@@ -80,7 +80,7 @@ class DenseResnet(nn.Module):
                 else:
                     layers.append(ResBlock(input_dim, dim, activ=activ, norm=norm))
             else:
-                input_dim_for_block = blocks_dims[i-1] if _ == 0 else dim
+                # input_dim_for_block = blocks_dims[i-1] if _ == 0 else dim
                 for j in range(num_blocks_per_layer):
                     if j == 0:
                         layers.append(ResBlock(blocks_dims[i-1], dim, activ=activ, norm=norm))
