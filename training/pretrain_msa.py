@@ -114,6 +114,9 @@ def main():
 
     epochs = config['training']['epochs']
     batch = config['training']['mini_batch_size']
+    presaved = config['training']['presaved']
+
+    # print(model)
 
     # pretrain, train, and predict
     pretrain_wrapper.pretrain_hdf(
@@ -121,6 +124,7 @@ def main():
         num_epochs=epochs,
         val_keys=keys_valid,
         mini_batch=batch,
+        pretrained=presaved,
     )
 
     pretrain_file.close()

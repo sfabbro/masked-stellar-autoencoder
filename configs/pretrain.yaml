@@ -1,6 +1,6 @@
 data:
-  # datafile: '/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5'
-  datafile: '/arc/home/aydanmckay/bprp_mae/final_model/pt_testing/10M_pretrain_data0622.h5'
+  datafile: '/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5'
+  # datafile: '/arc/home/aydanmckay/bprp_mae/final_model/pt_testing/10M_pretrain_data0622.h5'
   valid_keys: ['sslset11_part0','sslset14_part0','sslset2_part0','sslset5_part0','sslset20_part0']
   feature_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3','bp_4','bp_5','bp_6','bp_7','bp_8','bp_9',
                  'bp_10','bp_11','bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19','bp_20',
@@ -46,7 +46,7 @@ model:
   pt_activ_func: 'elu'
   norm: 'layer'
   rtdl_embed: 16
-  # decoder_dims: [256, 512, 1024]  # Optional: asymmetric decoder (default: mirrors encoder)
+  decoder_dims: [256, 512, 1024]  # Optional: asymmetric decoder (default: mirrors encoder)
 
 training:
   xp_masking_ratio: 0.9
@@ -56,8 +56,9 @@ training:
   lasso: 0
   optimizer: 'adamw'
   loss_fn: 'mae'  # Options: 'mse', 'mae', 'wmse' (error-weighted MSE), 'wmae'
-  mini_batch_size: 1024
+  mini_batch_size: 32768
   epochs: 100
+  presaved: masked_stellar_autoencoder_220M.pth
   # pert_features: false  # Optional: add Gaussian noise augmentation scaled by errors (default: false)
   # pert_scale: 1.0  # Optional: noise scale factor (default: 1.0)
 

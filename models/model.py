@@ -575,6 +575,7 @@ class TabResnetWrapper(BaseEstimator):
                 print(f"Warning: Invalid values in features for key '{key}'")
             if np.any(np.isnan(eX)) or np.any(np.isinf(eX)):
                 print(f"Warning: Invalid values in errors for key '{key}'")
+
             
             return torch.Tensor(X).to(self.device), torch.Tensor(eX).to(self.device)
             
@@ -597,7 +598,7 @@ class TabResnetWrapper(BaseEstimator):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
     
-    def pretrain_hdf(self, train_keys, num_epochs=10, val_keys=None, ft_stuff=None, test_stuff=None, mini_batch=32):
+    def pretrain_hdf(self, train_keys, num_epochs=10, val_keys=None, ft_stuff=None, test_stuff=None, mini_batch=32, pretrained=None):
         """
         Pre-trains the model on the training dataset with optional validation.
 
@@ -649,8 +650,22 @@ class TabResnetWrapper(BaseEstimator):
 
         epoch_loss = 0.
         loss_div = 0.
+        pretrained_epoch = 0
+
+        if pretrained is not None:
+            checkpoint = torch.load(pretrained)
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+            
+            epoch_loss = checkpoint['epoch_loss']
+            loss_div = checkpoint['loss_div']
+            pretrained_epoch = checkpoint['epoch']
+            print('Picking up pre-training from epoch',pretrained_epoch)
 
         for epoch in range(num_epochs):
+
+            epoch += pretrained_epoch
 
             random.shuffle(train_keys)
 
@@ -663,16 +678,19 @@ class TabResnetWrapper(BaseEstimator):
                     X_train, eX_train = self._load_data(key)
                     
                     # Memory-efficient data loading
-                    if X_train.shape[0] > 100000:  # For large datasets, use pin_memory
-                        train_loader = DataLoader(TensorDataset(X_train, eX_train), 
-                                                 batch_size=mini_batch, 
-                                                 shuffle=True, 
-                                                 pin_memory=True,
-                                                 num_workers=2)
-                    else:
-                        train_loader = DataLoader(TensorDataset(X_train, eX_train), 
-                                                 batch_size=mini_batch, 
-                                                 shuffle=True)
+                    # if X_train.shape[0] > 100000:  # For large datasets, use pin_memory
+                    #     train_loader = DataLoader(TensorDataset(X_train, eX_train), 
+                    #                              batch_size=mini_batch, 
+                    #                              shuffle=True, 
+                    #                              pin_memory=True,
+                    #                              num_workers=2)
+                    # else:
+                    #     train_loader = DataLoader(TensorDataset(X_train, eX_train), 
+                    #                              batch_size=mini_batch, 
+                    #                              shuffle=True)
+                    train_loader = DataLoader(TensorDataset(X_train, eX_train), 
+                                              batch_size=mini_batch, 
+                                              shuffle=True)
 
                     for X_batch,eX_batch in train_loader:
                         # Apply data augmentation if enabled (add Gaussian noise scaled by errors)
@@ -724,11 +742,28 @@ class TabResnetWrapper(BaseEstimator):
                 logging.info(f"{epoch + 1}, Validation Loss: {validation_loss}")
                 running_pt_validation_loss.append(validation_loss)
 
-            torch.save(self.model.state_dict(), self.pt_save_str)
+            # torch.save(self.model.state_dict(), self.pt_save_str) # old saving method
+            torch.save({
+                'epoch': epoch+1,
+                'model_state_dict': self.model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'scheduler_state_dict': scheduler.state_dict(),
+                'epoch_loss': epoch_loss,
+                'loss_div': loss_div,
+            }, self.pt_save_str)
 
             if self.checkpoint_interval is not None:
                 if (epoch+1) % self.checkpoint_interval == 0:
-                    torch.save(self.model.state_dict(), self.pt_save_str.split('.')[0]+'_checkpoint_'+str(self.checkpoint_interval)+'.pth')
+                    # torch.save(self.model.state_dict(), self.pt_save_str.split('.')[0]+'_checkpoint_'+str(epoch+1)+'.pth')
+                    torch.save({
+                        'epoch': epoch+1,
+                        'model_state_dict': self.model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'scheduler_state_dict': scheduler.state_dict(),
+                        'epoch_loss': epoch_loss,
+                        'loss_div': loss_div,
+                    }, self.pt_save_str.split('.')[0]+'_checkpoint_'+str(epoch+1)+'.pth')
+                    
 
         if ft_stuff is not None:
             self.fit(ft_stuff[0],
