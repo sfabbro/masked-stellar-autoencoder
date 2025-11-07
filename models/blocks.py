@@ -122,7 +122,7 @@ class TabResnet(nn.Module):
         if output_cols is None:
             output_cols = continuous_cols
         # final linear layer for reshaping
-        self.reconstruction_layer = nn.Linear(blocks_dims[0], output_cols, bias=False)
+        self.reconstruction_layer = nn.Linear(decoder_dims[-1], output_cols, bias=False)
 
     def forward(self, x):
         # Encode the input

@@ -158,7 +158,8 @@ def main():
             decoder_dims=decoder_dims,
         )
 
-        model.load_state_dict(torch.load(config['model']['saved_weights'], map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu')))
+        checkpoint = torch.load(config['model']['saved_weights'], map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+        model.load_state_dict(checkpoint['model_state_dict'])
     
         xp_ratio = config['training']['xp_masking_ratio']
         m_ratio = config['training']['m_masking_ratio']
