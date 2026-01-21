@@ -196,6 +196,30 @@ def main():
             checkpoint_interval=ci,
         )
 
+        
+        # Calculate consistency parameters: Pred_scaled = m * Recon_scaled + c
+        # Recon is RobustScaled: x_rob = (x - median) / IQR => x = x_rob * IQR + median
+        # Pred is StandardScaled: x_std = (x - mean) / std => x = x_std * std + mean
+        # x_std = x_rob * (IQR/std) + (median - mean)/std
+        
+        # Get Parallax index in features
+        px_feat_idx = cols.index("PARALLAX")
+        
+        # RobustScaler params for Parallax
+        # center_ is median, scale_ is IQR
+        feat_median = featurescaler.center_[px_feat_idx]
+        feat_iqr = featurescaler.scale_[px_feat_idx]
+        
+        # StandardScaler params for Parallax (last scaler in list)
+        label_scaler = scalers[-1] 
+        label_mean = label_scaler.mean_[0]
+        label_std = label_scaler.scale_[0]
+        
+        consistency_m = feat_iqr / label_std
+        consistency_c = (feat_median - label_mean) / label_std
+        
+        print(f"Consistency Params for Parallax: m={consistency_m}, c={consistency_c}")
+
         wrapper.fit(
             trainset,
             etrainset,
@@ -209,6 +233,7 @@ def main():
             mini_batch=config['finetuning']['mini_batch'], 
             linearprobe=config['finetuning']['linearprobe'], 
             maskft=config['finetuning']['mask'],
+            mask_pred=config['finetuning'].get('mask_prediction', None),
             multitask=config['finetuning']['multitask'],
             rncloss=config['finetuning']['rncloss'],
             ftlr=config['finetuning']['lr'],
