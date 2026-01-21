@@ -116,12 +116,11 @@ class TabResnet(nn.Module):
         # Use asymmetric decoder if specified, otherwise mirror encoder
         if decoder_dims is None:
             decoder_dims = blocks_dims[::-1]
+        
         self.decoder = DenseResnet(input_dim=blocks_dims[-1], blocks_dims=decoder_dims, d_embedding=d_embedding, activ=activ, pe=False, norm=norm)
 
-        # setting output size
         if output_cols is None:
             output_cols = continuous_cols
-        # final linear layer for reshaping
         self.reconstruction_layer = nn.Linear(decoder_dims[-1], output_cols, bias=False)
 
     def forward(self, x):
