@@ -99,6 +99,7 @@ def main():
     target_set = np.concatenate([target_set, testset[:, pos].reshape(-1, 1)], axis=1)
     
     labels = [i for i in range(num_classes) if i % 2 == 0] + ['parallax']
+    parallax_label_idx = labels.index('parallax')
 
     vlabelled_set.append(vlabel)
     vlabelled_set = np.concatenate(vlabelled_set, axis=1)
@@ -194,6 +195,7 @@ def main():
             ft_save_str=ft_save_file,
             ft_log_file=ft_log_file,
             checkpoint_interval=ci,
+            force_mask_cols=config['finetuning'].get('force_mask_cols', None),
         )
 
         
@@ -245,7 +247,13 @@ def main():
             pert_features=config['finetuning']['pert_features'],
             pert_labels=config['finetuning']['pert_labels'],
             feature_seed=config['finetuning']['pert_seed'],
-            ensemblepath=config['finetuning']['ensemble_path']
+            ensemblepath=config['finetuning']['ensemble_path'],
+            parallax_use_masked_pred=config['finetuning'].get('parallax_use_masked_pred', False),
+            parallax_label_idx=parallax_label_idx,
+            parallax_mle_weight=config['finetuning'].get('parallax_mle_weight', 0.0),
+            consistency_params={'m': consistency_m, 'c': consistency_c},
+            parallax_sigma_floor=config['finetuning'].get('parallax_sigma_floor', 0.0),
+            parallax_sigma_scale=config['finetuning'].get('parallax_sigma_scale', 1.0),
         )
 
 if __name__ == '__main__':

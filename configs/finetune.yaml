@@ -66,6 +66,7 @@ finetuning:
   mini_batch: 512 
   linearprobe: false
   mask: true
+  # mask_prediction: false  # Optional: force predictions to use masked inputs
   multitask: true
   rncloss: false
   lr: 0.0001
@@ -75,6 +76,11 @@ finetuning:
   lf: 'quantile'
   pert_features: true
   pert_labels: false
+  # force_mask_cols: ['PARALLAX']  # Optional: always mask specific features during fine-tuning
+  parallax_use_masked_pred: false
+  parallax_mle_weight: 0.0
+  parallax_sigma_floor: 0.0
+  parallax_sigma_scale: 1.0
   ensemble: false
   seed: 42
   pert_seed: 42

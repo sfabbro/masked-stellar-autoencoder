@@ -30,23 +30,47 @@ def main():
     keys_valid = config['data']['valid_keys']
     keys_train = [item for item in list(pretrain_file.keys()) if item not in keys_valid]
 
-    featurescaler = RobustScaler()
-    # as a test since there currently isn't a finetuning set
-    X = pretrain_file[keys_train[0]][:]
-
     cols = config['data']['feature_cols']
-    
-    X = np.column_stack([TabResnetWrapper._clean_column(col, X[col]) for col in cols])
-    
-    # Validate data before fitting scaler
-    if np.any(np.isnan(X)) or np.any(np.isinf(X)):
-        print("Warning: Invalid values detected in training data before scaling")
-        # Remove rows with all NaN values
-        valid_rows = ~np.all(np.isnan(X), axis=1)
-        X = X[valid_rows]
-        if len(X) == 0:
-            raise ValueError("No valid data remaining after removing NaN rows")
-    
+
+    scaler_keys = config['training'].get('scaler_keys', keys_train)
+    scaler_max_rows = config['training'].get('scaler_max_rows', None)
+    scaler_seed = config['training'].get('scaler_seed', 42)
+    rng = np.random.default_rng(scaler_seed)
+
+    X_list = []
+    total_rows = 0
+    for key in scaler_keys:
+        if key not in pretrain_file:
+            continue
+        X_key = pretrain_file[key][:]
+        X_key = np.column_stack([TabResnetWrapper._clean_column(col, X_key[col]) for col in cols])
+
+        if np.any(np.isnan(X_key)) or np.any(np.isinf(X_key)):
+            print("Warning: Invalid values detected in training data before scaling")
+            valid_rows = ~np.all(np.isnan(X_key), axis=1)
+            X_key = X_key[valid_rows]
+            if len(X_key) == 0:
+                continue
+
+        if scaler_max_rows is not None:
+            remaining = scaler_max_rows - total_rows
+            if remaining <= 0:
+                break
+            if X_key.shape[0] > remaining:
+                idx = rng.choice(X_key.shape[0], size=remaining, replace=False)
+                X_key = X_key[idx]
+
+        X_list.append(X_key)
+        total_rows += X_key.shape[0]
+        if scaler_max_rows is not None and total_rows >= scaler_max_rows:
+            break
+
+    if len(X_list) == 0:
+        raise ValueError("No valid data available to fit feature scaler")
+
+    X = np.vstack(X_list)
+
+    featurescaler = RobustScaler()
     featurescaler.fit(X)
     
     # Validate scaler was fitted properly
@@ -110,11 +134,12 @@ def main():
         checkpoint_interval=ci,
         pert_features=pert_features,
         pert_scale=pert_scale,
+        force_mask_cols=config['training'].get('force_mask_cols', None),
     )
 
     epochs = config['training']['epochs']
     batch = config['training']['mini_batch_size']
-    presaved = config['training']['presaved']
+    presaved = config['training'].get('presaved', None)
 
     # print(model)
 
