@@ -46,6 +46,7 @@ model:
   pt_activ_func: 'elu'
   norm: 'layer'
   rtdl_embed: 16
+  use_mask_indicators: true
   decoder_dims: [256, 512, 1024]  # Optional: asymmetric decoder (default: mirrors encoder)
 
 training:
@@ -55,7 +56,7 @@ training:
   weight_decay: 0.00001
   lasso: 0
   optimizer: 'adamw'
-  loss_fn: 'mae'  # Options: 'mse', 'mae', 'wmse' (error-weighted MSE), 'wmae'
+  loss_fn: 'wmae'  # Options: 'mse', 'mae', 'wmse' (error-weighted MSE), 'wmae'
   mini_batch_size: 32768
   epochs: 100
   presaved: masked_stellar_autoencoder_220M.pth  # Optional: resume pretraining from checkpoint
@@ -64,7 +65,7 @@ training:
   # scaler_max_rows: 1000000
   # scaler_seed: 42
   # Force-mask columns during pretraining (optional, leakage control)
-  # force_mask_cols: ['PARALLAX']
+  force_mask_cols: ['PARALLAX']
   # pert_features: false  # Optional: add Gaussian noise augmentation scaled by errors (default: false)
   # pert_scale: 1.0  # Optional: noise scale factor (default: 1.0)
 

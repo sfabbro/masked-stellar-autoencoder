@@ -47,6 +47,7 @@ model:
   pt_activ_func: 'elu'
   norm: 'layer'
   rtdl_embed: 16
+  use_mask_indicators: true
   # decoder_dims: [256, 512, 1024]  # Optional: asymmetric decoder (default: mirrors encoder)
   saved_weights: '/arc/home/aydanmckay/bprp_mae/.model_instances/checkpoint_60_fullmodelrealmags0605.pth'
 
@@ -77,7 +78,7 @@ finetuning:
   pert_features: true
   pert_labels: false
   # force_mask_cols: ['PARALLAX']  # Optional: always mask specific features during fine-tuning
-  parallax_use_masked_pred: false
+  parallax_use_masked_pred: true
   parallax_mle_weight: 0.0
   parallax_sigma_floor: 0.0
   parallax_sigma_scale: 1.0

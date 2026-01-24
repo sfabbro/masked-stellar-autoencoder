@@ -146,11 +146,13 @@ def main():
         d_embed = config['model']['rtdl_embed']
         norm = config['model']['norm']
         decoder_dims = config['model'].get('decoder_dims', None)  # Optional asymmetric decoder
+        use_mask_indicators = config['model'].get('use_mask_indicators', False)
 
         recon_cols = config['data']['recon_cols']
 
+        input_dim = len(cols) * (2 if use_mask_indicators else 1)
         model = make_model(
-            len(cols),
+            input_dim,
             blocks_dims,
             len(recon_cols),
             pt_activ,
@@ -196,6 +198,7 @@ def main():
             ft_log_file=ft_log_file,
             checkpoint_interval=ci,
             force_mask_cols=config['finetuning'].get('force_mask_cols', None),
+            use_mask_indicators=use_mask_indicators,
         )
 
         

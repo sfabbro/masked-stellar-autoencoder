@@ -7,8 +7,6 @@ from sklearn.base import BaseEstimator
 from torch.utils.data import DataLoader, TensorDataset
 
 from sklearn.model_selection import train_test_split
-# import h5py
-
 import numpy as np
 import pandas as pd
 import random
@@ -431,6 +429,8 @@ class TabResnetWrapper(BaseEstimator):
                  pert_features=False,
                  pert_scale=1.0,
                  force_mask_cols=None,
+                 use_mask_indicators=False,
+                 eps=1e-6,
                  ):
         
         '''
@@ -491,6 +491,9 @@ class TabResnetWrapper(BaseEstimator):
         self.force_mask_cols = force_mask_cols or []
         self.force_mask_indices = [feature_cols.index(col) for col in self.force_mask_cols if col in feature_cols]
         self.force_mask_indices_tensor = torch.tensor(self.force_mask_indices, dtype=torch.long, device=self.device)
+        self.use_mask_indicators = use_mask_indicators
+        self.mask_fill_value = 0.0 if self.use_mask_indicators else -9999.0
+        self.eps = eps
 
     def _apply_mask(self, X, col_start_fixed=5, col_end_fixed=115, col_start_random=115):
         """
@@ -513,7 +516,7 @@ class TabResnetWrapper(BaseEstimator):
     
         # get NaN locations
         nan_mask = ~torch.isnan(X_masked)
-        X_masked[~nan_mask] = -9999
+        X_masked[~nan_mask] = self.mask_fill_value
     
         # row-wise masking for cols [5:115] - XP coeffs
         num_rows_to_mask = int(self.xp_masking_ratio * X.shape[0])
@@ -542,9 +545,65 @@ class TabResnetWrapper(BaseEstimator):
             combined_mask[:, self.force_mask_indices_tensor] = True
 
         # apply masks
-        X_masked[combined_mask] = -9999
+        X_masked[combined_mask] = self.mask_fill_value
     
         return X_masked, combined_mask, nan_mask
+
+    def _build_pred_input(self, X_batch, eX_batch, maskft, pert_features, mask_pred):
+        """
+        Build the prediction input with optional perturbation, masking, and forced leakage masks.
+        Returns X_pred_input, X_masked, mask, nanmask.
+        """
+        X_noisy = X_batch
+        if pert_features:
+            X_noisy = X_batch + torch.randn_like(X_batch) * eX_batch
+
+        if maskft:
+            X_masked, mask, nanmask = self._apply_mask(X_noisy)
+        else:
+            X_masked = X_noisy.clone()
+            mask = None
+            nanmask = None
+
+        X_pred_input = X_masked if mask_pred else X_noisy
+
+        # Build input mask indicator: missing + applied masks
+        missing_mask = torch.isnan(X_noisy)
+        input_mask = missing_mask.clone()
+        if mask_pred and mask is not None and nanmask is not None:
+            input_mask = input_mask | mask | (~nanmask)
+
+        if self.force_mask_indices_tensor.numel() > 0:
+            X_pred_input = X_pred_input.clone()
+            X_pred_input[:, self.force_mask_indices_tensor] = self.mask_fill_value
+            input_mask[:, self.force_mask_indices_tensor] = True
+
+        if input_mask.any():
+            X_pred_input = X_pred_input.clone()
+            X_pred_input[input_mask] = self.mask_fill_value
+
+        if self.use_mask_indicators:
+            mask_indicator = input_mask.to(dtype=X_pred_input.dtype)
+            X_pred_input = torch.cat([X_pred_input, mask_indicator], dim=1)
+
+        return X_pred_input, X_masked, mask, nanmask
+
+    def _append_mask_indicators(self, X_masked, mask, nanmask):
+        if not self.use_mask_indicators:
+            return X_masked
+        mask_indicator = (mask | (~nanmask)).to(dtype=X_masked.dtype)
+        return torch.cat([X_masked, mask_indicator], dim=1)
+
+    @staticmethod
+    def _split_quantile_pred(y_pred):
+        """Split quantile predictions into median and scale if available."""
+        if y_pred.dim() == 3:
+            y_lower = y_pred[:, :, 0]
+            y_median = y_pred[:, :, 1]
+            y_upper = y_pred[:, :, 2]
+            y_sigma = 0.5 * (y_upper - y_lower)
+            return y_median, y_sigma
+        return y_pred, None
 
     def _load_data(self, key):
         '''Load and validate data with proper error handling'''
@@ -716,13 +775,19 @@ class TabResnetWrapper(BaseEstimator):
                         X_masked, mask, nanmask = self._apply_mask(X_batch)
 
                         # Forward pass (classification output is ignored for pretraining)
-                        X_reconstructed, z = self.model(X_masked)
+                        X_masked_input = self._append_mask_indicators(X_masked, mask, nanmask)
+                        X_reconstructed, z = self.model(X_masked_input)
 
                         # Compute the reconstruction loss
                         # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
                         reconstruction_mask = mask[:, :-self.diff] & nanmask[:, :-self.diff]
                         l1_norm = z.abs().sum()
-                        loss = self.loss_fn(X_batch[:,:-self.diff], X_reconstructed, reconstruction_mask, eX_batch[:, :-self.diff]) + self.lasso * l1_norm
+                        
+                        # Compute weights for loss: 1/(sigma^2 + eps)
+                        # eX_batch is sigma (error). 
+                        loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
+                        
+                        loss = self.loss_fn(X_batch[:,:-self.diff], X_reconstructed, reconstruction_mask, loss_weights) + self.lasso * l1_norm
 
                         optimizer.zero_grad()
                         loss.backward()
@@ -825,12 +890,17 @@ class TabResnetWrapper(BaseEstimator):
                     X_masked, mask, nanmask = self._apply_mask(X_batch)
 
                     # Forward pass
-                    X_reconstructed, _ = self.model(X_masked)
+                    X_masked_input = self._append_mask_indicators(X_masked, mask, nanmask)
+                    X_reconstructed, _ = self.model(X_masked_input)
 
                     # Compute validation loss
                     # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
                     reconstruction_mask = mask[:, :-self.diff] & nanmask[:, :-self.diff]
-                    batch_loss = self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, eX_batch[:, :-self.diff])
+                    
+                    # Compute weights for loss: 1/(sigma^2 + eps)
+                    loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + 1e-6)
+                    
+                    batch_loss = self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
                     
                     val_loss += batch_loss.item()
                 loss_div += len(val_loader)
@@ -981,20 +1051,12 @@ class TabResnetWrapper(BaseEstimator):
                 eX_batch = batch[1]
                 y_batch = batch[2]
 
-                # Apply masking to input features batch
-                if maskft and pert_features:
-                    X_masked, mask, nanmask = self._apply_mask(random.gauss(mu=X_batch, sigma=eX_batch))
-                elif pert_features and not maskft:
-                    X_masked = random.gauss(mu=X_batch, sigma=eX_batch)
-                elif maskft and not pert_features:
-                    X_masked, mask, nanmask = self._apply_mask(X_batch)
-                else:
-                    X_masked = X_batch.clone()
-
-                X_pred_input = X_masked if mask_pred else X_batch
+                X_pred_input, X_masked, mask, nanmask = self._build_pred_input(
+                    X_batch, eX_batch, maskft, pert_features, mask_pred
+                )
 
                 if pert_labels:
-                    y_batch = random.gauss(mu=y_batch, sigma=batch[3])
+                    y_batch = y_batch + torch.randn_like(y_batch) * batch[3]
 
                 if linearprobe:
                     # Forward pass (classification output is used for fitting)
@@ -1007,8 +1069,13 @@ class TabResnetWrapper(BaseEstimator):
                 if parallax_use_masked_pred and self.parallax_feature_idx is not None:
                     if parallax_label_idx is None:
                         parallax_label_idx = y_batch.shape[1] - 1
-                    parallax_masked = X_batch.clone()
-                    parallax_masked[:, self.parallax_feature_idx] = -9999
+                    # Respect mask_pred by starting from the same input used for prediction.
+                    # But we specifically want to mask parallax HERE for the second pass
+                    parallax_masked = X_pred_input.clone()
+                    parallax_masked[:, self.parallax_feature_idx] = self.mask_fill_value
+                    if self.use_mask_indicators:
+                        indicator_idx = self.parallax_feature_idx + len(self.feature_cols)
+                        parallax_masked[:, indicator_idx] = 1.0
                     if linearprobe:
                         encoded_masked = self.model.encoder(parallax_masked)
                         y_pred_masked = self.lp(encoded_masked)
@@ -1020,13 +1087,16 @@ class TabResnetWrapper(BaseEstimator):
                     else:
                         y_pred[:, parallax_label_idx] = y_pred_masked[:, parallax_label_idx]
 
+                y_pred_sigma = None
                 if ftlf != 'quantile':
-                    y_pred_err = y_pred[1]
-                    y_pred = y_pred[0]
+                    y_pred, y_pred_sigma = self._split_quantile_pred(y_pred)
                     
                 # Compute loss
                 if (ftlf == 'wmse') or (ftlf == 'wgnll'):
-                    loss = criterion(y_batch, y_pred, 1/(batch[3]+1e-5)**2)
+                    # batch[3] is e_y_val (errors)
+                    # Use inverse variance weighting
+                    weights = 1.0 / (batch[3]**2 + 1e-6)
+                    loss = criterion(y_batch, y_pred, weights)
                 elif (ftlf == 'mse') or (ftlf == 'mae'):
                     loss = criterion(y_batch, y_pred)  # Assuming class labels are integers
                 elif ftlf == 'quantile':
@@ -1055,13 +1125,22 @@ class TabResnetWrapper(BaseEstimator):
                         var = var + (parallax_sigma_floor ** 2)
                     mle_mask = (~torch.isnan(mu_phot)) & (~torch.isnan(pi_gaia)) & (~torch.isnan(var))
                     if mle_mask.any():
-                        loss = loss + parallax_mle_weight * (((mu_phot - pi_gaia) ** 2) / (var + 1e-6))[mle_mask].mean()
+                        loss = loss + parallax_mle_weight * (((mu_phot - pi_gaia) ** 2) / (var + self.eps))[mle_mask].mean()
 
                 if multitask:
-                    X_reconstructed, _ = self.model(X_masked)
+                    if mask is None or nanmask is None:
+                        X_masked_recon, mask, nanmask = self._apply_mask(X_batch)
+                    else:
+                        X_masked_recon = X_masked
+                    X_masked_recon_input = self._append_mask_indicators(X_masked_recon, mask, nanmask)
+                    X_reconstructed, _ = self.model(X_masked_recon_input)
                     # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
                     reconstruction_mask = mask[:, :-self.diff] & nanmask[:, :-self.diff]
-                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, eX_batch[:, :-self.diff])
+                    
+                    # Fix: Use inverse variance weighting for multitask reconstruction loss
+                    loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
+                    
+                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
 
                 if rncloss:
                     features = torch.stack((y_pred, y_pred.clone()), dim=1)  # [bs, 2, feat_dim]
@@ -1069,10 +1148,11 @@ class TabResnetWrapper(BaseEstimator):
                         loss += rnc(features, y_batch)
                     except RuntimeError as e:
                         print(e)
-                        print(torch.cuda.memory_summary())
 
                 if (ftlf == 'gnll') or (ftlf == 'wgnll'):
-                    loss += criterion2(y_pred, y_batch, torch.ones_like(y_pred_err), torch.ones_like(batch[3]))
+                    if y_pred_sigma is None:
+                        y_pred_sigma = torch.ones_like(y_batch)
+                    loss += criterion2(y_pred, y_batch, y_pred_sigma**2, batch[3]**2)
                 
                 optimizer.zero_grad()
                 loss.backward()
@@ -1169,13 +1249,9 @@ class TabResnetWrapper(BaseEstimator):
                 eX_batch = batch[1]
                 y_batch = batch[2]
 
-                # Apply masking to input features batch
-                if maskft:
-                    X_masked, mask, nanmask = self._apply_mask(X_batch)
-                else:
-                    X_masked = X_batch.clone()
-
-                X_pred_input = X_masked if mask_pred else X_batch
+                X_pred_input, X_masked, mask, nanmask = self._build_pred_input(
+                    X_batch, eX_batch, maskft, False, mask_pred
+                )
 
                 if linearprobe:
                     # Forward pass (classification output is used for fitting)
@@ -1188,8 +1264,12 @@ class TabResnetWrapper(BaseEstimator):
                 if parallax_use_masked_pred and self.parallax_feature_idx is not None:
                     if parallax_label_idx is None:
                         parallax_label_idx = y_batch.shape[1] - 1
-                    parallax_masked = X_batch.clone()
-                    parallax_masked[:, self.parallax_feature_idx] = -9999
+                    # Respect mask_pred by starting from the same input used for prediction.
+                    parallax_masked = X_pred_input.clone()
+                    parallax_masked[:, self.parallax_feature_idx] = self.mask_fill_value
+                    if self.use_mask_indicators:
+                        indicator_idx = self.parallax_feature_idx + len(self.feature_cols)
+                        parallax_masked[:, indicator_idx] = 1.0
                     if linearprobe:
                         encoded_masked = self.model.encoder(parallax_masked)
                         y_pred_masked = self.lp(encoded_masked)
@@ -1201,13 +1281,16 @@ class TabResnetWrapper(BaseEstimator):
                     else:
                         y_pred[:, parallax_label_idx] = y_pred_masked[:, parallax_label_idx]
 
+                y_pred_sigma = None
                 if ftlf != 'quantile':
-                    y_pred_err = y_pred[1]
-                    y_pred = y_pred[0]
+                    y_pred, y_pred_sigma = self._split_quantile_pred(y_pred)
                     
                 # Compute loss
                 if (ftlf == 'wmse') or (ftlf == 'wgnll'):
-                    loss = criterion(y_batch, y_pred, 1/(batch[3]+1e-5)**2)
+                    # batch[3] is e_y_val (errors)
+                    # Use inverse variance weighting
+                    weights = 1.0 / (batch[3]**2 + 1e-6)
+                    loss = criterion(y_batch, y_pred, weights)
                 elif (ftlf == 'mse') or (ftlf == 'mae'):
                     loss = criterion(y_batch, y_pred)  # Assuming class labels are integers
                 elif ftlf == 'quantile':
@@ -1236,13 +1319,22 @@ class TabResnetWrapper(BaseEstimator):
                         var = var + (parallax_sigma_floor ** 2)
                     mle_mask = (~torch.isnan(mu_phot)) & (~torch.isnan(pi_gaia)) & (~torch.isnan(var))
                     if mle_mask.any():
-                        loss = loss + parallax_mle_weight * (((mu_phot - pi_gaia) ** 2) / (var + 1e-6))[mle_mask].mean()
+                        loss = loss + parallax_mle_weight * (((mu_phot - pi_gaia) ** 2) / (var + self.eps))[mle_mask].mean()
 
                 if multitask:
-                    X_reconstructed, _ = self.model(X_masked)
+                    if mask is None or nanmask is None:
+                        X_masked_recon, mask, nanmask = self._apply_mask(X_batch)
+                    else:
+                        X_masked_recon = X_masked
+                    X_masked_recon_input = self._append_mask_indicators(X_masked_recon, mask, nanmask)
+                    X_reconstructed, _ = self.model(X_masked_recon_input)
                     # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
                     reconstruction_mask = mask[:, :-self.diff] & nanmask[:, :-self.diff]
-                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, eX_batch[:, :-self.diff])
+                    
+                    # Fix: Use inverse variance weighting for multitask reconstruction loss
+                    loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
+                    
+                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
 
                 if rncloss:
                     features = torch.stack((y_pred, y_pred.clone()), dim=1)  # [bs, 2, feat_dim]
@@ -1250,10 +1342,11 @@ class TabResnetWrapper(BaseEstimator):
                         loss += rnc(features, y_batch)
                     except RuntimeError as e:
                         print(e)
-                        print(torch.cuda.memory_summary())
 
                 if (ftlf == 'gnll') or (ftlf == 'wgnll'):
-                    loss += criterion2(y_pred, y_batch, torch.ones_like(y_pred_err), torch.ones_like(batch[3]))
+                    if y_pred_sigma is None:
+                        y_pred_sigma = torch.ones_like(y_batch)
+                    loss += criterion2(y_pred, y_batch, y_pred_sigma**2, batch[3]**2)
 
                 val_loss += loss.item()
             
