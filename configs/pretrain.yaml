@@ -66,6 +66,11 @@ training:
   # scaler_seed: 42
   # Force-mask columns during pretraining (optional, leakage control)
   force_mask_cols: ['PARALLAX']
+  # Optional mask range overrides (auto-detected from feature names)
+  # mask_ranges:
+  #   xp_start: 5
+  #   xp_end: 115
+  #   phot_tail_start: 115
   # pert_features: false  # Optional: add Gaussian noise augmentation scaled by errors (default: false)
   # pert_scale: 1.0  # Optional: noise scale factor (default: 1.0)
 

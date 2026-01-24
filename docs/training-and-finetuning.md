@@ -12,6 +12,7 @@ Learn robust representations by reconstructing masked inputs. This makes the enc
 **Key choices**  
 - **Masking**: XP coefficients are masked row-wise; photometric bands are masked element-wise.  
 - **Force-masking**: use `force_mask_cols` to always hide specific columns (e.g., `PARALLAX`) so the model learns to reconstruct them from photometry.  
+- **Mask indicators**: optional binary mask channels appended to the encoder input to make missingness explicit.  
 - **Perturbations**: optionally add Gaussian noise scaled by measurement errors (`pert_features`, `pert_scale`).  
 - **Scaler sampling**: fit the feature scaler using a random subset of rows to avoid loading huge datasets.
 
@@ -20,6 +21,8 @@ Learn robust representations by reconstructing masked inputs. This makes the enc
 training.xp_masking_ratio
 training.m_masking_ratio
 training.force_mask_cols
+model.use_mask_indicators
+training.mask_ranges   # optional overrides for xp_start/xp_end/phot_tail_start
 training.pert_features
 training.pert_scale
 training.scaler_keys
@@ -39,6 +42,7 @@ Predict stellar labels (Teff, logg, [Fe/H], alpha, age, parallax) with uncertain
 - **Quantile regression**: predicts 16th/50th/84th percentiles.  
 - **Masking in fine-tuning**: keeps the encoder robust to missing data.  
 - **Leakage-free parallax**: predict parallax from photometry only while still allowing Gaia parallax to improve other labels.
+- **Multitask weighting**: scale reconstruction loss relative to label loss when `multitask: true`.
 
 **Config knobs (finetune)**  
 ```
@@ -50,7 +54,17 @@ finetuning.parallax_use_masked_pred
 finetuning.parallax_mle_weight
 finetuning.parallax_sigma_scale
 finetuning.parallax_sigma_floor
+finetuning.multitask_weight
+training.mask_ranges   # optional overrides for xp_start/xp_end/phot_tail_start
 ```
+
+**Mask indicator note**  
+If `model.use_mask_indicators: true`, the encoder input dimension doubles (`len(feature_cols) * 2`), so
+old checkpoints are incompatible and you must pretrain from scratch.
+
+**Mask range auto-detection**  
+By default, mask ranges are inferred from feature names (e.g., `bp_1` … `rp_55`).  
+If your feature order differs, set `training.mask_ranges` to override.
 
 ---
 
@@ -84,6 +98,23 @@ parallax_use_masked_pred: true
 parallax_mle_weight: 0.1
 parallax_sigma_scale: 1.0
 parallax_sigma_floor: 0.0
+```
+
+**Quickstart config (Model B: best labels + leakage‑free parallax)**  
+```yaml
+# pretrain.yaml
+model:
+  use_mask_indicators: true
+training:
+  force_mask_cols: ['PARALLAX']
+
+# finetune.yaml
+model:
+  use_mask_indicators: true
+finetuning:
+  parallax_use_masked_pred: true
+  # force_mask_cols: ['PARALLAX']  # leave off for Model B
+  multitask_weight: 1.0
 ```
 
 **Calibration check (recommended)**  

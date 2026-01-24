@@ -61,6 +61,11 @@ training:
   loss_fn: 'mae'
   mini_batch_size: 1024
   epochs: 100
+  # Optional mask range overrides (auto-detected from feature names)
+  # mask_ranges:
+  #   xp_start: 5
+  #   xp_end: 115
+  #   phot_tail_start: 115
 
 finetuning:
   num_epochs: 101
@@ -69,6 +74,7 @@ finetuning:
   mask: true
   # mask_prediction: false  # Optional: force predictions to use masked inputs
   multitask: true
+  multitask_weight: 1.0
   rncloss: false
   lr: 0.0001
   opt: 'adamw'

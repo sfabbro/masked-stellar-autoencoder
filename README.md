@@ -104,10 +104,18 @@ Key config fields in `configs/pretrain.yaml`:
   Control masking of XP coefficients vs. photometric bands.  
 - `training.force_mask_cols`  
   Always mask specific columns (e.g., `['PARALLAX']`) so the model can reconstruct them from photometry.  
+- `model.use_mask_indicators`  
+  Appends a binary mask channel to the encoder input so masked values are explicit.  
 - `training.pert_features`, `training.pert_scale`  
   Adds Gaussian noise scaled by errors (optional).  
 - `training.presaved`  
   Optional checkpoint to resume from.  
+- `training.mask_ranges`  
+  Optional overrides for XP/photometry masking ranges (auto-detected by feature name by default).
+
+**Mask indicators note**  
+If `model.use_mask_indicators: true`, the encoder input dimension doubles (`len(feature_cols) * 2`) and
+old checkpoints will not load. Pretrain from scratch in this mode.
 
 **Scaler sampling (for very large datasets)**  
 To fit the feature scaler without loading the entire dataset:
@@ -126,6 +134,8 @@ Key config fields in `configs/finetune.yaml`:
   `mask_prediction` can optionally force predictions to use masked inputs.  
 - `finetuning.force_mask_cols`  
   Always mask columns during fine-tuning (useful for leakage control).  
+- `finetuning.multitask_weight`  
+  Weight applied to reconstruction loss when `multitask: true`.  
 
 ### 5) Parallax strategy (leakage-free + error-aware)
 Parallax is special because Gaia provides high-quality measurements nearby but becomes noisy at distance.
