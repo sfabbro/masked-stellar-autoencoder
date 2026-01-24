@@ -431,13 +431,14 @@ class TabResnetWrapper(BaseEstimator):
                  force_mask_cols=None,
                  use_mask_indicators=False,
                  eps=1e-6,
+                 mask_ranges=None,
                  ):
         
         '''
         Changes to the original that can predict ages are the following:
         periodic embeddings
         scaling the coefficients with the RobustScaler
-        changing the mask value to -9999
+        changing the mask value to a sentinel (or 0.0 with mask indicators)
         exponential scheduler instead of stepLR
         different masking ratios
 
@@ -494,8 +495,29 @@ class TabResnetWrapper(BaseEstimator):
         self.use_mask_indicators = use_mask_indicators
         self.mask_fill_value = 0.0 if self.use_mask_indicators else -9999.0
         self.eps = eps
+        self.mask_ranges = mask_ranges or {}
+        self._set_mask_ranges()
 
-    def _apply_mask(self, X, col_start_fixed=5, col_end_fixed=115, col_start_random=115):
+    def _set_mask_ranges(self):
+        """Derive XP and photometric mask ranges from feature names, with optional overrides."""
+        xp_start = None
+        xp_end = None
+        for i, col in enumerate(self.feature_cols):
+            if col.startswith("bp_") and xp_start is None:
+                xp_start = i
+            if col == "rp_55":
+                xp_end = i + 1
+        if xp_start is None or xp_end is None:
+            xp_start = 5
+            xp_end = 115
+
+        self.xp_start = int(self.mask_ranges.get("xp_start", xp_start))
+        self.xp_end = int(self.mask_ranges.get("xp_end", xp_end))
+        self.phot_start = 0
+        self.phot_end = self.xp_start
+        self.phot_tail_start = int(self.mask_ranges.get("phot_tail_start", self.xp_end))
+
+    def _apply_mask(self, X, col_start_fixed=None, col_end_fixed=None, col_start_random=None):
         """
         Apply masking strategies to the input tensor while tracking NaN locations:
         1. Mask columns [5:115] for a random subset of rows.
@@ -518,24 +540,32 @@ class TabResnetWrapper(BaseEstimator):
         nan_mask = ~torch.isnan(X_masked)
         X_masked[~nan_mask] = self.mask_fill_value
     
-        # row-wise masking for cols [5:115] - XP coeffs
+        if col_start_fixed is None:
+            col_start_fixed = self.xp_start
+        if col_end_fixed is None:
+            col_end_fixed = self.xp_end
+        if col_start_random is None:
+            col_start_random = self.phot_tail_start
+
+        # row-wise masking for XP coeffs
         num_rows_to_mask = int(self.xp_masking_ratio * X.shape[0])
         row_indices = torch.randperm(X.shape[0])[:num_rows_to_mask].to(self.device)
     
         mask_fixed = torch.zeros_like(X, dtype=torch.bool).to(self.device)
         mask_fixed[row_indices, col_start_fixed:col_end_fixed] = True
     
-        # random element-wise masking for cols [0:5] and [115:] - phot bands
+        # random element-wise masking for photometric bands (pre-XP and post-XP)
         mask_random = torch.zeros_like(X, dtype=torch.bool).to(self.device)
     
-        # mask [0:5] - W1, W2, G, BP, RP
-        mask_random[:, :col_start_fixed] = (
+        # mask pre-XP photometry
+        mask_random[:, self.phot_start:self.phot_end] = (
             torch.rand(X[:, :col_start_fixed].shape, device=self.device) < self.m_masking_ratio
         )
-        # mask [115:] - all other phot
-        mask_random[:, col_start_random:] = (
-            torch.rand(X[:, col_start_random:].shape, device=self.device) < self.m_masking_ratio
-        )
+        # mask post-XP photometry
+        if col_start_random < X.shape[1]:
+            mask_random[:, col_start_random:] = (
+                torch.rand(X[:, col_start_random:].shape, device=self.device) < self.m_masking_ratio
+            )
     
         # combined mask
         combined_mask = mask_fixed | mask_random
@@ -898,7 +928,7 @@ class TabResnetWrapper(BaseEstimator):
                     reconstruction_mask = mask[:, :-self.diff] & nanmask[:, :-self.diff]
                     
                     # Compute weights for loss: 1/(sigma^2 + eps)
-                    loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + 1e-6)
+                    loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
                     
                     batch_loss = self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
                     
@@ -944,6 +974,7 @@ class TabResnetWrapper(BaseEstimator):
             consistency_params=None,
             parallax_sigma_floor=0.0,
             parallax_sigma_scale=1.0,
+            multitask_weight=1.0,
            ):
         
         X_train = torch.Tensor(X_train).to(self.device)
@@ -988,12 +1019,11 @@ class TabResnetWrapper(BaseEstimator):
 
         try:
             state_dict = torch.load(ensemblepath, map_location=self.device)
-            
-            # assign to models
             self.model.load_state_dict(state_dict['autoencoder_state_dict'])
             self.ft.load_state_dict(state_dict['prediction_head_state_dict'])
             print('loaded checkpoint')
-        except:
+        except (FileNotFoundError, EOFError, RuntimeError, TypeError) as e:
+            print(f"Could not load checkpoint: {e}")
             self.ft.apply(self.init_weights_gelu)
             print('restarting fine-tuning')
 
@@ -1095,7 +1125,7 @@ class TabResnetWrapper(BaseEstimator):
                 if (ftlf == 'wmse') or (ftlf == 'wgnll'):
                     # batch[3] is e_y_val (errors)
                     # Use inverse variance weighting
-                    weights = 1.0 / (batch[3]**2 + 1e-6)
+                    weights = 1.0 / (batch[3]**2 + self.eps)
                     loss = criterion(y_batch, y_pred, weights)
                 elif (ftlf == 'mse') or (ftlf == 'mae'):
                     loss = criterion(y_batch, y_pred)  # Assuming class labels are integers
@@ -1140,7 +1170,7 @@ class TabResnetWrapper(BaseEstimator):
                     # Fix: Use inverse variance weighting for multitask reconstruction loss
                     loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
                     
-                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
+                    loss += multitask_weight * self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
 
                 if rncloss:
                     features = torch.stack((y_pred, y_pred.clone()), dim=1)  # [bs, 2, feat_dim]
@@ -1187,6 +1217,7 @@ class TabResnetWrapper(BaseEstimator):
                     consistency_params=consistency_params,
                     parallax_sigma_floor=parallax_sigma_floor,
                     parallax_sigma_scale=parallax_sigma_scale,
+                    multitask_weight=multitask_weight,
                 )
                 running_ft_validation_loss.append(validation_loss)
 
@@ -1200,9 +1231,9 @@ class TabResnetWrapper(BaseEstimator):
                 if (epoch+1) % self.checkpoint_interval == 0:
                     torch.save({'autoencoder_state_dict': self.model.state_dict(),
                                 'prediction_head_state_dict': self.ft.state_dict()},
-                                self.ft_save_str.split('.')[0]+'_checkpoint_'+str(self.checkpoint_interval)+'.pth')
+                                self.ft_save_str.split('.')[0]+'_checkpoint_'+str(epoch+1)+'.pth')
 
-    def validate_fit(self, X_val, eX_val, y_val, e_y_val=None, mini_batch=32, linearprobe=False, maskft=False, multitask=False, ftlf='mse', rncloss=False, ftlabeldim=5, mask_pred=False, parallax_use_masked_pred=False, parallax_label_idx=None, parallax_mle_weight=0.0, consistency_params=None, parallax_sigma_floor=0.0, parallax_sigma_scale=1.0):
+    def validate_fit(self, X_val, eX_val, y_val, e_y_val=None, mini_batch=32, linearprobe=False, maskft=False, multitask=False, ftlf='mse', rncloss=False, ftlabeldim=5, mask_pred=False, parallax_use_masked_pred=False, parallax_label_idx=None, parallax_mle_weight=0.0, consistency_params=None, parallax_sigma_floor=0.0, parallax_sigma_scale=1.0, multitask_weight=1.0):
         self.model.eval()
         if linearprobe:
             self.lp.eval()
@@ -1289,7 +1320,7 @@ class TabResnetWrapper(BaseEstimator):
                 if (ftlf == 'wmse') or (ftlf == 'wgnll'):
                     # batch[3] is e_y_val (errors)
                     # Use inverse variance weighting
-                    weights = 1.0 / (batch[3]**2 + 1e-6)
+                    weights = 1.0 / (batch[3]**2 + self.eps)
                     loss = criterion(y_batch, y_pred, weights)
                 elif (ftlf == 'mse') or (ftlf == 'mae'):
                     loss = criterion(y_batch, y_pred)  # Assuming class labels are integers
@@ -1334,7 +1365,7 @@ class TabResnetWrapper(BaseEstimator):
                     # Fix: Use inverse variance weighting for multitask reconstruction loss
                     loss_weights = 1.0 / (eX_batch[:, :-self.diff]**2 + self.eps)
                     
-                    loss += self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
+                    loss += multitask_weight * self.loss_fn(X_batch[:, :-self.diff], X_reconstructed, reconstruction_mask, loss_weights)
 
                 if rncloss:
                     features = torch.stack((y_pred, y_pred.clone()), dim=1)  # [bs, 2, feat_dim]

@@ -199,6 +199,7 @@ def main():
             checkpoint_interval=ci,
             force_mask_cols=config['finetuning'].get('force_mask_cols', None),
             use_mask_indicators=use_mask_indicators,
+            mask_ranges=config['training'].get('mask_ranges', None),
         )
 
         
@@ -257,6 +258,7 @@ def main():
             consistency_params={'m': consistency_m, 'c': consistency_c},
             parallax_sigma_floor=config['finetuning'].get('parallax_sigma_floor', 0.0),
             parallax_sigma_scale=config['finetuning'].get('parallax_sigma_scale', 1.0),
+            multitask_weight=config['finetuning'].get('multitask_weight', 1.0),
         )
 
 if __name__ == '__main__':

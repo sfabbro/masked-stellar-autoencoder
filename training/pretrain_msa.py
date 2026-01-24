@@ -138,6 +138,7 @@ def main():
         pert_scale=pert_scale,
         force_mask_cols=config['training'].get('force_mask_cols', None),
         use_mask_indicators=use_mask_indicators,
+        mask_ranges=config['training'].get('mask_ranges', None),
     )
 
     epochs = config['training']['epochs']
