@@ -383,21 +383,21 @@ def main():
         rp_e = process_xp_coeffs(rpe_ssl)
         del rpe_ssl
         
-        bprp = np.squeeze(np.hstack((bp, rp, bp_e, rp_e)))
-        bprp = bprp.reshape(-1,220)
-        # sample = np.hstack((ssl_np, bprp))
-        bprp_df = pd.DataFrame(data=bprp, columns=process_labels)
-        print('cleaning rows')
+        print('creating df')
+        dfs = [ssl_df]
+
+        dfs.append(pd.DataFrame(np.array(bp), columns=process_labels[0:55]))
         del bp
+        dfs.append(pd.DataFrame(np.array(rp), columns=process_labels[55:110]))
         del rp
+        dfs.append(pd.DataFrame(np.array(bp_e), columns=process_labels[110:165]))
         del bp_e
+        dfs.append(pd.DataFrame(np.array(rp_e), columns=process_labels[165:220]))
         del rp_e
-        del bprp
         gc.collect()
         
-        print('creating df')
-        ssl_df = pd.concat([ssl_df, bprp_df], axis=1)
-        del bprp_df
+        ssl_df = pd.concat(dfs, axis=1)
+        del dfs
         ssl_df = ssl_df.drop(columns=['bp_coefficients','rp_coefficients','bp_coefficient_errors','rp_coefficient_errors'])
         ssl_df = ssl_df[new_order]
         
