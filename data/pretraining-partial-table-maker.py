@@ -9,6 +9,7 @@ from astropy.table import Table
 import ast
 import pickle
 import os
+import shutil
 import time
 try:
     from dustmaps.sfd import SFDQuery
@@ -236,10 +237,10 @@ def crossmatch_all(df_local):
 
     print(merged_df['source_id'].dtype)
 
-    os.system('rm -r sdss_curated.h5_output')
-    os.system('rm -r smssdr4_curated.h5_output')
-    os.system('rm -r tmass_curated.h5_output')
-    os.system('rm -r ps1_curated.h5_output')
+    shutil.rmtree('sdss_curated.h5_output', ignore_errors=True)
+    shutil.rmtree('smssdr4_curated.h5_output', ignore_errors=True)
+    shutil.rmtree('tmass_curated.h5_output', ignore_errors=True)
+    shutil.rmtree('ps1_curated.h5_output', ignore_errors=True)
 
     return merged_df
 
