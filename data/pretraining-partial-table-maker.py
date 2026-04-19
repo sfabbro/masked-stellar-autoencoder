@@ -10,10 +10,14 @@ import ast
 import pickle
 import os
 import time
+import subprocess
+import shutil
+import sys
+
 try:
     from dustmaps.sfd import SFDQuery
-except:
-    os.system('pip install dustmaps')
+except ImportError:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'dustmaps'])
     from dustmaps.config import config
     config['data_dir'] = '~/dustmaps_data'
     import dustmaps.sfd
@@ -236,10 +240,14 @@ def crossmatch_all(df_local):
 
     print(merged_df['source_id'].dtype)
 
-    os.system('rm -r sdss_curated.h5_output')
-    os.system('rm -r smssdr4_curated.h5_output')
-    os.system('rm -r tmass_curated.h5_output')
-    os.system('rm -r ps1_curated.h5_output')
+    for output_dir in [
+        'sdss_curated.h5_output',
+        'smssdr4_curated.h5_output',
+        'tmass_curated.h5_output',
+        'ps1_curated.h5_output'
+    ]:
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
 
     return merged_df
 
