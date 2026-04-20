@@ -2,7 +2,6 @@
 Smoke tests for masking layout, losses, and tensor shapes (Phase 1 debugging).
 Run from repo root: pytest tests/test_msa_training_invariants.py -v
 """
-import math
 
 import pytest
 import torch
@@ -10,9 +9,9 @@ import torch
 from models.model import (
     EncoderDecoderLoss,
     PredictionHead,
-    quantile_loss,
-    make_model,
     _reduce_finetune_prediction,
+    make_model,
+    quantile_loss,
 )
 
 
@@ -53,6 +52,34 @@ def test_reduce_finetune_prediction_median_from_quantile_head():
     pt, err = _reduce_finetune_prediction(y, "mse", linearprobe=False)
     assert torch.allclose(pt, y[..., 1])
     assert err is None
+
+
+def test_reduce_finetune_prediction_variations():
+    # 1. ftlf == "quantile"
+    y1 = torch.randn(4, 6, 3)
+    pt1, err1 = _reduce_finetune_prediction(y1, "quantile", linearprobe=False)
+    assert pt1 is y1
+    assert err1 is None
+
+    # 2. linearprobe == True
+    y2 = torch.randn(4, 6)
+    pt2, err2 = _reduce_finetune_prediction(y2, "mse", linearprobe=True)
+    assert pt2 is y2
+    assert err2 is None
+
+    # 3. Tuple input
+    mean = torch.randn(4, 6)
+    variance = torch.randn(4, 6)
+    y3 = (mean, variance)
+    pt3, err3 = _reduce_finetune_prediction(y3, "gaussian", linearprobe=False)
+    assert pt3 is mean
+    assert err3 is variance
+
+    # 4. Fallback for 2D tensor
+    y4 = torch.randn(4, 6)
+    pt4, err4 = _reduce_finetune_prediction(y4, "mse", linearprobe=False)
+    assert pt4 is y4
+    assert err4 is None
 
 
 def test_prediction_head_monotonic_quantiles():

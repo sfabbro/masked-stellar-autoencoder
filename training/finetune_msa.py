@@ -1,43 +1,53 @@
-import yaml
 import argparse
-import torch
-import random
 import os
+import random
 import sys
+
 import numpy as np
+import torch
+import yaml
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, repo_root)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config_paths import expand_config_paths, ft_checkpoint_paths
-from models.checkpoint_load import torch_load_trusted
-from models.model import make_model, TabResnetWrapper
 from feature_noise import pert_channel_scale_vector
 from finetune_data import prepare_finetune_arrays
 
+from models.checkpoint_load import torch_load_trusted
+from models.model import TabResnetWrapper, make_model
+
 
 def main():
-
     parser = argparse.ArgumentParser(description="Train MSA")
-    parser.add_argument("--config", type=str, required=True,
-                        help="Path to config YAML file")
-    parser.add_argument("--max-train-rows", type=int, default=None,
-                        help="Subsample training rows for pilot runs only")
-    parser.add_argument("--max-valid-rows", type=int, default=None,
-                        help="Subsample validation rows for pilot runs only")
+    parser.add_argument(
+        "--config", type=str, required=True, help="Path to config YAML file"
+    )
+    parser.add_argument(
+        "--max-train-rows",
+        type=int,
+        default=None,
+        help="Subsample training rows for pilot runs only",
+    )
+    parser.add_argument(
+        "--max-valid-rows",
+        type=int,
+        default=None,
+        help="Subsample validation rows for pilot runs only",
+    )
     args = parser.parse_args()
 
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
     expand_config_paths(config)
 
-    if config['finetuning']['ensemble']:
-        rng = np.random.default_rng(config['finetuning'].get('ensemble_seed', 42))
-        n_ens = int(config['finetuning'].get('ensemble_size', 20))
+    if config["finetuning"]["ensemble"]:
+        rng = np.random.default_rng(config["finetuning"].get("ensemble_seed", 42))
+        n_ens = int(config["finetuning"].get("ensemble_size", 20))
         seeds = rng.integers(0, 1000, size=n_ens).tolist()
     else:
-        seeds = [config['finetuning']['seed']]
+        seeds = [config["finetuning"]["seed"]]
 
     pack = prepare_finetune_arrays(
         config,
@@ -58,15 +68,14 @@ def main():
     recon_cols = pack["recon_cols"]
 
     for seed in seeds:
-
         random.seed(int(seed))
         torch.manual_seed(int(seed))
 
-        blocks_dims = config['model']['layer_dims']
-        pt_activ = config['model']['pt_activ_func']
-        d_embed = config['model']['rtdl_embed']
-        norm = config['model']['norm']
-        decoder_dims = config['model'].get('decoder_dims', None)
+        blocks_dims = config["model"]["layer_dims"]
+        pt_activ = config["model"]["pt_activ_func"]
+        d_embed = config["model"]["rtdl_embed"]
+        norm = config["model"]["norm"]
+        decoder_dims = config["model"].get("decoder_dims", None)
 
         model = make_model(
             len(cols),
@@ -78,25 +87,25 @@ def main():
             decoder_dims=decoder_dims,
         )
 
-        checkpoint = torch_load_trusted(
+        checkpoint = torch_load_trusted(weights_only=False,
             config["model"]["saved_weights"],
             map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
         )
-        model.load_state_dict(checkpoint['model_state_dict'])
-    
-        # Use fine-tuning specific mask ratios if available, fallback to 0.3 defaults to optimize XP gradient connections
-        xp_ratio = config['finetuning'].get('xp_masking_ratio', 0.3)
-        m_ratio = config['finetuning'].get('m_masking_ratio', 0.3)
-        lr = config['training']['lr']
-        wd = config['training']['weight_decay']
-        lasso = config['training']['lasso']
-        opt = config['training']['optimizer']
-        lf = config['training']['loss_fn']
-        
-        ft_save_file, ft_log_file = ft_checkpoint_paths(config, seed)
-        ci = config['saving']['checkpoint_interval']
+        model.load_state_dict(checkpoint["model_state_dict"])
 
-        pretrain_file = config['data']['datafile']
+        # Use fine-tuning specific mask ratios if available, fallback to 0.3 defaults to optimize XP gradient connections
+        xp_ratio = config["finetuning"].get("xp_masking_ratio", 0.3)
+        m_ratio = config["finetuning"].get("m_masking_ratio", 0.3)
+        lr = config["training"]["lr"]
+        wd = config["training"]["weight_decay"]
+        lasso = config["training"]["lasso"]
+        opt = config["training"]["optimizer"]
+        lf = config["training"]["loss_fn"]
+
+        ft_save_file, ft_log_file = ft_checkpoint_paths(config, seed)
+        ci = config["saving"]["checkpoint_interval"]
+
+        pretrain_file = config["data"]["datafile"]
 
         pert_ch = pert_channel_scale_vector(
             cols,
@@ -129,7 +138,9 @@ def main():
             ),
             pert_channel_scale=pert_ch,
             scheduler_cosine_t0=int(config["training"].get("scheduler_cosine_t0", 10)),
-            scheduler_cosine_t_mult=int(config["training"].get("scheduler_cosine_t_mult", 2)),
+            scheduler_cosine_t_mult=int(
+                config["training"].get("scheduler_cosine_t_mult", 2)
+            ),
             scheduler_eta_min_factor=float(
                 config["training"].get("scheduler_eta_min_factor", 0.01)
             ),
@@ -147,7 +158,9 @@ def main():
             label_std = label_scaler.scale_[0]
             consistency_m = feat_iqr / label_std
             consistency_c = (feat_median - label_mean) / label_std
-            print(f"Consistency Params for Parallax: m={consistency_m}, c={consistency_c}")
+            print(
+                f"Consistency Params for Parallax: m={consistency_m}, c={consistency_c}"
+            )
         else:
             print(
                 "Skipping parallax feature/label consistency check "
@@ -159,40 +172,42 @@ def main():
             etrainset,
             labelled_set,
             e_y_train=e_labelled_set,
-            X_val=validset, 
+            X_val=validset,
             eX_val=evalidset,
             y_val=vlabelled_set,
             e_y_val=e_vlabelled_set,
-            num_epochs=config['finetuning']['num_epochs'],
-            mini_batch=config['finetuning']['mini_batch'], 
-            linearprobe=config['finetuning']['linearprobe'], 
-            maskft=config['finetuning']['mask'],
-            multitask=config['finetuning']['multitask'],
-            rncloss=config['finetuning']['rncloss'],
-            ftlr=config['finetuning']['lr'],
-            ftopt=config['finetuning']['opt'],
-            ftact=config['finetuning']['activ'],
-            ftl2=config['finetuning']['l2'],
-            ftlf=config['finetuning']['lf'],
+            num_epochs=config["finetuning"]["num_epochs"],
+            mini_batch=config["finetuning"]["mini_batch"],
+            linearprobe=config["finetuning"]["linearprobe"],
+            maskft=config["finetuning"]["mask"],
+            multitask=config["finetuning"]["multitask"],
+            rncloss=config["finetuning"]["rncloss"],
+            ftlr=config["finetuning"]["lr"],
+            ftopt=config["finetuning"]["opt"],
+            ftact=config["finetuning"]["activ"],
+            ftl2=config["finetuning"]["l2"],
+            ftlf=config["finetuning"]["lf"],
             ftlabeldim=len(pack["label_names"]),
-            pert_features=config['finetuning']['pert_features'],
-            pert_labels=config['finetuning']['pert_labels'],
-            feature_seed=config['finetuning']['pert_seed'],
-            ensemblepath=config['finetuning']['ensemble_path'],
-            ft_lambda_pred=float(config['finetuning'].get('lambda_pred', 0.8)),
-            ft_lambda_rec=float(config['finetuning'].get('lambda_rec', 0.2)),
-            ft_quantile_label_weights=config['finetuning'].get('quantile_label_weights'),
+            pert_features=config["finetuning"]["pert_features"],
+            pert_labels=config["finetuning"]["pert_labels"],
+            feature_seed=config["finetuning"]["pert_seed"],
+            ensemblepath=config["finetuning"]["ensemble_path"],
+            ft_lambda_pred=float(config["finetuning"].get("lambda_pred", 0.8)),
+            ft_lambda_rec=float(config["finetuning"].get("lambda_rec", 0.2)),
+            ft_quantile_label_weights=config["finetuning"].get(
+                "quantile_label_weights"
+            ),
             ft_use_sigma_quantile_weights=bool(
-                config['finetuning'].get('quantile_use_label_errors', False)
+                config["finetuning"].get("quantile_use_label_errors", False)
             ),
             ft_sigma_weight_floor=float(
-                config['finetuning'].get('quantile_sigma_weight_floor', 1e-6)
+                config["finetuning"].get("quantile_sigma_weight_floor", 1e-6)
             ),
             ft_sigma_weight_max=float(
-                config['finetuning'].get('quantile_sigma_weight_max', 1e6)
+                config["finetuning"].get("quantile_sigma_weight_max", 1e6)
             ),
             ft_sigma_weight_normalize_batch=bool(
-                config['finetuning'].get('quantile_sigma_weight_normalize_batch', True)
+                config["finetuning"].get("quantile_sigma_weight_normalize_batch", True)
             ),
             ft_encoder_lr=(
                 float(config["finetuning"]["encoder_lr"])
@@ -210,5 +225,6 @@ def main():
             ),
         )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

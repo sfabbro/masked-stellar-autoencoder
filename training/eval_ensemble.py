@@ -18,13 +18,14 @@ Encoder weights may be stored as ``autoencoder_state_dict`` (fine-tune) or
 ``model_state_dict`` (pretrain naming); the prediction head must still be present
 for evaluation.
 """
+
 from __future__ import annotations
 
 import argparse
-from typing import Any, Dict, Optional
 import json
 import os
 import sys
+from typing import Any, Dict, Optional
 
 import numpy as np
 import torch
@@ -37,11 +38,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from checkpoint_keys import autoencoder_state_dict, prediction_head_state_dict
 from config_paths import expand_config_paths
+from conformal import apply_cqr_offsets_inplace, interval_coverage
 from finetune_data import prepare_finetune_arrays
+
 from models.checkpoint_load import torch_load_trusted
 from models.model import PredictionHead, make_model
-
-from conformal import apply_cqr_offsets_inplace, interval_coverage
 
 
 def _inverse_labels(
@@ -56,9 +57,7 @@ def _inverse_labels(
         teff_space = pack.get("teff_target_space", "linear")
     for i in range(6):
         col = scalers[i].inverse_transform(y_scaled[:, i].reshape(-1, 1)).ravel()
-        if i == 5 and parallax_space == "log10_mas":
-            out[:, i] = np.power(10.0, col)
-        elif i == 0 and teff_space == "log10":
+        if i == 5 and parallax_space == "log10_mas" or i == 0 and teff_space == "log10":
             out[:, i] = np.power(10.0, col)
         else:
             out[:, i] = col
@@ -82,9 +81,12 @@ def _inverse_quantile_block(
     for j in range(ell):
         for k in range(3):
             col = scalers[j].inverse_transform(y_q[:, j, k].reshape(-1, 1)).ravel()
-            if j == 5 and parallax_space == "log10_mas":
-                out[:, j, k] = np.power(10.0, col)
-            elif j == 0 and teff_space == "log10":
+            if (
+                j == 5
+                and parallax_space == "log10_mas"
+                or j == 0
+                and teff_space == "log10"
+            ):
                 out[:, j, k] = np.power(10.0, col)
             else:
                 out[:, j, k] = col
@@ -146,7 +148,13 @@ def _metrics_block(y_true: np.ndarray, y_pred: np.ndarray, names: list) -> dict:
     for i, name in enumerate(names):
         m = np.isfinite(y_true[:, i]) & np.isfinite(y_pred[:, i])
         if m.sum() < 2:
-            block[name] = {"n": int(m.sum()), "RMSE": None, "MAE": None, "R2": None, "NMAD": None}
+            block[name] = {
+                "n": int(m.sum()),
+                "RMSE": None,
+                "MAE": None,
+                "R2": None,
+                "NMAD": None,
+            }
             continue
         yt, yp = y_true[m, i], y_pred[m, i]
         block[name] = {
@@ -210,9 +218,11 @@ def write_latex_metrics_table(rows_xp_on: dict, rows_xp_off: dict, path: str) ->
         a = rows_xp_on.get(name, {})
         b = rows_xp_off.get(name, {})
         u = units[i]
+
         def fmt(d, k):
             v = d.get(k)
             return "—" if v is None else f"{v:.4g}"
+
         lines.append(
             "        {%s} & %s & %s & %s & %s & %s & %s & %s & %s & %s \\\\"
             % (
@@ -237,7 +247,12 @@ def write_latex_metrics_table(rows_xp_on: dict, rows_xp_off: dict, path: str) ->
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
-    ap.add_argument("--checkpoints", nargs="+", required=True, help="Fine-tuned .pth files (autoencoder+head dict)")
+    ap.add_argument(
+        "--checkpoints",
+        nargs="+",
+        required=True,
+        help="Fine-tuned .pth files (autoencoder+head dict)",
+    )
     ap.add_argument("--out", default="results/eval_default")
     ap.add_argument("--batch-size", type=int, default=1024)
     ap.add_argument("--device", default=None)
@@ -248,7 +263,9 @@ def main():
     )
     args = ap.parse_args()
 
-    device = torch.device(args.device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    device = torch.device(
+        args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+    )
 
     with open(args.config) as f:
         config = yaml.safe_load(f)
@@ -279,7 +296,7 @@ def main():
         ftact = torch.nn.ELU()
     else:
         ftact = torch.nn.GELU()
-    probe0 = torch_load_trusted(args.checkpoints[0], map_location=device)
+    probe0 = torch_load_trusted(args.checkpoints[0], map_location=device, weights_only=False)
     ensemble_linear = bool(probe0.get("linear_probe", False))
     if ensemble_linear:
         head = torch.nn.Linear(blocks_dims[-1], len(label_names)).to(device)
@@ -288,7 +305,7 @@ def main():
 
     preds_scaled_list = []
     for ckpt in args.checkpoints:
-        state = torch_load_trusted(ckpt, map_location=device)
+        state = torch_load_trusted(ckpt, map_location=device, weights_only=False)
         if bool(state.get("linear_probe", False)) != ensemble_linear:
             raise ValueError(
                 f"All checkpoints must share the same linear_probe flag (mismatch at {ckpt})"
@@ -305,7 +322,7 @@ def main():
     X_off = _mask_xp_columns(X_test)
     preds_off_list = []
     for ckpt in args.checkpoints:
-        state = torch_load_trusted(ckpt, map_location=device)
+        state = torch_load_trusted(ckpt, map_location=device, weights_only=False)
         if bool(state.get("linear_probe", False)) != ensemble_linear:
             raise ValueError(
                 f"All checkpoints must share the same linear_probe flag (mismatch at {ckpt})"
@@ -314,7 +331,12 @@ def main():
         head.load_state_dict(prediction_head_state_dict(state))
         preds_off_list.append(
             predict_batches(
-                model, head, X_off, device, args.batch_size, linear_probe=ensemble_linear
+                model,
+                head,
+                X_off,
+                device,
+                args.batch_size,
+                linear_probe=ensemble_linear,
             )
         )
     ens_med_off = np.median(np.stack(preds_off_list, axis=0), axis=0)
@@ -328,16 +350,26 @@ def main():
     }
 
     feh_true = y_phys[:, 2]
-    for lo, hi, tag in [(-np.inf, -2.0, "feh_lt_m2"), (-2.0, -1.0, "feh_m2_m1"), (-1.0, np.inf, "feh_gt_m1")]:
+    for lo, hi, tag in [
+        (-np.inf, -2.0, "feh_lt_m2"),
+        (-2.0, -1.0, "feh_m2_m1"),
+        (-1.0, np.inf, "feh_gt_m1"),
+    ]:
         m = (feh_true >= lo) & (feh_true < hi) & np.isfinite(feh_true)
         if m.sum() < 5:
             out["bins_feh_xp_on"][tag] = {"n": int(m.sum())}
             out["bins_feh_xp_off"][tag] = {"n": int(m.sum())}
             continue
-        out["bins_feh_xp_on"][tag] = _metrics_block(y_phys[m], y_pred_phys[m], label_names)
-        out["bins_feh_xp_off"][tag] = _metrics_block(y_phys[m], y_pred_off_phys[m], label_names)
+        out["bins_feh_xp_on"][tag] = _metrics_block(
+            y_phys[m], y_pred_phys[m], label_names
+        )
+        out["bins_feh_xp_off"][tag] = _metrics_block(
+            y_phys[m], y_pred_off_phys[m], label_names
+        )
 
-    def _bins_true_parallax_quartiles(y_t: np.ndarray, y_p: np.ndarray, prefix: str) -> dict:
+    def _bins_true_parallax_quartiles(
+        y_t: np.ndarray, y_p: np.ndarray, prefix: str
+    ) -> dict:
         """Binned metrics vs spectroscopic truth parallax (mas) quartiles on the test set."""
         i = label_names.index("parallax")
         pi = y_t[:, i]
@@ -357,13 +389,17 @@ def main():
                 block[key] = _metrics_block(y_t[m], y_p[m], label_names)
         return block
 
-    out["bins_parallax_truth_xp_on"] = _bins_true_parallax_quartiles(y_phys, y_pred_phys, "xp_on")
+    out["bins_parallax_truth_xp_on"] = _bins_true_parallax_quartiles(
+        y_phys, y_pred_phys, "xp_on"
+    )
     out["bins_parallax_truth_xp_off"] = _bins_true_parallax_quartiles(
         y_phys, y_pred_off_phys, "xp_off"
     )
 
     g_aux = pack.get("test_G_mag")
-    out["bins_g_mag_xp_on"] = _quartile_bin_metrics(g_aux, y_phys, y_pred_phys, label_names, "g")
+    out["bins_g_mag_xp_on"] = _quartile_bin_metrics(
+        g_aux, y_phys, y_pred_phys, label_names, "g"
+    )
     out["bins_g_mag_xp_off"] = _quartile_bin_metrics(
         g_aux, y_phys, y_pred_off_phys, label_names, "g"
     )
@@ -409,7 +445,9 @@ def main():
             config["finetuning"].get("lr_scheduler_head_step_epochs", 10)
         ),
         "scheduler_cosine_t0": int(config["training"].get("scheduler_cosine_t0", 10)),
-        "scheduler_cosine_t_mult": int(config["training"].get("scheduler_cosine_t_mult", 2)),
+        "scheduler_cosine_t_mult": int(
+            config["training"].get("scheduler_cosine_t_mult", 2)
+        ),
         "scheduler_eta_min_factor": float(
             config["training"].get("scheduler_eta_min_factor", 0.01)
         ),
@@ -426,7 +464,7 @@ def main():
             preds_q_on = []
             preds_q_off = []
             for ckpt in args.checkpoints:
-                state = torch_load_trusted(ckpt, map_location=device)
+                state = torch_load_trusted(ckpt, map_location=device, weights_only=False)
                 model.load_state_dict(autoencoder_state_dict(state))
                 head.load_state_dict(prediction_head_state_dict(state))
                 preds_q_on.append(
