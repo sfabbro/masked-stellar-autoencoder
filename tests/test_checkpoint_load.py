@@ -25,3 +25,31 @@ def test_torch_load_trusted_state_dict_only(tmp_path):
     torch.save({"autoencoder_state_dict": lin.state_dict()}, str(path))
     out = torch_load_trusted(str(path), map_location="cpu")
     assert "autoencoder_state_dict" in out
+
+
+def test_torch_load_trusted_with_weights_only(mocker):
+    # Simulate PyTorch 2.6+ where weights_only is an argument
+    mock_sig = mocker.MagicMock()
+    mock_sig.parameters = {"weights_only": mocker.MagicMock()}
+    mocker.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig)
+
+    mock_torch_load = mocker.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"})
+
+    res = torch_load_trusted("dummy.pth", map_location="cpu")
+
+    assert res == {"mock": "data"}
+    mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu", weights_only=False)
+
+
+def test_torch_load_trusted_without_weights_only(mocker):
+    # Simulate older PyTorch where weights_only is not an argument
+    mock_sig = mocker.MagicMock()
+    mock_sig.parameters = {"f": mocker.MagicMock()}
+    mocker.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig)
+
+    mock_torch_load = mocker.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"})
+
+    res = torch_load_trusted("dummy.pth", map_location="cpu")
+
+    assert res == {"mock": "data"}
+    mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu")
