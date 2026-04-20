@@ -2,6 +2,7 @@
 import os
 import sys
 
+from unittest import mock
 import numpy as np
 import torch
 
@@ -27,29 +28,27 @@ def test_torch_load_trusted_state_dict_only(tmp_path):
     assert "autoencoder_state_dict" in out
 
 
-def test_torch_load_trusted_with_weights_only(mocker):
+def test_torch_load_trusted_with_weights_only():
     # Simulate PyTorch 2.6+ where weights_only is an argument
-    mock_sig = mocker.MagicMock()
-    mock_sig.parameters = {"weights_only": mocker.MagicMock()}
-    mocker.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig)
+    mock_sig = mock.MagicMock()
+    mock_sig.parameters = {"weights_only": mock.MagicMock()}
 
-    mock_torch_load = mocker.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"})
+    with mock.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig):
+        with mock.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"}) as mock_torch_load:
+            res = torch_load_trusted("dummy.pth", map_location="cpu")
 
-    res = torch_load_trusted("dummy.pth", map_location="cpu")
-
-    assert res == {"mock": "data"}
-    mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu", weights_only=False)
+            assert res == {"mock": "data"}
+            mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu", weights_only=False)
 
 
-def test_torch_load_trusted_without_weights_only(mocker):
+def test_torch_load_trusted_without_weights_only():
     # Simulate older PyTorch where weights_only is not an argument
-    mock_sig = mocker.MagicMock()
-    mock_sig.parameters = {"f": mocker.MagicMock()}
-    mocker.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig)
+    mock_sig = mock.MagicMock()
+    mock_sig.parameters = {"f": mock.MagicMock()}
 
-    mock_torch_load = mocker.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"})
+    with mock.patch("models.checkpoint_load.inspect.signature", return_value=mock_sig):
+        with mock.patch("models.checkpoint_load.torch.load", return_value={"mock": "data"}) as mock_torch_load:
+            res = torch_load_trusted("dummy.pth", map_location="cpu")
 
-    res = torch_load_trusted("dummy.pth", map_location="cpu")
-
-    assert res == {"mock": "data"}
-    mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu")
+            assert res == {"mock": "data"}
+            mock_torch_load.assert_called_once_with("dummy.pth", map_location="cpu")
