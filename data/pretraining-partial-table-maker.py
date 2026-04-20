@@ -11,10 +11,14 @@ import pandas as pd
 from astropy.table import Table
 from tqdm import tqdm
 
+import shutil
+import subprocess
+import sys
+
 try:
     from dustmaps.sfd import SFDQuery
 except Exception:
-    os.system("pip install dustmaps")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "dustmaps"])
     from dustmaps.config import config
 
     config["data_dir"] = "~/dustmaps_data"
@@ -322,10 +326,10 @@ def crossmatch_all(df_local):
 
     print(merged_df["source_id"].dtype)
 
-    os.system("rm -r sdss_curated.h5_output")
-    os.system("rm -r smssdr4_curated.h5_output")
-    os.system("rm -r tmass_curated.h5_output")
-    os.system("rm -r ps1_curated.h5_output")
+    shutil.rmtree("sdss_curated.h5_output", ignore_errors=True)
+    shutil.rmtree("smssdr4_curated.h5_output", ignore_errors=True)
+    shutil.rmtree("tmass_curated.h5_output", ignore_errors=True)
+    shutil.rmtree("ps1_curated.h5_output", ignore_errors=True)
 
     return merged_df
 
