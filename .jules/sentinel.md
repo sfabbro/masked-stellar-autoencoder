@@ -1,4 +1,4 @@
-## 2025-02-27 - [Command Injection via `os.system`]
-**Vulnerability:** Found insecure usage of `os.system` in `data/pretraining-partial-table-maker.py` for both package installation (`os.system("pip install dustmaps")`) and directory deletion (`os.system("rm -r ...")`). This approach is vulnerable to command injection and relies on the shell environment.
-**Learning:** Shell commands should be avoided when native Python equivalents are available. `os.system` runs a subshell and can execute unintended commands if its arguments are not fully sanitized.
-**Prevention:** Use `subprocess.check_call` with a list of arguments for executing external programs, ensuring arguments aren't executed by a shell. Use `shutil.rmtree` for directory removal, avoiding external OS commands altogether.
+## 2025-02-27 - [Broken CI Dependency Resolution]
+**Vulnerability:** The project's CI pipeline and setup instructions relied on a direct Git dependency for `rtdl-num-embeddings` without specifying a `#subdirectory=package` fragment. This caused Setuptools to discover multiple top-level packages in a flat layout during the build phase (e.g. ['exp', 'lib', 'package']), breaking the build process for `pixi install` and pip.
+**Learning:** For repositories using a `src-layout` or containing multiple packages, Git dependencies in `requirements.txt` or `pixi.toml` must explicitly declare the target subdirectory (e.g., `#subdirectory=package`) to prevent ambiguous package discovery.
+**Prevention:** Update `requirements.txt` and `pixi.toml` to use `git+https://github.com/yandex-research/rtdl-num-embeddings.git#subdirectory=package` ensuring deterministic build behavior and preventing dependency spoofing or build failures.

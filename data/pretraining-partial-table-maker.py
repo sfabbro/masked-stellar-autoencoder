@@ -1,5 +1,8 @@
 import ast
 import os
+import shutil
+import subprocess
+import sys
 import time
 
 # from gaiaxpy import generate, PhotometricSystem
@@ -10,10 +13,6 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 from tqdm import tqdm
-
-import shutil
-import subprocess
-import sys
 
 try:
     from dustmaps.sfd import SFDQuery
