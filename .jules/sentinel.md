@@ -1,0 +1,4 @@
+## 2025-01-20 - Command Injection Risks with `os.system`
+**Vulnerability:** Found instances of `os.system()` being used for dynamically installing dependencies (`pip install`) and removing directories (`rm -r`). Using `os.system()` is inherently vulnerable to shell injection if any arguments ever contain uncontrolled inputs, and it can also cause unintended behavior if the environment variables (like `$PATH` or aliases) behave differently than expected.
+**Learning:** In a data-processing script, convenience methods like `os.system` are often chosen for quick file manipulation or setup, but they bypass Python's safe environment abstractions, making the execution unpredictable and insecure.
+**Prevention:** Always use safe `subprocess` calls (e.g., `subprocess.check_call([sys.executable, "-m", "pip", "install", ...])`) instead of `os.system()`. For file operations like deletion, use native Python libraries like `shutil.rmtree(..., ignore_errors=True)`.
