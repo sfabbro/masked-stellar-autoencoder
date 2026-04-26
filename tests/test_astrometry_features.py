@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.join(_repo, "training"))
 
 from astrometry_features import (
     apply_parallax_input_policy,
+    parallax_label_asinh,
+    parallax_label_error_asinh,
     parallax_label_error_log10,
     parallax_label_log10,
 )
@@ -40,3 +42,28 @@ def test_log10_label_error_positive():
     e = np.array([1.0])
     s = parallax_label_error_log10(pi, e, floor_mas=1e-4)
     assert s[0] > 0 and np.isfinite(s[0])
+
+
+def test_asinh_labels():
+    pi = np.array([1.0, -1.0, 0.0, np.nan, np.inf, -np.inf], dtype=np.float64)
+    y, m = parallax_label_asinh(pi, scale_mas=2.0)
+    assert np.all(m == [True, True, True, False, False, False])
+    assert np.allclose(y[:3], np.arcsinh(pi[:3] / 2.0))
+    assert np.all(np.isnan(y[3:]))
+
+
+def test_asinh_label_error():
+    pi = np.array([10.0, -10.0, 0.0, np.nan, np.inf])
+    e = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
+    s = parallax_label_error_asinh(pi, e, scale_mas=2.0)
+
+    # 1 / (scale * sqrt((pi/scale)^2 + 1)) * e
+    # for pi=0, scale=2 -> 1 / (2 * sqrt(1)) * 1 = 0.5
+    assert np.isclose(s[2], 0.5)
+
+    # Error should be positive for finite values
+    assert np.all(s[:3] > 0)
+    assert np.all(np.isfinite(s[:3]))
+
+    # Non-finite inputs should result in NaN error
+    assert np.all(np.isnan(s[3:]))
