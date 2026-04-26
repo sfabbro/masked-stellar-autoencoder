@@ -61,3 +61,7 @@ ignore = [
     "SIM105", "SIM101", "B023", "SIM118", "B018", "SIM117", "SIM210", "E402",
     "SIM103", "B011", "B017", "B024", "SIM113", "E731", "F821"
 ]
+
+
+[tool.pytest.ini_options]
+pythonpath = ["src/masked_stellar_autoencoder", "src/masked_stellar_autoencoder/models", "src/masked_stellar_autoencoder/training", "data"]
