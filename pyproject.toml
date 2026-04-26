@@ -32,7 +32,7 @@ platforms = ["osx-arm64", "linux-64"]
 [tool.pixi.tasks]
 lint = "ruff check ."
 format = "ruff format ."
-test = "pytest"
+test = "PYTHONPATH=src:data pytest"
 
 [tool.pixi.dependencies]
 python = "3.12.*"

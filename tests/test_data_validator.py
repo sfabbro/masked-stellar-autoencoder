@@ -1,6 +1,5 @@
 import numpy as np
-
-from data.data_validator import DataValidator
+from data_validator import DataValidator
 
 
 class TestDataValidator:
