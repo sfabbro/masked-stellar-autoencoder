@@ -1276,186 +1276,43 @@ class TabResnetWrapper(BaseEstimator):
                 X_batch = batch[0]
                 eX_batch = batch[1]
                 y_batch = batch[2]
-
-                # Apply masking / feature noise (torch — not random.gauss, which only accepts scalars)
-                if maskft and pert_features:
-                    X_masked, mask, nanmask = self._apply_mask(
-                        X_batch + self._pert_noise(X_batch, eX_batch)
-                    )
-                elif pert_features and not maskft:
-                    X_masked = X_batch + self._pert_noise(X_batch, eX_batch)
-                    mask = torch.zeros_like(
-                        X_batch, dtype=torch.bool, device=X_batch.device
-                    )
-                    nanmask = ~torch.isnan(X_batch)
-                elif maskft and not pert_features:
-                    X_masked, mask, nanmask = self._apply_mask(X_batch)
-                else:
-                    X_masked = X_batch.clone()
-                    mask = torch.zeros_like(
-                        X_batch, dtype=torch.bool, device=X_batch.device
-                    )
-                    nanmask = ~torch.isnan(X_batch)
+                batch_3 = batch[3] if len(batch) > 3 else None
 
                 if pert_labels:
-                    y_noise = (
-                        torch.randn_like(y_batch, device=y_batch.device) * batch[3]
-                    )
+                    y_noise = torch.randn_like(y_batch, device=y_batch.device) * batch_3
                     y_batch = y_batch + y_noise
 
-                if linearprobe:
-                    encoded = self.model.encoder(X_masked)
-                    y_raw = self.lp(encoded)
-                else:
-                    encoded = self.model.encoder(X_masked)
-                    y_raw = self.ft(encoded)
-
-                if parallax_use_masked_pred and self.parallax_feature_idx is not None:
-                    if parallax_label_idx is None:
-                        parallax_label_idx = y_batch.shape[1] - 1
-                    # Mask parallax specifically for a second pass to get "photometric-only" prediction
-                    parallax_masked = X_masked.clone()
-                    parallax_masked[:, self.parallax_feature_idx] = -9999
-                    # Also set mask indicator if available
-                    indicator_idx = self.parallax_feature_idx + len(self.feature_cols)
-                    if indicator_idx < parallax_masked.shape[1]:
-                        parallax_masked[:, indicator_idx] = 1.0
-
-                    if linearprobe:
-                        encoded_masked = self.model.encoder(parallax_masked)
-                        y_raw_masked = self.lp(encoded_masked)
-                    else:
-                        encoded_masked = self.model.encoder(parallax_masked)
-                        y_raw_masked = self.ft(encoded_masked)
-
-                    # Replace parallax prediction with the one from masked input
-                    if y_raw.dim() == 3:
-                        y_raw[:, parallax_label_idx, :] = y_raw_masked[
-                            :, parallax_label_idx, :
-                        ]
-                    else:
-                        y_raw[:, parallax_label_idx] = y_raw_masked[
-                            :, parallax_label_idx
-                        ]
-
-                if ftlf == "quantile":
-                    y_head = y_raw
-                    y_pred_err = None
-                else:
-                    y_head, y_pred_err = _reduce_finetune_prediction(
-                        y_raw, ftlf, linearprobe
-                    )
-
-                # Compute loss
-                if (ftlf == "wmse") or (ftlf == "wgnll"):
-                    loss = criterion(y_batch, y_head, 1 / (batch[3] + 1e-5) ** 2)
-                elif (ftlf == "mse") or (ftlf == "mae"):
-                    loss = criterion(y_batch, y_head)
-                elif ftlf == "quantile":
-                    quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
-                    sw = None
-                    if ft_use_sigma_quantile_weights:
-                        sw = _sigma_pinball_weights(
-                            batch[3],
-                            y_batch,
-                            ft_sigma_weight_floor,
-                            ft_sigma_weight_max,
-                            ft_sigma_weight_normalize_batch,
-                        )
-                    loss = quantile_loss(
-                        y_head, y_batch, quantiles, q_weight_t, sample_weight=sw
-                    )
-                else:
-                    loss = 0
-
-                if (
-                    parallax_mle_weight > 0
-                    and self.parallax_feature_idx is not None
-                    and m_consistency is not None
-                ):
-                    if parallax_label_idx is None:
-                        parallax_label_idx = y_batch.shape[1] - 1
-
-                    # Gaia parallax (scaled)
-                    pi_gaia = (
-                        m_consistency * X_batch[:, self.parallax_feature_idx]
-                        + c_consistency
-                    )
-                    sigma_gaia = (
-                        m_consistency
-                        * eX_batch[:, self.parallax_feature_idx]
-                        * parallax_sigma_scale
-                    )
-
-                    # Model prediction (mu and sigma)
-                    if y_raw.dim() == 3:  # Quantile head
-                        mu_phot = y_head[:, parallax_label_idx, 1]
-                        sigma_phot = 0.5 * (
-                            y_head[:, parallax_label_idx, 2]
-                            - y_head[:, parallax_label_idx, 0]
-                        )
-                    else:
-                        mu_phot = y_head[:, parallax_label_idx]
-                        sigma_phot = None
-
-                    var = sigma_gaia**2
-                    if sigma_phot is not None:
-                        var = var + sigma_phot**2
-                    if parallax_sigma_floor > 0:
-                        var = var + (parallax_sigma_floor**2)
-
-                    mle_mask = (
-                        (~torch.isnan(mu_phot))
-                        & (~torch.isnan(pi_gaia))
-                        & (~torch.isnan(var))
-                    )
-                    if mle_mask.any():
-                        mle_loss = (((mu_phot - pi_gaia) ** 2) / (var + 1e-8))[
-                            mle_mask
-                        ].mean()
-                        loss = loss + parallax_mle_weight * mle_loss
-
-                if multitask:
-                    X_reconstructed, _ = self.model(X_masked)
-                    # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
-                    reconstruction_mask = (
-                        mask[:, : -self.diff] & nanmask[:, : -self.diff]
-                    )
-                    reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
-                    rec = self.loss_fn(
-                        X_batch[:, : -self.diff],
-                        X_reconstructed,
-                        reconstruction_mask,
-                        reconstruction_w,
-                    )
-                    loss = ft_lambda_pred * loss + ft_lambda_rec * rec
-
-                if rncloss:
-                    if pert_features:
-                        X_masked_2_in = X_batch + self._pert_noise(X_batch, eX_batch)
-                    else:
-                        X_masked_2_in = X_batch.clone()
-                    if maskft:
-                        X_masked_2, _, _ = self._apply_mask(X_masked_2_in)
-                    else:
-                        X_masked_2 = X_masked_2_in
-                    encoded_2 = self.model.encoder(X_masked_2)
-                    features = torch.stack(
-                        (encoded, encoded_2), dim=1
-                    )  # [bs, 2, latent]
-                    try:
-                        loss += rnc(features, y_batch)
-                    except RuntimeError as e:
-                        print(e)
-                        print(torch.cuda.memory_summary())
-
-                if (ftlf == "gnll") or (ftlf == "wgnll"):
-                    loss += criterion2(
-                        y_head,
-                        y_batch,
-                        torch.ones_like(y_pred_err),
-                        torch.ones_like(batch[3]),
-                    )
+                loss = self._compute_finetune_loss(
+                    X_batch=X_batch,
+                    eX_batch=eX_batch,
+                    y_batch=y_batch,
+                    batch_3=batch_3,
+                    linearprobe=linearprobe,
+                    maskft=maskft,
+                    multitask=multitask,
+                    ftlf=ftlf,
+                    rncloss=rncloss,
+                    ft_lambda_pred=ft_lambda_pred,
+                    ft_lambda_rec=ft_lambda_rec,
+                    ft_use_sigma_quantile_weights=ft_use_sigma_quantile_weights,
+                    ft_sigma_weight_floor=ft_sigma_weight_floor,
+                    ft_sigma_weight_max=ft_sigma_weight_max,
+                    ft_sigma_weight_normalize_batch=ft_sigma_weight_normalize_batch,
+                    q_weight_t=q_weight_t,
+                    parallax_mle_weight=parallax_mle_weight,
+                    parallax_use_masked_pred=parallax_use_masked_pred,
+                    parallax_label_idx=parallax_label_idx,
+                    parallax_sigma_floor=parallax_sigma_floor,
+                    parallax_sigma_scale=parallax_sigma_scale,
+                    m_consistency=m_consistency,
+                    c_consistency=c_consistency,
+                    criterion=criterion,
+                    criterion2=criterion2
+                    if (ftlf == "gnll") or (ftlf == "wgnll")
+                    else None,
+                    rnc=rnc if rncloss else None,
+                    pert_features=pert_features,
+                )
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -1535,6 +1392,191 @@ class TabResnetWrapper(BaseEstimator):
                         + str(self.checkpoint_interval)
                         + ".pth",
                     )
+
+    def _compute_finetune_loss(
+        self,
+        X_batch,
+        eX_batch,
+        y_batch,
+        batch_3,
+        linearprobe,
+        maskft,
+        multitask,
+        ftlf,
+        rncloss,
+        ft_lambda_pred,
+        ft_lambda_rec,
+        ft_use_sigma_quantile_weights,
+        ft_sigma_weight_floor,
+        ft_sigma_weight_max,
+        ft_sigma_weight_normalize_batch,
+        q_weight_t,
+        parallax_mle_weight,
+        parallax_use_masked_pred,
+        parallax_label_idx,
+        parallax_sigma_floor,
+        parallax_sigma_scale,
+        m_consistency,
+        c_consistency,
+        criterion,
+        criterion2,
+        rnc,
+        pert_features=False,
+    ):
+        # Apply masking / feature noise
+        if maskft and pert_features:
+            X_masked, mask, nanmask = self._apply_mask(
+                X_batch + self._pert_noise(X_batch, eX_batch)
+            )
+        elif pert_features and not maskft:
+            X_masked = X_batch + self._pert_noise(X_batch, eX_batch)
+            mask = torch.zeros_like(X_batch, dtype=torch.bool, device=X_batch.device)
+            nanmask = ~torch.isnan(X_batch)
+        elif maskft and not pert_features:
+            X_masked, mask, nanmask = self._apply_mask(X_batch)
+        else:
+            X_masked = X_batch.clone()
+            mask = torch.zeros_like(X_batch, dtype=torch.bool, device=X_batch.device)
+            nanmask = ~torch.isnan(X_batch)
+
+        if linearprobe:
+            encoded = self.model.encoder(X_masked)
+            y_raw = self.lp(encoded)
+        else:
+            encoded = self.model.encoder(X_masked)
+            y_raw = self.ft(encoded)
+
+        if parallax_use_masked_pred and self.parallax_feature_idx is not None:
+            if parallax_label_idx is None:
+                parallax_label_idx = y_batch.shape[1] - 1
+            # Mask parallax specifically for a second pass
+            parallax_masked = X_masked.clone()
+            parallax_masked[:, self.parallax_feature_idx] = -9999
+            indicator_idx = self.parallax_feature_idx + len(self.feature_cols)
+            if indicator_idx < parallax_masked.shape[1]:
+                parallax_masked[:, indicator_idx] = 1.0
+
+            if linearprobe:
+                encoded_masked = self.model.encoder(parallax_masked)
+                y_raw_masked = self.lp(encoded_masked)
+            else:
+                encoded_masked = self.model.encoder(parallax_masked)
+                y_raw_masked = self.ft(encoded_masked)
+
+            if y_raw.dim() == 3:
+                y_raw[:, parallax_label_idx, :] = y_raw_masked[:, parallax_label_idx, :]
+            else:
+                y_raw[:, parallax_label_idx] = y_raw_masked[:, parallax_label_idx]
+
+        if ftlf == "quantile":
+            y_head = y_raw
+            y_pred_err = None
+        else:
+            y_head, y_pred_err = _reduce_finetune_prediction(y_raw, ftlf, linearprobe)
+
+        if (ftlf == "wmse") or (ftlf == "wgnll"):
+            loss = criterion(y_batch, y_head, 1 / (batch_3 + 1e-5) ** 2)
+        elif (ftlf == "mse") or (ftlf == "mae"):
+            loss = criterion(y_batch, y_head)
+        elif ftlf == "quantile":
+            quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            sw = None
+            if ft_use_sigma_quantile_weights:
+                sw = _sigma_pinball_weights(
+                    batch_3,
+                    y_batch,
+                    ft_sigma_weight_floor,
+                    ft_sigma_weight_max,
+                    ft_sigma_weight_normalize_batch,
+                )
+            loss = quantile_loss(
+                y_head, y_batch, quantiles, q_weight_t, sample_weight=sw
+            )
+        else:
+            loss = 0
+
+        if (
+            parallax_mle_weight > 0
+            and self.parallax_feature_idx is not None
+            and m_consistency is not None
+        ):
+            if parallax_label_idx is None:
+                parallax_label_idx = y_batch.shape[1] - 1
+
+            pi_gaia = (
+                m_consistency * X_batch[:, self.parallax_feature_idx] + c_consistency
+            )
+            sigma_gaia = (
+                m_consistency
+                * eX_batch[:, self.parallax_feature_idx]
+                * parallax_sigma_scale
+            )
+
+            if y_raw.dim() == 3:
+                mu_phot = y_head[:, parallax_label_idx, 1]
+                sigma_phot = 0.5 * (
+                    y_head[:, parallax_label_idx, 2] - y_head[:, parallax_label_idx, 0]
+                )
+            else:
+                mu_phot = y_head[:, parallax_label_idx]
+                sigma_phot = None
+
+            var = sigma_gaia**2
+            if sigma_phot is not None:
+                var = var + sigma_phot**2
+            if parallax_sigma_floor > 0:
+                var = var + (parallax_sigma_floor**2)
+
+            mle_mask = (
+                (~torch.isnan(mu_phot)) & (~torch.isnan(pi_gaia)) & (~torch.isnan(var))
+            )
+            if mle_mask.any():
+                mle_loss = (((mu_phot - pi_gaia) ** 2) / (var + 1e-8))[mle_mask].mean()
+                loss = loss + parallax_mle_weight * mle_loss
+
+        if multitask:
+            X_reconstructed, _ = self.model(X_masked)
+            # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
+            reconstruction_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
+            reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
+            rec = self.loss_fn(
+                X_batch[:, : -self.diff],
+                X_reconstructed,
+                reconstruction_mask,
+                reconstruction_w,
+            )
+            loss = ft_lambda_pred * loss + ft_lambda_rec * rec
+
+        if rncloss:
+            if pert_features:
+                X_masked_2_in = X_batch + self._pert_noise(X_batch, eX_batch)
+            else:
+                X_masked_2_in = X_batch.clone()
+            if maskft:
+                X_masked_2, _, _ = self._apply_mask(X_masked_2_in)
+            else:
+                X_masked_2 = X_masked_2_in
+            encoded_2 = self.model.encoder(X_masked_2)
+            features = torch.stack((encoded, encoded_2), dim=1)  # [bs, 2, latent]
+            try:
+                loss = loss + rnc(features, y_batch)
+            except RuntimeError as e:
+                print(e)
+                # We continue after evaluation
+
+        if (ftlf == "gnll") or (ftlf == "wgnll"):
+            if y_pred_err is None:
+                raise RuntimeError(
+                    "Gaussian NLL path requires a (mean, logvar) tuple head; not supported for quantile head"
+                )
+            loss = loss + criterion2(
+                y_head,
+                y_batch,
+                torch.ones_like(y_pred_err),
+                torch.ones_like(batch_3),
+            )
+
+        return loss
 
     def validate_fit(
         self,
@@ -1621,161 +1663,39 @@ class TabResnetWrapper(BaseEstimator):
                 X_batch = batch[0]
                 eX_batch = batch[1]
                 y_batch = batch[2]
+                batch_3 = batch[3] if len(batch) > 3 else None
 
-                # Apply masking to input features batch (define mask/nanmask whenever multitask may use them)
-                if maskft:
-                    X_masked, mask, nanmask = self._apply_mask(X_batch)
-                else:
-                    X_masked = X_batch.clone()
-                    mask = torch.zeros_like(
-                        X_batch, dtype=torch.bool, device=X_batch.device
-                    )
-                    nanmask = ~torch.isnan(X_batch)
-
-                if linearprobe:
-                    encoded = self.model.encoder(X_masked)
-                    y_raw = self.lp(encoded)
-                else:
-                    encoded = self.model.encoder(X_masked)
-                    y_raw = self.ft(encoded)
-
-                if parallax_use_masked_pred and self.parallax_feature_idx is not None:
-                    if parallax_label_idx is None:
-                        parallax_label_idx = y_batch.shape[1] - 1
-                    # Mask parallax specifically for a second pass
-                    parallax_masked = X_masked.clone()
-                    parallax_masked[:, self.parallax_feature_idx] = -9999
-                    indicator_idx = self.parallax_feature_idx + len(self.feature_cols)
-                    if indicator_idx < parallax_masked.shape[1]:
-                        parallax_masked[:, indicator_idx] = 1.0
-
-                    if linearprobe:
-                        encoded_masked = self.model.encoder(parallax_masked)
-                        y_raw_masked = self.lp(encoded_masked)
-                    else:
-                        encoded_masked = self.model.encoder(parallax_masked)
-                        y_raw_masked = self.ft(encoded_masked)
-
-                    if y_raw.dim() == 3:
-                        y_raw[:, parallax_label_idx, :] = y_raw_masked[
-                            :, parallax_label_idx, :
-                        ]
-                    else:
-                        y_raw[:, parallax_label_idx] = y_raw_masked[
-                            :, parallax_label_idx
-                        ]
-
-                if ftlf == "quantile":
-                    y_head = y_raw
-                    y_pred_err = None
-                else:
-                    y_head, y_pred_err = _reduce_finetune_prediction(
-                        y_raw, ftlf, linearprobe
-                    )
-
-                if (ftlf == "wmse") or (ftlf == "wgnll"):
-                    loss = criterion(y_batch, y_head, 1 / (batch[3] + 1e-5) ** 2)
-                elif (ftlf == "mse") or (ftlf == "mae"):
-                    loss = criterion(y_batch, y_head)
-                elif ftlf == "quantile":
-                    quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
-                    sw = None
-                    if ft_use_sigma_quantile_weights:
-                        sw = _sigma_pinball_weights(
-                            batch[3],
-                            y_batch,
-                            ft_sigma_weight_floor,
-                            ft_sigma_weight_max,
-                            ft_sigma_weight_normalize_batch,
-                        )
-                    loss = quantile_loss(
-                        y_head, y_batch, quantiles, q_weight_t, sample_weight=sw
-                    )
-                else:
-                    loss = 0
-
-                if (
-                    parallax_mle_weight > 0
-                    and self.parallax_feature_idx is not None
-                    and m_consistency is not None
-                ):
-                    if parallax_label_idx is None:
-                        parallax_label_idx = y_batch.shape[1] - 1
-                    pi_gaia = (
-                        m_consistency * X_batch[:, self.parallax_feature_idx]
-                        + c_consistency
-                    )
-                    sigma_gaia = (
-                        m_consistency
-                        * eX_batch[:, self.parallax_feature_idx]
-                        * parallax_sigma_scale
-                    )
-                    if y_raw.dim() == 3:
-                        mu_phot = y_head[:, parallax_label_idx, 1]
-                        sigma_phot = 0.5 * (
-                            y_head[:, parallax_label_idx, 2]
-                            - y_head[:, parallax_label_idx, 0]
-                        )
-                    else:
-                        mu_phot = y_head[:, parallax_label_idx]
-                        sigma_phot = None
-                    var = sigma_gaia**2
-                    if sigma_phot is not None:
-                        var = var + sigma_phot**2
-                    if parallax_sigma_floor > 0:
-                        var = var + (parallax_sigma_floor**2)
-                    mle_mask = (
-                        (~torch.isnan(mu_phot))
-                        & (~torch.isnan(pi_gaia))
-                        & (~torch.isnan(var))
-                    )
-                    if mle_mask.any():
-                        mle_loss = (((mu_phot - pi_gaia) ** 2) / (var + 1e-8))[
-                            mle_mask
-                        ].mean()
-                        loss = loss + parallax_mle_weight * mle_loss
-
-                if multitask:
-                    X_reconstructed, _ = self.model(X_masked)
-                    # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
-                    reconstruction_mask = (
-                        mask[:, : -self.diff] & nanmask[:, : -self.diff]
-                    )
-                    reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
-                    rec = self.loss_fn(
-                        X_batch[:, : -self.diff],
-                        X_reconstructed,
-                        reconstruction_mask,
-                        reconstruction_w,
-                    )
-                    loss = ft_lambda_pred * loss + ft_lambda_rec * rec
-
-                if rncloss:
-                    if maskft:
-                        X_masked_2, _, _ = self._apply_mask(X_batch)
-                    else:
-                        X_masked_2 = X_batch.clone()
-                    encoded_2 = self.model.encoder(X_masked_2)
-                    features = torch.stack(
-                        (encoded, encoded_2), dim=1
-                    )  # [bs, 2, latent]
-                    try:
-                        val_loss += rnc(features, y_batch).item()
-                    except RuntimeError as e:
-                        print(e)
-                    # We continue after val_loss evaluation
-
-                if (ftlf == "gnll") or (ftlf == "wgnll"):
-                    if y_pred_err is None:
-                        raise RuntimeError(
-                            "Gaussian NLL path requires a (mean, logvar) tuple head; not supported for quantile head"
-                        )
-                    loss += criterion2(
-                        y_head,
-                        y_batch,
-                        torch.ones_like(y_pred_err),
-                        torch.ones_like(batch[3]),
-                    )
+                loss = self._compute_finetune_loss(
+                    X_batch=X_batch,
+                    eX_batch=eX_batch,
+                    y_batch=y_batch,
+                    batch_3=batch_3,
+                    linearprobe=linearprobe,
+                    maskft=maskft,
+                    multitask=multitask,
+                    ftlf=ftlf,
+                    rncloss=rncloss,
+                    ft_lambda_pred=ft_lambda_pred,
+                    ft_lambda_rec=ft_lambda_rec,
+                    ft_use_sigma_quantile_weights=ft_use_sigma_quantile_weights,
+                    ft_sigma_weight_floor=ft_sigma_weight_floor,
+                    ft_sigma_weight_max=ft_sigma_weight_max,
+                    ft_sigma_weight_normalize_batch=ft_sigma_weight_normalize_batch,
+                    q_weight_t=q_weight_t,
+                    parallax_mle_weight=parallax_mle_weight,
+                    parallax_use_masked_pred=parallax_use_masked_pred,
+                    parallax_label_idx=parallax_label_idx,
+                    parallax_sigma_floor=parallax_sigma_floor,
+                    parallax_sigma_scale=parallax_sigma_scale,
+                    m_consistency=m_consistency,
+                    c_consistency=c_consistency,
+                    criterion=criterion,
+                    criterion2=criterion2
+                    if (ftlf == "gnll") or (ftlf == "wgnll")
+                    else None,
+                    rnc=rnc if rncloss else None,
+                    pert_features=False,
+                )
 
                 val_loss += loss.item()
 
