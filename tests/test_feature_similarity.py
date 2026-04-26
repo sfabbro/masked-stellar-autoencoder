@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import torch
-from models.model import FeatureSimilarity
+from masked_stellar_autoencoder.models.model import FeatureSimilarity
 from scipy.spatial.distance import cdist
 
 
