@@ -16,31 +16,18 @@ from feature_noise import pert_channel_scale_vector
 from models.model import TabResnetWrapper, make_model
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Train MSA")
-    parser.add_argument(
-        "--config", type=str, required=True, help="Path to config YAML file"
-    )
-    args = parser.parse_args()
-
-    # load YAML
-    with open(args.config, "r") as f:
+def load_config(config_path: str) -> dict:
+    """Load and expand YAML configuration."""
+    with open(config_path, "r") as f:
         config = yaml.safe_load(f)
     expand_config_paths(config)
+    return config
 
-    # loading the pretraining file to pass to the wrapper
-    pretrain_file = h5py.File(config["data"]["datafile"])
 
-    # splitting up the keys
-    keys_valid = config["data"]["valid_keys"]
-    keys_train = [item for item in list(pretrain_file.keys()) if item not in keys_valid]
-
+def setup_scaler(pretrain_file: h5py.File, train_key: str, cols: list) -> RobustScaler:
+    """Initialize and fit the feature scaler on the first training file split."""
     featurescaler = RobustScaler()
-    # as a test since there currently isn't a finetuning set
-    X = pretrain_file[keys_train[0]][:]
-
-    cols = config["data"]["feature_cols"]
-
+    X = pretrain_file[train_key][:]
     X = np.column_stack([TabResnetWrapper._clean_column(col, X[col]) for col in cols])
 
     # Validate data before fitting scaler
@@ -58,8 +45,11 @@ def main():
     if not hasattr(featurescaler, "scale_") or featurescaler.scale_ is None:
         raise ValueError("Scaler failed to fit properly - scale_ attribute missing")
 
-    del X
+    return featurescaler
 
+
+def build_model_from_config(config: dict, num_cols: int, num_recon_cols: int):
+    """Construct the MSA model architecture from configuration."""
     blocks_dims = config["model"]["layer_dims"]
     pt_activ = config["model"]["pt_activ_func"]
     d_embed = config["model"]["rtdl_embed"]
@@ -68,17 +58,28 @@ def main():
         "decoder_dims", None
     )  # Optional asymmetric decoder
 
-    recon_cols = config["data"]["recon_cols"]
-
-    model = make_model(
-        len(cols),
+    return make_model(
+        num_cols,
         blocks_dims,
-        len(recon_cols),
+        num_recon_cols,
         pt_activ,
         d_embed,
         norm,
         decoder_dims=decoder_dims,
     )
+
+
+def create_pretrain_wrapper(
+    model,
+    pretrain_file: h5py.File,
+    featurescaler: RobustScaler,
+    config: dict,
+    cols: list,
+) -> TabResnetWrapper:
+    """Initialize the wrapper for the pretraining routine."""
+    blocks_dims = config["model"]["layer_dims"]
+    recon_cols = config["data"]["recon_cols"]
+    error_cols = config["data"]["error_cols"]
 
     xp_ratio = config["training"]["xp_masking_ratio"]
     m_ratio = config["training"]["m_masking_ratio"]
@@ -87,10 +88,9 @@ def main():
     lasso = config["training"]["lasso"]
     opt = config["training"]["optimizer"]
     lf = config["training"]["loss_fn"]
-    pert_features = config["training"].get(
-        "pert_features", False
-    )  # Optional data augmentation
-    pert_scale = config["training"].get("pert_scale", 1.0)  # Noise scale factor
+
+    pert_features = config["training"].get("pert_features", False)
+    pert_scale = config["training"].get("pert_scale", 1.0)
     pert_ch = pert_channel_scale_vector(
         cols, pert_ebv_scale=float(config["training"].get("pert_ebv_scale", 1.0))
     )
@@ -99,10 +99,7 @@ def main():
     pt_log_file = config["saving"]["log_file"]
     ci = config["saving"]["checkpoint_interval"]
 
-    error_cols = config["data"]["error_cols"]
-
-    # Initialize the pretraining wrapper
-    pretrain_wrapper = TabResnetWrapper(
+    return TabResnetWrapper(
         model=model,
         datafile=pretrain_file,
         scaler=featurescaler,
@@ -135,22 +132,45 @@ def main():
         ),
     )
 
-    epochs = config["training"]["epochs"]
-    batch = config["training"]["mini_batch_size"]
-    presaved = config["training"].get("presaved")
-    if presaved is None or presaved == "":
-        presaved = None
 
-    # pretrain, train, and predict
-    pretrain_wrapper.pretrain_hdf(
-        keys_train,
-        num_epochs=epochs,
-        val_keys=keys_valid,
-        mini_batch=batch,
-        pretrained=presaved,
+def main():
+    parser = argparse.ArgumentParser(description="Train MSA")
+    parser.add_argument(
+        "--config", type=str, required=True, help="Path to config YAML file"
     )
+    args = parser.parse_args()
 
-    pretrain_file.close()
+    config = load_config(args.config)
+
+    with h5py.File(config["data"]["datafile"], "r") as pretrain_file:
+        keys_valid = config["data"]["valid_keys"]
+        keys_train = [
+            item for item in list(pretrain_file.keys()) if item not in keys_valid
+        ]
+        cols = config["data"]["feature_cols"]
+        recon_cols = config["data"]["recon_cols"]
+
+        featurescaler = setup_scaler(pretrain_file, keys_train[0], cols)
+        model = build_model_from_config(config, len(cols), len(recon_cols))
+
+        pretrain_wrapper = create_pretrain_wrapper(
+            model, pretrain_file, featurescaler, config, cols
+        )
+
+        epochs = config["training"]["epochs"]
+        batch = config["training"]["mini_batch_size"]
+        presaved = config["training"].get("presaved")
+        if presaved is None or presaved == "":
+            presaved = None
+
+        # pretrain, train, and predict
+        pretrain_wrapper.pretrain_hdf(
+            keys_train,
+            num_epochs=epochs,
+            val_keys=keys_valid,
+            mini_batch=batch,
+            pretrained=presaved,
+        )
 
 
 if __name__ == "__main__":
