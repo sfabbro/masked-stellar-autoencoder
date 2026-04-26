@@ -243,7 +243,7 @@ def write_latex_metrics_table(rows_xp_on: dict, rows_xp_off: dict, path: str) ->
         f.write("\n".join(lines) + "\n")
 
 
-def main():
+def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument(
@@ -260,87 +260,16 @@ def main():
         default=None,
         help="Optional CQR offsets JSON (scaled space); widens q16/q84 and reports interval coverage",
     )
-    args = ap.parse_args()
+    return ap.parse_args()
 
-    device = torch.device(
-        args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    )
 
-    with open(args.config) as f:
-        config = yaml.safe_load(f)
-    expand_config_paths(config)
-
-    pack = prepare_finetune_arrays(config)
-    X_test = pack["testset"].astype(np.float32)
-    y_phys = pack["target_set"].astype(np.float64)
-    scalers = pack["scalers"]
-    label_names = pack["label_names"]
-    cols = pack["feature_cols"]
-
-    blocks_dims = config["model"]["layer_dims"]
-    recon_cols = pack["recon_cols"]
-    model = make_model(
-        len(cols),
-        blocks_dims,
-        len(recon_cols),
-        config["model"]["pt_activ_func"],
-        config["model"]["rtdl_embed"],
-        config["model"]["norm"],
-        decoder_dims=config["model"].get("decoder_dims"),
-    ).to(device)
-    act = config["finetuning"].get("activ", "relu")
-    if act == "relu":
-        ftact = torch.nn.ReLU()
-    elif act == "elu":
-        ftact = torch.nn.ELU()
-    else:
-        ftact = torch.nn.GELU()
-    probe0 = torch_load_trusted(args.checkpoints[0], map_location=device)
-    ensemble_linear = bool(probe0.get("linear_probe", False))
-    if ensemble_linear:
-        head = torch.nn.Linear(blocks_dims[-1], len(label_names)).to(device)
-    else:
-        head = PredictionHead(blocks_dims[-1], len(label_names), ftact).to(device)
-
-    preds_scaled_list = []
-    for ckpt in args.checkpoints:
-        state = torch_load_trusted(ckpt, map_location=device)
-        if bool(state.get("linear_probe", False)) != ensemble_linear:
-            raise ValueError(
-                f"All checkpoints must share the same linear_probe flag (mismatch at {ckpt})"
-            )
-        model.load_state_dict(autoencoder_state_dict(state))
-        head.load_state_dict(prediction_head_state_dict(state))
-        ps = predict_batches(
-            model, head, X_test, device, args.batch_size, linear_probe=ensemble_linear
-        )
-        preds_scaled_list.append(ps)
-    ens_med = np.median(np.stack(preds_scaled_list, axis=0), axis=0)
-    y_pred_phys = _inverse_labels(ens_med, scalers, pack)
-
-    X_off = _mask_xp_columns(X_test)
-    preds_off_list = []
-    for ckpt in args.checkpoints:
-        state = torch_load_trusted(ckpt, map_location=device)
-        if bool(state.get("linear_probe", False)) != ensemble_linear:
-            raise ValueError(
-                f"All checkpoints must share the same linear_probe flag (mismatch at {ckpt})"
-            )
-        model.load_state_dict(autoencoder_state_dict(state))
-        head.load_state_dict(prediction_head_state_dict(state))
-        preds_off_list.append(
-            predict_batches(
-                model,
-                head,
-                X_off,
-                device,
-                args.batch_size,
-                linear_probe=ensemble_linear,
-            )
-        )
-    ens_med_off = np.median(np.stack(preds_off_list, axis=0), axis=0)
-    y_pred_off_phys = _inverse_labels(ens_med_off, scalers, pack)
-
+def compute_metrics(
+    y_phys: np.ndarray,
+    y_pred_phys: np.ndarray,
+    y_pred_off_phys: np.ndarray,
+    label_names: list,
+    pack: dict,
+) -> dict:
     out = {
         "global_xp_on": _metrics_block(y_phys, y_pred_phys, label_names),
         "global_xp_off": _metrics_block(y_phys, y_pred_off_phys, label_names),
@@ -423,6 +352,101 @@ def main():
         snr_aux, y_phys, y_pred_off_phys, label_names, "pisigma"
     )
 
+    return out
+
+
+def get_ensemble_predictions(
+    model: torch.nn.Module,
+    head: torch.nn.Module,
+    X: np.ndarray,
+    loaded_states: list,
+    device: torch.device,
+    batch_size: int,
+    ensemble_linear: bool,
+    return_full_quantiles: bool = False,
+) -> np.ndarray:
+    preds_list = []
+    for ckpt, state in loaded_states:
+        if bool(state.get("linear_probe", False)) != ensemble_linear:
+            raise ValueError(
+                f"All checkpoints must share the same linear_probe flag (mismatch at {ckpt})"
+            )
+        model.load_state_dict(autoencoder_state_dict(state))
+        head.load_state_dict(prediction_head_state_dict(state))
+        ps = predict_batches(
+            model,
+            head,
+            X,
+            device,
+            batch_size,
+            linear_probe=ensemble_linear,
+            return_full_quantiles=return_full_quantiles,
+        )
+        preds_list.append(ps)
+    return np.median(np.stack(preds_list, axis=0), axis=0)
+
+
+def main():
+    args = parse_args()
+
+    device = torch.device(
+        args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+    )
+
+    with open(args.config) as f:
+        config = yaml.safe_load(f)
+    expand_config_paths(config)
+
+    pack = prepare_finetune_arrays(config)
+    X_test = pack["testset"].astype(np.float32)
+    y_phys = pack["target_set"].astype(np.float64)
+    scalers = pack["scalers"]
+    label_names = pack["label_names"]
+    cols = pack["feature_cols"]
+
+    blocks_dims = config["model"]["layer_dims"]
+    recon_cols = pack["recon_cols"]
+    model = make_model(
+        len(cols),
+        blocks_dims,
+        len(recon_cols),
+        config["model"]["pt_activ_func"],
+        config["model"]["rtdl_embed"],
+        config["model"]["norm"],
+        decoder_dims=config["model"].get("decoder_dims"),
+    ).to(device)
+    act = config["finetuning"].get("activ", "relu")
+    if act == "relu":
+        ftact = torch.nn.ReLU()
+    elif act == "elu":
+        ftact = torch.nn.ELU()
+    else:
+        ftact = torch.nn.GELU()
+    loaded_states = []
+    for ckpt in args.checkpoints:
+        state = torch_load_trusted(ckpt, map_location="cpu")
+        loaded_states.append((ckpt, state))
+
+    probe0 = loaded_states[0][1]
+    ensemble_linear = bool(probe0.get("linear_probe", False))
+    if ensemble_linear:
+        head = torch.nn.Linear(blocks_dims[-1], len(label_names)).to(device)
+    else:
+        head = PredictionHead(blocks_dims[-1], len(label_names), ftact).to(device)
+
+    ens_med = get_ensemble_predictions(
+        model, head, X_test, loaded_states, device, args.batch_size, ensemble_linear
+    )
+    y_pred_phys = _inverse_labels(ens_med, scalers, pack)
+
+    X_off = _mask_xp_columns(X_test)
+    ens_med_off = get_ensemble_predictions(
+        model, head, X_off, loaded_states, device, args.batch_size, ensemble_linear
+    )
+    y_pred_off_phys = _inverse_labels(ens_med_off, scalers, pack)
+
+    out = compute_metrics(y_phys, y_pred_phys, y_pred_off_phys, label_names, pack)
+
     os.makedirs(args.out, exist_ok=True)
     out["preprocessing"] = {
         "parallax_target_space": pack.get("parallax_target_space", "linear_mas"),
@@ -460,36 +484,26 @@ def main():
         else:
             with open(args.conformal_json) as f:
                 calib_doc = json.load(f)
-            preds_q_on = []
-            preds_q_off = []
-            for ckpt in args.checkpoints:
-                state = torch_load_trusted(ckpt, map_location=device)
-                model.load_state_dict(autoencoder_state_dict(state))
-                head.load_state_dict(prediction_head_state_dict(state))
-                preds_q_on.append(
-                    predict_batches(
-                        model,
-                        head,
-                        X_test,
-                        device,
-                        args.batch_size,
-                        linear_probe=False,
-                        return_full_quantiles=True,
-                    )
-                )
-                preds_q_off.append(
-                    predict_batches(
-                        model,
-                        head,
-                        X_off,
-                        device,
-                        args.batch_size,
-                        linear_probe=False,
-                        return_full_quantiles=True,
-                    )
-                )
-            ens_q_on = np.median(np.stack(preds_q_on, axis=0), axis=0)
-            ens_q_off = np.median(np.stack(preds_q_off, axis=0), axis=0)
+            ens_q_on = get_ensemble_predictions(
+                model,
+                head,
+                X_test,
+                loaded_states,
+                device,
+                args.batch_size,
+                ensemble_linear=False,
+                return_full_quantiles=True,
+            )
+            ens_q_off = get_ensemble_predictions(
+                model,
+                head,
+                X_off,
+                loaded_states,
+                device,
+                args.batch_size,
+                ensemble_linear=False,
+                return_full_quantiles=True,
+            )
             apply_cqr_offsets_inplace(ens_q_on, calib_doc)
             apply_cqr_offsets_inplace(ens_q_off, calib_doc)
             phys_on = _inverse_quantile_block(ens_q_on, scalers, pack)
