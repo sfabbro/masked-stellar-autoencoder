@@ -1,6 +1,5 @@
 """torch.load compatibility for training checkpoints (NumPy in dict, etc.)."""
 
-import inspect
 import os
 import sys
 
@@ -9,7 +8,9 @@ import pytest
 np = pytest.importorskip("numpy")
 torch = pytest.importorskip("torch")
 
-_repo = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src", "masked_stellar_autoencoder"))
+_repo = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "src", "masked_stellar_autoencoder")
+)
 sys.path.insert(0, _repo)
 
 from models.checkpoint_load import torch_load_trusted
@@ -78,9 +79,7 @@ def test_torch_load_trusted_without_weights_only_support(mocker, tmp_path):
 
     assert "test" in out
     assert out["test"].shape == (1,)
-    spy_torch_load.assert_called_once_with(
-        str(path), map_location="cpu"
-    )
+    spy_torch_load.assert_called_once_with(str(path), map_location="cpu")
 
 
 def test_torch_load_trusted_default_weights_only_is_true(mocker, tmp_path):
