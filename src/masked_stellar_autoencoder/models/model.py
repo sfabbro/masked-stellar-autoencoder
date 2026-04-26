@@ -775,7 +775,9 @@ class TabResnetWrapper(BaseEstimator):
     def _setup_pretrain_logging(self):
         """Sets up logging for pretraining."""
         os.makedirs(
-            os.path.dirname(self.pt_log_file) if os.path.dirname(self.pt_log_file) else ".",
+            os.path.dirname(self.pt_log_file)
+            if os.path.dirname(self.pt_log_file)
+            else ".",
             exist_ok=True,
         )
         _pt_sd = os.path.dirname(self.pt_save_str)
@@ -815,9 +817,7 @@ class TabResnetWrapper(BaseEstimator):
 
                 # Compute the reconstruction loss
                 # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
-                reconstruction_mask = (
-                    mask[:, : -self.diff] & nanmask[:, : -self.diff]
-                )
+                reconstruction_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
                 l1_norm = z.abs().sum()
                 reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
                 loss = (
@@ -833,9 +833,7 @@ class TabResnetWrapper(BaseEstimator):
                 optimizer.zero_grad()
                 loss.backward()
                 # Clip gradients to prevent exploding gradients in deep networks
-                torch.nn.utils.clip_grad_norm_(
-                    self.model.parameters(), max_norm=1.0
-                )
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 optimizer.step()
 
                 file_loss += loss.item()
@@ -852,7 +850,9 @@ class TabResnetWrapper(BaseEstimator):
             print(f"Error in training loop for key {key}: {e}")
             return 0.0, 0.0
 
-    def _save_pretrain_checkpoint(self, epoch, epoch_loss, loss_div, optimizer, scheduler, is_interval=False):
+    def _save_pretrain_checkpoint(
+        self, epoch, epoch_loss, loss_div, optimizer, scheduler, is_interval=False
+    ):
         """Saves a checkpoint during pretraining."""
         save_dict = {
             "epoch": epoch,
@@ -868,7 +868,6 @@ class TabResnetWrapper(BaseEstimator):
             save_path = self.pt_save_str.split(".")[0] + f"_checkpoint_{epoch}.pth"
 
         torch.save(save_dict, save_path)
-
 
     def pretrain_hdf(
         self,
@@ -926,7 +925,9 @@ class TabResnetWrapper(BaseEstimator):
             self.model.train()
 
             for subkeynum, key in pbar:
-                file_loss, file_loss_div = self._pretrain_file(key, optimizer, mini_batch, subkeynum)
+                file_loss, file_loss_div = self._pretrain_file(
+                    key, optimizer, mini_batch, subkeynum
+                )
                 epoch_loss += file_loss
                 loss_div += file_loss_div
 
@@ -947,11 +948,23 @@ class TabResnetWrapper(BaseEstimator):
                 running_pt_validation_loss.append(validation_loss)
 
             # Save latest checkpoint
-            self._save_pretrain_checkpoint(epoch + 1, epoch_loss, loss_div, optimizer, scheduler)
+            self._save_pretrain_checkpoint(
+                epoch + 1, epoch_loss, loss_div, optimizer, scheduler
+            )
 
             # Save interval checkpoint
-            if self.checkpoint_interval is not None and (epoch + 1) % self.checkpoint_interval == 0:
-                self._save_pretrain_checkpoint(epoch + 1, epoch_loss, loss_div, optimizer, scheduler, is_interval=True)
+            if (
+                self.checkpoint_interval is not None
+                and (epoch + 1) % self.checkpoint_interval == 0
+            ):
+                self._save_pretrain_checkpoint(
+                    epoch + 1,
+                    epoch_loss,
+                    loss_div,
+                    optimizer,
+                    scheduler,
+                    is_interval=True,
+                )
 
         if ft_stuff is not None:
             self.fit(
