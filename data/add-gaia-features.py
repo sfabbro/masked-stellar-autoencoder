@@ -37,7 +37,8 @@ with h5py.File("220M_pretrain_data.h5", "a") as hf_out:
             }:  # If the column contains byte strings or unicode
                 array3.append(
                     np.array(
-                        [np.nan if v in {b"", ""} else float(v) for v in col], dtype=">f8"
+                        [np.nan if v in {b"", ""} else float(v) for v in col],
+                        dtype=">f8",
                     )
                 )
                 new_dtypes.append((name, ">f8"))

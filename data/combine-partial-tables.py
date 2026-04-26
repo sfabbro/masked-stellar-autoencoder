@@ -30,7 +30,9 @@ with h5py.File("pretrain_dataset_incomplete.h5", "a") as hf:
                 dataset_base_name = "sslset" + file.split(".")[0].split("ll")[-1]
 
                 total_rows = data.shape[0]
-                num_chunks = (total_rows + row_limit - 1) // row_limit  # Ceiling division
+                num_chunks = (
+                    total_rows + row_limit - 1
+                ) // row_limit  # Ceiling division
 
                 for i in range(num_chunks):
                     start_idx = i * row_limit
