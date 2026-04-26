@@ -741,6 +741,135 @@ class TabResnetWrapper(BaseEstimator):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
+    def _setup_pretrain_optimizer(self):
+        """Sets up the optimizer for pretraining."""
+        decay, no_decay = [], []
+        for name, param in self.model.named_parameters():
+            if "bias" in name or "norm" in name:
+                no_decay.append(param)
+            else:
+                decay.append(param)
+
+        param_groups = [
+            {"params": decay, "weight_decay": self.wd},
+            {"params": no_decay, "weight_decay": 0.0},
+        ]
+
+        if self.opt == "adam":
+            return optim.Adam(param_groups, lr=self.lr)
+        elif self.opt == "adamw":
+            return optim.AdamW(param_groups, lr=self.lr)
+        elif self.opt == "sgd":
+            return optim.SGD(param_groups, lr=self.lr, momentum=0.9)
+        raise ValueError(f"Unknown optimizer: {self.opt}")
+
+    def _setup_pretrain_scheduler(self, optimizer):
+        """Sets up the learning rate scheduler for pretraining."""
+        return optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer,
+            T_0=self.scheduler_cosine_t0,
+            T_mult=self.scheduler_cosine_t_mult,
+            eta_min=self.lr * self.scheduler_eta_min_factor,
+        )
+
+    def _setup_pretrain_logging(self):
+        """Sets up logging for pretraining."""
+        os.makedirs(
+            os.path.dirname(self.pt_log_file) if os.path.dirname(self.pt_log_file) else ".",
+            exist_ok=True,
+        )
+        _pt_sd = os.path.dirname(self.pt_save_str)
+        if _pt_sd:
+            os.makedirs(_pt_sd, exist_ok=True)
+        logging.basicConfig(
+            filename=self.pt_log_file,
+            level=logging.INFO,
+            format="%(asctime)s - Sub-Epoch: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+            filemode="a",
+        )
+
+    def _pretrain_file(self, key, optimizer, mini_batch, subkeynum):
+        """Processes a single file during pretraining."""
+        file_loss = 0.0
+        file_loss_div = 0.0
+        try:
+            X_train, eX_train = self._load_data(key)
+
+            train_loader = DataLoader(
+                TensorDataset(X_train, eX_train),
+                batch_size=mini_batch,
+                shuffle=True,
+            )
+
+            for X_batch, eX_batch in train_loader:
+                # Apply data augmentation if enabled
+                if self.pert_features:
+                    X_batch = X_batch + self._pert_noise(X_batch, eX_batch)
+
+                # Apply masking to training data batch
+                X_masked, mask, nanmask = self._apply_mask(X_batch)
+
+                # Forward pass (classification output is ignored for pretraining)
+                X_reconstructed, z = self.model(X_masked)
+
+                # Compute the reconstruction loss
+                # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
+                reconstruction_mask = (
+                    mask[:, : -self.diff] & nanmask[:, : -self.diff]
+                )
+                l1_norm = z.abs().sum()
+                reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
+                loss = (
+                    self.loss_fn(
+                        X_batch[:, : -self.diff],
+                        X_reconstructed,
+                        reconstruction_mask,
+                        reconstruction_w,
+                    )
+                    + self.lasso * l1_norm
+                )
+
+                optimizer.zero_grad()
+                loss.backward()
+                # Clip gradients to prevent exploding gradients in deep networks
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(), max_norm=1.0
+                )
+                optimizer.step()
+
+                file_loss += loss.item()
+
+            file_loss_div += len(train_loader)
+
+            # Clear GPU cache periodically
+            if torch.cuda.is_available() and subkeynum % 10 == 0:
+                torch.cuda.empty_cache()
+
+            return file_loss, file_loss_div
+
+        except Exception as e:
+            print(f"Error in training loop for key {key}: {e}")
+            return 0.0, 0.0
+
+    def _save_pretrain_checkpoint(self, epoch, epoch_loss, loss_div, optimizer, scheduler, is_interval=False):
+        """Saves a checkpoint during pretraining."""
+        save_dict = {
+            "epoch": epoch,
+            "model_state_dict": self.model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "scheduler_state_dict": scheduler.state_dict(),
+            "epoch_loss": epoch_loss,
+            "loss_div": loss_div,
+        }
+
+        save_path = self.pt_save_str
+        if is_interval:
+            save_path = self.pt_save_str.split(".")[0] + f"_checkpoint_{epoch}.pth"
+
+        torch.save(save_dict, save_path)
+
+
     def pretrain_hdf(
         self,
         train_keys,
@@ -763,64 +892,9 @@ class TabResnetWrapper(BaseEstimator):
             mini_batch: Mini-batch size for pretraining.
         """
 
-        # Separate decay/no_decay for L2 (weight decay)
-        decay, no_decay = [], []
-        for name, param in self.model.named_parameters():
-            if "bias" in name or "norm" in name:
-                no_decay.append(param)
-            else:
-                decay.append(param)
-
-        if self.opt == "adam":
-            optimizer = optim.Adam(
-                [
-                    {"params": decay, "weight_decay": self.wd},
-                    {"params": no_decay, "weight_decay": 0.0},
-                ],
-                lr=self.lr,
-            )
-        elif self.opt == "adamw":
-            optimizer = optim.AdamW(
-                [
-                    {"params": decay, "weight_decay": self.wd},
-                    {"params": no_decay, "weight_decay": 0.0},
-                ],
-                lr=self.lr,
-            )
-        elif self.opt == "sgd":
-            optimizer = optim.SGD(
-                [
-                    {"params": decay, "weight_decay": self.wd},
-                    {"params": no_decay, "weight_decay": 0.0},
-                ],
-                lr=self.lr,
-                momentum=0.9,
-            )
-        # Use cosine annealing with warm restarts for better convergence
-        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
-            optimizer,
-            T_0=self.scheduler_cosine_t0,
-            T_mult=self.scheduler_cosine_t_mult,
-            eta_min=self.lr * self.scheduler_eta_min_factor,
-        )
-
-        # Configure logging with proper file handling
-        os.makedirs(
-            os.path.dirname(self.pt_log_file)
-            if os.path.dirname(self.pt_log_file)
-            else ".",
-            exist_ok=True,
-        )
-        _pt_sd = os.path.dirname(self.pt_save_str)
-        if _pt_sd:
-            os.makedirs(_pt_sd, exist_ok=True)
-        logging.basicConfig(
-            filename=self.pt_log_file,
-            level=logging.INFO,
-            format="%(asctime)s - Sub-Epoch: %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-            filemode="a",
-        )
+        optimizer = self._setup_pretrain_optimizer()
+        scheduler = self._setup_pretrain_scheduler(optimizer)
+        self._setup_pretrain_logging()
 
         running_pt_loss = []
         running_pt_validation_loss = []
@@ -835,9 +909,9 @@ class TabResnetWrapper(BaseEstimator):
             optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
             scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
 
-            epoch_loss = checkpoint["epoch_loss"]
-            loss_div = checkpoint["loss_div"]
-            pretrained_epoch = checkpoint["epoch"]
+            epoch_loss = checkpoint.get("epoch_loss", 0.0)
+            loss_div = checkpoint.get("loss_div", 0.0)
+            pretrained_epoch = checkpoint.get("epoch", 0)
             print("Picking up pre-training from epoch", pretrained_epoch)
 
         for epoch in range(num_epochs):
@@ -852,75 +926,12 @@ class TabResnetWrapper(BaseEstimator):
             self.model.train()
 
             for subkeynum, key in pbar:
-                try:
-                    X_train, eX_train = self._load_data(key)
+                file_loss, file_loss_div = self._pretrain_file(key, optimizer, mini_batch, subkeynum)
+                epoch_loss += file_loss
+                loss_div += file_loss_div
 
-                    # Memory-efficient data loading
-                    # if X_train.shape[0] > 100000:  # For large datasets, use pin_memory
-                    #     train_loader = DataLoader(TensorDataset(X_train, eX_train),
-                    #                              batch_size=mini_batch,
-                    #                              shuffle=True,
-                    #                              pin_memory=True,
-                    #                              num_workers=2)
-                    # else:
-                    #     train_loader = DataLoader(TensorDataset(X_train, eX_train),
-                    #                              batch_size=mini_batch,
-                    #                              shuffle=True)
-                    train_loader = DataLoader(
-                        TensorDataset(X_train, eX_train),
-                        batch_size=mini_batch,
-                        shuffle=True,
-                    )
-
-                    for X_batch, eX_batch in train_loader:
-                        # Apply data augmentation if enabled (add Gaussian noise scaled by errors)
-                        if self.pert_features:
-                            X_batch = X_batch + self._pert_noise(X_batch, eX_batch)
-
-                        # Apply masking to training data batch
-                        X_masked, mask, nanmask = self._apply_mask(X_batch)
-
-                        # Forward pass (classification output is ignored for pretraining)
-                        X_reconstructed, z = self.model(X_masked)
-
-                        # Compute the reconstruction loss
-                        # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
-                        reconstruction_mask = (
-                            mask[:, : -self.diff] & nanmask[:, : -self.diff]
-                        )
-                        l1_norm = z.abs().sum()
-                        reconstruction_w = 1.0 / (eX_batch[:, : -self.diff] ** 2 + 1e-8)
-                        loss = (
-                            self.loss_fn(
-                                X_batch[:, : -self.diff],
-                                X_reconstructed,
-                                reconstruction_mask,
-                                reconstruction_w,
-                            )
-                            + self.lasso * l1_norm
-                        )
-
-                        optimizer.zero_grad()
-                        loss.backward()
-                        # Clip gradients to prevent exploding gradients in deep networks
-                        torch.nn.utils.clip_grad_norm_(
-                            self.model.parameters(), max_norm=1.0
-                        )
-                        optimizer.step()
-
-                        # print(loss)
-                        epoch_loss += loss.item()
-
-                    loss_div += len(train_loader)
-
-                    # Clear GPU cache periodically
-                    if torch.cuda.is_available() and subkeynum % 10 == 0:
-                        torch.cuda.empty_cache()
-
+                if file_loss_div > 0:
                     logging.info(f"{subkeynum + 1}, Loss: {epoch_loss / loss_div}")
-                except Exception as e:
-                    print(f"Error in training loop for key {key}: {e}")
-                    continue
 
             scheduler.step()
 
@@ -935,36 +946,12 @@ class TabResnetWrapper(BaseEstimator):
                 logging.info(f"{epoch + 1}, Validation Loss: {validation_loss}")
                 running_pt_validation_loss.append(validation_loss)
 
-            # torch.save(self.model.state_dict(), self.pt_save_str) # old saving method
-            torch.save(
-                {
-                    "epoch": epoch + 1,
-                    "model_state_dict": self.model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "scheduler_state_dict": scheduler.state_dict(),
-                    "epoch_loss": epoch_loss,
-                    "loss_div": loss_div,
-                },
-                self.pt_save_str,
-            )
+            # Save latest checkpoint
+            self._save_pretrain_checkpoint(epoch + 1, epoch_loss, loss_div, optimizer, scheduler)
 
-            if self.checkpoint_interval is not None:
-                if (epoch + 1) % self.checkpoint_interval == 0:
-                    # torch.save(self.model.state_dict(), self.pt_save_str.split('.')[0]+'_checkpoint_'+str(epoch+1)+'.pth')
-                    torch.save(
-                        {
-                            "epoch": epoch + 1,
-                            "model_state_dict": self.model.state_dict(),
-                            "optimizer_state_dict": optimizer.state_dict(),
-                            "scheduler_state_dict": scheduler.state_dict(),
-                            "epoch_loss": epoch_loss,
-                            "loss_div": loss_div,
-                        },
-                        self.pt_save_str.split(".")[0]
-                        + "_checkpoint_"
-                        + str(epoch + 1)
-                        + ".pth",
-                    )
+            # Save interval checkpoint
+            if self.checkpoint_interval is not None and (epoch + 1) % self.checkpoint_interval == 0:
+                self._save_pretrain_checkpoint(epoch + 1, epoch_loss, loss_div, optimizer, scheduler, is_interval=True)
 
         if ft_stuff is not None:
             self.fit(
