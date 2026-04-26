@@ -8,10 +8,9 @@ sys.path.insert(0, os.path.join(_repo, "training"))
 
 from astrometry_features import (
     apply_parallax_input_policy,
+    parallax_label_error_asinh,
     parallax_label_error_log10,
     parallax_label_log10,
-    parallax_label_asinh,
-    parallax_label_error_asinh,
 )
 
 
@@ -42,6 +41,7 @@ def test_log10_label_error_positive():
     e = np.array([1.0])
     s = parallax_label_error_log10(pi, e, floor_mas=1e-4)
     assert s[0] > 0 and np.isfinite(s[0])
+
 
 def test_asinh_label_error():
     # Mathematical test:
