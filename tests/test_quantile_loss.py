@@ -1,16 +1,13 @@
 """Tests for quantile_loss and σ-weights (requires torch)."""
 
-import os
-import sys
-
 import pytest
-
-_repo = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, _repo)
 
 torch = pytest.importorskip("torch")
 
-from models.model import _sigma_pinball_weights, quantile_loss
+from masked_stellar_autoencoder.models.model import (
+    _sigma_pinball_weights,
+    quantile_loss,
+)
 
 
 def test_quantile_loss_sample_weight_changes_value():
