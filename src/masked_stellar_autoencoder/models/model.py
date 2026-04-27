@@ -471,6 +471,7 @@ def _reduce_finetune_prediction(y_raw: Tensor, ftlf: str, linearprobe: bool):
 
 # creating a training wrapper for the algorithm
 
+
 @dataclass
 class FinetuneContext:
     linearprobe: bool
@@ -497,6 +498,7 @@ class FinetuneContext:
     parallax_sigma_floor: float
     ft_lambda_pred: float
     ft_lambda_rec: float
+
 
 class TabResnetWrapper(BaseEstimator):
     def __init__(
