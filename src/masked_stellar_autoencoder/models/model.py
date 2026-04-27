@@ -332,9 +332,9 @@ class EncoderDecoderLoss(nn.Module):
         """
 
         # Correctly apply mask to errors before squaring
-        errors = torch.where(
-            mask.bool(), x_pred - x_true, torch.tensor(0.0, device=x_true.device)
-        )
+        # Direct subtraction with boolean mask multiplication avoids expensive torch.where
+        m = mask.bool()
+        errors = (x_pred - x_true) * m
         if self.cost == "mse":
             reconstruction_errors = errors**2
         elif self.cost == "mae":
