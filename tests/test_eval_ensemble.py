@@ -11,7 +11,7 @@ _training = os.path.abspath(
 )
 sys.path.insert(0, _training)
 
-from eval_ensemble import predict_batches
+from masked_stellar_autoencoder.training.eval_ensemble import predict_batches
 
 
 class DummyModel(torch.nn.Module):

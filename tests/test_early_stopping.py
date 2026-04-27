@@ -1,7 +1,8 @@
 from unittest.mock import MagicMock
 
 import pytest
-from models.model import EarlyStopping
+
+from masked_stellar_autoencoder.models.model import EarlyStopping
 
 torch = pytest.importorskip("torch")
 
