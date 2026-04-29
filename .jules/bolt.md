@@ -1,3 +1,6 @@
 ## 2025-04-26 - HDF5 I/O in tight loops
 **Learning:** Opening HDF5 files (`h5py.File`) inside tight loops is a significant I/O bottleneck in Python, particularly for scripts operating on many files or large datasets. Opening and closing these files repeatedly adds high overhead compared to opening the file once outside the loop and writing datasets as needed.
 **Action:** When doing file I/O within a loop over datasets or chunks, verify if the target file (like an `.h5` file) can be opened globally using a context manager `with h5py.File(..., 'a') as f:` before entering the loop. This single-open approach avoids the constant file locking and opening/closing costs.
+## 2024-04-29 - PyTorch `masked_fill_` vs `torch.where` vs Direct Multiplication
+**Learning:** When attempting to optimize PyTorch masking operations (`torch.where(mask, tensor, 0.0)`) inside loss functions, directly multiplying the tensor by the mask (`tensor * mask.bool()`) is faster but mathematically unsafe in the presence of `NaN` or `Inf` values, leading to silent `NaN` propagation (since `NaN * 0 = NaN`).
+**Action:** Always prefer using `.masked_fill_(~mask.bool(), 0.0)` for masking out regions of intermediate tensors. It is faster than allocating a new tensor via `torch.where` and is mathematically safe against `NaN` propagation from the masked-out regions, unlike direct multiplication.
