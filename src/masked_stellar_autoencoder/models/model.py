@@ -73,7 +73,7 @@ class WeightedMaskedMSELoss(nn.Module):
         # ⚡ Bolt: Use .masked_fill_ instead of boolean indexing to reduce memory allocations
         error = (input - target).masked_fill_(~mask, 0.0)
         masked_weights = weight.masked_fill(~mask, 0.0)
-        masked_error = (error ** 2) * masked_weights
+        masked_error = (error**2) * masked_weights
 
         if self.reduction == "mean":
             return masked_error.sum() / (masked_weights.sum() + self.eps)
@@ -95,7 +95,7 @@ class MaskedMSELoss(nn.Module):
         # ⚡ Bolt: Use .masked_fill_ instead of boolean indexing to reduce memory allocations
         # Also removed CPU-GPU sync (mask.sum() == 0 check) to make logic branchless.
         error = (input - target).masked_fill_(~mask, 0.0)
-        masked_error = error ** 2
+        masked_error = error**2
 
         if self.reduction == "mean":
             return masked_error.sum() / mask.sum().clamp_min(1.0)
