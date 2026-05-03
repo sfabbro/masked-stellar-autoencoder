@@ -70,18 +70,17 @@ class WeightedMaskedMSELoss(nn.Module):
         # Create mask for non-NaN targets
         mask = (~torch.isnan(target)) & (~torch.isnan(weight))
 
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_weights = weight[mask]
-        masked_error = (masked_input - masked_target) ** 2
-        masked_error = masked_error * masked_weights
+        # ⚡ Bolt: Use .masked_fill_ instead of boolean indexing to reduce memory allocations
+        error = (input - target).masked_fill_(~mask, 0.0)
+        masked_weights = weight.masked_fill(~mask, 0.0)
+        masked_error = (error ** 2) * masked_weights
 
         if self.reduction == "mean":
             return masked_error.sum() / (masked_weights.sum() + self.eps)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
-            return masked_error
+            return masked_error[mask]
 
 
 class MaskedMSELoss(nn.Module):
@@ -93,19 +92,17 @@ class MaskedMSELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute squared error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = (masked_input - masked_target) ** 2
+        # ⚡ Bolt: Use .masked_fill_ instead of boolean indexing to reduce memory allocations
+        # Also removed CPU-GPU sync (mask.sum() == 0 check) to make logic branchless.
+        error = (input - target).masked_fill_(~mask, 0.0)
+        masked_error = error ** 2
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
         if self.reduction == "mean":
-            return masked_error.mean()
+            return masked_error.sum() / mask.sum().clamp_min(1.0)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
-            return masked_error
+            return masked_error[mask]
 
 
 class MaskedMAELoss(nn.Module):
@@ -117,19 +114,17 @@ class MaskedMAELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute absolute error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = torch.abs(masked_input - masked_target)
+        # ⚡ Bolt: Use .masked_fill_ instead of boolean indexing to reduce memory allocations
+        # Also removed CPU-GPU sync (mask.sum() == 0 check) to make logic branchless.
+        error = (input - target).masked_fill_(~mask, 0.0)
+        masked_error = torch.abs(error)
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
         if self.reduction == "mean":
-            return masked_error.mean()
+            return masked_error.sum() / mask.sum().clamp_min(1.0)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
-            return masked_error
+            return masked_error[mask]
 
 
 class LabelDifference(nn.Module):

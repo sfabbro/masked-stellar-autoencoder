@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2024-05-18 - Branchless Tensor Reductions
+**Learning:** In PyTorch, using boolean indexing (e.g., `input[mask]`) causes dynamic tensor creations and memory allocations. Furthermore, branching on tensor values like `if mask.sum() == 0:` forces an expensive CPU-GPU synchronization.
+**Action:** When computing masked reductions like MSE/MAE, use `.masked_fill_(~mask, 0.0)` for branchless execution and faster zero-allocation math (e.g. `masked_error.sum() / mask.sum().clamp_min(1.0)`).
