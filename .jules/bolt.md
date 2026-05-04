@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-05-19 - PyTorch Masking Overhead in Reduction Functions
+**Learning:** Dynamic-shape boolean array indexing (e.g. `masked_input = input[mask]`) in PyTorch loss functions (e.g., MSE, MAE, Gaussian NLL) requires allocating new tensors with dynamically calculated shapes and sizes. Doing this inside high-frequency loss calculations can become a significant bottleneck causing fragmentation.
+**Action:** When calculating masked losses and dealing with reductions like `.sum()`, replace dynamic-shape indexing with `.masked_fill_(~mask, 0.0)` on the full-shape tensor, followed by a division using `mask.sum().clamp_min(1.0)` for reductions requiring mean. This prevents continuous dynamic intermediate memory allocation overhead and significantly speeds up operations.
