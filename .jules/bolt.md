@@ -13,3 +13,11 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-05-19 - PyTorch Reduction Masking Shapes
+**Learning:** When optimizing PyTorch loss functions to eliminate dynamic boolean indexing (`input[mask]`) for reductions (`mean`, `sum`), it is critical to preserve the API shape contract for the `reduction='none'` case. Unreduced masked losses often expect flattened 1D arrays, requiring a conditional fallback to standard boolean indexing (`input[mask]`) for non-reduction paths.
+**Action:** When converting PyTorch reduction losses to use `.masked_fill_(~mask, 0.0)` for performance, explicitly branch on `self.reduction == "none"` to preserve original boolean masking behavior and return shape.
+
+## 2025-05-19 - Safe NaN handling in Masked Reductions
+**Learning:** When replacing boolean indexing (`input[mask]`) with full-shape operations and `.masked_fill_` for performance, failure to sanitize `NaN` values in the input tensors before mathematical operations causes `NaN`s to propagate through the autograd graph and produce `NaN` gradients.
+**Action:** Always pre-sanitize inputs (e.g., `safe_target = target.masked_fill(~mask, 0.0)`) before any arithmetic operations in a custom masked loss function.
