@@ -70,14 +70,26 @@ class WeightedMaskedMSELoss(nn.Module):
         # Create mask for non-NaN targets
         mask = (~torch.isnan(target)) & (~torch.isnan(weight))
 
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_weights = weight[mask]
-        masked_error = (masked_input - masked_target) ** 2
-        masked_error = masked_error * masked_weights
+        if self.reduction == "none":
+            # ⚡ Bolt: Fallback to boolean indexing for unreduced flattened output
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_weights = weight[mask]
+            masked_error = (masked_input - masked_target) ** 2
+            return masked_error * masked_weights
+
+        # ⚡ Bolt: Optimized reduction path using full-shape operations to eliminate
+        # dynamic boolean array indexing and prevent intermediate memory allocations.
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        safe_weight = weight.masked_fill(~mask, 0.0)
+
+        masked_error = (safe_input - safe_target) ** 2
+        masked_error = masked_error * safe_weight
+        masked_error.masked_fill_(~mask, 0.0)
 
         if self.reduction == "mean":
-            return masked_error.sum() / (masked_weights.sum() + self.eps)
+            return masked_error.sum() / (safe_weight.sum() + self.eps)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
@@ -93,15 +105,21 @@ class MaskedMSELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute squared error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = (masked_input - masked_target) ** 2
+        if self.reduction == "none":
+            # ⚡ Bolt: Fallback to boolean indexing for unreduced flattened output
+            masked_input = input[mask]
+            masked_target = target[mask]
+            return (masked_input - masked_target) ** 2
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
+        # ⚡ Bolt: Optimized reduction path using full-shape operations to eliminate
+        # dynamic boolean array indexing and prevent intermediate memory allocations.
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        masked_error = (safe_input - safe_target) ** 2
+        masked_error.masked_fill_(~mask, 0.0)
+
         if self.reduction == "mean":
-            return masked_error.mean()
+            return masked_error.sum() / mask.sum().clamp_min(1.0)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
@@ -117,15 +135,21 @@ class MaskedMAELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute absolute error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = torch.abs(masked_input - masked_target)
+        if self.reduction == "none":
+            # ⚡ Bolt: Fallback to boolean indexing for unreduced flattened output
+            masked_input = input[mask]
+            masked_target = target[mask]
+            return torch.abs(masked_input - masked_target)
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
+        # ⚡ Bolt: Optimized reduction path using full-shape operations to eliminate
+        # dynamic boolean array indexing and prevent intermediate memory allocations.
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        masked_error = torch.abs(safe_input - safe_target)
+        masked_error.masked_fill_(~mask, 0.0)
+
         if self.reduction == "mean":
-            return masked_error.mean()
+            return masked_error.sum() / mask.sum().clamp_min(1.0)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
