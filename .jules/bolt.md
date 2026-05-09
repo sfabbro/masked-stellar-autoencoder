@@ -13,3 +13,6 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+## 2024-05-09 - PyTorch Loss Function NaN Propagation and Memory Efficiency
+**Learning:** Replacing dynamic boolean indexing (`input[mask]`) with full-shape tensor operations and `.masked_fill_` prevents costly device-to-host syncs in PyTorch but can cause catastrophic Autograd NaN propagation if `NaN`s in inputs aren't sanitized properly. Even if intermediate `NaN` values are zeroed-out later, operations like `0 * NaN` evaluate to `NaN` in backpropagation.
+**Action:** When migrating to full-shape masked reductions, aggressively sanitize input variables (e.g., `target_safe = target.masked_fill(~mask, 0.0)`) before they are used in arithmetic operations, ensuring both `target` and `target_var` or weights do not carry NaNs into graph equations.
