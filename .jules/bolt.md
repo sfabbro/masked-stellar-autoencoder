@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-10-24 - RnC Loss Vectorization
+**Learning:** In PyTorch custom loss functions (like `RnCLoss`), a Python loop over elements (e.g. `for k in range(n - 1):`) to compute pairwise masks and log probabilities incurs significant overhead.
+**Action:** When calculating row-wise contrastive metrics, vectorize the operation by using `unsqueeze()` to leverage PyTorch broadcasting (e.g. `label_diffs.unsqueeze(1) >= pos_label_diffs.unsqueeze(2)`). This achieves O(1) PyTorch execution time instead of O(n) Python loop iterations, making it multiple times faster for moderate batch sizes.
