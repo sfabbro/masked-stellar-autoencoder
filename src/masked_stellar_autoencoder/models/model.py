@@ -636,7 +636,8 @@ class TabResnetWrapper(BaseEstimator):
 
         # row-wise masking for cols [5:115] - XP coeffs
         num_rows_to_mask = int(self.xp_masking_ratio * X.shape[0])
-        row_indices = torch.randperm(X.shape[0])[:num_rows_to_mask].to(self.device)
+        # ⚡ Bolt: Generate random permutation directly on device to avoid CPU-GPU transfer overhead
+        row_indices = torch.randperm(X.shape[0], device=self.device)[:num_rows_to_mask]
 
         mask_fixed = torch.zeros_like(X, dtype=torch.bool).to(self.device)
         mask_fixed[row_indices, col_start_fixed:col_end_fixed] = True
