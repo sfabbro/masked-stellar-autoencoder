@@ -35,29 +35,53 @@ class MaskedGaussianNLLLoss(nn.Module):
 
         mask = (~torch.isnan(target)) & (~torch.isnan(target_var))
 
-        pred_mean = pred_mean[mask]
-        pred_var = pred_var[mask]
-        target = target[mask]
-        target_var = target_var[mask]
+        if self.reduction == "none":
+            pred_mean = pred_mean[mask]
+            pred_var = pred_var[mask]
+            target = target[mask]
+            target_var = target_var[mask]
+
+            var = pred_var.clamp(min=self.eps)
+            obs_var = target_var.clamp(min=self.eps)
+
+            err = var + obs_var
+            diff_squared = (pred_mean - target) ** 2
+
+            nll = 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
+                2 * math.pi
+            )
+            return nll
+
+        safe_pred_mean = pred_mean.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        safe_pred_var = pred_var.masked_fill(~mask, self.eps)
+        if isinstance(target_var, float):
+            safe_target_var = torch.full_like(safe_pred_var, target_var)
+        else:
+            safe_target_var = target_var.masked_fill(~mask, self.eps)
 
         # Clamp variance to avoid instability
-        var = pred_var.clamp(min=self.eps)
-        obs_var = target_var.clamp(min=self.eps)
+        var = safe_pred_var.clamp(min=self.eps)
+        obs_var = safe_target_var.clamp(min=self.eps)
 
         err = var + obs_var
-        diff_squared = (pred_mean - target) ** 2
+        diff_squared = (safe_pred_mean - safe_target) ** 2
 
         # Compute Gaussian NLL
         nll = 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
             2 * math.pi
         )
+        nll = nll.masked_fill_(~mask, 0.0)
 
         if self.reduction == "mean":
-            return nll.mean()
+            num_elements = mask.sum()
+            if num_elements == 0:
+                return torch.tensor(0.0, device=pred_mean.device, requires_grad=True)
+            return nll.sum() / num_elements
         elif self.reduction == "sum":
+            if mask.sum() == 0:
+                return torch.tensor(0.0, device=pred_mean.device, requires_grad=True)
             return nll.sum()
-        else:
-            return nll
 
 
 class WeightedMaskedMSELoss(nn.Module):
@@ -70,18 +94,25 @@ class WeightedMaskedMSELoss(nn.Module):
         # Create mask for non-NaN targets
         mask = (~torch.isnan(target)) & (~torch.isnan(weight))
 
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_weights = weight[mask]
-        masked_error = (masked_input - masked_target) ** 2
-        masked_error = masked_error * masked_weights
+        if self.reduction == "none":
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_weights = weight[mask]
+            masked_error = (masked_input - masked_target) ** 2
+            masked_error = masked_error * masked_weights
+            return masked_error
+
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        safe_weights = weight.masked_fill(~mask, 0.0)
+
+        squared_error = (safe_input - safe_target) ** 2
+        masked_error = squared_error * safe_weights
 
         if self.reduction == "mean":
-            return masked_error.sum() / (masked_weights.sum() + self.eps)
+            return masked_error.sum() / (safe_weights.sum() + self.eps)
         elif self.reduction == "sum":
             return masked_error.sum()
-        else:
-            return masked_error
 
 
 class MaskedMSELoss(nn.Module):
@@ -93,19 +124,29 @@ class MaskedMSELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute squared error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = (masked_input - masked_target) ** 2
-
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
-        if self.reduction == "mean":
-            return masked_error.mean()
-        elif self.reduction == "sum":
-            return masked_error.sum()
-        else:
+        if self.reduction == "none":
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_error = (masked_input - masked_target) ** 2
+            if masked_error.numel() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
             return masked_error
+
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+
+        squared_error = (safe_input - safe_target) ** 2
+        masked_error = squared_error.masked_fill_(~mask, 0.0)
+
+        if self.reduction == "mean":
+            num_elements = mask.sum()
+            if num_elements == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
+            return masked_error.sum() / num_elements
+        elif self.reduction == "sum":
+            if mask.sum() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
+            return masked_error.sum()
 
 
 class MaskedMAELoss(nn.Module):
@@ -117,19 +158,29 @@ class MaskedMAELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute absolute error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = torch.abs(masked_input - masked_target)
-
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
-        if self.reduction == "mean":
-            return masked_error.mean()
-        elif self.reduction == "sum":
-            return masked_error.sum()
-        else:
+        if self.reduction == "none":
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_error = torch.abs(masked_input - masked_target)
+            if masked_error.numel() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
             return masked_error
+
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+
+        abs_error = torch.abs(safe_input - safe_target)
+        masked_error = abs_error.masked_fill_(~mask, 0.0)
+
+        if self.reduction == "mean":
+            num_elements = mask.sum()
+            if num_elements == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
+            return masked_error.sum() / num_elements
+        elif self.reduction == "sum":
+            if mask.sum() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
+            return masked_error.sum()
 
 
 class LabelDifference(nn.Module):
