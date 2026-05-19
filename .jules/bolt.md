@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-05-20 - PyTorch Reductions and D2H Sync Overheads
+**Learning:** In custom PyTorch loss modules like `MaskedMSELoss` and `MaskedMAELoss`, using `reduction="mean"` combined with dynamic indexing like `masked_input = input[mask]` forces Device-to-Host (D2H) synchronizations because the size of the dynamically filtered tensor needs to be communicated back to the CPU to allocate memory. Furthermore, operations like `.mean()` and `.sum()` natively scale with tensor size.
+**Action:** When implementing custom masked losses, you should replace `input[mask]` with full-tensor mathematical approximations using `.masked_fill`. Setting the invalid/masked portions to `0.0` explicitly allows `.sum()` to yield the correct unreduced sum natively and very quickly (with no D2H shape syncs). Dividing this result by the manually aggregated count (`mask.sum().clamp_min(1)`) yields a D2H-free `mean` implementation that halves iteration times. To preserve API surface consistency, keep a `reduction="none"` conditional path using `input[mask]` solely for unreduced shape consumers.
