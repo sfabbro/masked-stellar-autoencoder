@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-05-19 - PyTorch Dynamic Boolean Indexing in Loss Functions
+**Learning:** In PyTorch loss functions, using dynamic boolean indexing (e.g., `input[mask]`) for reductions (`mean`, `sum`) triggers costly Device-to-Host synchronizations to determine the resulting tensor's dynamic shape, causing significant CPU-GPU blocking and slowing down training.
+**Action:** Replace `input[mask]` with full-shape tensor operations by using `.masked_fill(~mask, 0.0)` followed by a manual reduction (e.g., `.sum() / mask.sum().clamp_min(1)`). Ensure `NaN`s are safely filled with zeros *before* performing any mathematical operations (like squaring) to prevent `NaN` propagation during the backward pass. Note: For the `reduction='none'` case, fallback to dynamic boolean indexing (`input[mask]`) is typically necessary to preserve API shape contracts.
