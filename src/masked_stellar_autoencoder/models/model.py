@@ -725,7 +725,9 @@ class TabResnetWrapper(BaseEstimator):
                 print(f"Warning: Invalid values in errors for key '{key}'")
 
             # ⚡ Bolt: torch.as_tensor avoids CPU tensor creation overhead
-            return torch.as_tensor(X, device=self.device, dtype=torch.float32), torch.as_tensor(eX, device=self.device, dtype=torch.float32)
+            return torch.as_tensor(
+                X, device=self.device, dtype=torch.float32
+            ), torch.as_tensor(eX, device=self.device, dtype=torch.float32)
 
         except Exception as e:
             raise RuntimeError(f"Error loading data for key '{key}': {e}")
