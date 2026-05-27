@@ -636,9 +636,9 @@ class TabResnetWrapper(BaseEstimator):
 
         # row-wise masking for cols [5:115] - XP coeffs
         num_rows_to_mask = int(self.xp_masking_ratio * X.shape[0])
-        row_indices = torch.randperm(X.shape[0])[:num_rows_to_mask].to(self.device)
+        row_indices = torch.randperm(X.shape[0], device=self.device)[:num_rows_to_mask]
 
-        mask_fixed = torch.zeros_like(X, dtype=torch.bool).to(self.device)
+        mask_fixed = torch.zeros_like(X, dtype=torch.bool, device=self.device)
         mask_fixed[row_indices, col_start_fixed:col_end_fixed] = True
 
         # Extra rows with XP fully masked (mixture component toward XP-off at inference).
@@ -650,7 +650,7 @@ class TabResnetWrapper(BaseEstimator):
                 mask_fixed[add_idx, col_start_fixed:col_end_fixed] = True
 
         # random element-wise masking for cols [0:5] and [115:] - phot bands
-        mask_random = torch.zeros_like(X, dtype=torch.bool).to(self.device)
+        mask_random = torch.zeros_like(X, dtype=torch.bool, device=self.device)
 
         # mask [0:5] - W1, W2, G, BP, RP
         mask_random[:, :col_start_fixed] = (
