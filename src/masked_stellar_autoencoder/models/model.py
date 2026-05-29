@@ -628,7 +628,7 @@ class TabResnetWrapper(BaseEstimator):
             mask (Tensor): Boolean mask indicating where the mask was applied.
             nan_mask (Tensor): Boolean mask indicating original NaN locations.
         """
-        X_masked = X.clone().detach().to(self.device)
+        X_masked = X.detach().clone().to(self.device)
 
         # get NaN locations
         nan_mask = ~torch.isnan(X_masked)
@@ -636,9 +636,9 @@ class TabResnetWrapper(BaseEstimator):
 
         # row-wise masking for cols [5:115] - XP coeffs
         num_rows_to_mask = int(self.xp_masking_ratio * X.shape[0])
-        row_indices = torch.randperm(X.shape[0])[:num_rows_to_mask].to(self.device)
+        row_indices = torch.randperm(X.shape[0], device=self.device)[:num_rows_to_mask]
 
-        mask_fixed = torch.zeros_like(X, dtype=torch.bool).to(self.device)
+        mask_fixed = torch.zeros_like(X, dtype=torch.bool, device=self.device)
         mask_fixed[row_indices, col_start_fixed:col_end_fixed] = True
 
         # Extra rows with XP fully masked (mixture component toward XP-off at inference).
@@ -650,7 +650,7 @@ class TabResnetWrapper(BaseEstimator):
                 mask_fixed[add_idx, col_start_fixed:col_end_fixed] = True
 
         # random element-wise masking for cols [0:5] and [115:] - phot bands
-        mask_random = torch.zeros_like(X, dtype=torch.bool).to(self.device)
+        mask_random = torch.zeros_like(X, dtype=torch.bool, device=self.device)
 
         # mask [0:5] - W1, W2, G, BP, RP
         mask_random[:, :col_start_fixed] = (
@@ -723,7 +723,9 @@ class TabResnetWrapper(BaseEstimator):
             if np.any(np.isnan(eX)) or np.any(np.isinf(eX)):
                 print(f"Warning: Invalid values in errors for key '{key}'")
 
-            return torch.Tensor(X).to(self.device), torch.Tensor(eX).to(self.device)
+            return torch.as_tensor(
+                X, device=self.device, dtype=torch.float32
+            ), torch.as_tensor(eX, device=self.device, dtype=torch.float32)
 
         except Exception as e:
             raise RuntimeError(f"Error loading data for key '{key}': {e}")
@@ -1439,10 +1441,10 @@ class TabResnetWrapper(BaseEstimator):
         parallax_sigma_scale: float = 1.0,
         consistency_params: Optional[dict] = None,
     ):
-        X_train = torch.Tensor(X_train).to(self.device)
-        eX_train = torch.Tensor(eX_train).to(self.device)
-        y_train = torch.Tensor(y_train).to(self.device)
-        e_y_train = torch.Tensor(e_y_train).to(self.device)
+        X_train = torch.as_tensor(X_train, device=self.device, dtype=torch.float32)
+        eX_train = torch.as_tensor(eX_train, device=self.device, dtype=torch.float32)
+        y_train = torch.as_tensor(y_train, device=self.device, dtype=torch.float32)
+        e_y_train = torch.as_tensor(e_y_train, device=self.device, dtype=torch.float32)
         rdataset = TensorDataset(X_train, eX_train, y_train, e_y_train)
         train_loader = DataLoader(rdataset, batch_size=mini_batch, shuffle=True)
 
@@ -1618,12 +1620,12 @@ class TabResnetWrapper(BaseEstimator):
 
         val_loss = 0
         X_val, eX_val = (
-            torch.Tensor(X_val).to(self.device),
-            torch.Tensor(eX_val).to(self.device),
+            torch.as_tensor(X_val, device=self.device, dtype=torch.float32),
+            torch.as_tensor(eX_val, device=self.device, dtype=torch.float32),
         )
         y_val, e_y_val = (
-            torch.Tensor(y_val).to(self.device),
-            torch.Tensor(e_y_val).to(self.device),
+            torch.as_tensor(y_val, device=self.device, dtype=torch.float32),
+            torch.as_tensor(e_y_val, device=self.device, dtype=torch.float32),
         )
         rdataset = TensorDataset(X_val, eX_val, y_val, e_y_val)
         val_loader = DataLoader(rdataset, batch_size=mini_batch, shuffle=True)

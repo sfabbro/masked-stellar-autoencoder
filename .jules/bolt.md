@@ -13,3 +13,7 @@
 ## 2026-05-01 - Optimizing HDF5 Dataset Creation
 **Learning:** Instantiating `pandas.DataFrame` purely as an intermediate step to construct structured arrays for HDF5 `create_dataset` incurs significant and unnecessary Pandas overhead.
 **Action:** When assembling tabular data strictly for writing to HDF5 datasets, always use native NumPy structured arrays (`np.empty(len(data), dtype=[...])`) to drastically improve script execution speed and reduce memory consumption.
+
+## 2025-05-29 - PyTorch Device Allocation
+**Learning:** In PyTorch, creating tensors on the CPU and then moving them to the GPU via `.to(device)` (e.g., `torch.Tensor(x).to(device)`) incurs significant host-to-device memory transfer overhead and unnecessary CPU memory allocation.
+**Action:** Always allocate tensors directly on the target device using the `device=` argument during creation (e.g., `torch.as_tensor(x, device=device)` or `torch.zeros_like(x, device=device)`) to improve performance and reduce memory usage.
