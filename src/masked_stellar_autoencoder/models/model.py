@@ -76,7 +76,9 @@ class WeightedMaskedMSELoss(nn.Module):
         masked_error = ((input - safe_target) ** 2) * safe_weight
 
         if self.reduction == "mean":
-            return masked_error.masked_fill(~mask, 0.0).sum() / (safe_weight.sum() + self.eps)
+            return masked_error.masked_fill(~mask, 0.0).sum() / (
+                safe_weight.sum() + self.eps
+            )
         elif self.reduction == "sum":
             return masked_error.masked_fill(~mask, 0.0).sum()
         else:
@@ -415,7 +417,9 @@ def quantile_loss(
         w_eff = w_eff * w_s
     if label_weights is None and sample_weight is None:
         # ⚡ Bolt: Replaced boolean indexing with full-shape .masked_fill to avoid CPU-GPU synchronization overhead
-        return loss.masked_fill(~mask_expanded, 0.0).sum() / mask_expanded.sum().clamp_min(1)
+        return loss.masked_fill(
+            ~mask_expanded, 0.0
+        ).sum() / mask_expanded.sum().clamp_min(1)
     return (loss * w_eff).sum() / w_eff.sum().clamp_min(1e-8)
 
 
