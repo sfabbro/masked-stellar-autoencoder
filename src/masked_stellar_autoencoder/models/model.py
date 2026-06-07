@@ -35,25 +35,43 @@ class MaskedGaussianNLLLoss(nn.Module):
 
         mask = (~torch.isnan(target)) & (~torch.isnan(target_var))
 
-        pred_mean = pred_mean[mask]
-        pred_var = pred_var[mask]
-        target = target[mask]
-        target_var = target_var[mask]
+        if self.reduction == "none":
+            # For unreduced loss, preserve original shape/behavior
+            pred_mean = pred_mean[mask]
+            pred_var = pred_var[mask]
+            target = target[mask]
+            target_var = target_var[mask]
 
-        # Clamp variance to avoid instability
+            # Clamp variance to avoid instability
+            var = pred_var.clamp(min=self.eps)
+            obs_var = target_var.clamp(min=self.eps)
+
+            err = var + obs_var
+            diff_squared = (pred_mean - target) ** 2
+
+            # Compute Gaussian NLL
+            return 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
+                2 * math.pi
+            )
+
+        # ⚡ Bolt: Fast path avoids dynamic boolean indexing, preventing Device-to-Host syncs
         var = pred_var.clamp(min=self.eps)
-        obs_var = target_var.clamp(min=self.eps)
+        # Sanitize inputs before operations to prevent NaN gradients in backward pass
+        safe_obs_var = target_var.masked_fill(~mask, self.eps).clamp(min=self.eps)
+        safe_target = target.masked_fill(~mask, 0.0)
+        safe_pred_mean = pred_mean.masked_fill(~mask, 0.0)
 
-        err = var + obs_var
-        diff_squared = (pred_mean - target) ** 2
+        diff = safe_pred_mean - safe_target
+        diff_squared = diff**2
+        err = var + safe_obs_var
 
-        # Compute Gaussian NLL
         nll = 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
             2 * math.pi
         )
+        nll = nll.masked_fill_(~mask, 0.0)
 
         if self.reduction == "mean":
-            return nll.mean()
+            return nll.sum() / mask.to(nll.dtype).sum().clamp_min(1)
         elif self.reduction == "sum":
             return nll.sum()
         else:
@@ -70,18 +88,29 @@ class WeightedMaskedMSELoss(nn.Module):
         # Create mask for non-NaN targets
         mask = (~torch.isnan(target)) & (~torch.isnan(weight))
 
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_weights = weight[mask]
-        masked_error = (masked_input - masked_target) ** 2
-        masked_error = masked_error * masked_weights
+        if self.reduction == "none":
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_weights = weight[mask]
+            masked_error = (masked_input - masked_target) ** 2
+            masked_error = masked_error * masked_weights
+            return masked_error
+
+        # ⚡ Bolt: Fast path avoids dynamic boolean indexing, preventing Device-to-Host syncs
+        # Sanitize inputs before operations to prevent NaN gradients in backward pass
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+        safe_weight = weight.masked_fill(~mask, 0.0)
+
+        diff = safe_input - safe_target
+        error = ((diff**2) * safe_weight).masked_fill_(~mask, 0.0)
 
         if self.reduction == "mean":
-            return masked_error.sum() / (masked_weights.sum() + self.eps)
+            return error.sum() / (safe_weight.sum() + self.eps)
         elif self.reduction == "sum":
-            return masked_error.sum()
+            return error.sum()
         else:
-            return masked_error
+            return error
 
 
 class MaskedMSELoss(nn.Module):
@@ -93,19 +122,30 @@ class MaskedMSELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute squared error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = (masked_input - masked_target) ** 2
+        if self.reduction == "none":
+            # Compute squared error only where target is not NaN
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_error = (masked_input - masked_target) ** 2
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
-        if self.reduction == "mean":
-            return masked_error.mean()
-        elif self.reduction == "sum":
-            return masked_error.sum()
-        else:
+            if masked_error.numel() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
             return masked_error
+
+        # ⚡ Bolt: Fast path avoids dynamic boolean indexing, preventing Device-to-Host syncs
+        # Sanitize inputs before operations to prevent NaN gradients in backward pass
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+
+        diff = safe_input - safe_target
+        squared_error = (diff**2).masked_fill_(~mask, 0.0)
+
+        if self.reduction == "mean":
+            return squared_error.sum() / mask.to(input.dtype).sum().clamp_min(1)
+        elif self.reduction == "sum":
+            return squared_error.sum()
+        else:
+            return squared_error
 
 
 class MaskedMAELoss(nn.Module):
@@ -117,19 +157,29 @@ class MaskedMAELoss(nn.Module):
         # Create a mask for non-NaN targets
         mask = ~torch.isnan(target)
 
-        # Compute absolute error only where target is not NaN
-        masked_input = input[mask]
-        masked_target = target[mask]
-        masked_error = torch.abs(masked_input - masked_target)
+        if self.reduction == "none":
+            # Compute absolute error only where target is not NaN
+            masked_input = input[mask]
+            masked_target = target[mask]
+            masked_error = torch.abs(masked_input - masked_target)
 
-        if masked_error.numel() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
-        if self.reduction == "mean":
-            return masked_error.mean()
-        elif self.reduction == "sum":
-            return masked_error.sum()
-        else:
+            if masked_error.numel() == 0:
+                return torch.tensor(0.0, device=input.device, requires_grad=True)
             return masked_error
+
+        # ⚡ Bolt: Fast path avoids dynamic boolean indexing, preventing Device-to-Host syncs
+        # Sanitize inputs before operations to prevent NaN gradients in backward pass
+        safe_input = input.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(~mask, 0.0)
+
+        diff = torch.abs(safe_input - safe_target).masked_fill_(~mask, 0.0)
+
+        if self.reduction == "mean":
+            return diff.sum() / mask.to(input.dtype).sum().clamp_min(1)
+        elif self.reduction == "sum":
+            return diff.sum()
+        else:
+            return diff
 
 
 class LabelDifference(nn.Module):
