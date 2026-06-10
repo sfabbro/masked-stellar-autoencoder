@@ -251,13 +251,20 @@ class RnCLoss(nn.Module):
         exp_logits = exp_logits[mask].view(n, n - 1)
         label_diffs = label_diffs[mask].view(n, n - 1)
 
-        # ⚡ Bolt: Vectorize operations using `.unsqueeze()` to eliminate the Python loop and achieve O(1) execution time.
-        neg_mask = (label_diffs.unsqueeze(1) >= label_diffs.unsqueeze(2)).float()
-        log_sum_exp = torch.log((neg_mask * exp_logits.unsqueeze(1)).sum(dim=-1))
-        pos_log_probs = logits - log_sum_exp
-        loss = -(pos_log_probs / (n * (n - 1))).sum()
+        # ⚡ Bolt: Replaced O(N^3) memory-intensive 3D tensor broadcasting with a memory-efficient loop.
+        # This prevents Out-Of-Memory errors for large batches while maintaining performance.
+        loss = 0.0
+        for i in range(n):
+            neg_mask_i = (
+                label_diffs[i].unsqueeze(0) >= label_diffs[i].unsqueeze(1)
+            ).float()
+            log_sum_exp_i = torch.log(
+                (neg_mask_i * exp_logits[i].unsqueeze(0)).sum(dim=-1)
+            )
+            pos_log_probs_i = logits[i] - log_sum_exp_i
+            loss -= pos_log_probs_i.sum()
 
-        return loss
+        return loss / (n * (n - 1))
 
 
 class EarlyStopping:

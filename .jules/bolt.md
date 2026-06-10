@@ -25,3 +25,7 @@
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
 **Action:** Replace dynamic indexing with full-shape tensor operations like `loss.masked_fill(~mask, 0.0).sum() / mask.sum().clamp_min(1)`. Ensure the mask replacement is out-of-place (e.g. `masked_fill` instead of `masked_fill_`) if in-place modifications trigger autograd errors or undefined behavior in edge cases.
+
+## 2025-06-10 - PyTorch Loss Function OOM Errors
+**Learning:** In PyTorch custom loss functions (like RnCLoss), vectorizing row-wise contrastive metrics using 3D tensor broadcasting (e.g., `label_diffs.unsqueeze(1) >= label_diffs.unsqueeze(2)`) creates an $O(N^3)$ memory footprint. While this eliminates Python loops and is faster for small batches, it causes severe Out-Of-Memory (OOM) errors for larger batches.
+**Action:** When calculating pair-wise metrics where memory scalability is important, replace $O(N^3)$ vectorized broadcasting with a memory-efficient $O(N^2)$ `for` loop that computes the loss incrementally over the batch dimension to avoid OOM issues.
