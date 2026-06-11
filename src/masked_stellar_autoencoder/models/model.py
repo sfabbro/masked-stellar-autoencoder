@@ -254,7 +254,9 @@ class RnCLoss(nn.Module):
         # ⚡ Bolt: Replaced 3D tensor broadcasting with a loop for memory scalability, preventing OOM on large batches.
         loss = 0.0
         for i in range(n):
-            neg_mask = (label_diffs[i].unsqueeze(0) >= label_diffs[i].unsqueeze(1)).float()
+            neg_mask = (
+                label_diffs[i].unsqueeze(0) >= label_diffs[i].unsqueeze(1)
+            ).float()
             log_sum_exp = torch.log((neg_mask * exp_logits[i].unsqueeze(0)).sum(dim=-1))
             pos_log_probs = logits[i] - log_sum_exp
             loss -= (pos_log_probs / (n * (n - 1))).sum()
