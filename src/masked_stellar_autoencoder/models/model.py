@@ -255,8 +255,12 @@ class RnCLoss(nn.Module):
         # using 3D tensor broadcasting to prevent O(N^3) memory footprint and OOM errors for large batches.
         loss = 0.0
         for i in range(n):
-            pos_mask = (label_diffs[i].unsqueeze(0) >= label_diffs[i].unsqueeze(1)).float()
-            log_sum_exp_i = torch.log((pos_mask * exp_logits[i].unsqueeze(0)).sum(dim=-1))
+            pos_mask = (
+                label_diffs[i].unsqueeze(0) >= label_diffs[i].unsqueeze(1)
+            ).float()
+            log_sum_exp_i = torch.log(
+                (pos_mask * exp_logits[i].unsqueeze(0)).sum(dim=-1)
+            )
             pos_log_probs_i = logits[i] - log_sum_exp_i
             loss = loss - pos_log_probs_i.sum()
         loss = loss / (n * (n - 1))
