@@ -125,10 +125,10 @@ class MaskedMSELoss(nn.Module):
         # Compute squared error only where target is not NaN
         masked_error = ((safe_input - safe_target) ** 2).masked_fill_(~mask, 0.0)
 
-        if masked_error.numel() == 0 or mask.sum() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
+        # ⚡ Bolt: removed branching on `mask.sum() == 0` to eliminate
+        # blocking CPU-GPU synchronization, using `.clamp_min(1)` instead.
         if self.reduction == "mean":
-            return masked_error.sum() / mask.sum()
+            return masked_error.sum() / mask.sum().clamp_min(1)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:
@@ -156,10 +156,10 @@ class MaskedMAELoss(nn.Module):
         # Compute absolute error only where target is not NaN
         masked_error = torch.abs(safe_input - safe_target).masked_fill_(~mask, 0.0)
 
-        if masked_error.numel() == 0 or mask.sum() == 0:
-            return torch.tensor(0.0, device=input.device, requires_grad=True)
+        # ⚡ Bolt: removed branching on `mask.sum() == 0` to eliminate
+        # blocking CPU-GPU synchronization, using `.clamp_min(1)` instead.
         if self.reduction == "mean":
-            return masked_error.sum() / mask.sum()
+            return masked_error.sum() / mask.sum().clamp_min(1)
         elif self.reduction == "sum":
             return masked_error.sum()
         else:

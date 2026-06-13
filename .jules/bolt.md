@@ -25,3 +25,7 @@
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
 **Action:** Replace dynamic indexing with full-shape tensor operations like `loss.masked_fill(~mask, 0.0).sum() / mask.sum().clamp_min(1)`. Ensure the mask replacement is out-of-place (e.g. `masked_fill` instead of `masked_fill_`) if in-place modifications trigger autograd errors or undefined behavior in edge cases.
+
+## 2026-05-25 - Avoid data-dependent branching in custom losses
+**Learning:** In PyTorch, conditional branches that evaluate tensor data (e.g., `if mask.sum() == 0:`) force costly Device-to-Host (GPU to CPU) synchronizations, stalling the execution pipeline. This is particularly problematic in tight loops or custom loss functions.
+**Action:** Remove data-dependent conditionals by using unconditionally safe mathematical operations. For example, instead of branching on a zero sum, use `.clamp_min(1)` (or equivalent) in denominators to ensure safe division without blocking CPU-GPU execution.
