@@ -257,8 +257,12 @@ class RnCLoss(nn.Module):
         for i in range(n):
             label_diffs_i = label_diffs[i]
             exp_logits_i = exp_logits[i]
-            neg_mask_i = (label_diffs_i.unsqueeze(0) >= label_diffs_i.unsqueeze(1)).float()
-            log_sum_exp_i = torch.log((neg_mask_i * exp_logits_i.unsqueeze(0)).sum(dim=-1))
+            neg_mask_i = (
+                label_diffs_i.unsqueeze(0) >= label_diffs_i.unsqueeze(1)
+            ).float()
+            log_sum_exp_i = torch.log(
+                (neg_mask_i * exp_logits_i.unsqueeze(0)).sum(dim=-1)
+            )
             pos_log_probs_i = logits[i] - log_sum_exp_i
             loss = loss - (pos_log_probs_i.sum() / (n * (n - 1)))
 
