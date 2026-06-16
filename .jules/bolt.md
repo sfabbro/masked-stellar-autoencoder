@@ -25,3 +25,7 @@
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
 **Action:** Replace dynamic indexing with full-shape tensor operations like `loss.masked_fill(~mask, 0.0).sum() / mask.sum().clamp_min(1)`. Ensure the mask replacement is out-of-place (e.g. `masked_fill` instead of `masked_fill_`) if in-place modifications trigger autograd errors or undefined behavior in edge cases.
+
+## 2026-05-13 - Avoid 3D tensor broadcasting in row-wise contrastive losses
+**Learning:** In PyTorch custom loss functions (e.g., `RnCLoss`), vectorizing row-wise contrastive metrics using 3D tensor broadcasting (e.g., `a.unsqueeze(1) >= b.unsqueeze(2)`) creates an O(N^3) memory footprint. While this eliminates Python loops and is faster for small batches, it causes severe Out-Of-Memory errors for larger batches.
+**Action:** Prioritize memory scalability by using efficient `for` loops instead of high-dimensional multi-tensor broadcasting when evaluating pair-wise or row-wise loss components on batches, especially for components like contrastive loss that evaluate every item against every other item.
