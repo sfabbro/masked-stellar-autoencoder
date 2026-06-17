@@ -19,8 +19,8 @@
 **Action:** When calculating masked reductions (`mean` or `sum`) on tensors, use `.masked_fill(~mask, 0.0)` on the full-shape tensors, compute the error metric, and then apply a sum reduction (e.g., `.sum() / mask.sum().clamp_min(1)`). Crucially, you must sanitize `NaN` values *before* math operations (e.g. `(safe_pred - safe_target)**2`), otherwise `NaN` gradients will propagate during the backward pass even if masked out later. Preserve the original boolean indexing pattern specifically for `reduction="none"` to maintain API shape contracts.
 
 ## 2026-05-12 - Vectorizing PyTorch Custom Losses
-**Learning:** In PyTorch custom loss functions (like RnCLoss), using Python `for` loops for row-wise contrastive metrics results in slow O(n) execution times and loop overhead. Replacing loops with broadcasting using `.unsqueeze()` transforms the operation into a single vectorized O(1) step, dramatically increasing performance.
-**Action:** When implementing contrastive or pairwise loss functions in PyTorch, always evaluate pairs using multi-dimensional broadcasting (e.g., `tensor.unsqueeze(1) - tensor.unsqueeze(2)`) instead of explicit loops over dimension sizes.
+**Learning:** In PyTorch custom loss functions (like RnCLoss), vectorizing row-wise contrastive metrics using 3D tensor broadcasting (e.g., `a.unsqueeze(1) >= b.unsqueeze(2)`) creates an O(N^3) memory footprint. While this eliminates Python loops and is faster for small batches, it causes severe Out-Of-Memory errors for larger batches (e.g., trying to allocate 8GB+ for 2048 elements).
+**Action:** Prioritize memory scalability over loop-removal micro-optimizations. For large row-wise contrastive or pairwise loss computations, use memory-efficient `for` loops with out-of-place accumulations instead of multi-dimensional broadcasting to prevent OOM errors.
 
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
