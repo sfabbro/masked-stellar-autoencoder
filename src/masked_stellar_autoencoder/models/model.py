@@ -638,11 +638,15 @@ class TabResnetWrapper(BaseEstimator):
     def _pert_noise(self, X_batch: Tensor, eX_batch: Tensor) -> Tensor:
         """Gaussian noise scaled by per-feature errors and ``pert_channel_scale``."""
         noise = torch.randn_like(X_batch) * eX_batch * self.pert_scale
-        w = torch.as_tensor(
-            self._pert_channel_scale_np,
-            device=X_batch.device,
-            dtype=noise.dtype,
-        )
+
+        # ⚡ Bolt: Cache tensor allocation to avoid repetitive host-to-device transfers in batch loop
+        if not hasattr(self, "_pert_channel_scale_t"):
+            self._pert_channel_scale_t = torch.as_tensor(
+                self._pert_channel_scale_np,
+                device=X_batch.device,
+            )
+
+        w = self._pert_channel_scale_t.to(device=X_batch.device, dtype=noise.dtype)
         if w.dim() != 1 or w.shape[0] != X_batch.shape[1]:
             raise RuntimeError("pert_channel_scale length must match feature dimension")
         return noise * w.unsqueeze(0)
@@ -1198,7 +1202,10 @@ class TabResnetWrapper(BaseEstimator):
         elif ctx.ftlf in ("mse", "mae"):
             return ctx.criterion(y_batch, y_head)
         elif ctx.ftlf == "quantile":
-            quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            # ⚡ Bolt: Cache quantiles tensor to prevent continuous re-allocation and CPU-GPU syncs
+            if not hasattr(self, "_quantiles_t"):
+                self._quantiles_t = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            quantiles = self._quantiles_t
             sw = (
                 _sigma_pinball_weights(
                     batch[3],

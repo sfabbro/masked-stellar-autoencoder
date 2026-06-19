@@ -33,3 +33,7 @@
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
 **Action:** Replace dynamic indexing with full-shape tensor operations like `loss.masked_fill(~mask, 0.0).sum() / mask.sum().clamp_min(1)`. Ensure the mask replacement is out-of-place (e.g. `masked_fill` instead of `masked_fill_`) if in-place modifications trigger autograd errors or undefined behavior in edge cases.
+
+## 2024-05-18 - Caching Tensors in Training Loops
+**Learning:** Repetitive creation of static PyTorch tensors (e.g., `torch.tensor([0.16, 0.5, 0.84], device=device)` or `torch.as_tensor(numpy_array, device=device)`) within high-frequency batch loops introduces significant hidden performance overhead. Although the tensors are small, passing the `device` argument forces CPU-to-GPU memory transfers and causes blocking CPU-GPU synchronization, drastically slowing down training steps (benchmarked ~130x slower than cached execution).
+**Action:** Always eagerly instantiate and cache static constant tensors as class attributes (e.g., `_quantiles_t`) during setup, or lazy-load them on the first pass (e.g., `if not hasattr(...)`), then reuse the cached tensor during batch iterations.
