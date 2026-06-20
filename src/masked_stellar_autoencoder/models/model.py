@@ -635,14 +635,21 @@ class TabResnetWrapper(BaseEstimator):
         except ValueError:
             self.parallax_feature_idx = None
 
+    @property
+    def _pert_channel_scale_tensor(self):
+        # ⚡ Bolt: Cache static tensor to prevent repetitive host-to-device transfers and CPU-GPU syncs
+        if not hasattr(self, "_pert_channel_scale_cached"):
+            self._pert_channel_scale_cached = torch.as_tensor(
+                self._pert_channel_scale_np,
+                device=self.device,
+                dtype=torch.float32,
+            )
+        return self._pert_channel_scale_cached
+
     def _pert_noise(self, X_batch: Tensor, eX_batch: Tensor) -> Tensor:
         """Gaussian noise scaled by per-feature errors and ``pert_channel_scale``."""
         noise = torch.randn_like(X_batch) * eX_batch * self.pert_scale
-        w = torch.as_tensor(
-            self._pert_channel_scale_np,
-            device=X_batch.device,
-            dtype=noise.dtype,
-        )
+        w = self._pert_channel_scale_tensor.to(device=X_batch.device, dtype=noise.dtype)
         if w.dim() != 1 or w.shape[0] != X_batch.shape[1]:
             raise RuntimeError("pert_channel_scale length must match feature dimension")
         return noise * w.unsqueeze(0)
@@ -1192,13 +1199,20 @@ class TabResnetWrapper(BaseEstimator):
             parallax_masked[:, indicator_idx] = 1.0
         return parallax_masked
 
+    @property
+    def _quantiles_tensor(self):
+        # ⚡ Bolt: Cache static tensor to prevent repetitive host-to-device transfers and CPU-GPU syncs
+        if not hasattr(self, "_quantiles_cached"):
+            self._quantiles_cached = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+        return self._quantiles_cached
+
     def _compute_base_loss(self, y_batch, y_head, batch, ctx: FinetuneContext):
         if ctx.ftlf in ("wmse", "wgnll"):
             return ctx.criterion(y_batch, y_head, 1 / (batch[3] + 1e-5) ** 2)
         elif ctx.ftlf in ("mse", "mae"):
             return ctx.criterion(y_batch, y_head)
         elif ctx.ftlf == "quantile":
-            quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            quantiles = self._quantiles_tensor
             sw = (
                 _sigma_pinball_weights(
                     batch[3],
