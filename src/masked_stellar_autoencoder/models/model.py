@@ -1244,9 +1244,18 @@ class TabResnetWrapper(BaseEstimator):
         mle_mask = (
             (~torch.isnan(mu_phot)) & (~torch.isnan(pi_gaia)) & (~torch.isnan(var))
         )
-        if mle_mask.any():
-            return (((mu_phot - pi_gaia) ** 2) / (var + 1e-8))[mle_mask].mean()
-        return 0
+
+        # ⚡ Bolt: Replace dynamic boolean indexing with nan_to_num and masked_fill to avoid CPU-GPU syncs
+        safe_mu_phot = torch.nan_to_num(mu_phot, nan=0.0)
+        safe_pi_gaia = torch.nan_to_num(pi_gaia, nan=0.0)
+        safe_var = torch.nan_to_num(var, nan=1.0)
+
+        return (
+            (((safe_mu_phot - safe_pi_gaia) ** 2) / (safe_var + 1e-8))
+            .masked_fill(~mle_mask, 0.0)
+            .sum()
+            / mle_mask.sum().clamp_min(1)
+        )
 
     def _apply_parallax_masked_forward(
         self, X_masked, y_batch, y_raw, ctx: FinetuneContext
