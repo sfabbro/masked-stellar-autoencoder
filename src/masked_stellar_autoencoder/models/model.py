@@ -427,9 +427,14 @@ def quantile_loss(
     mask = ~torch.isnan(target)
     target_expanded = target.unsqueeze(2).expand_as(preds)
     quantiles = quantiles.view(1, 1, -1)
-    error = target_expanded - preds
+
+    # ⚡ Bolt: Sanitize NaN targets to 0.0 out-of-place to prevent NaN propagation to gradients
+    mask_expanded = mask.unsqueeze(2).expand_as(preds)
+    safe_target = target_expanded.masked_fill(~mask_expanded, 0.0)
+
+    error = safe_target - preds
     loss = torch.max((quantiles - 1) * error, quantiles * error)
-    mask_expanded = mask.unsqueeze(2).expand_as(loss)
+
     w_eff = mask_expanded.to(dtype=loss.dtype)
     if label_weights is not None:
         w_lab = (
@@ -450,7 +455,8 @@ def quantile_loss(
         return loss.masked_fill(
             ~mask_expanded, 0.0
         ).sum() / mask_expanded.sum().clamp_min(1)
-    return (loss * w_eff).sum() / w_eff.sum().clamp_min(1e-8)
+
+    return (loss.masked_fill(~mask_expanded, 0.0) * w_eff).sum() / w_eff.sum().clamp_min(1e-8)
 
 
 def _sigma_pinball_weights(
@@ -1198,7 +1204,9 @@ class TabResnetWrapper(BaseEstimator):
         elif ctx.ftlf in ("mse", "mae"):
             return ctx.criterion(y_batch, y_head)
         elif ctx.ftlf == "quantile":
-            quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            if getattr(self, "_quantiles", None) is None:
+                self._quantiles = torch.tensor([0.16, 0.5, 0.84], device=self.device)
+            quantiles = self._quantiles
             sw = (
                 _sigma_pinball_weights(
                     batch[3],

@@ -33,3 +33,11 @@
 ## 2026-05-14 - Avoid dynamic boolean indexing in quantile loss
 **Learning:** In PyTorch, using dynamic-shape boolean indexing like `loss[mask].mean()` forces device-to-host synchronization, causing massive slowdowns in tight loops or custom loss functions.
 **Action:** Replace dynamic indexing with full-shape tensor operations like `loss.masked_fill(~mask, 0.0).sum() / mask.sum().clamp_min(1)`. Ensure the mask replacement is out-of-place (e.g. `masked_fill` instead of `masked_fill_`) if in-place modifications trigger autograd errors or undefined behavior in edge cases.
+
+## 2026-05-26 - PyTorch dynamic tensor creation overhead
+**Learning:** Repetitive creation of static PyTorch tensors (e.g., `torch.tensor([0.16, 0.5, 0.84], device=device)`) inside high-frequency execution paths (like loss calculations inside a training loop) introduces significant hidden performance overhead.
+**Action:** When a constant tensor is needed inside a loop or high-frequency function, cache the tensor (e.g., as a class attribute or using lazy initialization `if getattr(self, '_t', None) is None: self._t = torch.tensor(...)`) instead of repeatedly re-instantiating it.
+
+## 2026-05-27 - NaN propagation during backward pass from masked values
+**Learning:** When using out-of-place mask filling to avoid dynamic boolean indexing, if a tensor contains NaNs (like `target`), calculating intermediate variables (e.g., `error = target - preds`) *before* applying the mask will result in NaNs flowing backward into the gradients, even if the forward loss is correctly masked.
+**Action:** Always sanitize tensors containing potential NaNs using `.masked_fill(~mask, 0.0)` *before* any mathematical operations are applied to them, to prevent NaN gradient propagation.
