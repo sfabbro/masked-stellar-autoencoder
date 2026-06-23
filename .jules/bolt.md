@@ -45,3 +45,6 @@
 ## 2025-05-26 - Optimize Parallax MLE Loss
 **Learning:** Dynamic boolean indexing in the parallax MLE loss calculation (`[mle_mask].mean()`) creates CPU-GPU sync overhead, just like in the general loss functions.
 **Action:** Replaced dynamic boolean indexing with `nan_to_num` for sanitization and `masked_fill(~mle_mask, 0.0)` followed by a sum reduction to avoid CPU-GPU syncs.
+## 2026-05-28 - Eliminating Redundant Tensor Allocations in Masked Losses
+**Learning:** In PyTorch loss functions, when replacing boolean indexing with full-shape tensor operations and `.masked_fill_`, avoid creating intermediate full-shape tensors for both inputs. Applying `.masked_fill_` directly to the resulting difference (`diff = input - target; diff.masked_fill_(~mask, 0.0)`) prevents redundant memory allocations and improves performance without breaking autograd.
+**Action:** When calculating masked differences, compute the difference first and mask it in-place instead of masking both inputs separately.

@@ -49,14 +49,13 @@ class MaskedGaussianNLLLoss(nn.Module):
             )
 
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_pred_mean = pred_mean.masked_fill(~mask, 0.0)
-        safe_target = target.masked_fill(~mask, 0.0)
+        diff = pred_mean - target
+        diff_squared = diff.masked_fill_(~mask, 0.0) ** 2
 
         var = pred_var.clamp(min=self.eps).masked_fill_(~mask, 1.0)
         obs_var = target_var.clamp(min=self.eps).masked_fill_(~mask, 1.0)
 
         err = var + obs_var
-        diff_squared = (safe_pred_mean - safe_target) ** 2
 
         # Compute Gaussian NLL
         nll = 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
@@ -89,11 +88,11 @@ class WeightedMaskedMSELoss(nn.Module):
             return ((masked_input - masked_target) ** 2) * masked_weights
 
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_input = input.masked_fill(~mask, 0.0)
-        safe_target = target.masked_fill(~mask, 0.0)
+        diff = input - target
+        masked_error = diff.masked_fill_(~mask, 0.0) ** 2
         safe_weights = weight.masked_fill(~mask, 0.0)
 
-        masked_error = ((safe_input - safe_target) ** 2) * safe_weights
+        masked_error = masked_error * safe_weights
 
         if self.reduction == "mean":
             return masked_error.sum() / (safe_weights.sum() + self.eps)
@@ -118,11 +117,10 @@ class MaskedMSELoss(nn.Module):
             return (masked_input - masked_target) ** 2
 
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_input = input.masked_fill(~mask, 0.0)
-        safe_target = target.masked_fill(~mask, 0.0)
+        diff = input - target
 
         # Compute squared error only where target is not NaN
-        masked_error = ((safe_input - safe_target) ** 2).masked_fill_(~mask, 0.0)
+        masked_error = diff.masked_fill_(~mask, 0.0) ** 2
 
         if self.reduction == "mean":
             return masked_error.sum() / mask.sum().clamp_min(1)
@@ -147,11 +145,10 @@ class MaskedMAELoss(nn.Module):
             return torch.abs(masked_input - masked_target)
 
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_input = input.masked_fill(~mask, 0.0)
-        safe_target = target.masked_fill(~mask, 0.0)
+        diff = input - target
 
         # Compute absolute error only where target is not NaN
-        masked_error = torch.abs(safe_input - safe_target).masked_fill_(~mask, 0.0)
+        masked_error = torch.abs(diff.masked_fill_(~mask, 0.0))
 
         if self.reduction == "mean":
             return masked_error.sum() / mask.sum().clamp_min(1)
