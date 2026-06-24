@@ -45,3 +45,7 @@
 ## 2025-05-26 - Optimize Parallax MLE Loss
 **Learning:** Dynamic boolean indexing in the parallax MLE loss calculation (`[mle_mask].mean()`) creates CPU-GPU sync overhead, just like in the general loss functions.
 **Action:** Replaced dynamic boolean indexing with `nan_to_num` for sanitization and `masked_fill(~mle_mask, 0.0)` followed by a sum reduction to avoid CPU-GPU syncs.
+
+## 2026-06-03 - Avoid `torch.Tensor(x).to(device)` for initial allocation
+**Learning:** Using `torch.Tensor(x).to(device)` or `torch.from_numpy(x).to(device)` to allocate inputs on a GPU creates an intermediate CPU tensor first and incurs a CPU-GPU transfer overhead.
+**Action:** Always instantiate tensors directly on the target device using `torch.as_tensor(x, device=device)` or `torch.tensor(x, device=device)`. This prevents redundant memory allocations and CPU-GPU synchronization overhead.

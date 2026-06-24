@@ -777,7 +777,7 @@ class TabResnetWrapper(BaseEstimator):
             if np.any(np.isnan(eX)) or np.any(np.isinf(eX)):
                 print(f"Warning: Invalid values in errors for key '{key}'")
 
-            return torch.Tensor(X).to(self.device), torch.Tensor(eX).to(self.device)
+            return torch.as_tensor(X, device=self.device, dtype=torch.float32), torch.as_tensor(eX, device=self.device, dtype=torch.float32)
 
         except Exception as e:
             raise RuntimeError(f"Error loading data for key '{key}': {e}")
@@ -1480,7 +1480,7 @@ class TabResnetWrapper(BaseEstimator):
         self, X_train, eX_train, y_train, e_y_train, mini_batch
     ):
         tensors = [
-            torch.Tensor(arr).to(self.device)
+            torch.as_tensor(arr, device=self.device, dtype=torch.float32)
             for arr in (X_train, eX_train, y_train, e_y_train)
         ]
         dataset = TensorDataset(*tensors)
@@ -1771,12 +1771,12 @@ class TabResnetWrapper(BaseEstimator):
 
         val_loss = 0
         X_val, eX_val = (
-            torch.Tensor(X_val).to(self.device),
-            torch.Tensor(eX_val).to(self.device),
+            torch.as_tensor(X_val, device=self.device, dtype=torch.float32),
+            torch.as_tensor(eX_val, device=self.device, dtype=torch.float32),
         )
         y_val, e_y_val = (
-            torch.Tensor(y_val).to(self.device),
-            torch.Tensor(e_y_val).to(self.device),
+            torch.as_tensor(y_val, device=self.device, dtype=torch.float32),
+            torch.as_tensor(e_y_val, device=self.device, dtype=torch.float32),
         )
         rdataset = TensorDataset(X_val, eX_val, y_val, e_y_val)
         val_loader = DataLoader(rdataset, batch_size=mini_batch, shuffle=True)
