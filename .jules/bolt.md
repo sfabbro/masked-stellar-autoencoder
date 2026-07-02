@@ -57,3 +57,7 @@
 ## 2026-06-26 - Avoid multiple intermediate boolean tensor allocations in high-frequency batch loops
 **Learning:** Creating multiple intermediate boolean tensors (like `mask_random` and `mask_fixed`) during high-frequency data augmentation steps causes unnecessary memory allocation overhead.
 **Action:** Pre-allocate a single combined boolean tensor and assign values directly to its slices instead of allocating multiple intermediate masks and combining them with bitwise operators.
+
+## 2026-07-10 - Avoid PyTorch boolean floatcasting with expand_as and masked_fill
+**Learning:** In PyTorch, using native boolean broadcasting multiplication (`mask.float() * tensor`) implicitly allocates an intermediate tensor. We found it consumes more memory and is slower on some devices. We can avoid this allocation by using `.masked_fill(~mask, 0.0)`. However, if the source tensor has a smaller broadcastable shape than the mask, applying `.masked_fill` directly throws an error.
+**Action:** Apply `.expand_as(mask)` before `.masked_fill(~mask, 0.0)` to ensure correct shape broadcasting without allocating new memory, avoiding the `.float()` casting overhead.
