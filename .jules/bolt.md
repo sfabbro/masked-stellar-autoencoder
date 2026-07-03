@@ -57,3 +57,7 @@
 ## 2026-06-26 - Avoid multiple intermediate boolean tensor allocations in high-frequency batch loops
 **Learning:** Creating multiple intermediate boolean tensors (like `mask_random` and `mask_fixed`) during high-frequency data augmentation steps causes unnecessary memory allocation overhead.
 **Action:** Pre-allocate a single combined boolean tensor and assign values directly to its slices instead of allocating multiple intermediate masks and combining them with bitwise operators.
+
+## 2026-06-27 - Implicit casting allocation in PyTorch loops
+**Learning:** Using boolean-to-float implicit casting and element-wise multiplication like `(mask.float() * tensor)` inside high-frequency PyTorch loops or custom loss functions leads to unnecessary memory allocations and implicit intermediate tensor creations.
+**Action:** Replace `mask.float() * tensor` with out-of-place mask filling `tensor.expand_as(mask).masked_fill(~mask, 0.0)` to perform zero-masking efficiently, especially in recurrent or looped custom losses.
