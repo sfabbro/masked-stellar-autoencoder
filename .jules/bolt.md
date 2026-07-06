@@ -57,3 +57,7 @@
 ## 2026-06-26 - Avoid multiple intermediate boolean tensor allocations in high-frequency batch loops
 **Learning:** Creating multiple intermediate boolean tensors (like `mask_random` and `mask_fixed`) during high-frequency data augmentation steps causes unnecessary memory allocation overhead.
 **Action:** Pre-allocate a single combined boolean tensor and assign values directly to its slices instead of allocating multiple intermediate masks and combining them with bitwise operators.
+
+## 2026-06-27 - Delay unneeded float tensor allocations in loss function fast-paths
+**Learning:** In PyTorch, allocating a full-batch float mask tensor (e.g., `mask.to(dtype=loss.dtype)`) unconditionally before a fast-path early return creates significant memory allocation overhead, even when weights are unused.
+**Action:** Always move conditional fast-paths that do not require weights (e.g., `if label_weights is None and sample_weight is None: return ...`) *above* the instantiation of such float tensors to prevent unnecessary memory allocations and improve execution speed.
