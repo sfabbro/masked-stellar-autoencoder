@@ -65,3 +65,7 @@
 ## 2026-06-27 - Delay unneeded float tensor allocations in loss function fast-paths
 **Learning:** In PyTorch, allocating a full-batch float mask tensor (e.g., `mask.to(dtype=loss.dtype)`) unconditionally before a fast-path early return creates significant memory allocation overhead, even when weights are unused.
 **Action:** Always move conditional fast-paths that do not require weights (e.g., `if label_weights is None and sample_weight is None: return ...`) *above* the instantiation of such float tensors to prevent unnecessary memory allocations and improve execution speed.
+
+## 2026-06-27 - Avoid casting full-shape boolean tensors to float before reduction
+**Learning:** In PyTorch, casting a full-shape boolean mask to float before reducing it (e.g., `mask.to(dtype).sum()`) unconditionally allocates a new float tensor of the same size, which incurs significant memory allocation overhead.
+**Action:** Delay the cast until after the reduction. Sum the boolean tensor first, then explicitly cast the resulting scalar/small tensor to float before applying operations that require matching types (e.g., `mask.sum().to(dtype).clamp_min(eps)`). This avoids allocating a large intermediate float tensor.
