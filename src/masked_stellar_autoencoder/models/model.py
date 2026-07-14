@@ -376,7 +376,8 @@ class EncoderDecoderLoss(nn.Module):
 
         # Mean squared (or absolute) error over masked elements only — avoids
         # per-column divisors that up-weight rarely masked features in a batch.
-        denom = mask.to(dtype=reconstruction_errors.dtype).sum().clamp_min(self.eps)
+        # ⚡ Bolt: Sum the boolean mask first to avoid allocating a full-shape float tensor, saving memory and time.
+        denom = mask.sum().to(dtype=reconstruction_errors.dtype).clamp_min(self.eps)
         loss = reconstruction_errors.sum() / denom
 
         return loss
