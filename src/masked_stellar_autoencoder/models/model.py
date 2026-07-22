@@ -264,8 +264,8 @@ class RnCLoss(nn.Module):
                 row_label_diffs.unsqueeze(0) >= row_label_diffs.unsqueeze(1)
             ).to(exp_logits.dtype)
             row_log_sum_exp = torch.log(torch.mv(row_neg_mask, exp_logits[i]))
-            row_pos_log_probs = logits[i] - row_log_sum_exp
-            loss = loss - row_pos_log_probs.sum() / (n * (n - 1))
+            # ⚡ Bolt: Compute sum of difference as difference of sums to avoid intermediate tensor allocation
+            loss = loss - (logits[i].sum() - row_log_sum_exp.sum()) / (n * (n - 1))
 
         return loss
 
@@ -450,21 +450,21 @@ def quantile_loss(
     from scaled label uncertainties; combined multiplicatively with ``label_weights``.
     """
     mask = ~torch.isnan(target)
-    target_expanded = target.unsqueeze(2).expand_as(preds)
     quantiles = quantiles.view(1, 1, -1)
 
+    # ⚡ Bolt: Exploit automatic broadcasting to prevent allocating full-shape intermediate tensors for target and mask
     # ⚡ Bolt: Sanitize NaN targets to 0.0 out-of-place to prevent NaN propagation to gradients
-    mask_expanded = mask.unsqueeze(2).expand_as(preds)
-    safe_target = target_expanded.masked_fill(~mask_expanded, 0.0)
+    safe_target = target.masked_fill(~mask, 0.0).unsqueeze(2)
+    mask_unsq = mask.unsqueeze(2)
 
     error = safe_target - preds
     loss = torch.max((quantiles - 1) * error, quantiles * error)
 
     if label_weights is None and sample_weight is None:
         # ⚡ Bolt: Replace dynamic boolean indexing with out-of-place masked_fill for ~2x faster execution and lower memory usage
-        return loss.masked_fill(
-            ~mask_expanded, 0.0
-        ).sum() / mask_expanded.sum().clamp_min(1)
+        return loss.masked_fill(~mask_unsq, 0.0).sum() / (
+            mask.sum().clamp_min(1) * preds.shape[2]
+        )
 
     # ⚡ Bolt: Delay allocation of float mask tensor until after unweighted fast-path
     # ⚡ Bolt: Avoid allocating full-shape w_eff if possible and apply masking directly
@@ -478,14 +478,15 @@ def quantile_loss(
 
     if w_eff is None:
         # Fallback if unweighted path is somehow skipped
-        w_eff = mask_expanded.to(dtype=loss.dtype)
+        w_eff_sum = mask.sum().to(dtype=loss.dtype) * preds.shape[2]
+        return loss.masked_fill(~mask_unsq, 0.0).sum() / w_eff_sum.clamp_min(1e-8)
     else:
         # Mask the weights so invalid entries don't contribute to the denominator
-        w_eff = w_eff.expand_as(loss).masked_fill(~mask_expanded, 0.0)
+        w_eff = w_eff.expand_as(loss).masked_fill(~mask_unsq, 0.0)
 
-    return (
-        loss.masked_fill(~mask_expanded, 0.0) * w_eff
-    ).sum() / w_eff.sum().clamp_min(1e-8)
+    return (loss.masked_fill(~mask_unsq, 0.0) * w_eff).sum() / w_eff.sum().clamp_min(
+        1e-8
+    )
 
 
 def _sigma_pinball_weights(
