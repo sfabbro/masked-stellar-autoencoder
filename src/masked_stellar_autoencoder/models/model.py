@@ -49,15 +49,18 @@ class MaskedGaussianNLLLoss(nn.Module):
                 2 * math.pi
             )
 
-        # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_target = target.masked_fill(~mask, 0.0)
+        # ⚡ Bolt: Pre-compute inverse mask to avoid redundant full-shape boolean tensor allocations
+        inv_mask = ~mask
 
-        var = pred_var.clamp(min=self.eps).masked_fill_(~mask, 1.0)
-        obs_var = target_var.clamp(min=self.eps).masked_fill_(~mask, 1.0)
+        # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
+        safe_target = target.masked_fill(inv_mask, 0.0)
+
+        var = pred_var.clamp(min=self.eps).masked_fill_(inv_mask, 1.0)
+        obs_var = target_var.clamp(min=self.eps).masked_fill_(inv_mask, 1.0)
 
         err = var + obs_var
         diff = pred_mean - safe_target
-        diff.masked_fill_(~mask, 0.0)
+        diff.masked_fill_(inv_mask, 0.0)
         # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
         diff_squared = diff * diff
 
@@ -65,7 +68,7 @@ class MaskedGaussianNLLLoss(nn.Module):
         nll = 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
             2 * math.pi
         )
-        nll = nll.masked_fill_(~mask, 0.0)
+        nll = nll.masked_fill_(inv_mask, 0.0)
 
         if self.reduction == "mean":
             return nll.sum() / mask.sum().clamp_min(1)
@@ -93,12 +96,15 @@ class WeightedMaskedMSELoss(nn.Module):
             diff_w = masked_input - masked_target
             return (diff_w * diff_w) * masked_weights
 
+        # ⚡ Bolt: Pre-compute inverse mask to avoid redundant full-shape boolean tensor allocations
+        inv_mask = ~mask
+
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_target = target.masked_fill(~mask, 0.0)
-        safe_weights = weight.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(inv_mask, 0.0)
+        safe_weights = weight.masked_fill(inv_mask, 0.0)
 
         diff = input - safe_target
-        diff.masked_fill_(~mask, 0.0)
+        diff.masked_fill_(inv_mask, 0.0)
 
         # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
         masked_error = (diff * diff) * safe_weights
@@ -125,12 +131,15 @@ class MaskedMSELoss(nn.Module):
             masked_target = target[mask]
             return (masked_input - masked_target) ** 2
 
+        # ⚡ Bolt: Pre-compute inverse mask to avoid redundant full-shape boolean tensor allocations
+        inv_mask = ~mask
+
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_target = target.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(inv_mask, 0.0)
 
         # Compute squared error only where target is not NaN
         diff = input - safe_target
-        diff.masked_fill_(~mask, 0.0)
+        diff.masked_fill_(inv_mask, 0.0)
         # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
         masked_error = diff * diff
 
@@ -156,12 +165,15 @@ class MaskedMAELoss(nn.Module):
             masked_target = target[mask]
             return torch.abs(masked_input - masked_target)
 
+        # ⚡ Bolt: Pre-compute inverse mask to avoid redundant full-shape boolean tensor allocations
+        inv_mask = ~mask
+
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
-        safe_target = target.masked_fill(~mask, 0.0)
+        safe_target = target.masked_fill(inv_mask, 0.0)
 
         # Compute absolute error only where target is not NaN
         diff = input - safe_target
-        masked_error = torch.abs(diff.masked_fill_(~mask, 0.0))
+        masked_error = torch.abs(diff.masked_fill_(inv_mask, 0.0))
 
         if self.reduction == "mean":
             return masked_error.sum() / mask.sum().clamp_min(1)
@@ -363,9 +375,12 @@ class EncoderDecoderLoss(nn.Module):
         >>> res = loss(x_true, x_pred, mask)
         """
 
+        # ⚡ Bolt: Pre-compute inverse boolean mask to prevent intermediate memory allocations
+        inv_mask = ~mask.bool()
+
         # Correctly apply mask to errors before squaring
         # ⚡ Bolt: Replaced torch.where with .masked_fill_ for ~50% faster in-place execution and lower memory usage
-        errors = (x_pred - x_true).masked_fill_(~mask.bool(), 0.0)
+        errors = (x_pred - x_true).masked_fill_(inv_mask, 0.0)
         if self.cost == "mse":
             # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
             reconstruction_errors = errors * errors
@@ -387,7 +402,7 @@ class EncoderDecoderLoss(nn.Module):
         elif self.cost == "gnll":
             if logvar is None:
                 raise ValueError("logvar required for gnll loss")
-            lv = logvar.masked_fill_(~mask.bool(), 0.0)
+            lv = logvar.masked_fill_(inv_mask, 0.0)
             # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
             reconstruction_errors = 0.5 * (lv + errors * errors / (lv.exp() + self.eps))
 
@@ -766,7 +781,10 @@ class TabResnetWrapper(BaseEstimator):
         )
 
         # apply masks
-        X_masked.masked_fill_(~nan_mask | combined_mask, -9999)
+        # ⚡ Bolt: Apply masks sequentially to avoid allocating an intermediate boolean tensor from bitwise OR
+        inv_nan = ~nan_mask
+        X_masked.masked_fill_(inv_nan, -9999)
+        X_masked.masked_fill_(combined_mask, -9999)
 
         return X_masked, combined_mask, nan_mask
 
