@@ -44,7 +44,9 @@ class MaskedGaussianNLLLoss(nn.Module):
             var = pred_var.clamp(min=self.eps)
             obs_var = target_var.clamp(min=self.eps)
             err = var + obs_var
-            diff_squared = (pred_mean - target) ** 2
+            # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
+            diff = pred_mean - target
+            diff_squared = diff * diff
             return 0.5 * (torch.log(err) + (diff_squared / err)) + 0.5 * math.log(
                 2 * math.pi
             )
@@ -123,7 +125,9 @@ class MaskedMSELoss(nn.Module):
         if self.reduction == "none":
             masked_input = input[mask]
             masked_target = target[mask]
-            return (masked_input - masked_target) ** 2
+            # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
+            diff = masked_input - masked_target
+            return diff * diff
 
         # ⚡ Bolt: Use .masked_fill instead of boolean indexing for performance
         safe_target = target.masked_fill(~mask, 0.0)
