@@ -89,3 +89,7 @@
 ## 2026-10-27 - Optimize `.expand_as()` in weighted loss reductions
 **Learning:** Explicitly expanding lower-dimensional weight tensors (e.g., `w_eff.expand_as(loss)`) before applying `.masked_fill` and `.sum()` creates a full-shape intermediate tensor, wasting memory and allocation time. However, simply removing `.expand_as` breaks the denominator reduction because the unexpanded tensor has fewer elements.
 **Action:** To avoid allocating the intermediate expanded tensor while preserving mathematical correctness, apply `.masked_fill` on the smaller unexpanded tensor, rely on native automatic broadcasting for the numerator element-wise multiplication, and explicitly multiply the denominator's `.sum()` by the size of the omitted broadcast dimension (e.g., `w_eff.sum() * C`).
+
+## 2026-10-28 - Pre-compute inverse masks and use sequential masking
+**Learning:** Repeatedly evaluating `~mask` or combining boolean tensors with bitwise operators (like `~nan_mask | combined_mask`) directly inside the argument list of `.masked_fill()` or `.masked_fill_()` forces PyTorch to allocate a new full-shape intermediate boolean tensor.
+**Action:** Pre-compute the inverse mask (e.g., `inv_mask = ~mask`) and reuse it across multiple `.masked_fill()` calls. For combining masks, apply multiple `.masked_fill_()` sequentially (e.g., `.masked_fill_(~mask_a, val).masked_fill_(mask_b, val)`) instead of using bitwise OR to minimize memory allocation overhead.
