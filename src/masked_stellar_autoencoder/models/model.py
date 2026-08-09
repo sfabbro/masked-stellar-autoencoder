@@ -470,11 +470,15 @@ def quantile_loss(
     inv_mask_unsq = inv_mask.unsqueeze(2)
 
     error = safe_target - preds
-    loss = torch.max((quantiles - 1) * error, quantiles * error)
+    # ⚡ Bolt: Mask the error in-place to avoid propagating NaNs in backward and enable loss masking optimization
+    error.masked_fill_(inv_mask_unsq, 0.0)
+
+    # ⚡ Bolt: Replace torch.max with equivalent math to avoid allocating two intermediate tensors
+    loss = error * quantiles - error.clamp_max(0.0)
 
     if label_weights is None and sample_weight is None:
         # ⚡ Bolt: Replace dynamic boolean indexing with out-of-place masked_fill for ~2x faster execution and lower memory usage
-        return loss.masked_fill(inv_mask_unsq, 0.0).sum() / (
+        return loss.sum() / (
             mask.sum().to(dtype=loss.dtype).clamp_min(1.0) * preds.shape[2]
         )
 
@@ -491,15 +495,13 @@ def quantile_loss(
     if w_eff is None:
         # Fallback if unweighted path is somehow skipped
         w_eff_sum = mask.sum().to(dtype=loss.dtype) * preds.shape[2]
-        return loss.masked_fill(inv_mask_unsq, 0.0).sum() / w_eff_sum.clamp_min(1e-8)
+        return loss.sum() / w_eff_sum.clamp_min(1e-8)
     else:
         # Mask the weights so invalid entries don't contribute to the denominator
         # ⚡ Bolt: Exploit automatic broadcasting and multiply the denominator by the broadcast dimension (preds.shape[2]) to avoid allocating a full-shape intermediate tensor for w_eff
         w_eff = w_eff.masked_fill(inv_mask_unsq, 0.0)
 
-    return (loss.masked_fill(inv_mask_unsq, 0.0) * w_eff).sum() / (
-        w_eff.sum() * preds.shape[2]
-    ).clamp_min(1e-8)
+    return (loss * w_eff).sum() / (w_eff.sum() * preds.shape[2]).clamp_min(1e-8)
 
 
 def _sigma_pinball_weights(
