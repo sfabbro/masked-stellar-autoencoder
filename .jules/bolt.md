@@ -96,3 +96,7 @@
 ## 2026-10-29 - Avoid casting int64 to float implicitly in PyTorch clamp_min
 **Learning:** PyTorch sometimes throws runtime errors when calling `.clamp_min(float_val)` directly on an `int64` tensor resulting from a boolean mask sum without explicit casting to a float dtype, depending on the execution context (like GPU execution).
 **Action:** Always call `.to(dtype)` to explicitly cast the integer scalar/reduced result of `mask.sum()` to a float tensor before chaining operations like `.clamp_min(eps)` that require float arguments to ensure robustness and prevent runtime errors.
+
+## 2026-10-30 - Optimize multiple allocating expressions with mathematical equivalents in max
+**Learning:** In PyTorch, using `torch.max((quantiles - 1) * error, quantiles * error)` allocates multiple intermediate tensors for the multiplications and subtractions before computing the max.
+**Action:** Replace `torch.max((quantiles - 1) * error, quantiles * error)` with the mathematical equivalent `error * quantiles - error.clamp_max(0.0)` which requires fewer allocations and speeds up execution significantly, especially during the backward pass.
