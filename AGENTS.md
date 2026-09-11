@@ -25,3 +25,10 @@ Pixi (`[tool.pixi]`). Prefer `pixi install` / `pixi run` over ad-hoc
 
 Use the repo's documented pixi/pytest entrypoints when present. Leave one
 small runnable check for non-trivial logic changes.
+
+## Env hygiene
+
+- Prefer `pixi run` / `pixi run python` over bare `python3` when Pixi exists.
+- Never `pip install --user` or install into `~/.local` / `$HOME/.local` (esp. CANFAR `/arc/home`).
+- Headless/batch: `export PYTHONNOUSERSITE=1` and `unset PYTHONPATH`.
+- On CANFAR: read skill `canfar-lab-workflow` (mounts, quotas, resources, headless, ports).
