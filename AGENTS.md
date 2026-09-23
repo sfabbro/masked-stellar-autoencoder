@@ -26,6 +26,11 @@ Pixi (`[tool.pixi]`). Prefer `pixi install` / `pixi run` over ad-hoc
 Use the repo's documented pixi/pytest entrypoints when present. Leave one
 small runnable check for non-trivial logic changes.
 
+The stellar-parameter pipeline is `masked_stellar_autoencoder.pipeline`
+([docs/pipeline.md](docs/pipeline.md)). Check it with
+`pixi run pytest tests/test_pipeline.py -q`. The original `training/` scripts
+are a separate path. Do not push this fork to `upstream`.
+
 ## Env hygiene
 
 - Prefer `pixi run` / `pixi run python` over bare `python3` when Pixi exists.

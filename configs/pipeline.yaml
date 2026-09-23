@@ -1,0 +1,21 @@
+# Stellar-parameter pipeline. Column names live in the registry, not in this file.
+# flux_state: raw coefficients get one Pogson division. already_scaled skips it.
+flux_state: raw
+g_ref: 8.5
+n_bp: 55
+n_rp: 55
+quantiles: [0.16, 0.5, 0.84]
+recon_weight: 0.1
+encoder_weight_decay: 0.0
+freeze_epochs: 2
+encoder_lr: 1.0e-5
+head_lr: 1.0e-3
+cqr_alpha: 0.32
+joint_coverage_minimum: 0.9
+reservoir_rows: 1000000
+mask:
+  span: 4
+  p_span: 0.8
+  p_drop_bp: 0.05
+  p_drop_rp: 0.05
+  p_drop_both: 0.05

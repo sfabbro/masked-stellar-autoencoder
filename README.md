@@ -72,6 +72,19 @@ python training/pretrain_msa.py --config configs/pretrain.yaml
 ```bash
 python training/finetune_msa.py --config configs/finetune.yaml
 ```
+
+### Stellar-parameter pipeline
+
+The restart is `masked_stellar_autoencoder.pipeline`. It keeps the commands above. See [docs/pipeline.md](docs/pipeline.md) for the scaling, missing-data, and checkpoint contract.
+
+```bash
+pixi run pytest tests/test_pipeline.py -q
+pixi run python -m masked_stellar_autoencoder.pipeline.train \
+  --config configs/pipeline.yaml --data /path/to/table.h5
+```
+
+The CLI counts stars in a named HDF table. It does not train.
+
 ### Alliance Narval / Slurm
 
 See [batch_scripts/README.md](batch_scripts/README.md) for `narval_pretrain.slurm`, `narval_finetune.slurm`, venv setup, and `configs/*.narval.example.yaml` path templates (`$SCRATCH/...`).
