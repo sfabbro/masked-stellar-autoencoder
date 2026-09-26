@@ -98,6 +98,11 @@ canfar-job run --repo sfabbro/masked-stellar-autoencoder --branch main \
   pixi install --frozen --environment gpu --platform linux-64-cuda
 ```
 
+If Skaha requests registry authentication, provide the Harbor username and
+CLI Secret as `CANFAR_REGISTRY__USERNAME` and `CANFAR_REGISTRY__SECRET` in the
+local launcher environment. These credentials are separate from `canfar login`
+and should not be committed.
+
 Build the Gaia source index after the Gaia source and project catalogue mounts
 are visible. This writes the index to the same project path used by preprocessing:
 
