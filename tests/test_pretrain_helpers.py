@@ -16,6 +16,7 @@ from masked_stellar_autoencoder.models.model import (
 )
 from masked_stellar_autoencoder.training.pretrain_msa import (
     _configure_pilot,
+    _limit_pilot_shards,
     _validate_error_columns,
     fit_pretrain_scaler,
 )
@@ -254,6 +255,16 @@ def test_pretrain_pilot_caps_work_and_uses_separate_outputs():
     assert config["training"]["max_rows_per_shard"] == 512
     assert config["saving"]["model_str"] == "/tmp/model_pilot.pth"
     assert config["saving"]["arc_checkpoint_dir"] == "/tmp/checkpoints_pilot"
+
+
+def test_pretrain_pilot_limits_training_and_validation_shards():
+    train_keys = [f"train_{i}" for i in range(5)]
+    valid_keys = [f"valid_{i}" for i in range(3)]
+
+    assert _limit_pilot_shards(train_keys, valid_keys) == (
+        ["train_0", "train_1"],
+        ["valid_0"],
+    )
 
 
 def test_load_data_masks_nonfinite_features_and_repairs_invalid_errors(tmp_path):

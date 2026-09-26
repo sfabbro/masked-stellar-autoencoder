@@ -183,8 +183,9 @@ scheduler, random generator state, and total epoch target. With ensemble mode on
 `MSA_FINETUNE_RESUME` is a shared weight warm-start for each member and each
 member starts a fresh optimizer; turn ensemble mode off to resume one interrupted
 member. Older fine-tune checkpoints without training state also start a fresh
-optimizer. Pilot runs use one epoch, bounded rows and batches, and `_pilot`
-output paths.
+optimizer. Pretraining pilots use one epoch, at most two training shards and
+one validation shard (512 rows per shard), and `_pilot` output paths. Fine-tuning
+pilots use one epoch, bounded rows and batches, and `_pilot` output paths.
 
 The launch command assumes CANFAR project storage is mounted at
 `/arc/projects/k-pop` and Gaia XP data at `/gaia/dr3/...`; set

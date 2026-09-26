@@ -105,6 +105,12 @@ def _configure_pilot(config):
             config["saving"][key] = _pilot_path(config["saving"][key])
 
 
+def _limit_pilot_shards(train_keys, valid_keys):
+    # ponytail: two train shards and one validation shard keep smoke runs cheap;
+    # raise these caps when a representative pilot is needed.
+    return train_keys[:2], valid_keys[:1]
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train MSA")
     parser.add_argument(
@@ -137,6 +143,8 @@ def main():
     keys_train = [item for item in available_keys if item not in keys_valid]
     if not keys_train:
         raise ValueError("No training shards remain after excluding valid_keys")
+    if args.pilot:
+        keys_train, keys_valid = _limit_pilot_shards(keys_train, keys_valid)
     featurescaler = fit_pretrain_scaler(
         pretrain_file, keys_train, cols, config["training"]
     )
