@@ -80,8 +80,8 @@ under the project mount. The example defaults assume the K-pop project paths
 below; every input root can be overridden with an environment variable.
 
 After logging in to CANFAR, submit stages by name. The wrapper requests one GPU
-for preflight and training stages. Set `CANFAR_GIT_REF` to choose a branch, tag,
-or commit, `CANFAR_SESSION_NAME` to name the job, and `CANFAR_CPU` or
+for preflight and training stages. Set `CANFAR_GIT_REF` to choose a branch or
+tag, `CANFAR_SESSION_NAME` to name the job, and `CANFAR_CPU` or
 `CANFAR_MEMORY` to override resource defaults:
 
 ```bash
