@@ -54,7 +54,8 @@ tar -C "$msa_source" \
   -cf - . | tar -C "$repo_dir" -xf -
 cd "$repo_dir"
 
-pixi install --locked --environment gpu --platform "$pixi_platform"
+pixi lock --check
+pixi install --frozen --environment gpu --platform "$pixi_platform"
 pixi_run=(pixi run --environment gpu --platform "$pixi_platform")
 
 case "$stage" in
