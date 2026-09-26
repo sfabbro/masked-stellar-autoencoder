@@ -4,8 +4,17 @@ set -euo pipefail
 stage="${1:?Usage: canfar_entrypoint.sh schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain|finetune-pilot|finetune|preflight}"
 project_root="${CANFAR_PROJECT_ROOT:-/arc/projects/k-pop}"
 work_root="${WORK:-/scratch/${USER:?USER is unset}}"
-msa_source="${MSA_SOURCE:-$project_root/software/masked-stellar-autoencoder}"
-repo_dir="$work_root/src/masked-stellar-autoencoder"
+script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+msa_source="${MSA_SOURCE:-$script_root}"
+if [[ ! -d "$msa_source" ]]; then
+  echo "MSA source snapshot is missing: $msa_source" >&2
+  exit 2
+fi
+msa_source="$(cd -- "$msa_source" && pwd -P)"
+repo_dir="$script_root"
+if [[ "$msa_source" != "$script_root" ]]; then
+  repo_dir="$work_root/msa/masked-stellar-autoencoder"
+fi
 
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH
@@ -15,6 +24,7 @@ export PIXI_HOME="$work_root/.pixi"
 export PIXI_CACHE_DIR="$work_root/.cache/pixi"
 export PIXI_CACHE_PYPI_WHEELS_DIR="$work_root/.cache/uv"
 export UV_CACHE_DIR="$work_root/.cache/uv"
+export DUSTMAPS_CONFIG_FNAME="${DUSTMAPS_CONFIG_FNAME:-$work_root/.dustmapsrc}"
 export MSA_OUTPUT_ROOT="${MSA_OUTPUT_ROOT:-$project_root/msa_runs}"
 export DUSTMAPS_DATA_DIR="${DUSTMAPS_DATA_DIR:-$MSA_OUTPUT_ROOT/dustmaps}"
 export MSA_PREPROCESS_DIR="${MSA_PREPROCESS_DIR:-$MSA_OUTPUT_ROOT/preprocess}"
@@ -41,21 +51,19 @@ case "$stage" in
   schema|source-index|fetch-dustmaps|preprocess|combine) pixi_platform=linux-64-cpu ;;
 esac
 
-if [[ ! -d "$msa_source" ]]; then
-  echo "MSA source snapshot is missing: $msa_source" >&2
-  echo "Sync the repository there or set MSA_SOURCE to its persistent location." >&2
-  exit 2
-fi
 if ! command -v pixi >/dev/null 2>&1; then
   echo "Pixi is required in the CANFAR image but was not found on PATH." >&2
   exit 2
 fi
 
-mkdir -p "$repo_dir" "$work_root/.cache/pixi" "$work_root/.cache/uv"
-tar -C "$msa_source" \
-  --exclude=.git --exclude=.pixi --exclude=.venv --exclude=__pycache__ \
-  --exclude=.pytest_cache --exclude=.ruff_cache --exclude=.ipynb_checkpoints \
-  -cf - . | tar -C "$repo_dir" -xf -
+mkdir -p "$work_root/.cache/pixi" "$work_root/.cache/uv"
+if [[ "$msa_source" != "$script_root" ]]; then
+  mkdir -p "$repo_dir"
+  tar -C "$msa_source" \
+    --exclude=.git --exclude=.pixi --exclude=.venv --exclude=__pycache__ \
+    --exclude=.pytest_cache --exclude=.ruff_cache --exclude=.ipynb_checkpoints \
+    -cf - . | tar -C "$repo_dir" -xf -
+fi
 cd "$repo_dir"
 
 pixi lock --check
@@ -72,7 +80,7 @@ case "$stage" in
     ;;
   fetch-dustmaps)
     mkdir -p "$DUSTMAPS_DATA_DIR"
-    "${pixi_run[@]}" python -c 'from dustmaps.sfd import fetch; fetch()'
+    "${pixi_run[@]}" python -c 'import os; from dustmaps.config import config; config["data_dir"] = os.environ["DUSTMAPS_DATA_DIR"]; from dustmaps.sfd import fetch; fetch()'
     ;;
   preprocess)
     "${pixi_run[@]}" python -u data/pretraining-partial-table-maker.py

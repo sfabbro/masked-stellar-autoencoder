@@ -2,9 +2,10 @@
 set -euo pipefail
 
 stage="${1:?Usage: canfar_launch.sh <stage> (see batch_scripts/README.md)}"
-source_root="${MSA_CANFAR_REPO_PATH:-/arc/projects/k-pop/software/masked-stellar-autoencoder}"
+shift
 image="${CANFAR_IMAGE:-images.canfar.net/astroai/base:latest}"
 name="${CANFAR_SESSION_NAME:-msa-${stage}}"
+ref="${CANFAR_GIT_REF:-main}"
 
 case "$stage" in
   schema|source-index|fetch-dustmaps|preprocess|combine|preflight|pretrain-pilot|pretrain|finetune-pilot|finetune) ;;
@@ -14,10 +15,14 @@ case "$stage" in
     ;;
 esac
 
-create_args=(--name "$name")
+job_args=(--repo sfabbro/masked-stellar-autoencoder --branch "$ref" --image "$image" --name "$name")
+if [[ -n "${CANFAR_CPU:-}" ]]; then job_args+=(--cpu "$CANFAR_CPU"); fi
+if [[ -n "${CANFAR_MEMORY:-}" ]]; then job_args+=(--memory "$CANFAR_MEMORY"); fi
 case "$stage" in
-  preflight|pretrain-pilot|pretrain|finetune-pilot|finetune) create_args+=(--gpu 1) ;;
+  preflight|pretrain-pilot|pretrain|finetune-pilot|finetune) job_args+=(--gpu 1) ;;
 esac
 
-canfar create "${create_args[@]}" headless "$image" -- \
-  bash "$source_root/batch_scripts/canfar_entrypoint.sh" "$stage"
+cmd=(bash batch_scripts/canfar_entrypoint.sh "$stage")
+if (($#)); then cmd=(env "$@" "${cmd[@]}"); fi
+
+canfar-job run "${job_args[@]}" -- "${cmd[@]}"

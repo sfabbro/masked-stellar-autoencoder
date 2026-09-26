@@ -72,17 +72,17 @@ so runs no longer overwrite a single checkpoint file.
 
 ## CANFAR (AstroAI base image)
 
-The CANFAR path uses `images.canfar.net/astroai/base:latest` with the repository's
-Pixi lock and a CUDA 12.8 PyTorch wheel. Sync the current repository snapshot to
-`/arc/projects/k-pop/software/masked-stellar-autoencoder` (or set `MSA_SOURCE`),
-and make the catalogue mounts readable from the session before launching jobs.
-The example defaults assume the K-pop project paths below; every input root can
-be overridden with an environment variable.
+The CANFAR path uses `images.canfar.net/astroai/base:latest` and the repository's
+Pixi lock. The Linux GPU lock resolves to PyTorch 2.14 with CUDA 13.0. The
+`scripts/canfar_launch.sh` wrapper stages `sfabbro/masked-stellar-autoencoder`
+into `$WORK` through `canfar-job`; it does not depend on a persistent code copy
+under the project mount. The example defaults assume the K-pop project paths
+below; every input root can be overridden with an environment variable.
 
-After syncing the repository and logging in to CANFAR, `scripts/canfar_launch.sh`
-can submit a stage by name. It uses the base image, asks for one GPU for
-preflight/training stages, and accepts `MSA_CANFAR_REPO_PATH` if the remote
-checkout is elsewhere:
+After logging in to CANFAR, submit stages by name. The wrapper requests one GPU
+for preflight and training stages. Set `CANFAR_GIT_REF` to choose a branch, tag,
+or commit, `CANFAR_SESSION_NAME` to name the job, and `CANFAR_CPU` or
+`CANFAR_MEMORY` to override resource defaults:
 
 ```bash
 scripts/canfar_launch.sh schema
@@ -93,31 +93,22 @@ Build the Gaia source index after the Gaia source and project catalogue mounts
 are visible. This writes the index to the same project path used by preprocessing:
 
 ```bash
-canfar create --name msa-source-index headless \
-  images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh source-index
+scripts/canfar_launch.sh source-index
 ```
 
 Start with a schema report; it prints available FITS/HDF5 fields and candidate
 uncertainty names without guessing a mapping:
 
 ```bash
-canfar create --name msa-schema headless \
-  images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh schema
+scripts/canfar_launch.sh schema
 ```
 
 Set `error_cols` in both CANFAR configs from the actual catalogue schemas, then
 run the bounded pilots before full training:
 
 ```bash
-canfar create --name msa-pretrain-pilot --gpu 1 headless \
-  images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh pretrain-pilot
-
-canfar create --name msa-finetune-pilot --gpu 1 headless \
-  images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh finetune-pilot
+scripts/canfar_launch.sh pretrain-pilot
+scripts/canfar_launch.sh finetune-pilot
 ```
 
 The preprocessing builder accepts `MSA_SOURCE_IDS_FILE`, `MSA_CATWISE_FILE`,
@@ -134,8 +125,7 @@ the session exposes different mounts. The XP input defaults to
 HDF5 shards. Run `fetch-dustmaps` once before preprocessing.
 
 ```bash
-canfar create --name msa-dustmaps headless images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh fetch-dustmaps
+scripts/canfar_launch.sh fetch-dustmaps
 ```
 
 Run `fetch-dustmaps`, then submit preprocessing in non-overlapping partition
@@ -143,11 +133,8 @@ ranges. For example, these two sessions produce portions 0–1 and 2–3; contin
 with further ranges until 50 is reached, then run `combine`:
 
 ```bash
-canfar create --name msa-data-00-02 headless images.canfar.net/astroai/base:latest -- \
-  env START_PART=0 STOP_PART=2 bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh preprocess
-
-canfar create --name msa-data-02-04 headless images.canfar.net/astroai/base:latest -- \
-  env START_PART=2 STOP_PART=4 bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh preprocess
+scripts/canfar_launch.sh preprocess START_PART=0 STOP_PART=2
+scripts/canfar_launch.sh preprocess START_PART=2 STOP_PART=4
 ```
 
 The temporary crossmatch cache includes the session hostname so concurrent
@@ -172,11 +159,8 @@ both configs when switching `MSA_PRETRAIN_DATA` and `MSA_FINETUNE_DATA` to the
 rebuilt tables.
 
 ```bash
-canfar create --name msa-pretrain --gpu 1 headless images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh pretrain
-
-canfar create --name msa-finetune --gpu 1 headless images.canfar.net/astroai/base:latest -- \
-  bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh finetune
+scripts/canfar_launch.sh pretrain
+scripts/canfar_launch.sh finetune
 ```
 
 Pretraining resumes optimizer, scheduler, and random generator state when
