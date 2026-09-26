@@ -16,7 +16,52 @@ from torch import Tensor
 from torch.utils.data import DataLoader, TensorDataset
 
 from .blocks import TabDenseNet, TabResnet
-from .checkpoint_load import torch_load_trusted
+from .checkpoint_load import torch_load_finetune_checkpoint, torch_load_trusted
+
+
+def _atomic_torch_save(payload, path):
+    temporary_path = f"{path}.tmp"
+    try:
+        torch.save(payload, temporary_path)
+        os.replace(temporary_path, path)
+    finally:
+        if os.path.exists(temporary_path):
+            os.remove(temporary_path)
+
+
+def _capture_rng_state() -> dict:
+    numpy_state = np.random.get_state()
+    return {
+        "python": random.getstate(),
+        "numpy": {
+            "generator": numpy_state[0],
+            "keys": numpy_state[1].tolist(),
+            "position": int(numpy_state[2]),
+            "has_gauss": int(numpy_state[3]),
+            "cached_gaussian": float(numpy_state[4]),
+        },
+        "torch_cpu": torch.get_rng_state(),
+        "torch_cuda": torch.cuda.get_rng_state_all()
+        if torch.cuda.is_available()
+        else [],
+    }
+
+
+def _restore_rng_state(state: dict) -> None:
+    random.setstate(state["python"])
+    numpy_state = state["numpy"]
+    np.random.set_state(
+        (
+            numpy_state["generator"],
+            np.asarray(numpy_state["keys"], dtype=np.uint32),
+            int(numpy_state["position"]),
+            int(numpy_state["has_gauss"]),
+            float(numpy_state["cached_gaussian"]),
+        )
+    )
+    torch.set_rng_state(state["torch_cpu"].cpu())
+    if torch.cuda.is_available() and state["torch_cuda"]:
+        torch.cuda.set_rng_state_all([rng.cpu() for rng in state["torch_cuda"]])
 
 
 class MaskedGaussianNLLLoss(nn.Module):
@@ -624,6 +669,7 @@ class TabResnetWrapper(BaseEstimator):
         scheduler_cosine_t0: int = 10,
         scheduler_cosine_t_mult: int = 2,
         scheduler_eta_min_factor: float = 0.01,
+        max_rows_per_key: int | None = None,
     ):
         """
         Changes to the original that can predict ages are the following:
@@ -651,7 +697,17 @@ class TabResnetWrapper(BaseEstimator):
             )
         self.feature_cols = feature_cols
         self.error_cols = error_cols
+        if len(self.error_cols) != len(self.feature_cols):
+            raise ValueError("error_cols must align one-to-one with feature_cols")
+        if any(
+            error is not None and not isinstance(error, str)
+            for error in self.error_cols
+        ):
+            raise TypeError("error_cols entries must be column names or None")
         self.recon_cols = recon_cols
+        if max_rows_per_key is not None and max_rows_per_key < 1:
+            raise ValueError("max_rows_per_key must be positive when set")
+        self.max_rows_per_key = max_rows_per_key
         self.diff = len(feature_cols) - len(recon_cols)
         self.xp_masking_ratio = xp_masking_ratio
         self.m_masking_ratio = m_masking_ratio
@@ -681,6 +737,10 @@ class TabResnetWrapper(BaseEstimator):
         self._pert_channel_scale_np = self._pert_channel_scale_array(
             feature_cols, pert_channel_scale
         )
+        self._error_available_np = np.asarray(
+            [error is not None for error in error_cols], dtype=np.float32
+        )
+        self._pert_channel_scale_np *= self._error_available_np
         self.lp: nn.Linear | None = None
         self.ft: PredictionHead | None = None
 
@@ -789,7 +849,12 @@ class TabResnetWrapper(BaseEstimator):
             if key not in self.datafile:
                 raise KeyError(f"Key '{key}' not found in datafile")
 
-            data = self.datafile[key][:]
+            dataset = self.datafile[key]
+            data = (
+                dataset[: self.max_rows_per_key]
+                if self.max_rows_per_key is not None
+                else dataset[:]
+            )
             if len(data) == 0:
                 raise ValueError(f"Dataset '{key}' is empty")
 
@@ -798,7 +863,9 @@ class TabResnetWrapper(BaseEstimator):
                 col for col in self.feature_cols if col not in data.dtype.names
             ]
             missing_errors = [
-                col for col in self.error_cols if col not in data.dtype.names
+                col
+                for col in self.error_cols
+                if col is not None and col not in data.dtype.names
             ]
 
             if missing_features:
@@ -808,8 +875,17 @@ class TabResnetWrapper(BaseEstimator):
             if missing_errors:
                 raise ValueError(f"Missing error columns in '{key}': {missing_errors}")
 
-            X = np.column_stack([data[col] for col in self.feature_cols])
-            eX = np.column_stack([data[col] for col in self.error_cols])
+            X = np.column_stack(
+                [self._clean_column(col, data[col]) for col in self.feature_cols]
+            )
+            eX = np.column_stack(
+                [
+                    self._clean_column(error, data[error])
+                    if error is not None
+                    else np.full(len(data), self.scale_factors[index])
+                    for index, error in enumerate(self.error_cols)
+                ]
+            )
 
             # Validate data shapes
             if X.shape[0] != eX.shape[0]:
@@ -817,13 +893,13 @@ class TabResnetWrapper(BaseEstimator):
                     f"Feature and error arrays have mismatched lengths: {X.shape[0]} vs {eX.shape[0]}"
                 )
 
-            # Handle missing error values more robustly
-            col_maxes = np.nanmax(eX, axis=0)
-            # Replace inf values with column max
-            eX = np.where(np.isinf(eX), col_maxes[None, :], eX)
-            # Replace NaN with column max
-            nan_mask = np.isnan(eX)
-            eX[nan_mask] = np.take(col_maxes, np.where(nan_mask)[1])
+            # Keep invalid measurements masked and replace unusable uncertainties
+            # with the largest valid error in that feature, as before.
+            X[~np.isfinite(X)] = np.nan
+            valid_errors = np.isfinite(eX) & (eX > 0)
+            col_maxes = np.max(np.where(valid_errors, eX, -np.inf), axis=0)
+            col_maxes[~np.isfinite(col_maxes)] = 1.0
+            eX = np.where(valid_errors, eX, col_maxes[None, :])
 
             # Apply scaling with validation
             X = self.featurescaler.transform(X)
@@ -990,6 +1066,16 @@ class TabResnetWrapper(BaseEstimator):
         shutil.copy2(src, tmp)
         os.replace(tmp, dst)
 
+    def _pretrain_run_signature(self) -> dict:
+        return {
+            "feature_cols": list(self.feature_cols),
+            "error_cols": list(self.error_cols),
+            "recon_cols": list(self.recon_cols),
+            "scaler_center": np.asarray(self.featurescaler.center_).tolist(),
+            "scaler_scale": np.asarray(self.featurescaler.scale_).tolist(),
+            "train_keys": list(getattr(self, "_pretrain_train_keys", [])),
+        }
+
     def _load_pretrain_resume(self, pretrained, optimizer, scheduler):
         epoch_loss = 0.0
         loss_div = 0.0
@@ -997,12 +1083,37 @@ class TabResnetWrapper(BaseEstimator):
         if pretrained is None:
             return epoch_loss, loss_div, pretrained_epoch
         checkpoint = torch_load_trusted(pretrained)
+        signature = checkpoint.get("run_signature")
+        if signature is not None:
+            current_signature = self._pretrain_run_signature()
+            mismatches = [
+                key
+                for key, current_value in current_signature.items()
+                if signature.get(key) != current_value
+                and not (
+                    key == "error_cols"
+                    and not self.pert_features
+                    and self.loss_fn.cost not in {"wmse", "wmae"}
+                )
+            ]
+            if mismatches:
+                raise ValueError(
+                    "Pretraining checkpoint does not match current run settings: "
+                    + ", ".join(mismatches)
+                )
+        else:
+            print(
+                "Warning: legacy pretraining checkpoint has no run signature; "
+                "feature/scaler compatibility cannot be verified"
+            )
         self.model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
         epoch_loss = checkpoint["epoch_loss"]
         loss_div = checkpoint["loss_div"]
         pretrained_epoch = checkpoint["epoch"]
+        if "rng_state" in checkpoint:
+            _restore_rng_state(checkpoint["rng_state"])
         print("Picking up pre-training from epoch", pretrained_epoch)
         return epoch_loss, loss_div, pretrained_epoch
 
@@ -1016,6 +1127,8 @@ class TabResnetWrapper(BaseEstimator):
             "scheduler_state_dict": scheduler.state_dict(),
             "epoch_loss": epoch_loss,
             "loss_div": loss_div,
+            "rng_state": _capture_rng_state(),
+            "run_signature": self._pretrain_run_signature(),
         }
 
     def _save_pretrain_checkpoints(
@@ -1024,7 +1137,7 @@ class TabResnetWrapper(BaseEstimator):
         payload = self._pretrain_checkpoint_payload(
             epoch, optimizer, scheduler, epoch_loss, loss_div
         )
-        torch.save(payload, self.pt_save_str)
+        _atomic_torch_save(payload, self.pt_save_str)
         if (
             self.checkpoint_interval is not None
             and (epoch + 1) % self.checkpoint_interval == 0
@@ -1032,7 +1145,7 @@ class TabResnetWrapper(BaseEstimator):
             interval_path = (
                 f"{os.path.splitext(self.pt_save_str)[0]}_checkpoint_{epoch + 1}.pth"
             )
-            torch.save(payload, interval_path)
+            _atomic_torch_save(payload, interval_path)
 
     def _pretrain_reconstruction_loss(
         self,
@@ -1104,6 +1217,8 @@ class TabResnetWrapper(BaseEstimator):
         running_pt_validation_loss,
     ):
         self._epoch_start = time.time()
+        epoch_loss = 0.0
+        loss_div = 0.0
         random.shuffle(train_keys)
         self.model.train()
         pbar = tqdm.tqdm(
@@ -1112,13 +1227,9 @@ class TabResnetWrapper(BaseEstimator):
             desc="Iterating Training Files",
         )
         for subkeynum, key in pbar:
-            try:
-                epoch_loss, loss_div = self._train_pretrain_key(
-                    key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
-                )
-            except Exception as e:
-                print(f"Error in training loop for key {key}: {e}")
-                continue
+            epoch_loss, loss_div = self._train_pretrain_key(
+                key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
+            )
 
         scheduler.step()
         mean_loss = epoch_loss / loss_div if loss_div else 0.0
@@ -1178,11 +1289,21 @@ class TabResnetWrapper(BaseEstimator):
 
         Args:
             train_keys: Training dataset files in the large h5 (features).
-            num_epochs: Number of epochs for pretraining.
+            num_epochs: Total target epoch; a resumed run stops at this epoch.
             val_keys: Optional validation dataset files in the large h5 (features).
             ft_stuff:
             mini_batch: Mini-batch size for pretraining.
         """
+        if not train_keys:
+            raise ValueError("pretrain_hdf requires at least one training shard")
+        if mini_batch < 1:
+            raise ValueError("mini_batch must be positive")
+        if val_keys is not None and not val_keys:
+            raise ValueError("val_keys was provided but contains no validation shards")
+        if num_epochs < 0:
+            raise ValueError("num_epochs must be non-negative")
+        self._pretrain_train_keys = sorted(train_keys)
+
         optimizer, scheduler = self._setup_pretrain_optimizer()
         self._configure_pretrain_logging()
 
@@ -1192,11 +1313,10 @@ class TabResnetWrapper(BaseEstimator):
             pretrained, optimizer, scheduler
         )
 
-        for epoch in range(num_epochs):
-            epoch += pretrained_epoch
+        for epoch in range(pretrained_epoch, num_epochs):
             epoch_loss, loss_div = self._run_pretrain_epoch(
                 epoch,
-                pretrained_epoch + num_epochs,
+                num_epochs,
                 train_keys,
                 val_keys,
                 optimizer,
@@ -1221,6 +1341,8 @@ class TabResnetWrapper(BaseEstimator):
 
         """
         self.model.eval()
+        if not val_keys:
+            raise ValueError("validate requires at least one validation shard")
         with torch.no_grad():
             n_keys = len(val_keys)
             pbar = tqdm.tqdm(
@@ -1582,16 +1704,63 @@ class TabResnetWrapper(BaseEstimator):
             )
 
     def _load_finetune_checkpoint(self, ensemblepath, linearprobe):
-        try:
-            state_dict = torch_load_trusted(ensemblepath, map_location=self.device)
-            self.model.load_state_dict(state_dict["autoencoder_state_dict"])
-            if not linearprobe:
-                self.ft.load_state_dict(state_dict["prediction_head_state_dict"])
-            print("loaded checkpoint")
-        except (FileNotFoundError, KeyError, RuntimeError, ValueError) as e:
-            print(f"Checkpoint load failed ({e}), reinitializing head")
+        self._finetune_resume_state = None
+        if not ensemblepath:
             if not linearprobe:
                 self.ft.apply(self.init_weights_gelu)
+            return
+
+        try:
+            state_dict = torch_load_finetune_checkpoint(
+                ensemblepath, map_location=self.device
+            )
+        except FileNotFoundError as e:
+            print(
+                f"Fine-tune checkpoint not found ({e}); using the loaded encoder "
+                "and a fresh head"
+            )
+            if not linearprobe:
+                self.ft.apply(self.init_weights_gelu)
+            return
+
+        self._finetune_resume_state = state_dict
+        if "linear_probe" in state_dict and bool(state_dict["linear_probe"]) != bool(
+            linearprobe
+        ):
+            raise ValueError(
+                "Fine-tune checkpoint linear_probe setting does not match this run"
+            )
+
+        if "autoencoder_state_dict" in state_dict:
+            self.model.load_state_dict(state_dict["autoencoder_state_dict"])
+            if linearprobe and "prediction_head_state_dict" in state_dict:
+                self.lp.load_state_dict(state_dict["prediction_head_state_dict"])
+                print("Loaded fine-tune checkpoint")
+            elif not linearprobe and "prediction_head_state_dict" in state_dict:
+                self.ft.load_state_dict(state_dict["prediction_head_state_dict"])
+                print("Loaded fine-tune checkpoint")
+            elif not linearprobe:
+                self.ft.apply(self.init_weights_gelu)
+                print("Loaded encoder checkpoint; initialized a fresh fine-tune head")
+        elif "model_state_dict" in state_dict:
+            self.model.load_state_dict(state_dict["model_state_dict"])
+            if not linearprobe:
+                self.ft.apply(self.init_weights_gelu)
+            print("Loaded pretraining checkpoint; initialized a fresh fine-tune head")
+        else:
+            raise ValueError(
+                f"Unsupported fine-tune checkpoint format at {ensemblepath!r}"
+            )
+
+    def _restore_finetune_training_state(self, optimizer, scheduler) -> int:
+        state = getattr(self, "_finetune_resume_state", None) or {}
+        if "optimizer_state_dict" not in state or "scheduler_state_dict" not in state:
+            return 0
+        optimizer.load_state_dict(state["optimizer_state_dict"])
+        scheduler.load_state_dict(state["scheduler_state_dict"])
+        if "rng_state" in state:
+            _restore_rng_state(state["rng_state"])
+        return int(state.get("epoch", 0))
 
     def _build_finetune_context(
         self,
@@ -1700,16 +1869,22 @@ class TabResnetWrapper(BaseEstimator):
             return list(self.lp.parameters())
         return list(self.model.parameters()) + list(self.ft.parameters())
 
-    def _save_finetune_checkpoint(self, linearprobe: bool, epoch: int) -> None:
+    def _save_finetune_checkpoint(
+        self, linearprobe: bool, epoch: int, optimizer, scheduler
+    ) -> None:
         head_sd = self.lp.state_dict() if linearprobe else self.ft.state_dict()
         payload = {
             "autoencoder_state_dict": self.model.state_dict(),
             "prediction_head_state_dict": head_sd,
             "linear_probe": bool(linearprobe),
+            "epoch": epoch + 1,
+            "optimizer_state_dict": optimizer.state_dict(),
+            "scheduler_state_dict": scheduler.state_dict(),
+            "rng_state": _capture_rng_state(),
             "featurescaler": self.featurescaler,
             "label_scalers": getattr(self, "label_scalers", None),
         }
-        torch.save(payload, self.ft_save_str)
+        _atomic_torch_save(payload, self.ft_save_str)
         if (
             self.checkpoint_interval is not None
             and (epoch + 1) % self.checkpoint_interval == 0
@@ -1717,7 +1892,7 @@ class TabResnetWrapper(BaseEstimator):
             interval_path = (
                 f"{os.path.splitext(self.ft_save_str)[0]}_checkpoint_{epoch + 1}.pth"
             )
-            torch.save(payload, interval_path)
+            _atomic_torch_save(payload, interval_path)
 
     def _run_finetune_epoch(
         self, train_loader, optimizer, scheduler, ctx, linearprobe, epoch, num_epochs
@@ -1842,6 +2017,7 @@ class TabResnetWrapper(BaseEstimator):
         parallax_sigma_scale: float = 1.0,
         consistency_params: dict | None = None,
         ft_encoder_warmup_epochs: int = 0,
+        resume_training: bool = True,
     ):
         train_loader = self._prepare_finetune_loader(
             X_train, eX_train, y_train, e_y_train, mini_batch
@@ -1891,13 +2067,19 @@ class TabResnetWrapper(BaseEstimator):
             random.seed(feature_seed)
             torch.manual_seed(feature_seed)
 
+        start_epoch = (
+            self._restore_finetune_training_state(optimizer, scheduler)
+            if resume_training
+            else 0
+        )
+
         # Encoder warmup: freeze encoder for first N epochs, then unfreeze
-        if ft_encoder_warmup_epochs > 0 and not linearprobe:
+        if ft_encoder_warmup_epochs > start_epoch and not linearprobe:
             for p in self.model.encoder.parameters():
                 p.requires_grad = False
             print(f"Encoder frozen for warmup ({ft_encoder_warmup_epochs} epochs)")
 
-        for epoch in range(num_epochs):
+        for epoch in range(start_epoch, num_epochs):
             # Unfreeze encoder at warmup boundary and rebuild optimizer
             if (
                 ft_encoder_warmup_epochs > 0
@@ -1938,7 +2120,7 @@ class TabResnetWrapper(BaseEstimator):
                 parallax_sigma_scale=parallax_sigma_scale,
                 consistency_params=consistency_params,
             )
-            self._save_finetune_checkpoint(linearprobe, epoch)
+            self._save_finetune_checkpoint(linearprobe, epoch, optimizer, scheduler)
 
     def validate_fit(
         self,

@@ -3,44 +3,60 @@
 data:
   datafile: '$SCRATCH/msa/data/pretrain_ssl.h5'
   valid_keys: ['sslset11_part0','sslset14_part0','sslset2_part0','sslset5_part0','sslset20_part0']
-  feature_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3','bp_4','bp_5','bp_6','bp_7','bp_8','bp_9',
-                 'bp_10','bp_11','bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19','bp_20',
-                 'bp_21','bp_22','bp_23','bp_24','bp_25','bp_26','bp_27','bp_28','bp_29','bp_30','bp_31',
-                 'bp_32','bp_33','bp_34','bp_35','bp_36','bp_37','bp_38','bp_39','bp_40','bp_41','bp_42',
-                 'bp_43','bp_44','bp_45','bp_46','bp_47','bp_48','bp_49','bp_50','bp_51','bp_52','bp_53',
-                 'bp_54','bp_55','rp_1','rp_2','rp_3','rp_4','rp_5','rp_6','rp_7','rp_8','rp_9','rp_10',
-                 'rp_11','rp_12','rp_13','rp_14','rp_15','rp_16','rp_17','rp_18','rp_19','rp_20','rp_21',
-                 'rp_22','rp_23','rp_24','rp_25','rp_26','rp_27','rp_28','rp_29','rp_30','rp_31','rp_32',
-                 'rp_33','rp_34','rp_35','rp_36','rp_37','rp_38','rp_39','rp_40','rp_41','rp_42','rp_43',
-                 'rp_44','rp_45','rp_46','rp_47','rp_48','rp_49','rp_50','rp_51','rp_52','rp_53','rp_54',
-                 'rp_55','U_SMSS','V_SMSS','G_SMSS','R_SMSS','I_SMSS','Z_SMSS','U_SDSS','G_SDSS','R_SDSS',
-                 'I_SDSS','Z_SDSS','G_PS1','R_PS1','I_PS1','Z_PS1','Y_PS1','J','H','KS','PARALLAX','EBV',
-                 'pmra','pmdec']
-  error_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3','bp_4','bp_5','bp_6','bp_7','bp_8','bp_9',
-               'bp_10','bp_11','bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19','bp_20',
-               'bp_21','bp_22','bp_23','bp_24','bp_25','bp_26','bp_27','bp_28','bp_29','bp_30','bp_31',
-               'bp_32','bp_33','bp_34','bp_35','bp_36','bp_37','bp_38','bp_39','bp_40','bp_41','bp_42',
-               'bp_43','bp_44','bp_45','bp_46','bp_47','bp_48','bp_49','bp_50','bp_51','bp_52','bp_53',
-               'bp_54','bp_55','rp_1','rp_2','rp_3','rp_4','rp_5','rp_6','rp_7','rp_8','rp_9','rp_10',
-               'rp_11','rp_12','rp_13','rp_14','rp_15','rp_16','rp_17','rp_18','rp_19','rp_20','rp_21',
-               'rp_22','rp_23','rp_24','rp_25','rp_26','rp_27','rp_28','rp_29','rp_30','rp_31','rp_32',
-               'rp_33','rp_34','rp_35','rp_36','rp_37','rp_38','rp_39','rp_40','rp_41','rp_42','rp_43',
-               'rp_44','rp_45','rp_46','rp_47','rp_48','rp_49','rp_50','rp_51','rp_52','rp_53','rp_54',
-               'rp_55','U_SMSS','V_SMSS','G_SMSS','R_SMSS','I_SMSS','Z_SMSS','U_SDSS','G_SDSS','R_SDSS',
-               'I_SDSS','Z_SDSS','G_PS1','R_PS1','I_PS1','Z_PS1','Y_PS1','J','H','KS','PARALLAX','EBV',
-               'pmra','pmdec']
-  recon_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3','bp_4','bp_5','bp_6','bp_7','bp_8','bp_9',
-               'bp_10','bp_11','bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19','bp_20',
-               'bp_21','bp_22','bp_23','bp_24','bp_25','bp_26','bp_27','bp_28','bp_29','bp_30','bp_31',
-               'bp_32','bp_33','bp_34','bp_35','bp_36','bp_37','bp_38','bp_39','bp_40','bp_41','bp_42',
-               'bp_43','bp_44','bp_45','bp_46','bp_47','bp_48','bp_49','bp_50','bp_51','bp_52','bp_53',
-               'bp_54','bp_55','rp_1','rp_2','rp_3','rp_4','rp_5','rp_6','rp_7','rp_8','rp_9','rp_10',
-               'rp_11','rp_12','rp_13','rp_14','rp_15','rp_16','rp_17','rp_18','rp_19','rp_20','rp_21',
-               'rp_22','rp_23','rp_24','rp_25','rp_26','rp_27','rp_28','rp_29','rp_30','rp_31','rp_32',
-               'rp_33','rp_34','rp_35','rp_36','rp_37','rp_38','rp_39','rp_40','rp_41','rp_42','rp_43',
-               'rp_44','rp_45','rp_46','rp_47','rp_48','rp_49','rp_50','rp_51','rp_52','rp_53','rp_54',
-               'rp_55','U_SMSS','V_SMSS','G_SMSS','R_SMSS','I_SMSS','Z_SMSS','U_SDSS','G_SDSS','R_SDSS',
-               'I_SDSS','Z_SDSS','G_PS1','R_PS1','I_PS1','Z_PS1','Y_PS1','J','H','KS']
+  feature_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3',
+                 'bp_4','bp_5','bp_6','bp_7','bp_8','bp_9','bp_10','bp_11',
+                 'bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19',
+                 'bp_20','bp_21','bp_22','bp_23','bp_24','bp_25','bp_26','bp_27',
+                 'bp_28','bp_29','bp_30','bp_31','bp_32','bp_33','bp_34','bp_35',
+                 'bp_36','bp_37','bp_38','bp_39','bp_40','bp_41','bp_42','bp_43',
+                 'bp_44','bp_45','bp_46','bp_47','bp_48','bp_49','bp_50','bp_51',
+                 'bp_52','bp_53','bp_54','bp_55','rp_1','rp_2','rp_3','rp_4',
+                 'rp_5','rp_6','rp_7','rp_8','rp_9','rp_10','rp_11','rp_12',
+                 'rp_13','rp_14','rp_15','rp_16','rp_17','rp_18','rp_19','rp_20',
+                 'rp_21','rp_22','rp_23','rp_24','rp_25','rp_26','rp_27','rp_28',
+                 'rp_29','rp_30','rp_31','rp_32','rp_33','rp_34','rp_35','rp_36',
+                 'rp_37','rp_38','rp_39','rp_40','rp_41','rp_42','rp_43','rp_44',
+                 'rp_45','rp_46','rp_47','rp_48','rp_49','rp_50','rp_51','rp_52',
+                 'rp_53','rp_54','rp_55','U_SMSS','V_SMSS','G_SMSS','R_SMSS','I_SMSS',
+                 'Z_SMSS','U_SDSS','G_SDSS','R_SDSS','I_SDSS','Z_SDSS','G_PS1','R_PS1',
+                 'I_PS1','Z_PS1','Y_PS1','J','H','KS','PARALLAX','EBV',
+                 'pmra','pmdec','RA','DEC']
+  # Null means no measured uncertainty is available: unit scaled weight, no jitter.
+  error_cols: [null,null,'e_G','e_BP','e_RP','bpe_1','bpe_2','bpe_3',
+                 'bpe_4','bpe_5','bpe_6','bpe_7','bpe_8','bpe_9','bpe_10','bpe_11',
+                 'bpe_12','bpe_13','bpe_14','bpe_15','bpe_16','bpe_17','bpe_18','bpe_19',
+                 'bpe_20','bpe_21','bpe_22','bpe_23','bpe_24','bpe_25','bpe_26','bpe_27',
+                 'bpe_28','bpe_29','bpe_30','bpe_31','bpe_32','bpe_33','bpe_34','bpe_35',
+                 'bpe_36','bpe_37','bpe_38','bpe_39','bpe_40','bpe_41','bpe_42','bpe_43',
+                 'bpe_44','bpe_45','bpe_46','bpe_47','bpe_48','bpe_49','bpe_50','bpe_51',
+                 'bpe_52','bpe_53','bpe_54','bpe_55','rpe_1','rpe_2','rpe_3','rpe_4',
+                 'rpe_5','rpe_6','rpe_7','rpe_8','rpe_9','rpe_10','rpe_11','rpe_12',
+                 'rpe_13','rpe_14','rpe_15','rpe_16','rpe_17','rpe_18','rpe_19','rpe_20',
+                 'rpe_21','rpe_22','rpe_23','rpe_24','rpe_25','rpe_26','rpe_27','rpe_28',
+                 'rpe_29','rpe_30','rpe_31','rpe_32','rpe_33','rpe_34','rpe_35','rpe_36',
+                 'rpe_37','rpe_38','rpe_39','rpe_40','rpe_41','rpe_42','rpe_43','rpe_44',
+                 'rpe_45','rpe_46','rpe_47','rpe_48','rpe_49','rpe_50','rpe_51','rpe_52',
+                 'rpe_53','rpe_54','rpe_55','E_U_SMSS','E_V_SMSS','E_G_SMSS','E_R_SMSS','E_I_SMSS',
+                 'E_Z_SMSS','E_U_SDSS','E_G_SDSS','E_R_SDSS','E_I_SDSS','E_Z_SDSS','E_G_PS1','E_R_PS1',
+                 'E_I_PS1','E_Z_PS1','E_Y_PS1','E_J','E_H','E_KS','e_parallax',null,
+                 'e_pmra','e_pmdec',null,null]
+  recon_cols: ['W1','W2','G','BP','RP','bp_1','bp_2','bp_3',
+                 'bp_4','bp_5','bp_6','bp_7','bp_8','bp_9','bp_10','bp_11',
+                 'bp_12','bp_13','bp_14','bp_15','bp_16','bp_17','bp_18','bp_19',
+                 'bp_20','bp_21','bp_22','bp_23','bp_24','bp_25','bp_26','bp_27',
+                 'bp_28','bp_29','bp_30','bp_31','bp_32','bp_33','bp_34','bp_35',
+                 'bp_36','bp_37','bp_38','bp_39','bp_40','bp_41','bp_42','bp_43',
+                 'bp_44','bp_45','bp_46','bp_47','bp_48','bp_49','bp_50','bp_51',
+                 'bp_52','bp_53','bp_54','bp_55','rp_1','rp_2','rp_3','rp_4',
+                 'rp_5','rp_6','rp_7','rp_8','rp_9','rp_10','rp_11','rp_12',
+                 'rp_13','rp_14','rp_15','rp_16','rp_17','rp_18','rp_19','rp_20',
+                 'rp_21','rp_22','rp_23','rp_24','rp_25','rp_26','rp_27','rp_28',
+                 'rp_29','rp_30','rp_31','rp_32','rp_33','rp_34','rp_35','rp_36',
+                 'rp_37','rp_38','rp_39','rp_40','rp_41','rp_42','rp_43','rp_44',
+                 'rp_45','rp_46','rp_47','rp_48','rp_49','rp_50','rp_51','rp_52',
+                 'rp_53','rp_54','rp_55','U_SMSS','V_SMSS','G_SMSS','R_SMSS','I_SMSS',
+                 'Z_SMSS','U_SDSS','G_SDSS','R_SDSS','I_SDSS','Z_SDSS','G_PS1','R_PS1',
+                 'I_PS1','Z_PS1','Y_PS1','J','H','KS','PARALLAX','EBV']
   ft_datafile: '$SCRATCH/msa/data/ftset_spec_ga_realmags.fits'
   classes: ['teff','e_teff','logg','e_logg','fe_h','e_fe_h','alpha','e_alpha','age','e_age']
 
@@ -49,7 +65,7 @@ model:
   pt_activ_func: 'elu'
   norm: 'layer'
   rtdl_embed: 16
-  # decoder_dims: [256, 512, 1024]  # Optional: asymmetric decoder (default: mirrors encoder)
+  decoder_dims: [256, 512, 1024]
   saved_weights: '$SCRATCH/msa/checkpoints/pretrain_latest.pth'
 
 training:

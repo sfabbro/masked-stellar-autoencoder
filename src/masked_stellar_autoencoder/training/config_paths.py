@@ -26,7 +26,13 @@ def expand_config_paths(config: dict[str, Any]) -> None:
 
     saving = config.get("saving")
     if isinstance(saving, dict):
-        for k in ("model_str", "log_file"):
+        for k in (
+            "model_str",
+            "log_file",
+            "metrics_file",
+            "residual_stats_file",
+            "arc_checkpoint_dir",
+        ):
             if k in saving:
                 saving[k] = expand_path(saving[k])
 
@@ -42,7 +48,10 @@ def expand_config_paths(config: dict[str, Any]) -> None:
 
     ft = config.get("finetuning")
     if isinstance(ft, dict) and "ensemble_path" in ft:
-        ft["ensemble_path"] = expand_path(ft["ensemble_path"])
+        value = ft["ensemble_path"]
+        ft["ensemble_path"] = (
+            expand_path(value) if isinstance(value, str) and value.strip() else None
+        )
 
 
 def ft_checkpoint_paths(config: dict[str, Any], seed: int) -> tuple[str, str]:

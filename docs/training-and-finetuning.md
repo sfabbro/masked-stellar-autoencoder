@@ -31,6 +31,8 @@ training.scaler_seed
 training.presaved
 ```
 
+`data.error_cols` must name the measurement-uncertainty field for each feature, in the same order as `data.feature_cols`. The trainer stops if the list is empty, has the wrong length, or duplicates feature values. Shipped configs leave the list blank until it is checked against the real HDF5/FITS schema. On CANFAR, run the `schema` stage in [the batch guide](../batch_scripts/README.md); it reports available fields and suggestions without selecting a mapping. The legacy partial-table builder writes XP uncertainties as `bpe_1..bpe_55` / `rpe_1..rpe_55` and survey photometry uncertainties as `E_*`; verify the remaining fields against the actual files before training.
+
 ---
 
 ### 2) Fine-tuning: multi-label prediction

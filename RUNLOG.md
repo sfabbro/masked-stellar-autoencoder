@@ -46,7 +46,7 @@ Slurm templates: `batch_scripts/narval_*.slurm`, `batch_scripts/env_narval.sh`, 
 
 ## Next steps (see `docs/experiment_matrix.md`)
 
-1. Phase 1 smoke tests: `pytest tests/` (on PEP 668–managed Pythons, create `.venv` and `pip install -r requirements-dev.txt` plus PyTorch).
+1. Phase 1 smoke tests: `pixi run test`.
 2. Pilot ablations: `python training/pilot_objectives.py` (when FITS available)
 3. Full train + `python training/eval_ensemble.py` → JSON + LaTeX fragments
 4. Git tag matching paper submission after numbers are frozen

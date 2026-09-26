@@ -19,11 +19,11 @@ python3 -m venv "$VENV_TARGET"
 source "$VENV_TARGET/bin/activate"
 pip install --upgrade pip wheel
 
-# Install PyTorch first (CPU/CUDA build per your site instructions), then the rest.
-pip install torch --index-url https://download.pytorch.org/whl/cu124 || pip install torch
-
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-pip install -r "$REPO_ROOT/requirements.txt"
+# Resolve the newest CUDA 12.8 PyTorch wheel, then install runtime dependencies
+# from the same pyproject.toml used by Pixi.
+"$VENV_TARGET/bin/python" -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+"$VENV_TARGET/bin/python" -m pip install -e "$REPO_ROOT"
 
 echo "Done. Activate with: source $VENV_TARGET/bin/activate"
 echo "Set MSA_VENV=$VENV_TARGET in your job environment."

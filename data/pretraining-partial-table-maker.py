@@ -1,34 +1,86 @@
 import ast
 import os
 import shutil
-import subprocess
-import sys
 import time
 
 # from gaiaxpy import generate, PhotometricSystem
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import (
+    FIRST_COMPLETED,
+    ProcessPoolExecutor,
+    ThreadPoolExecutor,
+    wait,
+)
+from pathlib import Path
 
 import h5py
 import numpy as np
 import pandas as pd
 from astropy.table import Table
+from dustmaps.config import config as dustmaps_config
+from dustmaps.sfd import SFDQuery
 from tqdm import tqdm
 
-try:
-    from dustmaps.sfd import SFDQuery
-except Exception:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "dustmaps"])
-    from dustmaps.config import config
-
-    config["data_dir"] = "~/dustmaps_data"
-    import dustmaps.sfd
-
-    dustmaps.sfd.fetch()
-    from dustmaps.sfd import SFDQuery
+dustmaps_data_dir = os.environ.get("DUSTMAPS_DATA_DIR")
+if not dustmaps_data_dir:
+    raise RuntimeError(
+        "Set DUSTMAPS_DATA_DIR to a persistent directory containing the SFD maps"
+    )
+dustmaps_config["data_dir"] = os.path.expandvars(os.path.expanduser(dustmaps_data_dir))
 import gc
 
 import astropy.units as units
 from astropy.coordinates import SkyCoord
+
+GAIA_XP_DIR = (
+    Path(os.environ.get("MSA_GAIA_XP_DIR", "/gaia/dr3/xp_continuous_mean_spectrum"))
+    .expanduser()
+    .resolve()
+)
+GAIA_SOURCE_DIR = (
+    Path(os.environ.get("MSA_GAIA_SOURCE_DIR", "/arc/projects/k-pop/gaia/GaiaSource"))
+    .expanduser()
+    .resolve()
+)
+ADQL_MATCH_DIR = (
+    Path(
+        os.environ.get(
+            "MSA_ADQL_MATCH_DIR", "/arc/projects/k-pop/catalogues/adql_matches"
+        )
+    )
+    .expanduser()
+    .resolve()
+)
+PREPROCESS_CACHE_DIR = Path(
+    os.environ.get("MSA_PREPROCESS_CACHE_DIR", ".crossmatch-cache")
+).expanduser()
+PREPROCESS_WORKERS = int(os.environ.get("MSA_PREPROCESS_WORKERS", "4"))
+if PREPROCESS_WORKERS < 1:
+    raise ValueError("MSA_PREPROCESS_WORKERS must be positive")
+
+
+def flux_error_to_mag(flux, flux_error):
+    """Propagate a positive flux and its error to a symmetric magnitude sigma."""
+    flux = np.asarray(flux, dtype=np.float64)
+    flux_error = np.asarray(flux_error, dtype=np.float64)
+    result = np.full(np.broadcast_shapes(flux.shape, flux_error.shape), np.nan)
+    valid = np.isfinite(flux) & (flux > 0) & np.isfinite(flux_error) & (flux_error >= 0)
+    # ponytail: first-order propagation is appropriate for symmetric training weights;
+    # asymmetric low-S/N Gaia magnitude errors need a flux-space likelihood to improve.
+    np.divide(2.5 / np.log(10) * flux_error, flux, out=result, where=valid)
+    return result
+
+
+def _xp_scale_labels():
+    return [
+        f"{prefix}_{i}" for prefix in ("bp", "rp", "bpe", "rpe") for i in range(1, 56)
+    ]
+
+
+def _scale_xp_measurements(df):
+    factor = 10 ** ((8.5 - df["G"]) / 2.5)
+    for column in _xp_scale_labels():
+        df[column] = df[column] / factor
+    return df
 
 
 # Function to process a single file
@@ -37,7 +89,9 @@ def process_xp_file(args):
     if len(ids) == 0:
         return None
 
-    file_path = f"/gaia/dr3/xp_continuous_mean_spectrum/XpContinuousMeanSpectrum_{source_name.split('_')[-1]}.csv.gz"
+    file_path = (
+        GAIA_XP_DIR / f"XpContinuousMeanSpectrum_{source_name.split('_')[-1]}.csv.gz"
+    )
 
     # Use chunking to read the file in parts and only process necessary rows
     chunksize = 100000
@@ -72,7 +126,7 @@ def process_source_file(args):
     if len(ids) == 0:
         return None
 
-    file_path = f"/arc/projects/k-pop/gaia/GaiaSource/{source_name}.hdf5"
+    file_path = GAIA_SOURCE_DIR / f"{source_name}.hdf5"
 
     # Open the HDF5 file using h5py
     with h5py.File(file_path, "r") as f:
@@ -81,7 +135,18 @@ def process_source_file(args):
         phot_g_mean_mag = f["phot_g_mean_mag"][:]
         phot_bp_mean_mag = f["phot_bp_mean_mag"][:]
         phot_rp_mean_mag = f["phot_rp_mean_mag"][:]
+        phot_g_mean_flux = f["phot_g_mean_flux"][:]
+        phot_bp_mean_flux = f["phot_bp_mean_flux"][:]
+        phot_rp_mean_flux = f["phot_rp_mean_flux"][:]
+        phot_g_mean_flux_error = f["phot_g_mean_flux_error"][:]
+        phot_bp_mean_flux_error = f["phot_bp_mean_flux_error"][:]
+        phot_rp_mean_flux_error = f["phot_rp_mean_flux_error"][:]
         parallax = f["parallax"][:]
+        parallax_error = f["parallax_error"][:]
+        pmra = f["pmra"][:]
+        pmdec = f["pmdec"][:]
+        pmra_error = f["pmra_error"][:]
+        pmdec_error = f["pmdec_error"][:]
         ra = f["ra"][:]
         dec = f["dec"][:]
 
@@ -97,7 +162,15 @@ def process_source_file(args):
             "G": phot_g_mean_mag,
             "BP": phot_bp_mean_mag,
             "RP": phot_rp_mean_mag,
+            "e_G": flux_error_to_mag(phot_g_mean_flux, phot_g_mean_flux_error),
+            "e_BP": flux_error_to_mag(phot_bp_mean_flux, phot_bp_mean_flux_error),
+            "e_RP": flux_error_to_mag(phot_rp_mean_flux, phot_rp_mean_flux_error),
             "PARALLAX": parallax,
+            "e_parallax": parallax_error,
+            "pmra": pmra,
+            "e_pmra": pmra_error,
+            "pmdec": pmdec,
+            "e_pmdec": pmdec_error,
             "RA": ra,
             "DEC": dec,
             "EBV": ebv,
@@ -135,6 +208,26 @@ def process_xp_coeffs(column):
         for lst in processed_column
     ]
     return processed_column
+
+
+def _source_ids_with_xp(dataset):
+    """Select source IDs with XP data from either supported index layout."""
+    values = dataset[:]
+    if values.dtype.names:
+        try:
+            source_ids = values["source_id"]
+            has_xp = values["has_xp_coeffs"]
+        except ValueError as exc:
+            raise ValueError(
+                "Source index datasets must have source_id and has_xp_coeffs fields"
+            ) from exc
+    elif values.ndim == 2 and values.shape[1] >= 2:
+        source_ids, has_xp = values[:, 0], values[:, 1]
+    else:
+        raise ValueError(
+            "Source index datasets must be structured records or two-column arrays"
+        )
+    return source_ids[has_xp == 1].tolist()
 
 
 def chunk_crossmatch_np(chunk, local_source_ids, on_index, save_path, chunk_index):
@@ -181,32 +274,46 @@ def parallel_crossmatch_np(
     local_source_ids,
     on_index=0,
     chunk_size=5_000_000,
-    workers=15,
+    workers=PREPROCESS_WORKERS,
     save_path="crossmatch_output",
 ):
     """Run parallel crossmatch and save intermediate results."""
     os.makedirs(save_path, exist_ok=True)
     chunk_index = 0
     start_time = time.time()
+    # ponytail: cap queued HDF chunks at 2 per worker; tune only after measuring
+    # session memory and throughput on the mounted catalogues.
+    max_in_flight = workers * 2
+    pending = set()
 
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        futures = []
+    with (
+        ProcessPoolExecutor(max_workers=workers) as executor,
+        tqdm(desc=f"Crossmatching {dataset_name}", unit="chunk") as progress,
+    ):
         for chunk in read_hdf_chunked_np(hdf_path, dataset_name, chunk_size):
-            future = executor.submit(
-                chunk_crossmatch_np,
-                chunk,
-                local_source_ids,
-                on_index,
-                save_path,
-                chunk_index,
+            pending.add(
+                executor.submit(
+                    chunk_crossmatch_np,
+                    chunk,
+                    local_source_ids,
+                    on_index,
+                    save_path,
+                    chunk_index,
+                )
             )
-            futures.append(future)
             chunk_index += 1
-        for future in tqdm(
-            as_completed(futures),
-            total=chunk_index,
-            desc=f"Crossmatching {dataset_name}",
-        ):
+            if len(pending) >= max_in_flight:
+                completed, pending = wait(pending, return_when=FIRST_COMPLETED)
+                for future in completed:
+                    future.result()
+                progress.update(len(completed))
+                gc.collect()
+
+        while pending:
+            completed, pending = wait(pending, return_when=FIRST_COMPLETED)
+            for future in completed:
+                future.result()
+            progress.update(len(completed))
             gc.collect()
 
     elapsed_time = time.time() - start_time
@@ -258,17 +365,18 @@ def crossmatch_all(df_local):
     merged_df = df_local.copy()
 
     for table, key in tables.items():
-        save_path = f"{table}_output"
+        save_path = PREPROCESS_CACHE_DIR / f"{table}_output"
+        shutil.rmtree(save_path, ignore_errors=True)
         parallel_crossmatch_np(
-            f"/arc/projects/k-pop/catalogues/adql_matches/{table}",
+            str(ADQL_MATCH_DIR / table),
             key,
             local_source_ids,
             on_index=0,
             chunk_size=5_000_000,
-            save_path=save_path,
+            save_path=str(save_path),
         )
 
-        result_np = merge_results_np(save_path)
+        result_np = merge_results_np(str(save_path))
 
         if table == "sdss_curated.h5":
             cols = [
@@ -325,16 +433,64 @@ def crossmatch_all(df_local):
 
     print(merged_df["source_id"].dtype)
 
-    shutil.rmtree("sdss_curated.h5_output", ignore_errors=True)
-    shutil.rmtree("smssdr4_curated.h5_output", ignore_errors=True)
-    shutil.rmtree("tmass_curated.h5_output", ignore_errors=True)
-    shutil.rmtree("ps1_curated.h5_output", ignore_errors=True)
+    for table in (
+        "sdss_curated.h5",
+        "smssdr4_curated.h5",
+        "tmass_curated.h5",
+        "ps1_curated.h5",
+    ):
+        shutil.rmtree(PREPROCESS_CACHE_DIR / f"{table}_output", ignore_errors=True)
 
     return merged_df
 
 
 def main():
-    catwisexmatch = Table.read("table_1_catwise.fits.gz")
+    global PREPROCESS_CACHE_DIR
+    catwise_path = (
+        Path(os.environ.get("MSA_CATWISE_FILE", "table_1_catwise.fits.gz"))
+        .expanduser()
+        .resolve()
+    )
+    source_ids_path = (
+        Path(os.environ.get("MSA_SOURCE_IDS_FILE", "source_ids_x_file_names.h5"))
+        .expanduser()
+        .resolve()
+    )
+    output_dir = Path(os.environ.get("MSA_PREPROCESS_DIR", ".")).expanduser().resolve()
+    PREPROCESS_CACHE_DIR = (
+        Path(
+            os.environ.get("MSA_PREPROCESS_CACHE_DIR", output_dir / ".crossmatch-cache")
+        )
+        .expanduser()
+        .resolve()
+    )
+    required = [
+        catwise_path,
+        source_ids_path,
+        GAIA_XP_DIR,
+        GAIA_SOURCE_DIR,
+        ADQL_MATCH_DIR,
+        *(
+            ADQL_MATCH_DIR / name
+            for name in (
+                "smssdr4_curated.h5",
+                "sdss_curated.h5",
+                "ps1_curated.h5",
+                "tmass_curated.h5",
+            )
+        ),
+        Path(dustmaps_data_dir).expanduser().resolve(),
+    ]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise FileNotFoundError(
+            "Preprocessing inputs or mounts are missing: " + ", ".join(missing)
+        )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    PREPROCESS_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    os.chdir(output_dir)
+
+    catwisexmatch = Table.read(catwise_path)
     catwisexmatch = catwisexmatch.to_pandas()
     catwisexmatch["W1"] = catwisexmatch["catwise_w1"]
     catwisexmatch["W2"] = catwisexmatch["catwise_w2"]
@@ -354,7 +510,15 @@ def main():
         "G",
         "BP",
         "RP",
+        "e_G",
+        "e_BP",
+        "e_RP",
         "PARALLAX",
+        "e_parallax",
+        "pmra",
+        "e_pmra",
+        "pmdec",
+        "e_pmdec",
         "RA",
         "DEC",
         "EBV",
@@ -403,7 +567,7 @@ def main():
     labels.extend(["rp_" + str(i) for i in range(1, 56)])
     labels.extend(["bpe_" + str(i) for i in range(1, 56)])
     labels.extend(["rpe_" + str(i) for i in range(1, 56)])
-    new_order = ["source_id", "W1", "W2", "G", "BP", "RP"]
+    new_order = ["source_id", "W1", "W2", "G", "BP", "RP", "e_G", "e_BP", "e_RP"]
     new_order.extend(["bp_" + str(i) for i in range(1, 56)])
     new_order.extend(["rp_" + str(i) for i in range(1, 56)])
     new_order.extend(["bpe_" + str(i) for i in range(1, 56)])
@@ -451,29 +615,34 @@ def main():
             "KS",
             "E_KS",
             "PARALLAX",
+            "e_parallax",
+            "pmra",
+            "e_pmra",
+            "pmdec",
+            "e_pmdec",
             "EBV",
         ]
     )
-
-    scale_labels = ["bp_" + str(i) for i in range(1, 56)]
-    scale_labels.extend(["rp_" + str(i) for i in range(1, 56)])
-
     process_labels = ["bp_" + str(i) for i in range(1, 56)]
     process_labels.extend(["rp_" + str(i) for i in range(1, 56)])
     process_labels.extend(["bpe_" + str(i) for i in range(1, 56)])
     process_labels.extend(["rpe_" + str(i) for i in range(1, 56)])
 
-    file = h5py.File("source_ids_x_file_names.h5", "r")
+    file = h5py.File(source_ids_path, "r")
 
     n_parts = 50
+    start_part = int(os.environ.get("START_PART", "0"))
+    stop_part = int(os.environ.get("STOP_PART", str(n_parts)))
+    if not 0 <= start_part <= stop_part <= n_parts:
+        raise ValueError(
+            f"Require 0 <= START_PART <= STOP_PART <= {n_parts}; "
+            f"got {start_part}, {stop_part}"
+        )
     # Determine the size of each split
     keys = list(file.keys())
     n = len(keys) // n_parts
     # Split the keys into n_parts
-    for i in range(n_parts):
-        if i + 1 < 34:
-            continue
-
+    for i in range(start_part, stop_part):
         startingtime = time.time()
         start_idx = i * n
         if i == n_parts - 1:  # Handle the remainder keys in the last part
@@ -483,18 +652,13 @@ def main():
 
         dictionary = {}
         for key in keys_part:
-            condition = file[key][:, 1] == 1
-            filtered_array = file[key][:][condition]
-            ids = filtered_array[:, 0]
-            dictionary[key] = list(ids)
+            dictionary[key] = _source_ids_with_xp(file[key])
 
         print("WORKING ON PORTION " + str(i + 1) + "/" + str(n_parts) + "\n")
 
         print("getting the coefficients")
         results = []
-        with ThreadPoolExecutor(
-            max_workers=15
-        ) as executor:  # Adjust the number of workers based on your system
+        with ThreadPoolExecutor(max_workers=PREPROCESS_WORKERS) as executor:
             # Submit tasks to the executor
             futures = [
                 executor.submit(process_xp_file, (dictionary[key], key))
@@ -508,9 +672,7 @@ def main():
 
         print("getting the source ids")
         source_results = []
-        with ThreadPoolExecutor(
-            max_workers=15
-        ) as executor:  # Adjust the number of workers based on your system
+        with ThreadPoolExecutor(max_workers=PREPROCESS_WORKERS) as executor:
             # Submit tasks to the executor
             # futures = [executor.submit(process_source_file, args) for args in zip(idlist, setlist)]
             futures = [
@@ -524,18 +686,22 @@ def main():
 
         print("concatenating results")
         # Concatenate all the filtered dataframes
-        if results:
+        if results and source_results:
             xp_df = pd.concat(results, ignore_index=True)
             si_df = pd.concat(source_results, ignore_index=True)
             xp_df = pd.merge(xp_df, si_df, on="source_id", how="inner")
         else:
-            xp_df = pd.DataFrame()  # Empty DataFrame if no data was processed
+            raise ValueError(
+                f"No Gaia XP/source matches were found for portion {i}; "
+                "check mounted input files and source IDs"
+            )
         print("Final DataFrame shape:", xp_df.shape)
 
         del si_df
         del source_results
         del results
-        xp_df = xp_df.dropna()
+        # Keep partially measured sources; the model masks missing channels.
+        xp_df = xp_df.dropna(subset=["source_id"])
 
         print("merging with catwise")
         catwise_x_xp_df = pd.merge(xp_df, catwisexmatch, on="source_id", how="left")
@@ -603,16 +769,15 @@ def main():
         )
         ssl_df = ssl_df[new_order]
 
-        print("scaling labels")
-        for label in scale_labels:
-            ssl_df[label] = ssl_df[label] / 10 ** ((8.5 - ssl_df["G"]) / 2.5)
+        print("scaling XP coefficients and their uncertainties")
+        ssl_df = _scale_xp_measurements(ssl_df)
 
         print("dropping weird columns and duplicates")
         ssl_df = ssl_df.drop_duplicates(subset="source_id")
 
         print("writing partial table")
         ssl_to_write = Table.from_pandas(ssl_df)
-        ssl_to_write.write("partialtable-" + str(i) + ".fits", overwrite=True)
+        ssl_to_write.write(output_dir / f"partialtable-{i}.fits", overwrite=True)
 
         print("time for part:", time.time() - startingtime, "s")
 

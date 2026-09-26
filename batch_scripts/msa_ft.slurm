@@ -17,4 +17,5 @@ source ~/load/environment/with/libraries
 
 cd ~/scratch/masked-stellar-autoencoder/
 
-python training/finetune_msa.py --config configs/finetune.yaml
+export PYTHONPATH="$(pwd)/src${PYTHONPATH:+:$PYTHONPATH}"
+python -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.yaml

@@ -88,7 +88,7 @@ Always **inputs** (not duplicated as prediction targets): they provide **tangent
 ## Conformal / CQR-style intervals (implemented)
 
 - **Calibration:** on a held-out set in **scaled label space**, compute asymmetric offsets so nominal quantile intervals satisfy split conformal coverage at level $1-\alpha$ (`training/conformal.py`, `training/calibrate_conformal.py` on `.npy` val arrays).
-- **Evaluation:** `training/eval_ensemble.py --conformal-json …` applies offsets to ensemble **q16/q84**, then reports **interval coverage** per label in `metrics.json` (median point metrics unchanged).
+- **Evaluation:** `pixi run python -m masked_stellar_autoencoder.training.eval_ensemble --conformal-json …` applies offsets to ensemble **q16/q84**, then reports **interval coverage** per label in `metrics.json` (median point metrics unchanged).
 
 ## Pretrain mask mixture (implemented)
 

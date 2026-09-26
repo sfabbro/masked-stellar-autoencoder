@@ -15,7 +15,7 @@ export TORCH_HOME="${TORCH_HOME:-$SCRATCH/.cache/torch}"
 export WANDB_MODE="${WANDB_MODE:-offline}"
 
 cd "$MSA_REPO" || exit 1
-export PYTHONPATH="$MSA_REPO:${PYTHONPATH:-}"
+export PYTHONPATH="$MSA_REPO/src${PYTHONPATH:+:$PYTHONPATH}"
 
 # Python venv (create with batch_scripts/setup_venv_narval.sh)
 if [[ -n "${MSA_VENV:-}" && -f "$MSA_VENV/bin/activate" ]]; then

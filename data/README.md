@@ -13,6 +13,20 @@ The data fed to the model has a specific structure which is created using the fo
 - combine-partial-tables.py to crunch all the files together into 1 HDF file.
 - add-gaia-features.py example on how to add more features from the gaia source files if desired, like the proper motions.
 
+The table maker processes portions 0–49 by default. Use the half-open range `START_PART=33 STOP_PART=34` to resume just portion 33 after an interrupted run, or to split preprocessing across sessions. It writes `partialtable-<portion>.fits`; the combiner creates HDF5 keys named `sslset<portion>_part<chunk>`, matching the `valid_keys` pattern in the training configs. The combiner rebuilds the output through a temporary file, so rerunning it replaces the prior complete HDF5 artifact only after conversion succeeds. Point `data.datafile` in the pretraining YAML at this output before training.
+
+The current preprocessing joins Gaia source and XP rows, the precomputed CatWISE/XP table, and curated survey tables on Gaia `source_id`. It does not run a coordinate matcher or call an `xmatch` package. SkyMapper, SDSS, Pan-STARRS, and 2MASS inputs are already curated Gaia source-id matches; the CatWISE table is pre-matched in the Andrae+2023 product. To build new positional matches, use a separate catalogue-matching workflow and record its match-radius / ambiguity policy before feeding the resulting source IDs here.
+
+Configured `error_cols` are per-feature measurement uncertainties in the same units as their values. XP coefficient errors are scaled by the same flux factor as the coefficients. Gaia G/BP/RP magnitude errors are propagated from the source flux and flux error with the first-order magnitude derivative; parallax and proper-motion errors use Gaia's published astrometric uncertainties. Survey magnitude errors come from their `E_*` columns. `W1`, `W2`, `EBV`, `RA`, and `DEC` have no uncertainty mapped by this builder: their aligned config entries are `null`, so training uses neutral scaled reconstruction weights and skips error-scaled noise for those channels. Rebuild the partial FITS/HDF5 and fine-tuning FITS after changing this schema.
+
+Input and output paths are configurable with `MSA_SOURCE_IDS_FILE`,
+`MSA_CATWISE_FILE`, `MSA_GAIA_XP_DIR`, `MSA_GAIA_SOURCE_DIR`,
+`MSA_ADQL_MATCH_DIR`, `MSA_PREPROCESS_DIR`, and `MSA_PRETRAIN_HDF5_OUT`.
+`DUSTMAPS_DATA_DIR` must point to a directory that already contains the SFD maps;
+fetch them once with `dustmaps.sfd.fetch()` into persistent storage before
+starting the builder. `MSA_PREPROCESS_WORKERS` caps local concurrency. On
+CANFAR, put caches under `$WORK` and keep partial tables/HDF5 under `/arc/projects`.
+
 - data_validator.py provides scripts to validate the data in the pre-training dataset file.
 
 ---

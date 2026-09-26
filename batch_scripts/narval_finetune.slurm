@@ -29,4 +29,4 @@ echo "Job $SLURM_JOB_ID  node $(hostname)"
 nvidia-smi || true
 
 CONFIG="${CONFIG:-configs/finetune.narval.example.yaml}"
-python -u training/finetune_msa.py --config "$CONFIG"
+python -u -m masked_stellar_autoencoder.training.finetune_msa --config "$CONFIG"

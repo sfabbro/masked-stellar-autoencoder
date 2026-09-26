@@ -32,4 +32,4 @@ echo "Job $SLURM_JOB_ID  node $(hostname)  CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DE
 nvidia-smi || true
 
 CONFIG="${CONFIG:-configs/pretrain.narval.example.yaml}"
-python -u training/pretrain_msa.py --config "$CONFIG"
+python -u -m masked_stellar_autoencoder.training.pretrain_msa --config "$CONFIG"

@@ -29,7 +29,9 @@ import torch
 import yaml
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
+from masked_stellar_autoencoder.models.checkpoint_load import (
+    torch_load_finetune_checkpoint,
+)
 from masked_stellar_autoencoder.models.model import PredictionHead, make_model
 
 from .checkpoint_keys import autoencoder_state_dict, prediction_head_state_dict
@@ -405,7 +407,7 @@ def main():
 
     loaded_states = []
     for ckpt in args.checkpoints:
-        state = torch_load_trusted(ckpt, map_location="cpu")
+        state = torch_load_finetune_checkpoint(ckpt, map_location="cpu")
         loaded_states.append(state)
 
     ensemble_linear = bool(loaded_states[0].get("linear_probe", False))

@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from masked_stellar_autoencoder.training.finetune_data import (
     _augment_below_feh,
     _filter_metal_poor,
+    _scale_features,
     _scale_paired_label_blocks,
     _split_data,
     prepare_finetune_arrays,
@@ -20,7 +21,7 @@ def test_prepare_finetune_arrays_invalid_label_scaler():
             "ft_datafile": "dummy.fits",
             "feature_cols": ["f1"],
             "classes": ["teff", "fe_h"],
-            "error_cols": ["e_teff", "e_fe_h"],
+            "error_cols": ["e_f1"],
             "recon_cols": ["r1"],
         },
         "finetuning": {},
@@ -32,6 +33,7 @@ def test_prepare_finetune_arrays_invalid_label_scaler():
             "teff": [5000.0] * 20,
             "fe_h": [0.0] * 20,
             "f1": [1.0] * 20,
+            "e_f1": [0.1] * 20,
             "e_teff": [10.0] * 20,
             "e_fe_h": [0.1] * 20,
         }
@@ -49,6 +51,20 @@ def test_prepare_finetune_arrays_invalid_label_scaler():
             match="preprocessing.label_scaler must be 'standard', 'robust', or 'power', got 'invalid_scaler_type'",
         ):
             prepare_finetune_arrays(config)
+
+
+def test_prepare_finetune_arrays_rejects_feature_values_as_uncertainties():
+    config = {
+        "data": {
+            "ft_datafile": "unused.fits",
+            "feature_cols": ["f1"],
+            "error_cols": ["f1"],
+            "classes": ["teff", "e_teff"],
+        },
+        "finetuning": {},
+    }
+    with pytest.raises(ValueError, match="duplicates data.feature_cols"):
+        prepare_finetune_arrays(config)
 
 
 def _sample_frames(n: int = 40) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -144,3 +160,50 @@ def test_augment_below_feh_noop_when_no_metal_poor_rows():
 
     np.testing.assert_array_equal(out_train, trainset)
     np.testing.assert_array_equal(out_err, etrainset)
+
+
+def test_scale_features_masks_nonfinite_values_and_keeps_errors_finite():
+    train = np.array([[1.0, 0.0], [2.0, 1.0], [np.inf, 2.0], [4.0, np.nan]])
+    valid = np.array([[np.inf, 3.0], [5.0, np.nan]])
+    test = np.array([[6.0, 4.0]])
+    e_train = np.array([[0.1, 0.2], [0.2, 0.3], [np.inf, 0.4], [0.4, 0.0]])
+    e_valid = np.array([[np.inf, 0.5], [0.3, np.nan]])
+    e_test = np.array([[0.2, 0.2]])
+
+    scaled = _scale_features(
+        train,
+        valid,
+        test,
+        e_train,
+        e_valid,
+        e_test,
+        ["G", "bp_1"],
+        {"xp_feature_scaling": "global"},
+    )
+    scaled_train, scaled_valid, _, scaled_e_train, scaled_e_valid, _, scaler = scaled
+
+    assert np.isnan(scaled_train[2, 0])
+    assert np.isnan(scaled_valid[0, 0])
+    assert np.isfinite(scaler.center_).all()
+    assert np.isfinite(scaler.scale_).all()
+    assert np.isfinite(scaled_e_train).all() and (scaled_e_train > 0).all()
+    assert np.isfinite(scaled_e_valid).all() and (scaled_e_valid > 0).all()
+
+
+def test_scale_features_uses_neutral_uncertainty_for_unavailable_channels():
+    train = np.array([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
+    errors = np.array([[0.1, np.nan], [0.2, np.nan], [0.3, np.nan]])
+    scaled = _scale_features(
+        train,
+        train[:1],
+        train[:1],
+        errors,
+        errors[:1],
+        errors[:1],
+        ["measured", "unmeasured"],
+        {},
+        error_available=np.array([True, False]),
+    )
+
+    for errors_scaled in (scaled[3], scaled[4], scaled[5]):
+        np.testing.assert_array_equal(errors_scaled[:, 1], 1.0)

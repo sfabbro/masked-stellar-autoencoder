@@ -2,7 +2,7 @@
 
 Photometric stellar parameters for Gaia sources, including stars with no XP spectrum and stars missing most external surveys. DR3 XP (55 BP + 55 RP signed Hermite coefficients) is the first table, not the schema. A DR4 file is a new `n_bp` / `n_rp`.
 
-The original trainer (`training/pretrain_msa.py`, `training/finetune_msa.py`, `models/model.py`) is unchanged. This path is `masked_stellar_autoencoder.pipeline`.
+The original trainer lives in `masked_stellar_autoencoder.training` (`pretrain_msa`, `finetune_msa`, `models.model`). Its CLI commands are `pixi run python -m masked_stellar_autoencoder.training.pretrain_msa` and `pixi run python -m masked_stellar_autoencoder.training.finetune_msa`. This catalogue pipeline is a separate path under `masked_stellar_autoencoder.pipeline`.
 
 ## Run
 

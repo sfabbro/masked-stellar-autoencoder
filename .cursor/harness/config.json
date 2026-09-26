@@ -1,0 +1,7 @@
+{
+  "verify_fast": ["pixi run lint"],
+  "verify": ["./scripts/ci_local.sh"],
+  "verify_full": ["./scripts/ci_local.sh"],
+  "reflect_min_turns": 5,
+  "reflect_min_minutes": 45
+}

@@ -5,6 +5,18 @@ import numpy as np
 import tqdm
 from natsort import natsorted
 
+
+def flux_error_to_mag(flux, flux_error):
+    flux = np.asarray(flux, dtype=np.float64)
+    flux_error = np.asarray(flux_error, dtype=np.float64)
+    result = np.full(np.broadcast_shapes(flux.shape, flux_error.shape), np.nan)
+    valid = np.isfinite(flux) & (flux > 0) & np.isfinite(flux_error) & (flux_error >= 0)
+    # ponytail: first-order propagation is suitable for symmetric weights; a
+    # flux-space likelihood is needed to model asymmetric errors at low S/N.
+    np.divide(2.5 / np.log(10) * flux_error, flux, out=result, where=valid)
+    return result
+
+
 try:
     file = h5py.File("pretrain_dataset_incomplete.h5", "r")
 except (FileNotFoundError, OSError) as e:
@@ -75,14 +87,26 @@ with h5py.File("220M_pretrain_data.h5", "a") as hf_out:
                     "g_flux_error": f["phot_g_mean_flux_error"][:],
                     "bp_flux_error": f["phot_bp_mean_flux_error"][:],
                     "rp_flux_error": f["phot_rp_mean_flux_error"][:],
+                    "e_G": flux_error_to_mag(
+                        f["phot_g_mean_flux"][:], f["phot_g_mean_flux_error"][:]
+                    ),
+                    "e_BP": flux_error_to_mag(
+                        f["phot_bp_mean_flux"][:], f["phot_bp_mean_flux_error"][:]
+                    ),
+                    "e_RP": flux_error_to_mag(
+                        f["phot_rp_mean_flux"][:], f["phot_rp_mean_flux_error"][:]
+                    ),
                     "e_parallax": f["parallax_error"][:],
                 }
 
                 # print('Loaded data into dict')
 
                 dtype = [(key, file_data[key].dtype) for key in file_data]
-                selected_columns = list(file_data.keys())
-                selected_columns.remove("source_id")
+                selected_columns = [
+                    key
+                    for key in file_data
+                    if key != "source_id" and key not in array1.dtype.names
+                ]
 
                 # Create structured array for file_data
                 array2 = np.zeros(file_data["source_id"].shape, dtype=dtype)
@@ -160,4 +184,6 @@ with h5py.File("220M_pretrain_data.h5", "a") as hf_out:
         # Do something with the final result (e.g., save, analyze, etc.)
         # final_result could be saved or processed further here
 
+        if dataset_name in hf_out:
+            del hf_out[dataset_name]
         hf_out.create_dataset(dataset_name, data=final_result)

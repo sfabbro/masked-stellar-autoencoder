@@ -1,6 +1,6 @@
 # Experiment log (multitask rationale, Phase 2)
 
-Record pilot and full-scale results here after each run. **Do not** edit paper tables by hand; copy `results/.../metrics_table.tex` from `training/eval_ensemble.py`.
+Record pilot and full-scale results here after each run. **Do not** edit paper tables by hand; copy `results/.../metrics_table.tex` from `masked_stellar_autoencoder.training.eval_ensemble`.
 
 ## Pred-only vs recon+pred (pilot)
 
@@ -14,7 +14,7 @@ Record pilot and full-scale results here after each run. **Do not** edit paper t
 Commands:
 
 ```bash
-python training/finetune_msa.py --config configs/pilot_local.yaml --max-train-rows 8192 --max-valid-rows 2048
+pixi run python -m masked_stellar_autoencoder.training.finetune_msa --config configs/pilot_local.yaml --max-train-rows 8192 --max-valid-rows 2048
 ```
 
 Flip `finetuning.multitask` between runs; keep seed and data identical.

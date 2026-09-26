@@ -1,30 +1,31 @@
-#!/bin/bash
-set -eu
-pip install -q h5py
-python3 << 'PYEOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+data_file="${MSA_PRETRAIN_DATA:-/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5}"
+pixi run python - "$data_file" <<'PYEOF'
+import sys
+
 import h5py
 
-f = h5py.File("/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5", "r")
-keys = list(f.keys())
-print(f"Top-level groups: {len(keys)}")
+with h5py.File(sys.argv[1], "r") as h5:
+    keys = list(h5.keys())
+    print(f"Top-level groups: {len(keys)}")
 
-for k in keys[:3]:
-    ds = f[k]
-    print(f"\n  {k}: shape={ds.shape}, dtype={ds.dtype}")
-    if hasattr(ds, "dtype") and ds.dtype.names:
-        print(f"    columns ({len(ds.dtype.names)}):")
-        for col in ds.dtype.names:
-            print(f"      {col}")
+    for key in keys[:3]:
+        dataset = h5[key]
+        print(f"\n  {key}: shape={dataset.shape}, dtype={dataset.dtype}")
+        if dataset.dtype.names:
+            print(f"    columns ({len(dataset.dtype.names)}):")
+            for column in dataset.dtype.names:
+                print(f"      {column}")
 
-print("\n  ...")
-total = sum(f[k].shape[0] for k in keys)
-print(f"\nTotal rows across all keys: {total:,}")
+    total = sum(h5[key].shape[0] for key in keys)
+    print(f"\nTotal rows across all keys: {total:,}")
 
-k0 = keys[0]
-arr = f[k0][:]
-print(f"\nKey '{k0}': {arr.shape}, {arr.nbytes / 1e6:.1f} MB")
-if arr.dtype.names:
-    print(f"  All {len(arr.dtype.names)} columns: {list(arr.dtype.names)}")
-
-f.close()
+    if keys:
+        first = h5[keys[0]]
+        size_mb = first.dtype.itemsize * first.shape[0] / 1e6
+        print(f"\nKey {keys[0]!r}: {first.shape}, {size_mb:.1f} MB")
+        if first.dtype.names:
+            print(f"  All {len(first.dtype.names)} columns: {list(first.dtype.names)}")
 PYEOF

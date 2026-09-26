@@ -22,4 +22,5 @@ source ~/load/environment/with/libraries
 
 cd ~/scratch/masked-stellar-autoencoder/
 
-python training/pretrain_msa.py --config configs/pretrain.yaml
+export PYTHONPATH="$(pwd)/src${PYTHONPATH:+:$PYTHONPATH}"
+python -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.yaml

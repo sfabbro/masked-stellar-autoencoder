@@ -1,5 +1,6 @@
 import argparse
 import random
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -11,6 +12,33 @@ from masked_stellar_autoencoder.models.model import TabResnetWrapper, make_model
 from .config_paths import expand_config_paths, ft_checkpoint_paths
 from .feature_noise import pert_channel_scale_vector
 from .finetune_data import prepare_finetune_arrays
+
+
+def _pilot_path(path):
+    if not path:
+        return path
+    value = Path(path)
+    return str(value.with_name(f"{value.stem}_pilot{value.suffix}"))
+
+
+def _configure_pilot(config, args):
+    finetuning = config["finetuning"]
+    finetuning["num_epochs"] = 1
+    finetuning["mini_batch"] = min(int(finetuning["mini_batch"]), 256)
+    finetuning["ensemble"] = False
+    args.max_train_rows = min(
+        8192 if args.max_train_rows is None else args.max_train_rows, 8192
+    )
+    args.max_valid_rows = min(
+        2048 if args.max_valid_rows is None else args.max_valid_rows, 2048
+    )
+    for key in ("model_str", "log_file"):
+        if key in config["saving"]:
+            config["saving"][key] = _pilot_path(config["saving"][key])
+    if config["finetuning"].get("ensemble_path"):
+        config["finetuning"]["ensemble_path"] = _pilot_path(
+            config["finetuning"]["ensemble_path"]
+        )
 
 
 def _print_parallax_consistency(pack, cols, scalers) -> None:
@@ -143,6 +171,7 @@ def _finetune_one_seed(
         pert_labels=config["finetuning"]["pert_labels"],
         feature_seed=config["finetuning"]["pert_seed"],
         ensemblepath=config["finetuning"]["ensemble_path"],
+        resume_training=not config["finetuning"].get("ensemble", False),
         ft_lambda_pred=float(config["finetuning"].get("lambda_pred", 0.8)),
         ft_lambda_rec=float(config["finetuning"].get("lambda_rec", 0.2)),
         ft_quantile_label_weights=config["finetuning"].get("quantile_label_weights"),
@@ -195,11 +224,18 @@ def main():
         default=None,
         help="Subsample validation rows for pilot runs only",
     )
+    parser.add_argument(
+        "--pilot",
+        action="store_true",
+        help="Run one bounded epoch without overwriting full outputs",
+    )
     args = parser.parse_args()
 
     with open(args.config) as f:
         config = yaml.safe_load(f)
     expand_config_paths(config)
+    if args.pilot:
+        _configure_pilot(config, args)
 
     if config["finetuning"]["ensemble"]:
         rng = np.random.default_rng(config["finetuning"].get("ensemble_seed", 42))

@@ -219,11 +219,31 @@ def _scale_features(
     etestset: np.ndarray,
     cols: list,
     pproc_early: dict[str, Any],
+    error_available: np.ndarray | None = None,
 ) -> tuple[
     np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, RobustScaler
 ]:
+    trainset, validset, testset, etrainset, evalidset, etestset = (
+        np.asarray(arr, dtype=np.float64).copy()
+        for arr in (trainset, validset, testset, etrainset, evalidset, etestset)
+    )
+    for features in (trainset, validset, testset):
+        features[~np.isfinite(features)] = np.nan
+    for errors in (etrainset, evalidset, etestset):
+        errors[~np.isfinite(errors)] = np.nan
+
+    valid_errors = np.isfinite(etrainset) & (etrainset > 0)
+    max_errors = np.max(np.where(valid_errors, etrainset, -np.inf), axis=0)
+    max_errors[~np.isfinite(max_errors)] = 1.0
+    for errors in (etrainset, evalidset, etestset):
+        invalid = ~np.isfinite(errors) | (errors <= 0)
+        errors[invalid] = np.broadcast_to(max_errors, errors.shape)[invalid]
+
     featurescaler = RobustScaler()
     featurescaler.fit(trainset)
+    featurescaler.center_[~np.isfinite(featurescaler.center_)] = 0.0
+    invalid_scale = ~np.isfinite(featurescaler.scale_) | (featurescaler.scale_ <= 0)
+    featurescaler.scale_[invalid_scale] = 1.0
 
     if pproc_early.get("xp_feature_scaling", "robust") == "global":
         xp_indices = [
@@ -233,11 +253,15 @@ def _scale_features(
         ]
         if xp_indices:
             xp_data = trainset[:, xp_indices]
-            q75, q25 = np.nanpercentile(xp_data, [75, 25])
-            global_iqr = q75 - q25
-            global_median = np.nanmedian(xp_data)
-            if global_iqr <= 0:
-                global_iqr = 1.0
+            valid_xp = xp_data[np.isfinite(xp_data)]
+            if valid_xp.size:
+                q75, q25 = np.percentile(valid_xp, [75, 25])
+                global_iqr = q75 - q25
+                global_median = np.median(valid_xp)
+                if not np.isfinite(global_iqr) or global_iqr <= 0:
+                    global_iqr = 1.0
+            else:
+                global_median, global_iqr = 0.0, 1.0
             featurescaler.center_[xp_indices] = global_median
             featurescaler.scale_[xp_indices] = global_iqr
 
@@ -250,6 +274,12 @@ def _scale_features(
     etrainset = etrainset / scale_factors
     evalidset = evalidset / scale_factors
     etestset = etestset / scale_factors
+    if error_available is not None:
+        unavailable = ~np.asarray(error_available, dtype=bool)
+        if unavailable.shape != (len(cols),):
+            raise ValueError("error_available must contain one flag per feature")
+        for errors in (etrainset, evalidset, etestset):
+            errors[:, unavailable] = 1.0
 
     return trainset, validset, testset, etrainset, evalidset, etestset, featurescaler
 
@@ -316,16 +346,37 @@ def prepare_finetune_arrays(
 
     If max_train_rows / max_valid_rows are set, subsample (first rows) for pilots only.
     """
+    for name, limit in (
+        ("max_train_rows", max_train_rows),
+        ("max_valid_rows", max_valid_rows),
+    ):
+        if limit is not None and limit < 1:
+            raise ValueError(f"{name} must be positive when set")
     expand_config_paths(config)
-    data = Table.read(config["data"]["ft_datafile"]).to_pandas()
-    errordata = data.copy()
-
     cols = config["data"]["feature_cols"]
     classes = config["data"]["classes"]
     error_cols = config["data"]["error_cols"]
+    if len(cols) != len(error_cols):
+        raise ValueError(
+            "data.error_cols must contain one uncertainty column per feature"
+        )
+    if any(error in set(cols) for error in error_cols if error is not None):
+        raise ValueError(
+            "data.error_cols duplicates data.feature_cols; map each feature to its "
+            "measurement uncertainty before fine-tuning"
+        )
 
-    data = data[classes + cols]
-    errordata = errordata[error_cols]
+    source_data = Table.read(config["data"]["ft_datafile"]).to_pandas()
+    data = source_data[classes + cols]
+    errordata = pd.DataFrame(
+        {
+            feature: source_data[error]
+            if error is not None
+            else np.full(len(source_data), np.nan)
+            for feature, error in zip(cols, error_cols, strict=True)
+        },
+        index=source_data.index,
+    )
 
     mp = config["finetuning"].get("metal_poor") or {}
     data, errordata = _filter_metal_poor(data, errordata, mp)
@@ -455,6 +506,9 @@ def prepare_finetune_arrays(
             etestset,
             cols,
             pproc_early,
+            error_available=np.asarray(
+                [error is not None for error in error_cols], dtype=bool
+            ),
         )
     )
 

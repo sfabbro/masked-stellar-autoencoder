@@ -9,9 +9,14 @@ description = "Masked Stellar Autoencoder for XP spectra"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "torch>=2.1.0",
+    "torch",
+    "torchmetrics",
+    "rtdl-num-embeddings>=0.0.12",
     "numpy>=1.25.0",
     "astropy>=6.0.0",
+    "astroquery>=0.4.9",
+    "dustmaps>=1.0",
+    "natsort>=8.4",
     "pandas>=2.1.0",
     "scikit-learn>=1.3.0",
     "scipy>=1.11.0",
@@ -20,7 +25,6 @@ dependencies = [
     "tqdm>=4.66.0",
     "pyyaml>=6.0.1",
     "wandb>=0.16.0",
-    "torchmetrics>=1.9.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -28,7 +32,11 @@ where = ["src"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
-platforms = ["osx-arm64", "linux-64"]
+platforms = [
+    "osx-arm64",
+    { name = "linux-64-cuda", platform = "linux-64", cuda = "12.8" },
+    { name = "linux-64-cpu", platform = "linux-64" },
+]
 
 [tool.pixi.tasks]
 lint = "ruff check ."
@@ -45,32 +53,44 @@ gpu = { features = ["gpu"] }
 
 [tool.pixi.dependencies]
 python = "3.13.*"
-pytorch = ">=2.1.0"
 numpy = ">=1.25.0"
 astropy = ">=6.0.0"
 pandas = ">=2.1.0"
 scikit-learn = ">=1.3.0"
 scipy = ">=1.11.0"
 h5py = ">=3.10.0"
+# PyTorch's SymPy dependency currently requires mpmath<1.4.
+mpmath = "<1.4"
 matplotlib = ">=3.8.0"
 tqdm = ">=4.66.0"
 pyyaml = ">=6.0.1"
 wandb = ">=0.16.0"
 ruff = "*"
 pytest = "*"
-pytest-mock = ">=3.15.1,<4"
-torchmetrics = ">=1.9.0,<2"
+pytest-mock = "*"
 
-[tool.pixi.feature.gpu.target.linux-64.dependencies]
-cuda-version = ">=12.4"
+[tool.pixi.target."*-cuda".pypi-dependencies]
+torch = { version = "*", index = "https://download.pytorch.org/whl/cu128" }
+
+[tool.pixi.target."*-cpu".pypi-dependencies]
+torch = { version = "*", index = "https://download.pytorch.org/whl/cpu" }
+
+[tool.pixi.target.osx-arm64.dependencies]
+pytorch = "*"
 
 [tool.pixi.feature.gpu.tasks]
-train = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml"
+check-canfar-gpu = "python -c 'import torch; print(torch.__version__, torch.version.cuda); assert torch.cuda.is_available(), \"GPU-enabled PyTorch cannot see a CANFAR GPU\"; print(torch.cuda.get_device_name(0))'"
+canfar-schema = "python -m masked_stellar_autoencoder.training.canfar_preflight --schema-only"
+canfar-preflight = "python -m masked_stellar_autoencoder.training.canfar_preflight --require-cuda"
+canfar-preflight-pretrain = "python -m masked_stellar_autoencoder.training.canfar_preflight --skip-finetune --require-cuda"
+pretrain-canfar = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml"
+finetune-canfar = "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.canfar.yaml"
+pretrain-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml --pilot"
+finetune-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.canfar.yaml --pilot"
 
 [tool.pixi.pypi-dependencies]
 masked-stellar-autoencoder = { path = ".", editable = true }
-rtdl_num_embeddings = ">=0.0.12"
-pre-commit = ">=4,<5"
+pre-commit = "*"
 
 [tool.ruff]
 target-version = "py312"

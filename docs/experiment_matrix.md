@@ -11,7 +11,7 @@ Pre-register decisions **before** full 220M pretrain / large ensembles. All rows
 | XP mask | Full forward with XP zeroed/masked vs nominal (same stars) |
 | G bins | Optional: faint vs bright using column `G` (or BP/RP proxy) |
 
-Export via `python training/eval_ensemble.py` (see `--help`).
+Export via `pixi run python -m masked_stellar_autoencoder.training.eval_ensemble` (see `--help`).
 
 ## Training axes
 

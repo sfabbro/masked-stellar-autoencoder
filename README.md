@@ -39,7 +39,8 @@ notebooks/ # Metrics, validation scripts, visualization tools, and exploratory a
 configs/ # Config file examples for running the model
 batch_scripts/ # Example slurm files for pre-training in batches
 README.md # This file
-requirements.txt # Python dependencies
+pyproject.toml # Project metadata, dependencies, and Pixi configuration
+pixi.lock # Resolved Pixi environments
 ```
 
 ---
@@ -49,16 +50,11 @@ requirements.txt # Python dependencies
 ```bash
 git clone https://github.com/aydanmckay/masked-stellar-autoencoder.git
 cd masked-stellar-autoencoder
-pip install -r requirements.txt
+pixi install
 ```
 
-Requirements include:
-* torch (PyTorch)
-* sklearn (scikit-learn)
-* numpy, pandas, scipy
-* astropy, h5py
-* matplotlib
-* [rtdl_num_embeddings](https://github.com/yandex-research/rtdl-num-embeddings)
+Runtime dependencies are declared in `pyproject.toml`; `pixi.lock` records the
+resolved versions for reproducible local and CANFAR environments.
 
 ---
 
@@ -66,11 +62,11 @@ Requirements include:
 
 ### Pretraining (Masked Autoencoding)
 ```bash
-python training/pretrain_msa.py --config configs/pretrain.yaml
+pixi run python -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.yaml
 ```
 ### Fine-tuning on Stellar Labels
 ```bash
-python training/finetune_msa.py --config configs/finetune.yaml
+pixi run python -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.yaml
 ```
 
 ### Stellar-parameter pipeline
@@ -97,17 +93,16 @@ See [docs/METHODOLOGY.md](docs/METHODOLOGY.md) for the frozen statistical policy
 After fine-tuning, export metrics and a LaTeX fragment with:
 
 ```bash
-PYTHONPATH=. python training/eval_ensemble.py --config configs/finetune.yaml \
+pixi run python -m masked_stellar_autoencoder.training.eval_ensemble --config configs/finetune.yaml \
   --checkpoints path/to/member1.pth path/to/member2.pth --out results/my_run
 ```
 
 See [RUNLOG.md](RUNLOG.md) for the paper–code gap audit and [docs/experiment_matrix.md](docs/experiment_matrix.md) for the ablation protocol. Record pilot multitask comparisons in [docs/EXPERIMENT_LOG.md](docs/EXPERIMENT_LOG.md).
 
-### Tests (optional)
+### Tests
 
 ```bash
-pip install -r requirements-dev.txt
-PYTHONPATH=. pytest tests/test_msa_training_invariants.py -v
+pixi run test
 ```
 
 ---

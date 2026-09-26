@@ -27,3 +27,10 @@ def torch_load_trusted(
     if "weights_only" in inspect.signature(torch.load).parameters:
         kwargs["weights_only"] = weights_only
     return torch.load(fpath, **kwargs)
+
+
+def torch_load_finetune_checkpoint(
+    fpath: PathLike, map_location: Any | None = None
+) -> Any:
+    """Load a trusted fine-tune checkpoint containing sklearn scaler objects."""
+    return torch_load_trusted(fpath, map_location=map_location, weights_only=False)

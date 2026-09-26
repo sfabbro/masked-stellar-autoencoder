@@ -37,5 +37,5 @@ if [[ ${#CKPTS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-python -u training/eval_ensemble.py --config "$CONFIG" --checkpoints "${CKPTS[@]}" --out "$OUT"
+python -u -m masked_stellar_autoencoder.training.eval_ensemble --config "$CONFIG" --checkpoints "${CKPTS[@]}" --out "$OUT"
 echo "Wrote metrics under $OUT"

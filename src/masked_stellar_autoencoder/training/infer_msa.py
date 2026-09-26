@@ -27,7 +27,9 @@ import pandas as pd
 import torch
 import yaml
 
-from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
+from masked_stellar_autoencoder.models.checkpoint_load import (
+    torch_load_finetune_checkpoint,
+)
 from masked_stellar_autoencoder.models.model import PredictionHead, make_model
 from masked_stellar_autoencoder.training.checkpoint_keys import (
     autoencoder_state_dict,
@@ -215,7 +217,7 @@ def main():
     expand_config_paths(config)
 
     print(f"Loading weights from {args.checkpoint}...")
-    state = torch_load_trusted(args.checkpoint, map_location=device)
+    state = torch_load_finetune_checkpoint(args.checkpoint, map_location=device)
 
     # 1. Pipeline dynamic scaler generation (Requires generating split on finetune DB)
     pack, featurescaler, label_scalers, label_names, cols, recon_cols = load_scalers(
