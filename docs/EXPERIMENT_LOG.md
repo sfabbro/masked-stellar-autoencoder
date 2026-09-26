@@ -19,6 +19,25 @@ pixi run python -m masked_stellar_autoencoder.training.finetune_msa --config con
 
 Flip `finetuning.multitask` between runs; keep seed and data identical.
 
+## CANFAR execution smoke (2026-09-26)
+
+**Revision:** `8f8c610`; image `images.canfar.net/astroai/base:latest`; GPU
+`NVIDIA H100 NVL MIG 1g.12gb`.
+
+| Stage | Work bound | Train loss | Validation loss | Output |
+|-------|------------|------------|-----------------|--------|
+| Pretraining | 1 epoch; 2 train shards and 1 validation shard; 512 rows per shard | 0.905803 | 0.900108 | `/arc/projects/k-pop/msa_runs/pretrain/checkpoints/msa_pretrain_pilot.pth` |
+| Fine-tuning | 1 epoch; at most 8192 train and 2048 validation rows | 0.408444 | 0.396878 | `/arc/projects/k-pop/msa_runs/finetune/checkpoints/msa_finetune_pilot.pth` |
+
+Both checkpoints were confirmed on persistent project storage. The CANFAR
+catalogue preflight found compatible model settings and all configured fields.
+The mounted legacy catalogues lack magnitude uncertainties for `W1`, `W2`,
+`G`, `BP`, and `RP`, so those uncertainty mappings remain explicitly unset.
+These runs verify execution and checkpoint output; their losses are not a model
+comparison. Preprocessing is still blocked because the source-ID index, Gaia XP
+directory, and preprocessing output directory are absent from this session's
+mounts.
+
 ## Full-scale (Phase 3)
 
 | Git tag | Checkpoint paths | eval_ensemble `--out` | Decision (A vs B) |
