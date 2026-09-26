@@ -34,7 +34,7 @@ where = ["src"]
 channels = ["conda-forge"]
 platforms = [
     "osx-arm64",
-    { name = "linux-64-cuda", platform = "linux-64", cuda = "12.8" },
+    { name = "linux-64-cuda", platform = "linux-64", cuda = "13.0" },
     { name = "linux-64-cpu", platform = "linux-64" },
 ]
 
@@ -70,7 +70,7 @@ pytest = "*"
 pytest-mock = "*"
 
 [tool.pixi.target."*-cuda".pypi-dependencies]
-torch = { version = "*", index = "https://download.pytorch.org/whl/cu128" }
+torch = { version = "*", index = "https://download.pytorch.org/whl/cu130" }
 
 [tool.pixi.target."*-cpu".pypi-dependencies]
 torch = { version = "*", index = "https://download.pytorch.org/whl/cpu" }
