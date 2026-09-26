@@ -36,6 +36,18 @@ def test_source_index_reader_accepts_generator_compound_hdf5(monkeypatch, tmp_pa
     assert module["_source_ids_with_xp"](dataset) == [101, 103]
 
 
+def test_xp_input_requires_compressed_csv_shards(monkeypatch, tmp_path):
+    module = load_preprocessor(monkeypatch, tmp_path)
+    xp_dir = tmp_path / "xp"
+    xp_dir.mkdir()
+
+    with pytest.raises(FileNotFoundError, match="XpContinuousMeanSpectrum_.*csv.gz"):
+        module["_require_xp_csv_shards"](xp_dir)
+
+    (xp_dir / "XpContinuousMeanSpectrum_000000-000001.csv.gz").touch()
+    module["_require_xp_csv_shards"](xp_dir)
+
+
 def test_gaia_flux_errors_propagate_to_magnitude_errors(monkeypatch, tmp_path):
     module = load_preprocessor(monkeypatch, tmp_path)
     factor = 2.5 / np.log(10)

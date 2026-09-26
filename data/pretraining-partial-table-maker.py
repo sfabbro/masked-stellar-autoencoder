@@ -81,6 +81,14 @@ def _xp_scale_labels():
     ]
 
 
+def _require_xp_csv_shards(directory):
+    if next(directory.glob("XpContinuousMeanSpectrum_*.csv.gz"), None) is None:
+        raise FileNotFoundError(
+            f"No Gaia XP CSV.gz shards found in {directory}; expected files named "
+            "XpContinuousMeanSpectrum_<source-id-range>.csv.gz"
+        )
+
+
 def _scale_xp_measurements(df):
     factor = 10 ** ((8.5 - df["G"]) / 2.5)
     for column in _xp_scale_labels():
@@ -491,6 +499,7 @@ def main():
         raise FileNotFoundError(
             "Preprocessing inputs or mounts are missing: " + ", ".join(missing)
         )
+    _require_xp_csv_shards(GAIA_XP_DIR)
     output_dir.mkdir(parents=True, exist_ok=True)
     PREPROCESS_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     os.chdir(output_dir)

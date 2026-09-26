@@ -128,8 +128,10 @@ Catalogue inputs use the original K-pop mounts. Generated outputs default to
 `dustmaps`, while the source-ID index, partial FITS tables, and combined HDF5
 file go under `preprocess`. These outputs stay on persistent project storage;
 crossmatch chunks and Pixi caches stay under `$WORK`. Override the paths when
-the session exposes different mounts. Run `fetch-dustmaps` once before
-preprocessing.
+the session exposes different mounts. The XP input defaults to
+`/arc/projects/k-pop/spectra/gaia/dr3/xp_continuous_mean_spectrum` and expects
+`XpContinuousMeanSpectrum_<source-id-range>.csv.gz` files; GaiaSource inputs are
+HDF5 shards. Run `fetch-dustmaps` once before preprocessing.
 
 ```bash
 canfar create --name msa-dustmaps headless images.canfar.net/astroai/base:latest -- \
