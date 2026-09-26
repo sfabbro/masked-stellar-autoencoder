@@ -26,8 +26,9 @@ data:
                  'Z_SMSS','U_SDSS','G_SDSS','R_SDSS','I_SDSS','Z_SDSS','G_PS1','R_PS1',
                  'I_PS1','Z_PS1','Y_PS1','J','H','KS','PARALLAX','EBV',
                  'pmra','pmdec','RA','DEC']
-  # Null means no measured uncertainty is available: unit scaled weight, no jitter.
-  error_cols: [null,null,'e_G','e_BP','e_RP','bpe_1','bpe_2','bpe_3',
+  # The mounted legacy catalogue has raw flux errors, not magnitude errors.
+  # Null avoids mixing units; rebuilt pipeline tables provide e_G/e_BP/e_RP.
+  error_cols: [null,null,null,null,null,'bpe_1','bpe_2','bpe_3',
                  'bpe_4','bpe_5','bpe_6','bpe_7','bpe_8','bpe_9','bpe_10','bpe_11',
                  'bpe_12','bpe_13','bpe_14','bpe_15','bpe_16','bpe_17','bpe_18','bpe_19',
                  'bpe_20','bpe_21','bpe_22','bpe_23','bpe_24','bpe_25','bpe_26','bpe_27',

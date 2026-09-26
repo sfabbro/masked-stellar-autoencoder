@@ -158,6 +158,14 @@ After the pretraining pilot and a clean preflight, launch full pretraining and
 fine-tuning with the `pretrain` and `finetune` stages. The schema and path
 preflight must pass before a training stage starts.
 
+The mounted legacy HDF5/FITS catalogues contain Gaia G/BP/RP flux uncertainties
+but not the corresponding magnitude uncertainties. The CANFAR configs leave
+those three `error_cols` entries null rather than mixing flux and magnitude
+units; the XP coefficient errors remain mapped. Tables rebuilt with the current
+preprocessing stage include `e_G`, `e_BP`, and `e_RP`, so map those columns in
+both configs when switching `MSA_PRETRAIN_DATA` and `MSA_FINETUNE_DATA` to the
+rebuilt tables.
+
 ```bash
 canfar create --name msa-pretrain --gpu 1 headless images.canfar.net/astroai/base:latest -- \
   bash /arc/projects/k-pop/software/masked-stellar-autoencoder/batch_scripts/canfar_entrypoint.sh pretrain

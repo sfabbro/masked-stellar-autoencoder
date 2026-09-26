@@ -153,10 +153,9 @@ def test_all_training_configs_match_pretrain_checkpoint_architecture():
             pretrain["data"]["feature_cols"]
         )
         assert pretrain["data"]["error_cols"] == finetune["data"]["error_cols"]
-        assert pretrain["data"]["error_cols"][:5] == [
-            None,
-            None,
-            "e_G",
-            "e_BP",
-            "e_RP",
-        ]
+        expected_broadband_errors = (
+            [None, None, None, None, None]
+            if suffix == ".canfar"
+            else [None, None, "e_G", "e_BP", "e_RP"]
+        )
+        assert pretrain["data"]["error_cols"][:5] == expected_broadband_errors
