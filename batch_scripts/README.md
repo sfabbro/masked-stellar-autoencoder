@@ -72,7 +72,7 @@ so runs no longer overwrite a single checkpoint file.
 
 ## CANFAR (AstroAI base image)
 
-The CANFAR path uses `images.canfar.net/astroai/base:latest` and the repository's
+The CANFAR path uses `astroai/base:latest` and the repository's
 Pixi lock. The Linux GPU lock resolves to PyTorch 2.14 with CUDA 13.0. The
 `scripts/canfar_launch.sh` wrapper stages `sfabbro/masked-stellar-autoencoder`
 into `$WORK` through `canfar-job`; it does not depend on a persistent code copy
@@ -87,6 +87,15 @@ tag, `CANFAR_SESSION_NAME` to name the job, and `CANFAR_CPU` or
 ```bash
 scripts/canfar_launch.sh schema
 scripts/canfar_launch.sh pretrain-pilot
+```
+
+`canfar-job` clones the selected Git ref under `$WORK` and runs `pixi install`
+in that fresh checkout. Check the CUDA environment installation directly with:
+
+```bash
+canfar-job run --repo sfabbro/masked-stellar-autoencoder --branch main \
+  --image astroai/base:latest --name msa-pixi-install -- \
+  pixi install --frozen --environment gpu --platform linux-64-cuda
 ```
 
 Build the Gaia source index after the Gaia source and project catalogue mounts

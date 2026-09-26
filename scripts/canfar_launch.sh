@@ -3,7 +3,7 @@ set -euo pipefail
 
 stage="${1:?Usage: canfar_launch.sh <stage> (see batch_scripts/README.md)}"
 shift
-image="${CANFAR_IMAGE:-images.canfar.net/astroai/base:latest}"
+image="${CANFAR_IMAGE:-astroai/base:latest}"
 name="${CANFAR_SESSION_NAME:-msa-${stage}}"
 ref="${CANFAR_GIT_REF:-main}"
 
