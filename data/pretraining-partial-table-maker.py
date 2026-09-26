@@ -32,7 +32,12 @@ import astropy.units as units
 from astropy.coordinates import SkyCoord
 
 GAIA_XP_DIR = (
-    Path(os.environ.get("MSA_GAIA_XP_DIR", "/gaia/dr3/xp_continuous_mean_spectrum"))
+    Path(
+        os.environ.get(
+            "MSA_GAIA_XP_DIR",
+            "/arc/projects/k-pop/spectra/gaia/dr3/xp_continuous_mean_spectrum",
+        )
+    )
     .expanduser()
     .resolve()
 )

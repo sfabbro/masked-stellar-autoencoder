@@ -37,9 +37,11 @@ These runs verify execution and checkpoint output; their losses are not a model
 comparison. The source-ID index is being generated from the mounted GaiaSource
 files under `/arc/projects/k-pop/msa_runs/preprocess/`; its original catalogue
 directory destination proved read-only and was moved in revision `68d92a2`.
-Full preprocessing remains blocked by the absent
-`/gaia/dr3/xp_continuous_mean_spectrum` mount. Dust maps also still need to be
-fetched.
+The earlier preprocessing check used the wrong XP default path
+(`/gaia/dr3/xp_continuous_mean_spectrum`). The user confirmed the XP directory
+is `/arc/projects/k-pop/spectra/gaia/dr3/xp_continuous_mean_spectrum`; the file
+layout still needs inspection in a CANFAR session. Dust maps also still need to
+be fetched.
 
 ## Full-scale (Phase 3)
 
