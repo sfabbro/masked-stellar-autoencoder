@@ -9,8 +9,12 @@ repo_dir="$work_root/src/masked-stellar-autoencoder"
 
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH
-export PIXI_CACHE_DIR="${PIXI_CACHE_DIR:-$work_root/.cache/pixi}"
-export UV_CACHE_DIR="${UV_CACHE_DIR:-$work_root/.cache/uv}"
+# The AstroAI image keeps Pixi's global home under /usr/local/share, which is
+# read-only in sessions. Keep Pixi state and both package caches in $WORK.
+export PIXI_HOME="$work_root/.pixi"
+export PIXI_CACHE_DIR="$work_root/.cache/pixi"
+export PIXI_CACHE_PYPI_WHEELS_DIR="$work_root/.cache/uv"
+export UV_CACHE_DIR="$work_root/.cache/uv"
 export DUSTMAPS_DATA_DIR="${DUSTMAPS_DATA_DIR:-$project_root/catalogues/dustmaps}"
 export MSA_PREPROCESS_DIR="${MSA_PREPROCESS_DIR:-$project_root/catalogues/andrae2023/preprocess}"
 export MSA_PREPROCESS_CACHE_DIR="${MSA_PREPROCESS_CACHE_DIR:-$work_root/msa-crossmatch-cache-${HOSTNAME:-session}}"
