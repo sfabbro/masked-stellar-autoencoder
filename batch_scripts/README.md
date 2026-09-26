@@ -122,11 +122,14 @@ canfar create --name msa-finetune-pilot --gpu 1 headless \
 
 The preprocessing builder accepts `MSA_SOURCE_IDS_FILE`, `MSA_CATWISE_FILE`,
 `MSA_GAIA_XP_DIR`, `MSA_GAIA_SOURCE_DIR`, `MSA_ADQL_MATCH_DIR`,
-`MSA_PREPROCESS_DIR`, `MSA_PREPROCESS_CACHE_DIR`, `START_PART`, and `STOP_PART`. Its defaults
-match the original K-pop mounts. Set `DUSTMAPS_DATA_DIR` to persistent project
-storage and run the `fetch-dustmaps` stage once before preprocessing. Intermediate
-crossmatch chunks and Pixi caches stay under `$WORK`; partial FITS tables and the
-combined HDF5 output stay under `/arc/projects` so a later session can continue.
+`MSA_PREPROCESS_DIR`, `MSA_PREPROCESS_CACHE_DIR`, `START_PART`, and `STOP_PART`.
+Catalogue inputs use the original K-pop mounts. Generated outputs default to
+`$MSA_OUTPUT_ROOT` (`/arc/projects/k-pop/msa_runs`): dust maps go under
+`dustmaps`, while the source-ID index, partial FITS tables, and combined HDF5
+file go under `preprocess`. These outputs stay on persistent project storage;
+crossmatch chunks and Pixi caches stay under `$WORK`. Override the paths when
+the session exposes different mounts. Run `fetch-dustmaps` once before
+preprocessing.
 
 ```bash
 canfar create --name msa-dustmaps headless images.canfar.net/astroai/base:latest -- \
