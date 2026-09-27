@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 import h5py
 import numpy as np
+import pytest
 import torch
 from sklearn.preprocessing import RobustScaler
 
@@ -169,7 +170,7 @@ def test_projected_store_repairs_invalid_errors_like_full_shard_loader(tmp_path)
     np.testing.assert_allclose(streamed_e, full_e.numpy())
 
 
-def test_pretrain_training_uses_streamed_batches_without_full_shard_load(tmp_path):
+def test_microbatch_accumulation_matches_full_batch_without_full_shard_load(tmp_path):
     from masked_stellar_autoencoder.models.model import TabResnetWrapper
 
     class TinyRecon(torch.nn.Module):
@@ -199,24 +200,77 @@ def test_pretrain_training_uses_streamed_batches_without_full_shard_load(tmp_pat
             chunk_rows=2,
         )
         store.prepare(["train"], ["train"], scaler_max_rows=5, scaler_seed=1)
-        model = TinyRecon()
+
+        def train_once(micro_batch_size):
+            np.random.seed(31)
+            torch.manual_seed(37)
+            model = TinyRecon()
+            wrapper = TabResnetWrapper(
+                model=model,
+                datafile=h5,
+                scaler=scaler,
+                feature_cols=feature_cols,
+                error_cols=[None] * len(feature_cols),
+                recon_cols=feature_cols[:115],
+                data_store=store,
+                xp_masking_ratio=0.8,
+                m_masking_ratio=0.1,
+                micro_batch_size=micro_batch_size,
+            )
+            wrapper._load_data = MagicMock(side_effect=AssertionError("full load used"))
+            optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+            total_loss, rows = wrapper._train_pretrain_key(
+                "train", optimizer, 2, 0.0, 0.0, 0
+            )
+            return total_loss, rows, model.weight.detach().clone()
+
+        full_loss, full_rows, full_weight = train_once(2)
+        micro_loss, micro_rows, micro_weight = train_once(1)
+
+    assert full_rows == micro_rows == 5
+    assert np.isfinite(full_loss)
+    assert np.isfinite(micro_loss)
+    torch.testing.assert_close(micro_weight, full_weight, rtol=1e-5, atol=1e-6)
+    store.close()
+
+
+def test_microbatch_accumulation_rejects_batchnorm(tmp_path):
+    from masked_stellar_autoencoder.models.model import TabResnetWrapper
+
+    class TinyBatchNorm(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.norm = torch.nn.BatchNorm1d(120)
+            self.weight = torch.nn.Parameter(torch.tensor(0.5))
+
+        def forward(self, values):
+            return self.norm(values)[:, :115] * self.weight, values[:, :1]
+
+    feature_cols = [f"feature_{i}" for i in range(120)]
+    dtype = np.dtype([(name, "f4") for name in feature_cols])
+    values = np.zeros(2, dtype=dtype)
+    with h5py.File(tmp_path / "input.h5", "w") as h5:
+        h5.create_dataset("train", data=values)
+        store = ProjectedHDF5Store(
+            h5,
+            feature_cols,
+            [None] * len(feature_cols),
+            scratch_dir=tmp_path,
+            cache_fraction=0.0,
+        )
+        store.prepare(["train"], ["train"], scaler_max_rows=2)
+        features = np.zeros((2, len(feature_cols)), dtype=np.float32)
         wrapper = TabResnetWrapper(
-            model=model,
+            model=TinyBatchNorm(),
             datafile=h5,
-            scaler=scaler,
+            scaler=RobustScaler().fit(features),
             feature_cols=feature_cols,
             error_cols=[None] * len(feature_cols),
             recon_cols=feature_cols[:115],
             data_store=store,
-            xp_masking_ratio=0.8,
-            m_masking_ratio=0.1,
+            micro_batch_size=1,
         )
-        wrapper._load_data = MagicMock(side_effect=AssertionError("full load used"))
-        optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
-        total_loss, rows = wrapper._train_pretrain_key(
-            "train", optimizer, 2, 0.0, 0.0, 0
-        )
-
-    assert rows == 5
-    assert np.isfinite(total_loss)
-    wrapper.data_store.close()
+        optimizer = torch.optim.SGD(wrapper.model.parameters(), lr=1e-3)
+        with pytest.raises(ValueError, match="changes BatchNorm statistics"):
+            wrapper._train_pretrain_key("train", optimizer, 2, 0.0, 0.0, 0)
+        store.close()

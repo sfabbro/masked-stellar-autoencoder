@@ -675,6 +675,7 @@ class TabResnetWrapper(BaseEstimator):
         scheduler_eta_min_factor: float = 0.01,
         max_rows_per_key: int | None = None,
         data_store=None,
+        micro_batch_size: int | None = None,
     ):
         """
         Changes to the original that can predict ages are the following:
@@ -714,6 +715,9 @@ class TabResnetWrapper(BaseEstimator):
             raise ValueError("max_rows_per_key must be positive when set")
         self.max_rows_per_key = max_rows_per_key
         self.data_store = data_store
+        if micro_batch_size is not None and micro_batch_size < 1:
+            raise ValueError("micro_batch_size must be positive when set")
+        self._pretrain_micro_batch_size = micro_batch_size
         self._pretrain_prefetch_depth = 2
         self.diff = len(feature_cols) - len(recon_cols)
         self.xp_masking_ratio = xp_masking_ratio
@@ -1043,6 +1047,8 @@ class TabResnetWrapper(BaseEstimator):
                 ).free
             except OSError:
                 pass
+        metrics["optimizer_batch_size"] = getattr(self, "_pretrain_batch_size", None)
+        metrics["micro_batch_size"] = getattr(self, "_pretrain_micro_batch_size", None)
         output_dir = os.path.dirname(self.pt_save_str) or "."
         try:
             metrics["output_free_bytes"] = shutil.disk_usage(output_dir).free
@@ -1099,7 +1105,10 @@ class TabResnetWrapper(BaseEstimator):
                     self.scale_factors,
                     sample_rows=10_000,
                     seed=epoch,
-                    batch_rows=mini_batch,
+                    batch_rows=min(
+                        mini_batch,
+                        getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
+                    ),
                 )
                 batches = prefetch_batches(
                     sampled_batches, depth=self._pretrain_prefetch_depth
@@ -1182,6 +1191,7 @@ class TabResnetWrapper(BaseEstimator):
                 if getattr(self, "data_store", None) is not None
                 else "full_shard_shuffle_v0"
             ),
+            "micro_batch_size": getattr(self, "_pretrain_micro_batch_size", None),
         }
 
     def _load_pretrain_resume(self, pretrained, optimizer, scheduler):
@@ -1265,6 +1275,7 @@ class TabResnetWrapper(BaseEstimator):
         z,
         mask,
         nanmask,
+        global_mask_count=None,
     ):
         reconstruction_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
         # ⚡ Bolt: Replace ** 2 with explicit multiplication for faster execution
@@ -1273,16 +1284,21 @@ class TabResnetWrapper(BaseEstimator):
         )
 
         logvar = getattr(self.model, "_last_logvar", None)
-        return (
-            self.loss_fn(
-                X_batch[:, : -self.diff],
-                X_reconstructed,
-                reconstruction_mask,
-                reconstruction_w,
-                logvar=logvar,
-            )
-            + self.lasso * z.abs().sum()
+        reconstruction_loss = self.loss_fn(
+            X_batch[:, : -self.diff],
+            X_reconstructed,
+            reconstruction_mask,
+            reconstruction_w,
+            logvar=logvar,
         )
+        if global_mask_count is not None:
+            local_count = reconstruction_mask.sum().to(reconstruction_loss.dtype)
+            reconstruction_loss = (
+                reconstruction_loss
+                * local_count
+                / global_mask_count.clamp_min(self.loss_fn.eps)
+            )
+        return reconstruction_loss + self.lasso * z.abs().sum()
 
     def _train_pretrain_key(
         self, key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
@@ -1296,6 +1312,15 @@ class TabResnetWrapper(BaseEstimator):
                 data_store.conversion_seconds,
                 data_store.transform_seconds,
             )
+        micro_batch = min(mini_batch, self._pretrain_micro_batch_size or mini_batch)
+        if micro_batch < mini_batch and any(
+            isinstance(module, nn.modules.batchnorm._BatchNorm)
+            for module in self.model.modules()
+        ):
+            raise ValueError(
+                "Microbatch gradient accumulation changes BatchNorm statistics; "
+                "use LayerNorm or set micro_batch_size equal to mini_batch_size"
+            )
         n_rows = 0
         shard_loss = torch.zeros((), device=self.device)
         for X_batch, eX_batch in self._iter_pretrain_batches(
@@ -1305,15 +1330,27 @@ class TabResnetWrapper(BaseEstimator):
             if self.pert_features:
                 X_batch = X_batch + self._pert_noise(X_batch, eX_batch)
             X_masked, mask, nanmask = self._apply_mask(X_batch)
-            X_reconstructed, z = self.model(X_masked)
-            loss = self._pretrain_reconstruction_loss(
-                X_batch, eX_batch, X_reconstructed, z, mask, nanmask
-            )
+            reconstruction_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
+            global_mask_count = reconstruction_mask.sum().to(dtype=torch.float32)
             optimizer.zero_grad(set_to_none=True)
-            loss.backward()
+            batch_loss = torch.zeros((), device=self.device)
+            for start in range(0, len(X_batch), micro_batch):
+                stop = min(start + micro_batch, len(X_batch))
+                X_reconstructed, z = self.model(X_masked[start:stop])
+                loss = self._pretrain_reconstruction_loss(
+                    X_batch[start:stop],
+                    eX_batch[start:stop],
+                    X_reconstructed,
+                    z,
+                    mask[start:stop],
+                    nanmask[start:stop],
+                    global_mask_count=global_mask_count,
+                )
+                loss.backward()
+                batch_loss.add_(loss.detach())
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
             optimizer.step()
-            shard_loss.add_(loss.detach() * len(X_batch))
+            shard_loss.add_(batch_loss * len(X_batch))
         if n_rows:
             epoch_loss += float(shard_loss.item())
             loss_div += n_rows
@@ -1465,6 +1502,7 @@ class TabResnetWrapper(BaseEstimator):
             raise ValueError("val_keys was provided but contains no validation shards")
         if num_epochs < 0:
             raise ValueError("num_epochs must be non-negative")
+        self._pretrain_batch_size = mini_batch
         self._pretrain_train_keys = sorted(train_keys)
 
         optimizer, scheduler = self._setup_pretrain_optimizer()
@@ -1520,29 +1558,34 @@ class TabResnetWrapper(BaseEstimator):
                     # Apply masking to validation data
                     X_masked, mask, nanmask = self._apply_mask(X_batch)
 
-                    # Forward pass
-                    X_reconstructed, _ = self.model(X_masked)
-
-                    # Compute validation loss
-                    # Combine masks: reconstruct only positions that were (1) originally valid AND (2) artificially masked
-                    reconstruction_mask = (
-                        mask[:, : -self.diff] & nanmask[:, : -self.diff]
+                    micro_batch = min(
+                        mini_batch,
+                        getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
                     )
-                    logvar = getattr(self.model, "_last_logvar", None)
-                    batch_loss = self.loss_fn(
-                        X_batch[:, : -self.diff],
-                        X_reconstructed,
-                        reconstruction_mask,
-                        1.0
-                        / (
-                            (eX_batch[:, : -self.diff] * eX_batch[:, : -self.diff])
-                            + 1e-8
-                        ),
-                        logvar=logvar,
-                    )
-
-                    loss_sum.add_(batch_loss * len(X_batch))
-                    row_count += len(X_batch)
+                    for start in range(0, len(X_batch), micro_batch):
+                        stop = min(start + micro_batch, len(X_batch))
+                        X_reconstructed, _ = self.model(X_masked[start:stop])
+                        reconstruction_mask = (
+                            mask[start:stop, : -self.diff]
+                            & nanmask[start:stop, : -self.diff]
+                        )
+                        logvar = getattr(self.model, "_last_logvar", None)
+                        batch_loss = self.loss_fn(
+                            X_batch[start:stop, : -self.diff],
+                            X_reconstructed,
+                            reconstruction_mask,
+                            1.0
+                            / (
+                                (
+                                    eX_batch[start:stop, : -self.diff]
+                                    * eX_batch[start:stop, : -self.diff]
+                                )
+                                + 1e-8
+                            ),
+                            logvar=logvar,
+                        )
+                        loss_sum.add_(batch_loss * (stop - start))
+                        row_count += stop - start
 
             if not row_count:
                 raise ValueError("Validation shards contain no rows")

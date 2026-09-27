@@ -244,7 +244,11 @@ def test_pretrain_accepts_explicitly_unavailable_uncertainties():
 
 def test_pretrain_pilot_caps_work_and_uses_separate_outputs():
     config = {
-        "training": {"epochs": 100, "mini_batch_size": 32768},
+        "training": {
+            "epochs": 100,
+            "mini_batch_size": 32768,
+            "micro_batch_size": 8192,
+        },
         "saving": {
             "model_str": "/tmp/model.pth",
             "log_file": "/tmp/train.log",
@@ -256,6 +260,7 @@ def test_pretrain_pilot_caps_work_and_uses_separate_outputs():
 
     assert config["training"]["epochs"] == 1
     assert config["training"]["mini_batch_size"] == 128
+    assert config["training"]["micro_batch_size"] == 128
     assert config["training"]["max_rows_per_shard"] == 512
     assert config["saving"]["model_str"] == "/tmp/model_pilot.pth"
     assert config["saving"]["arc_checkpoint_dir"] == "/tmp/checkpoints_pilot"
@@ -273,7 +278,11 @@ def test_pretrain_pilot_limits_training_and_validation_shards():
 
 def test_pretrain_batch_pilot_preserves_full_batch_and_separates_outputs():
     config = {
-        "training": {"epochs": 100, "mini_batch_size": 32768},
+        "training": {
+            "epochs": 100,
+            "mini_batch_size": 32768,
+            "micro_batch_size": 8192,
+        },
         "saving": {
             "model_str": "/tmp/model.pth",
             "log_file": "/tmp/train.log",
@@ -287,6 +296,7 @@ def test_pretrain_batch_pilot_preserves_full_batch_and_separates_outputs():
 
     assert config["training"]["epochs"] == 1
     assert config["training"]["mini_batch_size"] == 32768
+    assert config["training"]["micro_batch_size"] == 8192
     assert config["training"]["max_rows_per_shard"] == 32768
     assert config["saving"]["model_str"] == "/tmp/model_batch_pilot.pth"
     assert config["saving"]["metrics_file"] == "/tmp/metrics_batch_pilot.jsonl"

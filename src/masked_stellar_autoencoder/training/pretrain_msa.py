@@ -102,6 +102,10 @@ def _configure_pilot(config):
     training = config["training"]
     training["epochs"] = 1
     training["mini_batch_size"] = min(int(training["mini_batch_size"]), 128)
+    if "micro_batch_size" in training:
+        training["micro_batch_size"] = min(
+            int(training["micro_batch_size"]), training["mini_batch_size"]
+        )
     training["max_rows_per_shard"] = 512
     training["scaler_max_rows"] = min(
         int(training.get("scaler_max_rows", 1_000_000)), 10_000
@@ -280,6 +284,16 @@ def main():
     ci = config["saving"]["checkpoint_interval"]
 
     error_cols = config["data"]["error_cols"]
+    batch = int(config["training"]["mini_batch_size"])
+    micro_batch_size = int(config["training"].get("micro_batch_size", batch))
+    if not 1 <= micro_batch_size <= batch:
+        raise ValueError(
+            "training.micro_batch_size must be between 1 and mini_batch_size"
+        )
+    print(
+        f"Pretraining batch policy: optimizer_batch={batch}, "
+        f"micro_batch={micro_batch_size}"
+    )
 
     # Initialize the pretraining wrapper
     pretrain_wrapper = TabResnetWrapper(
@@ -315,6 +329,7 @@ def main():
         ),
         max_rows_per_key=config["training"].get("max_rows_per_shard"),
         data_store=data_store,
+        micro_batch_size=micro_batch_size,
     )
 
     pretrain_wrapper._configure_canfar_output(
@@ -326,7 +341,6 @@ def main():
     )
 
     epochs = config["training"]["epochs"]
-    batch = config["training"]["mini_batch_size"]
     presaved = config["training"].get("presaved")
     if presaved is None or presaved == "":
         presaved = None
