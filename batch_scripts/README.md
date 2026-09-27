@@ -74,8 +74,9 @@ so runs no longer overwrite a single checkpoint file.
 
 The CANFAR path uses `astroai/base:latest` and the repository's Pixi lock. The
 Linux GPU lock resolves to PyTorch 2.14 with CUDA 13.0. The
-`scripts/canfar_launch.sh` wrapper clones the selected Git ref into `$WORK` for
-each job, then runs the requested entrypoint stage. The example defaults assume
+`scripts/canfar_launch.sh` wrapper sets `WORK` to `/scratch/src` (override with
+`CANFAR_WORK_ROOT`), clones the selected Git ref there for each job, then runs
+the requested entrypoint stage. The example defaults assume
 the K-pop project paths below; every input root can be overridden with an
 environment variable.
 
