@@ -25,11 +25,6 @@ if [[ ! "$work_root" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
   exit 2
 fi
 
-repo_dir="$work_root/sfabbro/masked-stellar-autoencoder"
-printf -v quoted_work_root '%q' "$work_root"
-printf -v quoted_repo_dir '%q' "$repo_dir"
-printf -v quoted_ref '%q' "$ref"
-
 create_args=(
   --name "$name"
   --cpu "${CANFAR_CPU:-4}"
@@ -49,25 +44,12 @@ for env_assignment in "$@"; do
 done
 if [[ "${CANFAR_DRY_RUN:-0}" == 1 ]]; then create_args+=(--dry-run); fi
 
-remote_command="set -euo pipefail
-export PYTHONNOUSERSITE=1
-unset PYTHONPATH
-mkdir -p $quoted_work_root/sfabbro
-git clone --depth 50 --branch $quoted_ref https://github.com/sfabbro/masked-stellar-autoencoder.git $quoted_repo_dir
-cd $quoted_repo_dir
-printf \"MSA commit: \"
-git rev-parse --short HEAD
-bash batch_scripts/canfar_entrypoint.sh $stage"
+bootstrap="o=__import__('os');s=__import__('subprocess');w=o.environ['WORK'];r=w+'/sfabbro/masked-stellar-autoencoder';o.makedirs(w+'/sfabbro',exist_ok=True);s.run(['git','clone','--depth','50','--branch','$ref','https://github.com/sfabbro/masked-stellar-autoencoder.git',r],check=True);s.run(['bash',r+'/batch_scripts/canfar_entrypoint.sh','$stage'],check=True)"
 
-# Skaha treats dollar references in the command as regex replacement groups.
-if [[ "$remote_command" == *'$'* ]]; then
-  echo "CANFAR launch command contains a dollar reference unsupported by Skaha." >&2
-  exit 2
-fi
-if [[ "$remote_command" == *"'"* ]]; then
-  echo "CANFAR launch command must not contain single quotes." >&2
+# Skaha parses args as a command-line string; keep its Python -c payload one token.
+if [[ "$bootstrap" =~ [[:space:]] || "$bootstrap" == *'$'* || "$bootstrap" == *'"'* ]]; then
+  echo "CANFAR bootstrap must be a whitespace-free, dollar-free Python token." >&2
   exit 2
 fi
 
-# Skaha splits the argument string; quote the entire -c script so Bash receives it as one argument.
-canfar create headless "$image" "${create_args[@]}" -- bash -lc "'$remote_command'"
+canfar create headless "$image" "${create_args[@]}" -- python -u -c "$bootstrap"
