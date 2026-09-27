@@ -15,6 +15,7 @@ from sklearn.base import BaseEstimator
 from torch import Tensor
 from torch.utils.data import DataLoader, TensorDataset
 
+from ..training.hdf5_io import prefetch_batches
 from .blocks import TabDenseNet, TabResnet
 from .checkpoint_load import torch_load_finetune_checkpoint, torch_load_trusted
 
@@ -670,6 +671,7 @@ class TabResnetWrapper(BaseEstimator):
         scheduler_cosine_t_mult: int = 2,
         scheduler_eta_min_factor: float = 0.01,
         max_rows_per_key: int | None = None,
+        data_store=None,
     ):
         """
         Changes to the original that can predict ages are the following:
@@ -708,6 +710,8 @@ class TabResnetWrapper(BaseEstimator):
         if max_rows_per_key is not None and max_rows_per_key < 1:
             raise ValueError("max_rows_per_key must be positive when set")
         self.max_rows_per_key = max_rows_per_key
+        self.data_store = data_store
+        self._pretrain_prefetch_depth = 2
         self.diff = len(feature_cols) - len(recon_cols)
         self.xp_masking_ratio = xp_masking_ratio
         self.m_masking_ratio = m_masking_ratio
@@ -1015,39 +1019,70 @@ class TabResnetWrapper(BaseEstimator):
             f.write(json.dumps(entry) + "\n")
 
     def _log_residual_stats(self, val_keys, epoch, mini_batch=32768):
-        if not self._residual_stats_file:
+        if not self._residual_stats_file or not val_keys:
             return
         import json
 
         self.model.eval()
         stats: dict = {"epoch": epoch + 1}
         with torch.no_grad():
-            X_val, eX_val = self._load_data(val_keys[0])
-            n = min(10000, X_val.shape[0])
-            idx = torch.randperm(X_val.shape[0], device=self.device)[:n]
-            X_sub = X_val[idx]
-            del X_val, eX_val
-            X_masked, mask, nanmask = self._apply_mask(X_sub)
-            X_recon, _ = self.model(X_masked)
-            recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
-            errors = (X_recon - X_sub[:, : -self.diff]).abs()
-            errors = errors.masked_fill(~recon_mask, float("nan"))
-            # XP coefficients (within recon cols, between xp_col_start..xp_col_end)
-            xp_err = errors[:, self.xp_col_start : self.xp_col_end]
-            valid = xp_err[~torch.isnan(xp_err)]
-            if valid.numel() > 0:
-                stats["xp_mae"] = round(valid.mean().item(), 8)
-                stats["xp_p84"] = round(valid.quantile(0.84).item(), 8)
-            # Photometry (before xp_col_start and after xp_col_end within recon cols)
+            data_store = getattr(self, "data_store", None)
+            if data_store is not None:
+                sampled_batches = data_store.sample_batches(
+                    val_keys[0],
+                    self.featurescaler,
+                    self.scale_factors,
+                    sample_rows=10_000,
+                    seed=epoch,
+                    batch_rows=mini_batch,
+                )
+                batches = prefetch_batches(
+                    sampled_batches, depth=self._pretrain_prefetch_depth
+                )
+            else:
+                X_val, eX_val = self._load_data(val_keys[0])
+                n = min(10_000, X_val.shape[0])
+                idx = torch.randperm(X_val.shape[0], device=self.device)[:n]
+                X_sub, eX_sub = X_val[idx], eX_val[idx]
+                batches = (
+                    (
+                        X_sub[start : start + mini_batch],
+                        eX_sub[start : start + mini_batch],
+                    )
+                    for start in range(0, n, mini_batch)
+                )
+
+            xp_values, photo_values, all_values = [], [], []
             photo_idx = list(range(self.xp_col_start)) + list(
-                range(self.xp_col_end, errors.shape[1])
+                range(self.xp_col_end, len(self.recon_cols))
             )
-            photo_err = errors[:, photo_idx]
-            valid = photo_err[~torch.isnan(photo_err)]
-            if valid.numel() > 0:
-                stats["photo_mae"] = round(valid.mean().item(), 8)
-            # Overall
-            all_valid = errors[~torch.isnan(errors)]
+            for X_batch, eX_batch in batches:
+                if not isinstance(X_batch, torch.Tensor):
+                    X_batch = torch.as_tensor(
+                        np.ascontiguousarray(X_batch), device=self.device
+                    )
+                    eX_batch = torch.as_tensor(
+                        np.ascontiguousarray(eX_batch), device=self.device
+                    )
+                X_masked, mask, nanmask = self._apply_mask(X_batch)
+                X_recon, _ = self.model(X_masked)
+                recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
+                errors = (X_recon - X_batch[:, : -self.diff]).abs()
+                errors = errors.masked_fill(~recon_mask, float("nan"))
+                xp_err = errors[:, self.xp_col_start : self.xp_col_end]
+                photo_err = errors[:, photo_idx]
+                xp_values.append(xp_err[torch.isfinite(xp_err)])
+                photo_values.append(photo_err[torch.isfinite(photo_err)])
+                all_values.append(errors[torch.isfinite(errors)])
+
+            xp_valid = torch.cat(xp_values) if xp_values else torch.empty(0)
+            photo_valid = torch.cat(photo_values) if photo_values else torch.empty(0)
+            all_valid = torch.cat(all_values) if all_values else torch.empty(0)
+            if xp_valid.numel() > 0:
+                stats["xp_mae"] = round(xp_valid.mean().item(), 8)
+                stats["xp_p84"] = round(xp_valid.quantile(0.84).item(), 8)
+            if photo_valid.numel() > 0:
+                stats["photo_mae"] = round(photo_valid.mean().item(), 8)
             if all_valid.numel() > 0:
                 stats["overall_mae"] = round(all_valid.mean().item(), 8)
         with open(self._residual_stats_file, "a") as f:
@@ -1074,6 +1109,14 @@ class TabResnetWrapper(BaseEstimator):
             "scaler_center": np.asarray(self.featurescaler.center_).tolist(),
             "scaler_scale": np.asarray(self.featurescaler.scale_).tolist(),
             "train_keys": list(getattr(self, "_pretrain_train_keys", [])),
+            "loader_mode": getattr(
+                getattr(self, "data_store", None), "mode", "legacy-full-shard"
+            ),
+            "loader_policy": (
+                "bounded_chunk_shuffle_v1"
+                if getattr(self, "data_store", None) is not None
+                else "full_shard_shuffle_v0"
+            ),
         }
 
     def _load_pretrain_resume(self, pretrained, optimizer, scheduler):
@@ -1089,7 +1132,9 @@ class TabResnetWrapper(BaseEstimator):
             mismatches = [
                 key
                 for key, current_value in current_signature.items()
-                if signature.get(key) != current_value
+                if key in signature
+                and key != "loader_mode"
+                and signature.get(key) != current_value
                 and not (
                     key == "error_cols"
                     and not self.pert_features
@@ -1177,13 +1222,21 @@ class TabResnetWrapper(BaseEstimator):
     def _train_pretrain_key(
         self, key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
     ):
-        X_train, eX_train = self._load_data(key)
-        train_loader = DataLoader(
-            TensorDataset(X_train, eX_train),
-            batch_size=mini_batch,
-            shuffle=True,
-        )
-        for X_batch, eX_batch in train_loader:
+        started = time.perf_counter()
+        store_times = None
+        data_store = getattr(self, "data_store", None)
+        if data_store is not None:
+            store_times = (
+                data_store.read_seconds,
+                data_store.conversion_seconds,
+                data_store.transform_seconds,
+            )
+        n_rows = 0
+        shard_loss = torch.zeros((), device=self.device)
+        for X_batch, eX_batch in self._iter_pretrain_batches(
+            key, mini_batch, shuffle=True
+        ):
+            n_rows += len(X_batch)
             if self.pert_features:
                 X_batch = X_batch + self._pert_noise(X_batch, eX_batch)
             X_masked, mask, nanmask = self._apply_mask(X_batch)
@@ -1191,16 +1244,61 @@ class TabResnetWrapper(BaseEstimator):
             loss = self._pretrain_reconstruction_loss(
                 X_batch, eX_batch, X_reconstructed, z, mask, nanmask
             )
-            optimizer.zero_grad()
+            optimizer.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
             optimizer.step()
-            epoch_loss += loss.item()
-        loss_div += len(train_loader)
-        if torch.cuda.is_available() and subkeynum % 10 == 0:
-            torch.cuda.empty_cache()
-        logging.info(f"{subkeynum + 1}, Loss: {epoch_loss / loss_div}")
+            shard_loss.add_(loss.detach() * len(X_batch))
+        if n_rows:
+            epoch_loss += float(shard_loss.item())
+            loss_div += n_rows
+        wall_seconds = time.perf_counter() - started
+        if store_times is None:
+            mean_loss = epoch_loss / loss_div if loss_div else 0.0
+            logging.info(f"{subkeynum + 1}, Loss: {mean_loss}")
+        else:
+            read_seconds = data_store.read_seconds - store_times[0]
+            conversion_seconds = (data_store.conversion_seconds - store_times[1]) + (
+                data_store.transform_seconds - store_times[2]
+            )
+            logging.info(
+                "shard=%s rows=%d mode=%s wall_s=%.1f read_s=%.1f "
+                "conversion_s=%.1f rows_per_s=%.1f",
+                key,
+                n_rows,
+                data_store.mode,
+                wall_seconds,
+                read_seconds,
+                conversion_seconds,
+                n_rows / max(wall_seconds, 1e-9),
+            )
         return epoch_loss, loss_div
+
+    def _iter_pretrain_batches(self, key, mini_batch, *, shuffle):
+        data_store = getattr(self, "data_store", None)
+        if data_store is None:
+            X, eX = self._load_data(key)
+            loader = DataLoader(
+                TensorDataset(X, eX), batch_size=mini_batch, shuffle=shuffle
+            )
+            yield from loader
+            return
+
+        seed = int(np.random.randint(0, np.iinfo(np.uint32).max)) if shuffle else 0
+        batches = data_store.iter_batches(
+            key,
+            self.featurescaler,
+            self.scale_factors,
+            batch_rows=mini_batch,
+            shuffle=shuffle,
+            seed=seed,
+            max_rows=self.max_rows_per_key,
+        )
+        for X, eX in prefetch_batches(batches, depth=self._pretrain_prefetch_depth):
+            yield (
+                torch.as_tensor(np.ascontiguousarray(X), device=self.device),
+                torch.as_tensor(np.ascontiguousarray(eX), device=self.device),
+            )
 
     def _run_pretrain_epoch(
         self,
@@ -1348,17 +1446,12 @@ class TabResnetWrapper(BaseEstimator):
             pbar = tqdm.tqdm(
                 val_keys, total=n_keys, desc="Iterating Over Validation Keys"
             )
-            loss_div = 0
-            val_loss = 0
+            loss_sum = torch.zeros((), device=self.device)
+            row_count = 0
             for key in pbar:
-                X_val, eX_val = self._load_data(key)
-
-                # Create DataLoader for mini-batching validation data
-                val_loader = DataLoader(
-                    TensorDataset(X_val, eX_val), batch_size=mini_batch, shuffle=False
-                )
-
-                for X_batch, eX_batch in val_loader:
+                for X_batch, eX_batch in self._iter_pretrain_batches(
+                    key, mini_batch, shuffle=False
+                ):
                     # Apply masking to validation data
                     X_masked, mask, nanmask = self._apply_mask(X_batch)
 
@@ -1383,11 +1476,14 @@ class TabResnetWrapper(BaseEstimator):
                         logvar=logvar,
                     )
 
-                    val_loss += batch_loss.item()
-                loss_div += len(val_loader)
+                    loss_sum.add_(batch_loss * len(X_batch))
+                    row_count += len(X_batch)
 
-            print(f"Validation Loss: {val_loss / loss_div}")
-            return val_loss / loss_div
+            if not row_count:
+                raise ValueError("Validation shards contain no rows")
+            val_loss = float((loss_sum / row_count).item())
+            print(f"Validation Loss: {val_loss}")
+            return val_loss
 
     def _setup_finetune_optimizer(
         self, linearprobe, ftopt, ftlr, ftl2, enc_lr, head_lambda, encoder_lambda

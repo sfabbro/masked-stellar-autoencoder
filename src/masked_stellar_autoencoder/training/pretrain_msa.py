@@ -10,6 +10,7 @@ from masked_stellar_autoencoder.models.model import TabResnetWrapper, make_model
 
 from .config_paths import expand_config_paths
 from .feature_noise import pert_channel_scale_vector
+from .hdf5_io import ProjectedHDF5Store
 
 
 def fit_pretrain_scaler(datafile, train_keys, cols, training_config):
@@ -25,35 +26,27 @@ def fit_pretrain_scaler(datafile, train_keys, cols, training_config):
     if max_rows < 1:
         raise ValueError("training.scaler_max_rows must be positive")
 
-    rng = np.random.default_rng(int(training_config.get("scaler_seed", 42)))
-    # ponytail: sample evenly by shard to bound RAM; proportional reservoir sampling
-    # is the next step if production shards differ substantially in row count.
-    keys = list(scaler_keys)
-    if max_rows < len(keys):
-        keys = rng.choice(keys, size=max_rows, replace=False).tolist()
-        rows_per_key = 1
-    else:
-        rows_per_key = max_rows // len(keys)
-
-    samples = []
-    for key in keys:
-        dataset = datafile[key]
-        n_rows = len(dataset)
-        if n_rows == 0:
-            continue
-        n_sample = min(n_rows, rows_per_key)
-        indices = np.sort(rng.choice(n_rows, size=n_sample, replace=False))
-        rows = dataset[indices]
-        samples.append(
-            np.column_stack(
-                [TabResnetWrapper._clean_column(col, rows[col]) for col in cols]
-            )
+    owns_store = not isinstance(datafile, ProjectedHDF5Store)
+    if owns_store:
+        store = ProjectedHDF5Store(
+            datafile,
+            cols,
+            [None] * len(cols),
+            cache_fraction=0.0,
         )
-
-    if not samples:
-        raise ValueError("Training shards contain no rows for scaler fitting")
-
-    X = np.concatenate(samples, axis=0)
+        store.prepare(
+            list(scaler_keys),
+            list(scaler_keys),
+            scaler_max_rows=max_rows,
+            scaler_seed=int(training_config.get("scaler_seed", 42)),
+        )
+    else:
+        store = datafile
+    try:
+        X = store.scaler_sample.copy()
+    finally:
+        if owns_store:
+            store.close()
     X[~np.isfinite(X)] = np.nan
     if not np.isfinite(X).any():
         raise ValueError("Training shards have no finite feature values")
@@ -145,8 +138,24 @@ def main():
         raise ValueError("No training shards remain after excluding valid_keys")
     if args.pilot:
         keys_train, keys_valid = _limit_pilot_shards(keys_train, keys_valid)
+    data_store = ProjectedHDF5Store(
+        pretrain_file,
+        cols,
+        config["data"]["error_cols"],
+        chunk_rows=int(config["training"].get("io_chunk_rows", 65_536)),
+        shuffle_buffer_bytes=int(
+            config["training"].get("io_shuffle_buffer_bytes", 64 * 1024 * 1024)
+        ),
+    )
+    data_store.prepare(
+        [*keys_train, *keys_valid],
+        config["training"].get("scaler_keys") or keys_train,
+        scaler_max_rows=int(config["training"].get("scaler_max_rows", 1_000_000)),
+        scaler_seed=int(config["training"].get("scaler_seed", 42)),
+        max_rows_per_key=config["training"].get("max_rows_per_shard"),
+    )
     featurescaler = fit_pretrain_scaler(
-        pretrain_file, keys_train, cols, config["training"]
+        data_store, keys_train, cols, config["training"]
     )
 
     blocks_dims = config["model"]["layer_dims"]
@@ -228,6 +237,7 @@ def main():
             config["training"].get("scheduler_eta_min_factor", 0.01)
         ),
         max_rows_per_key=config["training"].get("max_rows_per_shard"),
+        data_store=data_store,
     )
 
     pretrain_wrapper._configure_canfar_output(
@@ -252,6 +262,7 @@ def main():
         pretrained=presaved,
     )
 
+    data_store.close()
     pretrain_file.close()
 
 

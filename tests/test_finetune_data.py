@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from masked_stellar_autoencoder.training.finetune_data import (
     _augment_below_feh,
     _filter_metal_poor,
+    _read_selected_fits,
     _scale_features,
     _scale_paired_label_blocks,
     _split_data,
@@ -33,24 +34,25 @@ def test_prepare_finetune_arrays_invalid_label_scaler():
             "teff": [5000.0] * 20,
             "fe_h": [0.0] * 20,
             "f1": [1.0] * 20,
-            "e_f1": [0.1] * 20,
             "e_teff": [10.0] * 20,
             "e_fe_h": [0.1] * 20,
+            "e_f1": [0.1] * 20,
         }
     )
 
     with patch(
-        "masked_stellar_autoencoder.training.finetune_data.Table.read"
+        "masked_stellar_autoencoder.training.finetune_data._read_selected_fits",
+        return_value=mock_df,
     ) as mock_read:
-        mock_table = MagicMock()
-        mock_table.to_pandas.return_value = mock_df
-        mock_read.return_value = mock_table
-
         with pytest.raises(
             ValueError,
             match="preprocessing.label_scaler must be 'standard', 'robust', or 'power', got 'invalid_scaler_type'",
         ):
             prepare_finetune_arrays(config)
+        assert mock_read.call_args.args == (
+            "dummy.fits",
+            ["teff", "fe_h", "f1", "e_f1"],
+        )
 
 
 def test_prepare_finetune_arrays_rejects_feature_values_as_uncertainties():
@@ -65,6 +67,83 @@ def test_prepare_finetune_arrays_rejects_feature_values_as_uncertainties():
     }
     with pytest.raises(ValueError, match="duplicates data.feature_cols"):
         prepare_finetune_arrays(config)
+
+
+def test_selected_fits_columns_preserve_prepared_arrays_and_splits(tmp_path):
+    from astropy.table import Table
+
+    n = 60
+    source = Table(
+        {
+            "teff": np.linspace(4200.0, 6200.0, n),
+            "e_teff": np.full(n, 40.0),
+            "logg": np.linspace(1.0, 4.5, n),
+            "e_logg": np.full(n, 0.1),
+            "fe_h": np.linspace(-2.5, 0.5, n),
+            "e_fe_h": np.full(n, 0.08),
+            "alpha": np.linspace(-0.1, 0.5, n),
+            "e_alpha": np.full(n, 0.05),
+            "age": np.linspace(1.0, 12.0, n),
+            "e_age": np.full(n, 0.5),
+            "PARALLAX": np.linspace(0.5, 5.0, n),
+            "e_parallax": np.full(n, 0.1),
+            "G": np.linspace(8.0, 18.0, n),
+            "EBV": np.linspace(0.0, 0.4, n),
+            "unused": np.array(["x" * 1000] * n),
+        }
+    )
+    path = tmp_path / "labels.fits"
+    source.write(path)
+    config = {
+        "data": {
+            "ft_datafile": str(path),
+            "classes": [
+                "teff",
+                "e_teff",
+                "logg",
+                "e_logg",
+                "fe_h",
+                "e_fe_h",
+                "alpha",
+                "e_alpha",
+                "age",
+                "e_age",
+            ],
+            "feature_cols": ["PARALLAX", "G", "EBV"],
+            "error_cols": ["e_parallax", None, None],
+            "recon_cols": ["PARALLAX", "G", "EBV"],
+        },
+        "finetuning": {"seed": 42, "metal_poor": {}},
+        "preprocessing": {},
+    }
+
+    selected = prepare_finetune_arrays(config)
+    required_columns = [
+        *config["data"]["classes"],
+        *config["data"]["feature_cols"],
+        "e_parallax",
+    ]
+    selected_table = _read_selected_fits(str(path), required_columns)
+    assert "unused" not in selected_table
+    full_table = Table.read(path).to_pandas()
+    with patch(
+        "masked_stellar_autoencoder.training.finetune_data._read_selected_fits",
+        return_value=full_table,
+    ):
+        baseline = prepare_finetune_arrays(config)
+
+    for key in (
+        "trainset",
+        "etrainset",
+        "validset",
+        "evalidset",
+        "testset",
+        "etestset",
+        "labelled_set",
+        "vlabelled_set",
+        "target_set",
+    ):
+        np.testing.assert_allclose(selected[key], baseline[key])
 
 
 def _sample_frames(n: int = 40) -> tuple[pd.DataFrame, pd.DataFrame]:

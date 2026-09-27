@@ -6,6 +6,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from astropy.io import fits
 from astropy.table import Table
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PowerTransformer, RobustScaler, StandardScaler
@@ -117,6 +118,36 @@ def _get_scaler_cls(label_scaler_kind: str) -> Any:
         raise ValueError(
             f"preprocessing.label_scaler must be 'standard', 'robust', or 'power', got {label_scaler_kind!r}"
         )
+
+
+def _read_selected_fits(path: str, columns: list[str]) -> pd.DataFrame:
+    with fits.open(path, memmap=True) as hdul:
+        table_hdu = next(
+            (hdu for hdu in hdul if isinstance(hdu, fits.BinTableHDU | fits.TableHDU)),
+            None,
+        )
+        if table_hdu is None:
+            raise ValueError(f"FITS file {path!r} has no binary table HDU")
+        available = set(table_hdu.columns.names)
+        missing = [name for name in columns if name not in available]
+        if missing:
+            raise ValueError(f"FITS table is missing required columns: {missing}")
+        selected_columns = {}
+        for name in columns:
+            values = table_hdu.data[name]
+            mask = np.zeros(len(values), dtype=bool)
+            if values.dtype.kind == "f":
+                mask |= ~np.isfinite(values)
+            elif values.dtype.kind in {"S", "U"}:
+                mask |= np.char.strip(values) == (
+                    b"" if values.dtype.kind == "S" else ""
+                )
+            null = table_hdu.columns[name].null
+            if null is not None:
+                mask |= values == null
+            selected_columns[name] = np.ma.array(values, mask=mask, copy=True)
+        selected = Table(selected_columns, masked=True, copy=False)
+    return selected.to_pandas()
 
 
 def _propagate_label_error(scaler, y, e):
@@ -366,7 +397,12 @@ def prepare_finetune_arrays(
             "measurement uncertainty before fine-tuning"
         )
 
-    source_data = Table.read(config["data"]["ft_datafile"]).to_pandas()
+    required_columns = list(
+        dict.fromkeys(
+            [*classes, *cols, *(error for error in error_cols if error is not None)]
+        )
+    )
+    source_data = _read_selected_fits(config["data"]["ft_datafile"], required_columns)
     data = source_data[classes + cols]
     errordata = pd.DataFrame(
         {

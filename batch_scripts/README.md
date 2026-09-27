@@ -124,6 +124,15 @@ scripts/canfar_launch.sh pretrain-pilot
 scripts/canfar_launch.sh finetune-pilot
 ```
 
+Pretraining reads only the configured feature and uncertainty columns. It stages
+their float32 projection under session scratch when the estimated cache is at
+most 80% of free scratch space; otherwise it streams sequential HDF5 chunks.
+Both modes use seeded bounded shuffling and two prefetched CPU batches, so the
+whole shard is never copied to GPU memory. Startup and per-shard logs report the
+I/O mode, read/conversion time, and rows per second. `training.io_chunk_rows`
+and `training.io_shuffle_buffer_bytes` can tune the reader; their defaults are
+65,536 rows and 64 MiB.
+
 The preprocessing builder accepts `MSA_SOURCE_IDS_FILE`, `MSA_CATWISE_FILE`,
 `MSA_GAIA_XP_DIR`, `MSA_GAIA_SOURCE_DIR`, `MSA_ADQL_MATCH_DIR`,
 `MSA_PREPROCESS_DIR`, `MSA_PREPROCESS_CACHE_DIR`, `START_PART`, and `STOP_PART`.
