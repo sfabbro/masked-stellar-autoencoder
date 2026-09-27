@@ -38,7 +38,8 @@ if [[ "${CANFAR_DRY_RUN:-0}" == 1 ]]; then create_args+=(--dry-run); fi
 remote_command='set -euo pipefail
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH
-export WORK="${WORK:-/scratch/src}"
+if [ -z "$WORK" ]; then WORK=/scratch/src; fi
+export WORK
 repo_dir="$WORK/sfabbro/masked-stellar-autoencoder"
 mkdir -p "$WORK/sfabbro"
 git clone --depth 50 --branch "$CANFAR_GIT_REF" https://github.com/sfabbro/masked-stellar-autoencoder.git "$repo_dir"
