@@ -1,8 +1,12 @@
 import argparse
+import json
+import resource
+import sys
 from pathlib import Path
 
 import h5py
 import numpy as np
+import torch
 import yaml
 from sklearn.preprocessing import RobustScaler
 
@@ -11,6 +15,19 @@ from masked_stellar_autoencoder.models.model import TabResnetWrapper, make_model
 from .config_paths import expand_config_paths
 from .feature_noise import pert_channel_scale_vector
 from .hdf5_io import ProjectedHDF5Store
+
+
+def _report_peak_memory():
+    peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    report = {
+        "peak_host_rss_bytes": int(
+            peak_rss if sys.platform == "darwin" else peak_rss * 1024
+        )
+    }
+    if torch.cuda.is_available():
+        report["peak_gpu_allocated_bytes"] = torch.cuda.max_memory_allocated()
+        report["peak_gpu_reserved_bytes"] = torch.cuda.max_memory_reserved()
+    print(f"Training peak memory: {json.dumps(report, sort_keys=True)}")
 
 
 def fit_pretrain_scaler(datafile, train_keys, cols, training_config):
@@ -254,6 +271,8 @@ def main():
         presaved = None
 
     # pretrain, train, and predict
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
     pretrain_wrapper.pretrain_hdf(
         keys_train,
         num_epochs=epochs,
@@ -262,6 +281,7 @@ def main():
         pretrained=presaved,
     )
 
+    _report_peak_memory()
     data_store.close()
     pretrain_file.close()
 
