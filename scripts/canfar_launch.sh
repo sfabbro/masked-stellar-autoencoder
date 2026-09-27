@@ -55,7 +55,7 @@ unset PYTHONPATH
 mkdir -p $quoted_work_root/sfabbro
 git clone --depth 50 --branch $quoted_ref https://github.com/sfabbro/masked-stellar-autoencoder.git $quoted_repo_dir
 cd $quoted_repo_dir
-printf 'MSA commit: '
+printf \"MSA commit: \"
 git rev-parse --short HEAD
 bash batch_scripts/canfar_entrypoint.sh $stage"
 
@@ -64,5 +64,10 @@ if [[ "$remote_command" == *'$'* ]]; then
   echo "CANFAR launch command contains a dollar reference unsupported by Skaha." >&2
   exit 2
 fi
+if [[ "$remote_command" == *"'"* ]]; then
+  echo "CANFAR launch command must not contain single quotes." >&2
+  exit 2
+fi
 
-canfar create headless "$image" "${create_args[@]}" -- bash -lc "$remote_command"
+# Skaha splits the argument string; quote the entire -c script so Bash receives it as one argument.
+canfar create headless "$image" "${create_args[@]}" -- bash -lc "'$remote_command'"
