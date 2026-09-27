@@ -72,12 +72,12 @@ so runs no longer overwrite a single checkpoint file.
 
 ## CANFAR (AstroAI base image)
 
-The CANFAR path uses `astroai/base:latest` and the repository's
-Pixi lock. The Linux GPU lock resolves to PyTorch 2.14 with CUDA 13.0. The
-`scripts/canfar_launch.sh` wrapper stages `sfabbro/masked-stellar-autoencoder`
-into `$WORK` through `canfar-job`; it does not depend on a persistent code copy
-under the project mount. The example defaults assume the K-pop project paths
-below; every input root can be overridden with an environment variable.
+The CANFAR path uses `astroai/base:latest` and the repository's Pixi lock. The
+Linux GPU lock resolves to PyTorch 2.14 with CUDA 13.0. The
+`scripts/canfar_launch.sh` wrapper clones the selected Git ref into `$WORK` for
+each job, then runs the requested entrypoint stage. The example defaults assume
+the K-pop project paths below; every input root can be overridden with an
+environment variable.
 
 After logging in to CANFAR, submit stages by name. The wrapper requests one GPU
 for preflight and training stages. Set `CANFAR_GIT_REF` to choose a branch or
@@ -89,13 +89,11 @@ scripts/canfar_launch.sh schema
 scripts/canfar_launch.sh pretrain-pilot
 ```
 
-`canfar-job` clones the selected Git ref under `$WORK` and runs `pixi install`
-in that fresh checkout. Check the CUDA environment installation directly with:
+Check the CUDA environment installation in a fresh clone with:
 
 ```bash
-canfar-job run --repo sfabbro/masked-stellar-autoencoder --branch main \
-  --image astroai/base:latest --name msa-pixi-install -- \
-  pixi install --frozen --environment gpu --platform linux-64-cuda
+CANFAR_DRY_RUN=1 scripts/canfar_launch.sh install
+scripts/canfar_launch.sh install
 ```
 
 If Skaha requests registry authentication, provide the Harbor username and

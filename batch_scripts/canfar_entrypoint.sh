@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-stage="${1:?Usage: canfar_entrypoint.sh schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain|finetune-pilot|finetune|preflight}"
+stage="${1:?Usage: canfar_entrypoint.sh install|schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain|finetune-pilot|finetune|preflight}"
 project_root="${CANFAR_PROJECT_ROOT:-/arc/projects/k-pop}"
 work_root="${WORK:-/scratch/${USER:?USER is unset}}"
 script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
@@ -71,6 +71,9 @@ pixi install --frozen --environment gpu --platform "$pixi_platform"
 pixi_run=(pixi run --environment gpu --platform "$pixi_platform")
 
 case "$stage" in
+  install)
+    "${pixi_run[@]}" python -c 'import masked_stellar_autoencoder, torch; assert torch.version.cuda == "13.0", torch.version.cuda; print(f"MSA import OK; torch={torch.__version__}; CUDA={torch.version.cuda}")'
+    ;;
   schema)
     "${pixi_run[@]}" python -m masked_stellar_autoencoder.training.canfar_preflight \
       --schema-only --output "$MSA_PRETRAIN_OUTPUT_DIR/schema-preflight.json"
