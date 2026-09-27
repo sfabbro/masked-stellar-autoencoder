@@ -1,7 +1,9 @@
 import argparse
 import json
+import os
 import resource
 import sys
+import time
 from pathlib import Path
 
 import h5py
@@ -115,10 +117,42 @@ def _configure_pilot(config):
             config["saving"][key] = _pilot_path(config["saving"][key])
 
 
+def _configure_batch_pilot(config):
+    """Run one full-size batch on one train and one validation shard."""
+    training = config["training"]
+    batch_size = int(training["mini_batch_size"])
+    if batch_size < 1:
+        raise ValueError("training.mini_batch_size must be positive")
+    training["epochs"] = 1
+    training["max_rows_per_shard"] = batch_size
+    training["scaler_max_rows"] = min(
+        int(training.get("scaler_max_rows", 1_000_000)), 10_000
+    )
+    for key in (
+        "model_str",
+        "log_file",
+        "metrics_file",
+        "residual_stats_file",
+        "arc_checkpoint_dir",
+    ):
+        if key in config["saving"]:
+            value = Path(config["saving"][key])
+            config["saving"][key] = str(
+                value.with_name(f"{value.stem}_batch_pilot{value.suffix}")
+            )
+
+
 def _limit_pilot_shards(train_keys, valid_keys):
     # ponytail: two train shards and one validation shard keep smoke runs cheap;
     # raise these caps when a representative pilot is needed.
     return train_keys[:2], valid_keys[:1]
+
+
+def _limit_batch_pilot_shards(train_keys, valid_keys):
+    # ponytail: one train/validation shard bounds the memory check; scale up only after the batch fits.
+    if not train_keys or not valid_keys:
+        raise ValueError("Batch pilot requires at least one train and validation shard")
+    return train_keys[:1], valid_keys[:1]
 
 
 def main():
@@ -126,10 +160,16 @@ def main():
     parser.add_argument(
         "--config", type=str, required=True, help="Path to config YAML file"
     )
-    parser.add_argument(
+    pilot_modes = parser.add_mutually_exclusive_group()
+    pilot_modes.add_argument(
         "--pilot",
         action="store_true",
         help="Run one bounded epoch without overwriting full outputs",
+    )
+    pilot_modes.add_argument(
+        "--batch-pilot",
+        action="store_true",
+        help="Run one train and validation batch at the configured batch size",
     )
     args = parser.parse_args()
 
@@ -139,6 +179,13 @@ def main():
     expand_config_paths(config)
     if args.pilot:
         _configure_pilot(config)
+    elif args.batch_pilot:
+        _configure_batch_pilot(config)
+
+    run_id = os.environ.get("MSA_RUN_ID") or (
+        f"pretrain-{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-{os.getpid()}"
+    )
+    print(f"Pretraining run: run_id={run_id}")
 
     cols = config["data"]["feature_cols"]
     _validate_error_columns(cols, config["data"]["error_cols"])
@@ -155,6 +202,19 @@ def main():
         raise ValueError("No training shards remain after excluding valid_keys")
     if args.pilot:
         keys_train, keys_valid = _limit_pilot_shards(keys_train, keys_valid)
+    elif args.batch_pilot:
+        keys_train, keys_valid = _limit_batch_pilot_shards(keys_train, keys_valid)
+        required_rows = int(config["training"]["mini_batch_size"])
+        too_short = [
+            key
+            for key in [*keys_train, *keys_valid]
+            if len(pretrain_file[key]) < required_rows
+        ]
+        if too_short:
+            raise ValueError(
+                "Batch pilot needs at least "
+                f"{required_rows} rows in each selected shard: {too_short}"
+            )
     data_store = ProjectedHDF5Store(
         pretrain_file,
         cols,
@@ -262,6 +322,7 @@ def main():
         residual_stats_file=config["saving"].get("residual_stats_file"),
         arc_checkpoint_dir=config["saving"].get("arc_checkpoint_dir"),
         arc_sync_interval=config["saving"].get("arc_sync_interval", 5),
+        run_id=run_id,
     )
 
     epochs = config["training"]["epochs"]

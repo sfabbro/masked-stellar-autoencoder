@@ -110,6 +110,7 @@ class ProjectedHDF5Store:
         self.shuffle_buffer_bytes = shuffle_buffer_bytes
         self.scratch_dir = self._resolve_scratch(scratch_dir)
         self._scratch_free_bytes = scratch_free_bytes
+        self.scratch_free_bytes = scratch_free_bytes
         self._cache_fraction = cache_fraction
         self._cache_tmp: tempfile.TemporaryDirectory | None = None
         self._cache_arrays: dict[str, np.memmap] = {}
@@ -195,6 +196,18 @@ class ProjectedHDF5Store:
 
         use_cache = self._cache_fits()
         started = time.perf_counter()
+        cache_limit = (
+            int(self.scratch_free_bytes * self._cache_fraction)
+            if self.scratch_free_bytes is not None
+            else None
+        )
+        print(
+            "Pretraining scan starting: "
+            f"mode={'cache' if use_cache else 'stream'}, shards={len(self._keys)}, "
+            f"projected_cache_bytes={self.cache_bytes}, "
+            f"scratch_free_bytes={self.scratch_free_bytes}, "
+            f"cache_limit_bytes={cache_limit}"
+        )
         try:
             if use_cache:
                 try:
@@ -240,6 +253,7 @@ class ProjectedHDF5Store:
             )
         except OSError:
             return False
+        self.scratch_free_bytes = free
         return self.cache_bytes <= int(free * self._cache_fraction)
 
     def _read_matrix(self, dataset: h5py.Dataset, start: int, stop: int) -> np.ndarray:
@@ -258,6 +272,9 @@ class ProjectedHDF5Store:
     ) -> list[np.ndarray]:
         samples: list[np.ndarray] = []
         for key_index, key in enumerate(self._keys):
+            key_started = time.perf_counter()
+            read_before = self.read_seconds
+            conversion_before = self.conversion_seconds
             dataset = self.datafile[key]
             n_rows = self._row_counts[key]
             names = dataset.dtype.names or ()
@@ -277,7 +294,9 @@ class ProjectedHDF5Store:
 
             error_maxima = np.full(self._feature_count, -np.inf, dtype=np.float32)
             chosen = sample_indices.get(key, np.empty(0, dtype=np.int64))
-            for start in range(0, n_rows, self._chunk_rows_for(dataset)):
+            chunk_rows = self._chunk_rows_for(dataset)
+            n_chunks = (n_rows + chunk_rows - 1) // chunk_rows
+            for chunk_index, start in enumerate(range(0, n_rows, chunk_rows), start=1):
                 stop = min(start + self._chunk_rows_for(dataset), n_rows)
                 matrix = self._read_matrix(dataset, start, stop)
                 if cache is not None:
@@ -297,6 +316,18 @@ class ProjectedHDF5Store:
                     if first < last:
                         rows = chosen[first:last] - start
                         samples.append(matrix[rows, : self._feature_count].copy())
+                if (
+                    chunk_index == 1
+                    or chunk_index == n_chunks
+                    or chunk_index % max(1, n_chunks // 4) == 0
+                ):
+                    print(
+                        "Pretraining scan progress: "
+                        f"key={key}, rows={stop}/{n_rows}, "
+                        f"elapsed_s={time.perf_counter() - key_started:.1f}, "
+                        f"source_read_s={self.read_seconds - read_before:.1f}, "
+                        f"conversion_s={self.conversion_seconds - conversion_before:.1f}"
+                    )
             error_maxima[~np.isfinite(error_maxima)] = 1.0
             self._error_maxima[key] = error_maxima
             if cache is not None:

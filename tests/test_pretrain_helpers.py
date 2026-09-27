@@ -1,4 +1,6 @@
+import json
 import random
+import time
 from unittest.mock import MagicMock
 
 import h5py
@@ -15,7 +17,9 @@ from masked_stellar_autoencoder.models.model import (
     _restore_rng_state,
 )
 from masked_stellar_autoencoder.training.pretrain_msa import (
+    _configure_batch_pilot,
     _configure_pilot,
+    _limit_batch_pilot_shards,
     _limit_pilot_shards,
     _validate_error_columns,
     fit_pretrain_scaler,
@@ -265,6 +269,51 @@ def test_pretrain_pilot_limits_training_and_validation_shards():
         ["train_0", "train_1"],
         ["valid_0"],
     )
+
+
+def test_pretrain_batch_pilot_preserves_full_batch_and_separates_outputs():
+    config = {
+        "training": {"epochs": 100, "mini_batch_size": 32768},
+        "saving": {
+            "model_str": "/tmp/model.pth",
+            "log_file": "/tmp/train.log",
+            "metrics_file": "/tmp/metrics.jsonl",
+            "residual_stats_file": "/tmp/residuals.jsonl",
+            "arc_checkpoint_dir": "/tmp/checkpoints",
+        },
+    }
+
+    _configure_batch_pilot(config)
+
+    assert config["training"]["epochs"] == 1
+    assert config["training"]["mini_batch_size"] == 32768
+    assert config["training"]["max_rows_per_shard"] == 32768
+    assert config["saving"]["model_str"] == "/tmp/model_batch_pilot.pth"
+    assert config["saving"]["metrics_file"] == "/tmp/metrics_batch_pilot.jsonl"
+
+
+def test_pretrain_batch_pilot_limits_to_one_train_and_validation_shard():
+    assert _limit_batch_pilot_shards(["train_a", "train_b"], ["valid_a"]) == (
+        ["train_a"],
+        ["valid_a"],
+    )
+
+
+def test_epoch_metrics_include_run_id_memory_and_disk_state(wrapper_stub, tmp_path):
+    metrics_path = tmp_path / "metrics.jsonl"
+    wrapper_stub._configure_canfar_output(
+        metrics_file=str(metrics_path), run_id="run-1"
+    )
+    wrapper_stub._epoch_start = time.time() - 1
+    optimizer = torch.optim.SGD([torch.nn.Parameter(torch.zeros(1))], lr=0.01)
+
+    wrapper_stub._log_epoch_metrics(0, 2, 0.5, 0.6, optimizer)
+
+    entry = json.loads(metrics_path.read_text())
+    assert entry["run_id"] == "run-1"
+    assert entry["peak_host_rss_bytes"] > 0
+    assert entry["output_free_bytes"] > 0
+    assert entry["epoch"] == 1
 
 
 def test_load_data_masks_nonfinite_features_and_repairs_invalid_errors(tmp_path):

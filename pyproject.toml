@@ -86,6 +86,7 @@ canfar-preflight-pretrain = "python -m masked_stellar_autoencoder.training.canfa
 pretrain-canfar = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml"
 finetune-canfar = "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.canfar.yaml"
 pretrain-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml --pilot"
+pretrain-canfar-batch-pilot = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml --batch-pilot"
 finetune-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.canfar.yaml --pilot"
 
 [tool.pixi.pypi-dependencies]

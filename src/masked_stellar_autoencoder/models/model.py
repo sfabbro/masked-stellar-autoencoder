@@ -3,6 +3,9 @@ import logging
 import math
 import os
 import random
+import resource
+import shutil
+import sys
 import time
 from dataclasses import dataclass
 
@@ -772,6 +775,9 @@ class TabResnetWrapper(BaseEstimator):
         self._arc_checkpoint_dir = None
         self._arc_sync_interval = 5
         self._epoch_start = None
+        self._run_id = (
+            f"pretrain-{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-{os.getpid()}"
+        )
 
     @property
     def _pert_channel_scale_tensor(self):
@@ -980,7 +986,7 @@ class TabResnetWrapper(BaseEstimator):
         logging.basicConfig(
             filename=self.pt_log_file,
             level=logging.INFO,
-            format="%(asctime)s - Sub-Epoch: %(message)s",
+            format=f"%(asctime)s - {self._run_id} - Sub-Epoch: %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
             filemode="a",
             force=True,
@@ -992,12 +998,64 @@ class TabResnetWrapper(BaseEstimator):
         residual_stats_file=None,
         arc_checkpoint_dir=None,
         arc_sync_interval=5,
+        run_id=None,
     ):
         self._metrics_file = metrics_file
         self._residual_stats_file = residual_stats_file
         self._arc_checkpoint_dir = arc_checkpoint_dir
         self._arc_sync_interval = arc_sync_interval
         self._epoch_start = None
+        self._run_id = (
+            run_id
+            or os.environ.get("MSA_RUN_ID")
+            or (
+                f"pretrain-{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-"
+                f"{os.getpid()}"
+            )
+        )
+
+    def _resource_metrics(self):
+        peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        metrics = {
+            "peak_host_rss_bytes": int(
+                peak_rss if sys.platform == "darwin" else peak_rss * 1024
+            ),
+            "current_host_rss_bytes": None,
+            "scratch_free_bytes": None,
+            "output_free_bytes": None,
+        }
+        try:
+            with open("/proc/self/statm") as statm:
+                resident_pages = int(statm.read().split()[1])
+            metrics["current_host_rss_bytes"] = resident_pages * os.sysconf(
+                "SC_PAGE_SIZE"
+            )
+        except (OSError, IndexError, ValueError):
+            pass
+
+        data_store = getattr(self, "data_store", None)
+        if data_store is not None:
+            metrics["loader_mode"] = data_store.mode
+            metrics["projected_cache_bytes"] = data_store.cache_bytes
+            try:
+                metrics["scratch_free_bytes"] = shutil.disk_usage(
+                    data_store.scratch_dir
+                ).free
+            except OSError:
+                pass
+        output_dir = os.path.dirname(self.pt_save_str) or "."
+        try:
+            metrics["output_free_bytes"] = shutil.disk_usage(output_dir).free
+        except OSError:
+            pass
+
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+            metrics["current_gpu_allocated_bytes"] = torch.cuda.memory_allocated()
+            metrics["peak_gpu_allocated_bytes"] = torch.cuda.max_memory_allocated()
+            metrics["current_gpu_reserved_bytes"] = torch.cuda.memory_reserved()
+            metrics["peak_gpu_reserved_bytes"] = torch.cuda.max_memory_reserved()
+        return metrics
 
     def _log_epoch_metrics(self, epoch, total_epochs, mean_loss, val_loss, optimizer):
         if not self._metrics_file:
@@ -1006,6 +1064,8 @@ class TabResnetWrapper(BaseEstimator):
         import time
 
         entry = {
+            "run_id": self._run_id,
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "epoch": epoch + 1,
             "total_epochs": total_epochs,
             "train_loss": round(float(mean_loss), 8),
@@ -1015,6 +1075,7 @@ class TabResnetWrapper(BaseEstimator):
                 round(time.time() - self._epoch_start, 1) if self._epoch_start else None
             ),
         }
+        entry.update(self._resource_metrics())
         with open(self._metrics_file, "a") as f:
             f.write(json.dumps(entry) + "\n")
 
@@ -1024,7 +1085,11 @@ class TabResnetWrapper(BaseEstimator):
         import json
 
         self.model.eval()
-        stats: dict = {"epoch": epoch + 1}
+        stats: dict = {
+            "run_id": self._run_id,
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "epoch": epoch + 1,
+        }
         with torch.no_grad():
             data_store = getattr(self, "data_store", None)
             if data_store is not None:
@@ -1342,12 +1407,12 @@ class TabResnetWrapper(BaseEstimator):
         self._save_pretrain_checkpoints(
             epoch, optimizer, scheduler, epoch_loss, loss_div
         )
-        # CANFAR monitoring: log metrics + residual stats, sync checkpoint to /arc
+        # CANFAR monitoring: record resources after validation and residual stats.
         validation = (
             running_pt_validation_loss[-1] if running_pt_validation_loss else None
         )
-        self._log_epoch_metrics(epoch, total_epochs, mean_loss, validation, optimizer)
         self._log_residual_stats(val_keys, epoch, mini_batch)
+        self._log_epoch_metrics(epoch, total_epochs, mean_loss, validation, optimizer)
         if (epoch + 1) % self._arc_sync_interval == 0:
             self._sync_checkpoint_to_arc()
         return epoch_loss, loss_div

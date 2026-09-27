@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-stage="${1:?Usage: canfar_entrypoint.sh install|schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain|finetune-pilot|finetune|preflight}"
+stage="${1:?Usage: canfar_entrypoint.sh install|schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain-batch-pilot|pretrain|finetune-pilot|finetune|preflight}"
 project_root="${CANFAR_PROJECT_ROOT:-/arc/projects/k-pop}"
 work_root="${WORK:-/scratch/${USER:?USER is unset}}"
 script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
@@ -97,6 +97,10 @@ case "$stage" in
   pretrain-pilot)
     "${pixi_run[@]}" canfar-preflight-pretrain
     "${pixi_run[@]}" pretrain-canfar-pilot
+    ;;
+  pretrain-batch-pilot)
+    "${pixi_run[@]}" canfar-preflight-pretrain
+    "${pixi_run[@]}" pretrain-canfar-batch-pilot
     ;;
   pretrain)
     "${pixi_run[@]}" canfar-preflight-pretrain

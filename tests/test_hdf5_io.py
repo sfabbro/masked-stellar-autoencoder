@@ -35,7 +35,7 @@ def _collect(store, scaler, *, shuffle=False, seed=0):
     ]
 
 
-def test_projected_store_stream_and_cache_match_with_partial_batch(tmp_path):
+def test_projected_store_stream_and_cache_match_with_partial_batch(tmp_path, capsys):
     path = tmp_path / "input.h5"
     with h5py.File(path, "w") as h5:
         h5.create_dataset("train", data=_table(), chunks=(2,))
@@ -74,6 +74,9 @@ def test_projected_store_stream_and_cache_match_with_partial_batch(tmp_path):
     ):
         np.testing.assert_allclose(stream_x, cache_x)
         np.testing.assert_allclose(stream_e, cache_e)
+    logs = capsys.readouterr().out
+    assert "Pretraining scan starting:" in logs
+    assert "Pretraining scan progress: key=train" in logs
 
 
 def test_projected_store_chunk_shuffle_is_seeded_and_preserves_rows(tmp_path):

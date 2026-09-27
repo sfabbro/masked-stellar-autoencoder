@@ -121,6 +121,7 @@ run the bounded pilots before full training:
 
 ```bash
 scripts/canfar_launch.sh pretrain-pilot
+scripts/canfar_launch.sh pretrain-batch-pilot
 scripts/canfar_launch.sh finetune-pilot
 ```
 
@@ -128,10 +129,29 @@ Pretraining reads only the configured feature and uncertainty columns. It stages
 their float32 projection under session scratch when the estimated cache is at
 most 80% of free scratch space; otherwise it streams sequential HDF5 chunks.
 Both modes use seeded bounded shuffling and two prefetched CPU batches, so the
-whole shard is never copied to GPU memory. Startup and per-shard logs report the
-I/O mode, read/conversion time, and rows per second. `training.io_chunk_rows`
-and `training.io_shuffle_buffer_bytes` can tune the reader; their defaults are
-65,536 rows and 64 MiB.
+whole shard is never copied to GPU memory. Startup logs report scratch capacity
+and scan progress; per-shard logs report the I/O mode, read/conversion time, and
+rows per second. Per-epoch `metrics.jsonl` entries include train/validation
+loss, learning rate, epoch duration, host/GPU memory, scratch/output free space,
+and a run ID. `residual_stats.jsonl` is tagged with the same run ID. Set a
+unique run ID and output root for each fresh full run so append-only logs and
+metrics cannot mix runs:
+
+```bash
+run_id="$(date -u +%Y%m%dT%H%M%SZ)"
+scripts/canfar_launch.sh pretrain \
+  "MSA_RUN_ID=$run_id" \
+  "MSA_OUTPUT_ROOT=/arc/projects/k-pop/msa_runs/pretrain-$run_id"
+```
+
+The regular `pretrain-pilot` is a fast smoke check (128-row batches, 512 rows
+per shard). `pretrain-batch-pilot` uses one training and one validation shard,
+one epoch, and the configured full batch size (32,768 rows by default). Run it
+before full training to verify GPU memory at the actual batch size. Both pilots
+write to pilot-specific filenames; choose a unique `MSA_OUTPUT_ROOT` for each
+pilot run as well. `training.io_chunk_rows` and
+`training.io_shuffle_buffer_bytes` tune the reader; defaults are 65,536 rows
+and 64 MiB.
 
 The preprocessing builder accepts `MSA_SOURCE_IDS_FILE`, `MSA_CATWISE_FILE`,
 `MSA_GAIA_XP_DIR`, `MSA_GAIA_SOURCE_DIR`, `MSA_ADQL_MATCH_DIR`,
