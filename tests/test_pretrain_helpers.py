@@ -449,6 +449,111 @@ def test_pretrain_epoch_resets_loss_counters(wrapper_stub):
     assert wrapper_stub._save_pretrain_checkpoints.call_args.args[-2:] == (2.0, 1.0)
 
 
+def test_pretrain_monitor_emits_row_weighted_intervals(wrapper_stub):
+    wrapper_stub._pretrain_monitor_interval_size = 7
+    wrapper_stub._pretrain_monitor_interval_rows = 0
+    wrapper_stub._pretrain_monitor_interval_count = 0
+    wrapper_stub._pretrain_monitor_interval_loss = torch.zeros(())
+    wrapper_stub._pretrain_monitor_epoch_rows_seen = 0
+    wrapper_stub._emit_pretrain_interval = MagicMock()
+
+    wrapper_stub._accumulate_pretrain_monitor_batch(torch.tensor(0.5), 4, 4)
+    assert not wrapper_stub._emit_pretrain_interval.called
+    wrapper_stub._accumulate_pretrain_monitor_batch(torch.tensor(1.5), 4, 4)
+
+    args, kwargs = wrapper_stub._emit_pretrain_interval.call_args
+    assert args[0] == 8  # The interval ends at an optimizer batch boundary.
+    torch.testing.assert_close(args[1], torch.tensor(8.0))
+    assert args[2] == 4
+    assert kwargs == {"partial": False}
+    assert wrapper_stub._pretrain_monitor_epoch_rows_seen == 8
+    assert wrapper_stub._pretrain_monitor_interval_rows == 0
+
+
+def test_pretrain_monitor_sample_is_bounded_and_seeded(wrapper_stub):
+    class SampleStore:
+        def __init__(self):
+            self.requests = []
+
+        def sample_batches(
+            self, key, scaler, scale_factors, *, sample_rows, seed, batch_rows
+        ):
+            self.requests.append((key, sample_rows, seed, batch_rows))
+            values = np.full((sample_rows, 2), seed, dtype=np.float32)
+            yield values, values.copy()
+
+    store = SampleStore()
+    wrapper_stub.data_store = store
+    wrapper_stub._pretrain_micro_batch_size = 2
+    wrapper_stub.scale_factors = np.ones(2)
+
+    X_sample, eX_sample = wrapper_stub._prepare_pretrain_monitor_sample(
+        ["valid_a", "valid_b"], 5, 8, seed=10
+    )
+
+    assert store.requests == [("valid_a", 3, 10, 2), ("valid_b", 2, 11, 2)]
+    assert X_sample.shape == eX_sample.shape == (5, 2)
+    np.testing.assert_array_equal(X_sample[:, 0], [10, 10, 10, 11, 11])
+
+
+def test_pretrain_monitor_evaluation_restores_model_mode_and_rng(wrapper_stub):
+    class ZeroReconstruction(torch.nn.Module):
+        def forward(self, values):
+            return torch.zeros((len(values), 1)), torch.zeros((len(values), 1))
+
+    wrapper_stub.model = ZeroReconstruction()
+    wrapper_stub.model.train()
+    wrapper_stub._run_id = "run-1"
+    wrapper_stub.xp_col_start = 0
+    wrapper_stub.xp_col_end = 1
+    wrapper_stub._pretrain_micro_batch_size = 2
+    wrapper_stub._pretrain_valid_keys = ["valid"]
+    wrapper_stub._pretrain_monitor_sample = (
+        np.array([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]], dtype=np.float32),
+        np.ones((3, 2), dtype=np.float32),
+    )
+    wrapper_stub._apply_mask = lambda values: (
+        values,
+        torch.ones_like(values, dtype=torch.bool),
+        torch.ones_like(values, dtype=torch.bool),
+    )
+    torch.manual_seed(17)
+    rng_before = torch.get_rng_state().clone()
+
+    stats = wrapper_stub._evaluate_pretrain_monitor_sample(
+        0,
+        2,
+        record_type="interval",
+        rows_seen_total=3,
+        epoch_rows_seen=3,
+        snapshot_only=True,
+    )
+
+    assert wrapper_stub.model.training
+    torch.testing.assert_close(torch.get_rng_state(), rng_before)
+    assert stats["sampled_rows"] == 3
+    assert stats["sampled_validation_shards"] == 1
+    assert np.isfinite(stats["sampled_val_loss"])
+    assert stats["feature_mae"] == [2.0]
+
+
+def test_pretrain_monitor_residual_snapshot_is_atomic_json(wrapper_stub, tmp_path):
+    snapshot_path = tmp_path / "residual_latest.json"
+    wrapper_stub._configure_canfar_output(
+        residual_latest_file=str(snapshot_path), run_id="run-1"
+    )
+
+    wrapper_stub._write_pretrain_residual_record(
+        {"record_type": "epoch", "rows_seen_total": 100, "overall_mae": 0.25}
+    )
+
+    record = json.loads(snapshot_path.read_text())
+    assert record["run_id"] == "run-1"
+    assert record["rows_seen_total"] == 100
+    assert record["overall_mae"] == 0.25
+    assert not snapshot_path.with_name(snapshot_path.name + ".tmp").exists()
+
+
 def test_pretrain_epoch_does_not_hide_shard_failure(wrapper_stub):
     wrapper_stub._metrics_file = None
     wrapper_stub._train_pretrain_key = MagicMock(side_effect=RuntimeError("bad shard"))

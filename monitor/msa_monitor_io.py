@@ -47,6 +47,7 @@ def sync_run_outputs(
         "progress.jsonl",
         "metrics.jsonl",
         "residual_stats.jsonl",
+        "residual_latest.json",
     ),
 ) -> tuple[dict[str, Path], dict[str, str]]:
     """Fetch only small monitoring files from the CADC ARC VOSpace with vcp."""

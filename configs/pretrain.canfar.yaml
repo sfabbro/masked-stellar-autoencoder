@@ -83,6 +83,8 @@ training:
   # The 272-column projection is ~237 GB; CANFAR session /scratch is capped at 200 GB.
   io_cache_fraction: 0.0
   epochs: 100
+  monitor_interval_rows: 10000000
+  monitor_sample_rows: 10000
   # Set MSA_PRETRAIN_RESUME to a full checkpoint to continue an interrupted run.
   presaved: '$MSA_PRETRAIN_RESUME'
   scheduler_cosine_t0: 10
@@ -94,6 +96,7 @@ saving:
   log_file: '$MSA_PRETRAIN_OUTPUT_DIR/pretrain.log'
   metrics_file: '$MSA_PRETRAIN_OUTPUT_DIR/metrics.jsonl'
   residual_stats_file: '$MSA_PRETRAIN_OUTPUT_DIR/residual_stats.jsonl'
+  residual_latest_file: '$MSA_PRETRAIN_OUTPUT_DIR/residual_latest.json'
   progress_file: '$MSA_PRETRAIN_OUTPUT_DIR/progress.jsonl'
   checkpoint_interval: 2
   arc_checkpoint_dir: '$MSA_PRETRAIN_CHECKPOINT_DIR'

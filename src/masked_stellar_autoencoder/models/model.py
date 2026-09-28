@@ -817,10 +817,18 @@ class TabResnetWrapper(BaseEstimator):
         # CANFAR output defaults (no-op unless configured via _configure_canfar_output)
         self._metrics_file = None
         self._residual_stats_file = None
+        self._residual_latest_file = None
         self._progress_file = None
         self._arc_checkpoint_dir = None
         self._arc_sync_interval = 5
         self._epoch_start = None
+        self._pretrain_monitor_interval_size = 0
+        self._pretrain_monitor_interval_rows = 0
+        self._pretrain_monitor_interval_count = 0
+        self._pretrain_monitor_epoch_rows_seen = 0
+        self._pretrain_monitor_interval_loss = None
+        self._pretrain_monitor_sample = None
+        self._pretrain_rows_per_epoch = 0
         self._run_id = (
             f"pretrain-{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-{os.getpid()}"
         )
@@ -1042,6 +1050,7 @@ class TabResnetWrapper(BaseEstimator):
         self,
         metrics_file=None,
         residual_stats_file=None,
+        residual_latest_file=None,
         progress_file=None,
         arc_checkpoint_dir=None,
         arc_sync_interval=5,
@@ -1049,6 +1058,7 @@ class TabResnetWrapper(BaseEstimator):
     ):
         self._metrics_file = metrics_file
         self._residual_stats_file = residual_stats_file
+        self._residual_latest_file = residual_latest_file
         self._progress_file = progress_file
         self._arc_checkpoint_dir = arc_checkpoint_dir
         self._arc_sync_interval = arc_sync_interval
@@ -1125,7 +1135,14 @@ class TabResnetWrapper(BaseEstimator):
         return metrics
 
     def _log_epoch_metrics(
-        self, epoch, total_epochs, mean_loss, val_loss, optimizer, residual_stats=None
+        self,
+        epoch,
+        total_epochs,
+        mean_loss,
+        val_loss,
+        optimizer,
+        residual_stats=None,
+        rows_seen_total=None,
     ):
         if not self._metrics_file:
             return
@@ -1135,6 +1152,7 @@ class TabResnetWrapper(BaseEstimator):
         entry = {
             "run_id": self._run_id,
             "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "record_type": "epoch",
             "epoch": epoch + 1,
             "total_epochs": total_epochs,
             "train_loss": round(float(mean_loss), 8),
@@ -1144,22 +1162,63 @@ class TabResnetWrapper(BaseEstimator):
                 round(time.time() - self._epoch_start, 1) if self._epoch_start else None
             ),
         }
+        if rows_seen_total is not None:
+            entry["rows_seen_total"] = int(rows_seen_total)
         entry.update(self._resource_metrics())
         entry.update(
             {
                 f"residual_{key}": value
                 for key, value in (residual_stats or {}).items()
-                if key not in {"run_id", "timestamp_utc", "epoch"}
+                if key
+                not in {
+                    "run_id",
+                    "timestamp_utc",
+                    "epoch",
+                    "record_type",
+                    "rows_seen_total",
+                    "epoch_rows_seen",
+                    "interval_rows",
+                    "interval_index",
+                    "interval_partial",
+                    "train_loss",
+                }
                 and isinstance(value, int | float)
             }
         )
         with open(self._metrics_file, "a") as f:
             f.write(json.dumps(entry) + "\n")
 
-    def _log_residual_stats(self, val_keys, epoch, mini_batch=32768):
-        if not self._residual_stats_file or not val_keys:
+    def _log_residual_stats(
+        self,
+        val_keys,
+        epoch,
+        mini_batch=32768,
+        *,
+        sample_data=None,
+        record_type=None,
+        rows_seen_total=None,
+        epoch_rows_seen=None,
+        interval_rows=None,
+        train_loss=None,
+        interval_index=None,
+        interval_partial=None,
+        snapshot_only=False,
+        report_progress=True,
+    ):
+        if (
+            not (
+                getattr(self, "_residual_stats_file", None)
+                or getattr(self, "_residual_latest_file", None)
+                or sample_data is not None
+            )
+            or not val_keys
+        ):
             return {}
         import json
+
+        def progress(stage, **fields):
+            if report_progress:
+                self._write_progress(stage, **fields)
 
         self.model.eval()
         stats: dict = {
@@ -1168,7 +1227,7 @@ class TabResnetWrapper(BaseEstimator):
             "epoch": epoch + 1,
         }
         sample_rows = 10_000
-        self._write_progress(
+        progress(
             "residual_sampling_started",
             epoch=epoch + 1,
             validation_shard_count=len(val_keys),
@@ -1176,7 +1235,21 @@ class TabResnetWrapper(BaseEstimator):
         )
         with torch.no_grad():
             data_store = getattr(self, "data_store", None)
-            if data_store is not None:
+            if sample_data is not None:
+                X_sample, eX_sample = sample_data
+                batch_rows = min(
+                    mini_batch,
+                    getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
+                )
+                batches = (
+                    (
+                        X_sample[start : start + batch_rows],
+                        eX_sample[start : start + batch_rows],
+                    )
+                    for start in range(0, len(X_sample), batch_rows)
+                )
+                batch_sources = (("validation_sample", batches),)
+            elif data_store is not None:
                 sample_rows_per_key = max(1, sample_rows // len(val_keys))
                 batch_rows = min(
                     mini_batch,
@@ -1216,6 +1289,7 @@ class TabResnetWrapper(BaseEstimator):
             error_batches = []
             sampled_rows = 0
             sampled_shards = 0
+            validation_loss_sum = torch.zeros((), device=self.device)
             photo_idx = list(range(self.xp_col_start)) + list(
                 range(self.xp_col_end, len(self.recon_cols))
             )
@@ -1236,11 +1310,20 @@ class TabResnetWrapper(BaseEstimator):
                     X_masked, mask, nanmask = self._apply_mask(X_batch)
                     X_recon, _ = self.model(X_masked)
                     recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
+                    logvar = getattr(self.model, "_last_logvar", None)
+                    batch_loss = self.loss_fn(
+                        X_batch[:, : -self.diff],
+                        X_recon,
+                        recon_mask,
+                        1.0 / (eX_batch[:, : -self.diff].square() + 1e-8),
+                        logvar=logvar,
+                    )
+                    validation_loss_sum.add_(batch_loss * len(X_batch))
                     errors = (X_recon - X_batch[:, : -self.diff]).abs()
                     errors = errors.masked_fill(~recon_mask, float("nan"))
                     error_batches.append(errors)
                 sampled_shards += int(shard_sampled)
-                self._write_progress(
+                progress(
                     "residual_shard_sampled",
                     epoch=epoch + 1,
                     key=key,
@@ -1268,10 +1351,39 @@ class TabResnetWrapper(BaseEstimator):
                 stats["overall_mae"] = round(all_valid.mean().item(), 8)
             stats.update(_summarize_feature_residuals(feature_errors, self.recon_cols))
         stats["sampled_rows"] = sampled_rows
-        stats["sampled_validation_shards"] = sampled_shards
-        with open(self._residual_stats_file, "a") as f:
-            f.write(json.dumps(stats) + "\n")
-        self._write_progress(
+        stats["sampled_validation_shards"] = (
+            len(val_keys) if sample_data is not None else sampled_shards
+        )
+        stats["sampled_val_loss"] = (
+            round(float((validation_loss_sum / sampled_rows).item()), 8)
+            if sampled_rows
+            else None
+        )
+        if record_type is not None:
+            stats["record_type"] = record_type
+        if rows_seen_total is not None:
+            stats["rows_seen_total"] = int(rows_seen_total)
+        if epoch_rows_seen is not None:
+            stats["epoch_rows_seen"] = int(epoch_rows_seen)
+        if interval_rows is not None:
+            stats["interval_rows"] = int(interval_rows)
+        if train_loss is not None:
+            stats["train_loss"] = round(float(train_loss), 8)
+        if interval_index is not None:
+            stats["interval_index"] = int(interval_index)
+        if interval_partial is not None:
+            stats["interval_partial"] = bool(interval_partial)
+        if snapshot_only:
+            self._write_pretrain_residual_snapshot(
+                {
+                    "run_id": self._run_id,
+                    "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    **stats,
+                }
+            )
+        else:
+            self._write_pretrain_residual_record(stats)
+        progress(
             "residual_sampling_finished",
             epoch=epoch + 1,
             sampled_rows=sampled_rows,
@@ -1289,6 +1401,202 @@ class TabResnetWrapper(BaseEstimator):
                 f"sampled_rows={sampled_rows}, sampled_shards={sampled_shards}"
             )
         return stats
+
+    def _prepare_pretrain_monitor_sample(
+        self, val_keys, sample_rows, mini_batch, *, seed=42
+    ):
+        data_store = getattr(self, "data_store", None)
+        if data_store is None or not val_keys or sample_rows < 1:
+            return None
+
+        batch_rows = min(
+            mini_batch,
+            getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
+        )
+        x_parts, e_parts = [], []
+        base, extra = divmod(sample_rows, len(val_keys))
+        for key_index, key in enumerate(val_keys):
+            rows_for_key = base + int(key_index < extra)
+            if rows_for_key < 1:
+                continue
+            for X, eX in data_store.sample_batches(
+                key,
+                self.featurescaler,
+                self.scale_factors,
+                sample_rows=rows_for_key,
+                seed=seed + key_index,
+                batch_rows=batch_rows,
+            ):
+                x_parts.append(X)
+                e_parts.append(eX)
+        if not x_parts:
+            return None
+        return np.concatenate(x_parts), np.concatenate(e_parts)
+
+    def _evaluate_pretrain_monitor_sample(
+        self,
+        epoch,
+        mini_batch,
+        *,
+        record_type,
+        rows_seen_total,
+        epoch_rows_seen,
+        interval_rows=None,
+        train_loss=None,
+        interval_index=None,
+        interval_partial=None,
+        snapshot_only=False,
+        seed=42,
+    ):
+        sample = getattr(self, "_pretrain_monitor_sample", None)
+        if sample is None:
+            return {}
+        was_training = self.model.training
+        rng_state = _capture_rng_state()
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        try:
+            return self._log_residual_stats(
+                self._pretrain_valid_keys,
+                epoch,
+                mini_batch,
+                sample_data=sample,
+                record_type=record_type,
+                rows_seen_total=rows_seen_total,
+                epoch_rows_seen=epoch_rows_seen,
+                interval_rows=interval_rows,
+                train_loss=train_loss,
+                interval_index=interval_index,
+                interval_partial=interval_partial,
+                snapshot_only=snapshot_only,
+                report_progress=False,
+            )
+        finally:
+            self.model.train(was_training)
+            _restore_rng_state(rng_state)
+
+    def _write_pretrain_residual_record(self, stats):
+        if not stats:
+            return
+        import json
+
+        entry = {
+            "run_id": self._run_id,
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            **stats,
+        }
+        if self._residual_stats_file:
+            path = Path(self._residual_stats_file)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a") as stream:
+                stream.write(json.dumps(entry) + "\n")
+        self._write_pretrain_residual_snapshot(entry)
+
+    def _write_pretrain_residual_snapshot(self, entry):
+        path = getattr(self, "_residual_latest_file", None)
+        if not path or not entry:
+            return
+        import json
+
+        snapshot = Path(path)
+        snapshot.parent.mkdir(parents=True, exist_ok=True)
+        temporary = snapshot.with_name(snapshot.name + ".tmp")
+        with temporary.open("w") as stream:
+            stream.write(json.dumps(entry) + "\n")
+        os.replace(temporary, snapshot)
+
+    def _emit_pretrain_interval(
+        self, interval_rows, interval_loss, mini_batch, *, partial
+    ):
+        if interval_rows < 1:
+            return
+        import json
+
+        epoch = int(getattr(self, "_active_epoch", 1))
+        total_epochs = int(getattr(self, "_active_total_epochs", epoch))
+        rows_seen = int(self._pretrain_monitor_epoch_rows_seen)
+        rows_seen_total = (epoch - 1) * int(self._pretrain_rows_per_epoch) + rows_seen
+        train_loss = float((interval_loss / interval_rows).item())
+        interval_index = int(self._pretrain_monitor_interval_count) + 1
+        residual_stats = self._evaluate_pretrain_monitor_sample(
+            epoch - 1,
+            mini_batch,
+            record_type="interval",
+            rows_seen_total=rows_seen_total,
+            epoch_rows_seen=rows_seen,
+            interval_rows=interval_rows,
+            train_loss=train_loss,
+            interval_index=interval_index,
+            interval_partial=partial,
+            snapshot_only=True,
+        )
+
+        if self._metrics_file:
+            entry = {
+                "run_id": self._run_id,
+                "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "record_type": "interval",
+                "epoch": epoch,
+                "total_epochs": total_epochs,
+                "interval_index": interval_index,
+                "interval_rows": int(interval_rows),
+                "epoch_rows_seen": rows_seen,
+                "rows_seen_total": rows_seen_total,
+                "train_loss": round(train_loss, 8),
+                "sampled_val_loss": residual_stats.get("sampled_val_loss"),
+                "interval_partial": bool(partial),
+            }
+            entry.update(
+                {
+                    f"residual_{key}": residual_stats[key]
+                    for key in ("xp_mae", "xp_p84", "photo_mae", "overall_mae")
+                    if key in residual_stats
+                }
+            )
+            entry.update(self._resource_metrics())
+            with open(self._metrics_file, "a") as stream:
+                stream.write(json.dumps(entry) + "\n")
+
+        self._pretrain_monitor_interval_count = interval_index
+        self._write_progress(
+            "training_interval_finished",
+            epoch=epoch,
+            total_epochs=total_epochs,
+            interval_index=interval_index,
+            interval_rows=int(interval_rows),
+            epoch_rows_seen=rows_seen,
+            rows_seen_total=rows_seen_total,
+            train_loss=round(train_loss, 8),
+            sampled_val_loss=residual_stats.get("sampled_val_loss"),
+            interval_partial=bool(partial),
+        )
+
+    def _accumulate_pretrain_monitor_batch(self, batch_loss, rows, mini_batch):
+        interval = int(getattr(self, "_pretrain_monitor_interval_size", 0))
+        if interval < 1:
+            return
+        self._pretrain_monitor_epoch_rows_seen += rows
+        self._pretrain_monitor_interval_rows += rows
+        self._pretrain_monitor_interval_loss.add_(batch_loss.detach() * rows)
+        if self._pretrain_monitor_interval_rows >= interval:
+            interval_rows = self._pretrain_monitor_interval_rows
+            interval_loss = self._pretrain_monitor_interval_loss
+            self._pretrain_monitor_interval_rows = 0
+            self._pretrain_monitor_interval_loss = torch.zeros((), device=self.device)
+            self._emit_pretrain_interval(
+                interval_rows, interval_loss, mini_batch, partial=False
+            )
+
+    def _flush_pretrain_monitor_interval(self, mini_batch):
+        interval_rows = int(getattr(self, "_pretrain_monitor_interval_rows", 0))
+        if interval_rows:
+            interval_loss = self._pretrain_monitor_interval_loss
+            self._pretrain_monitor_interval_rows = 0
+            self._pretrain_monitor_interval_loss = torch.zeros((), device=self.device)
+            self._emit_pretrain_interval(
+                interval_rows, interval_loss, mini_batch, partial=True
+            )
 
     def _sync_checkpoint_to_arc(self):
         if not self._arc_checkpoint_dir:
@@ -1485,6 +1793,9 @@ class TabResnetWrapper(BaseEstimator):
                 batch_loss.add_(loss.detach())
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
             optimizer.step()
+            self._accumulate_pretrain_monitor_batch(
+                batch_loss, len(X_batch), mini_batch
+            )
             shard_loss.add_(batch_loss * len(X_batch))
         if n_rows:
             epoch_loss += float(shard_loss.item())
@@ -1567,6 +1878,11 @@ class TabResnetWrapper(BaseEstimator):
         self._epoch_start = time.time()
         self._active_epoch = epoch + 1
         self._active_train_shard_count = len(train_keys)
+        self._active_total_epochs = total_epochs
+        self._pretrain_monitor_epoch_rows_seen = 0
+        self._pretrain_monitor_interval_rows = 0
+        self._pretrain_monitor_interval_count = 0
+        self._pretrain_monitor_interval_loss = torch.zeros((), device=self.device)
         self._write_progress(
             "epoch_started", epoch=epoch + 1, total_epochs=total_epochs
         )
@@ -1584,6 +1900,7 @@ class TabResnetWrapper(BaseEstimator):
                 key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
             )
 
+        self._flush_pretrain_monitor_interval(mini_batch)
         scheduler.step()
         mean_loss = epoch_loss / loss_div if loss_div else 0.0
         print(f"Pre-training Epoch [{epoch + 1}/{total_epochs}], Loss: {mean_loss}")
@@ -1606,7 +1923,19 @@ class TabResnetWrapper(BaseEstimator):
         validation = (
             running_pt_validation_loss[-1] if running_pt_validation_loss else None
         )
-        residual_stats = self._log_residual_stats(val_keys, epoch, mini_batch)
+        if getattr(self, "_pretrain_monitor_sample", None) is not None:
+            rows_seen_total = (epoch + 1) * int(
+                getattr(self, "_pretrain_rows_per_epoch", 0)
+            )
+            residual_stats = self._evaluate_pretrain_monitor_sample(
+                epoch,
+                mini_batch,
+                record_type="epoch",
+                rows_seen_total=rows_seen_total,
+                epoch_rows_seen=int(getattr(self, "_pretrain_rows_per_epoch", 0)),
+            )
+        else:
+            residual_stats = self._log_residual_stats(val_keys, epoch, mini_batch)
         self._log_epoch_metrics(
             epoch,
             total_epochs,
@@ -1614,6 +1943,8 @@ class TabResnetWrapper(BaseEstimator):
             validation,
             optimizer,
             residual_stats=residual_stats,
+            rows_seen_total=(epoch + 1)
+            * int(getattr(self, "_pretrain_rows_per_epoch", 0)),
         )
         self._write_progress(
             "epoch_finished",
@@ -1659,6 +1990,8 @@ class TabResnetWrapper(BaseEstimator):
         ft_stuff=None,
         mini_batch=32,
         pretrained=None,
+        monitor_interval_rows=0,
+        monitor_sample_rows=10_000,
     ):
         """
         Pre-trains the model on the training dataset with optional validation.
@@ -1678,8 +2011,46 @@ class TabResnetWrapper(BaseEstimator):
             raise ValueError("val_keys was provided but contains no validation shards")
         if num_epochs < 0:
             raise ValueError("num_epochs must be non-negative")
+        if monitor_interval_rows < 0:
+            raise ValueError("monitor_interval_rows must be non-negative")
+        if monitor_sample_rows < 1:
+            raise ValueError("monitor_sample_rows must be positive")
         self._pretrain_batch_size = mini_batch
         self._pretrain_train_keys = sorted(train_keys)
+        self._pretrain_valid_keys = list(val_keys or [])
+        data_store = getattr(self, "data_store", None)
+        if data_store is not None:
+            self._pretrain_rows_per_epoch = sum(
+                int(data_store._row_counts.get(key, 0)) for key in train_keys
+            )
+        elif hasattr(self, "datafile"):
+            max_rows_per_key = getattr(self, "max_rows_per_key", None)
+            self._pretrain_rows_per_epoch = sum(
+                min(
+                    len(self.datafile[key]),
+                    max_rows_per_key or len(self.datafile[key]),
+                )
+                for key in train_keys
+            )
+        else:
+            self._pretrain_rows_per_epoch = 0
+
+        monitoring_configured = any(
+            getattr(self, field, None)
+            for field in ("_metrics_file", "_residual_stats_file", "_progress_file")
+        )
+        self._pretrain_monitor_interval_size = (
+            int(monitor_interval_rows) if monitoring_configured else 0
+        )
+        self._pretrain_monitor_sample = (
+            self._prepare_pretrain_monitor_sample(
+                self._pretrain_valid_keys,
+                int(monitor_sample_rows),
+                mini_batch,
+            )
+            if self._pretrain_monitor_interval_size and val_keys
+            else None
+        )
 
         optimizer, scheduler = self._setup_pretrain_optimizer()
         self._configure_pretrain_logging()

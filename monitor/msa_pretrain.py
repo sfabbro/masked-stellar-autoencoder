@@ -6,6 +6,7 @@ app = marimo.App(width="full")
 
 @app.cell
 def _():
+    import json
     import os
     import re
     import sys
@@ -21,6 +22,7 @@ def _():
 
     return (
         UTC,
+        json,
         Path,
         datetime,
         load_jsonl,
@@ -73,6 +75,7 @@ def _(mo, os, sys):
 @app.cell
 def _(
     UTC,
+    json,
     Path,
     datetime,
     load_jsonl,
@@ -105,6 +108,22 @@ def _(
         metrics_records = load_jsonl(_paths["metrics.jsonl"])
         residual_records = load_jsonl(_paths["residual_stats.jsonl"])
         progress_records = load_jsonl(_paths["progress.jsonl"])
+        latest_path = _paths["residual_latest.json"]
+        if latest_path.is_file():
+            try:
+                latest_residual = json.loads(latest_path.read_text())
+                if (
+                    latest_residual.get("run_id") == _selected_run_id
+                    and latest_residual.get("record_type") == "interval"
+                    and (
+                        not residual_records
+                        or latest_residual.get("timestamp_utc", "")
+                        > residual_records[-1].get("timestamp_utc", "")
+                    )
+                ):
+                    residual_records.append(latest_residual)
+            except (OSError, json.JSONDecodeError) as exc:
+                errors["residual_latest.json"] = str(exc)
         metrics_records = [
             row for row in metrics_records if row.get("run_id") == _selected_run_id
         ]
@@ -150,6 +169,11 @@ def _(errors, last_update, metrics, mo, pd, progress, session_name, stale_minute
             ("shard_count", "shards"),
             ("overall_rows_completed", "rows scanned"),
             ("overall_rows_total", "rows to scan"),
+            ("rows_seen_total", "training rows seen"),
+            ("epoch_rows_seen", "rows in epoch"),
+            ("interval_rows", "interval rows"),
+            ("train_loss", "interval train loss"),
+            ("sampled_val_loss", "sample validation loss"),
             ("rows_per_second", "rows/s"),
         ):
             _value = _latest_progress.get(_field)
@@ -225,25 +249,64 @@ def _(errors, last_update, metrics, mo, pd, progress, session_name, stale_minute
 
 
 @app.cell
-def _(metrics, mo, plt):
+def _(metrics, mo, pd, plt):
     _content = []
     if metrics.empty:
         _content.append(
-            mo.md("## Training curves\nWaiting for the first completed epoch.")
+            mo.md("## Training curves\nWaiting for the first training metric.")
         )
     else:
         _fig, _axes = plt.subplots(1, 2, figsize=(12, 4))
-        _axes[0].plot(
-            metrics["epoch"], metrics["train_loss"], "o-", label="train", ms=3
-        )
-        if "val_loss" in metrics and metrics["val_loss"].notna().any():
+        _interval_mask = metrics.get(
+            "record_type", pd.Series("epoch", index=metrics.index)
+        ).eq("interval")
+        _intervals = metrics[_interval_mask]
+        _epochs = metrics[~_interval_mask]
+        if not _intervals.empty and "rows_seen_total" in _intervals:
+            _x = _intervals["rows_seen_total"] / 1e6
+            _axes[0].plot(_x, _intervals["train_loss"], ".-", label="train interval")
+            if (
+                "sampled_val_loss" in _intervals
+                and _intervals["sampled_val_loss"].notna().any()
+            ):
+                _axes[0].plot(
+                    _x,
+                    _intervals["sampled_val_loss"],
+                    ".-",
+                    label="validation sample",
+                )
+            if not _epochs.empty and "rows_seen_total" in _epochs:
+                _axes[0].scatter(
+                    _epochs["rows_seen_total"] / 1e6,
+                    _epochs["train_loss"],
+                    marker="s",
+                    label="epoch train",
+                )
+                if "val_loss" in _epochs and _epochs["val_loss"].notna().any():
+                    _axes[0].scatter(
+                        _epochs["rows_seen_total"] / 1e6,
+                        _epochs["val_loss"],
+                        marker="s",
+                        label="full validation",
+                    )
+            _axes[0].set_xlabel("Training rows seen (millions)")
+        else:
             _axes[0].plot(
-                metrics["epoch"], metrics["val_loss"], "s-", label="validation", ms=3
+                _epochs["epoch"], _epochs["train_loss"], "o-", label="train", ms=3
             )
-        _axes[0].set(xlabel="Epoch", ylabel="Masked reconstruction loss", title="Loss")
+            if "val_loss" in _epochs and _epochs["val_loss"].notna().any():
+                _axes[0].plot(
+                    _epochs["epoch"],
+                    _epochs["val_loss"],
+                    "s-",
+                    label="validation",
+                    ms=3,
+                )
+            _axes[0].set_xlabel("Epoch")
+        _axes[0].set(ylabel="Masked reconstruction loss", title="Loss")
         _axes[0].legend()
-        if "lr" in metrics:
-            _axes[1].plot(metrics["epoch"], metrics["lr"], color="tab:orange")
+        if "lr" in _epochs:
+            _axes[1].plot(_epochs["epoch"], _epochs["lr"], color="tab:orange")
         _axes[1].set(xlabel="Epoch", ylabel="Learning rate", title="Schedule")
         _fig.tight_layout()
         _content.extend([mo.md("## Training curves"), _fig])
@@ -252,7 +315,7 @@ def _(metrics, mo, plt):
 
 
 @app.cell
-def _(metrics, mo, plt):
+def _(metrics, mo, pd, plt):
     _resource_columns = {
         "current_host_rss_bytes": "host RSS",
         "peak_host_rss_bytes": "peak host RSS",
@@ -264,16 +327,32 @@ def _(metrics, mo, plt):
     if metrics.empty or not _available:
         _content = [mo.md("## Resources\nWaiting for epoch resource metrics.")]
     else:
+        _interval_mask = metrics.get(
+            "record_type", pd.Series("epoch", index=metrics.index)
+        ).eq("interval")
+        _intervals = metrics[_interval_mask]
+        _epochs = metrics[~_interval_mask]
+        _rows_axis = not _intervals.empty and "rows_seen_total" in _intervals
         _fig, _ax = plt.subplots(figsize=(10, 4))
+        _resource_data = _intervals if _rows_axis else _epochs
+        _x = (
+            _resource_data["rows_seen_total"] / 1e6
+            if _rows_axis
+            else _resource_data["epoch"]
+        )
         for _resource_name in _available:
             _ax.plot(
-                metrics["epoch"],
-                metrics[_resource_name] / 1024**3,
+                _x,
+                _resource_data[_resource_name] / 1024**3,
                 "o-",
                 ms=3,
                 label=_resource_columns[_resource_name],
             )
-        _ax.set(xlabel="Epoch", ylabel="GiB", title="Host and GPU memory")
+        _ax.set(
+            xlabel="Training rows seen (millions)" if _rows_axis else "Epoch",
+            ylabel="GiB",
+            title="Host and GPU memory",
+        )
         _ax.legend(ncol=2)
         _fig.tight_layout()
         _content = [mo.md("## Resources"), _fig]
@@ -282,9 +361,14 @@ def _(metrics, mo, plt):
 
 
 @app.cell
-def _(metrics, mo, plt, progress):
+def _(metrics, mo, pd, plt, progress):
     _fig, _axes = plt.subplots(1, 2, figsize=(12, 4))
     if not metrics.empty:
+        _residual_x = (
+            metrics["rows_seen_total"] / 1e6
+            if "rows_seen_total" in metrics and metrics["rows_seen_total"].notna().any()
+            else metrics["epoch"]
+        )
         for _column, _metric_label in (
             ("residual_xp_mae", "XP MAE"),
             ("residual_xp_p84", "XP p84"),
@@ -293,10 +377,14 @@ def _(metrics, mo, plt, progress):
         ):
             if _column in metrics:
                 _axes[0].plot(
-                    metrics["epoch"], metrics[_column], "o-", ms=3, label=_metric_label
+                    _residual_x, metrics[_column], "o-", ms=3, label=_metric_label
                 )
         _axes[0].set(
-            xlabel="Epoch", ylabel="Absolute residual", title="Validation residuals"
+            xlabel="Training rows seen (millions)"
+            if "rows_seen_total" in metrics and metrics["rows_seen_total"].notna().any()
+            else "Epoch",
+            ylabel="Absolute residual",
+            title="Validation residuals",
         )
         if _axes[0].lines:
             _axes[0].legend(fontsize="small")
@@ -314,7 +402,7 @@ def _(metrics, mo, plt, progress):
 
 
 @app.cell
-def _(mo, np, plt, re, residuals):
+def _(mo, np, pd, plt, re, residuals):
     _content = []
     if residuals.empty or "feature_names" not in residuals:
         _content.append(
@@ -335,6 +423,11 @@ def _(mo, np, plt, re, residuals):
                 )
             )
         else:
+            _row_text = (
+                f" · {int(_latest['rows_seen_total']):,} training rows seen"
+                if pd.notna(_latest.get("rows_seen_total"))
+                else ""
+            )
             _values = np.asarray(
                 [np.nan if value is None else value for value in _mae], dtype=float
             )
@@ -389,7 +482,8 @@ def _(mo, np, plt, re, residuals):
             _content.extend(
                 [
                     mo.md(
-                        f"## Per-feature validation QA · epoch {int(_latest['epoch'])} · "
+                        f"## Per-feature validation QA · epoch {int(_latest['epoch'])}"
+                        f"{_row_text} · "
                         f"{int(_latest.get('sampled_rows', 0)):,} sampled rows across "
                         f"{int(_latest.get('sampled_validation_shards', 0))} validation shards"
                     ),

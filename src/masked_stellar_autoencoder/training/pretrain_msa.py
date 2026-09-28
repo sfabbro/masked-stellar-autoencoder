@@ -115,6 +115,7 @@ def _configure_pilot(config):
         "log_file",
         "metrics_file",
         "residual_stats_file",
+        "residual_latest_file",
         "progress_file",
         "arc_checkpoint_dir",
     ):
@@ -138,6 +139,7 @@ def _configure_batch_pilot(config):
         "log_file",
         "metrics_file",
         "residual_stats_file",
+        "residual_latest_file",
         "progress_file",
         "arc_checkpoint_dir",
     ):
@@ -340,6 +342,7 @@ def main():
     pretrain_wrapper._configure_canfar_output(
         metrics_file=config["saving"].get("metrics_file"),
         residual_stats_file=config["saving"].get("residual_stats_file"),
+        residual_latest_file=config["saving"].get("residual_latest_file"),
         progress_file=config["saving"].get("progress_file"),
         arc_checkpoint_dir=config["saving"].get("arc_checkpoint_dir"),
         arc_sync_interval=config["saving"].get("arc_sync_interval", 5),
@@ -360,6 +363,8 @@ def main():
         val_keys=keys_valid,
         mini_batch=batch,
         pretrained=presaved,
+        monitor_interval_rows=int(config["training"].get("monitor_interval_rows", 0)),
+        monitor_sample_rows=int(config["training"].get("monitor_sample_rows", 10_000)),
     )
 
     _report_peak_memory()

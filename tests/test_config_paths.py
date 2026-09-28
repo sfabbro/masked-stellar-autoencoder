@@ -16,6 +16,7 @@ def test_expand_config_paths_includes_canfar_outputs(monkeypatch):
         "saving": {
             "metrics_file": "$MSA_OUT/metrics.jsonl",
             "residual_stats_file": "$MSA_OUT/residual.jsonl",
+            "residual_latest_file": "$MSA_OUT/residual_latest.json",
             "progress_file": "$MSA_OUT/progress.jsonl",
             "arc_checkpoint_dir": "$MSA_OUT/checkpoints",
         }
@@ -26,6 +27,7 @@ def test_expand_config_paths_includes_canfar_outputs(monkeypatch):
     assert cfg["saving"] == {
         "metrics_file": "/arc/projects/k-pop/run/metrics.jsonl",
         "residual_stats_file": "/arc/projects/k-pop/run/residual.jsonl",
+        "residual_latest_file": "/arc/projects/k-pop/run/residual_latest.json",
         "progress_file": "/arc/projects/k-pop/run/progress.jsonl",
         "arc_checkpoint_dir": "/arc/projects/k-pop/run/checkpoints",
     }
