@@ -1,11 +1,9 @@
-import json
 import subprocess
 
 import pytest
 
 from monitor.msa_monitor_io import (
     load_jsonl,
-    session_status,
     sync_run_outputs,
 )
 
@@ -75,21 +73,3 @@ def test_sync_run_outputs_rejects_non_arc_or_escaping_paths(tmp_path):
         sync_run_outputs("/arc/home/user/run", tmp_path)
     with pytest.raises(ValueError, match="/arc/projects"):
         sync_run_outputs("/arc/projects/k-pop/msa_runs/../other", tmp_path)
-
-
-def test_session_status_finds_matching_canfar_session(monkeypatch):
-    payload = [
-        {
-            "id": "abc123",
-            "name": "msa-pretrain-full-20260928t055244z",
-            "status": "Running",
-        }
-    ]
-
-    def fake_run(args, **kwargs):
-        return subprocess.CompletedProcess(
-            args, 0, stdout=json.dumps(payload), stderr=""
-        )
-
-    monkeypatch.setattr(subprocess, "run", fake_run)
-    assert session_status("MSA-Pretrain-Full-20260928T055244Z") == payload[0]

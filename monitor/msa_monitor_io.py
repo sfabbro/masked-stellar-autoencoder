@@ -84,28 +84,3 @@ def sync_run_outputs(
         finally:
             temp_path.unlink(missing_ok=True)
     return paths, errors
-
-
-def session_status(session_name: str) -> dict | None:
-    """Return the CANFAR session matching a name, or None when it is absent."""
-    result = subprocess.run(
-        ["canfar", "ps", "--all", "--json"],
-        capture_output=True,
-        text=True,
-        timeout=20,
-        check=False,
-    )
-    if result.returncode:
-        raise RuntimeError(result.stderr.strip() or "canfar ps failed")
-    sessions = json.loads(result.stdout)
-    if isinstance(sessions, dict):
-        sessions = sessions.get("sessions", [])
-    normalized_name = session_name.casefold()
-    return next(
-        (
-            item
-            for item in sessions
-            if str(item.get("name", "")).casefold() == normalized_name
-        ),
-        None,
-    )

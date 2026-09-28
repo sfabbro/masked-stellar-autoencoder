@@ -8,6 +8,7 @@ app = marimo.App(width="full")
 def _():
     import os
     import re
+    import sys
     import tempfile
     from datetime import UTC, datetime
     from pathlib import Path
@@ -16,7 +17,7 @@ def _():
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
-    from msa_monitor_io import load_jsonl, session_status, sync_run_outputs
+    from msa_monitor_io import load_jsonl, sync_run_outputs
 
     return (
         UTC,
@@ -29,14 +30,14 @@ def _():
         pd,
         plt,
         re,
-        session_status,
+        sys,
         sync_run_outputs,
         tempfile,
     )
 
 
 @app.cell
-def _(mo, os):
+def _(mo, os, sys):
     run_id = mo.ui.text(
         label="Run ID",
         value=os.environ.get("MSA_MONITOR_RUN_ID", ""),
@@ -54,12 +55,16 @@ def _(mo, os):
         default_interval="30s",
         label="Auto refresh",
     )
+    runtime = mo.md(
+        f"**Monitor runtime:** `{sys.executable}` · Python `{sys.version.split()[0]}`"
+    )
     mo.vstack(
         [
             mo.md("# MSA pretraining monitor"),
             mo.hstack([run_id, output_root]),
             session_name,
             refresh,
+            runtime,
         ]
     )
     return output_root, refresh, run_id, session_name
@@ -77,7 +82,6 @@ def _(
     re,
     run_id,
     session_name,
-    session_status,
     sync_run_outputs,
     tempfile,
 ):
@@ -85,7 +89,6 @@ def _(
     _selected_run_id = run_id.value.strip()
     _selected_root = output_root.value.strip()
     errors = {}
-    session = None
     metrics_records = []
     residual_records = []
     progress_records = []
@@ -111,12 +114,6 @@ def _(
         progress_records = [
             row for row in progress_records if row.get("run_id") == _selected_run_id
         ]
-        if session_name.value.strip():
-            try:
-                session = session_status(session_name.value.strip())
-            except (OSError, RuntimeError, ValueError) as exc:
-                errors["CANFAR session status"] = str(exc)
-
     metrics = pd.DataFrame(metrics_records)
     residuals = pd.DataFrame(residual_records)
     progress = pd.DataFrame(progress_records)
@@ -138,16 +135,12 @@ def _(
         if last_update is not None
         else None
     )
-    return errors, last_update, metrics, progress, residuals, session, stale_minutes
+    return errors, last_update, metrics, progress, residuals, stale_minutes
 
 
 @app.cell
-def _(errors, last_update, metrics, mo, pd, progress, session, stale_minutes):
-    _session_text = (
-        f"{session.get('status', 'unknown')} · {session.get('id', '')}"
-        if session
-        else "not found / not configured"
-    )
+def _(errors, last_update, metrics, mo, pd, progress, session_name, stale_minutes):
+    _session_text = session_name.value.strip() or "not configured"
     if not progress.empty:
         _latest_progress = progress.iloc[-1]
         _details = []
@@ -170,18 +163,11 @@ def _(errors, last_update, metrics, mo, pd, progress, session, stale_minutes):
 
     _last_text = last_update.isoformat() if last_update is not None else "no output yet"
     _stale_text = f"{stale_minutes:.1f} min ago" if stale_minutes is not None else "—"
-    if (
-        session
-        and session.get("status") == "Running"
-        and stale_minutes is not None
-        and stale_minutes > 45
-    ):
+    if stale_minutes is not None and stale_minutes > 45:
         _health = "⚠️ No persisted update for over 45 minutes"
     elif errors:
         _health = "⚠️ Some files could not be fetched; cached snapshots remain visible"
-    elif session and session.get("status") == "Running" and not progress.empty:
-        _health = "✅ CANFAR session is running; scan/training progress is updating"
-    elif not metrics.empty and not progress.empty:
+    elif last_update is not None:
         _health = "✅ Monitoring data is updating"
     else:
         _health = "Waiting for the first scan or training event"
@@ -216,22 +202,21 @@ def _(errors, last_update, metrics, mo, pd, progress, session, stale_minutes):
 
     _status = mo.md(
         f"## Run health\n\n{_health}\n\n"
-        f"**CANFAR session:** {_session_text}  \n"
+        f"**CANFAR session name:** `{_session_text}`  \n"
         f"**Phase:** {_phase_text}  \n"
         f"**Epoch:** {_epoch_text} · **Elapsed:** {_elapsed_hours:.1f} h · "
         f"**ETA:** {_eta_text} · **Best validation loss:** {_best_text}  \n"
         f"**Last update:** {_last_text} ({_stale_text})"
     )
-    _fetch_details = (
-        mo.md(
-            "### Fetch/status details\n"
-            + "\n".join(
-                f"- `{_name}`: {_message}" for _name, _message in errors.items()
-            )
-        )
-        if errors
-        else None
-    )
+    _fetch_details = None
+    if errors:
+        _error_lines = []
+        for _name, _message in errors.items():
+            _single_line = " ".join(str(_message).split()).replace("`", "'")
+            if len(_single_line) > 240:
+                _single_line = _single_line[:237] + "..."
+            _error_lines.append(f"- **{_name}:** `{_single_line}`")
+        _fetch_details = mo.md("### Fetch details\n\n" + "\n".join(_error_lines))
     _health_content = [_status]
     if _fetch_details is not None:
         _health_content.append(_fetch_details)
