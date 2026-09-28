@@ -80,6 +80,8 @@ training:
   pert_ebv_scale: 1.0
   mini_batch_size: 32768
   micro_batch_size: 8192
+  # The 272-column projection is ~237 GB; CANFAR session /scratch is capped at 200 GB.
+  io_cache_fraction: 0.0
   epochs: 100
   # Set MSA_PRETRAIN_RESUME to a full checkpoint to continue an interrupted run.
   presaved: '$MSA_PRETRAIN_RESUME'

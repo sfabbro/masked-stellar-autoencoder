@@ -223,6 +223,7 @@ def main():
         pretrain_file,
         cols,
         config["data"]["error_cols"],
+        cache_fraction=float(config["training"].get("io_cache_fraction", 0.8)),
         chunk_rows=int(config["training"].get("io_chunk_rows", 65_536)),
         shuffle_buffer_bytes=int(
             config["training"].get("io_shuffle_buffer_bytes", 64 * 1024 * 1024)

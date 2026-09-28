@@ -1063,7 +1063,9 @@ class TabResnetWrapper(BaseEstimator):
             metrics["peak_gpu_reserved_bytes"] = torch.cuda.max_memory_reserved()
         return metrics
 
-    def _log_epoch_metrics(self, epoch, total_epochs, mean_loss, val_loss, optimizer):
+    def _log_epoch_metrics(
+        self, epoch, total_epochs, mean_loss, val_loss, optimizer, residual_stats=None
+    ):
         if not self._metrics_file:
             return
         import json
@@ -1082,12 +1084,19 @@ class TabResnetWrapper(BaseEstimator):
             ),
         }
         entry.update(self._resource_metrics())
+        entry.update(
+            {
+                f"residual_{key}": value
+                for key, value in (residual_stats or {}).items()
+                if key not in {"run_id", "timestamp_utc", "epoch"}
+            }
+        )
         with open(self._metrics_file, "a") as f:
             f.write(json.dumps(entry) + "\n")
 
     def _log_residual_stats(self, val_keys, epoch, mini_batch=32768):
         if not self._residual_stats_file or not val_keys:
-            return
+            return {}
         import json
 
         self.model.eval()
@@ -1096,26 +1105,32 @@ class TabResnetWrapper(BaseEstimator):
             "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "epoch": epoch + 1,
         }
+        sample_rows = 10_000
         with torch.no_grad():
             data_store = getattr(self, "data_store", None)
             if data_store is not None:
-                sampled_batches = data_store.sample_batches(
-                    val_keys[0],
-                    self.featurescaler,
-                    self.scale_factors,
-                    sample_rows=10_000,
-                    seed=epoch,
-                    batch_rows=min(
-                        mini_batch,
-                        getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
-                    ),
+                sample_rows_per_key = max(1, sample_rows // len(val_keys))
+                batch_rows = min(
+                    mini_batch,
+                    getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
                 )
-                batches = prefetch_batches(
-                    sampled_batches, depth=self._pretrain_prefetch_depth
+                batch_sources = (
+                    prefetch_batches(
+                        data_store.sample_batches(
+                            key,
+                            self.featurescaler,
+                            self.scale_factors,
+                            sample_rows=sample_rows_per_key,
+                            seed=epoch * len(val_keys) + key_index,
+                            batch_rows=batch_rows,
+                        ),
+                        depth=self._pretrain_prefetch_depth,
+                    )
+                    for key_index, key in enumerate(val_keys)
                 )
             else:
                 X_val, eX_val = self._load_data(val_keys[0])
-                n = min(10_000, X_val.shape[0])
+                n = min(sample_rows, X_val.shape[0])
                 idx = torch.randperm(X_val.shape[0], device=self.device)[:n]
                 X_sub, eX_sub = X_val[idx], eX_val[idx]
                 batches = (
@@ -1125,29 +1140,37 @@ class TabResnetWrapper(BaseEstimator):
                     )
                     for start in range(0, n, mini_batch)
                 )
+                batch_sources = (batches,)
 
             xp_values, photo_values, all_values = [], [], []
+            sampled_rows = 0
+            sampled_shards = 0
             photo_idx = list(range(self.xp_col_start)) + list(
                 range(self.xp_col_end, len(self.recon_cols))
             )
-            for X_batch, eX_batch in batches:
-                if not isinstance(X_batch, torch.Tensor):
-                    X_batch = torch.as_tensor(
-                        np.ascontiguousarray(X_batch), device=self.device
-                    )
-                    eX_batch = torch.as_tensor(
-                        np.ascontiguousarray(eX_batch), device=self.device
-                    )
-                X_masked, mask, nanmask = self._apply_mask(X_batch)
-                X_recon, _ = self.model(X_masked)
-                recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
-                errors = (X_recon - X_batch[:, : -self.diff]).abs()
-                errors = errors.masked_fill(~recon_mask, float("nan"))
-                xp_err = errors[:, self.xp_col_start : self.xp_col_end]
-                photo_err = errors[:, photo_idx]
-                xp_values.append(xp_err[torch.isfinite(xp_err)])
-                photo_values.append(photo_err[torch.isfinite(photo_err)])
-                all_values.append(errors[torch.isfinite(errors)])
+            for batches in batch_sources:
+                shard_sampled = False
+                for X_batch, eX_batch in batches:
+                    sampled_rows += len(X_batch)
+                    shard_sampled = True
+                    if not isinstance(X_batch, torch.Tensor):
+                        X_batch = torch.as_tensor(
+                            np.ascontiguousarray(X_batch), device=self.device
+                        )
+                        eX_batch = torch.as_tensor(
+                            np.ascontiguousarray(eX_batch), device=self.device
+                        )
+                    X_masked, mask, nanmask = self._apply_mask(X_batch)
+                    X_recon, _ = self.model(X_masked)
+                    recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
+                    errors = (X_recon - X_batch[:, : -self.diff]).abs()
+                    errors = errors.masked_fill(~recon_mask, float("nan"))
+                    xp_err = errors[:, self.xp_col_start : self.xp_col_end]
+                    photo_err = errors[:, photo_idx]
+                    xp_values.append(xp_err[torch.isfinite(xp_err)])
+                    photo_values.append(photo_err[torch.isfinite(photo_err)])
+                    all_values.append(errors[torch.isfinite(errors)])
+                sampled_shards += int(shard_sampled)
 
             xp_valid = torch.cat(xp_values) if xp_values else torch.empty(0)
             photo_valid = torch.cat(photo_values) if photo_values else torch.empty(0)
@@ -1159,8 +1182,22 @@ class TabResnetWrapper(BaseEstimator):
                 stats["photo_mae"] = round(photo_valid.mean().item(), 8)
             if all_valid.numel() > 0:
                 stats["overall_mae"] = round(all_valid.mean().item(), 8)
+        stats["sampled_rows"] = sampled_rows
+        stats["sampled_validation_shards"] = sampled_shards
         with open(self._residual_stats_file, "a") as f:
             f.write(json.dumps(stats) + "\n")
+        residual_metrics = {
+            key: stats[key]
+            for key in ("xp_mae", "xp_p84", "photo_mae", "overall_mae")
+            if key in stats
+        }
+        if residual_metrics:
+            print(
+                "Validation residuals: "
+                f"{json.dumps(residual_metrics, sort_keys=True)}, "
+                f"sampled_rows={sampled_rows}, sampled_shards={sampled_shards}"
+            )
+        return stats
 
     def _sync_checkpoint_to_arc(self):
         if not self._arc_checkpoint_dir:
@@ -1448,8 +1485,15 @@ class TabResnetWrapper(BaseEstimator):
         validation = (
             running_pt_validation_loss[-1] if running_pt_validation_loss else None
         )
-        self._log_residual_stats(val_keys, epoch, mini_batch)
-        self._log_epoch_metrics(epoch, total_epochs, mean_loss, validation, optimizer)
+        residual_stats = self._log_residual_stats(val_keys, epoch, mini_batch)
+        self._log_epoch_metrics(
+            epoch,
+            total_epochs,
+            mean_loss,
+            validation,
+            optimizer,
+            residual_stats=residual_stats,
+        )
         if (epoch + 1) % self._arc_sync_interval == 0:
             self._sync_checkpoint_to_arc()
         return epoch_loss, loss_div

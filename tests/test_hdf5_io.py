@@ -107,6 +107,45 @@ def test_projected_store_chunk_shuffle_is_seeded_and_preserves_rows(tmp_path):
     assert not np.array_equal(first_values, other_values)
 
 
+def test_streamed_residual_sample_uses_seeded_contiguous_batches(tmp_path):
+    with h5py.File(tmp_path / "input.h5", "w") as h5:
+        h5.create_dataset("train", data=_table(), chunks=(2,))
+        store = ProjectedHDF5Store(
+            h5,
+            ["feature"],
+            ["error"],
+            scratch_dir=tmp_path,
+            cache_fraction=0.0,
+            chunk_rows=2,
+        )
+        store.prepare(["train"], ["train"], scaler_max_rows=4, scaler_seed=4)
+        scaler = RobustScaler().fit(np.array([[0.0], [6.0]], dtype=np.float32))
+
+        def sample(seed):
+            return list(
+                store.sample_batches(
+                    "train",
+                    scaler,
+                    np.array([2.0], dtype=np.float32),
+                    sample_rows=3,
+                    seed=seed,
+                    batch_rows=2,
+                )
+            )
+
+        first = sample(12)
+        repeated = sample(12)
+        other = sample(13)
+
+    first_values = np.concatenate([x[:, 0] for x, _ in first])
+    repeated_values = np.concatenate([x[:, 0] for x, _ in repeated])
+    other_values = np.concatenate([x[:, 0] for x, _ in other])
+    np.testing.assert_array_equal(first_values, repeated_values)
+    np.testing.assert_allclose(np.diff(first_values), 1 / 3)
+    assert [len(x) for x, _ in first] == [2, 1]
+    assert not np.array_equal(first_values, other_values)
+
+
 def test_projected_store_falls_back_when_scratch_budget_is_too_small(tmp_path):
     with h5py.File(tmp_path / "input.h5", "w") as h5:
         h5.create_dataset("train", data=_table())

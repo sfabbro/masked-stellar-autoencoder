@@ -451,27 +451,33 @@ class ProjectedHDF5Store:
         batch_rows: int,
     ) -> Iterator[tuple[np.ndarray, np.ndarray]]:
         count = self._row_counts[key]
-        indices = np.sort(
-            np.random.default_rng(seed).choice(
-                count, size=min(count, sample_rows), replace=False
-            )
-        )
+        sample_count = min(count, sample_rows)
         dataset = self.datafile[key]
         cached = self._cache_arrays.get(key)
+        if cached is None:
+            # ponytail: stream one random contiguous window to avoid scattered
+            # HDF5 reads on /arc; use reservoir sampling if window bias matters.
+            rng = np.random.default_rng(seed)
+            start = (
+                int(rng.integers(0, count - sample_count + 1))
+                if sample_count < count
+                else 0
+            )
+            stop = start + sample_count
+            for row_start in range(start, stop, batch_rows):
+                row_stop = min(row_start + batch_rows, stop)
+                matrix = self._read_matrix(dataset, row_start, row_stop)
+                yield self._prepare_arrays(matrix, key, scaler, scale_factors)
+            return
+
+        indices = np.sort(
+            np.random.default_rng(seed).choice(count, size=sample_count, replace=False)
+        )
         for start in range(0, len(indices), batch_rows):
             chosen = indices[start : start + batch_rows]
             read_started = time.perf_counter()
-            if cached is not None:
-                matrix = np.asarray(cached[chosen])
-                self.read_seconds += time.perf_counter() - read_started
-            else:
-                records = dataset.fields(self.fields)[chosen]
-                self.read_seconds += time.perf_counter() - read_started
-                convert_started = time.perf_counter()
-                matrix = np.column_stack(
-                    [_clean_column(name, records[name]) for name in self.fields]
-                )
-                self.conversion_seconds += time.perf_counter() - convert_started
+            matrix = np.asarray(cached[chosen])
+            self.read_seconds += time.perf_counter() - read_started
             yield self._prepare_arrays(matrix, key, scaler, scale_factors)
 
     def close_cache(self) -> None:

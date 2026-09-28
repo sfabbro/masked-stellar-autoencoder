@@ -317,13 +317,33 @@ def test_epoch_metrics_include_run_id_memory_and_disk_state(wrapper_stub, tmp_pa
     wrapper_stub._epoch_start = time.time() - 1
     optimizer = torch.optim.SGD([torch.nn.Parameter(torch.zeros(1))], lr=0.01)
 
-    wrapper_stub._log_epoch_metrics(0, 2, 0.5, 0.6, optimizer)
+    wrapper_stub._log_epoch_metrics(
+        0,
+        2,
+        0.5,
+        0.6,
+        optimizer,
+        residual_stats={
+            "xp_mae": 0.4,
+            "xp_p84": 0.8,
+            "photo_mae": 0.2,
+            "overall_mae": 0.3,
+            "sampled_rows": 1000,
+            "sampled_validation_shards": 5,
+        },
+    )
 
     entry = json.loads(metrics_path.read_text())
     assert entry["run_id"] == "run-1"
     assert entry["peak_host_rss_bytes"] > 0
     assert entry["output_free_bytes"] > 0
     assert entry["epoch"] == 1
+    assert entry["residual_xp_mae"] == 0.4
+    assert entry["residual_xp_p84"] == 0.8
+    assert entry["residual_photo_mae"] == 0.2
+    assert entry["residual_overall_mae"] == 0.3
+    assert entry["residual_sampled_rows"] == 1000
+    assert entry["residual_sampled_validation_shards"] == 5
 
 
 def test_load_data_masks_nonfinite_features_and_repairs_invalid_errors(tmp_path):

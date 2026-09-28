@@ -125,17 +125,22 @@ scripts/canfar_launch.sh pretrain-batch-pilot
 scripts/canfar_launch.sh finetune-pilot
 ```
 
-Pretraining reads only the configured feature and uncertainty columns. It stages
-their float32 projection under session scratch when the estimated cache is at
-most 80% of free scratch space; otherwise it streams sequential HDF5 chunks.
-Both modes use seeded bounded shuffling and two prefetched CPU batches, so the
-whole shard is never copied to GPU memory. Startup logs report scratch capacity
-and scan progress; per-shard logs report the I/O mode, read/conversion time, and
-rows per second. Per-epoch `metrics.jsonl` entries include train/validation
-loss, learning rate, epoch duration, host/GPU memory, scratch/output free space,
-and a run ID. `residual_stats.jsonl` is tagged with the same run ID. Set a
-unique run ID and output root for each fresh full run so append-only logs and
-metrics cannot mix runs:
+Pretraining reads only the configured feature and uncertainty columns. The
+reader can stage their float32 projection under session scratch when it fits
+the configured fraction of available space; otherwise it streams sequential
+HDF5 chunks. CANFAR session scratch is capped at 200 GB, while the current full
+projection is about 237 GB, so `pretrain.canfar.yaml` sets
+`training.io_cache_fraction: 0` and always streams from `/arc`. Both modes use
+seeded bounded shuffling and two prefetched CPU batches, so the whole shard is
+never copied to GPU memory. Startup logs report the selected I/O mode and scan
+progress; per-shard logs report read/conversion time and rows per second.
+Each epoch samples up to 10,000 validation rows across the validation shards
+and reports XP MAE, XP 84th-percentile absolute residual, photometry MAE, and
+overall MAE in the console, `metrics.jsonl`, and `residual_stats.jsonl`, along
+with sampled row and shard counts. Epoch metrics also include train/validation
+loss, learning rate, epoch duration, host/GPU memory, scratch/output free
+space, and a run ID. Set a unique run ID and output root for each fresh full
+run so append-only logs and metrics cannot mix runs:
 
 ```bash
 run_id="$(date -u +%Y%m%dT%H%M%SZ)"
