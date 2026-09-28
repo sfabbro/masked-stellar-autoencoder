@@ -1,3 +1,4 @@
+import json
 from unittest.mock import MagicMock
 
 import h5py
@@ -78,6 +79,34 @@ def test_projected_store_stream_and_cache_match_with_partial_batch(tmp_path, cap
     logs = capsys.readouterr().out
     assert "Pretraining scan starting:" in logs
     assert "Pretraining scan progress: key=train" in logs
+
+
+def test_projected_store_writes_structured_scan_progress(tmp_path):
+    progress_path = tmp_path / "progress.jsonl"
+    with h5py.File(tmp_path / "input.h5", "w") as h5:
+        h5.create_dataset("train", data=_table(), chunks=(2,))
+        store = ProjectedHDF5Store(
+            h5,
+            ["feature"],
+            ["error"],
+            scratch_dir=tmp_path,
+            cache_fraction=0.0,
+            chunk_rows=2,
+            progress_file=progress_path,
+            run_id="test-run",
+        )
+        store.prepare(["train"], ["train"], scaler_max_rows=4, scaler_seed=4)
+
+    events = [json.loads(line) for line in progress_path.read_text().splitlines()]
+    assert events[0]["stage"] == "scan_started"
+    assert events[0]["run_id"] == "test-run"
+    assert events[-1]["stage"] == "loader_ready"
+    assert events[-1]["loader_mode"] == "stream"
+    assert any(
+        event.get("stage") == "scan_progress"
+        and event["rows_completed"] == event["rows_total"]
+        for event in events
+    )
 
 
 def test_projected_store_chunk_shuffle_is_seeded_and_preserves_rows(tmp_path):

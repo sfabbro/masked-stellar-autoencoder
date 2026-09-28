@@ -8,6 +8,7 @@ import shutil
 import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -66,6 +67,46 @@ def _restore_rng_state(state: dict) -> None:
     torch.set_rng_state(state["torch_cpu"].cpu())
     if torch.cuda.is_available() and state["torch_cuda"]:
         torch.cuda.set_rng_state_all([rng.cpu() for rng in state["torch_cuda"]])
+
+
+def _summarize_feature_residuals(errors: np.ndarray, feature_names: list[str]) -> dict:
+    """Summarize sampled masked residuals by output feature for QA plots."""
+    result = {
+        "feature_names": list(feature_names),
+        "feature_valid_count": [],
+        "feature_valid_fraction": [],
+        "feature_mae": [],
+        "feature_p50": [],
+        "feature_p84": [],
+        "feature_p95": [],
+    }
+    sample_count = errors.shape[0]
+    for index in range(len(feature_names)):
+        values = errors[:, index]
+        values = values[np.isfinite(values)]
+        values = values.astype(np.float64, copy=False)
+        count = int(values.size)
+        result["feature_valid_count"].append(count)
+        result["feature_valid_fraction"].append(
+            round(count / sample_count, 8) if sample_count else 0.0
+        )
+        if count:
+            summaries = {
+                "feature_mae": float(values.mean()),
+                "feature_p50": float(np.quantile(values, 0.50)),
+                "feature_p84": float(np.quantile(values, 0.84)),
+                "feature_p95": float(np.quantile(values, 0.95)),
+            }
+        else:
+            summaries = {
+                "feature_mae": None,
+                "feature_p50": None,
+                "feature_p84": None,
+                "feature_p95": None,
+            }
+        for name, value in summaries.items():
+            result[name].append(round(value, 8) if value is not None else None)
+    return result
 
 
 class MaskedGaussianNLLLoss(nn.Module):
@@ -776,6 +817,7 @@ class TabResnetWrapper(BaseEstimator):
         # CANFAR output defaults (no-op unless configured via _configure_canfar_output)
         self._metrics_file = None
         self._residual_stats_file = None
+        self._progress_file = None
         self._arc_checkpoint_dir = None
         self._arc_sync_interval = 5
         self._epoch_start = None
@@ -1000,12 +1042,14 @@ class TabResnetWrapper(BaseEstimator):
         self,
         metrics_file=None,
         residual_stats_file=None,
+        progress_file=None,
         arc_checkpoint_dir=None,
         arc_sync_interval=5,
         run_id=None,
     ):
         self._metrics_file = metrics_file
         self._residual_stats_file = residual_stats_file
+        self._progress_file = progress_file
         self._arc_checkpoint_dir = arc_checkpoint_dir
         self._arc_sync_interval = arc_sync_interval
         self._epoch_start = None
@@ -1017,6 +1061,23 @@ class TabResnetWrapper(BaseEstimator):
                 f"{os.getpid()}"
             )
         )
+
+    def _write_progress(self, stage, **fields):
+        progress_file = getattr(self, "_progress_file", None)
+        if not progress_file:
+            return
+        import json
+
+        entry = {
+            "run_id": getattr(self, "_run_id", None),
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "stage": stage,
+            **fields,
+        }
+        progress_path = Path(progress_file)
+        progress_path.parent.mkdir(parents=True, exist_ok=True)
+        with progress_path.open("a") as stream:
+            stream.write(json.dumps(entry) + "\n")
 
     def _resource_metrics(self):
         peak_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -1089,6 +1150,7 @@ class TabResnetWrapper(BaseEstimator):
                 f"residual_{key}": value
                 for key, value in (residual_stats or {}).items()
                 if key not in {"run_id", "timestamp_utc", "epoch"}
+                and isinstance(value, int | float)
             }
         )
         with open(self._metrics_file, "a") as f:
@@ -1106,6 +1168,12 @@ class TabResnetWrapper(BaseEstimator):
             "epoch": epoch + 1,
         }
         sample_rows = 10_000
+        self._write_progress(
+            "residual_sampling_started",
+            epoch=epoch + 1,
+            validation_shard_count=len(val_keys),
+            target_rows=sample_rows,
+        )
         with torch.no_grad():
             data_store = getattr(self, "data_store", None)
             if data_store is not None:
@@ -1115,16 +1183,19 @@ class TabResnetWrapper(BaseEstimator):
                     getattr(self, "_pretrain_micro_batch_size", None) or mini_batch,
                 )
                 batch_sources = (
-                    prefetch_batches(
-                        data_store.sample_batches(
-                            key,
-                            self.featurescaler,
-                            self.scale_factors,
-                            sample_rows=sample_rows_per_key,
-                            seed=epoch * len(val_keys) + key_index,
-                            batch_rows=batch_rows,
+                    (
+                        key,
+                        prefetch_batches(
+                            data_store.sample_batches(
+                                key,
+                                self.featurescaler,
+                                self.scale_factors,
+                                sample_rows=sample_rows_per_key,
+                                seed=epoch * len(val_keys) + key_index,
+                                batch_rows=batch_rows,
+                            ),
+                            depth=self._pretrain_prefetch_depth,
                         ),
-                        depth=self._pretrain_prefetch_depth,
                     )
                     for key_index, key in enumerate(val_keys)
                 )
@@ -1140,18 +1211,20 @@ class TabResnetWrapper(BaseEstimator):
                     )
                     for start in range(0, n, mini_batch)
                 )
-                batch_sources = (batches,)
+                batch_sources = ((val_keys[0], batches),)
 
-            xp_values, photo_values, all_values = [], [], []
+            error_batches = []
             sampled_rows = 0
             sampled_shards = 0
             photo_idx = list(range(self.xp_col_start)) + list(
                 range(self.xp_col_end, len(self.recon_cols))
             )
-            for batches in batch_sources:
+            for key, batches in batch_sources:
                 shard_sampled = False
+                shard_sampled_rows = 0
                 for X_batch, eX_batch in batches:
                     sampled_rows += len(X_batch)
+                    shard_sampled_rows += len(X_batch)
                     shard_sampled = True
                     if not isinstance(X_batch, torch.Tensor):
                         X_batch = torch.as_tensor(
@@ -1165,16 +1238,27 @@ class TabResnetWrapper(BaseEstimator):
                     recon_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
                     errors = (X_recon - X_batch[:, : -self.diff]).abs()
                     errors = errors.masked_fill(~recon_mask, float("nan"))
-                    xp_err = errors[:, self.xp_col_start : self.xp_col_end]
-                    photo_err = errors[:, photo_idx]
-                    xp_values.append(xp_err[torch.isfinite(xp_err)])
-                    photo_values.append(photo_err[torch.isfinite(photo_err)])
-                    all_values.append(errors[torch.isfinite(errors)])
+                    error_batches.append(errors)
                 sampled_shards += int(shard_sampled)
+                self._write_progress(
+                    "residual_shard_sampled",
+                    epoch=epoch + 1,
+                    key=key,
+                    rows_sampled=shard_sampled_rows,
+                    sampled=shard_sampled,
+                )
 
-            xp_valid = torch.cat(xp_values) if xp_values else torch.empty(0)
-            photo_valid = torch.cat(photo_values) if photo_values else torch.empty(0)
-            all_valid = torch.cat(all_values) if all_values else torch.empty(0)
+            if error_batches:
+                all_errors = torch.cat(error_batches)
+                xp_errors = all_errors[:, self.xp_col_start : self.xp_col_end]
+                photo_errors = all_errors[:, photo_idx]
+                xp_valid = xp_errors[torch.isfinite(xp_errors)]
+                photo_valid = photo_errors[torch.isfinite(photo_errors)]
+                all_valid = all_errors[torch.isfinite(all_errors)]
+                feature_errors = all_errors.detach().cpu().numpy()
+            else:
+                all_valid = xp_valid = photo_valid = torch.empty(0)
+                feature_errors = np.empty((0, len(self.recon_cols)), dtype=np.float32)
             if xp_valid.numel() > 0:
                 stats["xp_mae"] = round(xp_valid.mean().item(), 8)
                 stats["xp_p84"] = round(xp_valid.quantile(0.84).item(), 8)
@@ -1182,10 +1266,17 @@ class TabResnetWrapper(BaseEstimator):
                 stats["photo_mae"] = round(photo_valid.mean().item(), 8)
             if all_valid.numel() > 0:
                 stats["overall_mae"] = round(all_valid.mean().item(), 8)
+            stats.update(_summarize_feature_residuals(feature_errors, self.recon_cols))
         stats["sampled_rows"] = sampled_rows
         stats["sampled_validation_shards"] = sampled_shards
         with open(self._residual_stats_file, "a") as f:
             f.write(json.dumps(stats) + "\n")
+        self._write_progress(
+            "residual_sampling_finished",
+            epoch=epoch + 1,
+            sampled_rows=sampled_rows,
+            sampled_validation_shards=sampled_shards,
+        )
         residual_metrics = {
             key: stats[key]
             for key in ("xp_mae", "xp_p84", "photo_mae", "overall_mae")
@@ -1341,6 +1432,13 @@ class TabResnetWrapper(BaseEstimator):
         self, key, optimizer, mini_batch, epoch_loss, loss_div, subkeynum
     ):
         started = time.perf_counter()
+        self._write_progress(
+            "train_shard_started",
+            epoch=getattr(self, "_active_epoch", None),
+            key=key,
+            shard_index=subkeynum + 1,
+            shard_count=getattr(self, "_active_train_shard_count", None),
+        )
         store_times = None
         data_store = getattr(self, "data_store", None)
         if data_store is not None:
@@ -1411,6 +1509,19 @@ class TabResnetWrapper(BaseEstimator):
                 conversion_seconds,
                 n_rows / max(wall_seconds, 1e-9),
             )
+            self._write_progress(
+                "train_shard_finished",
+                epoch=getattr(self, "_active_epoch", None),
+                key=key,
+                shard_index=subkeynum + 1,
+                shard_count=getattr(self, "_active_train_shard_count", None),
+                rows_completed=n_rows,
+                rows_total=data_store._row_counts.get(key, n_rows),
+                wall_seconds=round(wall_seconds, 3),
+                source_read_seconds=round(read_seconds, 3),
+                conversion_seconds=round(conversion_seconds, 3),
+                rows_per_second=round(n_rows / max(wall_seconds, 1e-9), 2),
+            )
         return epoch_loss, loss_div
 
     def _iter_pretrain_batches(self, key, mini_batch, *, shuffle):
@@ -1454,6 +1565,11 @@ class TabResnetWrapper(BaseEstimator):
         running_pt_validation_loss,
     ):
         self._epoch_start = time.time()
+        self._active_epoch = epoch + 1
+        self._active_train_shard_count = len(train_keys)
+        self._write_progress(
+            "epoch_started", epoch=epoch + 1, total_epochs=total_epochs
+        )
         epoch_loss = 0.0
         loss_div = 0.0
         random.shuffle(train_keys)
@@ -1481,6 +1597,11 @@ class TabResnetWrapper(BaseEstimator):
         self._save_pretrain_checkpoints(
             epoch, optimizer, scheduler, epoch_loss, loss_div
         )
+        self._write_progress(
+            "checkpoint_written",
+            epoch=epoch + 1,
+            path=os.path.basename(self.pt_save_str),
+        )
         # CANFAR monitoring: record resources after validation and residual stats.
         validation = (
             running_pt_validation_loss[-1] if running_pt_validation_loss else None
@@ -1494,8 +1615,19 @@ class TabResnetWrapper(BaseEstimator):
             optimizer,
             residual_stats=residual_stats,
         )
+        self._write_progress(
+            "epoch_finished",
+            epoch=epoch + 1,
+            total_epochs=total_epochs,
+            train_loss=round(float(mean_loss), 8),
+            val_loss=(round(float(validation), 8) if validation is not None else None),
+            wall_time_seconds=(
+                round(time.time() - self._epoch_start, 3) if self._epoch_start else None
+            ),
+        )
         if (epoch + 1) % self._arc_sync_interval == 0:
             self._sync_checkpoint_to_arc()
+            self._write_progress("checkpoint_synced", epoch=epoch + 1)
         return epoch_loss, loss_div
 
     def _chain_finetune_after_pretrain(self, ft_stuff) -> None:
@@ -1588,6 +1720,11 @@ class TabResnetWrapper(BaseEstimator):
         self.model.eval()
         if not val_keys:
             raise ValueError("validate requires at least one validation shard")
+        self._write_progress(
+            "validation_started",
+            epoch=getattr(self, "_active_epoch", None),
+            shard_count=len(val_keys),
+        )
         with torch.no_grad():
             n_keys = len(val_keys)
             pbar = tqdm.tqdm(
@@ -1595,7 +1732,16 @@ class TabResnetWrapper(BaseEstimator):
             )
             loss_sum = torch.zeros((), device=self.device)
             row_count = 0
-            for key in pbar:
+            data_store = getattr(self, "data_store", None)
+            for shard_index, key in enumerate(pbar, start=1):
+                shard_started = time.perf_counter()
+                rows_before = row_count
+                read_before = data_store.read_seconds if data_store is not None else 0.0
+                conversion_before = (
+                    data_store.conversion_seconds + data_store.transform_seconds
+                    if data_store is not None
+                    else 0.0
+                )
                 for X_batch, eX_batch in self._iter_pretrain_batches(
                     key, mini_batch, shuffle=False
                 ):
@@ -1630,11 +1776,42 @@ class TabResnetWrapper(BaseEstimator):
                         )
                         loss_sum.add_(batch_loss * (stop - start))
                         row_count += stop - start
+                self._write_progress(
+                    "validation_shard_finished",
+                    epoch=getattr(self, "_active_epoch", None),
+                    key=key,
+                    shard_index=shard_index,
+                    shard_count=n_keys,
+                    rows_completed=row_count - rows_before,
+                    rows_total=(
+                        data_store._row_counts.get(key, row_count - rows_before)
+                        if data_store is not None
+                        else row_count - rows_before
+                    ),
+                    wall_seconds=round(time.perf_counter() - shard_started, 3),
+                    source_read_seconds=round(data_store.read_seconds - read_before, 3)
+                    if data_store is not None
+                    else None,
+                    conversion_seconds=round(
+                        data_store.conversion_seconds
+                        + data_store.transform_seconds
+                        - conversion_before,
+                        3,
+                    )
+                    if data_store is not None
+                    else None,
+                )
 
             if not row_count:
                 raise ValueError("Validation shards contain no rows")
             val_loss = float((loss_sum / row_count).item())
             print(f"Validation Loss: {val_loss}")
+            self._write_progress(
+                "validation_finished",
+                epoch=getattr(self, "_active_epoch", None),
+                rows_completed=row_count,
+                val_loss=round(val_loss, 8),
+            )
             return val_loss
 
     def _setup_finetune_optimizer(

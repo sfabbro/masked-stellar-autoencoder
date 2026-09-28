@@ -15,6 +15,7 @@ from masked_stellar_autoencoder.models.model import (
     TabResnetWrapper,
     _capture_rng_state,
     _restore_rng_state,
+    _summarize_feature_residuals,
 )
 from masked_stellar_autoencoder.training.pretrain_msa import (
     _configure_batch_pilot,
@@ -62,6 +63,20 @@ def test_pretrain_checkpoint_payload_shape(wrapper_stub):
     assert "model_state_dict" in payload
     assert "rng_state" in payload
     assert "run_signature" in payload
+
+
+def test_feature_residual_summary_handles_masked_and_unavailable_columns():
+    summary = _summarize_feature_residuals(
+        np.array([[1.0, np.nan], [3.0, np.nan], [5.0, 2.0]], dtype=np.float32),
+        ["xp_0", "photo_g"],
+    )
+
+    assert summary["feature_names"] == ["xp_0", "photo_g"]
+    assert summary["feature_valid_count"] == [3, 1]
+    assert summary["feature_valid_fraction"] == [1.0, 0.33333333]
+    assert summary["feature_mae"] == [3.0, 2.0]
+    assert summary["feature_p84"] == [4.36, 2.0]
+    assert summary["feature_p95"] == [4.8, 2.0]
 
 
 def test_pretrain_resume_rejects_changed_feature_order(wrapper_stub, tmp_path):
@@ -330,6 +345,8 @@ def test_epoch_metrics_include_run_id_memory_and_disk_state(wrapper_stub, tmp_pa
             "overall_mae": 0.3,
             "sampled_rows": 1000,
             "sampled_validation_shards": 5,
+            "feature_names": ["xp_0"],
+            "feature_mae": [0.5],
         },
     )
 
@@ -344,6 +361,7 @@ def test_epoch_metrics_include_run_id_memory_and_disk_state(wrapper_stub, tmp_pa
     assert entry["residual_overall_mae"] == 0.3
     assert entry["residual_sampled_rows"] == 1000
     assert entry["residual_sampled_validation_shards"] == 5
+    assert "residual_feature_mae" not in entry
 
 
 def test_load_data_masks_nonfinite_features_and_repairs_invalid_errors(tmp_path):

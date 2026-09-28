@@ -31,6 +31,7 @@ def expand_config_paths(config: dict[str, Any]) -> None:
             "log_file",
             "metrics_file",
             "residual_stats_file",
+            "progress_file",
             "arc_checkpoint_dir",
         ):
             if k in saving:

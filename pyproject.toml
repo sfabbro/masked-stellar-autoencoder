@@ -50,6 +50,7 @@ ci = "SKIP=ci-tests pre-commit run --all-files --color always && pytest tests/"
 
 [tool.pixi.environments]
 gpu = { features = ["gpu"] }
+monitor = { features = ["monitor"], no-default-feature = true }
 
 [tool.pixi.dependencies]
 python = "3.13.*"
@@ -88,6 +89,18 @@ finetune-canfar = "python -u -m masked_stellar_autoencoder.training.finetune_msa
 pretrain-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml --pilot"
 pretrain-canfar-batch-pilot = "python -u -m masked_stellar_autoencoder.training.pretrain_msa --config configs/pretrain.canfar.yaml --batch-pilot"
 finetune-canfar-pilot = "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune.canfar.yaml --pilot"
+
+[tool.pixi.feature.monitor.dependencies]
+python = "3.13.*"
+pandas = ">=2.1.0"
+matplotlib = ">=3.8.0"
+
+[tool.pixi.feature.monitor.pypi-dependencies]
+marimo = "*"
+vos = "*"
+
+[tool.pixi.feature.monitor.tasks]
+monitor-pretrain = "marimo run monitor/msa_pretrain.py --host 127.0.0.1 --port 2718"
 
 [tool.pixi.pypi-dependencies]
 masked-stellar-autoencoder = { path = ".", editable = true }

@@ -115,6 +115,7 @@ def _configure_pilot(config):
         "log_file",
         "metrics_file",
         "residual_stats_file",
+        "progress_file",
         "arc_checkpoint_dir",
     ):
         if key in config["saving"]:
@@ -137,6 +138,7 @@ def _configure_batch_pilot(config):
         "log_file",
         "metrics_file",
         "residual_stats_file",
+        "progress_file",
         "arc_checkpoint_dir",
     ):
         if key in config["saving"]:
@@ -228,6 +230,8 @@ def main():
         shuffle_buffer_bytes=int(
             config["training"].get("io_shuffle_buffer_bytes", 64 * 1024 * 1024)
         ),
+        progress_file=config["saving"].get("progress_file"),
+        run_id=run_id,
     )
     data_store.prepare(
         [*keys_train, *keys_valid],
@@ -336,6 +340,7 @@ def main():
     pretrain_wrapper._configure_canfar_output(
         metrics_file=config["saving"].get("metrics_file"),
         residual_stats_file=config["saving"].get("residual_stats_file"),
+        progress_file=config["saving"].get("progress_file"),
         arc_checkpoint_dir=config["saving"].get("arc_checkpoint_dir"),
         arc_sync_interval=config["saving"].get("arc_sync_interval", 5),
         run_id=run_id,

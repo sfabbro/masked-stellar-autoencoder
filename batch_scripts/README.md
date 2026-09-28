@@ -142,6 +142,24 @@ loss, learning rate, epoch duration, host/GPU memory, scratch/output free
 space, and a run ID. Set a unique run ID and output root for each fresh full
 run so append-only logs and metrics cannot mix runs:
 
+The laptop Marimo monitor reads only `progress.jsonl`, `metrics.jsonl`, and
+`residual_stats.jsonl` from ARC through `vcp arc:`; it does not copy the HDF5
+training data. Install its isolated Pixi environment once, then start it with
+the selected run and session names (the local CADC/VOSpace credentials must be
+available to `vcp`):
+
+```bash
+pixi install --environment monitor
+export MSA_MONITOR_RUN_ID=20260927T120000Z
+export MSA_MONITOR_OUTPUT_ROOT=/arc/projects/k-pop/msa_runs/pretrain-20260927T120000Z
+export MSA_MONITOR_SESSION_NAME=msa-pretrain-full-20260927T120000Z
+pixi run -e monitor monitor-pretrain
+```
+
+Open `http://127.0.0.1:2718` on the laptop to view run health, epoch losses,
+resource use, I/O throughput, and per-feature validation residuals. The
+monitor refreshes the small telemetry snapshots every 30 seconds.
+
 ```bash
 run_id="$(date -u +%Y%m%dT%H%M%SZ)"
 scripts/canfar_launch.sh pretrain \

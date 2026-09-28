@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import queue
 import shutil
@@ -86,6 +87,8 @@ class ProjectedHDF5Store:
         chunk_rows: int = 65_536,
         shuffle_buffer_bytes: int = 64 * 1024 * 1024,
         scratch_free_bytes: int | None = None,
+        progress_file: str | Path | None = None,
+        run_id: str | None = None,
     ):
         if not feature_cols:
             raise ValueError("At least one feature column is required")
@@ -112,6 +115,8 @@ class ProjectedHDF5Store:
         self._scratch_free_bytes = scratch_free_bytes
         self.scratch_free_bytes = scratch_free_bytes
         self._cache_fraction = cache_fraction
+        self.progress_file = Path(progress_file) if progress_file else None
+        self.run_id = run_id
         self._cache_tmp: tempfile.TemporaryDirectory | None = None
         self._cache_arrays: dict[str, np.memmap] = {}
         self._keys: list[str] = []
@@ -124,6 +129,19 @@ class ProjectedHDF5Store:
         self.conversion_seconds = 0.0
         self.transform_seconds = 0.0
         self.prepare_seconds = 0.0
+
+    def _write_progress(self, stage: str, **fields) -> None:
+        if self.progress_file is None:
+            return
+        entry = {
+            "run_id": self.run_id,
+            "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "stage": stage,
+            **fields,
+        }
+        self.progress_file.parent.mkdir(parents=True, exist_ok=True)
+        with self.progress_file.open("a") as stream:
+            stream.write(json.dumps(entry) + "\n")
 
     @staticmethod
     def _resolve_scratch(scratch_dir: str | Path | None) -> Path:
@@ -208,6 +226,15 @@ class ProjectedHDF5Store:
             f"scratch_free_bytes={self.scratch_free_bytes}, "
             f"cache_limit_bytes={cache_limit}"
         )
+        total_rows = sum(self._row_counts.values())
+        self._write_progress(
+            "scan_started",
+            shard_count=len(self._keys),
+            rows_total=total_rows,
+            projected_cache_bytes=self.cache_bytes,
+            selected_loader_mode="cache" if use_cache else "stream",
+            scratch_capacity_bytes=self.scratch_free_bytes,
+        )
         try:
             if use_cache:
                 try:
@@ -238,7 +265,19 @@ class ProjectedHDF5Store:
                 f"source_read_s={self.read_seconds:.1f}, "
                 f"conversion_s={self.conversion_seconds:.1f}"
             )
-        except Exception:
+            self._write_progress(
+                "loader_ready",
+                loader_mode=self.mode,
+                rows_total=total_rows,
+                projected_cache_bytes=self.cache_bytes,
+                prepare_seconds=round(self.prepare_seconds, 3),
+                source_read_seconds=round(self.read_seconds, 3),
+                conversion_seconds=round(self.conversion_seconds, 3),
+            )
+        except Exception as exc:
+            self._write_progress(
+                "scan_failed", error_type=type(exc).__name__, error=str(exc)
+            )
             self.close_cache()
             raise
 
@@ -271,6 +310,7 @@ class ProjectedHDF5Store:
         self, sample_indices: dict[str, np.ndarray], *, write_cache: bool
     ) -> list[np.ndarray]:
         samples: list[np.ndarray] = []
+        overall_rows_completed = 0
         for key_index, key in enumerate(self._keys):
             key_started = time.perf_counter()
             read_before = self.read_seconds
@@ -321,6 +361,21 @@ class ProjectedHDF5Store:
                     or chunk_index == n_chunks
                     or chunk_index % max(1, n_chunks // 4) == 0
                 ):
+                    self._write_progress(
+                        "scan_progress",
+                        key=key,
+                        key_index=key_index + 1,
+                        shard_count=len(self._keys),
+                        rows_completed=stop,
+                        rows_total=n_rows,
+                        overall_rows_completed=overall_rows_completed + stop,
+                        overall_rows_total=sum(self._row_counts.values()),
+                        elapsed_seconds=round(time.perf_counter() - key_started, 3),
+                        source_read_seconds=round(self.read_seconds - read_before, 3),
+                        conversion_seconds=round(
+                            self.conversion_seconds - conversion_before, 3
+                        ),
+                    )
                     print(
                         "Pretraining scan progress: "
                         f"key={key}, rows={stop}/{n_rows}, "
@@ -328,6 +383,7 @@ class ProjectedHDF5Store:
                         f"source_read_s={self.read_seconds - read_before:.1f}, "
                         f"conversion_s={self.conversion_seconds - conversion_before:.1f}"
                     )
+            overall_rows_completed += n_rows
             error_maxima[~np.isfinite(error_maxima)] = 1.0
             self._error_maxima[key] = error_maxima
             if cache is not None:

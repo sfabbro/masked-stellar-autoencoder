@@ -94,6 +94,7 @@ saving:
   log_file: '$MSA_PRETRAIN_OUTPUT_DIR/pretrain.log'
   metrics_file: '$MSA_PRETRAIN_OUTPUT_DIR/metrics.jsonl'
   residual_stats_file: '$MSA_PRETRAIN_OUTPUT_DIR/residual_stats.jsonl'
+  progress_file: '$MSA_PRETRAIN_OUTPUT_DIR/progress.jsonl'
   checkpoint_interval: 2
   arc_checkpoint_dir: '$MSA_PRETRAIN_CHECKPOINT_DIR'
   arc_sync_interval: 5
