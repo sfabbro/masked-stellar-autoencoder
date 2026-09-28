@@ -48,6 +48,28 @@ def test_sync_run_outputs_downloads_to_atomic_local_snapshots(tmp_path, monkeypa
     assert calls[0][2] != str(paths["metrics.jsonl"])
 
 
+def test_sync_run_outputs_treats_not_yet_written_metrics_as_pending(
+    tmp_path, monkeypatch
+):
+    def fake_run(args, **kwargs):
+        return subprocess.CompletedProcess(
+            args,
+            1,
+            stdout="",
+            stderr="ERROR:: NodeNotFound: metrics.jsonl",
+        )
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    paths, errors = sync_run_outputs(
+        "/arc/projects/k-pop/msa_runs/run-1",
+        tmp_path,
+        filenames=("metrics.jsonl",),
+    )
+
+    assert not errors
+    assert load_jsonl(paths["metrics.jsonl"]) == []
+
+
 def test_sync_run_outputs_rejects_non_arc_or_escaping_paths(tmp_path):
     with pytest.raises(ValueError, match="/arc/projects"):
         sync_run_outputs("/arc/home/user/run", tmp_path)
@@ -56,7 +78,13 @@ def test_sync_run_outputs_rejects_non_arc_or_escaping_paths(tmp_path):
 
 
 def test_session_status_finds_matching_canfar_session(monkeypatch):
-    payload = [{"id": "abc123", "name": "msa-pretrain-full", "status": "Running"}]
+    payload = [
+        {
+            "id": "abc123",
+            "name": "msa-pretrain-full-20260928t055244z",
+            "status": "Running",
+        }
+    ]
 
     def fake_run(args, **kwargs):
         return subprocess.CompletedProcess(
@@ -64,4 +92,4 @@ def test_session_status_finds_matching_canfar_session(monkeypatch):
         )
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    assert session_status("msa-pretrain-full") == payload[0]
+    assert session_status("MSA-Pretrain-Full-20260928T055244Z") == payload[0]

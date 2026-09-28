@@ -75,7 +75,8 @@ def sync_run_outputs(
             )
             if result.returncode or not temp_path.is_file():
                 message = result.stderr.strip() or "vcp did not create a local file"
-                errors[filename] = message
+                if "NodeNotFound" not in message:
+                    errors[filename] = message
                 continue
             os.replace(temp_path, destination)
         except (OSError, subprocess.TimeoutExpired) as exc:
@@ -99,4 +100,12 @@ def session_status(session_name: str) -> dict | None:
     sessions = json.loads(result.stdout)
     if isinstance(sessions, dict):
         sessions = sessions.get("sessions", [])
-    return next((item for item in sessions if item.get("name") == session_name), None)
+    normalized_name = session_name.casefold()
+    return next(
+        (
+            item
+            for item in sessions
+            if str(item.get("name", "")).casefold() == normalized_name
+        ),
+        None,
+    )

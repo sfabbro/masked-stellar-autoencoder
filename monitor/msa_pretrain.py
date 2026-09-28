@@ -16,8 +16,7 @@ def _():
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
-
-    from monitor.msa_monitor_io import load_jsonl, session_status, sync_run_outputs
+    from msa_monitor_io import load_jsonl, session_status, sync_run_outputs
 
     return (
         UTC,
@@ -50,7 +49,11 @@ def _(mo, os):
         label="CANFAR session name",
         value=os.environ.get("MSA_MONITOR_SESSION_NAME", ""),
     )
-    refresh = mo.ui.refresh(label="Auto refresh", interval="30s")
+    refresh = mo.ui.refresh(
+        options=["30s", "1m"],
+        default_interval="30s",
+        label="Auto refresh",
+    )
     mo.vstack(
         [
             mo.md("# MSA pretraining monitor"),
@@ -176,6 +179,8 @@ def _(errors, last_update, metrics, mo, pd, progress, session, stale_minutes):
         _health = "⚠️ No persisted update for over 45 minutes"
     elif errors:
         _health = "⚠️ Some files could not be fetched; cached snapshots remain visible"
+    elif session and session.get("status") == "Running" and not progress.empty:
+        _health = "✅ CANFAR session is running; scan/training progress is updating"
     elif not metrics.empty and not progress.empty:
         _health = "✅ Monitoring data is updating"
     else:
