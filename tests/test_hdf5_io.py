@@ -190,6 +190,84 @@ def test_projected_store_falls_back_when_scratch_budget_is_too_small(tmp_path):
 
     assert store.mode == "stream"
     assert store.cache_bytes > 1
+    assert store._row_counts == store._source_row_counts
+
+
+def test_projected_store_caches_seeded_training_subset_and_streams_validation(
+    tmp_path,
+):
+    with h5py.File(tmp_path / "input.h5", "w") as h5:
+        h5.create_dataset("train", data=_table(), chunks=(2,))
+        train_b = _table()[:3].copy()
+        train_b["feature"] += 20
+        h5.create_dataset("train_b", data=train_b, chunks=(2,))
+        valid_table = _table()
+        valid_table["feature"] += 10
+        h5.create_dataset("valid", data=valid_table, chunks=(2,))
+
+        def make_store():
+            store = ProjectedHDF5Store(
+                h5,
+                ["feature"],
+                ["error"],
+                scratch_dir=tmp_path,
+                cache_fraction=1.0,
+                cache_max_bytes=40,
+                cache_keys=["train", "train_b"],
+                cache_seed=19,
+                chunk_rows=2,
+            )
+            store.prepare(
+                ["train", "train_b", "valid"],
+                ["train", "train_b"],
+                scaler_max_rows=4,
+            )
+            return store
+
+        scaler = RobustScaler().fit(np.array([[0.0], [6.0]], dtype=np.float32))
+        first = make_store()
+        train = _collect_key(first, "train", scaler)
+        shuffled = _collect_key(first, "train", scaler, shuffle=True, seed=17)
+        train_b = _collect_key(first, "train_b", scaler)
+        valid = _collect_key(first, "valid", scaler)
+        second = make_store()
+        repeated_train = _collect_key(second, "train", scaler)
+        repeated_shuffled = _collect_key(second, "train", scaler, shuffle=True, seed=17)
+
+    assert first.mode == "cache_subset"
+    assert first._row_counts == {"train": 3, "train_b": 2, "valid": 7}
+    assert first.cache_bytes == 40
+    assert [len(x) for x, _ in train] == [3]
+    assert [len(x) for x, _ in train_b] == [2]
+    assert [len(x) for x, _ in valid] == [3, 3, 1]
+    np.testing.assert_array_equal(
+        np.concatenate([x[:, 0] for x, _ in train]),
+        np.concatenate([x[:, 0] for x, _ in repeated_train]),
+    )
+    shuffled_features = np.concatenate([x[:, 0] for x, _ in shuffled])
+    repeated_features = np.concatenate([x[:, 0] for x, _ in repeated_shuffled])
+    np.testing.assert_array_equal(shuffled_features, repeated_features)
+    np.testing.assert_array_equal(
+        np.sort(shuffled_features), np.sort(train[0][0][:, 0])
+    )
+    np.testing.assert_array_equal(
+        np.sort(np.concatenate([x[:, 0] for x, _ in valid])),
+        (np.arange(10, 17, dtype=np.float32) - 3) / 3,
+    )
+
+
+def _collect_key(store, key, scaler, *, shuffle=False, seed=0):
+    return [
+        (x.copy(), e.copy())
+        for x, e in store.iter_batches(
+            key,
+            scaler,
+            np.array([2.0], dtype=np.float32),
+            batch_rows=3,
+            shuffle=shuffle,
+            seed=seed,
+        )
+    ]
 
 
 def test_projected_store_repairs_invalid_errors_like_full_shard_loader(tmp_path):

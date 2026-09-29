@@ -61,6 +61,7 @@ def test_pretrain_checkpoint_payload_shape(wrapper_stub):
     assert payload["epoch"] == 1
     assert payload["epoch_loss"] == 1.0
     assert "model_state_dict" in payload
+    assert payload["rows_seen_total"] == 0
     assert "rng_state" in payload
     assert "run_signature" in payload
 
@@ -104,6 +105,31 @@ def test_pretrain_resume_rejects_changed_feature_order(wrapper_stub, tmp_path):
 
     with pytest.raises(ValueError, match="feature_cols"):
         wrapper_stub._load_pretrain_resume(str(checkpoint), MagicMock(), MagicMock())
+
+
+def test_legacy_pretrain_resume_counts_full_source_rows(wrapper_stub, tmp_path):
+    checkpoint = tmp_path / "checkpoint.pth"
+    torch.save(
+        {
+            "model_state_dict": {},
+            "optimizer_state_dict": {},
+            "scheduler_state_dict": {},
+            "epoch_loss": 0.0,
+            "loss_div": 0.0,
+            "epoch": 3,
+        },
+        checkpoint,
+    )
+    wrapper_stub._pretrain_train_keys = ["train"]
+    wrapper_stub.data_store = type(
+        "Store",
+        (),
+        {"_source_row_counts": {"train": 11}, "_row_counts": {"train": 7}},
+    )()
+
+    wrapper_stub._load_pretrain_resume(str(checkpoint), MagicMock(), MagicMock())
+
+    assert wrapper_stub._pretrain_rows_seen_total == 33
 
 
 def test_unweighted_pretrain_can_resume_with_corrected_error_mapping(
@@ -468,6 +494,7 @@ def test_pretrain_monitor_emits_row_weighted_intervals(wrapper_stub):
     assert kwargs == {"partial": False}
     assert wrapper_stub._pretrain_monitor_epoch_rows_seen == 8
     assert wrapper_stub._pretrain_monitor_interval_rows == 0
+    assert wrapper_stub._pretrain_rows_seen_total == 8
 
 
 def test_pretrain_monitor_sample_is_bounded_and_seeded(wrapper_stub):
@@ -494,6 +521,50 @@ def test_pretrain_monitor_sample_is_bounded_and_seeded(wrapper_stub):
     assert store.requests == [("valid_a", 3, 10, 2), ("valid_b", 2, 11, 2)]
     assert X_sample.shape == eX_sample.shape == (5, 2)
     np.testing.assert_array_equal(X_sample[:, 0], [10, 10, 10, 11, 11])
+
+
+def test_pretraining_noise_augmentation_keeps_clean_reconstruction_target(
+    wrapper_stub,
+):
+    class Echo(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.zeros(()))
+
+        def forward(self, values):
+            return values + self.weight, values
+
+    wrapper_stub.model = Echo()
+    wrapper_stub.data_store = None
+    wrapper_stub.diff = 0
+    wrapper_stub.pert_features = True
+    wrapper_stub._pretrain_micro_batch_size = 2
+    wrapper_stub._iter_pretrain_batches = lambda *args, **kwargs: iter(
+        [(torch.tensor([[1.0], [2.0]]), torch.ones((2, 1)))]
+    )
+    masked_inputs = []
+    wrapper_stub._pert_noise = lambda values, errors: torch.full_like(values, 0.5)
+    wrapper_stub._apply_mask = lambda values: (
+        masked_inputs.append(values.clone()) or values,
+        torch.ones_like(values, dtype=torch.bool),
+        torch.ones_like(values, dtype=torch.bool),
+    )
+    targets = []
+
+    def capture_target(target, *args, **kwargs):
+        targets.append(target.clone())
+        return wrapper_stub.model.weight * 0 + 1.0
+
+    wrapper_stub._pretrain_reconstruction_loss = capture_target
+    wrapper_stub._write_progress = MagicMock()
+    wrapper_stub._accumulate_pretrain_monitor_batch = MagicMock()
+
+    wrapper_stub._train_pretrain_key(
+        "train", MagicMock(), mini_batch=2, epoch_loss=0.0, loss_div=0.0, subkeynum=0
+    )
+
+    torch.testing.assert_close(masked_inputs[0], torch.tensor([[1.5], [2.5]]))
+    torch.testing.assert_close(targets[0], torch.tensor([[1.0], [2.0]]))
 
 
 def test_pretrain_monitor_evaluation_restores_model_mode_and_rng(wrapper_stub):

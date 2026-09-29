@@ -89,6 +89,9 @@ class ProjectedHDF5Store:
         scratch_free_bytes: int | None = None,
         progress_file: str | Path | None = None,
         run_id: str | None = None,
+        cache_max_bytes: int | None = None,
+        cache_keys: list[str] | None = None,
+        cache_seed: int = 42,
     ):
         if not feature_cols:
             raise ValueError("At least one feature column is required")
@@ -98,6 +101,12 @@ class ProjectedHDF5Store:
             raise ValueError("cache_fraction must be between zero and one")
         if chunk_rows < 1 or shuffle_buffer_bytes < 1:
             raise ValueError("chunk_rows and shuffle_buffer_bytes must be positive")
+        if cache_max_bytes is not None and (
+            isinstance(cache_max_bytes, bool)
+            or not isinstance(cache_max_bytes, int)
+            or cache_max_bytes < 1
+        ):
+            raise ValueError("cache_max_bytes must be a positive integer when set")
 
         self.datafile = datafile
         self.feature_cols = list(feature_cols)
@@ -117,14 +126,21 @@ class ProjectedHDF5Store:
         self._cache_fraction = cache_fraction
         self.progress_file = Path(progress_file) if progress_file else None
         self.run_id = run_id
+        self.cache_max_bytes = cache_max_bytes
+        self.cache_keys = list(cache_keys) if cache_keys is not None else None
+        self.cache_seed = int(cache_seed)
         self._cache_tmp: tempfile.TemporaryDirectory | None = None
         self._cache_arrays: dict[str, np.memmap] = {}
         self._keys: list[str] = []
+        self._source_row_counts: dict[str, int] = {}
         self._row_counts: dict[str, int] = {}
+        self._cache_row_counts: dict[str, int] = {}
+        self._cached_keys: set[str] = set()
         self._error_maxima: dict[str, np.ndarray] = {}
         self.scaler_sample = np.empty((0, self._feature_count), dtype=np.float32)
         self.cache_bytes = 0
         self.mode = "unprepared"
+        self.shuffle_policy = "bounded_chunk_shuffle_v1"
         self.read_seconds = 0.0
         self.conversion_seconds = 0.0
         self.transform_seconds = 0.0
@@ -176,7 +192,7 @@ class ProjectedHDF5Store:
             raise ValueError("No training shards are available for scaler fitting")
 
         self._keys = list(keys)
-        self._row_counts = {
+        self._source_row_counts = {
             key: min(
                 len(self.datafile[key]),
                 max_rows_per_key
@@ -185,11 +201,64 @@ class ProjectedHDF5Store:
             )
             for key in self._keys
         }
-        self.cache_bytes = (
-            sum(self._row_counts[key] for key in self._keys)
-            * len(self.fields)
-            * np.dtype(np.float32).itemsize
+        self._row_counts = dict(self._source_row_counts)
+        cache_keys = (
+            list(self.cache_keys) if self.cache_keys is not None else list(keys)
         )
+        if len(set(cache_keys)) != len(cache_keys):
+            raise ValueError("cache_keys must not contain duplicates")
+        unknown_cache_keys = [
+            key for key in cache_keys if key not in self._source_row_counts
+        ]
+        if unknown_cache_keys:
+            raise ValueError(
+                f"cache_keys must be prepared shards: {unknown_cache_keys}"
+            )
+        nonempty_cache_keys = [
+            key for key in cache_keys if self._source_row_counts[key]
+        ]
+        row_bytes = len(self.fields) * np.dtype(np.float32).itemsize
+        full_cache_rows = sum(
+            self._source_row_counts[key] for key in nonempty_cache_keys
+        )
+        cache_row_limit = full_cache_rows
+        if self.cache_max_bytes is not None:
+            cache_row_limit = min(full_cache_rows, self.cache_max_bytes // row_bytes)
+
+        # ponytail: if the cap cannot retain at least one row from every train shard,
+        # skip caching and stream the complete dataset instead of biasing the run.
+        if cache_row_limit < len(nonempty_cache_keys):
+            cache_row_limit = 0
+        self._cache_row_counts = {key: 0 for key in cache_keys}
+        if cache_row_limit:
+            remaining = cache_row_limit - len(nonempty_cache_keys)
+            additional_capacity = sum(
+                self._source_row_counts[key] - 1 for key in nonempty_cache_keys
+            )
+            exact_extra = {
+                key: (
+                    remaining * (self._source_row_counts[key] - 1) / additional_capacity
+                    if additional_capacity
+                    else 0
+                )
+                for key in nonempty_cache_keys
+            }
+            self._cache_row_counts.update(
+                {key: 1 + int(exact_extra[key]) for key in nonempty_cache_keys}
+            )
+            left = cache_row_limit - sum(self._cache_row_counts.values())
+            remainder_order = sorted(
+                (
+                    key
+                    for key in nonempty_cache_keys
+                    if self._cache_row_counts[key] < self._source_row_counts[key]
+                ),
+                key=lambda key: (-(exact_extra[key] % 1), key),
+            )
+            for key in remainder_order[:left]:
+                self._cache_row_counts[key] += 1
+
+        self.cache_bytes = sum(self._cache_row_counts.values()) * row_bytes
 
         rng = np.random.default_rng(scaler_seed)
         sample_keys = list(scaler_keys)
@@ -212,7 +281,7 @@ class ProjectedHDF5Store:
             if self._row_counts[key]
         }
 
-        use_cache = self._cache_fits()
+        use_cache = bool(cache_row_limit) and self._cache_fits()
         started = time.perf_counter()
         cache_limit = (
             int(self.scratch_free_bytes * self._cache_fraction)
@@ -224,14 +293,17 @@ class ProjectedHDF5Store:
             f"mode={'cache' if use_cache else 'stream'}, shards={len(self._keys)}, "
             f"projected_cache_bytes={self.cache_bytes}, "
             f"scratch_free_bytes={self.scratch_free_bytes}, "
-            f"cache_limit_bytes={cache_limit}"
+            f"cache_limit_bytes={cache_limit}, "
+            f"cached_training_rows={sum(self._cache_row_counts.values())}"
         )
-        total_rows = sum(self._row_counts.values())
+        total_rows = sum(self._source_row_counts.values())
         self._write_progress(
             "scan_started",
             shard_count=len(self._keys),
             rows_total=total_rows,
             projected_cache_bytes=self.cache_bytes,
+            cache_max_bytes=self.cache_max_bytes,
+            cached_training_rows=sum(self._cache_row_counts.values()),
             selected_loader_mode="cache" if use_cache else "stream",
             scratch_capacity_bytes=self.scratch_free_bytes,
         )
@@ -241,11 +313,33 @@ class ProjectedHDF5Store:
                     self._cache_tmp = tempfile.TemporaryDirectory(
                         prefix="msa-pretrain-", dir=self.scratch_dir
                     )
-                    self.mode = "cache"
+                    self._cached_keys = set(nonempty_cache_keys)
+                    self._row_counts.update(
+                        {
+                            key: self._cache_row_counts[key]
+                            for key in nonempty_cache_keys
+                        }
+                    )
+                    all_keys_cached = self._cached_keys == set(self._keys)
+                    all_cached_rows = all(
+                        self._cache_row_counts[key] == self._source_row_counts[key]
+                        for key in self._cached_keys
+                    )
+                    self.mode = (
+                        "cache"
+                        if all_keys_cached and all_cached_rows
+                        else (
+                            "cache_subset" if not all_cached_rows else "cache_partial"
+                        )
+                    )
+                    self.shuffle_policy = "cached_block_shuffle_v1"
                     samples = self._scan(sample_indices, write_cache=True)
                 except OSError as exc:
                     self.close_cache()
                     self.read_seconds = self.conversion_seconds = 0.0
+                    self._cached_keys.clear()
+                    self._row_counts = dict(self._source_row_counts)
+                    self.shuffle_policy = "bounded_chunk_shuffle_v1"
                     print(
                         f"Pretraining scratch cache unavailable ({exc}); streaming HDF5"
                     )
@@ -268,8 +362,13 @@ class ProjectedHDF5Store:
             self._write_progress(
                 "loader_ready",
                 loader_mode=self.mode,
+                shuffle_policy=self.shuffle_policy,
                 rows_total=total_rows,
                 projected_cache_bytes=self.cache_bytes,
+                cache_max_bytes=self.cache_max_bytes,
+                cached_training_rows=(
+                    sum(self._row_counts[key] for key in self._cached_keys)
+                ),
                 prepare_seconds=round(self.prepare_seconds, 3),
                 source_read_seconds=round(self.read_seconds, 3),
                 conversion_seconds=round(self.conversion_seconds, 3),
@@ -316,21 +415,30 @@ class ProjectedHDF5Store:
             read_before = self.read_seconds
             conversion_before = self.conversion_seconds
             dataset = self.datafile[key]
-            n_rows = self._row_counts[key]
+            n_rows = self._source_row_counts[key]
             names = dataset.dtype.names or ()
             missing = [name for name in self.fields if name not in names]
             if missing:
                 raise ValueError(f"Missing projected fields in '{key}': {missing}")
             cache = None
-            if write_cache:
+            cache_rows = self._cache_row_counts.get(key, 0)
+            if write_cache and key in self._cached_keys:
                 cache_path = Path(self._cache_tmp.name) / f"shard-{key_index}.npy"
                 cache = np.lib.format.open_memmap(
                     cache_path,
                     mode="w+",
                     dtype=np.float32,
-                    shape=(n_rows, len(self.fields)),
+                    shape=(cache_rows, len(self.fields)),
                 )
                 self._cache_arrays[key] = cache
+            cache_indices = None
+            if cache is not None and cache_rows < n_rows:
+                cache_indices = np.sort(
+                    np.random.default_rng(
+                        np.random.SeedSequence([self.cache_seed, key_index])
+                    ).choice(n_rows, size=cache_rows, replace=False)
+                )
+            cache_rows_written = 0
 
             error_maxima = np.full(self._feature_count, -np.inf, dtype=np.float32)
             chosen = sample_indices.get(key, np.empty(0, dtype=np.int64))
@@ -340,7 +448,17 @@ class ProjectedHDF5Store:
                 stop = min(start + self._chunk_rows_for(dataset), n_rows)
                 matrix = self._read_matrix(dataset, start, stop)
                 if cache is not None:
-                    cache[start:stop] = matrix
+                    if cache_indices is None:
+                        cache[start:stop] = matrix
+                    else:
+                        first = int(np.searchsorted(cache_indices, start, side="left"))
+                        last = int(np.searchsorted(cache_indices, stop, side="left"))
+                        if first < last:
+                            rows = cache_indices[first:last] - start
+                            cache[
+                                cache_rows_written : cache_rows_written + len(rows)
+                            ] = matrix[rows]
+                            cache_rows_written += len(rows)
                 for i, error in enumerate(self.error_cols):
                     if error is None:
                         continue
@@ -397,7 +515,14 @@ class ProjectedHDF5Store:
     def error_maxima(self, key: str) -> np.ndarray:
         return self._error_maxima[key]
 
-    def _iter_raw(self, key: str, max_rows: int | None = None) -> Iterator[np.ndarray]:
+    def _iter_raw(
+        self,
+        key: str,
+        max_rows: int | None = None,
+        *,
+        shuffle_chunks: bool = False,
+        seed: int = 0,
+    ) -> Iterator[np.ndarray]:
         if key not in self._row_counts:
             raise KeyError(f"Shard '{key}' was not prepared")
         count = min(
@@ -407,7 +532,13 @@ class ProjectedHDF5Store:
         dataset = self.datafile[key]
         cached = self._cache_arrays.get(key)
         chunk_rows = self._chunk_rows_for(dataset)
-        for start in range(0, count, chunk_rows):
+        starts = range(0, count, chunk_rows)
+        if cached is not None and shuffle_chunks:
+            chunks = np.arange((count + chunk_rows - 1) // chunk_rows)
+            if len(chunks) > 1:
+                starts = np.random.default_rng(seed).permutation(chunks) * chunk_rows
+        for start in starts:
+            start = int(start)
             stop = min(start + chunk_rows, count)
             started = time.perf_counter()
             if cached is not None:
@@ -486,7 +617,12 @@ class ProjectedHDF5Store:
                 yield x[start : start + batch_rows], e[start : start + batch_rows]
             parts_x, parts_e, buffered_bytes = [], [], 0
 
-        for matrix in self._iter_raw(key, max_rows):
+        for matrix in self._iter_raw(
+            key,
+            max_rows,
+            shuffle_chunks=key in self._cache_arrays,
+            seed=seed ^ 0x9E3779B9,
+        ):
             x, e = self._prepare_arrays(matrix, key, scaler, scale_factors)
             part_bytes = x.nbytes + e.nbytes
             if parts_x and buffered_bytes + part_bytes > buffer_limit:

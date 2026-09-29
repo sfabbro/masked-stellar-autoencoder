@@ -227,6 +227,9 @@ def main():
         pretrain_file,
         cols,
         config["data"]["error_cols"],
+        scratch_dir=(
+            os.environ.get("MSA_PRETRAIN_CACHE_DIR") or os.environ.get("WORK")
+        ),
         cache_fraction=float(config["training"].get("io_cache_fraction", 0.8)),
         chunk_rows=int(config["training"].get("io_chunk_rows", 65_536)),
         shuffle_buffer_bytes=int(
@@ -234,6 +237,13 @@ def main():
         ),
         progress_file=config["saving"].get("progress_file"),
         run_id=run_id,
+        cache_max_bytes=config["training"].get("io_cache_max_bytes"),
+        cache_keys=(
+            keys_train
+            if config["training"].get("io_cache_max_bytes") is not None
+            else None
+        ),
+        cache_seed=int(config["training"].get("io_cache_seed", 42)),
     )
     data_store.prepare(
         [*keys_train, *keys_valid],

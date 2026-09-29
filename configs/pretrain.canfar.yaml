@@ -80,8 +80,16 @@ training:
   pert_ebv_scale: 1.0
   mini_batch_size: 32768
   micro_batch_size: 8192
-  # The 272-column projection is ~237 GB; CANFAR session /scratch is capped at 200 GB.
-  io_cache_fraction: 0.0
+  # Cache a seeded, shard-stratified training subset. 150 GB leaves headroom in
+  # the 200 GB session scratch quota; validation remains streamed from /arc.
+  # If the cap or available scratch cannot fit, keep the full dataset and stream.
+  io_cache_fraction: 0.8
+  io_cache_max_bytes: 150000000000
+  io_cache_seed: 42
+  # Shuffle cached blocks each epoch, then rows within a 256 MiB buffer.
+  io_shuffle_buffer_bytes: 268435456
+  pert_features: false
+  pert_scale: 0.25
   epochs: 100
   monitor_interval_rows: 10000000
   monitor_sample_rows: 10000

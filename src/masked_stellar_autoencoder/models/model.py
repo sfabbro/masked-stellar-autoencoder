@@ -829,6 +829,7 @@ class TabResnetWrapper(BaseEstimator):
         self._pretrain_monitor_interval_loss = None
         self._pretrain_monitor_sample = None
         self._pretrain_rows_per_epoch = 0
+        self._pretrain_rows_seen_total = 0
         self._run_id = (
             f"pretrain-{time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())}-{os.getpid()}"
         )
@@ -1516,7 +1517,7 @@ class TabResnetWrapper(BaseEstimator):
         epoch = int(getattr(self, "_active_epoch", 1))
         total_epochs = int(getattr(self, "_active_total_epochs", epoch))
         rows_seen = int(self._pretrain_monitor_epoch_rows_seen)
-        rows_seen_total = (epoch - 1) * int(self._pretrain_rows_per_epoch) + rows_seen
+        rows_seen_total = int(self._pretrain_rows_seen_total)
         train_loss = float((interval_loss / interval_rows).item())
         interval_index = int(self._pretrain_monitor_interval_count) + 1
         residual_stats = self._evaluate_pretrain_monitor_sample(
@@ -1573,6 +1574,9 @@ class TabResnetWrapper(BaseEstimator):
         )
 
     def _accumulate_pretrain_monitor_batch(self, batch_loss, rows, mini_batch):
+        self._pretrain_rows_seen_total = (
+            int(getattr(self, "_pretrain_rows_seen_total", 0)) + rows
+        )
         interval = int(getattr(self, "_pretrain_monitor_interval_size", 0))
         if interval < 1:
             return
@@ -1622,10 +1626,23 @@ class TabResnetWrapper(BaseEstimator):
             "loader_mode": getattr(
                 getattr(self, "data_store", None), "mode", "legacy-full-shard"
             ),
-            "loader_policy": (
-                "bounded_chunk_shuffle_v1"
-                if getattr(self, "data_store", None) is not None
-                else "full_shard_shuffle_v0"
+            "loader_policy": getattr(
+                getattr(self, "data_store", None),
+                "shuffle_policy",
+                "full_shard_shuffle_v0",
+            ),
+            "train_rows_per_epoch": getattr(self, "_pretrain_rows_per_epoch", None),
+            "train_rows_by_key": {
+                key: int(self.data_store._row_counts.get(key, 0))
+                for key in getattr(self, "_pretrain_train_keys", [])
+            }
+            if getattr(self, "data_store", None) is not None
+            else None,
+            "cache_max_bytes": getattr(
+                getattr(self, "data_store", None), "cache_max_bytes", None
+            ),
+            "cache_seed": getattr(
+                getattr(self, "data_store", None), "cache_seed", None
             ),
             "micro_batch_size": getattr(self, "_pretrain_micro_batch_size", None),
         }
@@ -1644,7 +1661,7 @@ class TabResnetWrapper(BaseEstimator):
                 key
                 for key, current_value in current_signature.items()
                 if key in signature
-                and key != "loader_mode"
+                and key not in {"loader_mode", "loader_policy"}
                 and signature.get(key) != current_value
                 and not (
                     key == "error_cols"
@@ -1657,6 +1674,15 @@ class TabResnetWrapper(BaseEstimator):
                     "Pretraining checkpoint does not match current run settings: "
                     + ", ".join(mismatches)
                 )
+            if signature.get("loader_policy") not in {
+                None,
+                current_signature.get("loader_policy"),
+            }:
+                print(
+                    "Resuming with updated input shuffle policy: "
+                    f"{signature.get('loader_policy')} -> "
+                    f"{current_signature.get('loader_policy')}"
+                )
         else:
             print(
                 "Warning: legacy pretraining checkpoint has no run signature; "
@@ -1668,6 +1694,22 @@ class TabResnetWrapper(BaseEstimator):
         epoch_loss = checkpoint["epoch_loss"]
         loss_div = checkpoint["loss_div"]
         pretrained_epoch = checkpoint["epoch"]
+        if "rows_seen_total" in checkpoint:
+            self._pretrain_rows_seen_total = int(checkpoint["rows_seen_total"])
+        else:
+            data_store = getattr(self, "data_store", None)
+            if data_store is None:
+                rows_per_epoch = int(getattr(self, "_pretrain_rows_per_epoch", 0))
+            else:
+                rows_per_epoch = sum(
+                    int(
+                        data_store._source_row_counts.get(
+                            key, data_store._row_counts.get(key, 0)
+                        )
+                    )
+                    for key in getattr(self, "_pretrain_train_keys", [])
+                )
+            self._pretrain_rows_seen_total = pretrained_epoch * rows_per_epoch
         if "rng_state" in checkpoint:
             _restore_rng_state(checkpoint["rng_state"])
         print("Picking up pre-training from epoch", pretrained_epoch)
@@ -1683,6 +1725,7 @@ class TabResnetWrapper(BaseEstimator):
             "scheduler_state_dict": scheduler.state_dict(),
             "epoch_loss": epoch_loss,
             "loss_div": loss_div,
+            "rows_seen_total": int(getattr(self, "_pretrain_rows_seen_total", 0)),
             "rng_state": _capture_rng_state(),
             "run_signature": self._pretrain_run_signature(),
         }
@@ -1770,9 +1813,12 @@ class TabResnetWrapper(BaseEstimator):
             key, mini_batch, shuffle=True
         ):
             n_rows += len(X_batch)
+            X_target = X_batch
             if self.pert_features:
-                X_batch = X_batch + self._pert_noise(X_batch, eX_batch)
-            X_masked, mask, nanmask = self._apply_mask(X_batch)
+                X_input = X_target + self._pert_noise(X_target, eX_batch)
+            else:
+                X_input = X_target
+            X_masked, mask, nanmask = self._apply_mask(X_input)
             reconstruction_mask = mask[:, : -self.diff] & nanmask[:, : -self.diff]
             global_mask_count = reconstruction_mask.sum().to(dtype=torch.float32)
             optimizer.zero_grad(set_to_none=True)
@@ -1781,7 +1827,7 @@ class TabResnetWrapper(BaseEstimator):
                 stop = min(start + micro_batch, len(X_batch))
                 X_reconstructed, z = self.model(X_masked[start:stop])
                 loss = self._pretrain_reconstruction_loss(
-                    X_batch[start:stop],
+                    X_target[start:stop],
                     eX_batch[start:stop],
                     X_reconstructed,
                     z,
@@ -1923,10 +1969,8 @@ class TabResnetWrapper(BaseEstimator):
         validation = (
             running_pt_validation_loss[-1] if running_pt_validation_loss else None
         )
+        rows_seen_total = int(getattr(self, "_pretrain_rows_seen_total", 0))
         if getattr(self, "_pretrain_monitor_sample", None) is not None:
-            rows_seen_total = (epoch + 1) * int(
-                getattr(self, "_pretrain_rows_per_epoch", 0)
-            )
             residual_stats = self._evaluate_pretrain_monitor_sample(
                 epoch,
                 mini_batch,
@@ -1943,13 +1987,14 @@ class TabResnetWrapper(BaseEstimator):
             validation,
             optimizer,
             residual_stats=residual_stats,
-            rows_seen_total=(epoch + 1)
-            * int(getattr(self, "_pretrain_rows_per_epoch", 0)),
+            rows_seen_total=rows_seen_total,
         )
         self._write_progress(
             "epoch_finished",
             epoch=epoch + 1,
             total_epochs=total_epochs,
+            rows_seen_total=rows_seen_total,
+            epoch_rows_seen=int(getattr(self, "_pretrain_rows_per_epoch", 0)),
             train_loss=round(float(mean_loss), 8),
             val_loss=(round(float(validation), 8) if validation is not None else None),
             wall_time_seconds=(
@@ -2016,6 +2061,7 @@ class TabResnetWrapper(BaseEstimator):
         if monitor_sample_rows < 1:
             raise ValueError("monitor_sample_rows must be positive")
         self._pretrain_batch_size = mini_batch
+        self._pretrain_rows_seen_total = 0
         self._pretrain_train_keys = sorted(train_keys)
         self._pretrain_valid_keys = list(val_keys or [])
         data_store = getattr(self, "data_store", None)
