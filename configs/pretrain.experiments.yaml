@@ -10,6 +10,11 @@ arms:
   - arm_id: group_balanced
     embedding: stable
     loss: group_mae
+  - arm_id: lower_mask_mae
+    embedding: stable
+    loss: mae
+    xp_masking_ratio: 0.5
+    m_masking_ratio: 0.2
   - arm_id: lower_mask
     embedding: stable
     loss: group_mae
