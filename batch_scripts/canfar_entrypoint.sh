@@ -118,6 +118,7 @@ case "$stage" in
       --validation-rows "${MSA_EXPERIMENT_VALIDATION_ROWS:-10000}"
       --presentations "${MSA_EXPERIMENT_PRESENTATIONS:-5000000}"
       --log-rows "${MSA_EXPERIMENT_LOG_ROWS:-1000000}"
+      --diagnostic-rows "${MSA_EXPERIMENT_DIAGNOSTIC_ROWS:-100000}"
     )
     if [[ -n "${MSA_EXPERIMENT_ARMS:-}" ]]; then
       read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"

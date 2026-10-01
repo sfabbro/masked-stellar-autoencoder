@@ -218,11 +218,13 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
             "--train-rows",
             "64",
             "--validation-rows",
-            "32",
+            "31",
             "--presentations",
             "32",
             "--log-rows",
             "16",
+            "--diagnostic-rows",
+            "7",
         ],
     )
     experiments.main()
@@ -244,10 +246,30 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
         assert metrics[-1]["optimizer_steps"] == 2
         assert metrics[-1]["rows_seen_total"] == 32
         assert metrics[-1]["learning_rate"] == metrics[0]["learning_rate"]
+        assert metrics[-1]["loader_mode"] == "experiment-prefix-cache"
+        assert metrics[-1]["optimizer_batch_size"] == 16
+        assert metrics[-1]["cache_bytes"] > 0
+        assert "cgroup_memory_peak_bytes" in metrics[-1]
         initial_maes.append(metrics[0]["sampled_validation_mae"])
         qa = json.loads((output / arm["arm_id"] / "residual_latest.json").read_text())
+        assert qa["validation_rows_total"] == 31
+        assert qa["diagnostic_snapshot"]["rows"] == 7
+        assert qa["diagnostic_snapshot"]["validation_rows"] == 31
+        assert qa["regimes"]["common"]["overall"]["count"] > 7
+        with np.load(output / arm["arm_id"] / "residual_latest.npz") as snapshot:
+            assert snapshot["targets"].shape[0] == 7
+            assert snapshot["validation_row_index"].tolist() == [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+            ]
         assert qa["uncertainty_units"] == "unverified"
         assert qa["latent"]["effective_rank"] > 0
+        assert qa["latent"]["sample_rows"] == 7
         assert qa["snr_units"].startswith("unverified")
         assert "physical_bias" not in qa["regimes"]["common"]["features"][0]
         assert "physical_rmse" not in qa["regimes"]["common"]["features"][0]

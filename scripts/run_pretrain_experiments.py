@@ -52,6 +52,23 @@ def sha256(path):
     return digest.hexdigest()
 
 
+def cgroup_memory_metrics():
+    result = {}
+    for source, name in (
+        ("memory.current", "cgroup_memory_current_bytes"),
+        ("memory.peak", "cgroup_memory_peak_bytes"),
+        ("memory.max", "cgroup_memory_limit_bytes"),
+    ):
+        try:
+            value = Path("/sys/fs/cgroup", source).read_text().strip()
+        except OSError:
+            value = None
+        if value is not None and value.isdecimal():
+            value = int(value)
+        result[name] = value
+    return result
+
+
 def feature_groups(names):
     xp = [i for i, name in enumerate(names) if name.startswith(("bp_", "rp_"))]
     astro = [
@@ -306,6 +323,7 @@ def evaluate(
     validation_id,
     rows_seen,
     verified_sigma=(),
+    diagnostic_rows=100_000,
 ):
     model, device = wrapper.model, wrapper.device
     names = wrapper.recon_cols
@@ -327,6 +345,12 @@ def evaluate(
         "validation_id": validation_id,
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "rows_seen_total": rows_seen,
+        "validation_rows_total": len(validation),
+        "diagnostic_snapshot": {
+            "rows": min(diagnostic_rows, len(validation)),
+            "validation_rows": len(validation),
+            "selection": "evenly spaced deterministic validation rows; diagnostics only",
+        },
         "units": "saved RobustScaler units",
         "uncertainty_units": "verified only for named features"
         if verified_sigma
@@ -338,11 +362,15 @@ def evaluate(
         else "unverified; source e_parallax ratio is provisional",
         "regimes": {},
     }
+    snapshot_indices = np.linspace(
+        0, len(validation) - 1, min(diagnostic_rows, len(validation)), dtype=np.int64
+    )
     snapshots = {
-        "targets": target,
-        "sigma": sigmas,
-        "source_sigma": sigma[:, :width],
+        "targets": target[snapshot_indices],
+        "sigma": sigmas[snapshot_indices],
+        "source_sigma": sigma[snapshot_indices, :width],
         "feature_names": np.asarray(names),
+        "validation_row_index": snapshot_indices,
     }
     prior = _capture_rng_state()
     model.eval()
@@ -350,6 +378,7 @@ def evaluate(
         for regime, mask in masks.items():
             predictions = []
             latents = []
+            latent_cursor = 0
             for start in range(0, len(validation), wrapper._pretrain_micro_batch_size):
                 batch = torch.as_tensor(
                     np.array(
@@ -363,8 +392,15 @@ def evaluate(
                 prediction, latent = model(batch.masked_fill(hidden, -9999))
                 predictions.append(prediction.cpu().numpy())
                 if regime == "common":
-                    latents.append(latent.cpu().numpy())
+                    next_cursor = np.searchsorted(
+                        snapshot_indices, start + len(batch), side="left"
+                    )
+                    if next_cursor > latent_cursor:
+                        rows = snapshot_indices[latent_cursor:next_cursor] - start
+                        latents.append(latent[rows].cpu().numpy())
+                        latent_cursor = next_cursor
             prediction = np.concatenate(predictions)
+            del predictions
             scored = mask[:, :width] & np.isfinite(target)
             residual = np.where(scored, prediction - target, np.nan)
             finite_prediction = bool(np.isfinite(prediction).all())
@@ -374,9 +410,12 @@ def evaluate(
                 )
             if latents:
                 latent = np.concatenate(latents)
+                del latents
                 if not np.isfinite(latent).all():
                     raise FloatingPointError("Nonfinite validation latent values")
                 qa["latent"] = latent_summary(latent)
+                qa["latent"]["sample_rows"] = len(latent)
+                qa["latent"]["sample_policy"] = qa["diagnostic_snapshot"]["selection"]
             overall = summarize(residual, target, median[:width], sigmas)
             overall["masked_mae"] = (
                 float(abs(residual[scored]).mean()) if scored.any() else None
@@ -508,8 +547,8 @@ def evaluate(
                 "histograms": histograms,
                 "bins": bins,
             }
-            snapshots[f"{regime}_prediction"] = prediction
-            snapshots[f"{regime}_mask"] = mask[:, :width]
+            snapshots[f"{regime}_prediction"] = prediction[snapshot_indices]
+            snapshots[f"{regime}_mask"] = mask[snapshot_indices, :width]
     _restore_rng_state(prior)
     write_json(output / "residual_latest.json", qa)
     temporary = output / "residual_latest.tmp.npz"
@@ -657,6 +696,7 @@ def run_arm(
             manifest["validation_id"],
             rows,
             config["data"].get("uncertainty_units_verified", []),
+            args.diagnostic_rows,
         )
         common = qa["regimes"]["common"]["overall"]
         entry = {
@@ -694,6 +734,12 @@ def run_arm(
                 name: value["overall"] for name, value in qa["regimes"].items()
             },
             **wrapper._resource_metrics(),
+            "loader_mode": "experiment-prefix-cache",
+            "optimizer_batch_size": config["training"]["mini_batch_size"],
+            "cache_bytes": manifest["sample"]["cache_bytes"],
+            "projected_cache_bytes": manifest["projected_cache_bytes"],
+            "scratch_free_bytes": shutil.disk_usage(args.cache_dir).free,
+            **cgroup_memory_metrics(),
         }
         for path in (output / "metrics.jsonl", args.output / "metrics.jsonl"):
             with path.open("a") as stream:
@@ -807,11 +853,18 @@ def main():
     parser.add_argument("--validation-rows", type=int, default=10_000)
     parser.add_argument("--presentations", type=int, default=5_000_000)
     parser.add_argument("--log-rows", type=int, default=1_000_000)
+    parser.add_argument("--diagnostic-rows", type=int, default=100_000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--arms", nargs="+")
     args = parser.parse_args()
     if (
-        min(args.train_rows, args.validation_rows, args.presentations, args.log_rows)
+        min(
+            args.train_rows,
+            args.validation_rows,
+            args.presentations,
+            args.log_rows,
+            args.diagnostic_rows,
+        )
         < 1
     ):
         parser.error("All row budgets must be positive")
@@ -913,6 +966,8 @@ def main():
             else "cpu",
         },
         "presentations_per_arm": args.presentations,
+        "diagnostic_validation_rows": min(args.validation_rows, args.diagnostic_rows),
+        "diagnostic_snapshot_policy": "evenly spaced deterministic validation rows; diagnostics only; JSON evaluation uses every validation row",
         "arms": [
             {**arm, "status": "pending", "output_root": arm["arm_id"]} for arm in arms
         ],

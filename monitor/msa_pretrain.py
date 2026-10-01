@@ -693,7 +693,8 @@ def _(
                 f"**Suite:** `{suite_manifest.get('suite_id', suite_manifest.get('run_id', '—'))}` · "
                 f"**Status:** `{suite_manifest.get('status', '—')}` · "
                 f"**Common validation:** `{suite_manifest.get('validation_id', 'unavailable')}`\n\n"
-                "Rank uses equal-group skill against the median baseline on the common fixed validation sample: "
+                "Rank uses equal-group skill against the median baseline over every row in the "
+                "common fixed validation set: "
                 "mean(1 − group MAE / group median MAE) across XP, photometry and astrometry. Higher is better. "
                 "Only completed candidates with equal star-view and optimizer-step budgets are ranked. "
                 "Raw unweighted MAE in RobustScaler units and live unfinished candidates remain visible. "
@@ -706,8 +707,8 @@ def _(
             "cache_cap_bytes", _training_config.get("io_cache_max_bytes")
         )
         _sample_summary = {
-            "training subset rows": _sample.get("train_rows"),
-            "validation subset rows": _sample.get("validation_rows"),
+            "training prefix rows": _sample.get("train_rows"),
+            "fixed validation rows": _sample.get("validation_rows"),
             "star views per arm": suite_manifest.get("presentations_per_arm"),
             "cache GB": _sample.get("cache_bytes", 0) / 1e9,
             "configured cache cap GB": _cache_cap / 1e9
@@ -928,12 +929,38 @@ def _(json, mo, np, pd, plt, selected_arm, selected_regime, suite_snapshots):
                 "XP off hides the entire XP block. A group with count zero has no scored targets."
             )
         )
+        _diagnostic = _qa.get("diagnostic_snapshot", {})
+        _validation_rows = _diagnostic.get("validation_rows")
+        _sample_rows = _diagnostic.get("rows")
+        _selection = _diagnostic.get("selection", "selection policy unavailable")
+        if (
+            isinstance(_validation_rows, int)
+            and not isinstance(_validation_rows, bool)
+            and isinstance(_sample_rows, int)
+            and not isinstance(_sample_rows, bool)
+        ):
+            _items.append(
+                mo.md(
+                    f"**Full-validation JSON summaries:** {_validation_rows:,} rows; "
+                    "overall, feature, group, histogram, and bin summaries use all validation rows.  \n"
+                    f"**Bounded diagnostic sample:** {_sample_rows:,} of {_validation_rows:,} rows "
+                    f"({_selection}). Residual NPZ arrays and latent activity use this sample only; "
+                    "any NPZ-based charts are sample views, separate from the full-validation scores."
+                )
+            )
+        else:
+            _items.append(
+                mo.md(
+                    "Validation and diagnostic sample sizes are unavailable in this snapshot; "
+                    "do not infer full-population coverage from its QA tables."
+                )
+            )
         _overall = _regime.get("overall", {})
         if _overall:
             _items.append(mo.ui.table([_overall], selection=None, pagination=False))
         _latent = _qa.get("latent", {}) if selected_regime.value == "common" else {}
         if isinstance(_latent, dict) and _latent:
-            _items.append(mo.md("### Latent activity on fixed validation"))
+            _items.append(mo.md("### Latent activity on diagnostic sample"))
             _items.append(
                 mo.ui.table(
                     [
@@ -945,6 +972,8 @@ def _(json, mo, np, pd, plt, selected_arm, selected_regime, suite_snapshots):
                             "near-constant dimensions": _latent.get(
                                 "near_constant_dimensions"
                             ),
+                            "sample rows": _latent.get("sample_rows"),
+                            "sample policy": _latent.get("sample_policy"),
                         }
                     ],
                     selection=None,
