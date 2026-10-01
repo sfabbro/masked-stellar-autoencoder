@@ -22,6 +22,7 @@ from masked_stellar_autoencoder.training.pretrain_msa import (
     _configure_pilot,
     _limit_batch_pilot_shards,
     _limit_pilot_shards,
+    _pretrain_io_error_cols,
     _validate_error_columns,
     fit_pretrain_scaler,
 )
@@ -157,6 +158,61 @@ def test_unweighted_pretrain_can_resume_with_corrected_error_mapping(
     )
 
     assert result == (0.0, 0.0, 2)
+
+
+def test_pretrain_io_skips_error_columns_only_when_they_are_unused():
+    errors = ["e_a", None]
+
+    assert _pretrain_io_error_cols(errors, loss_fn="mae", pert_features=False) == [
+        None,
+        None,
+    ]
+    assert (
+        _pretrain_io_error_cols(errors, loss_fn="wmae", pert_features=False) == errors
+    )
+    assert _pretrain_io_error_cols(errors, loss_fn="mae", pert_features=True) == errors
+
+
+def test_pretrain_resume_allows_expanding_same_training_shards(
+    wrapper_stub, tmp_path, capsys
+):
+    wrapper_stub._pretrain_train_keys = ["train_a", "train_b"]
+    wrapper_stub.data_store = type(
+        "Store",
+        (),
+        {
+            "_row_counts": {"train_a": 12, "train_b": 8},
+            "_source_row_counts": {"train_a": 12, "train_b": 8},
+            "mode": "cache_partial",
+            "shuffle_policy": "cached_block_shuffle_v1",
+            "cache_max_bytes": 150_000_000_000,
+            "cache_seed": 42,
+        },
+    )()
+    signature = wrapper_stub._pretrain_run_signature()
+    signature["train_rows_by_key"] = {"train_a": 7, "train_b": 5}
+    signature["train_rows_per_epoch"] = 12
+    checkpoint = tmp_path / "checkpoint.pth"
+    torch.save(
+        {
+            "model_state_dict": {},
+            "optimizer_state_dict": {},
+            "scheduler_state_dict": {},
+            "epoch_loss": 0.0,
+            "loss_div": 0.0,
+            "epoch": 2,
+            "rows_seen_total": 24,
+            "run_signature": signature,
+        },
+        checkpoint,
+    )
+
+    result = wrapper_stub._load_pretrain_resume(
+        str(checkpoint), MagicMock(), MagicMock()
+    )
+
+    assert result == (0.0, 0.0, 2)
+    assert "expanded training data coverage: 12 -> 20" in capsys.readouterr().out
 
 
 def test_weighted_pretrain_rejects_changed_error_mapping(wrapper_stub, tmp_path):

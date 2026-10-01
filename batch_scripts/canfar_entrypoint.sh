@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-stage="${1:?Usage: canfar_entrypoint.sh install|schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain-batch-pilot|pretrain|finetune-pilot|finetune|preflight}"
+stage="${1:?Usage: canfar_entrypoint.sh install|schema|source-index|fetch-dustmaps|preprocess|combine|pretrain-pilot|pretrain-batch-pilot|pretrain-experiments|pretrain|finetune-pilot|finetune|preflight}"
 project_root="${CANFAR_PROJECT_ROOT:-/arc/projects/k-pop}"
 work_root="${WORK:-/scratch/${USER:?USER is unset}}"
 script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
@@ -105,6 +105,25 @@ case "$stage" in
   pretrain)
     "${pixi_run[@]}" canfar-preflight-pretrain
     "${pixi_run[@]}" pretrain-canfar
+    ;;
+  pretrain-experiments)
+    : "${MSA_PRETRAIN_RESUME:?Set MSA_PRETRAIN_RESUME to the immutable full checkpoint}"
+    "${pixi_run[@]}" check-canfar-gpu
+    experiment_output="${MSA_EXPERIMENT_OUTPUT:-$MSA_OUTPUT_ROOT/experiments-$(date -u +%Y%m%dT%H%M%SZ)}"
+    experiment_args=(
+      --checkpoint "$MSA_PRETRAIN_RESUME"
+      --output "$experiment_output"
+      --cache-dir "${MSA_EXPERIMENT_CACHE:-$work_root/msa-experiment-cache}"
+      --train-rows "${MSA_EXPERIMENT_TRAIN_ROWS:-3000000}"
+      --validation-rows "${MSA_EXPERIMENT_VALIDATION_ROWS:-10000}"
+      --presentations "${MSA_EXPERIMENT_PRESENTATIONS:-5000000}"
+      --log-rows "${MSA_EXPERIMENT_LOG_ROWS:-1000000}"
+    )
+    if [[ -n "${MSA_EXPERIMENT_ARMS:-}" ]]; then
+      read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"
+      experiment_args+=(--arms "${experiment_arms[@]}")
+    fi
+    "${pixi_run[@]}" python -u scripts/run_pretrain_experiments.py "${experiment_args[@]}"
     ;;
   finetune-pilot)
     "${pixi_run[@]}" canfar-preflight

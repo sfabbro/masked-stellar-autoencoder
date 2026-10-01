@@ -1,0 +1,21 @@
+# All arms reload exactly the same trusted full checkpoint and optimizer state.
+# Keep evaluation masks fixed at the source config's original mask ratios.
+arms:
+  - arm_id: legacy_control
+    embedding: legacy
+    loss: mae
+  - arm_id: stable_embedding
+    embedding: stable
+    loss: mae
+  - arm_id: group_balanced
+    embedding: stable
+    loss: group_mae
+  - arm_id: lower_mask
+    embedding: stable
+    loss: group_mae
+    xp_masking_ratio: 0.5
+    m_masking_ratio: 0.2
+  - arm_id: dropout_zero
+    embedding: stable
+    loss: group_mae
+    dropout: 0.0

@@ -1654,14 +1654,37 @@ class TabResnetWrapper(BaseEstimator):
         if pretrained is None:
             return epoch_loss, loss_div, pretrained_epoch
         checkpoint = torch_load_trusted(pretrained)
+        if checkpoint.get("experiment_only"):
+            raise ValueError(
+                "This checkpoint is from a bounded experiment; use explicit experiment "
+                "handling to preserve its subset, mask RNG and embedding policy"
+            )
         signature = checkpoint.get("run_signature")
         if signature is not None:
             current_signature = self._pretrain_run_signature()
+            saved_rows_by_key = signature.get("train_rows_by_key")
+            current_rows_by_key = current_signature.get("train_rows_by_key")
+            expanded_training_rows = (
+                signature.get("train_keys") == current_signature.get("train_keys")
+                and isinstance(saved_rows_by_key, dict)
+                and isinstance(current_rows_by_key, dict)
+                and saved_rows_by_key.keys() == current_rows_by_key.keys()
+                and all(
+                    int(current_rows_by_key[key]) >= int(saved_rows_by_key[key])
+                    for key in saved_rows_by_key
+                )
+                and sum(map(int, current_rows_by_key.values()))
+                > sum(map(int, saved_rows_by_key.values()))
+            )
             mismatches = [
                 key
                 for key, current_value in current_signature.items()
                 if key in signature
                 and key not in {"loader_mode", "loader_policy"}
+                and not (
+                    expanded_training_rows
+                    and key in {"train_rows_per_epoch", "train_rows_by_key"}
+                )
                 and signature.get(key) != current_value
                 and not (
                     key == "error_cols"
@@ -1673,6 +1696,12 @@ class TabResnetWrapper(BaseEstimator):
                 raise ValueError(
                     "Pretraining checkpoint does not match current run settings: "
                     + ", ".join(mismatches)
+                )
+            if expanded_training_rows:
+                print(
+                    "Resuming with expanded training data coverage: "
+                    f"{sum(map(int, saved_rows_by_key.values()))} -> "
+                    f"{sum(map(int, current_rows_by_key.values()))} rows per epoch"
                 )
             if signature.get("loader_policy") not in {
                 None,

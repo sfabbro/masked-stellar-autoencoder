@@ -9,7 +9,7 @@ ref="${CANFAR_GIT_REF:-main}"
 work_root="${CANFAR_WORK_ROOT:-/scratch/src}"
 
 case "$stage" in
-  install|schema|source-index|fetch-dustmaps|preprocess|combine|preflight|pretrain-pilot|pretrain-batch-pilot|pretrain|finetune-pilot|finetune) ;;
+  install|schema|source-index|fetch-dustmaps|preprocess|combine|preflight|pretrain-pilot|pretrain-batch-pilot|pretrain-experiments|pretrain|finetune-pilot|finetune) ;;
   *)
     echo "Unknown CANFAR stage: $stage" >&2
     exit 2
@@ -33,7 +33,7 @@ create_args=(
   --env PYTHONNOUSERSITE=1
 )
 case "$stage" in
-  preflight|pretrain-pilot|pretrain-batch-pilot|pretrain|finetune-pilot|finetune) create_args+=(--gpu 1) ;;
+  preflight|pretrain-pilot|pretrain-batch-pilot|pretrain-experiments|pretrain|finetune-pilot|finetune) create_args+=(--gpu 1) ;;
 esac
 for env_assignment in "$@"; do
   if [[ ! "$env_assignment" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then

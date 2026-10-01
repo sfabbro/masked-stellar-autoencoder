@@ -80,9 +80,9 @@ training:
   pert_ebv_scale: 1.0
   mini_batch_size: 32768
   micro_batch_size: 8192
-  # Cache a seeded, shard-stratified training subset. 150 GB leaves headroom in
-  # the 200 GB session scratch quota; validation remains streamed from /arc.
-  # If the cap or available scratch cannot fit, keep the full dataset and stream.
+  # For unweighted MAE without feature perturbation, cache only the 140 input
+  # features: all current training rows fit in about 117 GB. Validation streams
+  # from /arc. If a future dataset exceeds the cap, the loader samples per shard.
   io_cache_fraction: 0.8
   io_cache_max_bytes: 150000000000
   io_cache_seed: 42

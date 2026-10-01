@@ -91,6 +91,13 @@ def _validate_error_columns(feature_cols, error_cols):
         )
 
 
+def _pretrain_io_error_cols(error_cols, *, loss_fn, pert_features):
+    """Keep uncertainty fields out of the input cache when training cannot use them."""
+    if pert_features or loss_fn in {"wmse", "wmae"}:
+        return list(error_cols)
+    return [None] * len(error_cols)
+
+
 def _pilot_path(path):
     if not path:
         return path
@@ -197,6 +204,11 @@ def main():
 
     cols = config["data"]["feature_cols"]
     _validate_error_columns(cols, config["data"]["error_cols"])
+    io_error_cols = _pretrain_io_error_cols(
+        config["data"]["error_cols"],
+        loss_fn=config["training"].get("loss_fn", "mse"),
+        pert_features=bool(config["training"].get("pert_features", False)),
+    )
 
     # Load the pretraining file after checking the feature/uncertainty mapping.
     pretrain_file = h5py.File(config["data"]["datafile"])
@@ -226,7 +238,7 @@ def main():
     data_store = ProjectedHDF5Store(
         pretrain_file,
         cols,
-        config["data"]["error_cols"],
+        io_error_cols,
         scratch_dir=(
             os.environ.get("MSA_PRETRAIN_CACHE_DIR") or os.environ.get("WORK")
         ),

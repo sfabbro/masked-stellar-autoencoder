@@ -1,9 +1,47 @@
 # loading the packages
+import math
+
 import torch
 import torch.nn as nn
 from rtdl_num_embeddings import (
     PeriodicEmbeddings,
 )
+
+
+class MaskedPeriodicEmbeddings(PeriodicEmbeddings):
+    """Keep the missing-value encoding stable while observed frequencies learn."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.register_buffer(
+            "missing_periodic_encoding",
+            self._missing_encoding(self.periodic.weight).detach(),
+        )
+
+    @staticmethod
+    def _missing_encoding(weight):
+        phase = 2 * math.pi * weight * -9999.0
+        return torch.cat([phase.cos(), phase.sin()], -1)
+
+    def _load_from_state_dict(self, state_dict, prefix, *args, **kwargs):
+        buffer_key = prefix + "missing_periodic_encoding"
+        frequency_key = prefix + "periodic.weight"
+        if buffer_key not in state_dict and frequency_key in state_dict:
+            # Old checkpoints must freeze the loaded frequencies, not random init.
+            weight = state_dict[frequency_key].to(
+                device=self.periodic.weight.device, dtype=self.periodic.weight.dtype
+            )
+            state_dict[buffer_key] = self._missing_encoding(weight).detach()
+        super()._load_from_state_dict(state_dict, prefix, *args, **kwargs)
+
+    def forward(self, x):
+        periodic = torch.where(
+            (x == -9999.0).unsqueeze(-1),
+            self.missing_periodic_encoding,
+            self.periodic(x),
+        )
+        x = self.linear(periodic)
+        return x if self.activation is None else self.activation(x)
 
 
 def _get_activation(active: str) -> nn.Module:
@@ -92,7 +130,7 @@ class DenseResnet(nn.Module):
             if i == 0:
                 if pe:
                     layers.append(
-                        PeriodicEmbeddings(
+                        MaskedPeriodicEmbeddings(
                             input_dim, d_embedding=d_embedding, lite=False
                         )
                     )
@@ -275,7 +313,9 @@ class TabDenseEncoder(nn.Module):
     ):
         super().__init__()
         self.cosine_latent = cosine_latent
-        self.pe = PeriodicEmbeddings(input_dim, d_embedding=d_embedding, lite=False)
+        self.pe = MaskedPeriodicEmbeddings(
+            input_dim, d_embedding=d_embedding, lite=False
+        )
         self.flatten = nn.Flatten()
         self.input_proj = nn.Linear(input_dim * d_embedding, latent_size)
         self.block = DenseBlock(
