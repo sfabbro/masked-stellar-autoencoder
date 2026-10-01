@@ -703,17 +703,23 @@ def _(
         )
         _sample = suite_manifest.get("sample", {})
         _training_config = suite_manifest.get("config", {}).get("training", {})
-        _cache_cap = _sample.get(
-            "cache_cap_bytes", _training_config.get("io_cache_max_bytes")
-        )
+        _cache_cap = suite_manifest.get("cache_limit_bytes")
+        if _cache_cap is None:
+            _cache_cap = _sample.get(
+                "cache_cap_bytes", _training_config.get("io_cache_max_bytes")
+            )
+
+        def _gib(value):
+            if isinstance(value, int | float) and not isinstance(value, bool):
+                return round(value / (1024**3), 2)
+            return None
+
         _sample_summary = {
             "training prefix rows": _sample.get("train_rows"),
             "fixed validation rows": _sample.get("validation_rows"),
             "star views per arm": suite_manifest.get("presentations_per_arm"),
-            "cache GB": _sample.get("cache_bytes", 0) / 1e9,
-            "configured cache cap GB": _cache_cap / 1e9
-            if isinstance(_cache_cap, int | float)
-            else None,
+            "cache used (GiB)": _gib(_sample.get("cache_bytes")),
+            "cache limit (GiB)": _gib(_cache_cap),
             "loader": "bounded prefix cache" if _sample else "pending",
             "sampling policy": _sample.get("policy", "pending"),
         }
@@ -875,32 +881,102 @@ def _(mo, pd, plt, suite_records):
         _content.append(mo.md("Waiting for initial validation and interval metrics."))
     if _latest_rows:
         _telemetry = pd.DataFrame(_latest_rows)
-        _columns = [
+        _performance_columns = [
             name
             for name in (
                 "arm",
                 "event",
                 "optimizer_steps",
                 "rows_seen_total",
-                "parent_rows_seen_total",
+                "rows_per_second",
+                "validation_seconds",
+                "optimizer_batch_size",
                 "train_loss",
                 "learning_rate",
                 "gradient_norm_mean",
-                "gradient_norm_max",
                 "frequency_gradient_fraction",
                 "clipping_rate",
-                "rows_per_second",
-                "loader_wait_s",
-                "cache_bytes",
-                "cache_cap_bytes",
-                "current_host_rss_bytes",
-                "current_gpu_allocated_bytes",
-                "peak_gpu_allocated_bytes",
             )
             if name in _telemetry
         ]
+        if _performance_columns:
+            _performance_labels = {
+                "rows_per_second": "Rows/s",
+                "validation_seconds": "Validation seconds",
+                "optimizer_batch_size": "Optimizer batch size",
+            }
+            _content.append(
+                mo.ui.table(
+                    _telemetry[_performance_columns].rename(
+                        columns=_performance_labels
+                    ),
+                    selection=None,
+                    pagination=False,
+                )
+            )
+
+        _byte_columns = {
+            "cache_bytes": "Cache used (GiB)",
+            "projected_cache_bytes": "Projected cache (GiB)",
+            "current_host_rss_bytes": "Host RSS current (GiB)",
+            "peak_host_rss_bytes": "Host RSS peak (GiB)",
+            "cgroup_memory_current_bytes": "Cgroup memory current (GiB)",
+            "cgroup_memory_peak_bytes": "Cgroup memory peak (GiB)",
+            "cgroup_memory_limit_bytes": "Cgroup hard limit (GiB)",
+            "current_gpu_allocated_bytes": "GPU allocated current (GiB)",
+            "peak_gpu_allocated_bytes": "GPU allocated peak (GiB)",
+            "current_gpu_reserved_bytes": "GPU reserved current (GiB)",
+            "peak_gpu_reserved_bytes": "GPU reserved peak (GiB)",
+        }
+        _empty_values = pd.Series(index=_telemetry.index, dtype="float64")
+        for _source, _label in _byte_columns.items():
+            _values = pd.to_numeric(
+                _telemetry.get(_source, _empty_values),
+                errors="coerce",
+            )
+            _telemetry[_label] = [
+                round(float(_value) / (1024**3), 2) if pd.notna(_value) else None
+                for _value in _values
+            ]
+
+        _cgroup_peak = pd.to_numeric(
+            _telemetry.get("cgroup_memory_peak_bytes", _empty_values),
+            errors="coerce",
+        )
+        _cgroup_limit = pd.to_numeric(
+            _telemetry.get("cgroup_memory_limit_bytes", _empty_values),
+            errors="coerce",
+        )
+        if ((_cgroup_limit > 0) & (_cgroup_peak >= _cgroup_limit)).fillna(False).any():
+            _content.append(
+                mo.md(
+                    "**Cgroup memory peak reached or exceeded the reported hard limit; "
+                    "peak headroom was zero.**"
+                )
+            )
+        _resource_columns = [
+            "arm",
+            "Cache used (GiB)",
+            "Projected cache (GiB)",
+            "Host RSS current (GiB)",
+            "Host RSS peak (GiB)",
+            "Cgroup memory current (GiB)",
+            "Cgroup memory peak (GiB)",
+            "Cgroup hard limit (GiB)",
+            "GPU allocated current (GiB)",
+            "GPU allocated peak (GiB)",
+            "GPU reserved current (GiB)",
+            "GPU reserved peak (GiB)",
+        ]
         _content.append(
-            mo.ui.table(_telemetry[_columns], selection=None, pagination=False)
+            mo.md(
+                "### Memory and cache resources\n"
+                "Byte values use GiB (2³⁰ bytes). Cache use is compared with the run-specific limit above; "
+                "filesystem-wide free space is not shown as session scratch headroom."
+            )
+        )
+        _content.append(
+            mo.ui.table(_telemetry[_resource_columns], selection=None, pagination=False)
         )
     mo.vstack(_content)
     return
