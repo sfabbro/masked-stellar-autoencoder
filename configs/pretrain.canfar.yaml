@@ -68,8 +68,8 @@ model:
   cosine_latent: false
 
 training:
-  xp_masking_ratio: 0.9
-  m_masking_ratio: 0.6
+  xp_masking_ratio: 0.5
+  m_masking_ratio: 0.2
   mask_mixture_xp_full_frac: 0.0
   lr: 0.00001
   weight_decay: 0.00001
