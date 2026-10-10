@@ -127,6 +127,9 @@ case "$stage" in
       read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"
       experiment_args+=(--arms "${experiment_arms[@]}")
     fi
+    if [[ "${MSA_EXPERIMENT_INDEPENDENT_RNG:-0}" == 1 ]]; then
+      experiment_args+=(--independent-rng)
+    fi
     "${pixi_run[@]}" python -u scripts/run_pretrain_experiments.py "${experiment_args[@]}"
     ;;
   finetune-pilot)

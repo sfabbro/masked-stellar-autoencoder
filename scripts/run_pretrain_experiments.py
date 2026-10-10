@@ -650,6 +650,12 @@ def run_arm(
     wrapper, optimizer, scheduler = build_wrapper(
         config, checkpoint, source, center, scale, arm, output
     )
+    if args.independent_rng:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(args.seed)
     device, model = wrapper.device, wrapper.model
     frequency = [
         module.periodic.weight
@@ -856,6 +862,7 @@ def main():
     parser.add_argument("--diagnostic-rows", type=int, default=100_000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--validation-seed", type=int, default=42)
+    parser.add_argument("--independent-rng", action="store_true")
     parser.add_argument("--arms", nargs="+")
     args = parser.parse_args()
     if (
@@ -956,6 +963,7 @@ def main():
         ),
         "seed": args.seed,
         "validation_seed": args.validation_seed,
+        "independent_rng": args.independent_rng,
         "mask_policy": "separate device generator seeded once per arm; independent of dropout RNG",
         "scheduler_policy": "checkpoint LR held fixed for paired bounded presentations; saved scheduler state unchanged",
         "selection_metric": "group_skill_median",
