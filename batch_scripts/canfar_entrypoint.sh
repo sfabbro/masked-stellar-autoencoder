@@ -121,6 +121,7 @@ case "$stage" in
       --log-rows "${MSA_EXPERIMENT_LOG_ROWS:-1000000}"
       --diagnostic-rows "${MSA_EXPERIMENT_DIAGNOSTIC_ROWS:-100000}"
       --seed "${MSA_EXPERIMENT_SEED:-42}"
+      --validation-seed "${MSA_EXPERIMENT_VALIDATION_SEED:-42}"
     )
     if [[ -n "${MSA_EXPERIMENT_ARMS:-}" ]]; then
       read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"
