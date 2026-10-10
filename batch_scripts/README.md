@@ -174,10 +174,10 @@ before full training to verify GPU memory at the actual batch size. Both pilots
 write to pilot-specific filenames; choose a unique `MSA_OUTPUT_ROOT` for each
 pilot run as well. `training.io_chunk_rows` and
 `training.io_shuffle_buffer_bytes` tune the reader; defaults are 65,536 rows
-and 64 MiB. The CANFAR config uses a 24,576-row microbatch within each
-32,768-row optimizer batch to use more GPU memory while retaining some headroom.
-Smaller microbatches accumulate gradients while retaining the optimizer batch;
-this requires LayerNorm because BatchNorm statistics would change.
+and 64 MiB. The CANFAR config uses a 16,384-row microbatch and gradient
+accumulation to retain the 32,768-row optimizer batch with safe GPU memory
+headroom. Smaller microbatches require LayerNorm because BatchNorm statistics
+would change. Each finished epoch syncs its checkpoint to persistent `/arc`.
 
 The preprocessing builder accepts `MSA_SOURCE_IDS_FILE`, `MSA_CATWISE_FILE`,
 `MSA_GAIA_XP_DIR`, `MSA_GAIA_SOURCE_DIR`, `MSA_ADQL_MATCH_DIR`,
