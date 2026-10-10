@@ -174,7 +174,7 @@ before full training to verify GPU memory at the actual batch size. Both pilots
 write to pilot-specific filenames; choose a unique `MSA_OUTPUT_ROOT` for each
 pilot run as well. `training.io_chunk_rows` and
 `training.io_shuffle_buffer_bytes` tune the reader; defaults are 65,536 rows
-and 64 MiB. The CANFAR config uses an 8,192-row microbatch and gradient
+and 64 MiB. The CANFAR config uses a 16,384-row microbatch and gradient
 accumulation to retain the 32,768-row optimizer batch while reducing activation
 memory. This requires LayerNorm; training rejects a smaller microbatch when the
 model contains BatchNorm because that would change its statistics.
