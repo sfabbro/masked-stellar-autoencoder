@@ -1,0 +1,23 @@
+# Complete the XP × photometric masking factorial at both candidate loss functions.
+# The baseline and jointly reduced-mask corners are in pretrain.experiments.yaml.
+arms:
+  - arm_id: xp_low_photo_base_mae
+    embedding: stable
+    loss: mae
+    xp_masking_ratio: 0.5
+    m_masking_ratio: 0.6
+  - arm_id: xp_base_photo_low_mae
+    embedding: stable
+    loss: mae
+    xp_masking_ratio: 0.9
+    m_masking_ratio: 0.2
+  - arm_id: xp_low_photo_base_group_mae
+    embedding: stable
+    loss: group_mae
+    xp_masking_ratio: 0.5
+    m_masking_ratio: 0.6
+  - arm_id: xp_base_photo_low_group_mae
+    embedding: stable
+    loss: group_mae
+    xp_masking_ratio: 0.9
+    m_masking_ratio: 0.2

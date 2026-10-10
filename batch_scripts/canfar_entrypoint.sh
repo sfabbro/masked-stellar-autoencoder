@@ -111,6 +111,7 @@ case "$stage" in
     "${pixi_run[@]}" check-canfar-gpu
     experiment_output="${MSA_EXPERIMENT_OUTPUT:-$MSA_OUTPUT_ROOT/experiments-$(date -u +%Y%m%dT%H%M%SZ)}"
     experiment_args=(
+      --experiments "${MSA_EXPERIMENTS_CONFIG:-configs/pretrain.experiments.yaml}"
       --checkpoint "$MSA_PRETRAIN_RESUME"
       --output "$experiment_output"
       --cache-dir "${MSA_EXPERIMENT_CACHE:-$work_root/msa-experiment-cache}"
@@ -119,6 +120,7 @@ case "$stage" in
       --presentations "${MSA_EXPERIMENT_PRESENTATIONS:-5000000}"
       --log-rows "${MSA_EXPERIMENT_LOG_ROWS:-1000000}"
       --diagnostic-rows "${MSA_EXPERIMENT_DIAGNOSTIC_ROWS:-100000}"
+      --seed "${MSA_EXPERIMENT_SEED:-42}"
     )
     if [[ -n "${MSA_EXPERIMENT_ARMS:-}" ]]; then
       read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"
