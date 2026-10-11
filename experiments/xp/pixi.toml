@@ -1,0 +1,23 @@
+[workspace]
+name = "msa-xp-experiments"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", { name = "linux-64-cuda", platform = "linux-64", cuda = "13.0" }]
+
+[dependencies]
+python = "3.13.*"
+numpy = ">=2.5"
+scipy = ">=1.18"
+mpmath = "<1.4"
+
+[pypi-dependencies]
+masked-stellar-autoencoder = { path = "../..", editable = true }
+torchregress = { git = "https://github.com/sfabbro/torchregress.git", rev = "6311d708435884123906d3236da217d856e13806" }
+gaiaxpy = "==2.1.2"
+pytest = "*"
+ruff = "*"
+
+[target.osx-arm64.dependencies]
+pytorch = ">=2.13"
+
+[target."*-cuda".pypi-dependencies]
+torch = { version = ">=2.13", index = "https://download.pytorch.org/whl/cu130" }

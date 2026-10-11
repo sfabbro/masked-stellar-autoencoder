@@ -2,6 +2,8 @@
 
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import h5py
@@ -74,6 +76,77 @@ def test_mask_draws_do_not_depend_on_dropout_rng():
     assert int(first[:, 1].sum()) == 5
 
 
+@pytest.mark.parametrize("mode", ["coefficients", "block", "channel"])
+def test_mixed_xp_mask_keeps_whole_spectrum_task_and_masks_partial_rows(mode):
+    target = torch.ones(100, 9)
+    features = [
+        "G",
+        *[f"bp_{i}" for i in range(1, 5)],
+        *[f"rp_{i}" for i in range(1, 5)],
+    ]
+    generator = torch.Generator().manual_seed(17)
+    hidden, mask, finite = experiments.training_mask(
+        target,
+        list(range(1, 9)),
+        0.5,
+        0.2,
+        generator,
+        xp_mode=mode,
+        features=features,
+    )
+    count = mask[:, 1:].sum(1)
+    assert int((count == 8).sum()) == 25
+    assert int(((count > 0) & (count < 8)).sum()) == 50
+    assert int(count.sum()) == 400
+    assert torch.equal(hidden[mask], torch.full_like(hidden[mask], -9999))
+    assert finite.all()
+
+
+def test_noise_objective_handles_nan_targets_and_normalizes_microbatches():
+    prediction = torch.tensor([[1.0, 2.0, 3.0], [2.0, 4.0, 5.0]], requires_grad=True)
+    target = torch.tensor([[0.0, float("nan"), 1.0], [0.0, 0.0, 1.0]])
+    sigma = torch.tensor([[1.0, float("nan"), 0.0], [2.0, 1.0, 0.0]])
+    mask = torch.isfinite(target)
+    options = {"loss": "torchregress_noise", "variance_floor": 1.0}
+    whole = experiments.experiment_objective(
+        prediction, target, mask, [0, 1], options, mask.sum(), sigma=sigma
+    )
+    parts = sum(
+        experiments.experiment_objective(
+            prediction[i : i + 1],
+            target[i : i + 1],
+            mask[i : i + 1],
+            [0, 1],
+            options,
+            mask.sum(),
+            sigma=sigma[i : i + 1],
+        )
+        for i in range(2)
+    )
+    torch.testing.assert_close(whole, parts)
+    whole.backward()
+    assert torch.isfinite(prediction.grad).all()
+    assert prediction.grad[0, 1] == 0
+    assert float(prediction.grad[0, 0]) == pytest.approx(1 / 2 / 5)
+    assert float(prediction.grad[1, 0]) == pytest.approx(2 / 5 / 5)
+    assert float(prediction.grad[0, 2]) == pytest.approx(1 / 5)
+
+
+def test_spectral_projection_unscales_residual_and_never_uses_center():
+    residual = np.array([[1.0, -1.0]])
+    scale = np.array([2.0, 3.0])
+    basis = np.array([[1.0, 2.0, 0.0], [0.0, 1.0, 2.0]])
+    projected = experiments.project_spectral_residual(residual, scale, basis)
+    np.testing.assert_allclose(projected, [[2.0, 1.0, -6.0]])
+
+
+def test_reliability_weights_do_not_reward_noise_or_use_validation():
+    target = np.array([[-1.0, -2.0], [1.0, 2.0]])
+    sigma = np.array([[0.5, 4.0], [0.5, 4.0]])
+    weights = experiments.noise_reliability(target, sigma)
+    np.testing.assert_allclose(weights, [0.75, 0.05])
+
+
 def test_normal_resume_rejects_pilot_checkpoint(tmp_path):
     path = tmp_path / "pilot.pth"
     torch.save({"experiment_only": True}, path)
@@ -104,7 +177,10 @@ def test_flux_sigma_cannot_be_used_as_magnitude_sigma():
         experiments.validate_source(checkpoint, {"data": data}, source)
 
 
-def test_paired_experiment_smoke(tmp_path, monkeypatch):
+@pytest.mark.parametrize("xp_suite", [False, True])
+def test_paired_experiment_smoke(tmp_path, monkeypatch, xp_suite):
+    if xp_suite and importlib.util.find_spec("gaiaxpy") is None:
+        pytest.skip("The extended suite runs in experiments/xp/pixi.toml")
     torch.manual_seed(7)
     features = ["G", "bp_1", "bp_2", "rp_1", "PARALLAX", "RA"]
     errors = [None, "bpe_1", "bpe_2", "rpe_1", "e_parallax", None]
@@ -208,7 +284,14 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
             "--config",
             str(config_path),
             "--experiments",
-            str(SCRIPT.parents[1] / "configs/pretrain.experiments.yaml"),
+            str(
+                SCRIPT.parents[1]
+                / (
+                    "configs/pretrain.xp-reconstruction.yaml"
+                    if xp_suite
+                    else "configs/pretrain.experiments.yaml"
+                )
+            ),
             "--checkpoint",
             str(checkpoint_path),
             "--output",
@@ -225,6 +308,7 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
             "16",
             "--diagnostic-rows",
             "7",
+            *(["--xp-diagnostics"] if xp_suite else []),
         ],
     )
     experiments.main()
@@ -233,11 +317,11 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
     assert manifest["sample"]["train_rows"] == 64
     assert experiments.sha256(checkpoint_path) == parent_hash
     initial_maes = []
-    for arm in manifest["arms"]:
+    for arm in manifest["experiments"]:
         assert arm["status"] == "complete"
         metrics = [
             json.loads(line)
-            for line in (output / arm["arm_id"] / "metrics.jsonl")
+            for line in (output / arm["run_id"] / "metrics.jsonl")
             .read_text()
             .splitlines()
         ]
@@ -247,16 +331,19 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
         assert metrics[-1]["rows_seen_total"] == 32
         assert metrics[-1]["learning_rate"] == metrics[0]["learning_rate"]
         assert metrics[-1]["loader_mode"] == "experiment-prefix-cache"
+        assert metrics[-1]["all_columns_mae"] == metrics[-1]["common_scaled_mae"]
+        assert metrics[-1]["xp_only_mae"] is not None
+        assert set(metrics[-1]["per_column_mae"]) == set(recon)
         assert metrics[-1]["optimizer_batch_size"] == 16
         assert metrics[-1]["cache_bytes"] > 0
         assert "cgroup_memory_peak_bytes" in metrics[-1]
         initial_maes.append(metrics[0]["sampled_validation_mae"])
-        qa = json.loads((output / arm["arm_id"] / "residual_latest.json").read_text())
+        qa = json.loads((output / arm["run_id"] / "residual_latest.json").read_text())
         assert qa["validation_rows_total"] == 31
         assert qa["diagnostic_snapshot"]["rows"] == 7
         assert qa["diagnostic_snapshot"]["validation_rows"] == 31
         assert qa["regimes"]["common"]["overall"]["count"] > 7
-        with np.load(output / arm["arm_id"] / "residual_latest.npz") as snapshot:
+        with np.load(output / arm["run_id"] / "residual_latest.npz") as snapshot:
             assert snapshot["targets"].shape[0] == 7
             assert snapshot["validation_row_index"].tolist() == [
                 0,
@@ -267,17 +354,60 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch):
                 25,
                 30,
             ]
-        assert qa["uncertainty_units"] == "unverified"
+        assert qa["uncertainty_units"] == (
+            "verified only for named features" if xp_suite else "unverified"
+        )
         assert qa["latent"]["effective_rank"] > 0
         assert qa["latent"]["sample_rows"] == 7
         assert qa["snr_units"].startswith("unverified")
         assert "physical_bias" not in qa["regimes"]["common"]["features"][0]
         assert "physical_rmse" not in qa["regimes"]["common"]["features"][0]
-        assert (output / arm["arm_id"] / "residual_init.npz").exists()
+        assert (output / arm["run_id"] / "residual_init.npz").exists()
         assert qa["regimes"]["xp_on"]["blocks"]["xp"]["count"] == 0
         assert qa["regimes"]["xp_off"]["blocks"]["xp"]["count"] > 0
         assert (
             qa["regimes"]["common"]["features"][0]["uncertainty_normalized"]["count"]
             == 0
         )
+        if xp_suite:
+            assert qa["regimes"]["partial_coefficients"]["blocks"]["xp"]["count"] > 0
+            assert qa["regimes"]["xp_off"]["spectral"]["rows"] == 7
+            assert np.isfinite(
+                qa["regimes"]["xp_off"]["spectral"]["integrated_absolute_fraction_mean"]
+            )
+        verification = json.loads(
+            (output / arm["run_id"] / "checkpoint_verification.json").read_text()
+        )
+        assert verification["reload_predictions_equal"]
+        assert verification["parent_sha256"] == parent_hash
     assert max(initial_maes) - min(initial_maes) == 0
+
+
+def test_launch_record_has_separate_bounded_jobs_and_refuses_duplicate_record(tmp_path):
+    record = tmp_path / "jobs.json"
+    command = [
+        sys.executable,
+        str(SCRIPT.with_name("launch_xp_experiments.py")),
+        "--checkpoint",
+        "/arc/immutable.pth",
+        "--output-root",
+        "/arc/new-suite",
+        "--git-ref",
+        "codex/xp-tests",
+        "--git-sha",
+        "a" * 40,
+        "--record",
+        str(record),
+        "--dry-run",
+    ]
+    subprocess.run(command, cwd=SCRIPT.parents[1], check=True, capture_output=True)
+    saved = json.loads(record.read_text())
+    assert saved["train_stars"] == 10_000_000
+    assert saved["presentations"] == 20_000_000
+    assert len(saved["jobs"]) == 7
+    assert len({job["output"] for job in saved["jobs"]}) == 7
+    assert all(job["status"] == "dry_run" for job in saved["jobs"])
+    assert (
+        subprocess.run(command, cwd=SCRIPT.parents[1], capture_output=True).returncode
+        != 0
+    )

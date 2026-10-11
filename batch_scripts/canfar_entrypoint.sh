@@ -45,11 +45,22 @@ export MSA_FINETUNE_OUTPUT_DIR="${MSA_FINETUNE_OUTPUT_DIR:-$MSA_OUTPUT_ROOT/fine
 export MSA_FINETUNE_CHECKPOINT="${MSA_FINETUNE_CHECKPOINT:-$MSA_FINETUNE_OUTPUT_DIR/checkpoints/msa_finetune.pth}"
 export MSA_PRETRAIN_HDF5_OUT="${MSA_PRETRAIN_HDF5_OUT:-$MSA_PREPROCESS_DIR/pretrain_dataset_incomplete.h5}"
 export MSA_PREPROCESS_WORKERS="${MSA_PREPROCESS_WORKERS:-4}"
+if [[ "$stage" == pretrain-experiments ]]; then
+  experiment_output="${MSA_EXPERIMENT_OUTPUT:-$MSA_OUTPUT_ROOT/experiments-$(date -u +%Y%m%dT%H%M%SZ)}"
+  mkdir -p "$(dirname -- "$experiment_output")"
+  exec > >(tee "$experiment_output.session.log") 2>&1
+fi
 
 pixi_platform=linux-64-cuda
 case "$stage" in
   schema|source-index|fetch-dustmaps|preprocess|combine) pixi_platform=linux-64-cpu ;;
 esac
+pixi_manifest="$repo_dir/pyproject.toml"
+pixi_environment=gpu
+if [[ "$stage" == pretrain-experiments && "${MSA_XP_EXPERIMENTS:-0}" == 1 ]]; then
+  pixi_manifest="$repo_dir/experiments/xp/pixi.toml"
+  pixi_environment=default
+fi
 
 if ! command -v pixi >/dev/null 2>&1; then
   echo "Pixi is required in the CANFAR image but was not found on PATH." >&2
@@ -66,9 +77,9 @@ if [[ "$msa_source" != "$script_root" ]]; then
 fi
 cd "$repo_dir"
 
-pixi lock --check
-pixi install --frozen --environment gpu --platform "$pixi_platform"
-pixi_run=(pixi run --environment gpu --platform "$pixi_platform")
+pixi lock --manifest-path "$pixi_manifest" --check
+pixi install --manifest-path "$pixi_manifest" --frozen --environment "$pixi_environment" --platform "$pixi_platform"
+pixi_run=(pixi run --manifest-path "$pixi_manifest" --environment "$pixi_environment" --platform "$pixi_platform")
 
 case "$stage" in
   install)
@@ -108,8 +119,7 @@ case "$stage" in
     ;;
   pretrain-experiments)
     : "${MSA_PRETRAIN_RESUME:?Set MSA_PRETRAIN_RESUME to the immutable full checkpoint}"
-    "${pixi_run[@]}" check-canfar-gpu
-    experiment_output="${MSA_EXPERIMENT_OUTPUT:-$MSA_OUTPUT_ROOT/experiments-$(date -u +%Y%m%dT%H%M%SZ)}"
+    "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     experiment_args=(
       --experiments "${MSA_EXPERIMENTS_CONFIG:-configs/pretrain.experiments.yaml}"
       --checkpoint "$MSA_PRETRAIN_RESUME"
@@ -126,6 +136,13 @@ case "$stage" in
     if [[ -n "${MSA_EXPERIMENT_ARMS:-}" ]]; then
       read -r -a experiment_arms <<< "$MSA_EXPERIMENT_ARMS"
       experiment_args+=(--arms "${experiment_arms[@]}")
+    fi
+    if [[ -n "${MSA_EXPERIMENT_RUNS:-}" ]]; then
+      read -r -a experiment_runs <<< "$MSA_EXPERIMENT_RUNS"
+      experiment_args+=(--runs "${experiment_runs[@]}")
+    fi
+    if [[ "${MSA_XP_EXPERIMENTS:-0}" == 1 ]]; then
+      experiment_args+=(--xp-diagnostics)
     fi
     if [[ "${MSA_EXPERIMENT_INDEPENDENT_RNG:-0}" == 1 ]]; then
       experiment_args+=(--independent-rng)

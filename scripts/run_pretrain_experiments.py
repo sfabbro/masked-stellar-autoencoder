@@ -36,6 +36,15 @@ from masked_stellar_autoencoder.models.model import (
 from masked_stellar_autoencoder.training.config_paths import expand_config_paths
 from masked_stellar_autoencoder.training.hdf5_io import _clean_column
 from masked_stellar_autoencoder.training.pretrain_msa import _validate_error_columns
+from masked_stellar_autoencoder.training.xp_experiments import (
+    experiment_objective,
+    noise_reliability,
+    spectral_basis,
+    spectral_summary,
+)
+from masked_stellar_autoencoder.training.xp_experiments import (
+    project_spectral_residual as project_spectral_residual,
+)
 
 
 def write_json(path, value):
@@ -282,7 +291,7 @@ def summarize(residual, target, median, sigma=None):
     return result
 
 
-def fixed_masks(x, features, seed, xp_ratio, photo_ratio):
+def fixed_masks(x, features, seed, xp_ratio, photo_ratio, extended=False):
     rng = np.random.default_rng(seed)
     xp = [i for i, name in enumerate(features) if name.startswith(("bp_", "rp_"))]
     common = rng.random(x.shape) < photo_ratio
@@ -293,20 +302,83 @@ def fixed_masks(x, features, seed, xp_ratio, photo_ratio):
     xp_on[:, xp] = False
     xp_off = common.copy()
     xp_off[:, xp] = True
-    return {"common": common, "xp_on": xp_on, "xp_off": xp_off}
+    masks = {"common": common, "xp_on": xp_on, "xp_off": xp_off}
+    if extended:
+        for mode in ("coefficients", "block", "channel"):
+            generator = torch.Generator().manual_seed(seed)
+            masks[f"partial_{mode}"] = training_mask(
+                torch.from_numpy(np.asarray(x)),
+                xp,
+                1.0,
+                photo_ratio,
+                generator,
+                xp_mode=mode,
+                features=features,
+                whole_fraction=0,
+            )[1].numpy()
+    return masks
 
 
-def training_mask(target, xp_indices, xp_ratio, photo_ratio, generator):
-    """Mask RNG is independent of dropout so all paired arms share mask draws."""
+def training_mask(
+    target,
+    xp_indices,
+    xp_ratio,
+    photo_ratio,
+    generator,
+    *,
+    xp_mode="whole",
+    features=None,
+    whole_fraction=0.5,
+):
+    """Mask RNG is independent of dropout so all paired experiments share mask draws."""
     mask = (
         torch.rand(target.shape, device=target.device, generator=generator)
         < photo_ratio
     )
     mask[:, xp_indices] = False
-    rows = torch.randperm(len(target), device=target.device, generator=generator)[
-        : int(len(target) * xp_ratio)
-    ]
-    mask[rows[:, None], xp_indices] = True
+    permutation = torch.randperm(len(target), device=target.device, generator=generator)
+    rows = permutation[: int(len(target) * xp_ratio)]
+    if xp_mode == "whole":
+        mask[rows[:, None], xp_indices] = True
+    else:
+        n_whole = int(len(rows) * whole_fraction)
+        mask[rows[:n_whole, None], xp_indices] = True
+        count = max(1, len(xp_indices) // 2)
+        # Preserve the baseline's hidden-coefficient budget where enough rows exist.
+        n_partial = min(
+            len(target) - n_whole,
+            round((len(rows) - n_whole) * len(xp_indices) / count),
+        )
+        partial = permutation[n_whole : n_whole + n_partial]
+        if xp_mode == "coefficients":
+            scores = torch.rand(
+                (len(partial), len(xp_indices)),
+                device=target.device,
+                generator=generator,
+            )
+            selected = torch.topk(scores, count, dim=1).indices
+            columns = torch.as_tensor(xp_indices, device=target.device)[selected]
+            mask[partial[:, None], columns] = True
+        elif xp_mode == "block":
+            starts = torch.randint(
+                len(xp_indices) - count + 1,
+                (len(partial),),
+                device=target.device,
+                generator=generator,
+            )
+            columns = torch.as_tensor(xp_indices, device=target.device)[
+                starts[:, None] + torch.arange(count, device=target.device)
+            ]
+            mask[partial[:, None], columns] = True
+        elif xp_mode == "channel":
+            band = torch.randint(
+                2, (len(partial),), device=target.device, generator=generator
+            )
+            for value, prefix in enumerate(("bp_", "rp_")):
+                columns = [i for i in xp_indices if features[i].startswith(prefix)]
+                mask[partial[band == value, None], columns] = True
+        else:
+            raise ValueError(f"Unknown XP mask mode: {xp_mode}")
     finite = torch.isfinite(target)
     return target.masked_fill(mask | ~finite, -9999), mask, finite
 
@@ -324,6 +396,7 @@ def evaluate(
     rows_seen,
     verified_sigma=(),
     diagnostic_rows=100_000,
+    spectral_projection=None,
 ):
     model, device = wrapper.model, wrapper.device
     names = wrapper.recon_cols
@@ -515,6 +588,11 @@ def evaluate(
                             **summarize(
                                 residual[selected], target[selected], median[:width]
                             ),
+                            "xp_only": summarize(
+                                residual[selected][:, groups["xp"]],
+                                target[selected][:, groups["xp"]],
+                                median[groups["xp"]],
+                            ),
                         }
                     )
             if "PARALLAX" in wrapper.feature_cols:
@@ -549,6 +627,40 @@ def evaluate(
             }
             snapshots[f"{regime}_prediction"] = prediction[snapshot_indices]
             snapshots[f"{regime}_mask"] = mask[snapshot_indices, :width]
+            if spectral_projection is not None:
+                qa["regimes"][regime]["spectral"] = spectral_summary(
+                    target[snapshot_indices],
+                    prediction[snapshot_indices],
+                    mask[snapshot_indices, :width],
+                    scale[:width],
+                    center[:width],
+                    spectral_projection,
+                )
+            xp_columns = groups.get("xp", [])
+            xp_target = target[:, xp_columns] * scale[xp_columns] + center[xp_columns]
+            xp_sigma = sigma[:, xp_columns] * scale[xp_columns]
+            snr = np.divide(
+                abs(xp_target),
+                xp_sigma,
+                out=np.full_like(xp_target, np.nan),
+                where=np.isfinite(xp_sigma) & (xp_sigma > 0),
+            )
+            qa["regimes"][regime]["xp_coefficient_snr"] = [
+                {
+                    "lower": lower,
+                    "upper": upper,
+                    **summarize(
+                        np.where(
+                            (snr >= lower) & (snr < upper),
+                            residual[:, xp_columns],
+                            np.nan,
+                        ),
+                        target[:, xp_columns],
+                        median[xp_columns],
+                    ),
+                }
+                for lower, upper in ((0, 1), (1, 3), (3, 10), (10, 1e30))
+            ]
     _restore_rng_state(prior)
     write_json(output / "residual_latest.json", qa)
     temporary = output / "residual_latest.tmp.npz"
@@ -618,15 +730,19 @@ def build_wrapper(config, checkpoint, source, center, scale, arm, output):
     return wrapper, optimizer, scheduler
 
 
-def iter_batches(cache, batch_size, rng):
+def iter_batches(cache, batch_size, rng, sigma=None):
     # ponytail: shuffle 65K-row blocks and rows within each; use a reservoir for wider mixing.
     blocks = list(range(0, len(cache), 65536))
     rng.shuffle(blocks)
     for start in blocks:
-        block = np.array(cache[start : start + 65536])
-        rng.shuffle(block)
-        for offset in range(0, len(block), batch_size):
-            yield block[offset : offset + batch_size]
+        indices = np.arange(start, min(start + 65536, len(cache)))
+        rng.shuffle(indices)
+        for offset in range(0, len(indices), batch_size):
+            selected = indices[offset : offset + batch_size]
+            if sigma is None:
+                yield np.array(cache[selected])
+            else:
+                yield np.array(cache[selected]), np.array(sigma[selected])
 
 
 def run_arm(
@@ -643,8 +759,10 @@ def run_arm(
     arm,
     args,
     manifest,
+    train_sigma=None,
+    spectral_projection=None,
 ):
-    arm_id = arm["arm_id"]
+    arm_id = arm["run_id"]
     output = args.output / arm_id
     output.mkdir()
     wrapper, optimizer, scheduler = build_wrapper(
@@ -677,6 +795,26 @@ def run_arm(
         for i, name in enumerate(wrapper.feature_cols)
         if name.startswith(("bp_", "rp_"))
     ]
+    reliability = None
+    if arm.get("loss") == "signal_weighted_mae":
+        indices = np.linspace(
+            0, len(cache) - 1, min(100_000, len(cache)), dtype=np.int64
+        )
+        reliability = torch.as_tensor(
+            noise_reliability(
+                np.asarray(cache[indices]), np.asarray(train_sigma[indices])
+            ),
+            device=device,
+        )
+        write_json(
+            output / "training_reliability.json",
+            {
+                "feature_names": wrapper.feature_cols,
+                "weights": reliability.cpu().tolist(),
+                "rows": len(indices),
+                "selection": "training-only evenly spaced prefix rows",
+            },
+        )
     parent_rows = int(checkpoint.get("rows_seen_total", 0))
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
@@ -703,13 +841,12 @@ def run_arm(
             rows,
             config["data"].get("uncertainty_units_verified", []),
             args.diagnostic_rows,
+            spectral_projection,
         )
         common = qa["regimes"]["common"]["overall"]
         entry = {
             "suite_id": manifest["suite_id"],
             "run_id": arm_id,
-            "arm_id": arm_id,
-            "arm": arm_id,
             "validation_id": manifest["validation_id"],
             "phase": phase,
             "event": phase,
@@ -720,6 +857,16 @@ def run_arm(
             "train_loss": statistics[0] / interval_rows if interval_rows else None,
             "sampled_validation_mae": mae,
             "common_scaled_mae": mae,
+            "all_columns_mae": mae,
+            "xp_only_mae": qa["regimes"]["common"]["blocks"]["xp"]["mae"],
+            "per_column_mae": {
+                value["name"]: value["mae"]
+                for value in qa["regimes"]["common"]["features"]
+            },
+            "per_column_count": {
+                value["name"]: value["count"]
+                for value in qa["regimes"]["common"]["features"]
+            },
             "median_mae": common["median_mae"],
             "zero_mae": common["zero_mae"],
             "group_mae": common["group_mae"],
@@ -737,7 +884,8 @@ def run_arm(
             "train_seconds": train_seconds,
             "validation_seconds": time.perf_counter() - interval_start - elapsed,
             "regimes": {
-                name: value["overall"] for name, value in qa["regimes"].items()
+                name: {**value["overall"], "xp_only_mae": value["blocks"]["xp"]["mae"]}
+                for name, value in qa["regimes"].items()
             },
             **wrapper._resource_metrics(),
             "loader_mode": "experiment-prefix-cache",
@@ -763,7 +911,10 @@ def run_arm(
     model.train()
     balanced = arm.get("loss", "mae") == "group_mae"
     while rows < args.presentations:
-        for raw in iter_batches(cache, config["training"]["mini_batch_size"], rng):
+        for values in iter_batches(
+            cache, config["training"]["mini_batch_size"], rng, train_sigma
+        ):
+            raw, uncertainty = values if train_sigma is not None else (values, None)
             raw = raw[: args.presentations - rows]
             if not len(raw):
                 break
@@ -774,6 +925,13 @@ def run_arm(
                 wrapper.xp_masking_ratio,
                 wrapper.m_masking_ratio,
                 mask_generator,
+                xp_mode=arm.get("xp_mask_mode", "whole"),
+                features=wrapper.feature_cols,
+            )
+            uncertainty = (
+                torch.as_tensor(uncertainty[: len(raw)], device=device)
+                if uncertainty is not None
+                else None
             )
             score = mask[:, :width] & finite[:, :width]
             counts = [score[:, indices].sum() for indices in groups.values()]
@@ -792,9 +950,18 @@ def run_arm(
                         counts,
                     )
                 else:
-                    loss = (prediction - target[start:stop, :width]).masked_fill(
-                        ~score[start:stop], 0
-                    ).abs().sum() / global_count
+                    loss = experiment_objective(
+                        prediction,
+                        target[start:stop, :width],
+                        score[start:stop],
+                        [i for i in xp_indices if i < width],
+                        arm,
+                        global_count,
+                        sigma=uncertainty[start:stop, :width]
+                        if uncertainty is not None
+                        else None,
+                        reliability=reliability,
+                    )
                 loss.backward()
                 batch_loss.add_(loss.detach())
             frequency_squared = sum(
@@ -838,13 +1005,33 @@ def run_arm(
             "run_signature": signature,
             "experiment": {
                 "suite_id": manifest["suite_id"],
-                "arm": arm,
+                "settings": arm,
                 "pilot_presentations": rows,
                 "parent_checkpoint_sha256": manifest["checkpoint_sha256"],
                 "source_run_signature": checkpoint["run_signature"],
             },
         },
         output / "checkpoint.pth",
+    )
+    saved = torch_load_trusted(
+        output / "checkpoint.pth", map_location=device, weights_only=False
+    )
+    reloaded = copy.deepcopy(model)
+    reloaded.load_state_dict(saved["model_state_dict"], strict=True)
+    model.eval()
+    reloaded.eval()
+    with torch.no_grad():
+        probe = torch.as_tensor(np.array(validation[:16]), device=device)
+        probe = probe.masked_fill(~torch.isfinite(probe), -9999)
+        torch.testing.assert_close(model(probe)[0], reloaded(probe)[0], rtol=0, atol=0)
+    write_json(
+        output / "checkpoint_verification.json",
+        {
+            "reload_predictions_equal": True,
+            "sha256": sha256(output / "checkpoint.pth"),
+            "parent_sha256": manifest["checkpoint_sha256"],
+            "probe_rows": len(probe),
+        },
     )
 
 
@@ -863,7 +1050,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--validation-seed", type=int, default=42)
     parser.add_argument("--independent-rng", action="store_true")
-    parser.add_argument("--arms", nargs="+")
+    parser.add_argument("--runs", "--arms", dest="runs", nargs="+")
+    parser.add_argument("--xp-diagnostics", action="store_true")
     args = parser.parse_args()
     if (
         min(
@@ -881,21 +1069,56 @@ def main():
     with open(args.config) as stream:
         config = yaml.safe_load(stream)
     expand_config_paths(config)
+    if args.xp_diagnostics:
+        config["data"]["uncertainty_units_verified"] = [
+            name
+            for name in config["data"]["feature_cols"]
+            if name.startswith(("bp_", "rp_"))
+        ]
+        config["data"]["xp_uncertainty_policy"] = (
+            "coefficient errors share the builder's G=8.5 normalization; diagonal only; shared G error and correlations unavailable"
+        )
     with open(args.experiments) as stream:
-        arms = yaml.safe_load(stream)["arms"]
-    if args.arms:
-        arms = [arm for arm in arms if arm["arm_id"] in args.arms]
-        if {arm["arm_id"] for arm in arms} != set(args.arms):
-            parser.error("Unknown arm requested")
-    if not arms or len({arm["arm_id"] for arm in arms}) != len(arms):
-        parser.error("Arm IDs must be unique and nonempty")
+        specification = yaml.safe_load(stream)
+        arms = specification.get("experiments", specification.get("arms"))
+        arms = [
+            {
+                **{key: value for key, value in arm.items() if key != "arm_id"},
+                "run_id": arm.get("run_id", arm.get("arm_id")),
+            }
+            for arm in arms
+        ]
+    if args.runs:
+        arms = [arm for arm in arms if arm["run_id"] in args.runs]
+        if {arm["run_id"] for arm in arms} != set(args.runs):
+            parser.error("Unknown experiment requested")
+    if not arms or len({arm["run_id"] for arm in arms}) != len(arms):
+        parser.error("Experiment IDs must be unique and nonempty")
     for arm in arms:
-        if Path(arm["arm_id"]).name != arm["arm_id"] or arm["arm_id"] in {".", ".."}:
-            parser.error("Arm IDs must be single safe path components")
+        if Path(arm["run_id"]).name != arm["run_id"] or arm["run_id"] in {".", ".."}:
+            parser.error("Experiment IDs must be single safe path components")
         if arm.get("embedding", "stable") not in {"legacy", "stable"} or arm.get(
             "loss", "mae"
-        ) not in {"mae", "group_mae"}:
-            parser.error("Unknown embedding/loss arm")
+        ) not in {
+            "mae",
+            "group_mae",
+            "xp_mse",
+            "torchregress_noise",
+            "signal_weighted_mae",
+        }:
+            parser.error("Unknown embedding/loss experiment")
+        if arm.get("xp_mask_mode", "whole") not in {
+            "whole",
+            "coefficients",
+            "block",
+            "channel",
+        }:
+            parser.error("Unknown XP mask mode")
+        if (
+            not math.isfinite(arm.get("variance_floor", 0.1))
+            or arm.get("variance_floor", 0.1) <= 0
+        ):
+            parser.error("Variance floor must be finite and positive")
         for field in ("dropout", "xp_masking_ratio", "m_masking_ratio"):
             if field in arm and not 0 <= arm[field] <= 1:
                 parser.error(f"{field} must be between zero and one")
@@ -940,7 +1163,7 @@ def main():
         "checkpoint": str(args.checkpoint),
         "checkpoint_sha256": sha256(args.checkpoint),
         "checkpoint_epoch": checkpoint["epoch"],
-        "optimizer_policy": "full inherited AdamW moments retained per arm; frequency moments may remain dominated by prior sentinel gradients, so short-pilot adaptation is limited",
+        "optimizer_policy": "full inherited AdamW moments retained per experiment; frequency moments may remain dominated by prior sentinel gradients, so short-pilot adaptation is limited",
         "source_code_sha256": {
             name: sha256(Path(name))
             for name in (
@@ -949,6 +1172,12 @@ def main():
             )
         },
         "runner_sha256": sha256(Path(__file__)),
+        "xp_helpers_sha256": sha256(
+            Path("src/masked_stellar_autoencoder/training/xp_experiments.py")
+        ),
+        "experiment_environment_lock_sha256": sha256(Path("experiments/xp/pixi.lock"))
+        if args.xp_diagnostics
+        else None,
         "config_sha256": sha256(Path(args.config)),
         "experiments_sha256": sha256(Path(args.experiments)),
         "git_diff_sha256": hashlib.sha256(
@@ -964,10 +1193,10 @@ def main():
         "seed": args.seed,
         "validation_seed": args.validation_seed,
         "independent_rng": args.independent_rng,
-        "mask_policy": "separate device generator seeded once per arm; independent of dropout RNG",
+        "mask_policy": "separate device generator seeded once per experiment; independent of dropout RNG",
         "scheduler_policy": "checkpoint LR held fixed for paired bounded presentations; saved scheduler state unchanged",
-        "selection_metric": "group_skill_median",
-        "selection_policy": "higher mean of XP/photo/astro skill against training medians, completed arms only, identical presentations and optimizer steps",
+        "selection_metric": "xp_only_mae",
+        "selection_policy": "compare ordinary all-column and XP-only held-out MAE; completed experiments only, identical checkpoint, masks, presentations and optimizer steps",
         "runtime": {
             "torch": torch.__version__,
             "python": platform.python_version(),
@@ -975,19 +1204,25 @@ def main():
             if torch.cuda.is_available()
             else "cpu",
         },
-        "presentations_per_arm": args.presentations,
+        "presentations_per_experiment": args.presentations,
         "diagnostic_validation_rows": min(args.validation_rows, args.diagnostic_rows),
         "diagnostic_snapshot_policy": "evenly spaced deterministic validation rows; diagnostics only; JSON evaluation uses every validation row",
-        "arms": [
-            {**arm, "status": "pending", "output_root": arm["arm_id"]} for arm in arms
+        "experiments": [
+            {**arm, "status": "pending", "output_root": arm["run_id"]} for arm in arms
         ],
     }
     write_json(args.output / "manifest.json", manifest)
     try:
         with h5py.File(config["data"]["datafile"], "r") as source:
             keys, holdout, center, scale = validate_source(checkpoint, config, source)
+            needs_sigma = any(
+                arm.get("loss") in {"torchregress_noise", "signal_weighted_mae"}
+                for arm in arms
+            )
             expected_cache_bytes = (
-                (args.train_rows + 2 * args.validation_rows) * len(center) * 4
+                ((2 if needs_sigma else 1) * args.train_rows + 2 * args.validation_rows)
+                * len(center)
+                * 4
             )
             cache_limit = min(
                 150_000_000_000, int(shutil.disk_usage(args.cache_dir).free * 0.8)
@@ -999,11 +1234,11 @@ def main():
                 raise ValueError(
                     f"Projected pilot cache {expected_cache_bytes} exceeds scratch budget {cache_limit}"
                 )
-            cache, _, train_counts = read_prefixes(
+            cache, train_sigma, train_counts = read_prefixes(
                 source,
                 keys,
                 config["data"]["feature_cols"],
-                None,
+                config["data"]["error_cols"] if needs_sigma else None,
                 args.train_rows,
                 center,
                 scale,
@@ -1030,7 +1265,10 @@ def main():
                 "source_rows_by_key": {key: len(source[key]) for key in source},
                 "source_path": str(config["data"]["datafile"]),
                 "source_size_bytes": Path(source.filename).stat().st_size,
-                "cache_bytes": cache.nbytes + validation.nbytes + sigma.nbytes,
+                "cache_bytes": cache.nbytes
+                + validation.nbytes
+                + sigma.nbytes
+                + (train_sigma.nbytes if train_sigma is not None else 0),
                 "median_baseline_rows": min(100_000, len(cache)),
                 "median_baseline_policy": "evenly spaced deterministic rows across the bounded pilot cache",
                 "sigma_policy": "only named finite positive source errors; missing/invalid is NaN",
@@ -1050,7 +1288,27 @@ def main():
                 args.validation_seed,
                 config["training"]["xp_masking_ratio"],
                 config["training"]["m_masking_ratio"],
+                extended=args.xp_diagnostics,
             )
+            spectral_projection = (
+                spectral_basis(config["data"]["recon_cols"])
+                if args.xp_diagnostics
+                else None
+            )
+            if spectral_projection is not None:
+                np.savez_compressed(
+                    args.output / "spectral_projection.npz",
+                    wavelength_nm=spectral_projection["wavelength_nm"],
+                    basis=spectral_projection["basis"],
+                )
+                manifest["spectral_projection"] = {
+                    key: value
+                    for key, value in spectral_projection.items()
+                    if key not in {"basis", "wavelength_nm"}
+                }
+                manifest["spectral_projection"]["sha256"] = sha256(
+                    args.output / "spectral_projection.npz"
+                )
             for name, mask in masks.items():
                 validation_hash.update(name.encode())
                 validation_hash.update(mask.tobytes())
@@ -1077,7 +1335,7 @@ def main():
             )
             manifest["status"] = "running"
             write_json(args.output / "manifest.json", manifest)
-            for arm in manifest["arms"]:
+            for arm in manifest["experiments"]:
                 arm["status"] = "running"
                 write_json(args.output / "manifest.json", manifest)
                 run_arm(
@@ -1094,6 +1352,8 @@ def main():
                     arm,
                     args,
                     manifest,
+                    train_sigma,
+                    spectral_projection,
                 )
                 arm["status"] = "complete"
                 write_json(args.output / "manifest.json", manifest)
@@ -1101,7 +1361,7 @@ def main():
     except Exception as exc:
         manifest["status"] = "failed"
         manifest["error"] = f"{type(exc).__name__}: {exc}"
-        for arm in manifest["arms"]:
+        for arm in manifest["experiments"]:
             if arm["status"] == "running":
                 arm["status"] = "failed"
         raise
