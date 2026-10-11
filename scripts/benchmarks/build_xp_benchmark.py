@@ -131,6 +131,25 @@ def main():
         if any(source[k].dtype != dtype for k in keys):
             raise ValueError("Mixed record schemas")
         out.attrs["parent_checkpoint"] = args.parent_checkpoint
+        if args.parent_checkpoint:
+            import torch
+
+            checkpoint = torch.load(
+                args.parent_checkpoint, map_location="cpu", weights_only=False
+            )
+            signature = checkpoint["run_signature"]
+            scaler = out.create_group("reference_scaler")
+            scaler.create_dataset("center", data=signature["scaler_center"])
+            scaler.create_dataset("scale", data=signature["scaler_scale"])
+            scaler.attrs["feature_cols"] = json.dumps(signature["feature_cols"])
+            scaler.attrs["recon_cols"] = json.dumps(signature["recon_cols"])
+            scaler.attrs["checkpoint_epoch"] = checkpoint["epoch"]
+            digest = hashlib.sha256()
+            with open(args.parent_checkpoint, "rb") as stream:
+                for block in iter(lambda: stream.read(8 * 1024 * 1024), b""):
+                    digest.update(block)
+            scaler.attrs["checkpoint_sha256"] = digest.hexdigest()
+            del checkpoint
         out.attrs["schema_version"] = 1
         out.attrs["record_policy"] = (
             "All original HDF5 fields preserved, without refitting or applying a scaler."
