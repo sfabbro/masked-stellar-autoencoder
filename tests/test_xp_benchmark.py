@@ -63,6 +63,8 @@ def test_split_preserving_covariance_roundtrip(tmp_path, monkeypatch):
             "1",
             "--workers",
             "1",
+            "--scratch-dir",
+            str(tmp_path / "scratch"),
         ],
     )
     builder.main()

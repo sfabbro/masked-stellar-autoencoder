@@ -11,3 +11,5 @@ The grouped layout requires a reader selecting `train/records` or `validation/re
 Expected correlation storage is about 104 GB, plus records and metadata. Runtime depends on scanning/decompressing the entire raw CSV collection, not merely parsing the selected 10M stars. The one-CSV timing is therefore not an end-to-end production estimate. Outputs belong on ARC; no full scratch copy is required.
 
 Behavioral verification: `pixi run pytest tests/test_xp_benchmark.py -q`.
+
+Random correlation writes use uncompressed contiguous HDF5 staging under `--scratch-dir` on `/scratch`. This needs roughly 140 GB of local disk, but does not require that much RAM: the kernel page cache is bounded by the session memory limit. Once staging passes coverage checks, publication reads sequential blocks and writes a compressed `.copying` file on ARC. Schema and beginning/middle/end values are compared before atomic rename to the final file. Scratch staging is removed only after successful publication.

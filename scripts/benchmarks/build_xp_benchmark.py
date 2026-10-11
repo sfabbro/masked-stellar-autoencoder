@@ -86,6 +86,59 @@ def read_correlations(path, sorted_ids):
     )
 
 
+def publish_hdf5(staged, output):
+    """Sequentially compress a closed scratch file into an atomic ARC artifact."""
+    copying = Path(str(output) + ".copying")
+    if output.exists() or copying.exists():
+        raise FileExistsError(output)
+    with h5py.File(staged, "r") as source, h5py.File(copying, "x") as destination:
+        for key, value in source.attrs.items():
+            destination.attrs[key] = value
+
+        def copy_group(src, dst):
+            for key, value in src.attrs.items():
+                dst.attrs[key] = value
+            for name, obj in src.items():
+                if isinstance(obj, h5py.Group):
+                    copy_group(obj, dst.create_group(name))
+                    continue
+                if obj.ndim == 0:
+                    target = dst.create_dataset(name, data=obj[()])
+                else:
+                    block = min(
+                        128 if name == "xp_correlations" else 2048, obj.shape[0]
+                    )
+                    target = dst.create_dataset(
+                        name,
+                        obj.shape,
+                        dtype=obj.dtype,
+                        chunks=(block, *obj.shape[1:]),
+                        compression="gzip",
+                        compression_opts=1,
+                        shuffle=True,
+                    )
+                    for start in range(0, obj.shape[0], block):
+                        values = obj[start : start + block]
+                        if name == "xp_correlations" and not np.isfinite(values).all():
+                            raise ValueError("Incomplete correlation staging file")
+                        target[start : start + block] = values
+                for key, value in obj.attrs.items():
+                    target.attrs[key] = value
+
+        copy_group(source, destination)
+        destination.flush()
+    with h5py.File(staged, "r") as source, h5py.File(copying, "r") as destination:
+        for split in ("train", "validation"):
+            for name in source[split]:
+                a, b = source[split][name], destination[split][name]
+                if a.shape != b.shape or a.dtype != b.dtype:
+                    raise ValueError("Published schema mismatch")
+                for begin in (0, max(0, len(a) // 2 - 2), max(0, len(a) - 4)):
+                    if a[begin : begin + 4].tobytes() != b[begin : begin + 4].tobytes():
+                        raise ValueError("Published round-trip mismatch")
+    os.replace(copying, output)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True)
@@ -97,15 +150,19 @@ def main():
     parser.add_argument("--parent-checkpoint", default="")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--scratch-dir", type=Path)
     args = parser.parse_args()
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(str(output) + ".building")
+    staging_root = args.scratch_dir or output.parent
+    staging_root.mkdir(parents=True, exist_ok=True)
+    temporary = staging_root / (output.name + ".building")
     if output.exists() or temporary.exists():
         raise FileExistsError(output)
     started = time.perf_counter()
     rng = np.random.default_rng(args.seed)
     manifest = vars(args).copy()
+    manifest["scratch_dir"] = str(args.scratch_dir) if args.scratch_dir else None
     manifest.update(
         status="building",
         script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -221,10 +278,8 @@ def main():
                 "xp_correlations",
                 (total, 2, 1485),
                 dtype="f4",
-                chunks=(min(128, total), 1, 1485),
-                compression="gzip",
-                compression_opts=1,
-                shuffle=True,
+                # Random writes must not repeatedly recompress 128-star chunks.
+                # Contiguous staging uses the scratch disk/page cache; publish sequentially.
                 fillvalue=np.nan,
             )
             corr.attrs["band_order"] = "BP,RP"
@@ -331,8 +386,10 @@ def main():
                 raise ValueError("Invalid covariance probe")
         out.attrs["provenance"] = json.dumps(manifest)
         out.flush()
-    os.replace(temporary, output)
+    report(stage="publishing", staging_bytes=temporary.stat().st_size)
+    publish_hdf5(temporary, output)
     report(status="complete", stage="verified", output_bytes=output.stat().st_size)
+    temporary.unlink()
 
 
 if __name__ == "__main__":
