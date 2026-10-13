@@ -6,6 +6,43 @@ import numpy as np
 import torch
 
 
+def configure_optimizer(optimizer, experiment):
+    """Change only the requested optimizer state and inherited learning rate."""
+    factor = float(experiment.get("lr_factor", 1))
+    if not math.isfinite(factor) or factor <= 0:
+        raise ValueError("Learning-rate factor must be finite and positive")
+    source_rates = [group["lr"] for group in optimizer.param_groups]
+    if experiment.get("reset_optimizer", False):
+        optimizer.state.clear()
+    for group, rate in zip(optimizer.param_groups, source_rates, strict=True):
+        group["lr"] = rate * factor
+    return {
+        "reset_moments": bool(experiment.get("reset_optimizer", False)),
+        "source_learning_rates": source_rates,
+        "learning_rates": [g["lr"] for g in optimizer.param_groups],
+        "schedule": "held fixed during bounded continuation",
+    }
+
+
+def spectral_relative_error(
+    prediction, target, mask, xp, scale, center, basis, wavelength
+):
+    """Per-star integrated spectral error from hidden coefficients only."""
+    valid = torch.isfinite(target[:, xp]).all(1) & mask[:, xp].any(1)
+    safe_target = target[:, xp].masked_fill(~valid[:, None], 0)
+    residual = (prediction[:, xp] - safe_target).masked_fill(
+        ~mask[:, xp] | ~valid[:, None], 0
+    )
+    flux = (safe_target * scale[xp] + center[xp]) @ basis[xp]
+    residual_flux = (residual * scale[xp]) @ basis[xp]
+    reference = torch.trapezoid(flux.abs(), wavelength, dim=1)
+    valid &= torch.isfinite(reference) & (reference > 0)
+    fraction = torch.trapezoid(
+        residual_flux.abs(), wavelength, dim=1
+    ) / reference.clamp_min(1e-12)
+    return fraction.masked_fill(~valid, 0), mask[:, xp].sum(1).masked_fill(~valid, 0)
+
+
 def noise_reliability(target, sigma):
     """Training-only signal-variance fraction; missing errors keep unit weight."""
     variance = np.nanvar(target, axis=0)
@@ -30,8 +67,10 @@ def experiment_objective(
     sigma=None,
     reliability=None,
     correlations=None,
+    spectral=None,
 ):
     """Global optimizer-batch denominator keeps microbatch gradients equivalent."""
+    original_target = target
     target = target.masked_fill(~mask, 0)
     safe_prediction = prediction.masked_fill(~mask, 0)
     errors = (safe_prediction - target).abs()
@@ -119,6 +158,17 @@ def experiment_objective(
             raise ValueError("Reliability weights must be derived from training rows")
         errors = errors.clone()
         errors[:, xp] *= reliability[xp]
+    elif objective == "spectral_mae":
+        if spectral is None:
+            raise ValueError("Spectral objective requires calibrated projection")
+        fraction, counts = spectral_relative_error(
+            prediction, original_target, mask, xp, **spectral
+        )
+        coefficient_loss = errors.masked_fill(~mask, 0).sum()
+        return (
+            coefficient_loss
+            + experiment.get("spectral_weight", 0.1) * (fraction * counts).sum()
+        ) / global_count.clamp_min(1)
     elif objective != "mae":
         raise ValueError(f"Unknown experiment objective: {objective}")
     return errors.masked_fill(~mask, 0).sum() / global_count.clamp_min(1)

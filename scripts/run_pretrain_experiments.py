@@ -37,6 +37,7 @@ from masked_stellar_autoencoder.training.config_paths import expand_config_paths
 from masked_stellar_autoencoder.training.hdf5_io import _clean_column
 from masked_stellar_autoencoder.training.pretrain_msa import _validate_error_columns
 from masked_stellar_autoencoder.training.xp_experiments import (
+    configure_optimizer,
     experiment_objective,
     noise_reliability,
     spectral_basis,
@@ -755,6 +756,7 @@ def build_wrapper(config, checkpoint, source, center, scale, arm, output):
     # Adam state tensors must be copied: load_state_dict can alias the source.
     optimizer.load_state_dict(copy.deepcopy(checkpoint["optimizer_state_dict"]))
     scheduler.load_state_dict(copy.deepcopy(checkpoint["scheduler_state_dict"]))
+    write_json(output / "optimizer_policy.json", configure_optimizer(optimizer, arm))
     _restore_rng_state(checkpoint["rng_state"])
     return wrapper, optimizer, scheduler
 
@@ -832,6 +834,22 @@ def run_arm(
         if name.startswith(("bp_", "rp_"))
     ]
     reliability = None
+    spectral_loss = None
+    if arm.get("loss") == "spectral_mae":
+        if spectral_projection is None:
+            raise ValueError("Spectral loss requires --xp-diagnostics")
+        spectral_loss = {
+            "scale": torch.as_tensor(scale[:width], dtype=torch.float32, device=device),
+            "center": torch.as_tensor(
+                center[:width], dtype=torch.float32, device=device
+            ),
+            "basis": torch.as_tensor(
+                spectral_projection["basis"], dtype=torch.float32, device=device
+            ),
+            "wavelength": torch.as_tensor(
+                spectral_projection["wavelength_nm"], dtype=torch.float32, device=device
+            ),
+        }
     if arm.get("loss") == "signal_weighted_mae":
         indices = np.linspace(
             0, len(cache) - 1, min(100_000, len(cache)), dtype=np.int64
@@ -1004,6 +1022,7 @@ def run_arm(
                         sigma=uncertainty[start:stop, :width]
                         if uncertainty is not None
                         else None,
+                        spectral=spectral_loss,
                         reliability=reliability,
                         correlations=torch.as_tensor(packed[start:stop], device=device)
                         if packed is not None
@@ -1161,6 +1180,7 @@ def main():
             "torchregress_noise",
             "signal_weighted_mae",
             "torchregress_covariance",
+            "spectral_mae",
         }:
             parser.error("Unknown embedding/loss experiment")
         if arm.get("xp_mask_mode", "whole") not in {
@@ -1178,6 +1198,13 @@ def main():
         for field in ("dropout", "xp_masking_ratio", "m_masking_ratio"):
             if field in arm and not 0 <= arm[field] <= 1:
                 parser.error(f"{field} must be between zero and one")
+        if not math.isfinite(arm.get("lr_factor", 1)) or arm.get("lr_factor", 1) <= 0:
+            parser.error("Learning-rate factor must be finite and positive")
+        if (
+            not math.isfinite(arm.get("spectral_weight", 0.1))
+            or arm.get("spectral_weight", 0.1) < 0
+        ):
+            parser.error("Spectral weight must be finite and nonnegative")
     if (
         config["model"]["norm"] != "layer"
         or config["training"].get("pert_features")
@@ -1219,7 +1246,7 @@ def main():
         "checkpoint": str(args.checkpoint),
         "checkpoint_sha256": sha256(args.checkpoint),
         "checkpoint_epoch": checkpoint["epoch"],
-        "optimizer_policy": "full inherited AdamW moments retained per experiment; frequency moments may remain dominated by prior sentinel gradients, so short-pilot adaptation is limited",
+        "optimizer_policy": "inherit checkpoint AdamW groups; optional per-experiment moment reset and LR factor recorded in optimizer_policy.json",
         "source_code_sha256": {
             name: sha256(Path(name))
             for name in (
@@ -1250,7 +1277,7 @@ def main():
         "validation_seed": args.validation_seed,
         "independent_rng": args.independent_rng,
         "mask_policy": "separate device generator seeded once per experiment; independent of dropout RNG",
-        "scheduler_policy": "checkpoint LR held fixed for paired bounded presentations; saved scheduler state unchanged",
+        "scheduler_policy": "inherited LR times per-experiment lr_factor held fixed during bounded presentations; saved scheduler state unchanged",
         "selection_metric": "xp_only_mae",
         "selection_policy": "compare ordinary all-column and XP-only held-out MAE; completed experiments only, identical checkpoint, masks, presentations and optimizer steps",
         "runtime": {
