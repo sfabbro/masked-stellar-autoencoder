@@ -37,9 +37,10 @@ def spectral_relative_error(
     residual_flux = (residual * scale[xp]) @ basis[xp]
     reference = torch.trapezoid(flux.abs(), wavelength, dim=1)
     valid &= torch.isfinite(reference) & (reference > 0)
-    fraction = torch.trapezoid(
-        residual_flux.abs(), wavelength, dim=1
-    ) / reference.clamp_min(1e-12)
+    # Physical fluxes are tiny: an absolute epsilon would change the
+    # relative objective with the flux unit. Exclude invalid references.
+    safe_reference = torch.where(valid, reference, torch.ones_like(reference))
+    fraction = torch.trapezoid(residual_flux.abs(), wavelength, dim=1) / safe_reference
     return fraction.masked_fill(~valid, 0), mask[:, xp].sum(1).masked_fill(~valid, 0)
 
 

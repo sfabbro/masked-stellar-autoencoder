@@ -43,6 +43,11 @@ def test_spectral_loss_matches_independent_projection_and_masks_visible_errors()
     )
     np.testing.assert_allclose(fraction.detach().numpy(), [expected, 0.0], rtol=1e-6)
     assert count.tolist() == [1, 0]
+    tiny_fraction, tiny_count = spectral_relative_error(
+        prediction, target, mask, [1, 2], scale, center, basis * 1e-16, wavelength
+    )
+    torch.testing.assert_close(fraction, tiny_fraction)
+    torch.testing.assert_close(count, tiny_count)
     options = {"loss": "spectral_mae", "spectral_weight": 0.1}
     spectral = dict(scale=scale, center=center, basis=basis, wavelength=wavelength)
     full = experiment_objective(
