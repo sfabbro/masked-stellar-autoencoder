@@ -1,0 +1,13 @@
+# Same parent checkpoint, benchmark stars, masks, optimizer state and presentations.
+experiments:
+  - run_id: unchanged_control
+    embedding: stable
+    loss: mae
+  - run_id: corrected_diagonal_xp
+    embedding: stable
+    loss: torchregress_noise
+    variance_floor: 0.1
+  - run_id: full_covariance_xp
+    embedding: stable
+    loss: torchregress_covariance
+    variance_floor: 0.1

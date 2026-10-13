@@ -147,6 +147,12 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_INDEPENDENT_RNG:-0}" == 1 ]]; then
       experiment_args+=(--independent-rng)
     fi
+    if [[ -n "${MSA_EXPERIMENT_BENCHMARK:-}" ]]; then
+      experiment_args+=(--benchmark "$MSA_EXPERIMENT_BENCHMARK")
+    fi
+    if [[ -n "${MSA_EXPERIMENT_MICRO_BATCH:-}" ]]; then
+      experiment_args+=(--micro-batch-size "$MSA_EXPERIMENT_MICRO_BATCH")
+    fi
     "${pixi_run[@]}" python -u scripts/run_pretrain_experiments.py "${experiment_args[@]}"
     ;;
   finetune-pilot)

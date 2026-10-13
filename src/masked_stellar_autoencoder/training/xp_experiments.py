@@ -29,12 +29,67 @@ def experiment_objective(
     *,
     sigma=None,
     reliability=None,
+    correlations=None,
 ):
     """Global optimizer-batch denominator keeps microbatch gradients equivalent."""
     target = target.masked_fill(~mask, 0)
     safe_prediction = prediction.masked_fill(~mask, 0)
     errors = (safe_prediction - target).abs()
     objective = experiment.get("loss", "mae")
+    if objective == "torchregress_covariance":
+        from torchregress.losses.gaussian import MultivariateGaussianLoss
+
+        if sigma is None or correlations is None or len(xp) != 110:
+            raise ValueError(
+                "Full XP covariance requires 110 errors and packed BP/RP correlations"
+            )
+        # The covariance of scored coefficients is a principal submatrix, not a
+        # conditional covariance given visible coefficients. Identity padding
+        # lets differently masked stars share a batched 55-dimensional solve.
+        total = errors[:, [i for i in range(target.shape[1]) if i not in xp]].sum()
+        triangle = torch.tril_indices(55, 55, -1, device=prediction.device)
+        for band in range(2):
+            columns = xp[band * 55 : (band + 1) * 55]
+            scored = mask[:, columns]
+            active = scored.any(1)
+            if not active.any():
+                continue
+            scored = scored[active]
+            uncertainty = sigma[active][:, columns].double()
+            uncertainty = torch.where(
+                torch.isfinite(uncertainty) & (uncertainty > 0), uncertainty, 0
+            )
+            corr = (
+                torch.eye(55, device=prediction.device, dtype=torch.float64)
+                .expand(int(active.sum()), -1, -1)
+                .clone()
+            )
+            packed = correlations[active, band].double()
+            corr[:, triangle[0], triangle[1]] = packed
+            corr[:, triangle[1], triangle[0]] = packed
+            covariance = corr * uncertainty[:, :, None] * uncertainty[:, None, :]
+            covariance += torch.eye(
+                55, device=prediction.device, dtype=torch.float64
+            ) * experiment.get("variance_floor", 0.1)
+            covariance *= scored[:, :, None] & scored[:, None, :]
+            covariance += torch.diag_embed((~scored).double())
+            # Reject indefinite matrices rather than silently repairing Gaia errors.
+            if torch.linalg.cholesky_ex(covariance)[1].any():
+                raise ValueError(
+                    "XP covariance is not positive definite after the fixed variance floor"
+                )
+            losses = MultivariateGaussianLoss(reduction="none", jitter=0, eps=0)(
+                safe_prediction[active][:, columns].double(),
+                target[active][:, columns].double(),
+                covariance_matrices=covariance,
+            )
+            total = (
+                total
+                + (
+                    losses - (~scored).sum(1).double() * (0.5 * math.log(2 * math.pi))
+                ).sum()
+            )
+        return total / global_count.clamp_min(1)
     if objective in {"torchregress_noise", "xp_mse"}:
         from torchregress.losses.uncertain_gt import NoisyTargetGaussianNLL
 

@@ -161,7 +161,18 @@ def validate_source(checkpoint, config, source):
             raise ValueError(f"Checkpoint lacks reloadable full training state: {name}")
     train_keys = list(signature["train_keys"])
     validation_keys = list(config["data"]["valid_keys"])
-    if set(train_keys) != set(source) - set(validation_keys):
+    grouped = "train/records" in source and "validation/records" in source
+    if grouped:
+        scaler = source["reference_scaler"]
+        for field, saved in (("center", "scaler_center"), ("scale", "scaler_scale")):
+            np.testing.assert_array_equal(scaler[field][:], signature[saved])
+        if json.loads(scaler.attrs["feature_cols"]) != signature["feature_cols"]:
+            raise ValueError("Benchmark feature order differs from checkpoint")
+        saved_validation = json.loads(source["validation"].attrs["source_shard_names"])
+        if set(saved_validation) != set(validation_keys):
+            raise ValueError("Benchmark validation membership differs")
+        train_keys, validation_keys = ["train/records"], ["validation/records"]
+    elif set(train_keys) != set(source) - set(validation_keys):
         raise ValueError("Checkpoint training shards differ from source/config holdout")
     for key in [*train_keys, *validation_keys]:
         if key not in source:
@@ -190,7 +201,18 @@ def validate_source(checkpoint, config, source):
     return train_keys, validation_keys, center, scale
 
 
-def read_prefixes(source, keys, features, errors, max_rows, center, scale, destination):
+def read_prefixes(
+    source,
+    keys,
+    features,
+    errors,
+    max_rows,
+    center,
+    scale,
+    destination,
+    *,
+    correct_xp_errors=False,
+):
     """Stage only bounded sequential prefixes, never scan the full catalogue."""
     per_key = math.ceil(max_rows / len(keys))
     counts = {}
@@ -221,6 +243,13 @@ def read_prefixes(source, keys, features, errors, max_rows, center, scale, desti
                 for column, error in enumerate(errors):
                     if error is not None:
                         raw = _clean_column(error, records[error])
+                        if correct_xp_errors and features[column].startswith(
+                            ("bp_", "rp_")
+                        ):
+                            flux = 10 ** (
+                                (8.5 - _clean_column("G", records["G"])) / 2.5
+                            )
+                            raw = raw / flux
                         sigma[offset : offset + len(values), column] = np.where(
                             np.isfinite(raw) & (raw > 0), raw / scale[column], np.nan
                         )
@@ -730,7 +759,7 @@ def build_wrapper(config, checkpoint, source, center, scale, arm, output):
     return wrapper, optimizer, scheduler
 
 
-def iter_batches(cache, batch_size, rng, sigma=None):
+def iter_batches(cache, batch_size, rng, sigma=None, correlations=None):
     # ponytail: shuffle 65K-row blocks and rows within each; use a reservoir for wider mixing.
     blocks = list(range(0, len(cache), 65536))
     rng.shuffle(blocks)
@@ -739,7 +768,13 @@ def iter_batches(cache, batch_size, rng, sigma=None):
         rng.shuffle(indices)
         for offset in range(0, len(indices), batch_size):
             selected = indices[offset : offset + batch_size]
-            if sigma is None:
+            if correlations is not None:
+                yield (
+                    np.array(cache[selected]),
+                    np.array(sigma[selected]),
+                    np.array(correlations[selected]),
+                )
+            elif sigma is None:
                 yield np.array(cache[selected])
             else:
                 yield np.array(cache[selected]), np.array(sigma[selected])
@@ -761,6 +796,7 @@ def run_arm(
     manifest,
     train_sigma=None,
     spectral_projection=None,
+    train_correlations=None,
 ):
     arm_id = arm["run_id"]
     output = args.output / arm_id
@@ -912,9 +948,17 @@ def run_arm(
     balanced = arm.get("loss", "mae") == "group_mae"
     while rows < args.presentations:
         for values in iter_batches(
-            cache, config["training"]["mini_batch_size"], rng, train_sigma
+            cache,
+            config["training"]["mini_batch_size"],
+            rng,
+            train_sigma,
+            train_correlations,
         ):
-            raw, uncertainty = values if train_sigma is not None else (values, None)
+            packed = None
+            if train_correlations is not None:
+                raw, uncertainty, packed = values
+            else:
+                raw, uncertainty = values if train_sigma is not None else (values, None)
             raw = raw[: args.presentations - rows]
             if not len(raw):
                 break
@@ -961,6 +1005,9 @@ def run_arm(
                         if uncertainty is not None
                         else None,
                         reliability=reliability,
+                        correlations=torch.as_tensor(packed[start:stop], device=device)
+                        if packed is not None
+                        else None,
                     )
                 loss.backward()
                 batch_loss.add_(loss.detach())
@@ -1052,6 +1099,8 @@ def main():
     parser.add_argument("--independent-rng", action="store_true")
     parser.add_argument("--runs", "--arms", dest="runs", nargs="+")
     parser.add_argument("--xp-diagnostics", action="store_true")
+    parser.add_argument("--benchmark", type=Path)
+    parser.add_argument("--micro-batch-size", type=int)
     args = parser.parse_args()
     if (
         min(
@@ -1069,6 +1118,10 @@ def main():
     with open(args.config) as stream:
         config = yaml.safe_load(stream)
     expand_config_paths(config)
+    if args.benchmark:
+        config["data"]["datafile"] = str(args.benchmark)
+    if args.micro_batch_size:
+        config["training"]["micro_batch_size"] = args.micro_batch_size
     if args.xp_diagnostics:
         config["data"]["uncertainty_units_verified"] = [
             name
@@ -1076,7 +1129,9 @@ def main():
             if name.startswith(("bp_", "rp_"))
         ]
         config["data"]["xp_uncertainty_policy"] = (
-            "coefficient errors share the builder's G=8.5 normalization; diagonal only; shared G error and correlations unavailable"
+            "benchmark raw errors divided by G flux factor then scaler scale; BP/RP packed correlations available; G uncertainty and BP/RP cross covariance excluded"
+            if args.benchmark
+            else "legacy error normalization unverified"
         )
     with open(args.experiments) as stream:
         specification = yaml.safe_load(stream)
@@ -1105,6 +1160,7 @@ def main():
             "xp_mse",
             "torchregress_noise",
             "signal_weighted_mae",
+            "torchregress_covariance",
         }:
             parser.error("Unknown embedding/loss experiment")
         if arm.get("xp_mask_mode", "whole") not in {
@@ -1216,7 +1272,12 @@ def main():
         with h5py.File(config["data"]["datafile"], "r") as source:
             keys, holdout, center, scale = validate_source(checkpoint, config, source)
             needs_sigma = any(
-                arm.get("loss") in {"torchregress_noise", "signal_weighted_mae"}
+                arm.get("loss")
+                in {
+                    "torchregress_noise",
+                    "signal_weighted_mae",
+                    "torchregress_covariance",
+                }
                 for arm in arms
             )
             expected_cache_bytes = (
@@ -1224,6 +1285,15 @@ def main():
                 * len(center)
                 * 4
             )
+            needs_covariance = any(
+                arm.get("loss") == "torchregress_covariance" for arm in arms
+            )
+            if needs_covariance:
+                if not args.benchmark:
+                    raise ValueError(
+                        "Covariance experiments require the grouped benchmark"
+                    )
+                expected_cache_bytes += args.train_rows * 2 * 1485 * 4
             cache_limit = min(
                 150_000_000_000, int(shutil.disk_usage(args.cache_dir).free * 0.8)
             )
@@ -1243,6 +1313,7 @@ def main():
                 center,
                 scale,
                 args.cache_dir / f"{args.output.name}-train.npy",
+                correct_xp_errors=bool(args.benchmark),
             )
             validation, sigma, validation_counts = read_prefixes(
                 source,
@@ -1253,7 +1324,51 @@ def main():
                 center,
                 scale,
                 args.cache_dir / f"{args.output.name}-validation.npy",
+                correct_xp_errors=bool(args.benchmark),
             )
+            train_correlations = None
+            if args.benchmark:
+                audit = Path(str(args.benchmark) + ".manifest.json")
+                benchmark_manifest = json.loads(audit.read_text())
+                if benchmark_manifest["status"] != "complete":
+                    raise ValueError("Benchmark manifest is not complete")
+                manifest["benchmark_source_id_sha256"] = benchmark_manifest[
+                    "source_id_sha256"
+                ]
+                manifest["benchmark_manifest_sha256"] = sha256(audit)
+                if (
+                    len(cache) != args.train_rows
+                    or len(validation) != args.validation_rows
+                ):
+                    raise ValueError(
+                        "Benchmark row budgets exceed grouped split counts"
+                    )
+            if needs_covariance:
+                xp_names = [
+                    n
+                    for n in config["data"]["recon_cols"]
+                    if n.startswith(("bp_", "rp_"))
+                ]
+                if xp_names != [
+                    f"{band}_{i}" for band in ("bp", "rp") for i in range(1, 56)
+                ]:
+                    raise ValueError(
+                        "Covariance requires canonical BP/RP reconstruction order"
+                    )
+                train_correlations = np.lib.format.open_memmap(
+                    args.cache_dir / "train-correlations.npy",
+                    mode="w+",
+                    dtype="f4",
+                    shape=(len(cache), 2, 1485),
+                )
+                for start in range(0, len(cache), 8192):
+                    stop = min(start + 8192, len(cache))
+                    if not source["train/xp_covariance_available"][start:stop].all():
+                        raise ValueError("Benchmark covariance is unavailable")
+                    train_correlations[start:stop] = source["train/xp_correlations"][
+                        start:stop
+                    ]
+                train_correlations.flush()
             if not len(cache) or not len(validation):
                 raise ValueError("Training and holdout samples must be nonempty")
             manifest["sample"] = {
@@ -1262,7 +1377,9 @@ def main():
                 "validation_rows": len(validation),
                 "train_rows_by_key": train_counts,
                 "validation_rows_by_key": validation_counts,
-                "source_rows_by_key": {key: len(source[key]) for key in source},
+                "source_rows_by_key": {
+                    key: len(source[key]) for key in [*keys, *holdout]
+                },
                 "source_path": str(config["data"]["datafile"]),
                 "source_size_bytes": Path(source.filename).stat().st_size,
                 "cache_bytes": cache.nbytes
@@ -1354,6 +1471,7 @@ def main():
                     manifest,
                     train_sigma,
                     spectral_projection,
+                    train_correlations,
                 )
                 arm["status"] = "complete"
                 write_json(args.output / "manifest.json", manifest)

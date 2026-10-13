@@ -1,5 +1,7 @@
 # Fixed 10M-star XP benchmark
 
+**Verified error-unit correction:** stored coefficients are G-normalized, but the legacy XP error columns are in raw archive units. Divide errors by `10**((8.5-G)/2.5)` before constructing covariance or uncertainty losses. Earlier error-unit descriptions below and in the original builder manifest are superseded by the measured audit and reader guidance in `docs/xp-benchmark-usage.md`.
+
 The CPU-only builder `scripts/benchmarks/build_xp_benchmark.py` samples 9M training and 1M validation stars without replacement, proportionally across the original HDF5 shards. Validation membership follows the epoch-27 checkpoint. Seed 42 fixes selection. Every original record field is retained, including G-normalized XP coefficients, their errors and unmodified magnitudes. Scaling is applied in the training reader; the parent checkpoint path identifies the existing RobustScaler for matched continuations.
 
 Each split has `records` (original compound dtype), `source_shard`, `source_row`, packed `xp_correlations` (stars × BP/RP × 1485), `xp_band_metadata` and `xp_covariance_available`. Band metadata retain basis IDs, parameter counts, relevant-basis counts and standard deviations. Correlations have implicit unit diagonal, with strict lower-triangle ordering. The loader reconstructs covariance from coefficient errors, and divides by both scaler scales. G-normalization uncertainty and BP/RP cross covariance are not supplied by this sidecar. No spectra are MC sampled.
