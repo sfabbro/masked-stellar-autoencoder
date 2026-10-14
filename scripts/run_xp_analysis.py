@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -36,6 +37,26 @@ def main():
 
     save()
     try:
+        labels = spec["labels_fits"]
+        if settings["mode"] == "probes":
+            source = Path(labels)
+            staging = Path("/scratch/msa-probe-data")
+            staging.mkdir(parents=True, exist_ok=True)
+            size = source.stat().st_size
+            if shutil.disk_usage(staging).free < size + 5 * 1024**3:
+                raise OSError("Insufficient scratch space to stage labelled FITS")
+            destination = staging / source.name
+            print(f"STAGING_LABELS {source} {size} bytes", flush=True)
+            shutil.copyfile(source, destination.with_suffix(".copying"))
+            destination.with_suffix(".copying").replace(destination)
+            labels = str(destination)
+            manifest["labels_staging"] = {
+                "source": str(source),
+                "scratch_path": labels,
+                "size_bytes": size,
+                "policy": "sequential ARC read; all FITS column access on private scratch",
+            }
+            save()
         splits = settings.get("splits", ["identity"])
         for split in splits:
             command = [
@@ -55,7 +76,7 @@ def main():
             if settings["mode"] == "probes":
                 command += [
                     "--labels-fits",
-                    spec["labels_fits"],
+                    labels,
                     "--split",
                     split,
                     "--fits-xp-units",
