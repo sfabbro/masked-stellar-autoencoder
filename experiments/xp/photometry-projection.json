@@ -1,0 +1,54 @@
+{
+  "torchgaiaxp_git_sha": "9002eca11ef0ff9502b6bb261f5acc7d9fed8489",
+  "version": "0.2.0",
+  "projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a",
+  "source_assets_sha256": {
+    "systems.json": "0e90d591e98b2e275bc5d5b3b3d184fe6fbca1a5d32efeb04cf327e249e75d2c",
+    "systems.npz": "ee8a0e381fdd5b35c936ab1725dad6dc1e8e3e1660b37852a0354fc5acdb4024"
+  },
+  "matrix_shape": [
+    110,
+    9
+  ],
+  "columns": [
+    "G_SDSS",
+    "R_SDSS",
+    "I_SDSS",
+    "G_PS1",
+    "R_PS1",
+    "I_PS1",
+    "G_SMSS",
+    "R_SMSS",
+    "I_SMSS"
+  ],
+  "bands": [
+    "SDSS/g",
+    "SDSS/r",
+    "SDSS/i",
+    "PanSTARRS1/gp",
+    "PanSTARRS1/rp",
+    "PanSTARRS1/ip",
+    "Sky_Mapper/g",
+    "Sky_Mapper/r",
+    "Sky_Mapper/i"
+  ],
+  "zero_points": [
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1,
+    -56.1
+  ],
+  "policy": "raw non-standardised linear matrices; BP coefficients followed by RP; no additive offsets",
+  "independent_projection_check": {
+    "rows": 128,
+    "seed": 42,
+    "reference": "torchgaiaxp.generate XPSpectra band-wise contraction",
+    "passed": true,
+    "max_absolute_difference": 8.758115402030107e-47
+  }
+}

@@ -46,6 +46,12 @@ from masked_stellar_autoencoder.training.xp_experiments import (
 from masked_stellar_autoencoder.training.xp_experiments import (
     project_spectral_residual as project_spectral_residual,
 )
+from masked_stellar_autoencoder.training.xp_photometry import (
+    PhotometryProjection,
+    fit_calibration,
+    normalized_observed_flux,
+    photometry_consistency_sum,
+)
 
 
 def write_json(path, value):
@@ -413,6 +419,162 @@ def training_mask(
     return target.masked_fill(mask | ~finite, -9999), mask, finite
 
 
+def prepare_photometry(
+    cache, train_sigma, center, scale, names, projection_path, output
+):
+    """Fixed calibration from 100K training-only rows; no learned targets."""
+    projection = PhotometryProjection.load(projection_path)
+    xp = [names.index(f"{band}_{i}") for band in ("bp", "rp") for i in range(1, 56)]
+    photo = [names.index(name) for name in projection.columns]
+    g = names.index("G")
+    indices = np.linspace(0, len(cache) - 1, min(100_000, len(cache)), dtype=np.int64)
+    values = np.asarray(cache[indices], dtype=np.float64) * scale + center
+    calibration = fit_calibration(
+        values[:, xp], values[:, photo], values[:, g], projection, min_count=1000
+    )
+    metadata = {
+        "columns": projection.columns,
+        "bands": projection.bands,
+        "calibration": calibration.as_dict(),
+        "rows": len(indices),
+        "selection": "training-only evenly spaced deterministic benchmark rows",
+        "projection_sha256": sha256(Path(projection_path)),
+        "scaler_center": center[xp].tolist(),
+        "scaler_scale": scale[xp].tolist(),
+        "normalization": "raw linear XP projection and observed flux divided by 10**((8.5-G)/2.5); true G used only in loss targets, no model-input substitution",
+        "correction": "training-only per-band additive median residual in reference-flux units; no standardised GaiaXPy offsets",
+        "floor": "max(1.4826*MAD training residual, 0.02 median band flux); observed magnitude errors added in quadrature",
+        "decoder": "predicted photometry targets detached; ordinary observed MAE remains anchor",
+    }
+    # Baseline measures the observational mismatch before learning any correction.
+    observed = normalized_observed_flux(
+        values[:, photo], values[:, g], projection.zero_points
+    )
+    synthetic = values[:, xp] @ projection.matrix
+    baseline = []
+    for i, column in enumerate(projection.columns):
+        valid = (
+            np.isfinite(observed[:, i])
+            & (observed[:, i] > 0)
+            & np.isfinite(synthetic[:, i])
+            & (synthetic[:, i] > 0)
+        )
+        dm = -2.5 * np.log10(synthetic[valid, i] / observed[valid, i])
+        baseline.append(
+            {
+                "column": column,
+                "count": int(valid.sum()),
+                "median_synthetic_minus_observed_mag": float(np.median(dm)),
+                "median_absolute_mag": float(np.median(abs(dm))),
+            }
+        )
+    metadata["observed_xp_baseline"] = baseline
+    write_json(output / "photometry_calibration.json", metadata)
+    return {
+        "projection": projection,
+        "calibration": calibration,
+        "xp": xp,
+        "photo": photo,
+        "g": g,
+        "center": center,
+        "scale": scale,
+    }
+
+
+def photometry_terms(prediction, target, score, uncertainty, context, *, decoder=False):
+    xp, photo, g = context["xp"], context["photo"], context["g"]
+    projection = context["projection"]
+    kw = {"device": prediction.device, "dtype": prediction.dtype}
+    scale = torch.as_tensor(context["scale"], **kw)
+    center = torch.as_tensor(context["center"], **kw)
+    # Dimensionless band/G flux target, evaluated with one exponent to avoid tiny divisors.
+    magnitudes = target[:, photo] * scale[photo] + center[photo]
+    g_mag = target[:, g] * scale[g] + center[g]
+    zp = torch.as_tensor(projection.zero_points, **kw)
+    observed = 10.0 ** (-0.4 * (magnitudes - zp + 8.5 - g_mag[:, None]))
+    errors = (
+        uncertainty[:, photo] * scale[photo]
+        if uncertainty is not None
+        else torch.full_like(observed, torch.nan)
+    )
+    decoder_flux = None
+    band_mask = None
+    if decoder:
+        mag_prediction = prediction[:, photo] * scale[photo] + center[photo]
+        decoder_flux = 10.0 ** (-0.4 * (mag_prediction - zp + 8.5 - g_mag[:, None]))
+        band_mask = score[:, photo]
+    return photometry_consistency_sum(
+        prediction[:, xp],
+        target[:, xp],
+        score[:, xp],
+        center[xp],
+        scale[xp],
+        projection.matrix,
+        observed,
+        errors,
+        context["calibration"],
+        band_mask=band_mask,
+        decoder_flux=decoder_flux,
+    )[0]
+
+
+def photometry_summary(target, prediction, mask, context):
+    projection, xp = context["projection"], context["xp"]
+    photo, g = context["photo"], context["g"]
+    scale, center = context["scale"], context["center"]
+    raw = target * scale[: target.shape[1]] + center[: target.shape[1]]
+    combined = np.where(mask[:, xp], prediction[:, xp], target[:, xp])
+    synthetic = (combined * scale[xp] + center[xp]) @ projection.matrix
+    observed = normalized_observed_flux(
+        raw[:, photo], raw[:, g], projection.zero_points
+    )
+    active = mask[:, xp].any(1) & np.isfinite(target[:, xp]).all(1)
+    calibration = context["calibration"]
+    result = {
+        "policy": "hybrid visible observed plus hidden predicted XP; actual survey photometry target; raw magnitude residual and bias-corrected flux residual",
+        "bands": [],
+    }
+    for i, column in enumerate(projection.columns):
+        valid = (
+            active
+            & np.isfinite(observed[:, i])
+            & (observed[:, i] > 0)
+            & np.isfinite(synthetic[:, i])
+        )
+        residual = (synthetic[:, i] - observed[:, i]) / calibration.reference_flux[
+            i
+        ] - calibration.bias[i]
+        positive = valid & (synthetic[:, i] > 0)
+        dm = -2.5 * np.log10(synthetic[positive, i] / observed[positive, i])
+        item = {
+            "column": column,
+            "count": int(valid.sum()),
+            "nonpositive_synthetic_count": int((valid & (synthetic[:, i] <= 0)).sum()),
+            "reference_flux_absolute_error_mean": float(np.mean(abs(residual[valid])))
+            if valid.any()
+            else None,
+            "magnitude_mae": float(np.mean(abs(dm))) if len(dm) else None,
+            "magnitude_median_absolute_error": float(np.median(abs(dm)))
+            if len(dm)
+            else None,
+        }
+        for state, selected in (
+            ("hidden", mask[:, photo[i]]),
+            ("visible", ~mask[:, photo[i]]),
+        ):
+            rows = valid & selected
+            item[state] = {
+                "count": int(rows.sum()),
+                "reference_flux_absolute_error_mean": float(
+                    np.mean(abs(residual[rows]))
+                )
+                if rows.any()
+                else None,
+            }
+        result["bands"].append(item)
+    return result
+
+
 def evaluate(
     wrapper,
     validation,
@@ -427,6 +589,7 @@ def evaluate(
     verified_sigma=(),
     diagnostic_rows=100_000,
     spectral_projection=None,
+    photometry=None,
 ):
     model, device = wrapper.model, wrapper.device
     names = wrapper.recon_cols
@@ -666,6 +829,13 @@ def evaluate(
                     center[:width],
                     spectral_projection,
                 )
+            if photometry is not None:
+                qa["regimes"][regime]["photometry_consistency"] = photometry_summary(
+                    target[snapshot_indices],
+                    prediction[snapshot_indices],
+                    mask[snapshot_indices, :width],
+                    photometry,
+                )
             xp_columns = groups.get("xp", [])
             xp_target = target[:, xp_columns] * scale[xp_columns] + center[xp_columns]
             xp_sigma = sigma[:, xp_columns] * scale[xp_columns]
@@ -799,6 +969,7 @@ def run_arm(
     train_sigma=None,
     spectral_projection=None,
     train_correlations=None,
+    photometry=None,
 ):
     arm_id = arm["run_id"]
     output = args.output / arm_id
@@ -835,7 +1006,7 @@ def run_arm(
     ]
     reliability = None
     spectral_loss = None
-    if arm.get("loss") == "spectral_mae":
+    if arm.get("loss") in {"spectral_mae", "photometry_spectral_mae"}:
         if spectral_projection is None:
             raise ValueError("Spectral loss requires --xp-diagnostics")
         spectral_loss = {
@@ -896,6 +1067,7 @@ def run_arm(
             config["data"].get("uncertainty_units_verified", []),
             args.diagnostic_rows,
             spectral_projection,
+            photometry,
         )
         common = qa["regimes"]["common"]["overall"]
         entry = {
@@ -1017,7 +1189,19 @@ def run_arm(
                         target[start:stop, :width],
                         score[start:stop],
                         [i for i in xp_indices if i < width],
-                        arm,
+                        {
+                            **arm,
+                            "loss": "spectral_mae"
+                            if arm.get("loss") == "photometry_spectral_mae"
+                            else "mae",
+                        }
+                        if arm.get("loss")
+                        in {
+                            "photometry_mae",
+                            "photometry_spectral_mae",
+                            "photometry_decoder_mae",
+                        }
+                        else arm,
                         global_count,
                         sigma=uncertainty[start:stop, :width]
                         if uncertainty is not None
@@ -1028,6 +1212,47 @@ def run_arm(
                         if packed is not None
                         else None,
                     )
+                if arm.get("loss") in {
+                    "photometry_mae",
+                    "photometry_spectral_mae",
+                    "photometry_decoder_mae",
+                }:
+                    if photometry is None:
+                        raise ValueError(
+                            "Photometry objective requires calibrated projection"
+                        )
+                    observed_sum = photometry_terms(
+                        prediction,
+                        target[start:stop, :width],
+                        score[start:stop],
+                        uncertainty[start:stop, :width]
+                        if uncertainty is not None
+                        else None,
+                        photometry,
+                    )
+                    loss = (
+                        loss
+                        + arm.get("photometry_weight", 0.01)
+                        * observed_sum
+                        / global_count
+                    )
+                    if arm.get("loss") == "photometry_decoder_mae":
+                        decoder_sum = photometry_terms(
+                            prediction,
+                            target[start:stop, :width],
+                            score[start:stop],
+                            uncertainty[start:stop, :width]
+                            if uncertainty is not None
+                            else None,
+                            photometry,
+                            decoder=True,
+                        )
+                        loss = (
+                            loss
+                            + arm.get("decoder_weight", 0.002)
+                            * decoder_sum
+                            / global_count
+                        )
                 loss.backward()
                 batch_loss.add_(loss.detach())
             frequency_squared = sum(
@@ -1120,6 +1345,7 @@ def main():
     parser.add_argument("--xp-diagnostics", action="store_true")
     parser.add_argument("--benchmark", type=Path)
     parser.add_argument("--micro-batch-size", type=int)
+    parser.add_argument("--photometry-preflight", action="store_true")
     args = parser.parse_args()
     if (
         min(
@@ -1181,6 +1407,9 @@ def main():
             "signal_weighted_mae",
             "torchregress_covariance",
             "spectral_mae",
+            "photometry_mae",
+            "photometry_spectral_mae",
+            "photometry_decoder_mae",
         }:
             parser.error("Unknown embedding/loss experiment")
         if arm.get("xp_mask_mode", "whole") not in {
@@ -1205,6 +1434,13 @@ def main():
             or arm.get("spectral_weight", 0.1) < 0
         ):
             parser.error("Spectral weight must be finite and nonnegative")
+    photometry_path = specification.get("photometry_projection")
+    if args.photometry_preflight and not photometry_path:
+        parser.error("Photometry preflight requires a projection asset")
+    for arm in arms:
+        for field in ("photometry_weight", "decoder_weight"):
+            if not math.isfinite(arm.get(field, 0.01)) or arm.get(field, 0.01) < 0:
+                parser.error(f"{field} must be finite and nonnegative")
     if (
         config["model"]["norm"] != "layer"
         or config["training"].get("pert_features")
@@ -1298,7 +1534,7 @@ def main():
     try:
         with h5py.File(config["data"]["datafile"], "r") as source:
             keys, holdout, center, scale = validate_source(checkpoint, config, source)
-            needs_sigma = any(
+            needs_sigma = bool(photometry_path) or any(
                 arm.get("loss")
                 in {
                     "torchregress_noise",
@@ -1477,6 +1713,28 @@ def main():
                 ],
                 dtype=np.float32,
             )
+            photometry = None
+            if photometry_path:
+                photometry = prepare_photometry(
+                    cache,
+                    train_sigma,
+                    center,
+                    scale,
+                    config["data"]["feature_cols"],
+                    photometry_path,
+                    args.output,
+                )
+                manifest["photometry_calibration_sha256"] = sha256(
+                    args.output / "photometry_calibration.json"
+                )
+                manifest["photometry_projection_sha256"] = sha256(Path(photometry_path))
+                manifest["photometry_helpers_sha256"] = sha256(
+                    Path("src/masked_stellar_autoencoder/training/xp_photometry.py")
+                )
+            if args.photometry_preflight:
+                manifest["status"] = "complete"
+                manifest["preflight_only"] = True
+                return
             manifest["status"] = "running"
             write_json(args.output / "manifest.json", manifest)
             for arm in manifest["experiments"]:
@@ -1499,6 +1757,7 @@ def main():
                     train_sigma,
                     spectral_projection,
                     train_correlations,
+                    photometry,
                 )
                 arm["status"] = "complete"
                 write_json(args.output / "manifest.json", manifest)

@@ -411,3 +411,74 @@ def test_launch_record_has_separate_bounded_jobs_and_refuses_duplicate_record(tm
         subprocess.run(command, cwd=SCRIPT.parents[1], capture_output=True).returncode
         != 0
     )
+
+
+def test_photometry_runner_g_is_target_only_and_decoder_detached():
+    from masked_stellar_autoencoder.training.xp_photometry import (
+        PhotometryCalibration,
+        PhotometryProjection,
+    )
+
+    matrix = np.zeros((110, 1))
+    matrix[0, 0] = 1
+    context = {
+        "projection": PhotometryProjection(matrix, np.zeros(1), ("band",), ("band",)),
+        "calibration": PhotometryCalibration(
+            np.ones(1), np.zeros(1), np.full(1, 0.02), np.ones(1)
+        ),
+        "xp": list(range(110)),
+        "photo": [110],
+        "g": 111,
+        "scale": np.ones(112),
+        "center": np.zeros(112),
+    }
+    target = torch.ones((2, 112))
+    target[:, 110] = 0
+    target[:, 111] = 8.5
+    prediction = target.clone().requires_grad_()
+    with torch.no_grad():
+        prediction[:, 0] = 2
+        prediction[:, 110] = 0.3
+        prediction[:, 111] = -1000
+    score = torch.ones_like(target, dtype=torch.bool)
+    loss = experiments.photometry_terms(prediction, target, score, None, context)
+    assert loss.item() == pytest.approx(49.5 * 110 * 2, rel=1e-6)
+    loss.backward()
+    assert prediction.grad[:, 0].abs().sum() > 0
+    assert prediction.grad[:, 110:].abs().sum() == 0
+    prediction.grad.zero_()
+    decoder = experiments.photometry_terms(
+        prediction, target, score, None, context, decoder=True
+    )
+    decoder.backward()
+    assert prediction.grad[:, 0].abs().sum() > 0
+    assert prediction.grad[:, 110:].abs().sum() == 0
+
+
+def test_photometry_diagnostics_allow_unreconstructed_ancillary_columns():
+    from masked_stellar_autoencoder.training.xp_photometry import (
+        PhotometryCalibration,
+        PhotometryProjection,
+    )
+
+    matrix = np.zeros((110, 1))
+    matrix[0, 0] = 1
+    context = {
+        "projection": PhotometryProjection(matrix, np.zeros(1), ("band",), ("band",)),
+        "calibration": PhotometryCalibration(
+            np.ones(1), np.zeros(1), np.full(1, 0.02), np.ones(1)
+        ),
+        "xp": list(range(110)),
+        "photo": [110],
+        "g": 111,
+        "scale": np.ones(114),
+        "center": np.zeros(114),
+    }
+    target = np.ones((2, 112))
+    target[:, 110] = 0
+    target[:, 111] = 8.5
+    result = experiments.photometry_summary(
+        target, target, np.ones_like(target, dtype=bool), context
+    )
+    assert result["bands"][0]["magnitude_mae"] == 0
+    assert result["bands"][0]["count"] == 2

@@ -1,0 +1,24 @@
+# Same epoch47 parent and benchmark as the previous five-run comparison.
+photometry_projection: experiments/xp/photometry-projection.npz
+experiments:
+  - run_id: unchanged_control
+    embedding: stable
+    loss: mae
+  - run_id: spectral_auxiliary_mae
+    embedding: stable
+    loss: spectral_mae
+    spectral_weight: 0.1
+  - run_id: observed_photometry_mae
+    embedding: stable
+    loss: photometry_mae
+    photometry_weight: 0.01
+  - run_id: photometry_spectral_mae
+    embedding: stable
+    loss: photometry_spectral_mae
+    photometry_weight: 0.01
+    spectral_weight: 0.1
+  - run_id: anchored_decoder_consistency_mae
+    embedding: stable
+    loss: photometry_decoder_mae
+    photometry_weight: 0.01
+    decoder_weight: 0.002

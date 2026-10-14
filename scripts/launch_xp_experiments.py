@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--git-sha", required=True)
     parser.add_argument("--record", required=True, type=Path)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--photometry-preflight", action="store_true")
     parser.add_argument(
         "--experiments",
         type=Path,
@@ -99,6 +100,7 @@ def main():
         "benchmark": args.benchmark,
         "experiments_config": str(args.experiments),
         "micro_batch_size": args.micro_batch_size,
+        "photometry_preflight": args.photometry_preflight,
         "validation_stars": 1_000_000,
         "presentations": 20_000_000,
         "seed": 42,
@@ -115,8 +117,13 @@ def main():
             "train_stars",
             "micro_batch_size",
             "experiments_config",
+            "photometry_preflight",
         ):
-            if existing.get(key) != record.get(key):
+            if (
+                existing.get(key, False)
+                if key == "photometry_preflight"
+                else existing.get(key)
+            ) != record.get(key):
                 parser.error(f"Existing submission record differs: {key}")
         jobs.extend(existing["jobs"])
     args.record.write_text(json.dumps(record, indent=2) + "\n")
@@ -148,6 +155,8 @@ def main():
             "MSA_EXPERIMENT_INDEPENDENT_RNG": "1",
             "MSA_EXPERIMENT_MICRO_BATCH": str(args.micro_batch_size),
         }
+        if args.photometry_preflight:
+            env["MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT"] = "1"
         if args.benchmark:
             env["MSA_EXPERIMENT_BENCHMARK"] = args.benchmark
         request = {
@@ -158,7 +167,7 @@ def main():
             "args": "-u -c " + payload,
             "cores": 4,
             "ram": 64,
-            "gpu": 1,
+            "gpu": 0 if args.photometry_preflight else 1,
             "env": env,
         }
         ids = [] if args.dry_run else session.create(**request)
@@ -167,7 +176,11 @@ def main():
             "session_ids": ids,
             "output": output,
             "log": f"{output}.session.log",
-            "resources": {"cpu": 4, "memory_gib": 64, "gpu": 1},
+            "resources": {
+                "cpu": 4,
+                "memory_gib": 64,
+                "gpu": 0 if args.photometry_preflight else 1,
+            },
             "status": "dry_run"
             if args.dry_run
             else "submitted"

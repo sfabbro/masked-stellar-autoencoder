@@ -119,7 +119,9 @@ case "$stage" in
     ;;
   pretrain-experiments)
     : "${MSA_PRETRAIN_RESUME:?Set MSA_PRETRAIN_RESUME to the immutable full checkpoint}"
-    "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
+    if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 ]]; then
+      "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
+    fi
     experiment_args=(
       --experiments "${MSA_EXPERIMENTS_CONFIG:-configs/pretrain.experiments.yaml}"
       --checkpoint "$MSA_PRETRAIN_RESUME"
@@ -146,6 +148,9 @@ case "$stage" in
     fi
     if [[ "${MSA_EXPERIMENT_INDEPENDENT_RNG:-0}" == 1 ]]; then
       experiment_args+=(--independent-rng)
+    fi
+    if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" == 1 ]]; then
+      experiment_args+=(--photometry-preflight)
     fi
     if [[ -n "${MSA_EXPERIMENT_BENCHMARK:-}" ]]; then
       experiment_args+=(--benchmark "$MSA_EXPERIMENT_BENCHMARK")
