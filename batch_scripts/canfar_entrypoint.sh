@@ -159,6 +159,9 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" == 1 ]]; then
       experiment_args+=(--photometry-preflight)
     fi
+    if [[ "${MSA_EXPERIMENT_EVALUATION_ONLY:-0}" == 1 ]]; then
+      experiment_args+=(--evaluation-only)
+    fi
     if [[ -n "${MSA_EXPERIMENT_BENCHMARK:-}" ]]; then
       experiment_args+=(--benchmark "$MSA_EXPERIMENT_BENCHMARK")
     fi

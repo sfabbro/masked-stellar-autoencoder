@@ -1254,6 +1254,34 @@ def run_arm(
         shutil.copyfile(
             output / f"residual_latest.{suffix}", output / f"residual_init.{suffix}"
         )
+    if getattr(args, "evaluation_only", False):
+        checkpoint_hash_after = sha256(args.checkpoint)
+        if checkpoint_hash_after != manifest["checkpoint_sha256"]:
+            raise ValueError(
+                "Read-only evaluation checkpoint changed during evaluation"
+            )
+        reloaded = copy.deepcopy(model)
+        reloaded.load_state_dict(checkpoint["model_state_dict"], strict=True)
+        model.eval()
+        reloaded.eval()
+        with torch.no_grad():
+            probe = torch.as_tensor(np.array(validation[:16]), device=device)
+            probe = probe.masked_fill(~torch.isfinite(probe), -9999)
+            torch.testing.assert_close(
+                model(probe)[0], reloaded(probe)[0], rtol=0, atol=0
+            )
+        write_json(
+            output / "evaluation_verification.json",
+            {
+                "evaluation_only": True,
+                "optimizer_steps": 0,
+                "training_presentations": 0,
+                "checkpoint_sha256": checkpoint_hash_after,
+                "reload_predictions_equal": True,
+                "source_unchanged": True,
+            },
+        )
+        return
     model.train()
     balanced = arm.get("loss", "mae") == "group_mae"
     while rows < args.presentations:
@@ -1500,6 +1528,7 @@ def main():
     parser.add_argument("--benchmark", type=Path)
     parser.add_argument("--micro-batch-size", type=int)
     parser.add_argument("--photometry-preflight", action="store_true")
+    parser.add_argument("--evaluation-only", action="store_true")
     args = parser.parse_args()
     if (
         min(
@@ -1707,7 +1736,10 @@ def main():
             if torch.cuda.is_available()
             else "cpu",
         },
-        "presentations_per_experiment": args.presentations,
+        "evaluation_only": args.evaluation_only,
+        "presentations_per_experiment": 0
+        if args.evaluation_only
+        else args.presentations,
         "diagnostic_validation_rows": min(args.validation_rows, args.diagnostic_rows),
         "diagnostic_snapshot_policy": "evenly spaced deterministic validation rows; diagnostics only; JSON evaluation uses every validation row",
         "experiments": [

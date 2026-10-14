@@ -255,7 +255,8 @@ def test_flux_sigma_cannot_be_used_as_magnitude_sigma():
 
 
 @pytest.mark.parametrize("xp_suite", [False, True])
-def test_paired_experiment_smoke(tmp_path, monkeypatch, xp_suite):
+@pytest.mark.parametrize("evaluation_only", [False, True])
+def test_paired_experiment_smoke(tmp_path, monkeypatch, xp_suite, evaluation_only):
     if xp_suite and importlib.util.find_spec("gaiaxpy") is None:
         pytest.skip("The extended suite runs in experiments/xp/pixi.toml")
     torch.manual_seed(7)
@@ -386,6 +387,7 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch, xp_suite):
             "--diagnostic-rows",
             "7",
             *(["--xp-diagnostics"] if xp_suite else []),
+            *(["--evaluation-only"] if evaluation_only else []),
         ],
     )
     experiments.main()
@@ -393,6 +395,25 @@ def test_paired_experiment_smoke(tmp_path, monkeypatch, xp_suite):
     assert manifest["status"] == "complete"
     assert manifest["sample"]["train_rows"] == 64
     assert experiments.sha256(checkpoint_path) == parent_hash
+    if evaluation_only:
+        assert manifest["evaluation_only"]
+        assert manifest["presentations_per_experiment"] == 0
+        for experiment in manifest["experiments"]:
+            folder = output / experiment["run_id"]
+            verification = json.loads(
+                (folder / "evaluation_verification.json").read_text()
+            )
+            assert verification["checkpoint_sha256"] == parent_hash
+            assert verification["optimizer_steps"] == 0
+            assert verification["training_presentations"] == 0
+            assert verification["reload_predictions_equal"]
+            assert not (folder / "checkpoint.pth").exists()
+            metrics = [
+                json.loads(line)
+                for line in (folder / "metrics.jsonl").read_text().splitlines()
+            ]
+            assert len(metrics) == 1 and metrics[0]["optimizer_steps"] == 0
+        return
     initial_maes = []
     for arm in manifest["experiments"]:
         assert arm["status"] == "complete"

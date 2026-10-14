@@ -1,0 +1,6 @@
+photometry_projection: experiments/xp/photometry-projection.npz
+experiments:
+  - run_id: evaluate_latest_standard55
+    embedding: stable
+    loss: mae
+    seed: 42
