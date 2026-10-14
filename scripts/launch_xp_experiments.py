@@ -167,7 +167,7 @@ def main():
             "args": "-u -c " + payload,
             "cores": 4,
             "ram": 64,
-            "gpu": 0 if args.photometry_preflight else 1,
+            "gpu": None if args.photometry_preflight else 1,
             "env": env,
         }
         ids = [] if args.dry_run else session.create(**request)
