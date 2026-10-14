@@ -122,6 +122,13 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == analysis ]]; then
+      : "${MSA_ANALYSIS_SPEC:?Set the pinned analysis specification path}"
+      "${pixi_run[@]}" python -u scripts/run_xp_analysis.py \
+        --spec "$MSA_ANALYSIS_SPEC" --run-id "$MSA_EXPERIMENT_RUNS" \
+        --output "$experiment_output"
+      exit 0
+    fi
     experiment_args=(
       --experiments "${MSA_EXPERIMENTS_CONFIG:-configs/pretrain.experiments.yaml}"
       --checkpoint "$MSA_PRETRAIN_RESUME"

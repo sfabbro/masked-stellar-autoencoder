@@ -1,0 +1,23 @@
+# Matched epoch47 continuations. Each run is a separate headless GPU session.
+photometry_projection: experiments/xp/photometry-projection.npz
+experiments:
+  - {run_id: control_s42, seed: 42, embedding: stable, loss: mae}
+  - {run_id: control_s43, seed: 43, embedding: stable, loss: mae}
+  - {run_id: control_s44, seed: 44, embedding: stable, loss: mae}
+  - {run_id: spectral_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1}
+  - {run_id: spectral_s43, seed: 43, embedding: stable, loss: spectral_mae, spectral_weight: 0.1}
+  - {run_id: spectral_s44, seed: 44, embedding: stable, loss: spectral_mae, spectral_weight: 0.1}
+  - {run_id: photometry_spectral_s42, seed: 42, embedding: stable, loss: photometry_spectral_mae, spectral_weight: 0.1, photometry_weight: 0.01}
+  - {run_id: photometry_spectral_s43, seed: 43, embedding: stable, loss: photometry_spectral_mae, spectral_weight: 0.1, photometry_weight: 0.01}
+  - {run_id: photometry_spectral_s44, seed: 44, embedding: stable, loss: photometry_spectral_mae, spectral_weight: 0.1, photometry_weight: 0.01}
+  - {run_id: spectral_weight003_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.03}
+  - {run_id: spectral_weight030_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.3}
+  - {run_id: spectral_lr05_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, lr_factor: 0.5}
+  - {run_id: spectral_lr125_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, lr_factor: 1.25}
+  - {run_id: spectral_reset_warmup_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, reset_optimizer: true, warmup_steps: 32}
+  - {run_id: spectral_dropout0_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, dropout: 0.0}
+  - {run_id: spectral_dropout005_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, dropout: 0.05}
+  - {run_id: spectral_decoder_dropout0_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, decoder_dropout: 0.0}
+  - {run_id: multiscale_spectral_s42, seed: 42, embedding: stable, loss: multiscale_spectral_mae, spectral_weight: 0.1, spectral_smoothing_nm: 40.0}
+  - {run_id: full_decoder_spectral_s42, seed: 42, embedding: stable, loss: full_decoder_spectral_mae, spectral_weight: 0.1}
+  - {run_id: spectral_latent_views_s42, seed: 42, embedding: stable, loss: spectral_mae, spectral_weight: 0.1, latent_weight: 0.01}

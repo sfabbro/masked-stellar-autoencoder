@@ -11,6 +11,9 @@ def configure_optimizer(optimizer, experiment):
     factor = float(experiment.get("lr_factor", 1))
     if not math.isfinite(factor) or factor <= 0:
         raise ValueError("Learning-rate factor must be finite and positive")
+    warmup = experiment.get("warmup_steps", 0)
+    if isinstance(warmup, bool) or not isinstance(warmup, int) or warmup < 0:
+        raise ValueError("Warmup steps must be a nonnegative integer")
     source_rates = [group["lr"] for group in optimizer.param_groups]
     if experiment.get("reset_optimizer", False):
         optimizer.state.clear()
@@ -20,8 +23,22 @@ def configure_optimizer(optimizer, experiment):
         "reset_moments": bool(experiment.get("reset_optimizer", False)),
         "source_learning_rates": source_rates,
         "learning_rates": [g["lr"] for g in optimizer.param_groups],
-        "schedule": "held fixed during bounded continuation",
+        "warmup_steps": warmup,
+        "schedule": "linear warmup then fixed"
+        if warmup
+        else "held fixed during bounded continuation",
     }
+
+
+def apply_optimizer_warmup(optimizer, policy, completed_steps):
+    """Set next update's LR: first update gets 1/N, update N reaches target."""
+    warmup = policy.get("warmup_steps", 0)
+    if warmup:
+        fraction = min((completed_steps + 1) / warmup, 1.0)
+        for group, rate in zip(
+            optimizer.param_groups, policy["learning_rates"], strict=True
+        ):
+            group["lr"] = rate * fraction
 
 
 def spectral_relative_error(
@@ -159,12 +176,41 @@ def experiment_objective(
             raise ValueError("Reliability weights must be derived from training rows")
         errors = errors.clone()
         errors[:, xp] *= reliability[xp]
-    elif objective == "spectral_mae":
+    elif objective in {
+        "spectral_mae",
+        "multiscale_spectral_mae",
+        "full_decoder_spectral_mae",
+    }:
         if spectral is None:
             raise ValueError("Spectral objective requires calibrated projection")
-        fraction, counts = spectral_relative_error(
-            prediction, original_target, mask, xp, **spectral
-        )
+        spectral_options = dict(spectral)
+        if objective == "multiscale_spectral_mae":
+            from masked_stellar_autoencoder.training.xp_representation import (
+                multiscale_spectral_relative_error,
+            )
+
+            fraction, counts = multiscale_spectral_relative_error(
+                prediction,
+                original_target,
+                mask,
+                xp,
+                width_nm=experiment.get("spectral_smoothing_nm", 40.0),
+                shape_weight=experiment.get("spectral_shape_weight", 1.0),
+                **spectral_options,
+            )
+        else:
+            spectral_options.pop("smoothing", None)
+            spectral_mask = mask
+            if objective == "full_decoder_spectral_mae":
+                # This deliberately introduces copying of visible XP outputs.
+                # Original masked MAE and its batch denominator are unchanged.
+                spectral_mask = mask.clone()
+                spectral_mask[:, xp] = torch.isfinite(original_target[:, xp]).all(1)[
+                    :, None
+                ]
+            fraction, counts = spectral_relative_error(
+                prediction, original_target, spectral_mask, xp, **spectral_options
+            )
         coefficient_loss = errors.masked_fill(~mask, 0).sum()
         return (
             coefficient_loss

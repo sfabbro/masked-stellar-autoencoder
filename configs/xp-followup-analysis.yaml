@@ -1,0 +1,224 @@
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+labels_fits: /arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits
+analyses:
+- run_id: probe_parent47
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth
+  checkpoint_sha256: 4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482
+  splits:
+  - identity
+  - sky
+- run_id: probe_unchanged_control
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/unchanged_control/unchanged_control/checkpoint.pth
+  checkpoint_sha256: 009ff36ed79487d50c1697295c5c49748a5e41e5eaf4455c75d4482b11d6f163
+  splits:
+  - identity
+  - sky
+- run_id: probe_spectral_auxiliary_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae/spectral_auxiliary_mae/checkpoint.pth
+  checkpoint_sha256: 699a23d52ebdd2b83ebfc210415f8b72e651498f5673baa8f310fe39aa25cfbe
+  splits:
+  - identity
+  - sky
+- run_id: probe_observed_photometry_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/observed_photometry_mae/observed_photometry_mae/checkpoint.pth
+  checkpoint_sha256: b654be6587c05854767527c47e7697311dd126931f06e300205fff01f0f41f82
+  splits:
+  - identity
+  - sky
+- run_id: probe_photometry_spectral_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae/photometry_spectral_mae/checkpoint.pth
+  checkpoint_sha256: 513c604edb9560b329521665e03ec160f971721f11fb8a0802b8010ea7151142
+  splits:
+  - identity
+  - sky
+- run_id: probe_anchored_decoder_consistency_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/anchored_decoder_consistency_mae/anchored_decoder_consistency_mae/checkpoint.pth
+  checkpoint_sha256: 52409f21747fec72564d6df1b2086a102b233c21e5e59d7c7c70a0314033c4db
+  splits:
+  - identity
+  - sky
+- run_id: probe_corrected_signal_weighted_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-next-e47-20261013/corrected_signal_weighted_mae/corrected_signal_weighted_mae/checkpoint.pth
+  checkpoint_sha256: cccfe3909d3eef6f656a1d50c638952b40320afeada6a713f3f3a1b419a69695
+  splits:
+  - identity
+  - sky
+- run_id: probe_adam_reset_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_mae/adam_reset_mae/checkpoint.pth
+  checkpoint_sha256: 83b65d1ad1c9051b287afbcb529cbc88723781e440097f092f060a3d3aae0678
+  splits:
+  - identity
+  - sky
+- run_id: probe_adam_reset_lr2_mae
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_lr2_mae/adam_reset_lr2_mae/checkpoint.pth
+  checkpoint_sha256: 779302b42d5a0573ec7c81413698f171329cfdd1ca795d1dc06b3f462eb1d084
+  splits:
+  - identity
+  - sky
+- run_id: latent_refine_parent47
+  mode: latent_refinement
+  checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth
+  checkpoint_sha256: 4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482
+  splits:
+  - inference
+- run_id: latent_refine_spectral_auxiliary_mae
+  mode: latent_refinement
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae/spectral_auxiliary_mae/checkpoint.pth
+  checkpoint_sha256: 699a23d52ebdd2b83ebfc210415f8b72e651498f5673baa8f310fe39aa25cfbe
+  splits:
+  - inference
+- run_id: latent_refine_photometry_spectral_mae
+  mode: latent_refinement
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae/photometry_spectral_mae/checkpoint.pth
+  checkpoint_sha256: 513c604edb9560b329521665e03ec160f971721f11fb8a0802b8010ea7151142
+  splits:
+  - inference
+- run_id: probe_new_control_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s42/control_s42/checkpoint.pth
+  depends_on: control_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_control_s43
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s43/control_s43/checkpoint.pth
+  depends_on: control_s43
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_control_s44
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s44/control_s44/checkpoint.pth
+  depends_on: control_s44
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s42/spectral_s42/checkpoint.pth
+  depends_on: spectral_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_s43
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s43/spectral_s43/checkpoint.pth
+  depends_on: spectral_s43
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_s44
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s44/spectral_s44/checkpoint.pth
+  depends_on: spectral_s44
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_photometry_spectral_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s42/photometry_spectral_s42/checkpoint.pth
+  depends_on: photometry_spectral_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_photometry_spectral_s43
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s43/photometry_spectral_s43/checkpoint.pth
+  depends_on: photometry_spectral_s43
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_photometry_spectral_s44
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s44/photometry_spectral_s44/checkpoint.pth
+  depends_on: photometry_spectral_s44
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_weight003_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight003_s42/spectral_weight003_s42/checkpoint.pth
+  depends_on: spectral_weight003_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_weight030_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight030_s42/spectral_weight030_s42/checkpoint.pth
+  depends_on: spectral_weight030_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_lr05_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr05_s42/spectral_lr05_s42/checkpoint.pth
+  depends_on: spectral_lr05_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_lr125_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr125_s42/spectral_lr125_s42/checkpoint.pth
+  depends_on: spectral_lr125_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_reset_warmup_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_reset_warmup_s42/spectral_reset_warmup_s42/checkpoint.pth
+  depends_on: spectral_reset_warmup_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_dropout0_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout0_s42/spectral_dropout0_s42/checkpoint.pth
+  depends_on: spectral_dropout0_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_dropout005_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout005_s42/spectral_dropout005_s42/checkpoint.pth
+  depends_on: spectral_dropout005_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_decoder_dropout0_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_decoder_dropout0_s42/spectral_decoder_dropout0_s42/checkpoint.pth
+  depends_on: spectral_decoder_dropout0_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_multiscale_spectral_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/multiscale_spectral_s42/multiscale_spectral_s42/checkpoint.pth
+  depends_on: multiscale_spectral_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_full_decoder_spectral_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/full_decoder_spectral_s42/full_decoder_spectral_s42/checkpoint.pth
+  depends_on: full_decoder_spectral_s42
+  splits:
+  - identity
+  - sky
+- run_id: probe_new_spectral_latent_views_s42
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_latent_views_s42/spectral_latent_views_s42/checkpoint.pth
+  depends_on: spectral_latent_views_s42
+  splits:
+  - identity
+  - sky

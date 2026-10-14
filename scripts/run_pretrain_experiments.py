@@ -37,6 +37,7 @@ from masked_stellar_autoencoder.training.config_paths import expand_config_paths
 from masked_stellar_autoencoder.training.hdf5_io import _clean_column
 from masked_stellar_autoencoder.training.pretrain_msa import _validate_error_columns
 from masked_stellar_autoencoder.training.xp_experiments import (
+    apply_optimizer_warmup,
     configure_optimizer,
     experiment_objective,
     noise_reliability,
@@ -51,6 +52,10 @@ from masked_stellar_autoencoder.training.xp_photometry import (
     fit_calibration,
     normalized_observed_flux,
     photometry_consistency_sum,
+)
+from masked_stellar_autoencoder.training.xp_representation import (
+    continuum_operator,
+    paired_latent_regularizer,
 )
 
 
@@ -417,6 +422,30 @@ def training_mask(
             raise ValueError(f"Unknown XP mask mode: {xp_mode}")
     finite = torch.isfinite(target)
     return target.masked_fill(mask | ~finite, -9999), mask, finite
+
+
+def paired_training_view(target, primary_hidden, features, photo_ratio, generator):
+    """Change photometry masks only; preserve primary G, XP and astrometry."""
+    if len(features) != target.shape[1] or target.shape != primary_hidden.shape:
+        raise ValueError("Paired-view features must match target and primary shapes")
+    if not math.isfinite(photo_ratio) or not 0 <= photo_ratio <= 1:
+        raise ValueError("Photometry mask ratio must be finite and in [0, 1]")
+    columns = [
+        i
+        for i, name in enumerate(features)
+        if name in {"W1", "W2", "BP", "RP", "J", "H", "KS"}
+        or name.endswith(("_SMSS", "_SDSS", "_PS1"))
+    ]
+    secondary = primary_hidden.clone()
+    hidden = (
+        torch.rand(
+            (len(target), len(columns)), device=target.device, generator=generator
+        )
+        < photo_ratio
+    )
+    values = target[:, columns]
+    secondary[:, columns] = values.masked_fill(hidden | ~torch.isfinite(values), -9999)
+    return secondary
 
 
 def prepare_photometry(
@@ -870,6 +899,39 @@ def evaluate(
     return qa["regimes"]["common"]["overall"]["masked_mae"], qa
 
 
+def configure_experiment_dropout(model, experiment):
+    """Override experiment dropout only; encoder/decoder keys take precedence."""
+    for key in ("dropout", "encoder_dropout", "decoder_dropout"):
+        if key in experiment:
+            value = experiment[key]
+            if not math.isfinite(value) or not 0 <= value <= 1:
+                raise ValueError(f"{key} must be finite and between zero and one")
+    for name, module in model.named_modules():
+        if not isinstance(module, torch.nn.Dropout):
+            continue
+        key = (
+            "encoder_dropout"
+            if name.startswith("encoder.")
+            else "decoder_dropout"
+            if name.startswith("decoder.")
+            else "dropout"
+        )
+        if key in experiment or "dropout" in experiment:
+            module.p = float(experiment.get(key, experiment.get("dropout")))
+    return {
+        name: module.p
+        for name, module in model.named_modules()
+        if isinstance(module, torch.nn.Dropout)
+    }
+
+
+def experiment_seed(experiment, default):
+    seed = experiment.get("seed", default)
+    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed < 2**32:
+        raise ValueError("Experiment seed must be an integer in [0, 2**32)")
+    return seed
+
+
 def build_wrapper(config, checkpoint, source, center, scale, arm, output):
     model_config = config["model"]
     data = config["data"]
@@ -893,10 +955,8 @@ def build_wrapper(config, checkpoint, source, center, scale, arm, output):
         for module in model.modules():
             if isinstance(module, MaskedPeriodicEmbeddings):
                 module.forward = MethodType(PeriodicEmbeddings.forward, module)
-    if "dropout" in arm:
-        for module in model.modules():
-            if isinstance(module, torch.nn.Dropout):
-                module.p = float(arm["dropout"])
+    dropout_policy = configure_experiment_dropout(model, arm)
+    write_json(output / "dropout_policy.json", dropout_policy)
     scaler = RobustScaler()
     scaler.center_, scaler.scale_, scaler.n_features_in_ = (
         center.copy(),
@@ -977,12 +1037,17 @@ def run_arm(
     wrapper, optimizer, scheduler = build_wrapper(
         config, checkpoint, source, center, scale, arm, output
     )
-    if args.independent_rng:
-        random.seed(args.seed)
-        np.random.seed(args.seed)
-        torch.manual_seed(args.seed)
+    seed = experiment_seed(arm, args.seed)
+    if args.independent_rng or "seed" in arm:
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
         if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(args.seed)
+            torch.cuda.manual_seed_all(seed)
+    optimizer_policy = json.loads((output / "optimizer_policy.json").read_text())
+    optimizer_policy["seed"] = seed
+    optimizer_policy["independent_rng"] = args.independent_rng or "seed" in arm
+    write_json(output / "optimizer_policy.json", optimizer_policy)
     device, model = wrapper.device, wrapper.model
     frequency = [
         module.periodic.weight
@@ -997,8 +1062,8 @@ def run_arm(
     interval_rows = 0
     train_seconds = 0.0
     interval_start = time.perf_counter()
-    rng = np.random.default_rng(args.seed)
-    mask_generator = torch.Generator(device=device).manual_seed(args.seed)
+    rng = np.random.default_rng(seed)
+    mask_generator = torch.Generator(device=device).manual_seed(seed)
     xp_indices = [
         i
         for i, name in enumerate(wrapper.feature_cols)
@@ -1006,7 +1071,12 @@ def run_arm(
     ]
     reliability = None
     spectral_loss = None
-    if arm.get("loss") in {"spectral_mae", "photometry_spectral_mae"}:
+    if arm.get("loss") in {
+        "spectral_mae",
+        "photometry_spectral_mae",
+        "multiscale_spectral_mae",
+        "full_decoder_spectral_mae",
+    }:
         if spectral_projection is None:
             raise ValueError("Spectral loss requires --xp-diagnostics")
         spectral_loss = {
@@ -1021,6 +1091,55 @@ def run_arm(
                 spectral_projection["wavelength_nm"], dtype=torch.float32, device=device
             ),
         }
+        if arm.get("loss") == "multiscale_spectral_mae":
+            spectral_loss["smoothing"] = continuum_operator(
+                spectral_loss["wavelength"], arm.get("spectral_smoothing_nm", 40.0)
+            )
+    latent_scale = None
+    second_mask_generator = None
+    if arm.get("latent_weight", 0) > 0:
+        indices = np.linspace(
+            0, len(cache) - 1, min(10_000, len(cache)), dtype=np.int64
+        )
+        calibration_generator = torch.Generator(device=device).manual_seed(42)
+        calibration = torch.as_tensor(np.array(cache[indices]), device=device)
+        calibration_hidden, _, _ = training_mask(
+            calibration,
+            xp_indices,
+            wrapper.xp_masking_ratio,
+            wrapper.m_masking_ratio,
+            calibration_generator,
+            features=wrapper.feature_cols,
+        )
+        model.eval()
+        with torch.no_grad():
+            calibration_latent = torch.cat(
+                [
+                    model(calibration_hidden[start : start + micro])[1]
+                    for start in range(0, len(indices), micro)
+                ]
+            )
+        latent_scale = calibration_latent.std(0, unbiased=True)
+        if not torch.isfinite(latent_scale).all() or not (latent_scale > 0).all():
+            raise ValueError(
+                "Parent training latent scales must be finite and positive"
+            )
+        write_json(
+            output / "latent_calibration.json",
+            {
+                "rows": len(indices),
+                "training_only": True,
+                "mask_seed": 42,
+                "parent_sha256": manifest["checkpoint_sha256"],
+                "reference_scale": latent_scale.cpu().tolist(),
+                "indices_sha256": hashlib.sha256(indices.tobytes()).hexdigest(),
+                "statistics_microbatch": micro,
+                "pair_policy": "same G/XP/astrometry visibility; independent photometry masks",
+            },
+        )
+        second_mask_generator = torch.Generator(device=device).manual_seed(
+            seed + 1_000_000
+        )
     if arm.get("loss") == "signal_weighted_mae":
         indices = np.linspace(
             0, len(cache) - 1, min(100_000, len(cache)), dtype=np.int64
@@ -1080,6 +1199,7 @@ def run_arm(
             "rows_seen_total": rows,
             "parent_rows_seen_total": parent_rows,
             "optimizer_steps": steps,
+            "seed": seed,
             "train_loss": statistics[0] / interval_rows if interval_rows else None,
             "sampled_validation_mae": mae,
             "common_scaled_mae": mae,
@@ -1162,6 +1282,15 @@ def run_arm(
                 xp_mode=arm.get("xp_mask_mode", "whole"),
                 features=wrapper.feature_cols,
             )
+            second_hidden = None
+            if latent_scale is not None:
+                second_hidden = paired_training_view(
+                    target,
+                    hidden,
+                    wrapper.feature_cols,
+                    wrapper.m_masking_ratio,
+                    second_mask_generator,
+                )
             uncertainty = (
                 torch.as_tensor(uncertainty[: len(raw)], device=device)
                 if uncertainty is not None
@@ -1174,7 +1303,7 @@ def run_arm(
             batch_loss = torch.zeros((), device=device)
             for start in range(0, len(raw), micro):
                 stop = min(start + micro, len(raw))
-                prediction, _ = model(hidden[start:stop])
+                prediction, latent = model(hidden[start:stop])
                 if balanced:
                     loss = balanced_mae(
                         prediction,
@@ -1253,6 +1382,30 @@ def run_arm(
                             * decoder_sum
                             / global_count
                         )
+                if latent_scale is not None:
+                    if stop - start < 2:
+                        raise ValueError(
+                            "Paired latent regularization requires >=2 rows"
+                        )
+                    # The auxiliary forward must not advance primary dropout RNG.
+                    devices = (
+                        [
+                            device.index
+                            if device.index is not None
+                            else torch.cuda.current_device()
+                        ]
+                        if device.type == "cuda"
+                        else []
+                    )
+                    with torch.random.fork_rng(devices=devices):
+                        _, second_latent = model(second_hidden[start:stop])
+                    loss = loss + arm["latent_weight"] * paired_latent_regularizer(
+                        latent,
+                        second_latent,
+                        latent_scale,
+                    ) * ((stop - start) / len(raw))
+                if not torch.isfinite(loss):
+                    raise FloatingPointError("Nonfinite experiment objective")
                 loss.backward()
                 batch_loss.add_(loss.detach())
             frequency_squared = sum(
@@ -1261,6 +1414,7 @@ def run_arm(
                 if parameter.grad is not None
             )
             norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            apply_optimizer_warmup(optimizer, optimizer_policy, steps)
             optimizer.step()
             rows += len(raw)
             steps += 1
@@ -1410,6 +1564,8 @@ def main():
             "photometry_mae",
             "photometry_spectral_mae",
             "photometry_decoder_mae",
+            "multiscale_spectral_mae",
+            "full_decoder_spectral_mae",
         }:
             parser.error("Unknown embedding/loss experiment")
         if arm.get("xp_mask_mode", "whole") not in {
@@ -1424,9 +1580,24 @@ def main():
             or arm.get("variance_floor", 0.1) <= 0
         ):
             parser.error("Variance floor must be finite and positive")
-        for field in ("dropout", "xp_masking_ratio", "m_masking_ratio"):
-            if field in arm and not 0 <= arm[field] <= 1:
+        for field in (
+            "dropout",
+            "encoder_dropout",
+            "decoder_dropout",
+            "xp_masking_ratio",
+            "m_masking_ratio",
+        ):
+            if field in arm and (
+                not math.isfinite(arm[field]) or not 0 <= arm[field] <= 1
+            ):
                 parser.error(f"{field} must be between zero and one")
+        try:
+            experiment_seed(arm, args.seed)
+        except ValueError as error:
+            parser.error(str(error))
+        warmup = arm.get("warmup_steps", 0)
+        if isinstance(warmup, bool) or not isinstance(warmup, int) or warmup < 0:
+            parser.error("Warmup steps must be a nonnegative integer")
         if not math.isfinite(arm.get("lr_factor", 1)) or arm.get("lr_factor", 1) <= 0:
             parser.error("Learning-rate factor must be finite and positive")
         if (
@@ -1434,6 +1605,16 @@ def main():
             or arm.get("spectral_weight", 0.1) < 0
         ):
             parser.error("Spectral weight must be finite and nonnegative")
+        if (
+            not math.isfinite(arm.get("latent_weight", 0))
+            or arm.get("latent_weight", 0) < 0
+        ):
+            parser.error("Latent weight must be finite and nonnegative")
+        if (
+            not math.isfinite(arm.get("spectral_smoothing_nm", 40))
+            or arm.get("spectral_smoothing_nm", 40) <= 0
+        ):
+            parser.error("Spectral smoothing width must be finite and positive")
     photometry_path = specification.get("photometry_projection")
     if args.photometry_preflight and not photometry_path:
         parser.error("Photometry preflight requires a projection asset")
@@ -1494,6 +1675,9 @@ def main():
         "xp_helpers_sha256": sha256(
             Path("src/masked_stellar_autoencoder/training/xp_experiments.py")
         ),
+        "representation_helpers_sha256": sha256(
+            Path("src/masked_stellar_autoencoder/training/xp_representation.py")
+        ),
         "experiment_environment_lock_sha256": sha256(Path("experiments/xp/pixi.lock"))
         if args.xp_diagnostics
         else None,
@@ -1513,7 +1697,7 @@ def main():
         "validation_seed": args.validation_seed,
         "independent_rng": args.independent_rng,
         "mask_policy": "separate device generator seeded once per experiment; independent of dropout RNG",
-        "scheduler_policy": "inherited LR times per-experiment lr_factor held fixed during bounded presentations; saved scheduler state unchanged",
+        "scheduler_policy": "inherited LR times per-experiment lr_factor; optional linear warmup_steps then fixed; saved parent scheduler state unchanged",
         "selection_metric": "xp_only_mae",
         "selection_policy": "compare ordinary all-column and XP-only held-out MAE; completed experiments only, identical checkpoint, masks, presentations and optimizer steps",
         "runtime": {

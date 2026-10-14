@@ -25,6 +25,83 @@ experiments = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(experiments)
 
 
+def test_encoder_decoder_dropout_are_independent_and_keep_default():
+    model = torch.nn.Module()
+    model.encoder = torch.nn.Sequential(torch.nn.Dropout(0.1))
+    model.decoder = torch.nn.Sequential(torch.nn.Dropout(0.1))
+    original = experiments.configure_experiment_dropout(model, {})
+    assert original == {"encoder.0": 0.1, "decoder.0": 0.1}
+    experiments.configure_experiment_dropout(model, {"decoder_dropout": 0})
+    assert model.encoder[0].p == 0.1
+    assert model.decoder[0].p == 0
+    experiments.configure_experiment_dropout(
+        model, {"dropout": 0.05, "encoder_dropout": 0}
+    )
+    assert model.encoder[0].p == 0
+    assert model.decoder[0].p == 0.05
+    with pytest.raises(ValueError, match="finite"):
+        experiments.configure_experiment_dropout(model, {"dropout": float("nan")})
+
+
+def test_experiment_seed_changes_row_and_mask_generators():
+    seed = experiments.experiment_seed({"seed": 43}, 42)
+    assert seed == 43
+    assert experiments.experiment_seed({}, 42) == 42
+    data = np.arange(90, dtype=np.float32).reshape(30, 3)
+    orders = [
+        np.concatenate(
+            list(experiments.iter_batches(data, 7, np.random.default_rng(value)))
+        )
+        for value in (42, 43, 43)
+    ]
+    assert not np.array_equal(orders[0], orders[1])
+    np.testing.assert_array_equal(orders[1], orders[2])
+    with pytest.raises(ValueError, match="seed"):
+        experiments.experiment_seed({"seed": -1}, 42)
+
+
+def test_second_views_keep_xp_group_and_leave_primary_masks_unchanged():
+    target = torch.arange(896, dtype=torch.float32).reshape(128, 7)
+    features = ["W1", "bp_1", "rp_1", "G", "PARALLAX", "G_SDSS", "RA"]
+    target[3, 1] = float("nan")
+    primary = torch.Generator().manual_seed(42)
+    baseline = torch.Generator().manual_seed(42)
+    secondary = torch.Generator().manual_seed(1_000_042)
+    for _ in range(3):
+        first, first_mask, _ = experiments.training_mask(
+            target, [1, 2], 0.5, 0.2, primary
+        )
+        second = experiments.paired_training_view(
+            target, first, features, 0.2, secondary
+        )
+        reference, reference_mask, _ = experiments.training_mask(
+            target, [1, 2], 0.5, 0.2, baseline
+        )
+        torch.testing.assert_close(first, reference)
+        torch.testing.assert_close(first_mask, reference_mask)
+        torch.testing.assert_close(
+            second[:, [1, 2, 3, 4, 6]], first[:, [1, 2, 3, 4, 6]]
+        )
+        assert (second[:, [0, 5]] != first[:, [0, 5]]).any()
+        assert second[3, 1] == -9999
+
+
+def test_auxiliary_dropout_forward_preserves_primary_rng_sequence():
+    model = torch.nn.Sequential(torch.nn.Linear(5, 8), torch.nn.Dropout(0.1))
+    model.train()
+    inputs = torch.ones(128, 5)
+    torch.manual_seed(42)
+    expected = [model(inputs).detach() for _ in range(3)]
+    torch.manual_seed(42)
+    actual = []
+    for _ in range(3):
+        actual.append(model(inputs).detach())
+        with torch.random.fork_rng(devices=[]):
+            model(inputs * 2)
+    for first, second in zip(expected, actual, strict=True):
+        torch.testing.assert_close(first, second)
+
+
 def test_balanced_mae_microbatches_match_whole_batch():
     target = torch.tensor([[1.0, float("nan"), 3.0], [2.0, 5.0, 6.0]])
     mask = torch.isfinite(target)

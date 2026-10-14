@@ -2,11 +2,32 @@ import numpy as np
 import torch
 
 from masked_stellar_autoencoder.training.xp_experiments import (
+    apply_optimizer_warmup,
     configure_optimizer,
     experiment_objective,
     noise_reliability,
     spectral_relative_error,
 )
+
+
+def test_linear_warmup_has_exact_update_endpoints_and_preserves_state():
+    parameter = torch.nn.Parameter(torch.tensor([1.0]))
+    optimizer = torch.optim.AdamW([parameter], lr=0.008)
+    parameter.grad = torch.ones_like(parameter)
+    optimizer.step()
+    policy = configure_optimizer(optimizer, {"lr_factor": 0.5, "warmup_steps": 4})
+    assert optimizer.state[parameter]["step"] == 1
+    rates = []
+    for step in range(6):
+        apply_optimizer_warmup(optimizer, policy, step)
+        rates.append(optimizer.param_groups[0]["lr"])
+    assert rates == [0.001, 0.002, 0.003, 0.004, 0.004, 0.004]
+    reset = configure_optimizer(
+        optimizer, {"reset_optimizer": True, "warmup_steps": 32}
+    )
+    assert not optimizer.state
+    apply_optimizer_warmup(optimizer, reset, 0)
+    assert optimizer.param_groups[0]["lr"] == 0.004 / 32
 
 
 def test_optimizer_reset_preserves_group_settings_and_isolates_lr_restart():
