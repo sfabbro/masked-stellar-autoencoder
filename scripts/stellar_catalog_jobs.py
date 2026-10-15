@@ -96,10 +96,14 @@ def selected_native(table, source):
             eligible &= (col(["flag_sp"]) == 0) & (col(["flag_fe_h"]) == 0)
     elif source == "apogee":
         # Native FE_H only, never M_H. Require flags; preserve rejected records too.
-        if not {"aspcapflag", "starflag"} <= names.keys():
+        if not {"aspcapflag", "starflag", "fe_h_flag"} <= names.keys():
             eligible[:] = False
         else:
-            eligible &= (col(["aspcapflag"]) == 0) & (col(["starflag"]) == 0)
+            eligible &= (
+                (col(["aspcapflag"]) == 0)
+                & (col(["starflag"]) == 0)
+                & (col(["fe_h_flag"]) == 0)
+            )
     return ids, value, error, eligible
 
 

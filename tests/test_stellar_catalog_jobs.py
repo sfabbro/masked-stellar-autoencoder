@@ -20,11 +20,16 @@ def test_native_apogee_never_uses_m_h_as_iron_and_requires_flags():
             fits.Column(name="FE_H_ERR", format="D", array=[0.1, 0.1]),
             fits.Column(name="ASPCAPFLAG", format="K", array=[0, 1]),
             fits.Column(name="STARFLAG", format="K", array=[0, 0]),
+            fits.Column(name="FE_H_FLAG", format="K", array=[0, 0]),
         ]
     ).data
     _, value, _, eligible = jobs.selected_native(table, "apogee")
     np.testing.assert_allclose(value, [-2.5, -1.8])
     assert eligible.tolist() == [True, False]
+    table["ASPCAPFLAG"][:] = 0
+    table["FE_H_FLAG"][0] = 1
+    _, _, _, eligible = jobs.selected_native(table, "apogee")
+    assert eligible.tolist() == [False, True]
     _, value, _, eligible = jobs.selected_native(
         table[["M_H"]]
         if False
