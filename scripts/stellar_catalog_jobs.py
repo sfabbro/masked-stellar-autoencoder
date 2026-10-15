@@ -411,6 +411,7 @@ def main():
             "datasets",
             "posterior-labels",
             "dataset-view",
+            "desi-labels",
         ],
         required=True,
     )
@@ -451,6 +452,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "desi-labels":
+            from desi_stellar_labels import build_labels
+
+            result = build_labels(args.output, scratch)
         elif args.mode == "dataset-view":
             from stellar_dataset_views import dataset_view
 

@@ -262,3 +262,8 @@ jobs:
   env:
     MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
     MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: desi_labels_v1
+  task: catalog
+  mode: desi-labels
+  depends_on:
+  - desi_collection_v1

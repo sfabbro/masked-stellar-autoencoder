@@ -29,9 +29,12 @@ def publish(staged, output):
                 other = copied[name]
                 assert node.shape == other.shape and node.dtype == other.dtype
                 for start in range(0, len(node), 131072):
-                    np.testing.assert_array_equal(
-                        node[start : start + 131072], other[start : start + 131072]
-                    )
+                    left = node[start : start + 131072]
+                    right = other[start : start + 131072]
+                    if node.dtype.names:
+                        assert left.tobytes() == right.tobytes(), name
+                    else:
+                        np.testing.assert_array_equal(left, right)
 
         original.visititems(verify)
     copying.replace(output)
