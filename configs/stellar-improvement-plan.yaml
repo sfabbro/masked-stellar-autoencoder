@@ -44,3 +44,130 @@ jobs:
   task: training
   env:
     MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: candidate_collection_v2
+  task: catalog
+  mode: collect
+- run_id: feh_frozen_huber
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_huber
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_mse
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_recon001
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_recon01
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_balanced
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_balanced_corrected
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_curriculum
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_ttt5_head
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_ttt15_head
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: parallax_frozen_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: parallax_sft_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: photo_value_no_wise
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_2mass
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_skymapper
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_sdss
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_ps1
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_xp
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: age_frozen_nll
+  task: stellar-labels
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: age_sft_nll
+  task: stellar-labels
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_clean_sft_nll
+  task: stellar-labels
+  depends_on:
+  - label_registry_v1
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: feh_clean_recon001
+  task: stellar-labels
+  depends_on:
+  - label_registry_v1
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: feh_clean_balanced
+  task: stellar-labels
+  depends_on:
+  - label_registry_v1
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: feh_clean_sky_nll
+  task: stellar-labels
+  depends_on:
+  - label_registry_v1
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5

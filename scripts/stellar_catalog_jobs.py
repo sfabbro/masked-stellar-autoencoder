@@ -44,6 +44,7 @@ def inventory(root):
                 for s in [
                     "galah",
                     "apogee",
+                    "allstar",
                     "astronn",
                     "li_et",
                     "pigs",
@@ -255,39 +256,100 @@ def collect(args):
     for item in spec["sources"]:
         result = dict(item)
         try:
+            limit = int(item.get("max_bytes", args.max_bytes))
             request = urllib.request.Request(
                 item["url"],
                 method="HEAD",
                 headers={"User-Agent": "MSA-science-catalogue-audit/1.0"},
             )
-            with urllib.request.urlopen(request, timeout=40) as response:
-                result.update(
-                    http_status=response.status,
-                    content_length=response.headers.get("Content-Length"),
-                    content_type=response.headers.get("Content-Type"),
-                )
-            if (
-                item.get("download")
-                and int(result.get("content_length") or 10**15) <= args.max_bytes
-            ):
+            try:
+                with urllib.request.urlopen(request, timeout=40) as response:
+                    result.update(
+                        http_status=response.status,
+                        content_length=response.headers.get("Content-Length"),
+                        content_type=response.headers.get("Content-Type"),
+                    )
+            except Exception as error:
+                result["head_error"] = str(error)
+            if item.get("download") and int(result.get("content_length") or 0) <= limit:
                 target = args.output / item["filename"]
-                if target.exists():
+                partial = target.with_suffix(target.suffix + ".copying")
+                if target.exists() or partial.exists():
                     raise FileExistsError(target)
                 with (
-                    urllib.request.urlopen(item["url"], timeout=120) as source,
-                    target.open("xb") as dest,
+                    urllib.request.urlopen(item["url"], timeout=180) as source,
+                    partial.open("xb") as dest,
                 ):
                     digest = hashlib.sha256()
                     size = 0
                     while chunk := source.read(1024 * 1024):
                         size += len(chunk)
-                        if size > args.max_bytes:
-                            raise ValueError("Download exceeds bounded limit")
+                        if size > limit:
+                            raise ValueError(
+                                "Download exceeds bounded per-product limit"
+                            )
                         digest.update(chunk)
                         dest.write(chunk)
+                if (
+                    item.get("expected_sha256")
+                    and digest.hexdigest() != item["expected_sha256"]
+                ):
+                    raise ValueError("Catalogue checksum mismatch")
+                partial.replace(target)
                 result.update(
                     file=str(target), sha256=digest.hexdigest(), actual_bytes=size
                 )
+                if target.name.endswith(".fits"):
+                    with fits.open(target, memmap=True) as hdul:
+                        result["fits_tables"] = [
+                            {
+                                "name": h.name,
+                                "rows": h.header.get("NAXIS2"),
+                                "columns": h.columns.names,
+                                "units": {c.name: c.unit for c in h.columns if c.unit},
+                            }
+                            for h in hdul
+                            if isinstance(h, fits.BinTableHDU)
+                        ]
+                        # Candidate discovery only: keep raw uncertainties/flags and original row.
+                        for h in hdul:
+                            if not isinstance(h, fits.BinTableHDU):
+                                continue
+                            columns = {c.lower(): c for c in h.columns.names}
+                            metal = next(
+                                (
+                                    columns[k]
+                                    for k in ["feh", "fe_h", "[fe/h]"]
+                                    if k in columns
+                                ),
+                                None,
+                            )
+                            if metal is None:
+                                continue
+                            value = np.asarray(h.data[metal])
+                            rows = np.flatnonzero(
+                                np.isfinite(value) & (value < -2) & (value > -6)
+                            )
+                            rng = np.random.default_rng(42)
+                            rng.shuffle(rows)
+                            rows = rows[:50000]
+                            rows.sort()
+                            if len(rows):
+                                candidate = target.with_name(
+                                    target.stem + "-candidate-sample.fits"
+                                )
+                                fits.BinTableHDU(h.data[rows], name=h.name).writeto(
+                                    candidate, overwrite=False
+                                )
+                                result["candidate_sample"] = {
+                                    "path": str(candidate),
+                                    "rows": len(rows),
+                                    "original_row_indices_file": str(candidate)
+                                    + ".rows.npy",
+                                    "selection": "seed42 uniform among nominal raw metallicity<-2; uncorrected values, retain original uncertainties/flags; not independent XP truth",
+                                }
+                                np.save(str(candidate) + ".rows.npy", rows)
+                            break
             else:
                 result["download_status"] = "metadata_only_or_exceeds_limit"
         except Exception as error:
@@ -297,7 +359,7 @@ def collect(args):
     return {
         "sources": results,
         "scientific_ingestion_complete": False,
-        "note": "Downloaded catalogue metadata/raw files only; verified survey-specific mapping and correction required before labels are eligible",
+        "note": "Raw candidate samples require verified survey-specific ID joins, quality flags, uncertainties and correction application before scientific labels are eligible",
     }
 
 

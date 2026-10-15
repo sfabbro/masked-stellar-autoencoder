@@ -1,7 +1,57 @@
 sources:
 - name: DESI_DR1_MWS_iron
   url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/mwsall-pix-iron.fits
-  download: false
+  download: true
   role: spectroscopic measurements; FeH temperature/gravity corrections must be recorded
     before eligibility
   uncertainty_policy: native per-star errors and flags required
+  filename: mwsall-pix-iron.fits
+  max_bytes: 14000000000
+  correction_documentation: https://data.desi.lbl.gov/doc/releases/dr1/vac/mws/
+  eligibility: pending published temperature/gravity FeH correction and Gaia DR3 crossmatch;
+    retain raw values/errors
+- name: Shi2026
+  url: https://zenodo.org/api/records/19176298/files/Gaia_XP_MP_star.fits/content
+  download: true
+  filename: shi2026-xp-metals.fits
+  max_bytes: 1100000000
+  role: XP-derived candidate selection, not independent XP labels
+- name: PIGS_spectroscopy
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/tabled2.dat.gz
+  download: true
+  filename: pigs-tabled2.dat.gz
+- name: PIGS_distances
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/tabled3.dat.gz
+  download: true
+  filename: pigs-tabled3.dat.gz
+  role: StarHorse derived distances; record Gaia/isochrone dependence
+- name: PIGS_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/ReadMe
+  download: true
+  filename: pigs-ReadMe
+- name: Pristine_DR1_public_sample
+  url: https://cdsarc.cds.unistra.fr/ftp/J/A+A/692/A115/pristine_dr1.sam
+  download: true
+  filename: pristine-dr1-public-sample.dat
+  role: 1000-row official public sample, full catalogue acquisition pending
+- name: Pristine_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/A+A/692/A115/ReadMe
+  download: true
+  filename: pristine-ReadMe
+- name: Huang_Beers2025
+  url: https://nadc.china-vo.org/data/sports/
+  download: true
+  filename: sports-access-page.html
+  role: access metadata; scientific catalogue file URL unresolved, not yet acquired
+- name: LAMOST_DR10_Li2025
+  url: https://arxiv.org/html/2506.09705v1
+  download: true
+  filename: lamost-li2025-paper.html
+  role: catalogue provenance/schema; machine-readable table URL unresolved, not yet
+    acquired
+- name: DESI_SPDist
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws-spdist/
+  download: true
+  filename: desi-spdist-index.html
+  role: distance product discovery; stellar-label/photometry/parallax dependencies
+    must be recorded

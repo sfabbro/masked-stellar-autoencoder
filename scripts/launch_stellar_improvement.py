@@ -19,6 +19,10 @@ def eligible(plan, now, dependencies):
         plan["not_before_utc"]
     ):
         return False
+    if plan.get("require_native_registry") and not dependencies.get(
+        "native_labels_ready", False
+    ):
+        return False
     return all(dependencies.get(name, False) for name in plan.get("depends_on", []))
 
 
@@ -75,11 +79,22 @@ def main():
             else None
         )
         try:
-            dependencies[name] = bool(
-                response
-                and response.returncode == 0
-                and json.loads(response.stdout)["status"] == "complete"
+            content = (
+                json.loads(response.stdout)
+                if response and response.returncode == 0
+                else {}
             )
+            dependencies[name] = content.get("status") == "complete"
+            if name == "label_registry_v1":
+                result = content.get("result", {})
+                dependencies["native_labels_ready"] = bool(
+                    dependencies[name]
+                    and result.get("native_galah_apogee_complete")
+                    and all(
+                        result.get("sources", {}).get(s, {}).get("quality_pass", 0) > 0
+                        for s in ("galah", "apogee")
+                    )
+                )
         except (ValueError, KeyError):
             dependencies[name] = False
     payload = bootstrap(
