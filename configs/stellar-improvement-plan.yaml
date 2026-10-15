@@ -195,3 +195,36 @@ jobs:
   - apogee_native_fetch_v1
   env:
     MSA_NATIVE_LABEL_FILES: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
+- run_id: posterior_labels_v1
+  task: catalog
+  mode: posterior-labels
+- run_id: dataset_view_v1
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v1
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: dataset_view_v2
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v2
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: mae_b8192_lr4_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr12_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr4_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr12_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml

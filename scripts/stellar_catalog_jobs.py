@@ -400,7 +400,14 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "--mode",
-        choices=["inventory", "registry", "collect", "datasets"],
+        choices=[
+            "inventory",
+            "registry",
+            "collect",
+            "datasets",
+            "posterior-labels",
+            "dataset-view",
+        ],
         required=True,
     )
     p.add_argument("--output", type=Path, required=True)
@@ -429,6 +436,23 @@ def main():
     try:
         if args.mode == "collect":
             result = collect(args)
+        elif args.mode == "posterior-labels":
+            from stellar_dataset_views import posterior_tables
+
+            result = posterior_tables(
+                args.output,
+                scratch,
+                [
+                    "/arc/projects/k-pop/catalogues/starhorse_ages/apogee17.fits",
+                    "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
+                ],
+            )
+        elif args.mode == "dataset-view":
+            from stellar_dataset_views import dataset_view
+
+            result = dataset_view(
+                args.output, scratch, os.environ["MSA_LABEL_REGISTRY"]
+            )
         else:
             inv = inventory(args.root)
             for extra in filter(

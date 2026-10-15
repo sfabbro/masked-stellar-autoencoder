@@ -13,3 +13,5 @@ Loss normalization uses the hidden finite feature count over each actual optimiz
 On the measured prior micro512 pilots,20M training compute was22–25min, while full1M evaluations made total wall time approximately70min. Provision1.25–2GPUh per run excluding queues/setup/cache, revise after initial measured throughput. End-to-end timing is part of the result, not a guaranteed ETA.
 
 Compare all-column/XP MAE, count-weighted BP/RP orders1–10/11–30/31–55, integrated spectral error, calibrated hidden/visible photometric agreement and downstream frozen representation probes. Seed42 alone is exploratory; confirm the chosen setting and unchanged control with independent training seeds before changing large-training policy.
+
+An additional wider-LR grid uses factors4 and12 (9.854528418624213e-6 and2.956358525587264e-5) at batches8192 and2048. These four runs retain identical budgets, masks, source checkpoint, Adam state and all scientific checks. The first nine accepted runs remain immutable. Require finite objectives and report divergence rather than relaxing checks.

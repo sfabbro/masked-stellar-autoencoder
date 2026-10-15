@@ -1,12 +1,92 @@
-# Immutable parent epoch57 SHA256 9b033ae63a3b87c93dcfeffd989172f7888d029f77143e6cf315cf7a032ab2ca.
-# Standard MAE isolates LR/batch effects; microbatch512 supplied to launcher.
 experiments:
-  - {run_id: mae_b32768_lr05_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 32768, mask_chunk_rows: 512, lr_factor: 0.5}
-  - {run_id: mae_b32768_lr1_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 32768, mask_chunk_rows: 512, lr_factor: 1.0}
-  - {run_id: mae_b32768_lr2_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 32768, mask_chunk_rows: 512, lr_factor: 2.0}
-  - {run_id: mae_b8192_lr05_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 8192, mask_chunk_rows: 512, lr_factor: 0.5}
-  - {run_id: mae_b8192_lr1_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 8192, mask_chunk_rows: 512, lr_factor: 1.0}
-  - {run_id: mae_b8192_lr2_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 8192, mask_chunk_rows: 512, lr_factor: 2.0}
-  - {run_id: mae_b2048_lr05_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 2048, mask_chunk_rows: 512, lr_factor: 0.5}
-  - {run_id: mae_b2048_lr1_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 2048, mask_chunk_rows: 512, lr_factor: 1.0}
-  - {run_id: mae_b2048_lr2_s42, seed: 42, embedding: stable, loss: mae, optimizer_batch_size: 2048, mask_chunk_rows: 512, lr_factor: 2.0}
+- run_id: mae_b32768_lr05_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 32768
+  mask_chunk_rows: 512
+  lr_factor: 0.5
+- run_id: mae_b32768_lr1_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 32768
+  mask_chunk_rows: 512
+  lr_factor: 1.0
+- run_id: mae_b32768_lr2_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 32768
+  mask_chunk_rows: 512
+  lr_factor: 2.0
+- run_id: mae_b8192_lr05_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 8192
+  mask_chunk_rows: 512
+  lr_factor: 0.5
+- run_id: mae_b8192_lr1_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 8192
+  mask_chunk_rows: 512
+  lr_factor: 1.0
+- run_id: mae_b8192_lr2_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 8192
+  mask_chunk_rows: 512
+  lr_factor: 2.0
+- run_id: mae_b2048_lr05_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 2048
+  mask_chunk_rows: 512
+  lr_factor: 0.5
+- run_id: mae_b2048_lr1_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 2048
+  mask_chunk_rows: 512
+  lr_factor: 1.0
+- run_id: mae_b2048_lr2_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 2048
+  mask_chunk_rows: 512
+  lr_factor: 2.0
+- run_id: mae_b8192_lr4_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 8192
+  mask_chunk_rows: 512
+  lr_factor: 4.0
+- run_id: mae_b8192_lr12_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 8192
+  mask_chunk_rows: 512
+  lr_factor: 12.0
+- run_id: mae_b2048_lr4_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 2048
+  mask_chunk_rows: 512
+  lr_factor: 4.0
+- run_id: mae_b2048_lr12_s42
+  seed: 42
+  embedding: stable
+  loss: mae
+  optimizer_batch_size: 2048
+  mask_chunk_rows: 512
+  lr_factor: 12.0
