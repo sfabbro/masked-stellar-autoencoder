@@ -253,7 +253,13 @@ def build_registry(args, inv, scratch):
 def collect(args):
     spec = yaml.safe_load(Path(args.sources).read_text())
     results = []
+    selected = set(filter(None, os.environ.get("MSA_CATALOG_SOURCES", "").split(",")))
+    known = {item["name"] for item in spec["sources"]}
+    if selected - known:
+        raise ValueError(f"Unknown catalogue sources: {sorted(selected - known)}")
     for item in spec["sources"]:
+        if selected and item["name"] not in selected:
+            continue
         result = dict(item)
         try:
             limit = int(item.get("max_bytes", args.max_bytes))
@@ -272,8 +278,19 @@ def collect(args):
             except Exception as error:
                 result["head_error"] = str(error)
             if item.get("download") and int(result.get("content_length") or 0) <= limit:
-                target = args.output / item["filename"]
+                published = args.output / item["filename"]
+                target = (
+                    Path(
+                        os.environ.get(
+                            "MSA_LABEL_SCRATCH", "/scratch/msa-label-staging"
+                        )
+                    )
+                    / args.run_id
+                    / item["filename"]
+                )
                 partial = target.with_suffix(target.suffix + ".copying")
+                if published.exists():
+                    raise FileExistsError(published)
                 if target.exists() or partial.exists():
                     raise FileExistsError(target)
                 with (
@@ -297,7 +314,7 @@ def collect(args):
                     raise ValueError("Catalogue checksum mismatch")
                 partial.replace(target)
                 result.update(
-                    file=str(target), sha256=digest.hexdigest(), actual_bytes=size
+                    file=str(published), sha256=digest.hexdigest(), actual_bytes=size
                 )
                 if target.name.endswith(".fits"):
                     with fits.open(target, memmap=True) as hdul:
@@ -350,6 +367,22 @@ def collect(args):
                                 }
                                 np.save(str(candidate) + ".rows.npy", rows)
                             break
+                raw_copy = published.with_suffix(published.suffix + ".copying")
+                if raw_copy.exists():
+                    raise FileExistsError(raw_copy)
+                shutil.copyfile(target, raw_copy)
+                raw_copy.replace(published)
+                if result.get("candidate_sample"):
+                    candidate = Path(result["candidate_sample"]["path"])
+                    sample_output = args.output / candidate.name
+                    shutil.copyfile(candidate, sample_output)
+                    shutil.copyfile(
+                        str(candidate) + ".rows.npy", str(sample_output) + ".rows.npy"
+                    )
+                    result["candidate_sample"].update(
+                        path=str(sample_output),
+                        original_row_indices_file=str(sample_output) + ".rows.npy",
+                    )
             else:
                 result["download_status"] = "metadata_only_or_exceeds_limit"
         except Exception as error:
@@ -381,7 +414,10 @@ def main():
     p.add_argument("--max-bytes", type=int, default=512 * 1024 * 1024)
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    scratch = Path("/scratch/msa-label-staging") / args.run_id
+    scratch = (
+        Path(os.environ.get("MSA_LABEL_SCRATCH", "/scratch/msa-label-staging"))
+        / args.run_id
+    )
     scratch.mkdir(parents=True, exist_ok=False)
     manifest = {
         "status": "running",
@@ -395,6 +431,13 @@ def main():
             result = collect(args)
         else:
             inv = inventory(args.root)
+            for extra in filter(
+                None, os.environ.get("MSA_NATIVE_LABEL_FILES", "").split(",")
+            ):
+                path = Path(extra)
+                if not path.is_file():
+                    raise FileNotFoundError(path)
+                inv.append({"path": str(path), "bytes": path.stat().st_size})
             atomic_json(args.output / "inventory.json", inv)
             result = {"files": len(inv)}
             if args.mode == "registry":

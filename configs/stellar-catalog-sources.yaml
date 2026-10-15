@@ -1,4 +1,10 @@
 sources:
+- name: native_APOGEE_DR17
+  url: https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/allStar-dr17-synspec_rev1.fits
+  download: true
+  filename: allStar-dr17-synspec_rev1.fits
+  max_bytes: 6000000000
+  role: native FE_H and FE_H_ERR with ASPCAPFLAG and STARFLAG; preserve M_H separately
 - name: DESI_DR1_MWS_iron
   url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/mwsall-pix-iron.fits
   download: true
@@ -55,3 +61,8 @@ sources:
   filename: desi-spdist-index.html
   role: distance product discovery; stellar-label/photometry/parallax dependencies
     must be recorded
+- name: DESI_DR1_checksum
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/dr1_vac_dr1_mws_iron_v1.0.sha256sum
+  download: true
+  filename: desi-publisher.sha256sum
+  role: publisher checksum; compare against downloaded combined product before scientific ingestion

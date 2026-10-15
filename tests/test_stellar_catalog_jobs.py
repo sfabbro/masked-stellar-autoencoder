@@ -41,6 +41,58 @@ def test_duplicate_source_ids_have_identical_split():
     assert jobs.identity_split(ids)[0] == jobs.identity_split(ids)[2]
 
 
+def test_collection_filters_sources_stages_and_publishes(tmp_path, monkeypatch):
+    import argparse
+    import hashlib
+    import io
+    import json
+
+    payload = b"catalogue-data"
+
+    class Response(io.BytesIO):
+        status = 200
+        headers = {"Content-Length": str(len(payload)), "Content-Type": "text/plain"}
+
+    calls = []
+
+    def open_url(request, timeout):
+        calls.append(request.full_url if hasattr(request, "full_url") else request)
+        return Response(payload)
+
+    monkeypatch.setattr(jobs.urllib.request, "urlopen", open_url)
+    monkeypatch.setenv("MSA_CATALOG_SOURCES", "wanted")
+    monkeypatch.setenv("MSA_LABEL_SCRATCH", str(tmp_path / "scratch"))
+    (tmp_path / "scratch" / "test").mkdir(parents=True)
+    output = tmp_path / "out"
+    output.mkdir()
+    sources = tmp_path / "sources.json"
+    sources.write_text(
+        json.dumps(
+            {
+                "sources": [
+                    {"name": "skip", "url": "https://example.org/skip"},
+                    {
+                        "name": "wanted",
+                        "url": "https://example.org/data",
+                        "download": True,
+                        "filename": "data.dat",
+                        "expected_sha256": hashlib.sha256(payload).hexdigest(),
+                    },
+                ]
+            }
+        )
+    )
+    result = jobs.collect(
+        argparse.Namespace(sources=sources, output=output, run_id="test", max_bytes=100)
+    )
+    assert all(url.endswith("/data") for url in calls)
+    assert len(result["sources"]) == 1
+    assert "error" not in result["sources"][0]
+    assert (output / "data.dat").read_bytes() == payload
+    assert (tmp_path / "scratch/test/data.dat").read_bytes() == payload
+    assert not list(output.glob("*.copying"))
+
+
 def test_registry_publication_preserves_mh_and_excludes_unflagged_galah(tmp_path):
     import argparse
 

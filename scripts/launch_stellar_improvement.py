@@ -3,8 +3,10 @@
 import argparse
 import datetime as dt
 import json
+import socket
 import subprocess
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 from launch_xp_followup import atomic_json, bootstrap, dns_addresses
@@ -12,6 +14,25 @@ from launch_xp_followup import atomic_json, bootstrap, dns_addresses
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
 PARENT = "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_57.pth"
 BENCH = "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5"
+
+
+def launch_addresses():
+    """Extend the existing TLS-preserving tunnel to explicitly configured data hosts."""
+    addresses = dns_addresses()
+    sources = yaml.safe_load(Path("configs/stellar-catalog-sources.yaml").read_text())[
+        "sources"
+    ]
+    hosts = {urlparse(source["url"]).hostname for source in sources}
+    hosts.update({"cdsarc.u-strasbg.fr", "vizier.cds.unistra.fr", "data.sdss.org"})
+    for host in sorted(hosts):
+        try:
+            addresses[host] = socket.gethostbyname(host)
+        except OSError as error:
+            print(
+                json.dumps({"catalogue_host_unresolved": host, "error": str(error)}),
+                flush=True,
+            )
+    return addresses
 
 
 def eligible(plan, now, dependencies):
@@ -85,7 +106,12 @@ def main():
                 else {}
             )
             dependencies[name] = content.get("status") == "complete"
-            if name == "label_registry_v1":
+            if content.get("mode") == "collect":
+                sources = content.get("result", {}).get("sources", [])
+                dependencies[name] &= bool(sources) and all(
+                    "error" not in source for source in sources
+                )
+            if name.startswith("label_registry_"):
                 result = content.get("result", {})
                 dependencies["native_labels_ready"] = bool(
                     dependencies[name]
@@ -100,7 +126,7 @@ def main():
     payload = bootstrap(
         "codex/xp-reconstruction-experiments",
         args.git_sha,
-        {} if args.dry_run else dns_addresses(),
+        {} if args.dry_run else launch_addresses(),
     )
     submitted = 0
     for plan in plans:

@@ -47,6 +47,23 @@ jobs:
 - run_id: candidate_collection_v2
   task: catalog
   mode: collect
+  env:
+    MSA_CATALOG_SOURCES: PIGS_spectroscopy,PIGS_distances,PIGS_ReadMe,Pristine_DR1_public_sample,Pristine_ReadMe,Huang_Beers2025,LAMOST_DR10_Li2025,DESI_SPDist
+- run_id: apogee_native_fetch_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: native_APOGEE_DR17
+- run_id: desi_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: DESI_DR1_MWS_iron,DESI_DR1_checksum
+- run_id: shi_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: Shi2026
 - run_id: feh_frozen_huber
   task: stellar-labels
   env:
@@ -142,32 +159,39 @@ jobs:
 - run_id: feh_clean_sft_nll
   task: stellar-labels
   depends_on:
-  - label_registry_v1
+  - label_registry_v2
   require_native_registry: true
   env:
     MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
-    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
 - run_id: feh_clean_recon001
   task: stellar-labels
   depends_on:
-  - label_registry_v1
+  - label_registry_v2
   require_native_registry: true
   env:
     MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
-    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
 - run_id: feh_clean_balanced
   task: stellar-labels
   depends_on:
-  - label_registry_v1
+  - label_registry_v2
   require_native_registry: true
   env:
     MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
-    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
 - run_id: feh_clean_sky_nll
   task: stellar-labels
   depends_on:
-  - label_registry_v1
+  - label_registry_v2
   require_native_registry: true
   env:
     MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
-    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: label_registry_v2
+  task: catalog
+  mode: registry
+  depends_on:
+  - apogee_native_fetch_v1
+  env:
+    MSA_NATIVE_LABEL_FILES: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits

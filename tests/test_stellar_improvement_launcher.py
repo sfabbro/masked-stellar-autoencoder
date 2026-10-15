@@ -26,3 +26,13 @@ def test_registry_completion_is_not_enough_without_native_quality_measurements()
     assert launch.eligible(
         plan, now, {"label_registry_v1": True, "native_labels_ready": True}
     )
+
+
+def test_catalogue_hosts_are_explicitly_added_without_disabling_tls(monkeypatch):
+    monkeypatch.setattr(launch, "dns_addresses", lambda: {"github.com": "192.0.2.1"})
+    monkeypatch.setattr(launch.socket, "gethostbyname", lambda host: "192.0.2.2")
+    addresses = launch.launch_addresses()
+    assert addresses["data.desi.lbl.gov"] == "192.0.2.2"
+    assert addresses["zenodo.org"] == "192.0.2.2"
+    assert addresses["github.com"] == "192.0.2.1"
+    assert "unconfigured.example" not in addresses
