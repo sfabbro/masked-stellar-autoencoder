@@ -40,10 +40,17 @@ def eligible(plan, now, dependencies):
         plan["not_before_utc"]
     ):
         return False
-    if plan.get("require_native_registry") and not dependencies.get(
-        "native_labels_ready", False
-    ):
-        return False
+    if plan.get("require_native_registry"):
+        registries = [
+            name
+            for name in plan.get("depends_on", [])
+            if name.startswith("label_registry_")
+        ]
+        if not registries or not all(
+            dependencies.get(name + ":native_labels_ready", False)
+            for name in registries
+        ):
+            return False
     return all(dependencies.get(name, False) for name in plan.get("depends_on", []))
 
 
@@ -113,7 +120,7 @@ def main():
                 )
             if name.startswith("label_registry_"):
                 result = content.get("result", {})
-                dependencies["native_labels_ready"] = bool(
+                dependencies[name + ":native_labels_ready"] = bool(
                     dependencies[name]
                     and result.get("native_galah_apogee_complete")
                     and all(

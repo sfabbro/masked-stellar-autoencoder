@@ -24,7 +24,32 @@ def test_registry_completion_is_not_enough_without_native_quality_measurements()
     plan = {"require_native_registry": True, "depends_on": ["label_registry_v1"]}
     assert not launch.eligible(plan, now, {"label_registry_v1": True})
     assert launch.eligible(
-        plan, now, {"label_registry_v1": True, "native_labels_ready": True}
+        plan,
+        now,
+        {"label_registry_v1": True, "label_registry_v1:native_labels_ready": True},
+    )
+
+
+def test_native_readiness_is_specific_to_the_requested_registry_version():
+    now = dt.datetime.now(dt.UTC)
+    plan = {"require_native_registry": True, "depends_on": ["label_registry_v2"]}
+    assert not launch.eligible(
+        plan,
+        now,
+        {
+            "label_registry_v2": True,
+            "label_registry_v1:native_labels_ready": True,
+            "label_registry_v2:native_labels_ready": False,
+        },
+    )
+    assert launch.eligible(
+        plan,
+        now,
+        {
+            "label_registry_v2": True,
+            "label_registry_v1:native_labels_ready": False,
+            "label_registry_v2:native_labels_ready": True,
+        },
     )
 
 
