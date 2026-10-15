@@ -1,4 +1,4 @@
-"""Submit exactly two read-only comparisons of the pinned standard epoch55."""
+"""Submit two read-only comparisons of a pinned completed standard checkpoint."""
 
 import argparse
 import datetime as dt
@@ -14,27 +14,33 @@ def main():
     parser.add_argument("--git-sha", required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
+        "--spec", type=Path, default=Path("configs/xp-latest-standard-analysis.yaml")
+    )
+    parser.add_argument(
         "--record",
         type=Path,
-        default=Path("experiments/xp/launch-latest-standard-e55-20261014.json"),
+        default=None,
     )
     args = parser.parse_args()
     if len(args.git_sha) != 40 or any(
         x not in "0123456789abcdef" for x in args.git_sha
     ):
         parser.error("Require a complete immutable source SHA")
-    analysis = yaml.safe_load(
-        Path("configs/xp-latest-standard-analysis.yaml").read_text()
-    )
+    analysis = yaml.safe_load(args.spec.read_text())
+    epoch = analysis.get("checkpoint_epoch", 55)
+    if args.record is None:
+        args.record = Path(
+            f"experiments/xp/launch-latest-standard-e{epoch}-20261014.json"
+        )
     pinned = analysis["analyses"][0]
     record = {
         "git_sha": args.git_sha,
         "checkpoint": pinned["checkpoint"],
         "checkpoint_sha256": pinned["checkpoint_sha256"],
-        "checkpoint_epoch": 55,
+        "checkpoint_epoch": epoch,
         "read_only_evaluation": True,
         "benchmark": analysis["benchmark"],
-        "output_root": "/arc/projects/k-pop/msa_runs/xp-latest-standard-e55-20261014",
+        "output_root": f"/arc/projects/k-pop/msa_runs/xp-latest-standard-e{epoch}-20261014",
         "jobs": [],
     }
     if args.record.exists():
@@ -55,13 +61,13 @@ def main():
         {} if args.dry_run else dns_addresses(),
     )
     for run_id, task in [
-        ("probe_latest_standard55", "analysis"),
-        ("evaluate_latest_standard55", "evaluation"),
+        (pinned["run_id"], "analysis"),
+        (f"evaluate_latest_standard{epoch}", "evaluation"),
     ]:
         prior = next((x for x in record["jobs"] if x["run_id"] == run_id), None)
         if prior and prior["session_ids"]:
             continue
-        name = "msa-xp-standard55-" + task
+        name = f"msa-xp-standard{epoch}-" + task
         output = record["output_root"] + "/" + run_id
         if client:
             matches = [x for x in client.fetch() if x.get("name") == name]
@@ -98,8 +104,10 @@ def main():
             "PYTHONNOUSERSITE": "1",
             "MSA_XP_EXPERIMENTS": "1",
             "MSA_EXPERIMENT_TASK": "analysis" if task == "analysis" else "training",
-            "MSA_ANALYSIS_SPEC": "configs/xp-latest-standard-analysis.yaml",
-            "MSA_EXPERIMENTS_CONFIG": "configs/pretrain.xp-latest-standard.yaml",
+            "MSA_ANALYSIS_SPEC": str(args.spec),
+            "MSA_EXPERIMENTS_CONFIG": analysis.get(
+                "experiments_config", "configs/pretrain.xp-latest-standard.yaml"
+            ),
             "MSA_PRETRAIN_RESUME": record["checkpoint"],
             "MSA_EXPERIMENT_RUNS": run_id,
             "MSA_EXPERIMENT_OUTPUT": output,
