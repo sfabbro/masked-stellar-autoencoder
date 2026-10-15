@@ -1,0 +1,46 @@
+jobs:
+- run_id: label_registry_v1
+  task: catalog
+  mode: registry
+- run_id: candidate_collection_v1
+  task: catalog
+  mode: collect
+- run_id: dataset_design_v1
+  task: catalog
+  mode: datasets
+- run_id: mae_b32768_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b32768_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b32768_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml

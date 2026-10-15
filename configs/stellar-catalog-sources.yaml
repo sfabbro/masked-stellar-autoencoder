@@ -1,0 +1,7 @@
+sources:
+- name: DESI_DR1_MWS_iron
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/mwsall-pix-iron.fits
+  download: false
+  role: spectroscopic measurements; FeH temperature/gravity corrections must be recorded
+    before eligibility
+  uncertainty_policy: native per-star errors and flags required

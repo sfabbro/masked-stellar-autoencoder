@@ -580,3 +580,30 @@ def test_photometry_diagnostics_allow_unreconstructed_ancillary_columns():
     )
     assert result["bands"][0]["magnitude_mae"] == 0
     assert result["bands"][0]["count"] == 2
+
+
+def test_fixed_chunk_masks_pair_actual_rows_across_optimizer_batches():
+    cache = np.arange(131200 * 6, dtype="f4").reshape(131200, 6)
+    cache[::211, 4] = np.nan
+    results = []
+    for batch in (32768, 8192, 2048):
+        generator = torch.Generator().manual_seed(123)
+        rows, masks = [], []
+        for indices, values in experiments.iter_batches(
+            cache, batch, np.random.default_rng(42), return_indices=True
+        ):
+            _, mask, _ = experiments.chunked_training_mask(
+                torch.tensor(values),
+                [1, 2],
+                0.5,
+                0.2,
+                generator,
+                chunk_rows=512,
+                features=["G", "bp_1", "rp_1", "W1", "BP", "RP"],
+            )
+            rows.append(indices)
+            masks.append(mask)
+        results.append((np.concatenate(rows), torch.cat(masks)))
+    for rows, masks in results[1:]:
+        np.testing.assert_array_equal(rows, results[0][0])
+        assert torch.equal(masks, results[0][1])

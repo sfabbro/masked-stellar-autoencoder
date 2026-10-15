@@ -119,8 +119,18 @@ case "$stage" in
     ;;
   pretrain-experiments)
     : "${MSA_PRETRAIN_RESUME:?Set MSA_PRETRAIN_RESUME to the immutable full checkpoint}"
-    if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 ]]; then
+    if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog ]]; then
+      "${pixi_run[@]}" python -u scripts/stellar_catalog_jobs.py \
+        --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == stellar-labels ]]; then
+      "${pixi_run[@]}" python -u scripts/run_stellar_label_experiments.py \
+        --config "$MSA_LABEL_CONFIG" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == analysis ]]; then
       : "${MSA_ANALYSIS_SPEC:?Set the pinned analysis specification path}"

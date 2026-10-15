@@ -448,6 +448,24 @@ def paired_training_view(target, primary_hidden, features, photo_ratio, generato
     return secondary
 
 
+def chunked_training_mask(
+    target, xp_indices, xp_ratio, photo_ratio, generator, chunk_rows=512, **kwargs
+):
+    """Fixed row chunks make actual masks independent of optimizer batch size."""
+    pieces = [
+        training_mask(
+            target[start : start + chunk_rows],
+            xp_indices,
+            xp_ratio,
+            photo_ratio,
+            generator,
+            **kwargs,
+        )
+        for start in range(0, len(target), chunk_rows)
+    ]
+    return tuple(torch.cat([piece[index] for piece in pieces]) for index in range(3))
+
+
 def prepare_photometry(
     cache, train_sigma, center, scale, names, projection_path, output
 ):
@@ -991,7 +1009,9 @@ def build_wrapper(config, checkpoint, source, center, scale, arm, output):
     return wrapper, optimizer, scheduler
 
 
-def iter_batches(cache, batch_size, rng, sigma=None, correlations=None):
+def iter_batches(
+    cache, batch_size, rng, sigma=None, correlations=None, *, return_indices=False
+):
     # ponytail: shuffle 65K-row blocks and rows within each; use a reservoir for wider mixing.
     blocks = list(range(0, len(cache), 65536))
     rng.shuffle(blocks)
@@ -1001,15 +1021,16 @@ def iter_batches(cache, batch_size, rng, sigma=None, correlations=None):
         for offset in range(0, len(indices), batch_size):
             selected = indices[offset : offset + batch_size]
             if correlations is not None:
-                yield (
+                values = (
                     np.array(cache[selected]),
                     np.array(sigma[selected]),
                     np.array(correlations[selected]),
                 )
             elif sigma is None:
-                yield np.array(cache[selected])
+                values = np.array(cache[selected])
             else:
-                yield np.array(cache[selected]), np.array(sigma[selected])
+                values = np.array(cache[selected]), np.array(sigma[selected])
+            yield (selected, values) if return_indices else values
 
 
 def run_arm(
@@ -1057,6 +1078,11 @@ def run_arm(
     groups = feature_groups(wrapper.recon_cols)
     width = len(wrapper.recon_cols)
     micro = wrapper._pretrain_micro_batch_size
+    effective_batch = arm.get(
+        "optimizer_batch_size", config["training"]["mini_batch_size"]
+    )
+    mask_chunk_rows = arm.get("mask_chunk_rows", 0)
+    row_digest, mask_digest = hashlib.sha256(), hashlib.sha256()
     rows, steps, interval_steps = 0, 0, 0
     sums = torch.zeros(4, device=device)
     interval_rows = 0
@@ -1200,6 +1226,13 @@ def run_arm(
             "parent_rows_seen_total": parent_rows,
             "optimizer_steps": steps,
             "seed": seed,
+            "training_cache_row_index_sha256": row_digest.hexdigest()
+            if mask_chunk_rows
+            else None,
+            "training_mask_sha256": mask_digest.hexdigest()
+            if mask_chunk_rows
+            else None,
+            "mask_chunk_rows": mask_chunk_rows,
             "train_loss": statistics[0] / interval_rows if interval_rows else None,
             "sampled_validation_mae": mae,
             "common_scaled_mae": mae,
@@ -1235,7 +1268,7 @@ def run_arm(
             },
             **wrapper._resource_metrics(),
             "loader_mode": "experiment-prefix-cache",
-            "optimizer_batch_size": config["training"]["mini_batch_size"],
+            "optimizer_batch_size": effective_batch,
             "cache_bytes": manifest["sample"]["cache_bytes"],
             "projected_cache_bytes": manifest["projected_cache_bytes"],
             "scratch_free_bytes": shutil.disk_usage(args.cache_dir).free,
@@ -1287,11 +1320,15 @@ def run_arm(
     while rows < args.presentations:
         for values in iter_batches(
             cache,
-            config["training"]["mini_batch_size"],
+            effective_batch,
             rng,
             train_sigma,
             train_correlations,
+            return_indices=bool(mask_chunk_rows),
         ):
+            selected = None
+            if mask_chunk_rows:
+                selected, values = values
             packed = None
             if train_correlations is not None:
                 raw, uncertainty, packed = values
@@ -1301,7 +1338,9 @@ def run_arm(
             if not len(raw):
                 break
             target = torch.as_tensor(raw, device=device)
-            hidden, mask, finite = training_mask(
+            mask_function = chunked_training_mask if mask_chunk_rows else training_mask
+            mask_options = {"chunk_rows": mask_chunk_rows} if mask_chunk_rows else {}
+            hidden, mask, finite = mask_function(
                 target,
                 xp_indices,
                 wrapper.xp_masking_ratio,
@@ -1309,7 +1348,13 @@ def run_arm(
                 mask_generator,
                 xp_mode=arm.get("xp_mask_mode", "whole"),
                 features=wrapper.feature_cols,
+                **mask_options,
             )
+            if mask_chunk_rows:
+                row_digest.update(
+                    np.asarray(selected[: len(raw)], dtype="<u8").tobytes()
+                )
+                mask_digest.update(mask.detach().cpu().numpy().tobytes())
             second_hidden = None
             if latent_scale is not None:
                 second_hidden = paired_training_view(
@@ -1457,6 +1502,21 @@ def run_arm(
                 emit("complete" if rows == args.presentations else "interval")
             if rows == args.presentations:
                 break
+    if mask_chunk_rows:
+        write_json(
+            output / "training_pairing.json",
+            {
+                "rows": rows,
+                "optimizer_steps": steps,
+                "optimizer_batch_size": effective_batch,
+                "micro_batch_size": micro,
+                "mask_chunk_rows": mask_chunk_rows,
+                "training_cache_row_index_sha256": row_digest.hexdigest(),
+                "training_mask_sha256": mask_digest.hexdigest(),
+                "row_identity": "little-endian uint64 shuffled row indices in identical benchmark training cache",
+                "mask_identity": "row-major bool masks for every input feature, fixed chunk RNG stream",
+            },
+        )
     signature = {
         **checkpoint["run_signature"],
         "loader_mode": "experiment-prefix",
@@ -1627,6 +1687,24 @@ def main():
         warmup = arm.get("warmup_steps", 0)
         if isinstance(warmup, bool) or not isinstance(warmup, int) or warmup < 0:
             parser.error("Warmup steps must be a nonnegative integer")
+        effective_batch = arm.get(
+            "optimizer_batch_size", config["training"]["mini_batch_size"]
+        )
+        chunk = arm.get("mask_chunk_rows", 0)
+        for field, value in (
+            ("optimizer_batch_size", effective_batch),
+            ("mask_chunk_rows", chunk),
+        ):
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, int)
+                or value < (1 if field == "optimizer_batch_size" else 0)
+            ):
+                parser.error(f"{field} must be a valid integer")
+        if chunk and (65536 % chunk or effective_batch % chunk):
+            parser.error(
+                "Mask chunk must divide 65536 and optimizer batch for exact cross-batch pairing"
+            )
         if not math.isfinite(arm.get("lr_factor", 1)) or arm.get("lr_factor", 1) <= 0:
             parser.error("Learning-rate factor must be finite and positive")
         if (
