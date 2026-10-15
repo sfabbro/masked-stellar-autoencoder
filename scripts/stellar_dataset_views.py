@@ -174,10 +174,11 @@ def dataset_view(
                 if split == "train"
                 else 0,
             }
-        sorted_ids = np.sort(np.concatenate(all_ids))
+        joined_ids = np.concatenate(all_ids)
+        sorted_ids = np.sort(joined_ids)
         if np.any(sorted_ids[1:] == sorted_ids[:-1]):
             raise ValueError("Duplicate benchmark IDs or train/validation overlap")
-        digest = hashlib.sha256(sorted_ids.tobytes()).hexdigest()
+        digest = hashlib.sha256(joined_ids.tobytes()).hexdigest()
         if digest != expected_hash:
             raise ValueError("Actual benchmark source-ID hash mismatch")
         out["reference_scaler"] = h5py.ExternalLink(str(benchmark), "/reference_scaler")

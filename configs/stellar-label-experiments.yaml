@@ -196,3 +196,9 @@ experiments:
 - run_id: feh_clean_sky_nll
   loss: noisy_nll
   split: sky
+- run_id: feh_clean_sft_huber
+- run_id: feh_clean_frozen_huber
+  adapt_encoder: false
+- run_id: feh_clean_balanced_corrected
+  sampling_emphasis: 0.5
+  importance_corrected: true

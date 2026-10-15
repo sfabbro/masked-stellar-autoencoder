@@ -18,13 +18,13 @@ spec.loader.exec_module(views)
 def test_index_keeps_all_fields_and_separates_label_holdouts(tmp_path):
     benchmark = tmp_path / "benchmark.h5"
     registry = tmp_path / "labels.h5"
-    ids = np.array([10, 20, 30], dtype="<i8")
+    ids = np.array([20, 10, 30], dtype="<i8")
     digest = hashlib.sha256(ids.tobytes()).hexdigest()
     with h5py.File(benchmark, "w") as f:
         f.attrs["provenance"] = json.dumps({"source_id_sha256": digest})
         dtype = [("source_id", "<i8"), ("original_field", "<f8")]
         f.create_dataset(
-            "train/records", data=np.array([(10, 4.0), (20, 5.0)], dtype=dtype)
+            "train/records", data=np.array([(20, 4.0), (10, 5.0)], dtype=dtype)
         )
         f.create_dataset("validation/records", data=np.array([(30, 6.0)], dtype=dtype))
         f.create_dataset("reference_scaler/scale", data=[1.0])
@@ -42,7 +42,7 @@ def test_index_keeps_all_fields_and_separates_label_holdouts(tmp_path):
     assert result["counts"]["train"]["sft_fit_eligible"] == 1
     assert result["counts"]["validation"]["sft_fit_eligible"] == 0
     with h5py.File(output / "dataset-view.h5") as f:
-        assert f["train/selected_label_row"][:].tolist() == [0, -1]
+        assert f["train/selected_label_row"][:].tolist() == [-1, 0]
         assert f["train/benchmark/records"]["original_field"].tolist() == [4.0, 5.0]
         assert f["validation/label_holdout_split"][:].tolist() == [2]
 

@@ -228,3 +228,37 @@ jobs:
   task: training
   env:
     MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: dataset_view_v1_r2
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v1
+  replaces: dataset_view_v1
+  replacement_reason: 'Confirmed failed index: hash must retain train-then-validation
+    row order; sorting is solely for uniqueness checks. Benchmark itself is unchanged.'
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: feh_clean_sft_huber
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_frozen_huber
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_balanced_corrected
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
