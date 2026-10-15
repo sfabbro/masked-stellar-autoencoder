@@ -267,3 +267,8 @@ jobs:
   mode: desi-labels
   depends_on:
   - desi_collection_v1
+- run_id: pigs_labels_v1
+  task: catalog
+  mode: pigs-labels
+  depends_on:
+  - candidate_collection_v2

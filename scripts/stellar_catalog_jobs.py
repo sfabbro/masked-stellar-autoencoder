@@ -412,6 +412,7 @@ def main():
             "posterior-labels",
             "dataset-view",
             "desi-labels",
+            "pigs-labels",
         ],
         required=True,
     )
@@ -452,6 +453,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "pigs-labels":
+            from pigs_stellar_labels import build_labels
+
+            result = build_labels(args.output, scratch)
         elif args.mode == "desi-labels":
             from desi_stellar_labels import build_labels
 
