@@ -78,6 +78,23 @@ def main():
                     "overlap-summary.json",
                     "overlap-pairs.npz",
                 ]
+        elif task == "pristine-value":
+            files += [
+                "comparison.json",
+                "paired-cohort.npz",
+                "predictions.npz",
+                "checkpoint_verification.json",
+            ]
+            files += [
+                cohort + "__" + variant + "-head.npz"
+                for cohort in [
+                    "strict_benchmark_train",
+                    "broad_excluding_benchmark_validation",
+                ]
+                for variant in ["encoder", "encoder_gaia", "encoder_gaia_cahk"]
+            ]
+            if args.initial_predictions:
+                files += ["initial_predictions.npz"]
         elif task == "stellar-labels":
             files += [
                 "metrics.jsonl",

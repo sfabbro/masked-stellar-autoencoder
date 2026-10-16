@@ -127,6 +127,11 @@ case "$stage" in
         --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == pristine-value ]]; then
+      "${pixi_run[@]}" python -u scripts/run_pristine_value.py \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == stellar-labels ]]; then
       "${pixi_run[@]}" python -u scripts/run_stellar_label_experiments.py \
         --config "$MSA_LABEL_CONFIG" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
