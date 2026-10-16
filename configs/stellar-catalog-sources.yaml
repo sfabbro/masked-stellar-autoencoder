@@ -123,3 +123,12 @@ sources:
   expected_sha256: 2d247a9adc219578ff35d432cc76788abd6b282ea19b192aadec88daca17aa07
   role: 396 model solutions for66stars fromsix correlated pipelines;no averaging into independent observations
   uncertainty_policy: AgeGyr anddistancepc;both lower andupper uncertainties arepositive widths,not APOKASC-style signed offsets;retain allpipelines/modeldependence
+
+- name: Hipparcos2_corrected_reference
+  url: https://cdsarc.cds.unistra.fr/ftp/I/311/hip2.dat.gz
+  download: false
+  role: bounded distance-feature-cohort mode preserves corrected raw measured parallaxes
+- name: Gaia_DR3_Hipparcos2_reference_mapping
+  url: https://gea.esac.esa.int/tap-server/tap/sync
+  download: false
+  role: bounded official count, identity mapping and three disjoint astrometry queries

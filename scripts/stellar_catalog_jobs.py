@@ -428,6 +428,7 @@ def main():
             "pristine-quality-view",
             "enriched-label-view",
             "age-feature-cohort",
+            "distance-feature-cohort",
         ],
         required=True,
     )
@@ -468,6 +469,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "distance-feature-cohort":
+            from stellar_distance_cohorts import materialize
+
+            result = materialize(args.output, scratch, legacy=Path(args.legacy))
         elif args.mode == "age-feature-cohort":
             from stellar_age_cohorts import materialize
 

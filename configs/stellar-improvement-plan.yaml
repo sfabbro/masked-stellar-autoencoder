@@ -350,3 +350,10 @@ jobs:
   task: native-age
   depends_on:
   - age_feature_cohort_v1
+
+- run_id: distance_feature_cohort_v1
+  task: catalog
+  mode: distance-feature-cohort
+  depends_on:
+  - posterior_labels_v2
+  - dataset_view_v2
