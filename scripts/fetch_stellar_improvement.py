@@ -80,6 +80,15 @@ def main():
                     "overlap-summary.json",
                     "overlap-pairs.npz",
                 ]
+        elif task == "native-age":
+            files += [
+                "metrics.jsonl",
+                "paired-cohort.npz",
+                "predictions.npz",
+                "checkpoint_verification.json",
+            ]
+            if args.initial_predictions:
+                files += ["initial_predictions.npz"]
         elif task == "pristine-value":
             files += [
                 "comparison.json",

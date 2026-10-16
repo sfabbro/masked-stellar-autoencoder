@@ -338,3 +338,15 @@ jobs:
   depends_on:
   - posterior_labels_v2
   - dataset_view_v2
+- run_id: native_age_strict_frozen_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
+- run_id: native_age_strict_sft_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
+- run_id: native_age_strict_recon_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
