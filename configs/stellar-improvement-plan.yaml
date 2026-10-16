@@ -277,3 +277,9 @@ jobs:
   mode: collect
   env:
     MSA_CATALOG_SOURCES: Pristine_DR1_full,Pristine_ReadMe
+- run_id: pristine_full_fetch_v1_r2
+  task: catalog
+  mode: pristine-async
+  replaces: pristine_full_fetch_v1
+  replacement_reason: 'Confirmed collection error: synchronous TAP connection closed
+    before data; validated asynchronous TOP2 FITS export. No overlap with failed download.'

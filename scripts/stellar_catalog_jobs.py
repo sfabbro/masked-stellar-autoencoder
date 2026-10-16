@@ -423,6 +423,7 @@ def main():
             "dataset-view",
             "desi-labels",
             "pigs-labels",
+            "pristine-async",
         ],
         required=True,
     )
@@ -463,6 +464,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "pristine-async":
+            from pristine_async_fetch import build_catalogue
+
+            result = build_catalogue(args.output, scratch)
         elif args.mode == "pigs-labels":
             from pigs_stellar_labels import build_labels
 
