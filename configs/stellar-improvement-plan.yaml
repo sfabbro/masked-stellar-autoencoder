@@ -297,3 +297,8 @@ jobs:
   - pristine_full_fetch_v1_r2
   - dataset_view_v2
   - label_registry_v2
+- run_id: li2025_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: LAMOST_DR10_Li2025_catalogue,LAMOST_DR10_Li2025_ReadMe

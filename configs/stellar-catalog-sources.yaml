@@ -77,3 +77,18 @@ sources:
     not independent spectroscopic FeH truth
   uncertainty_policy: Preserve e_CaHKmag0, metallicity percentiles, flags and all
     original columns; no invented symmetric error
+- name: LAMOST_DR10_Li2025_catalogue
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/53/table2.dat.gz
+  download: true
+  filename: li2025-table2.dat.gz
+  max_bytes: 2000000
+  expected_sha256: 8eaf96716c4c118db4a1701b5f5a779b077f06de04c2c281c23c0d709ea9b421
+  role: Actual Li2025 LAMOST DR10 CaT metallicity catalogue;8440measurements/8378uniqueGaiaDR3stars,not
+    the older Li2022highresolution sample
+  uncertainty_policy: Preserve measured errors,q_EW1,mag/color method andduplicate
+    rows; randomerrors not asserted totalcalibratedaccuracy
+- name: LAMOST_DR10_Li2025_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/53/ReadMe
+  download: true
+  filename: li2025-ReadMe
+  expected_sha256: c140ce88e8ebbc900397d21038e46fb644e3529dfd5bfb231ab5a33d187f041c
