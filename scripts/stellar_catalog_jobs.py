@@ -425,6 +425,7 @@ def main():
             "pigs-labels",
             "pristine-async",
             "survey-overlap",
+            "pristine-quality-view",
         ],
         required=True,
     )
@@ -465,6 +466,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "pristine-quality-view":
+            from pristine_quality_views import build_view
+
+            result = build_view(args.output, scratch)
         elif args.mode == "survey-overlap":
             from stellar_survey_overlap import build_audit
 
