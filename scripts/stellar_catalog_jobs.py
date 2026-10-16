@@ -427,6 +427,7 @@ def main():
             "survey-overlap",
             "pristine-quality-view",
             "enriched-label-view",
+            "enriched-feature-cohort",
             "age-feature-cohort",
             "distance-feature-cohort",
         ],
@@ -475,6 +476,10 @@ def main():
             result = materialize(args.output, scratch, legacy=Path(args.legacy))
         elif args.mode == "age-feature-cohort":
             from stellar_age_cohorts import materialize
+
+            result = materialize(args.output, scratch, legacy=Path(args.legacy))
+        elif args.mode == "enriched-feature-cohort":
+            from stellar_enriched_features import materialize
 
             result = materialize(args.output, scratch, legacy=Path(args.legacy))
         elif args.mode == "enriched-label-view":

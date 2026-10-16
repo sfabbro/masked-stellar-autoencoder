@@ -74,6 +74,8 @@ def main():
                 ]
             if job["plan"].get("mode") == "age-feature-cohort":
                 files += ["age-cohort-report.json"]
+            if job["plan"].get("mode") == "enriched-feature-cohort":
+                files += ["enriched-feature-report.json"]
             if job["plan"].get("mode") == "enriched-label-view":
                 files += [
                     "enriched-view-report.json",

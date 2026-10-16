@@ -376,3 +376,10 @@ jobs:
   reason: Use verified original nested records provenance and audited ID index as completed age controls
   depends_on:
   - distance_feature_cohort_v1
+
+- run_id: enriched_feature_cohort_v1
+  task: catalog
+  mode: enriched-feature-cohort
+  depends_on:
+  - enriched_label_view_v1
+  - dataset_view_v2
