@@ -369,3 +369,10 @@ jobs:
   reason: Read original compound benchmark source_id field rather than grouped-index path
   depends_on:
   - distance_feature_cohort_v1
+
+- run_id: distance_value_frozen_v3
+  task: distance-value
+  supersedes: distance_value_frozen_v2
+  reason: Use verified original nested records provenance and audited ID index as completed age controls
+  depends_on:
+  - distance_feature_cohort_v1

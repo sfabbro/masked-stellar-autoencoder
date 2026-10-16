@@ -51,20 +51,32 @@ def test_raw_gaia_baseline_is_scored_without_inversion_or_sign_cut():
     assert result["bias_mas"] == pytest.approx(0)
 
 
-@pytest.mark.parametrize("compound", [True, False])
-def test_benchmark_ids_read_original_compound_and_grouped_indexes(tmp_path, compound):
-    import h5py
-    from run_distance_value import benchmark_ids
+def test_actual_nested_benchmark_records_and_verified_index(tmp_path):
+    import json
 
-    path = tmp_path / "benchmark.h5"
+    import h5py
+    from run_distance_value import EXPECTED_IDS, benchmark_ids
+
+    benchmark, index = tmp_path / "benchmark.h5", tmp_path / "index.h5"
     ids = np.array([2**60 + 1, 2**60 + 3], dtype="i8")
-    with h5py.File(path, "w") as f:
-        for name in ["train", "validation"]:
-            if compound:
-                rows = np.zeros(2, dtype=[("source_id", "<i8"), ("bp_1", "<f4")])
-                rows["source_id"] = ids
-                f.create_dataset(name, data=rows)
-            else:
-                f.create_group(name).create_dataset("source_id", data=ids)
-    for actual in benchmark_ids(path):
+    with h5py.File(benchmark, "w") as f, h5py.File(index, "w") as view:
+        f.attrs["provenance"] = json.dumps({"source_id_sha256": EXPECTED_IDS})
+        for split in ["train", "validation"]:
+            rows = np.zeros(2, dtype=[("source_id", "<i8"), ("bp_1", "<f4")])
+            rows["source_id"] = ids
+            f.create_group(split).create_dataset("records", data=rows)
+            view.create_group(split).create_dataset("source_id", data=ids)
+    for actual in benchmark_ids(benchmark, index):
         np.testing.assert_array_equal(actual, ids)
+    with h5py.File(benchmark, "r+") as f:
+        f.attrs["provenance"] = json.dumps({"source_id_sha256": "wrong"})
+    with pytest.raises(ValueError, match="provenance"):
+        benchmark_ids(benchmark, index)
+
+    with h5py.File(benchmark, "r+") as f:
+        f.attrs["provenance"] = json.dumps({"source_id_sha256": EXPECTED_IDS})
+    with h5py.File(index, "r+") as f:
+        del f["train/source_id"]
+        f["train"].create_dataset("source_id", data=ids[:1])
+    with pytest.raises(ValueError, match="count differs"):
+        benchmark_ids(benchmark, index)

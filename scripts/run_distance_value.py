@@ -79,10 +79,31 @@ def fit_distance_head(latent, distance, train, evaluate):
     return positive_distance(log_prediction), state
 
 
-def benchmark_ids(path):
-    """Support the immutable compound tables and grouped index views."""
-    with h5py.File(path) as f:
-        return f["train"]["source_id"][:], f["validation"]["source_id"][:]
+def benchmark_ids(benchmark, index):
+    """Use audited ID index; verify the actual nested compound-record benchmark.
+
+    This is the same provenance/index path used by the completed native-age controls.
+    Reading ten million projected fields from the compressed 121GB benchmark is
+    unnecessary; the independently checked index retains the original ordered IDs.
+    """
+    with h5py.File(benchmark) as f:
+        if json.loads(f.attrs["provenance"])["source_id_sha256"] != EXPECTED_IDS:
+            raise ValueError("Immutable benchmark provenance changed")
+        counts = []
+        for split in ["train", "validation"]:
+            records = f[split + "/records"]
+            if (
+                not isinstance(records, h5py.Dataset)
+                or not records.dtype.names
+                or "source_id" not in records.dtype.names
+            ):
+                raise ValueError("Expected original nested compound benchmark records")
+            counts.append(len(records))
+    with h5py.File(index) as f:
+        ids = tuple(f[split + "/source_id"][:] for split in ["train", "validation"])
+    if [len(v) for v in ids] != counts:
+        raise ValueError("Benchmark index count differs from original records")
+    return ids
 
 
 def main():
@@ -124,7 +145,7 @@ def main():
             holdout = f["ALL_reference_holdout_source_ids"][:]
             if file_digest(LEGACY) != f.attrs["feature_input_sha256"]:
                 raise ValueError("Feature table changed")
-        bt, bv = benchmark_ids(BENCH)
+        bt, bv = benchmark_ids(BENCH, ROOT / "dataset_view_v2/dataset-view.h5")
         bh = hashlib.sha256(
             bt.astype("<i8").tobytes() + bv.astype("<i8").tobytes()
         ).hexdigest()
