@@ -327,3 +327,8 @@ jobs:
   mode: collect
   env:
     MSA_CATALOG_SOURCES: APOKASC3_recommended,APOKASC3_ReadMe
+- run_id: legacy_seismic_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: LEGACY_seismic_ReadMe,LEGACY_seismic_targets,LEGACY_seismic_models

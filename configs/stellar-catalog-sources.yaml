@@ -105,3 +105,21 @@ sources:
   download: true
   filename: apokasc3-ReadMe
   expected_sha256: 0b7bc6650872d8560813b55038f75e01801adb31653ad0690fd0e44380e5a56a
+- name: LEGACY_seismic_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/ReadMe
+  download: true
+  filename: legacy-ReadMe
+  expected_sha256: 6772f7ce41d987cf6ffb5f02a4ea3c4adfa170526ba994ff563f0c3cefe2c11a
+- name: LEGACY_seismic_targets
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/table3.dat
+  download: true
+  filename: legacy-table3.dat
+  expected_sha256: 09d00d8857ddc667c76170618365a5a7047bebed99353632f388198af372ced6
+  role: 66 Kepler main-sequence/subgiant seismic reference targets;KIC identifiers require audited Gaia mapping
+- name: LEGACY_seismic_models
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/table4.dat
+  download: true
+  filename: legacy-table4.dat
+  expected_sha256: 2d247a9adc219578ff35d432cc76788abd6b282ea19b192aadec88daca17aa07
+  role: 396 model solutions for66stars fromsix correlated pipelines;no averaging into independent observations
+  uncertainty_policy: AgeGyr anddistancepc;both lower andupper uncertainties arepositive widths,not APOKASC-style signed offsets;retain allpipelines/modeldependence
