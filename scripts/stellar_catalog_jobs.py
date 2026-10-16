@@ -426,6 +426,7 @@ def main():
             "pristine-async",
             "survey-overlap",
             "pristine-quality-view",
+            "enriched-label-view",
         ],
         required=True,
     )
@@ -466,6 +467,10 @@ def main():
                     "/arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits",
                 ],
             )
+        elif args.mode == "enriched-label-view":
+            from stellar_enriched_views import build_view
+
+            result = build_view(args.output, scratch)
         elif args.mode == "pristine-quality-view":
             from pristine_quality_views import build_view
 

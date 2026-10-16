@@ -302,3 +302,11 @@ jobs:
   mode: collect
   env:
     MSA_CATALOG_SOURCES: LAMOST_DR10_Li2025_catalogue,LAMOST_DR10_Li2025_ReadMe
+- run_id: enriched_label_view_v1
+  task: catalog
+  mode: enriched-label-view
+  depends_on:
+  - label_registry_v2
+  - pigs_labels_v1
+  - li2025_collection_v1
+  - dataset_view_v2
