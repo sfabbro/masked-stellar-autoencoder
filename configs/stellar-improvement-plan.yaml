@@ -362,3 +362,10 @@ jobs:
   task: distance-value
   depends_on:
   - distance_feature_cohort_v1
+
+- run_id: distance_value_frozen_v2
+  task: distance-value
+  supersedes: distance_value_frozen_v1
+  reason: Read original compound benchmark source_id field rather than grouped-index path
+  depends_on:
+  - distance_feature_cohort_v1

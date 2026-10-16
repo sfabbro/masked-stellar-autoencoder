@@ -49,3 +49,22 @@ def test_raw_gaia_baseline_is_scored_without_inversion_or_sign_cut():
     assert result["count"] == 2
     assert result["mae_mas"] == pytest.approx(0.1)
     assert result["bias_mas"] == pytest.approx(0)
+
+
+@pytest.mark.parametrize("compound", [True, False])
+def test_benchmark_ids_read_original_compound_and_grouped_indexes(tmp_path, compound):
+    import h5py
+    from run_distance_value import benchmark_ids
+
+    path = tmp_path / "benchmark.h5"
+    ids = np.array([2**60 + 1, 2**60 + 3], dtype="i8")
+    with h5py.File(path, "w") as f:
+        for name in ["train", "validation"]:
+            if compound:
+                rows = np.zeros(2, dtype=[("source_id", "<i8"), ("bp_1", "<f4")])
+                rows["source_id"] = ids
+                f.create_dataset(name, data=rows)
+            else:
+                f.create_group(name).create_dataset("source_id", data=ids)
+    for actual in benchmark_ids(path):
+        np.testing.assert_array_equal(actual, ids)

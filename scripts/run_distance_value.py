@@ -79,6 +79,12 @@ def fit_distance_head(latent, distance, train, evaluate):
     return positive_distance(log_prediction), state
 
 
+def benchmark_ids(path):
+    """Support the immutable compound tables and grouped index views."""
+    with h5py.File(path) as f:
+        return f["train"]["source_id"][:], f["validation"]["source_id"][:]
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--run-id", required=True)
@@ -118,8 +124,7 @@ def main():
             holdout = f["ALL_reference_holdout_source_ids"][:]
             if file_digest(LEGACY) != f.attrs["feature_input_sha256"]:
                 raise ValueError("Feature table changed")
-        with h5py.File(BENCH) as f:
-            bt, bv = f["train/source_id"][:], f["validation/source_id"][:]
+        bt, bv = benchmark_ids(BENCH)
         bh = hashlib.sha256(
             bt.astype("<i8").tobytes() + bv.astype("<i8").tobytes()
         ).hexdigest()
