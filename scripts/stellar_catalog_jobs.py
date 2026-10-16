@@ -428,6 +428,7 @@ def main():
             "pristine-quality-view",
             "enriched-label-view",
             "enriched-feature-cohort",
+            "enriched-feature-audit",
             "age-feature-cohort",
             "distance-feature-cohort",
         ],
@@ -478,6 +479,10 @@ def main():
             from stellar_age_cohorts import materialize
 
             result = materialize(args.output, scratch, legacy=Path(args.legacy))
+        elif args.mode == "enriched-feature-audit":
+            from stellar_enriched_audit import run_audit
+
+            result = run_audit(args.output)
         elif args.mode == "enriched-feature-cohort":
             from stellar_enriched_features import materialize
 

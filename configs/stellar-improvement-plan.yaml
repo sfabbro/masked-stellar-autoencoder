@@ -383,3 +383,9 @@ jobs:
   depends_on:
   - enriched_label_view_v1
   - dataset_view_v2
+
+- run_id: enriched_feature_audit_v1
+  task: catalog
+  mode: enriched-feature-audit
+  depends_on:
+  - enriched_feature_cohort_v1

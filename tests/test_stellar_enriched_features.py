@@ -184,3 +184,37 @@ def test_full_materialization_original_benchmark_priority_and_fixed_label_tiers(
                 f["raw_layers/" + n + "/measurements"][:],
                 original[n + "/measurements"][:],
             )
+
+    from types import SimpleNamespace
+
+    from stellar_enriched_audit import verify
+
+    args = SimpleNamespace(
+        cohort=out / "enriched-feature-cohort.h5",
+        labels=labels,
+        index=root / "dataset_view_v2/dataset-view.h5",
+        legacy=legacy,
+        benchmark=benchmark,
+        report=out / "independent.json",
+    )
+    pins = dict(
+        expected_label_sha=file_digest(labels),
+        expected_legacy_sha=file_digest(legacy),
+        expected_counts=(200, 50),
+        expected_ids=expected,
+        expected_scaler_sha=scaler_sha,
+    )
+    checked = verify(args, **pins)
+    assert (
+        checked["publication_gate_complete"]
+        and checked["all_original_benchmark_raw_records_verified"]
+    )
+    args.benchmark = None
+    assert not verify(args, **pins)["publication_gate_complete"]
+    args.benchmark = benchmark
+    with h5py.File(benchmark, "r+") as changed:
+        row = changed["train/records"][1]
+        row["G"] = 999
+        changed["train/records"][1] = row
+    with pytest.raises(AssertionError):
+        verify(args, **pins)
