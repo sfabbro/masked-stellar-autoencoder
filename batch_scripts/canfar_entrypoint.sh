@@ -127,6 +127,11 @@ case "$stage" in
         --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == enriched-value ]]; then
+      "${pixi_run[@]}" python -u scripts/run_enriched_value.py \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == distance-value ]]; then
       "${pixi_run[@]}" python -u scripts/run_distance_value.py \
         --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"

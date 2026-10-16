@@ -89,6 +89,17 @@ def main():
                     "overlap-summary.json",
                     "overlap-pairs.npz",
                 ]
+        elif task == "enriched-value":
+            files += [
+                "paired-cohort.npz",
+                "predictions.npz",
+                "comparison.json",
+                "checkpoint_verification.json",
+                "native_only-head.npz",
+                "canonical_augmented-head.npz",
+            ]
+            if args.initial_predictions:
+                files += ["initial_predictions.npz"]
         elif task == "distance-value":
             files += [
                 "paired-cohort.npz",

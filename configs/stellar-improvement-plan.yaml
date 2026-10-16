@@ -389,3 +389,9 @@ jobs:
   mode: enriched-feature-audit
   depends_on:
   - enriched_feature_cohort_v1
+
+- run_id: enriched_value_frozen_v1
+  task: enriched-value
+  depends_on:
+  - enriched_feature_cohort_v1
+  - enriched_feature_audit_v1

@@ -218,3 +218,13 @@ def test_full_materialization_original_benchmark_priority_and_fixed_label_tiers(
         changed["train/records"][1] = row
     with pytest.raises(AssertionError):
         verify(args, **pins)
+
+    from run_enriched_value import prepare
+
+    d = prepare(out / "enriched-feature-cohort.h5")
+    assert np.isin(d["native_fit"], d["augmented_fit"]).all()
+    assert not np.isin(d["source_id"][d["augmented_fit"]], val).any()
+    for layer in d["tests"].values():
+        assert not np.isin(
+            layer["measurements"]["source_id"], d["source_id"][d["augmented_fit"]]
+        ).any()
