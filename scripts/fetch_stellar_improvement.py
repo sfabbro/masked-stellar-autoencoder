@@ -89,6 +89,23 @@ def main():
                     "overlap-summary.json",
                     "overlap-pairs.npz",
                 ]
+        elif task == "prediction-comparison":
+            files += [
+                "paired-cohort.npz",
+                "predictions.npz",
+                "comparison.json",
+                "metrics.jsonl",
+                "checkpoint_verification.json",
+                "initial_reconstruction.npz",
+                "final_reconstruction.npz",
+                "snapshot-0.npz",
+                "snapshot-3014656.npz",
+                "snapshot-6029312.npz",
+                "snapshot-9000000.npz",
+                "snapshot-10000000.npz",
+            ]
+            if args.initial_predictions:
+                files += ["initial_predictions.npz"]
         elif task == "enriched-value":
             files += [
                 "paired-cohort.npz",
