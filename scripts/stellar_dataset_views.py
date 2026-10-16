@@ -95,7 +95,9 @@ def posterior_tables(output, scratch, paths):
                         prefix + "_posterior_valid", data=valid, compression="gzip"
                     )
                 for name in hdu.columns.names:
-                    if "flag" in name.lower():
+                    if "flag" in name.lower() or "ageinout" in name.lower().replace(
+                        "_", ""
+                    ):
                         raw = np.asarray(hdu.data[name])
                         if raw.dtype.kind == "U":
                             raw = raw.astype("S")

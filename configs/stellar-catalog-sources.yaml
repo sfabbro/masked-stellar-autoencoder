@@ -92,3 +92,16 @@ sources:
   download: true
   filename: li2025-ReadMe
   expected_sha256: c140ce88e8ebbc900397d21038e46fb644e3529dfd5bfb231ab5a33d187f041c
+- name: APOKASC3_recommended
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/table4.dat.gz
+  download: true
+  filename: apokasc3-table4.dat.gz
+  max_bytes: 3000000
+  expected_sha256: af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d
+  role: Recommended APOKASC3 table;15808uniqueGaiaDR3IDs,asteroseismic constraints plus spectroscopy/models and Gaia-based radius calibration;not independent geometric truth
+  uncertainty_policy: Preserve CatTab,AgeCat,RGB/RC alternatives and signed asymmetric age offsets in Gyr;do not clip or invent symmetric errors
+- name: APOKASC3_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/ReadMe
+  download: true
+  filename: apokasc3-ReadMe
+  expected_sha256: 0b7bc6650872d8560813b55038f75e01801adb31653ad0690fd0e44380e5a56a

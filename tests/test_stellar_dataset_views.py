@@ -55,6 +55,9 @@ def test_posteriors_keep_asymmetry_units_and_reject_wrong_units(tmp_path):
                 fits.Column(name=prefix + suffix, format="D", unit=unit, array=[value])
             )
     columns.append(fits.Column(name="OutputFlag", format="3A", array=["000"]))
+    columns.append(
+        fits.Column(name="AgeInOut", format="15A", array=["WARN_diff_inout"])
+    )
     source = tmp_path / "starhorse.fits"
     fits.BinTableHDU.from_columns(columns).writeto(source)
     output, scratch = tmp_path / "out", tmp_path / "scratch"
@@ -66,6 +69,7 @@ def test_posteriors_keep_asymmetry_units_and_reject_wrong_units(tmp_path):
         assert f["starhorse/Age_percentiles"][:].tolist() == [[1, 2, 3, 6, 9]]
         assert f["starhorse/Dist_percentiles"].attrs["unit"] == "kpc"
         assert f["starhorse/flags/OutputFlag"][:].tolist() == [b"000"]
+        assert f["starhorse/flags/AgeInOut"][:].tolist() == [b"WARN_diff_inout"]
     with fits.open(source, mode="update") as f:
         f[1].header["TUNIT2"] = "yr"
     other = tmp_path / "bad"

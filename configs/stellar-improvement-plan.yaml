@@ -315,3 +315,15 @@ jobs:
   depends_on:
   - pristine_quality_view_v1
   - label_registry_v2
+- run_id: posterior_labels_v2
+  task: catalog
+  mode: posterior-labels
+  supersedes: posterior_labels_v1
+  reason: Preserve StarHorse AgeInOut warning omitted by the generic flag-name filter
+  depends_on:
+  - posterior_labels_v1
+- run_id: apokasc3_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: APOKASC3_recommended,APOKASC3_ReadMe
