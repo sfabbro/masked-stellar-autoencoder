@@ -24,6 +24,15 @@ def atomic_json(path, value):
     tmp.replace(path)
 
 
+def verify_expected_fits_rows(hdul, expected_rows):
+    """Reject truncated TAP exports before publishing them as full catalogues."""
+    if expected_rows is None:
+        return
+    tables = [h for h in hdul if isinstance(h, fits.BinTableHDU)]
+    if len(tables) != 1 or len(tables[0].data) != int(expected_rows):
+        raise ValueError("FITS catalogue row count differs from expected full release")
+
+
 def identity_split(ids):
     x = np.asarray(ids, dtype=np.uint64) ^ np.uint64(42)
     with np.errstate(over="ignore"):
@@ -322,6 +331,7 @@ def collect(args):
                 )
                 if target.name.endswith(".fits"):
                     with fits.open(target, memmap=True) as hdul:
+                        verify_expected_fits_rows(hdul, item.get("expected_fits_rows"))
                         result["fits_tables"] = [
                             {
                                 "name": h.name,

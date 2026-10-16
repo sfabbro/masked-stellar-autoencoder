@@ -65,4 +65,15 @@ sources:
   url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/dr1_vac_dr1_mws_iron_v1.0.sha256sum
   download: true
   filename: desi-publisher.sha256sum
-  role: publisher checksum; compare against downloaded combined product before scientific ingestion
+  role: publisher checksum; compare against downloaded combined product before scientific
+    ingestion
+- name: Pristine_DR1_full
+  url: https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=fits&QUERY=SELECT+%2A+FROM+%22J%2FA%2BA%2F692%2FA115%2Fpristine_dr1%22&MAXREC=7000000
+  download: true
+  filename: pristine-dr1-full.fits
+  max_bytes: 2500000000
+  expected_fits_rows: 6380652
+  role: Real Pristine DR1 CaHK photometry and photometric metallicity candidate catalogue;
+    not independent spectroscopic FeH truth
+  uncertainty_policy: Preserve e_CaHKmag0, metallicity percentiles, flags and all
+    original columns; no invented symmetric error

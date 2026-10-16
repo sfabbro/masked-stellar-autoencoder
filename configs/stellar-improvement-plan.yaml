@@ -272,3 +272,8 @@ jobs:
   mode: pigs-labels
   depends_on:
   - candidate_collection_v2
+- run_id: pristine_full_fetch_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: Pristine_DR1_full,Pristine_ReadMe

@@ -127,3 +127,18 @@ def test_registry_publication_preserves_mh_and_excludes_unflagged_galah(tmp_path
         assert f["measurements"]["quantity"].tolist() == [b"FeH", b"MH", b"FeH"]
         assert f["selected/labels"]["source_id"].tolist() == [300]
     assert result["selected_FeH_stars"] == 1
+
+
+def test_expected_full_fits_rows_reject_truncated_exports():
+    import pytest
+
+    table = fits.BinTableHDU.from_columns(
+        [fits.Column(name="GaiaDR3", format="K", array=[11, 12])]
+    )
+    hdul = fits.HDUList([fits.PrimaryHDU(), table])
+    jobs.verify_expected_fits_rows(hdul, 2)
+    jobs.verify_expected_fits_rows(hdul, None)
+    with pytest.raises(ValueError, match="row count"):
+        jobs.verify_expected_fits_rows(hdul, 3)
+    with pytest.raises(ValueError, match="row count"):
+        jobs.verify_expected_fits_rows(fits.HDUList([fits.PrimaryHDU()]), 2)
