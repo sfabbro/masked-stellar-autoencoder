@@ -332,3 +332,9 @@ jobs:
   mode: collect
   env:
     MSA_CATALOG_SOURCES: LEGACY_seismic_ReadMe,LEGACY_seismic_targets,LEGACY_seismic_models
+- run_id: age_feature_cohort_v1
+  task: catalog
+  mode: age-feature-cohort
+  depends_on:
+  - posterior_labels_v2
+  - dataset_view_v2

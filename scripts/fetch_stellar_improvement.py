@@ -67,6 +67,8 @@ def main():
         files = ["manifest.json", "session.log"]
         if task == "catalog":
             files += ["inventory.json", "collection.json", "dataset-design.json"]
+            if job["plan"].get("mode") == "age-feature-cohort":
+                files += ["age-cohort-report.json"]
             if job["plan"].get("mode") == "enriched-label-view":
                 files += [
                     "enriched-view-report.json",
