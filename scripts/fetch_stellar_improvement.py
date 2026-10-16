@@ -67,6 +67,12 @@ def main():
         files = ["manifest.json", "session.log"]
         if task == "catalog":
             files += ["inventory.json", "collection.json", "dataset-design.json"]
+            if job["plan"].get("mode") == "survey-overlap":
+                files += [
+                    "input-provenance.json",
+                    "overlap-summary.json",
+                    "overlap-pairs.npz",
+                ]
         elif task == "stellar-labels":
             files += [
                 "metrics.jsonl",

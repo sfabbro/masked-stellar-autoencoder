@@ -283,3 +283,10 @@ jobs:
   replaces: pristine_full_fetch_v1
   replacement_reason: 'Confirmed collection error: synchronous TAP connection closed
     before data; validated asynchronous TOP2 FITS export. No overlap with failed download.'
+- run_id: survey_overlap_v1
+  task: catalog
+  mode: survey-overlap
+  depends_on:
+  - label_registry_v2
+  - desi_labels_v1
+  - pigs_labels_v1
