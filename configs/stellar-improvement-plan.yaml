@@ -357,3 +357,8 @@ jobs:
   depends_on:
   - posterior_labels_v2
   - dataset_view_v2
+
+- run_id: distance_value_frozen_v1
+  task: distance-value
+  depends_on:
+  - distance_feature_cohort_v1
