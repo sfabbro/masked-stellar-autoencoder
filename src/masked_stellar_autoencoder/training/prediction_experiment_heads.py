@@ -82,30 +82,104 @@ def point_prediction(output: Tensor) -> Tensor:
     return output[:, :, 0].mean(dim=1)
 
 
-def prediction_loss(output: Tensor, target: Tensor, kind: str) -> Tensor:
+def fit_lds_huber(targets: Tensor, spec: dict) -> nn.Module:
+    """Fit torchregress LDS once on every standardized native fit label.
+
+    ``kernel_width_bins`` is the library histogram-bin sigma, not a dex bandwidth.
+    ``LDSLoss.fit`` uses the declared bin count over the fit-label range.
+    """
+    expected = {
+        "kernel": "gaussian",
+        "kernel_width_bins": 2,
+        "n_bins": 100,
+        "reweight_factor": 1.0,
+        "base_loss": "huber",
+    }
+    actual = {
+        "kernel": spec.get("kernel"),
+        "kernel_width_bins": spec.get("kernel_width_bins"),
+        "n_bins": spec.get("n_bins"),
+        "reweight_factor": float(spec.get("reweight_factor", -1)),
+        "base_loss": spec.get("base_loss"),
+    }
+    if actual != expected:
+        raise ValueError(f"LDS spec must be {expected}")
+    if targets.ndim != 1 or not targets.is_floating_point():
+        raise ValueError("LDS fit targets must be a floating-point vector")
+    if len(targets) < 2 or not torch.isfinite(targets).all():
+        raise ValueError("LDS fit targets must be finite and contain a range")
+    from torchregress.losses import LDSLoss
+
+    loss = LDSLoss(
+        kernel="gaussian",
+        kernel_width=2.0,
+        reweight_factor=1.0,
+        base_loss="huber",
+    )
+    loss.fit(targets.detach().reshape(-1).cpu(), n_bins=100)
+    return loss
+
+
+def prediction_loss(
+    output: Tensor,
+    target: Tensor,
+    kind: str,
+    *,
+    lds: nn.Module | None = None,
+    label_variance: Tensor | None = None,
+) -> Tensor:
     """Mean member loss with explicit valid, observed-label rows only.
 
     The caller selects eligible labels first. Missing labels are not imputed.
     NLL/CRPS use exp(raw log variance) with no observational-error floor,
     clipping or arbitrary scatter term; nonfinite/underflow outputs fail.
     Equal-member score averaging is not the score of the Gaussian mixture.
+    ``gaussian_nll_label_error`` adds the quoted native variance in the same
+    standardized units. That quoted variance is not a total calibrated error.
+    ``lds_huber`` applies one LDS fit from all native fit labels, not a batch fit.
     """
     _validate_output(output)
     if target.shape != (len(output),) or target.device != output.device:
         raise ValueError("target must be [row] on the output device")
     if not target.is_floating_point() or not torch.isfinite(target).all():
         raise ValueError("target must contain only finite eligible labels")
-    if kind not in {"huber", "gaussian_nll", "gaussian_crps"}:
+    if kind not in {
+        "huber",
+        "gaussian_nll",
+        "gaussian_crps",
+        "lds_huber",
+        "gaussian_nll_label_error",
+    }:
         raise ValueError(f"Unknown prediction loss: {kind}")
+    if (lds is None) != (kind != "lds_huber"):
+        raise ValueError(
+            "LDS Huber requires the fitted LDS module and no other loss does"
+        )
+    if (label_variance is None) != (kind != "gaussian_nll_label_error"):
+        raise ValueError(
+            "Quoted label variance belongs only to gaussian_nll_label_error"
+        )
+    if label_variance is not None and (
+        label_variance.shape != (len(output),)
+        or label_variance.device != output.device
+        or not label_variance.is_floating_point()
+        or not torch.isfinite(label_variance).all()
+        or not torch.all(label_variance > 0)
+    ):
+        raise ValueError("label variance must be finite and strictly positive [row]")
     if len(output) == 0:
         return output.sum()
     truth = target[:, None].expand(-1, output.shape[1])
     mean = output[:, :, 0]
-    if kind == "huber":
-        return torch.nn.functional.huber_loss(mean, truth, delta=1.0)
+    if kind in {"huber", "lds_huber"}:
+        if kind == "huber":
+            return torch.nn.functional.huber_loss(mean, truth, delta=1.0)
+        return lds(mean, truth)
     from torchregress.losses import GaussianCRPSLoss, GaussianNLLLoss
 
     variance = output[:, :, 1].exp()
+    if label_variance is not None:
+        variance = variance + label_variance[:, None]
     if not torch.all(torch.isfinite(variance) & (variance > 0)):
         raise ValueError("predicted variance must be finite and strictly positive")
     loss_class = GaussianCRPSLoss if kind == "gaussian_crps" else GaussianNLLLoss

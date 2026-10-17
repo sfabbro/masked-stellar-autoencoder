@@ -27,6 +27,7 @@ from stellar_catalog_jobs import atomic_json, identity_split
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     build_prediction_head,
+    fit_lds_huber,
     point_prediction,
     prediction_loss,
     rank_contrast_loss,
@@ -124,13 +125,13 @@ def reconstruct(model, values, mask, device, micro=512):
     return np.concatenate(predictions)
 
 
-def probabilistic_metrics(outputs, truth, center, scale):
+def probabilistic_metrics(outputs, truth, center, scale, label_sigma_dex=None):
     """Observed-label Gaussian diagnostics, never inferred for Huber heads."""
     out = torch.from_numpy(outputs).double()
     y = torch.from_numpy(np.asarray((truth - center) / scale, dtype="f8"))
     mean = out[:, 0, 0].numpy() * scale + center
     sigma = (out[:, 0, 1] * 0.5).exp().numpy() * scale
-    return dict(
+    metrics = dict(
         gaussian_crps_dex=float(prediction_loss(out, y, "gaussian_crps")) * scale,
         gaussian_nll_dex=float(prediction_loss(out, y, "gaussian_nll"))
         + float(np.log(scale)),
@@ -140,7 +141,35 @@ def probabilistic_metrics(outputs, truth, center, scale):
         ),
         mean_sigma_dex=float(sigma.mean()),
         target="reported_native_FeH_not_error_deconvolved_truth",
+        quoted_label_error_included=False,
     )
+    if label_sigma_dex is None:
+        return metrics
+    quoted = np.asarray(label_sigma_dex, dtype="f8")
+    if (
+        quoted.shape != truth.shape
+        or not np.isfinite(quoted).all()
+        or np.any(quoted <= 0)
+    ):
+        raise ValueError("Test quoted FeH errors must be finite and positive")
+    total = np.sqrt(sigma**2 + quoted**2)
+    standardized = torch.as_tensor((quoted / scale) ** 2, dtype=torch.float64)
+    metrics.update(
+        quoted_label_error_included=True,
+        quoted_error_is_not_total_calibrated_sigma=True,
+        convolved_gaussian_nll_dex=float(
+            prediction_loss(
+                out, y, "gaussian_nll_label_error", label_variance=standardized
+            )
+        )
+        + float(np.log(scale)),
+        convolved_central_68_27_coverage=float(np.mean(np.abs(truth - mean) <= total)),
+        convolved_central_95_coverage=float(
+            np.mean(np.abs(truth - mean) <= 1.959963984540054 * total)
+        ),
+        mean_convolved_sigma_dex=float(total.mean()),
+    )
+    return metrics
 
 
 def main():
@@ -293,6 +322,47 @@ def main():
             labels = torch.as_tensor(
                 (data["fit_truth"][fit] - yc) / ys, dtype=torch.float32, device=device
             )
+            lds = None
+            label_variance = None
+            if arm["loss"] == "lds_huber":
+                lds = fit_lds_huber(labels, arm["lds"])
+                weights = lds._weights_per_bin.detach().cpu().numpy()
+                atomic_json(
+                    args.output / "lds-weights.json",
+                    dict(
+                        kernel_width_bins=2,
+                        n_bins=100,
+                        min_weight=float(weights.min()),
+                        max_weight=float(weights.max()),
+                        weights=weights.tolist(),
+                        note="torchregress LDS kernel width is histogram-bin sigma, not dex",
+                    ),
+                )
+            elif arm["loss"] == "gaussian_nll_label_error":
+                quoted = np.asarray(
+                    data["fit_native_measurements"]["uncertainty"], dtype="f8"
+                )
+                if (
+                    quoted.shape != (len(fit),)
+                    or not np.isfinite(quoted).all()
+                    or np.any(quoted <= 0)
+                ):
+                    raise ValueError(
+                        "Native fit FeH uncertainties must be finite and positive"
+                    )
+                label_variance = torch.as_tensor(
+                    (quoted / ys) ** 2, dtype=torch.float32, device=device
+                )
+                atomic_json(
+                    args.output / "label-error-summary.json",
+                    dict(
+                        fit_rows=int(len(quoted)),
+                        min_dex=float(quoted.min()),
+                        median_dex=float(np.median(quoted)),
+                        max_dex=float(quoted.max()),
+                        quoted_error_is_not_total_calibrated_sigma=True,
+                    ),
+                )
             train = torch.as_tensor(safe[fit], device=device)
             test_x = safe[test["used_row"]]
             np.savez_compressed(
@@ -323,7 +393,15 @@ def main():
                 with torch.no_grad():
                     z = model.encoder(train[rows])
                 head_opt.zero_grad(set_to_none=True)
-                loss = prediction_loss(head(z), labels[rows], arm["loss"])
+                loss = prediction_loss(
+                    head(z),
+                    labels[rows],
+                    arm["loss"],
+                    lds=lds,
+                    label_variance=None
+                    if label_variance is None
+                    else label_variance[rows],
+                )
                 loss.backward()
                 head_opt.step()
             budget = 512 if args.smoke else suite["reconstruction_presentations"]
@@ -371,7 +449,15 @@ def main():
                     supervised_digest.update(rows.tobytes())
                     torch.manual_seed(100_000 + steps * groups + group)
                     z = model.encoder(train[rows])
-                    loss = prediction_loss(head(z), labels[rows], arm["loss"])
+                    loss = prediction_loss(
+                        head(z),
+                        labels[rows],
+                        arm["loss"],
+                        lds=lds,
+                        label_variance=None
+                        if label_variance is None
+                        else label_variance[rows],
+                    )
                     if arm.get("rnc_weight", 0):
                         loss = loss + arm["rnc_weight"] * rank_contrast_loss(
                             z, labels[rows]
@@ -486,9 +572,18 @@ def main():
                     "below_minus3": truth < -3,
                 }.items()
             }
-            if arm["loss"] in {"gaussian_nll", "gaussian_crps"}:
+            if arm["loss"] in {
+                "gaussian_nll",
+                "gaussian_crps",
+                "gaussian_nll_label_error",
+            }:
+                quoted_test = (
+                    test["measurements"]["uncertainty"]
+                    if arm["loss"] == "gaussian_nll_label_error"
+                    else None
+                )
                 comparison["probabilistic"] = probabilistic_metrics(
-                    outputs, truth, yc, ys
+                    outputs, truth, yc, ys, quoted_test
                 )
             else:
                 comparison["probabilistic"] = {

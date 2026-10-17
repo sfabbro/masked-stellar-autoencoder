@@ -122,6 +122,13 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog && "${MSA_CATALOG_MODE:-}" == joint-native-preparation ]]; then
+      "${pixi_run[@]}" python -u scripts/prepare_joint_native_labels.py \
+        --config configs/joint-native-preparation.yaml --record-source-pins
+      "${pixi_run[@]}" python -u scripts/prepare_joint_native_labels.py \
+        --config configs/joint-native-preparation.yaml --execute
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog ]]; then
       "${pixi_run[@]}" python -u scripts/stellar_catalog_jobs.py \
         --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"

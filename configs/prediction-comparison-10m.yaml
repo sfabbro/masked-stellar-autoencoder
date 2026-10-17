@@ -30,3 +30,16 @@ arms:
 - run_id: prediction_e72_batchensemble_huber_10m_v1
   head: batchensemble
   loss: huber
+- run_id: prediction_e72_residual_lds_huber_10m_v1
+  head: residual
+  loss: lds_huber
+  lds:
+    kernel: gaussian
+    kernel_width_bins: 2
+    n_bins: 100
+    reweight_factor: 1.0
+    base_loss: huber
+    fit_targets: standardized_native_fit_feh
+- run_id: prediction_e72_residual_nll_labelerr_10m_v1
+  head: residual
+  loss: gaussian_nll_label_error

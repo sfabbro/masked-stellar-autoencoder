@@ -9,6 +9,7 @@ import torch
 
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     build_prediction_head,
+    fit_lds_huber,
     point_prediction,
     prediction_loss,
     rank_contrast_loss,
@@ -34,6 +35,49 @@ def test_common_initial_predictions_member_shapes_and_full_state_reload(kind, me
     restored.load_state_dict(copy.deepcopy(head.state_dict()))
     assert torch.equal(head(inputs), restored(inputs))
     assert point_prediction(output).shape == (5,)
+
+
+def test_quoted_label_variance_matches_independent_convolution_and_rejects_bad_errors():
+    output = torch.tensor([[[0.0, 0.0]]], dtype=torch.float64)
+    truth = torch.tensor([0.0], dtype=torch.float64)
+    quoted = torch.tensor([3.0], dtype=torch.float64)
+    plain = prediction_loss(output, truth, "gaussian_nll")
+    convolved = prediction_loss(
+        output, truth, "gaussian_nll_label_error", label_variance=quoted
+    )
+    # y equals the mean, so only the log-determinant term changes.
+    reference = 0.5 * math.log(2 * math.pi * 4.0)
+    np.testing.assert_allclose(convolved.item(), reference, rtol=1e-14)
+    assert convolved > plain
+    with pytest.raises(ValueError, match="strictly positive"):
+        prediction_loss(
+            output,
+            truth,
+            "gaussian_nll_label_error",
+            label_variance=torch.tensor([0.0]),
+        )
+
+
+def test_lds_huber_upweights_the_isolated_label():
+    spec = {
+        "kernel": "gaussian",
+        "kernel_width_bins": 2,
+        "n_bins": 100,
+        "reweight_factor": 1.0,
+        "base_loss": "huber",
+    }
+    isolated = torch.tensor([0.0, 0.0, 0.0, 0.0, 5.0], dtype=torch.float64)
+    fitted = fit_lds_huber(isolated, spec)
+    weights = fitted._weights_per_bin
+    assert float(weights[-1]) > float(weights[0])
+    output = torch.zeros(5, 1, 2, dtype=torch.float64, requires_grad=True)
+    weighted = prediction_loss(output, isolated, "lds_huber", lds=fitted)
+    weighted.backward()
+    assert torch.isfinite(weighted)
+    assert torch.isfinite(output.grad).all()
+    assert output.grad[4, 0, 0] != 0
+    with pytest.raises(ValueError, match="LDS spec"):
+        fit_lds_huber(isolated, {**spec, "n_bins": 10})
 
 
 def test_gaussian_crps_against_independent_normal_integral_and_gradcheck():

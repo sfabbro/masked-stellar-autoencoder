@@ -72,6 +72,15 @@ differs from older native-label pilots, so compare the six new matched arms
 against one another. The supervised, replay-row and reconstruction-mask streams
 are hashed and must match across arms. Dropout seeds are reset per branch.
 
+Two later residual-head arms reuse this parent, cohort, budget and stream:
+`prediction_e72_residual_lds_huber_10m_v1` applies torchregress LDS weights to
+Huber, with kernel width 2 in that library's 100-bin histogram units, fitted
+once on all standardized native fit labels. `prediction_e72_residual_nll_labelerr_10m_v1`
+adds the quoted native FeH variance to the predicted Gaussian variance in
+standardized units. The completed residual Huber arm is their control and is
+not resubmitted. Quoted errors are not a total calibrated uncertainty, and LDS
+changes the population estimand.
+
 RnC uses256-star contrast pools and L2-normalized latents, temperature2.
 Accumulating eight losses does not create a2048-star negative pool. This is a
 single-view auxiliary, not a claim to reproduce Chang's two independently
