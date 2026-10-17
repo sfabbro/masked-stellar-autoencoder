@@ -452,6 +452,13 @@ jobs:
   env:
     MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
     MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_contrastive_flow_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
 - run_id: joint-native-preparation-v1
   task: catalog
   mode: joint-native-preparation

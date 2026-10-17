@@ -79,7 +79,15 @@ once on all standardized native fit labels. `prediction_e72_residual_nll_labeler
 adds the quoted native FeH variance to the predicted Gaussian variance in
 standardized units. The completed residual Huber arm is their control and is
 not resubmitted. Quoted errors are not a total calibrated uncertainty, and LDS
-changes the population estimand.
+changes the population estimand. `prediction_e72_contrastive_flow_10m_v1` is
+the same budget with a different head: an 8-d LayerNorm summary of the latent,
+trained by torchregress `ContrastiveFlowLoss` as p(summary | FeH). Negatives
+are fixed rolls of the 256-star label batch, shifts 1, 2, 4, 8, 16, 32, 64 and
+128, so the shared row stream is not advanced. The reported point is a 201-point
+grid maximum of that likelihood over the fit-label range plus 0.5 standardized
+units on each side. It is not q(FeH | latent), not a posterior that multiplies
+by the training-label frequency, and not a Gaussian, so this arm has no
+coverage. Its initial predictions are not the zero head used by the other arms.
 
 RnC uses256-star contrast pools and L2-normalized latents, temperature2.
 Accumulating eight losses does not create a2048-star negative pool. This is a

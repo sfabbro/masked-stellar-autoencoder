@@ -26,7 +26,9 @@ from stellar_catalog_jobs import atomic_json, identity_split
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
+    build_contrastive_flow,
     build_prediction_head,
+    contrastive_grid,
     fit_lds_huber,
     point_prediction,
     prediction_loss,
@@ -315,7 +317,16 @@ def main():
             for group in optimizer.param_groups:
                 group["lr"] = suite["encoder_lr"]
             torch.manual_seed(42)
-            head = build_prediction_head(arm["head"], input_dim=256).to(device)
+            contrastive = arm["loss"] == "contrastive_flow"
+            if contrastive and arm["head"] != "contrastive_flow":
+                raise ValueError(
+                    "contrastive flow uses its own estimator, not a point head"
+                )
+            head = (
+                build_contrastive_flow(arm["contrastive_flow"]).to(device)
+                if contrastive
+                else build_prediction_head(arm["head"], input_dim=256).to(device)
+            )
             head_opt = torch.optim.AdamW(
                 head.parameters(), lr=suite["head_lr"], weight_decay=1e-4
             )
@@ -363,8 +374,61 @@ def main():
                         quoted_error_is_not_total_calibrated_sigma=True,
                     ),
                 )
+            grid = (
+                contrastive_grid(labels, arm["contrastive_flow"])
+                if contrastive
+                else None
+            )
+            if grid is not None:
+                atomic_json(
+                    args.output / "contrastive-flow-grid.json",
+                    dict(
+                        points=int(grid.numel()),
+                        min_standardized=float(grid[0]),
+                        max_standardized=float(grid[-1]),
+                        estimand="grid_mle_of_p_summary_latent_given_FeH",
+                        negatives="fixed_batch_rolls",
+                        not_a_training_prior_posterior=True,
+                    ),
+                )
             train = torch.as_tensor(safe[fit], device=device)
             test_x = safe[test["used_row"]]
+
+            def batch_objective(latent, rows):
+                if contrastive:
+                    return head.criterion(latent, labels[rows])
+                return prediction_loss(
+                    head(latent),
+                    labels[rows],
+                    arm["loss"],
+                    lds=lds,
+                    label_variance=None
+                    if label_variance is None
+                    else label_variance[rows],
+                )
+
+            def current_outputs(active_model, active_head):
+                active_model.eval()
+                active_head.eval()
+                if not contrastive:
+                    return predict(active_model, active_head, test_x, device)
+                chunks = []
+                with torch.no_grad():
+                    for block in np.array_split(
+                        test_x, max(1, int(np.ceil(len(test_x) / 512)))
+                    ):
+                        encoded = active_model.encoder(
+                            torch.as_tensor(np.array(block), device=device)
+                        )
+                        chunks.append(
+                            active_head.standardized_mle(encoded, grid).cpu().numpy()
+                        )
+                return np.concatenate(chunks)
+
+            def save_outputs(path, array):
+                key = "standardized_mle" if contrastive else "member_outputs"
+                np.savez_compressed(path, **{key: array})
+
             np.savez_compressed(
                 args.output / "paired-cohort.npz",
                 fit_source_id=data["source_id"][fit],
@@ -376,10 +440,8 @@ def main():
                 label_center=yc,
                 label_scale=ys,
             )
-            initial = predict(model, head, test_x, device)
-            np.savez_compressed(
-                args.output / "initial_predictions.npz", member_outputs=initial
-            )
+            initial = current_outputs(model, head)
+            save_outputs(args.output / "initial_predictions.npz", initial)
             rng = np.random.default_rng(42)
             supervised_digest, row_digest, mask_digest = (
                 hashlib.sha256() for _ in range(3)
@@ -393,15 +455,7 @@ def main():
                 with torch.no_grad():
                     z = model.encoder(train[rows])
                 head_opt.zero_grad(set_to_none=True)
-                loss = prediction_loss(
-                    head(z),
-                    labels[rows],
-                    arm["loss"],
-                    lds=lds,
-                    label_variance=None
-                    if label_variance is None
-                    else label_variance[rows],
-                )
+                loss = batch_objective(z, rows)
                 loss.backward()
                 head_opt.step()
             budget = 512 if args.smoke else suite["reconstruction_presentations"]
@@ -411,10 +465,8 @@ def main():
             micro = config["training"]["micro_batch_size"]
             seen, steps = 0, 0
             snapshots = [0, 3_000_000, 6_000_000, 9_000_000, budget]
-            after_warmup = predict(model, head, test_x, device)
-            np.savez_compressed(
-                args.output / "snapshot-0.npz", member_outputs=after_warmup
-            )
+            after_warmup = current_outputs(model, head)
+            save_outputs(args.output / "snapshot-0.npz", after_warmup)
             for indices, raw in replay_batches(cache, budget, effective):
                 row_digest.update(indices.tobytes())
                 target = torch.as_tensor(raw, device=device)
@@ -449,16 +501,12 @@ def main():
                     supervised_digest.update(rows.tobytes())
                     torch.manual_seed(100_000 + steps * groups + group)
                     z = model.encoder(train[rows])
-                    loss = prediction_loss(
-                        head(z),
-                        labels[rows],
-                        arm["loss"],
-                        lds=lds,
-                        label_variance=None
-                        if label_variance is None
-                        else label_variance[rows],
-                    )
+                    loss = batch_objective(z, rows)
                     if arm.get("rnc_weight", 0):
+                        if contrastive:
+                            raise ValueError(
+                                "contrastive flow does not combine with RnC"
+                            )
                         loss = loss + arm["rnc_weight"] * rank_contrast_loss(
                             z, labels[rows]
                         )
@@ -500,11 +548,9 @@ def main():
                     for threshold in snapshots
                     if threshold
                 ):
-                    outputs = predict(model, head, test_x, device)
-                    np.savez_compressed(
-                        args.output / f"snapshot-{seen}.npz", member_outputs=outputs
-                    )
-            outputs = predict(model, head, test_x, device)
+                    outputs = current_outputs(model, head)
+                    save_outputs(args.output / f"snapshot-{seen}.npz", outputs)
+            outputs = current_outputs(model, head)
             state = dict(
                 model_state_dict=model.state_dict(),
                 head_state_dict=head.state_dict(),
@@ -524,7 +570,7 @@ def main():
             other_model, other_head = copy.deepcopy(model), copy.deepcopy(head)
             other_model.load_state_dict(restored["model_state_dict"], strict=True)
             other_head.load_state_dict(restored["head_state_dict"], strict=True)
-            reloaded = predict(other_model, other_head, test_x, device)
+            reloaded = current_outputs(other_model, other_head)
             np.testing.assert_array_equal(outputs, reloaded)
             final_reconstruction = reconstruct(
                 model, validation, validation_mask, device
@@ -557,11 +603,18 @@ def main():
                         projection,
                     ),
                 )
-            prediction = point_prediction(torch.from_numpy(outputs)).numpy() * ys + yc
+            if contrastive:
+                prediction = outputs * ys + yc
+                raw_key = "standardized_mle"
+            else:
+                prediction = (
+                    point_prediction(torch.from_numpy(outputs)).numpy() * ys + yc
+                )
+                raw_key = "member_outputs"
             np.savez_compressed(
                 args.output / "predictions.npz",
-                member_outputs=outputs,
                 prediction=prediction,
+                **{raw_key: outputs},
             )
             truth = test["measurements"]["value"]
             comparison = {
@@ -588,14 +641,19 @@ def main():
             else:
                 comparison["probabilistic"] = {
                     "available": False,
-                    "reason": "Huber log variance is not trained",
+                    "reason": (
+                        "Grid MLE of p(summary(latent)|FeH); not a Gaussian on FeH"
+                        if contrastive
+                        else "Huber log variance is not trained"
+                    ),
                 }
             comparison["reconstruction"] = reconstruction
             atomic_json(args.output / "comparison.json", comparison)
             atomic_json(
                 args.output / "checkpoint_verification.json",
                 dict(
-                    all_test_member_outputs_byte_exact=True,
+                    all_test_member_outputs_byte_exact=not contrastive,
+                    all_test_standardized_mle_byte_exact=contrastive,
                     rows=len(outputs),
                     model_and_head_strict_reload=True,
                     all_validation_decoder_outputs_byte_exact=True,
@@ -620,7 +678,11 @@ def main():
                 supervised_adaptation_presentations=steps
                 * groups
                 * suite["contrast_batch"],
-                supervised_loss="Mean of eight 256-star losses per optimizer update; independent 10M reconstruction budget. RnC normalized single-view auxiliary, not full Chang recipe.",
+                supervised_loss=(
+                    "Mean of eight 256-star InfoNCE losses per optimizer update; p(summary(latent)|FeH), fixed label rolls, independent 10M reconstruction budget."
+                    if contrastive
+                    else "Mean of eight 256-star losses per optimizer update; independent 10M reconstruction budget. RnC normalized single-view auxiliary, not full Chang recipe."
+                ),
                 comparison=comparison,
                 test_not_used_for_selection=True,
                 optimizer_policy="Retained parent Adam moments; fixed encoder/model LR and fresh warmed-up head optimizer; no scheduler steps",

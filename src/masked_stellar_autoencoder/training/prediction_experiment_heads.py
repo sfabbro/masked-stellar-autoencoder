@@ -192,6 +192,138 @@ def prediction_loss(
     return loss
 
 
+_CONTRASTIVE_FLOW_SPEC = {
+    "n_features": 8,
+    "context_dim": 1,
+    "flow_type": "nsf",
+    "n_transforms": 3,
+    "hidden_features": [64, 64],
+    "temperature": 1.0,
+    "margin": 0.0,
+    "negative_shifts": [1, 2, 4, 8, 16, 32, 64, 128],
+    "grid_points": 201,
+    "grid_margin_standardized": 0.5,
+}
+
+
+class ContrastiveFlowEstimator(nn.Module):
+    """p(summary(latent) | FeH) trained by torchregress ContrastiveFlowLoss.
+
+    The point estimate is a grid maximum of that likelihood. It is not
+    q(FeH | latent), not a posterior under the training-label frequency, and
+    not a Gaussian predictive distribution. Negative contexts are fixed rolls
+    of the supervised batch, so the row stream stays matched to the other arms.
+    """
+
+    def __init__(self, flow_loss: nn.Module, shifts: tuple[int, ...], n_features: int):
+        super().__init__()
+        self.summary = nn.Sequential(
+            nn.Linear(256, n_features), nn.LayerNorm(n_features)
+        )
+        self.flow_loss = flow_loss
+        self.shifts = shifts
+
+    def criterion(self, latent: Tensor, label: Tensor) -> Tensor:
+        if latent.ndim != 2 or latent.shape[1] != 256 or label.shape != (len(latent),):
+            raise ValueError(
+                "contrastive flow expects [row, 256] latents and [row] labels"
+            )
+        if label.device != latent.device or not torch.isfinite(latent).all():
+            raise ValueError("contrastive flow inputs must be finite and on one device")
+        if not label.is_floating_point() or not torch.isfinite(label).all():
+            raise ValueError("contrastive flow labels must be finite")
+        if len(latent) <= max(self.shifts):
+            raise ValueError(
+                "contrastive batch must be larger than every negative shift"
+            )
+        summary = self.summary(latent)
+        negatives = torch.stack(
+            [torch.roll(label, shift) for shift in self.shifts], dim=1
+        ).unsqueeze(-1)
+        loss = self.flow_loss(label[:, None], summary, negative_context=negatives)
+        if not torch.isfinite(loss):
+            raise ValueError("nonfinite contrastive flow loss")
+        return loss
+
+    def standardized_mle(self, latent: Tensor, grid: Tensor) -> Tensor:
+        if grid.ndim != 1 or grid.numel() < 2 or not torch.isfinite(grid).all():
+            raise ValueError(
+                "FeH grid must be a finite vector with at least two points"
+            )
+        if len(latent) == 0:
+            return grid.new_empty(0)
+        summary = self.summary(latent)
+        chosen = []
+        for start in range(0, len(summary), 256):
+            block = summary[start : start + 256]
+            context = grid.view(1, -1, 1).expand(len(block), -1, 1).reshape(-1, 1)
+            target = (
+                block.unsqueeze(1)
+                .expand(-1, grid.numel(), -1)
+                .reshape(-1, block.shape[1])
+            )
+            with torch.enable_grad():
+                score = self.flow_loss.log_prob(
+                    context.detach(), target.detach()
+                ).reshape(-1)
+            if score.numel() != len(block) * grid.numel():
+                raise ValueError(
+                    "contrastive flow log probability is not one value per grid point"
+                )
+            chosen.append(grid[score.reshape(len(block), grid.numel()).argmax(dim=1)])
+        return torch.cat(chosen)
+
+
+def contrastive_flow_spec(spec: dict) -> dict:
+    actual = {
+        "n_features": spec.get("n_features"),
+        "context_dim": spec.get("context_dim"),
+        "flow_type": spec.get("flow_type"),
+        "n_transforms": spec.get("n_transforms"),
+        "hidden_features": [int(v) for v in spec.get("hidden_features", [])],
+        "temperature": float(spec.get("temperature", -1)),
+        "margin": float(spec.get("margin", -1)),
+        "negative_shifts": [int(v) for v in spec.get("negative_shifts", [])],
+        "grid_points": spec.get("grid_points"),
+        "grid_margin_standardized": float(spec.get("grid_margin_standardized", -1)),
+    }
+    if actual != _CONTRASTIVE_FLOW_SPEC:
+        raise ValueError(f"contrastive flow spec must be {_CONTRASTIVE_FLOW_SPEC}")
+    return actual
+
+
+def build_contrastive_flow(spec: dict) -> ContrastiveFlowEstimator:
+    checked = contrastive_flow_spec(spec)
+    from torchregress.losses import create_contrastive_flow_loss
+
+    flow = create_contrastive_flow_loss(
+        n_features=checked["n_features"],
+        context_dim=checked["context_dim"],
+        flow_type=checked["flow_type"],
+        n_transforms=checked["n_transforms"],
+        hidden_features=checked["hidden_features"],
+        temperature=checked["temperature"],
+        margin=checked["margin"],
+    )
+    return ContrastiveFlowEstimator(
+        flow,
+        tuple(checked["negative_shifts"]),
+        checked["n_features"],
+    )
+
+
+def contrastive_grid(labels: Tensor, spec: dict) -> Tensor:
+    checked = contrastive_flow_spec(spec)
+    margin = checked["grid_margin_standardized"]
+    low = float(labels.min()) - margin
+    high = float(labels.max()) + margin
+    if not high > low:
+        raise ValueError("contrastive FeH grid needs a positive range")
+    return torch.linspace(
+        low, high, checked["grid_points"], device=labels.device, dtype=labels.dtype
+    )
+
+
 def rank_contrast_loss(
     latent: Tensor, target: Tensor, *, temperature: float = 2.0
 ) -> Tensor:

@@ -8,7 +8,10 @@ import pytest
 import torch
 
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
+    build_contrastive_flow,
     build_prediction_head,
+    contrastive_flow_spec,
+    contrastive_grid,
     fit_lds_huber,
     point_prediction,
     prediction_loss,
@@ -175,3 +178,82 @@ def test_rank_contrast_translation_and_positive_scale_invariant_features():
     empty_pair_loss = rank_contrast_loss(one, torch.zeros(1))
     assert empty_pair_loss.item() == 0
     empty_pair_loss.backward()
+
+
+_FLOW_SPEC = {
+    "n_features": 8,
+    "context_dim": 1,
+    "flow_type": "nsf",
+    "n_transforms": 3,
+    "hidden_features": [64, 64],
+    "temperature": 1.0,
+    "margin": 0.0,
+    "negative_shifts": [1, 2, 4, 8, 16, 32, 64, 128],
+    "grid_points": 201,
+    "grid_margin_standardized": 0.5,
+}
+
+
+def test_contrastive_flow_spec_rejects_a_changed_transform_count():
+    changed = dict(_FLOW_SPEC)
+    changed["n_transforms"] = 4
+    with pytest.raises(ValueError, match="contrastive flow spec"):
+        contrastive_flow_spec(changed)
+    assert contrastive_flow_spec(_FLOW_SPEC) == _FLOW_SPEC
+
+
+def test_contrastive_flow_rolls_are_deterministic_and_the_batch_must_exceed_them():
+    pytest.importorskip("zuko")
+    head = build_contrastive_flow(_FLOW_SPEC)
+    too_small = torch.zeros(128, 256)
+    with pytest.raises(ValueError, match="negative shift"):
+        head.criterion(too_small, torch.zeros(128))
+    label = torch.linspace(-1.0, 1.0, 129)
+    loss = head.criterion(torch.zeros(129, 256), label)
+    loss.backward()
+    assert torch.isfinite(loss)
+    grid = contrastive_grid(label, _FLOW_SPEC)
+    estimate = head.standardized_mle(torch.zeros(4, 256), grid)
+    assert estimate.shape == (4,)
+    assert ((estimate[:, None] - grid).abs() < 1e-6).any(dim=1).all()
+
+
+def test_one_dimensional_contrastive_flow_mle_tracks_the_context():
+    pytest.importorskip("zuko")
+    from torchregress.losses import create_contrastive_flow_loss
+
+    torch.manual_seed(0)
+    flow = create_contrastive_flow_loss(
+        n_features=1,
+        context_dim=1,
+        flow_type="nsf",
+        n_transforms=2,
+        hidden_features=[32, 32],
+        temperature=1.0,
+        margin=0.0,
+    )
+    context = torch.linspace(-1.5, 1.5, 128)
+    data = context[:, None]
+    optimizer = torch.optim.Adam(flow.parameters(), lr=1e-2)
+    shifts = (1, 2, 4, 8, 16, 32)
+    for _ in range(80):
+        negatives = torch.stack([torch.roll(context, shift) for shift in shifts], 1)
+        loss = flow(context[:, None], data, negative_context=negatives.unsqueeze(-1))
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+    grid = torch.linspace(-2.0, 2.0, 161)
+    chosen = []
+    for start in range(0, len(data), 32):
+        block = data[start : start + 32]
+        query = grid.view(1, -1, 1).expand(len(block), -1, 1).reshape(-1, 1)
+        target = block.unsqueeze(1).expand(-1, grid.numel(), -1).reshape(-1, 1)
+        with torch.enable_grad():
+            score = flow.log_prob(query.detach(), target.detach()).reshape(
+                len(block), -1
+            )
+        chosen.append(grid[score.argmax(dim=1)])
+    estimate = torch.cat(chosen)
+    error = (estimate - context).abs().mean()
+    assert error < estimate.abs().mean()
+    assert error < 0.35
