@@ -56,7 +56,9 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
     paired = np.load(directory / "paired-cohort.npz", allow_pickle=False)
     final = np.load(directory / "predictions.npz", allow_pickle=False)
     initial = np.load(directory / "initial_predictions.npz", allow_pickle=False)
-    assert np.all(initial["member_outputs"] == 0)
+    flow = arm["loss"] == "contrastive_flow"
+    if not flow:
+        assert np.all(initial["member_outputs"] == 0)
     with h5py.File(cohort) as f:
         raw = f["raw_layers/native/measurements"][:]
         feature_row = f["layer_index/native/feature_row"][:]
@@ -143,22 +145,34 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
     config = yaml.safe_load((ROOT / "configs/pretrain.canfar.yaml").read_text())
     model = probe.load_model(config, checkpoint, torch.device("cpu"))
     model.load_state_dict(saved["model_state_dict"], strict=True)
-    head = build_prediction_head(arm["head"])
-    head.load_state_dict(saved["head_state_dict"], strict=True)
     model.eval()
-    head.eval()
-    predictions = []
-    with torch.no_grad():
-        for start in range(0, 100620, 512):
-            predictions.append(
-                head(
-                    model.encoder(
-                        torch.from_numpy(paired["test_input"][start : start + 512])
-                    )
-                ).numpy()
-            )
-    output = np.concatenate(predictions)
-    np.testing.assert_allclose(output, final["member_outputs"], rtol=5e-5, atol=5e-5)
+    flow_report = {}
+    if flow:
+        from contrastive_flow_reference import replay
+
+        parent_model = probe.load_model(config, checkpoint, torch.device("cpu")).eval()
+        output, flow_report = replay(
+            model, parent_model, saved, paired, initial, final, arm, directory
+        )
+        del parent_model
+    else:
+        head = build_prediction_head(arm["head"])
+        head.load_state_dict(saved["head_state_dict"], strict=True)
+        head.eval()
+        predictions = []
+        with torch.no_grad():
+            for start in range(0, 100620, 512):
+                predictions.append(
+                    head(
+                        model.encoder(
+                            torch.from_numpy(paired["test_input"][start : start + 512])
+                        )
+                    ).numpy()
+                )
+        output = np.concatenate(predictions)
+        np.testing.assert_allclose(
+            output, final["member_outputs"], rtol=5e-5, atol=5e-5
+        )
     reconstruction = np.load(
         directory / "initial_reconstruction.npz", allow_pickle=False
     )
@@ -182,7 +196,10 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
             np.max(np.abs(actual_reconstruction - expected["prediction"]))
         )
     yc, ys = float(paired["label_center"]), float(paired["label_scale"])
-    point = final["member_outputs"][:, :, 0].mean(1) * ys + yc
+    raw_point = (
+        final["standardized_mle"] if flow else final["member_outputs"][:, :, 0].mean(1)
+    )
+    point = raw_point * ys + yc
     np.testing.assert_array_equal(point, final["prediction"])
     truth = paired["test_measurements"]["value"]
     report = dict(
@@ -190,12 +207,15 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         run_id=manifest["run_id"],
         native_fit=19859,
         native_test=100620,
-        cpu_replay_all_test_member_outputs=True,
+        cpu_replay_all_test_member_outputs=not flow,
+        cpu_replay_all_test_grid_mle=flow,
         cpu_replay_all_validation_decoder_outputs=True,
         cpu_decoder_rows=len(hidden),
         cpu_decoder_max_absolute_difference=reconstruction_diff,
         cpu_max_absolute_member_output_difference=float(
-            np.max(np.abs(output - final["member_outputs"]))
+            np.max(
+                np.abs(output - final["standardized_mle" if flow else "member_outputs"])
+            )
         ),
         cpu_rtol=5e-5,
         cpu_atol=5e-5,
@@ -205,7 +225,7 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         corrected_input_max_absolute_difference=input_max_difference,
         corrected_input_rtol=5e-6 if input_reference else 0.0,
         corrected_input_atol=5e-6 if input_reference else 0.0,
-        initial_outputs_zero=True,
+        initial_outputs_zero=not flow,
         replay_and_supervised_streams_independently_regenerated=True,
         mask_sha256=manifest["mask_sha256"],
         mask_note="Compare across matched GPU jobs; not independently CPU-regenerated",
@@ -214,6 +234,7 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         final_checkpoint_sha256=sha(directory / "checkpoint.pth"),
         source_sha=manifest["source_sha"],
     )
+    report.update(flow_report)
     if arm["loss"] in ("gaussian_nll", "gaussian_crps"):
         mu = final["member_outputs"][:, 0, 0].astype("f8") * ys + yc
         sigma = np.exp(final["member_outputs"][:, 0, 1].astype("f8") / 2) * ys

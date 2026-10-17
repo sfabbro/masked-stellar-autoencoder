@@ -1,5 +1,6 @@
 """Paired RC diagnostics after complete independent CPU verification."""
 
+import argparse
 import csv
 import json
 
@@ -28,7 +29,17 @@ def write_csv(name, rows):
         writer.writerows(rows)
 
 
-def main():
+def main(kind="rc"):
+    global RUNS, OUT
+    flow = kind == "flow"
+    if flow:
+        RUNS = [
+            (BASE / "prediction_e72_huber_10m_v1", "Plain Huber"),
+            (BASE / "prediction_e72_residual_huber_10m_v1", "Residual Huber"),
+            (BASE / "prediction_e72_contrastive_flow_10m_v1", "Contrastive flow"),
+        ]
+        OUT = BASE / "prediction_e72_contrastive_flow_10m_v1/verified-comparison"
+    prefix = "contrastive-flow" if flow else "rc"
     OUT.mkdir(parents=True, exist_ok=True)
     metrics, snapshots, recon, checks = [], [], [], []
     reference = None
@@ -42,7 +53,7 @@ def main():
             manifest["presentations"] == 10000000
             and manifest["optimizer_updates"] == 306
         )
-        if label != "Plain Huber":
+        if "input_correction" in manifest["arm"]:
             assert report["corrected_inputs_independently_derived"]
         checks.append(report)
         with np.load(directory / "paired-cohort.npz", allow_pickle=False) as saved:
@@ -64,7 +75,7 @@ def main():
                 assert reference[0][key] == manifest[key], key
             assert set(arrays) == set(reference[1])
             for key in arrays:
-                if key not in {"fit_input", "test_input"}:
+                if flow or key not in {"fit_input", "test_input"}:
                     assert (
                         arrays[key].dtype == reference[1][key].dtype
                         and arrays[key].tobytes() == reference[1][key].tobytes()
@@ -102,10 +113,12 @@ def main():
         assert len(files) == 5
         for file in files:
             with np.load(file) as saved:
-                point = (
-                    saved["member_outputs"][:, :, 0].mean(1) * arrays["label_scale"]
-                    + arrays["label_center"]
+                raw_point = (
+                    saved["standardized_mle"]
+                    if "standardized_mle" in saved
+                    else saved["member_outputs"][:, :, 0].mean(1)
                 )
+                point = raw_point * arrays["label_scale"] + arrays["label_center"]
             for subset in ["all", "below_-2"]:
                 keep = masks[subset]
                 snapshots.append(
@@ -195,9 +208,13 @@ def main():
     )
     axs[1, 0].legend()
     axs[1, 1].legend()
-    fig.suptitle("Epoch 72 · diagonal XP regression calibration · one seed")
-    fig.savefig(OUT / "rc-comparison.png", dpi=170)
-    fig.savefig(OUT / "rc-comparison.pdf")
+    fig.suptitle(
+        "Epoch 72 · contrastive likelihood-grid flow · one seed"
+        if flow
+        else "Epoch 72 · diagonal XP regression calibration · one seed"
+    )
+    fig.savefig(OUT / (prefix + "-comparison.png"), dpi=170)
+    fig.savefig(OUT / (prefix + "-comparison.pdf"))
     plt.close(fig)
     allrows = [r for r in metrics if r["subset"] == "all"]
     tails = [r for r in metrics if r["subset"] == "below_-2"]
@@ -221,6 +238,17 @@ def main():
         "",
         "CSV files preserve all conditional, survey, snapshot, reconstruction and spectral diagnostics. Figure visual inspection pending.",
     ]
+    if flow:
+        lines[0] = "# Independently verified contrastive flow comparison"
+        lines[2] = (
+            "The flow passed all100620 initial and final likelihood-grid CPU replays with independently label-major score enumeration and all10000 final decoder rows. Raw source fields, all paired inputs/measurements, fit-only label scaling, row/label streams, parent and shared GPU masks checked. Plain and residual Huber reuse completed independent reports. Supervised holdout does not exclude unsupervised pretraining overlap; one seed."
+        )
+        lines[-5] = (
+            "Conditional/survey scores describe agreement with noisy reported native labels. The native registry includes Li-VMPS (39 of185 below−2 stars); separate APOGEE/GALAH-only diagnostics are saved. No latent physical truth or attenuation-removal claim follows from mean error alone."
+        )
+        lines[-3] = (
+            "This is p(learned8-dimensional summary|FeH) with201-grid likelihood maximization; it is not q(FeH|data), a calibrated physical PDF, or a frequentist confidence interval. The summary is learned jointly, and density estimation, representation quality and grid resolution all affect performance. No new catalogues or silver merge. SIMEX and the incomplete other-arm QA are excluded."
+        )
     (OUT / "comparison.md").write_text("\n".join(lines) + "\n")
     (OUT / "independent-verification.json").write_text(
         json.dumps(
@@ -243,4 +271,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--kind", choices=["rc", "flow"], default="rc")
+    main(parser.parse_args().kind)
