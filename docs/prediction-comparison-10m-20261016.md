@@ -89,6 +89,20 @@ units on each side. It is not q(FeH | latent), not a posterior that multiplies
 by the training-label frequency, and not a Gaussian, so this arm has no
 coverage. Its initial predictions are not the zero head used by the other arms.
 
+Three residual-Huber arms then ask whether XP measurement error, rather than
+the label distribution, attenuates FeH. They use the reported coefficient
+errors divided by the parent scale, one coefficient at a time. Photometry and
+EBV are unchanged, and the 72-epoch pretraining is not repeated.
+`prediction_e72_rc_shared_xp_10m_v1` shrinks every star by the fit-star rms
+reliability. `prediction_e72_rc_per_star_xp_10m_v1` uses each star's own error
+with that same signal variance. `prediction_e72_simex_xp_10m_v1` retrains at
+the library's lambda grid, four simulations for every positive lambda. The
+reported point is not torchregress's quadratic extrapolation: on the classical
+curve 2/(2+lambda) that quadratic lands at 1.49 rather than 2, so each star is
+extrapolated to lambda=-1 with a/(c+lambda). `NoisyTargetGaussianNLL` is the
+quoted-error arm already completed. Functional errors-in-variables, input-noise
+augmentation, pseudo-labels and orthogonal distance regression are not run.
+
 RnC uses256-star contrast pools and L2-normalized latents, temperature2.
 Accumulating eight losses does not create a2048-star negative pool. This is a
 single-view auxiliary, not a claim to reproduce Chang's two independently

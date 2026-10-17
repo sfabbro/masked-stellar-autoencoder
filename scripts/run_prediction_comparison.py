@@ -25,6 +25,11 @@ from run_stellar_label_experiments import BENCH
 from stellar_catalog_jobs import atomic_json, identity_split
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
+from masked_stellar_autoencoder.training.input_measurement import (
+    mean_prediction_by_lambda,
+    prepare_replicas,
+    rational_extrapolate,
+)
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     build_contrastive_flow,
     build_prediction_head,
@@ -33,9 +38,6 @@ from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     point_prediction,
     prediction_loss,
     rank_contrast_loss,
-)
-from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
-    spectrophotometric_inputs,
 )
 
 
@@ -314,308 +316,363 @@ def main():
                 wavelength_nm=projection["wavelength_nm"],
             )
             # Retain original Adam moments; explicitly replace scheduler with fixed LR.
-            for group in optimizer.param_groups:
-                group["lr"] = suite["encoder_lr"]
-            torch.manual_seed(42)
-            contrastive = arm["loss"] == "contrastive_flow"
-            if contrastive and arm["head"] != "contrastive_flow":
-                raise ValueError(
-                    "contrastive flow uses its own estimator, not a point head"
+            replicas = [dict(lambda_value=0.0, simulation=0, matrix=safe)]
+            if "input_correction" in arm:
+                with h5py.File(args.cohort) as cohort_file:
+                    raw_error = cohort_file["features/reported_feature_errors"][:][
+                        data["feature_row"]
+                    ]
+                replicas, correction_summary = prepare_replicas(
+                    arm["input_correction"],
+                    safe,
+                    raw_error,
+                    data["scale"],
+                    features,
+                    fit,
                 )
-            head = (
-                build_contrastive_flow(arm["contrastive_flow"]).to(device)
-                if contrastive
-                else build_prediction_head(arm["head"], input_dim=256).to(device)
-            )
-            head_opt = torch.optim.AdamW(
-                head.parameters(), lr=suite["head_lr"], weight_decay=1e-4
-            )
-            labels = torch.as_tensor(
-                (data["fit_truth"][fit] - yc) / ys, dtype=torch.float32, device=device
-            )
-            lds = None
-            label_variance = None
-            if arm["loss"] == "lds_huber":
-                lds = fit_lds_huber(labels, arm["lds"])
-                weights = lds._weights_per_bin.detach().cpu().numpy()
-                atomic_json(
-                    args.output / "lds-weights.json",
-                    dict(
-                        kernel_width_bins=2,
-                        n_bins=100,
-                        min_weight=float(weights.min()),
-                        max_weight=float(weights.max()),
-                        weights=weights.tolist(),
-                        note="torchregress LDS kernel width is histogram-bin sigma, not dex",
-                    ),
-                )
-            elif arm["loss"] == "gaussian_nll_label_error":
-                quoted = np.asarray(
-                    data["fit_native_measurements"]["uncertainty"], dtype="f8"
-                )
-                if (
-                    quoted.shape != (len(fit),)
-                    or not np.isfinite(quoted).all()
-                    or np.any(quoted <= 0)
-                ):
+                atomic_json(args.output / "input-correction.json", correction_summary)
+            dex_predictions = []
+            for replica in replicas:
+                encoder_matrix = replica["matrix"]
+                if replicas[0] is not replica:
+                    wrapper, optimizer, _ = pretrain.build_wrapper(
+                        config,
+                        checkpoint,
+                        source,
+                        center,
+                        scale,
+                        {"lr_factor": 1.0},
+                        args.output,
+                    )
+                    model, device = wrapper.model, wrapper.device
+                    for group in optimizer.param_groups:
+                        group["lr"] = suite["encoder_lr"]
+                for group in optimizer.param_groups:
+                    group["lr"] = suite["encoder_lr"]
+                torch.manual_seed(42)
+                contrastive = arm["loss"] == "contrastive_flow"
+                if contrastive and arm["head"] != "contrastive_flow":
                     raise ValueError(
-                        "Native fit FeH uncertainties must be finite and positive"
+                        "contrastive flow uses its own estimator, not a point head"
                     )
-                label_variance = torch.as_tensor(
-                    (quoted / ys) ** 2, dtype=torch.float32, device=device
+                head = (
+                    build_contrastive_flow(arm["contrastive_flow"]).to(device)
+                    if contrastive
+                    else build_prediction_head(arm["head"], input_dim=256).to(device)
                 )
-                atomic_json(
-                    args.output / "label-error-summary.json",
-                    dict(
-                        fit_rows=int(len(quoted)),
-                        min_dex=float(quoted.min()),
-                        median_dex=float(np.median(quoted)),
-                        max_dex=float(quoted.max()),
-                        quoted_error_is_not_total_calibrated_sigma=True,
-                    ),
+                head_opt = torch.optim.AdamW(
+                    head.parameters(), lr=suite["head_lr"], weight_decay=1e-4
                 )
-            grid = (
-                contrastive_grid(labels, arm["contrastive_flow"])
-                if contrastive
-                else None
-            )
-            if grid is not None:
-                atomic_json(
-                    args.output / "contrastive-flow-grid.json",
-                    dict(
-                        points=int(grid.numel()),
-                        min_standardized=float(grid[0]),
-                        max_standardized=float(grid[-1]),
-                        estimand="grid_mle_of_p_summary_latent_given_FeH",
-                        negatives="fixed_batch_rolls",
-                        not_a_training_prior_posterior=True,
-                    ),
+                labels = torch.as_tensor(
+                    (data["fit_truth"][fit] - yc) / ys,
+                    dtype=torch.float32,
+                    device=device,
                 )
-            train = torch.as_tensor(safe[fit], device=device)
-            test_x = safe[test["used_row"]]
-
-            def batch_objective(latent, rows):
-                if contrastive:
-                    return head.criterion(latent, labels[rows])
-                return prediction_loss(
-                    head(latent),
-                    labels[rows],
-                    arm["loss"],
-                    lds=lds,
-                    label_variance=None
-                    if label_variance is None
-                    else label_variance[rows],
-                )
-
-            def current_outputs(active_model, active_head):
-                active_model.eval()
-                active_head.eval()
-                if not contrastive:
-                    return predict(active_model, active_head, test_x, device)
-                chunks = []
-                with torch.no_grad():
-                    for block in np.array_split(
-                        test_x, max(1, int(np.ceil(len(test_x) / 512)))
+                lds = None
+                label_variance = None
+                if arm["loss"] == "lds_huber":
+                    lds = fit_lds_huber(labels, arm["lds"])
+                    weights = lds._weights_per_bin.detach().cpu().numpy()
+                    atomic_json(
+                        args.output / "lds-weights.json",
+                        dict(
+                            kernel_width_bins=2,
+                            n_bins=100,
+                            min_weight=float(weights.min()),
+                            max_weight=float(weights.max()),
+                            weights=weights.tolist(),
+                            note="torchregress LDS kernel width is histogram-bin sigma, not dex",
+                        ),
+                    )
+                elif arm["loss"] == "gaussian_nll_label_error":
+                    quoted = np.asarray(
+                        data["fit_native_measurements"]["uncertainty"], dtype="f8"
+                    )
+                    if (
+                        quoted.shape != (len(fit),)
+                        or not np.isfinite(quoted).all()
+                        or np.any(quoted <= 0)
                     ):
-                        encoded = active_model.encoder(
-                            torch.as_tensor(np.array(block), device=device)
+                        raise ValueError(
+                            "Native fit FeH uncertainties must be finite and positive"
                         )
-                        chunks.append(
-                            active_head.standardized_mle(encoded, grid).cpu().numpy()
-                        )
-                return np.concatenate(chunks)
-
-            def save_outputs(path, array):
-                key = "standardized_mle" if contrastive else "member_outputs"
-                np.savez_compressed(path, **{key: array})
-
-            np.savez_compressed(
-                args.output / "paired-cohort.npz",
-                fit_source_id=data["source_id"][fit],
-                fit_input=safe[fit],
-                fit_target=data["fit_truth"][fit],
-                fit_measurements=data["fit_native_measurements"],
-                test_input=test_x,
-                test_measurements=test["measurements"],
-                label_center=yc,
-                label_scale=ys,
-            )
-            initial = current_outputs(model, head)
-            save_outputs(args.output / "initial_predictions.npz", initial)
-            rng = np.random.default_rng(42)
-            supervised_digest, row_digest, mask_digest = (
-                hashlib.sha256() for _ in range(3)
-            )
-            warmup = 2 if args.smoke else suite["warmup_updates"]
-            for _ in range(warmup):
-                rows = rng.integers(len(fit), size=suite["contrast_batch"])
-                supervised_digest.update(rows.tobytes())
-                model.eval()
-                head.train()
-                with torch.no_grad():
-                    z = model.encoder(train[rows])
-                head_opt.zero_grad(set_to_none=True)
-                loss = batch_objective(z, rows)
-                loss.backward()
-                head_opt.step()
-            budget = 512 if args.smoke else suite["reconstruction_presentations"]
-            effective = 256 if args.smoke else suite["effective_batch"]
-            mask_rng = torch.Generator(device=device).manual_seed(42)
-            xp = [i for i, n in enumerate(features) if n.startswith(("bp_", "rp_"))]
-            micro = config["training"]["micro_batch_size"]
-            seen, steps = 0, 0
-            snapshots = [0, 3_000_000, 6_000_000, 9_000_000, budget]
-            after_warmup = current_outputs(model, head)
-            save_outputs(args.output / "snapshot-0.npz", after_warmup)
-            for indices, raw in replay_batches(cache, budget, effective):
-                row_digest.update(indices.tobytes())
-                target = torch.as_tensor(raw, device=device)
-                hidden, mask, finite = pretrain.training_mask(
-                    target, xp, 0.5, 0.2, mask_rng
-                )
-                score = (mask & finite)[:, :width]
-                mask_digest.update(mask.cpu().numpy().tobytes())
-                optimizer.zero_grad(set_to_none=True)
-                head_opt.zero_grad(set_to_none=True)
-                model.train()
-                head.train()
-                torch.manual_seed(1000 + steps)
-                reconstruction_total = 0.0
-                for start in range(0, len(raw), micro):
-                    stop = start + micro
-                    predicted, _ = model(hidden[start:stop])
-                    replay = pretrain.experiment_objective(
-                        predicted,
-                        target[start:stop, :width],
-                        score[start:stop],
-                        xp,
-                        {"loss": "mae"},
-                        score.sum(),
+                    label_variance = torch.as_tensor(
+                        (quoted / ys) ** 2, dtype=torch.float32, device=device
                     )
-                    (suite["reconstruction_weight"] * replay).backward()
-                    reconstruction_total += float(replay.detach())
-                groups = 1 if args.smoke else suite["supervised_batches_per_update"]
-                supervised_total = 0.0
-                for group in range(groups):
+                    atomic_json(
+                        args.output / "label-error-summary.json",
+                        dict(
+                            fit_rows=int(len(quoted)),
+                            min_dex=float(quoted.min()),
+                            median_dex=float(np.median(quoted)),
+                            max_dex=float(quoted.max()),
+                            quoted_error_is_not_total_calibrated_sigma=True,
+                        ),
+                    )
+                grid = (
+                    contrastive_grid(labels, arm["contrastive_flow"])
+                    if contrastive
+                    else None
+                )
+                if grid is not None:
+                    atomic_json(
+                        args.output / "contrastive-flow-grid.json",
+                        dict(
+                            points=int(grid.numel()),
+                            min_standardized=float(grid[0]),
+                            max_standardized=float(grid[-1]),
+                            estimand="grid_mle_of_p_summary_latent_given_FeH",
+                            negatives="fixed_batch_rolls",
+                            not_a_training_prior_posterior=True,
+                        ),
+                    )
+                train = torch.as_tensor(encoder_matrix[fit], device=device)
+                test_x = encoder_matrix[test["used_row"]]
+
+                def batch_objective(latent, rows):
+                    if contrastive:
+                        return head.criterion(latent, labels[rows])
+                    return prediction_loss(
+                        head(latent),
+                        labels[rows],
+                        arm["loss"],
+                        lds=lds,
+                        label_variance=None
+                        if label_variance is None
+                        else label_variance[rows],
+                    )
+
+                def current_outputs(active_model, active_head):
+                    active_model.eval()
+                    active_head.eval()
+                    if not contrastive:
+                        return predict(active_model, active_head, test_x, device)
+                    chunks = []
+                    with torch.no_grad():
+                        for block in np.array_split(
+                            test_x, max(1, int(np.ceil(len(test_x) / 512)))
+                        ):
+                            encoded = active_model.encoder(
+                                torch.as_tensor(np.array(block), device=device)
+                            )
+                            chunks.append(
+                                active_head.standardized_mle(encoded, grid)
+                                .cpu()
+                                .numpy()
+                            )
+                    return np.concatenate(chunks)
+
+                def save_outputs(path, array):
+                    key = "standardized_mle" if contrastive else "member_outputs"
+                    np.savez_compressed(path, **{key: array})
+
+                np.savez_compressed(
+                    args.output / "paired-cohort.npz",
+                    fit_source_id=data["source_id"][fit],
+                    fit_input=encoder_matrix[fit],
+                    fit_target=data["fit_truth"][fit],
+                    fit_measurements=data["fit_native_measurements"],
+                    test_input=test_x,
+                    test_measurements=test["measurements"],
+                    label_center=yc,
+                    label_scale=ys,
+                )
+                initial = current_outputs(model, head)
+                save_outputs(args.output / "initial_predictions.npz", initial)
+                rng = np.random.default_rng(42)
+                supervised_digest, row_digest, mask_digest = (
+                    hashlib.sha256() for _ in range(3)
+                )
+                warmup = 2 if args.smoke else suite["warmup_updates"]
+                for _ in range(warmup):
                     rows = rng.integers(len(fit), size=suite["contrast_batch"])
                     supervised_digest.update(rows.tobytes())
-                    torch.manual_seed(100_000 + steps * groups + group)
-                    z = model.encoder(train[rows])
+                    model.eval()
+                    head.train()
+                    with torch.no_grad():
+                        z = model.encoder(train[rows])
+                    head_opt.zero_grad(set_to_none=True)
                     loss = batch_objective(z, rows)
-                    if arm.get("rnc_weight", 0):
-                        if contrastive:
-                            raise ValueError(
-                                "contrastive flow does not combine with RnC"
-                            )
-                        loss = loss + arm["rnc_weight"] * rank_contrast_loss(
-                            z, labels[rows]
-                        )
-                    if not torch.isfinite(loss):
-                        raise FloatingPointError("Nonfinite supervised objective")
-                    (loss / groups).backward()
-                    supervised_total += float(loss.detach()) / groups
-                model_gradient_norm = torch.nn.utils.clip_grad_norm_(
-                    model.parameters(), 1.0, error_if_nonfinite=True
-                )
-                head_gradient_norm = torch.nn.utils.clip_grad_norm_(
-                    head.parameters(), 1.0, error_if_nonfinite=True
-                )
-                optimizer.step()
-                head_opt.step()
-                seen += len(raw)
-                steps += 1
-                with (args.output / "metrics.jsonl").open("a") as handle:
-                    handle.write(
-                        json.dumps(
-                            dict(
-                                step=steps,
-                                presentations=seen,
-                                supervised_loss=supervised_total,
-                                reconstruction_mae=reconstruction_total,
-                                model_gradient_norm_before_clip=float(
-                                    model_gradient_norm
-                                ),
-                                head_gradient_norm_before_clip=float(
-                                    head_gradient_norm
-                                ),
-                                elapsed_s=time.monotonic() - started,
-                            )
-                        )
-                        + "\n"
+                    loss.backward()
+                    head_opt.step()
+                budget = 512 if args.smoke else suite["reconstruction_presentations"]
+                effective = 256 if args.smoke else suite["effective_batch"]
+                mask_rng = torch.Generator(device=device).manual_seed(42)
+                xp = [i for i, n in enumerate(features) if n.startswith(("bp_", "rp_"))]
+                micro = config["training"]["micro_batch_size"]
+                seen, steps = 0, 0
+                snapshots = [0, 3_000_000, 6_000_000, 9_000_000, budget]
+                after_warmup = current_outputs(model, head)
+                save_outputs(args.output / "snapshot-0.npz", after_warmup)
+                for indices, raw in replay_batches(cache, budget, effective):
+                    row_digest.update(indices.tobytes())
+                    target = torch.as_tensor(raw, device=device)
+                    hidden, mask, finite = pretrain.training_mask(
+                        target, xp, 0.5, 0.2, mask_rng
                     )
-                if any(
-                    seen - len(raw) < threshold <= seen
-                    for threshold in snapshots
-                    if threshold
+                    score = (mask & finite)[:, :width]
+                    mask_digest.update(mask.cpu().numpy().tobytes())
+                    optimizer.zero_grad(set_to_none=True)
+                    head_opt.zero_grad(set_to_none=True)
+                    model.train()
+                    head.train()
+                    torch.manual_seed(1000 + steps)
+                    reconstruction_total = 0.0
+                    for start in range(0, len(raw), micro):
+                        stop = start + micro
+                        predicted, _ = model(hidden[start:stop])
+                        replay = pretrain.experiment_objective(
+                            predicted,
+                            target[start:stop, :width],
+                            score[start:stop],
+                            xp,
+                            {"loss": "mae"},
+                            score.sum(),
+                        )
+                        (suite["reconstruction_weight"] * replay).backward()
+                        reconstruction_total += float(replay.detach())
+                    groups = 1 if args.smoke else suite["supervised_batches_per_update"]
+                    supervised_total = 0.0
+                    for group in range(groups):
+                        rows = rng.integers(len(fit), size=suite["contrast_batch"])
+                        supervised_digest.update(rows.tobytes())
+                        torch.manual_seed(100_000 + steps * groups + group)
+                        z = model.encoder(train[rows])
+                        loss = batch_objective(z, rows)
+                        if arm.get("rnc_weight", 0):
+                            if contrastive:
+                                raise ValueError(
+                                    "contrastive flow does not combine with RnC"
+                                )
+                            loss = loss + arm["rnc_weight"] * rank_contrast_loss(
+                                z, labels[rows]
+                            )
+                        if not torch.isfinite(loss):
+                            raise FloatingPointError("Nonfinite supervised objective")
+                        (loss / groups).backward()
+                        supervised_total += float(loss.detach()) / groups
+                    model_gradient_norm = torch.nn.utils.clip_grad_norm_(
+                        model.parameters(), 1.0, error_if_nonfinite=True
+                    )
+                    head_gradient_norm = torch.nn.utils.clip_grad_norm_(
+                        head.parameters(), 1.0, error_if_nonfinite=True
+                    )
+                    optimizer.step()
+                    head_opt.step()
+                    seen += len(raw)
+                    steps += 1
+                    with (args.output / "metrics.jsonl").open("a") as handle:
+                        handle.write(
+                            json.dumps(
+                                dict(
+                                    step=steps,
+                                    lambda_value=replica["lambda_value"],
+                                    simulation=replica["simulation"],
+                                    presentations=seen,
+                                    supervised_loss=supervised_total,
+                                    reconstruction_mae=reconstruction_total,
+                                    model_gradient_norm_before_clip=float(
+                                        model_gradient_norm
+                                    ),
+                                    head_gradient_norm_before_clip=float(
+                                        head_gradient_norm
+                                    ),
+                                    elapsed_s=time.monotonic() - started,
+                                )
+                            )
+                            + "\n"
+                        )
+                    if any(
+                        seen - len(raw) < threshold <= seen
+                        for threshold in snapshots
+                        if threshold
+                    ):
+                        outputs = current_outputs(model, head)
+                        save_outputs(args.output / f"snapshot-{seen}.npz", outputs)
+                outputs = current_outputs(model, head)
+                state = dict(
+                    model_state_dict=model.state_dict(),
+                    head_state_dict=head.state_dict(),
+                    optimizer_state_dict=optimizer.state_dict(),
+                    head_optimizer_state_dict=head_opt.state_dict(),
+                    parent_sha256=checkpoint_sha,
+                    arm=arm,
+                    label_center=yc,
+                    label_scale=ys,
+                    presentations=seen,
+                    feature_columns=features,
+                )
+                torch.save(state, args.output / "checkpoint.pth")
+                restored = torch_load_trusted(
+                    args.output / "checkpoint.pth",
+                    map_location=device,
+                    weights_only=False,
+                )
+                other_model, other_head = copy.deepcopy(model), copy.deepcopy(head)
+                other_model.load_state_dict(restored["model_state_dict"], strict=True)
+                other_head.load_state_dict(restored["head_state_dict"], strict=True)
+                reloaded = current_outputs(other_model, other_head)
+                np.testing.assert_array_equal(outputs, reloaded)
+                final_reconstruction = reconstruct(
+                    model, validation, validation_mask, device
+                )
+                np.testing.assert_array_equal(
+                    final_reconstruction,
+                    reconstruct(other_model, validation, validation_mask, device),
+                )
+                np.savez_compressed(
+                    args.output / "final_reconstruction.npz",
+                    prediction=final_reconstruction,
+                )
+                reconstruction = {}
+                validation_target = validation[:, :width]
+                validation_score_mask = validation_mask[:, :width]
+                scored = validation_score_mask & np.isfinite(validation_target)
+                for name, prediction in (
+                    ("initial", initial_reconstruction),
+                    ("final", final_reconstruction),
                 ):
-                    outputs = current_outputs(model, head)
-                    save_outputs(args.output / f"snapshot-{seen}.npz", outputs)
-            outputs = current_outputs(model, head)
-            state = dict(
-                model_state_dict=model.state_dict(),
-                head_state_dict=head.state_dict(),
-                optimizer_state_dict=optimizer.state_dict(),
-                head_optimizer_state_dict=head_opt.state_dict(),
-                parent_sha256=checkpoint_sha,
-                arm=arm,
-                label_center=yc,
-                label_scale=ys,
-                presentations=seen,
-                feature_columns=features,
-            )
-            torch.save(state, args.output / "checkpoint.pth")
-            restored = torch_load_trusted(
-                args.output / "checkpoint.pth", map_location=device, weights_only=False
-            )
-            other_model, other_head = copy.deepcopy(model), copy.deepcopy(head)
-            other_model.load_state_dict(restored["model_state_dict"], strict=True)
-            other_head.load_state_dict(restored["head_state_dict"], strict=True)
-            reloaded = current_outputs(other_model, other_head)
-            np.testing.assert_array_equal(outputs, reloaded)
-            final_reconstruction = reconstruct(
-                model, validation, validation_mask, device
-            )
-            np.testing.assert_array_equal(
-                final_reconstruction,
-                reconstruct(other_model, validation, validation_mask, device),
-            )
-            np.savez_compressed(
-                args.output / "final_reconstruction.npz",
-                prediction=final_reconstruction,
-            )
-            reconstruction = {}
-            validation_target = validation[:, :width]
-            validation_score_mask = validation_mask[:, :width]
-            scored = validation_score_mask & np.isfinite(validation_target)
-            for name, prediction in (
-                ("initial", initial_reconstruction),
-                ("final", final_reconstruction),
-            ):
-                residual = prediction - validation_target
-                reconstruction[name] = dict(
-                    masked_mae=float(np.abs(residual[scored]).mean()),
-                    spectral=pretrain.spectral_summary(
-                        validation_target,
-                        prediction,
-                        validation_score_mask,
-                        scale[:width],
-                        center[:width],
-                        projection,
-                    ),
+                    residual = prediction - validation_target
+                    reconstruction[name] = dict(
+                        masked_mae=float(np.abs(residual[scored]).mean()),
+                        spectral=pretrain.spectral_summary(
+                            validation_target,
+                            prediction,
+                            validation_score_mask,
+                            scale[:width],
+                            center[:width],
+                            projection,
+                        ),
+                    )
+                if contrastive:
+                    prediction = outputs * ys + yc
+                    raw_key = "standardized_mle"
+                else:
+                    prediction = (
+                        point_prediction(torch.from_numpy(outputs)).numpy() * ys + yc
+                    )
+                    raw_key = "member_outputs"
+                np.savez_compressed(
+                    args.output / "predictions.npz",
+                    prediction=prediction,
+                    **{raw_key: outputs},
                 )
-            if contrastive:
-                prediction = outputs * ys + yc
-                raw_key = "standardized_mle"
-            else:
-                prediction = (
-                    point_prediction(torch.from_numpy(outputs)).numpy() * ys + yc
+                dex_predictions.append(prediction)
+                if len(replicas) > 1:
+                    np.savez_compressed(
+                        args.output
+                        / f"predictions-lambda-{replica['lambda_value']}-sim-{replica['simulation']}.npz",
+                        prediction=prediction,
+                    )
+            # Replica loop ends after the dex prediction is stored.
+            if replica is replicas[-1] and len(replicas) > 1:
+                lambdas, means = mean_prediction_by_lambda(replicas, dex_predictions)
+                prediction = rational_extrapolate(lambdas, means)
+                np.savez_compressed(
+                    args.output / "predictions.npz",
+                    prediction=prediction,
+                    extrapolant="a/(c+lambda)",
                 )
-                raw_key = "member_outputs"
-            np.savez_compressed(
-                args.output / "predictions.npz",
-                prediction=prediction,
-                **{raw_key: outputs},
-            )
             truth = test["measurements"]["value"]
             comparison = {
                 name: probe.score(prediction[keep], truth[keep])
@@ -686,6 +743,14 @@ def main():
                 comparison=comparison,
                 test_not_used_for_selection=True,
                 optimizer_policy="Retained parent Adam moments; fixed encoder/model LR and fresh warmed-up head optimizer; no scheduler steps",
+                input_correction=correction_summary
+                if "input_correction" in arm
+                else None,
+                reported_prediction=(
+                    "per-star rational extrapolation of the lambda curve to -1"
+                    if len(replicas) > 1
+                    else "single adapted head"
+                ),
             )
     except Exception as error:
         manifest.update(status="failed", error=f"{type(error).__name__}: {error}")

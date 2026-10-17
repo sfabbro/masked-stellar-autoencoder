@@ -57,3 +57,26 @@ arms:
     negative_shifts: [1, 2, 4, 8, 16, 32, 64, 128]
     grid_points: 201
     grid_margin_standardized: 0.5
+- run_id: prediction_e72_rc_shared_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_shared
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+- run_id: prediction_e72_rc_per_star_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_per_star
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+- run_id: prediction_e72_simex_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: simex
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    simex_n_simulations: 4
+    simex_extrapolation_order: 2
