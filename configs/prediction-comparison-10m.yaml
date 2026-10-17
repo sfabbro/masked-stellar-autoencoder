@@ -80,3 +80,36 @@ arms:
     noise: fit_rms_standardized_diagonal
     simex_n_simulations: 4
     simex_extrapolation_order: 2
+- run_id: prediction_e72_rc_shared_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_shared
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+  replaces_run_id: prediction_e72_rc_shared_xp_10m_v1
+- run_id: prediction_e72_rc_per_star_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_per_star
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+  replaces_run_id: prediction_e72_rc_per_star_xp_10m_v1
+- run_id: prediction_e72_simex_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: simex
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    simex_n_simulations: 4
+    simex_extrapolation_order: 2
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+    simex_extrapolant: affine_rational
+  replaces_run_id: prediction_e72_simex_xp_10m_v1

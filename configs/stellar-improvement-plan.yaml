@@ -486,3 +486,26 @@ jobs:
   depends_on:
   - enriched_feature_cohort_v1
   - distance_feature_cohort_v1
+
+# Distinct replacements preserve all three failed v1 outputs.
+- run_id: prediction_e72_rc_shared_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_rc_per_star_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_simex_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'

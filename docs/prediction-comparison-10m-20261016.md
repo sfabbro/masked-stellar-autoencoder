@@ -148,3 +148,33 @@ signed-parallax distance objective remains a separate integration step.
 
 No extra survey acquisition is needed for this wave. The already accepted
 enriched frozen comparison remains independently monitored without duplication.
+
+### Corrected XP-input replacements (v2)
+
+The three original RC/SIMEX runs failed at source48e1901 because their input
+sanitizer import was missing. Their IDs and outputs remain preserved. Distinct
+`prediction_e72_rc_shared_xp_10m_v2`, `prediction_e72_rc_per_star_xp_10m_v2`
+and `prediction_e72_simex_xp_10m_v2` outputs are the authorized replacements.
+They retain the actual epoch72 parent and original native source roles.
+
+The corrected adapters must convert raw XP coefficient errors to the same G=8.5
+normalization as the coefficient values before applying the parent scaler.
+Quoted coefficient errors omit their off-diagonal covariance and uncertainty in
+the shared G normalization; these experiments do not calibrate physical truth.
+Actual source convention checks are required before fitting.
+
+SIMEX v2 fits `b + a/(c + lambda)` with an intercept, profiling c on the declared
+400-point grid [1.05,8]. This preserves constants and shifts of the label origin;
+the previous zero-intercept family did not. The family remains an empirical
+extrapolation model, not a guarantee of unbiased nonlinear predictions.
+The library's polynomial correctly preserves constants; its approximation error
+on one nonlinear toy curve does not establish a torchregress implementation bug.
+
+Each RC replacement uses10M reconstruction presentations. SIMEX fits17 models
+(one at lambda0, four at each of0.5,1,1.5,2):10M per model,170M total, with17
+head warmups. Every contributing checkpoint, corrected paired input, initial
+prediction, raw final output and reload result must be retained separately;
+assembled predictions cannot be replayed from the final replica alone. Model
+and optimizer state must reset to the same parent between replicas. Independent
+verification must replay the contributing models and recompute the extrapolation
+before any scientific result is reported.

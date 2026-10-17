@@ -6,9 +6,11 @@ Labels describe reported native spectroscopic FeH, not calibrated latent truth.
 
 import argparse
 import copy
+import gc
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -26,6 +28,7 @@ from stellar_catalog_jobs import atomic_json, identity_split
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
 from masked_stellar_autoencoder.training.input_measurement import (
+    audit_xp_error_sources,
     mean_prediction_by_lambda,
     prepare_replicas,
     rational_extrapolate,
@@ -39,11 +42,34 @@ from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     prediction_loss,
     rank_contrast_loss,
 )
+from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
+    spectrophotometric_inputs,
+)
 
 
 def digest(path):
     with open(path, "rb") as handle:
         return hashlib.file_digest(handle, "sha256").hexdigest()
+
+
+def replica_directory(root, replica, index, count):
+    """Every SIMEX model is independently reproducible; ordinary arms stay flat."""
+    if count == 1:
+        return root
+    path = (
+        root
+        / f"replica-{index:03d}-lambda-{replica['lambda_value']:g}-sim-{replica['simulation']}"
+    )
+    path.mkdir(exist_ok=False)
+    for name in (
+        "initial_reconstruction.npz",
+        "dropout_policy.json",
+        "optimizer_policy.json",
+    ):
+        source = root / name
+        if source.exists():
+            shutil.copy2(source, path / name)
+    return path
 
 
 def replay_batches(cache, budget, batch_size):
@@ -232,6 +258,30 @@ def main():
             args.cohort, 128 if args.smoke else None
         )
         features = data["feature_columns"]
+        if "input_correction" in arm:
+            if args.smoke:
+                error_audit = dict(
+                    status="smoke_only", original_error_source_verified=False
+                )
+            else:
+                with h5py.File(args.cohort) as actual_cohort:
+                    legacy_path = str(actual_cohort.attrs["legacy_input"])
+                error_audit = audit_xp_error_sources(
+                    args.cohort,
+                    args.benchmark,
+                    legacy_path,
+                    data["feature_row"],
+                    features,
+                )
+                if (
+                    error_audit["error_convention"]
+                    != arm["input_correction"]["error_convention"]
+                ):
+                    raise ValueError(
+                        "Declared XP error convention differs from actual sources"
+                    )
+            atomic_json(args.output / "xp-error-source-audit.json", error_audit)
+            manifest["xp_error_source_audit"] = error_audit
         with h5py.File(args.benchmark) as source:
             keys, validation_keys, center, scale = pretrain.validate_source(
                 checkpoint, config, source
@@ -329,10 +379,16 @@ def main():
                     data["scale"],
                     features,
                     fit,
+                    g_magnitude=data["raw_values"][:, features.index("G")],
+                    error_convention=arm["input_correction"]["error_convention"],
                 )
                 atomic_json(args.output / "input-correction.json", correction_summary)
             dex_predictions = []
-            for replica in replicas:
+            replica_records = []
+            for replica_number, replica in enumerate(replicas):
+                replica_output = replica_directory(
+                    args.output, replica, replica_number, len(replicas)
+                )
                 encoder_matrix = replica["matrix"]
                 if replicas[0] is not replica:
                     wrapper, optimizer, _ = pretrain.build_wrapper(
@@ -342,7 +398,7 @@ def main():
                         center,
                         scale,
                         {"lr_factor": 1.0},
-                        args.output,
+                        replica_output,
                     )
                     model, device = wrapper.model, wrapper.device
                     for group in optimizer.param_groups:
@@ -374,7 +430,7 @@ def main():
                     lds = fit_lds_huber(labels, arm["lds"])
                     weights = lds._weights_per_bin.detach().cpu().numpy()
                     atomic_json(
-                        args.output / "lds-weights.json",
+                        replica_output / "lds-weights.json",
                         dict(
                             kernel_width_bins=2,
                             n_bins=100,
@@ -400,7 +456,7 @@ def main():
                         (quoted / ys) ** 2, dtype=torch.float32, device=device
                     )
                     atomic_json(
-                        args.output / "label-error-summary.json",
+                        replica_output / "label-error-summary.json",
                         dict(
                             fit_rows=int(len(quoted)),
                             min_dex=float(quoted.min()),
@@ -416,7 +472,7 @@ def main():
                 )
                 if grid is not None:
                     atomic_json(
-                        args.output / "contrastive-flow-grid.json",
+                        replica_output / "contrastive-flow-grid.json",
                         dict(
                             points=int(grid.numel()),
                             min_standardized=float(grid[0]),
@@ -467,7 +523,7 @@ def main():
                     np.savez_compressed(path, **{key: array})
 
                 np.savez_compressed(
-                    args.output / "paired-cohort.npz",
+                    replica_output / "paired-cohort.npz",
                     fit_source_id=data["source_id"][fit],
                     fit_input=encoder_matrix[fit],
                     fit_target=data["fit_truth"][fit],
@@ -478,7 +534,7 @@ def main():
                     label_scale=ys,
                 )
                 initial = current_outputs(model, head)
-                save_outputs(args.output / "initial_predictions.npz", initial)
+                save_outputs(replica_output / "initial_predictions.npz", initial)
                 rng = np.random.default_rng(42)
                 supervised_digest, row_digest, mask_digest = (
                     hashlib.sha256() for _ in range(3)
@@ -503,7 +559,7 @@ def main():
                 seen, steps = 0, 0
                 snapshots = [0, 3_000_000, 6_000_000, 9_000_000, budget]
                 after_warmup = current_outputs(model, head)
-                save_outputs(args.output / "snapshot-0.npz", after_warmup)
+                save_outputs(replica_output / "snapshot-0.npz", after_warmup)
                 for indices, raw in replay_batches(cache, budget, effective):
                     row_digest.update(indices.tobytes())
                     target = torch.as_tensor(raw, device=device)
@@ -561,34 +617,32 @@ def main():
                     head_opt.step()
                     seen += len(raw)
                     steps += 1
-                    with (args.output / "metrics.jsonl").open("a") as handle:
-                        handle.write(
-                            json.dumps(
-                                dict(
-                                    step=steps,
-                                    lambda_value=replica["lambda_value"],
-                                    simulation=replica["simulation"],
-                                    presentations=seen,
-                                    supervised_loss=supervised_total,
-                                    reconstruction_mae=reconstruction_total,
-                                    model_gradient_norm_before_clip=float(
-                                        model_gradient_norm
-                                    ),
-                                    head_gradient_norm_before_clip=float(
-                                        head_gradient_norm
-                                    ),
-                                    elapsed_s=time.monotonic() - started,
-                                )
-                            )
-                            + "\n"
-                        )
+                    metric_record = dict(
+                        step=steps,
+                        replica_index=replica_number,
+                        lambda_value=replica["lambda_value"],
+                        simulation=replica["simulation"],
+                        presentations=seen,
+                        total_presentations=replica_number * budget + seen,
+                        supervised_loss=supervised_total,
+                        reconstruction_mae=reconstruction_total,
+                        model_gradient_norm_before_clip=float(model_gradient_norm),
+                        head_gradient_norm_before_clip=float(head_gradient_norm),
+                        elapsed_s=time.monotonic() - started,
+                    )
+                    log_paths = [replica_output / "metrics.jsonl"]
+                    if len(replicas) > 1:
+                        log_paths.append(args.output / "metrics.jsonl")
+                    for log_path in log_paths:
+                        with log_path.open("a") as handle:
+                            handle.write(json.dumps(metric_record) + "\n")
                     if any(
                         seen - len(raw) < threshold <= seen
                         for threshold in snapshots
                         if threshold
                     ):
                         outputs = current_outputs(model, head)
-                        save_outputs(args.output / f"snapshot-{seen}.npz", outputs)
+                        save_outputs(replica_output / f"snapshot-{seen}.npz", outputs)
                 outputs = current_outputs(model, head)
                 state = dict(
                     model_state_dict=model.state_dict(),
@@ -601,10 +655,14 @@ def main():
                     label_scale=ys,
                     presentations=seen,
                     feature_columns=features,
+                    source_sha=manifest["source_sha"],
+                    replica_index=replica_number,
+                    lambda_value=float(replica["lambda_value"]),
+                    simulation=int(replica["simulation"]),
                 )
-                torch.save(state, args.output / "checkpoint.pth")
+                torch.save(state, replica_output / "checkpoint.pth")
                 restored = torch_load_trusted(
-                    args.output / "checkpoint.pth",
+                    replica_output / "checkpoint.pth",
                     map_location=device,
                     weights_only=False,
                 )
@@ -621,7 +679,7 @@ def main():
                     reconstruct(other_model, validation, validation_mask, device),
                 )
                 np.savez_compressed(
-                    args.output / "final_reconstruction.npz",
+                    replica_output / "final_reconstruction.npz",
                     prediction=final_reconstruction,
                 )
                 reconstruction = {}
@@ -653,25 +711,136 @@ def main():
                     )
                     raw_key = "member_outputs"
                 np.savez_compressed(
-                    args.output / "predictions.npz",
+                    replica_output / "predictions.npz",
                     prediction=prediction,
                     **{raw_key: outputs},
                 )
                 dex_predictions.append(prediction)
+                reload_report = dict(
+                    all_test_member_outputs_byte_exact=not contrastive,
+                    all_test_standardized_mle_byte_exact=contrastive,
+                    rows=len(outputs),
+                    model_and_head_strict_reload=True,
+                    all_validation_decoder_outputs_byte_exact=True,
+                    same_device=True,
+                    optimizer_state_saved_not_resumed_tested=True,
+                )
+                atomic_json(
+                    replica_output / "checkpoint_verification.json", reload_report
+                )
+                record = dict(
+                    index=replica_number,
+                    directory=str(replica_output.relative_to(args.output)),
+                    lambda_value=float(replica["lambda_value"]),
+                    simulation=int(replica["simulation"]),
+                    parent_sha256=checkpoint_sha,
+                    source_sha=manifest["source_sha"],
+                    presentations=seen,
+                    optimizer_updates=steps,
+                    row_sha256=row_digest.hexdigest(),
+                    mask_sha256=mask_digest.hexdigest(),
+                    supervised_stream_sha256=supervised_digest.hexdigest(),
+                    head_parameters=sum(p.numel() for p in head.parameters()),
+                    supervised_warmup_presentations=warmup * suite["contrast_batch"],
+                    supervised_adaptation_presentations=steps
+                    * groups
+                    * suite["contrast_batch"],
+                    reconstruction=reconstruction,
+                    reload=reload_report,
+                )
                 if len(replicas) > 1:
-                    np.savez_compressed(
-                        args.output
-                        / f"predictions-lambda-{replica['lambda_value']}-sim-{replica['simulation']}.npz",
-                        prediction=prediction,
+                    record["perturbation_seed"] = int(
+                        replica.get(
+                            "perturbation_seed",
+                            20_000
+                            + correction_summary["lambdas"].index(
+                                float(replica["lambda_value"])
+                            )
+                            * 100
+                            + int(replica["simulation"]),
+                        )
                     )
-            # Replica loop ends after the dex prediction is stored.
-            if replica is replicas[-1] and len(replicas) > 1:
+                    record["files"] = {
+                        path.name: dict(bytes=path.stat().st_size, sha256=digest(path))
+                        for path in sorted(replica_output.iterdir())
+                        if path.is_file()
+                    }
+                    atomic_json(
+                        replica_output / "replica-manifest.json",
+                        {"status": "complete", **record},
+                    )
+                    record["manifest_sha256"] = digest(
+                        replica_output / "replica-manifest.json"
+                    )
+                    if replica_records:
+                        for key in (
+                            "row_sha256",
+                            "mask_sha256",
+                            "supervised_stream_sha256",
+                            "parent_sha256",
+                            "source_sha",
+                        ):
+                            if record[key] != replica_records[0][key]:
+                                raise ValueError(
+                                    f"SIMEX replica stream/parent mismatch: {key}"
+                                )
+                replica_records.append(record)
+                if len(replicas) > 1:
+                    # Do not keep previous GPU models, Adam tensors or reload
+                    # copies alive during the next replica's allocation/training.
+                    del other_model, other_head, restored, state
+                    del model, wrapper, optimizer, head, head_opt, train, labels
+                    z = loss = predicted = replay = target = hidden = mask = finite = (
+                        score
+                    ) = None
+                    gc.collect()
+                    if device.type == "cuda":
+                        torch.cuda.empty_cache()
+            # Replica loop ends after all actual checkpoints and outputs are stored.
+            if len(replicas) > 1:
                 lambdas, means = mean_prediction_by_lambda(replicas, dex_predictions)
                 prediction = rational_extrapolate(lambdas, means)
                 np.savez_compressed(
                     args.output / "predictions.npz",
                     prediction=prediction,
-                    extrapolant="a/(c+lambda)",
+                    lambda_values=np.asarray(lambdas, dtype="f8"),
+                    lambda_mean_prediction=means,
+                    per_replica_prediction=np.stack(dex_predictions),
+                    extrapolant="b+a/(c+lambda), c grid[1.05,8]",
+                )
+                np.savez_compressed(
+                    args.output / "initial_predictions.npz",
+                    prediction=np.full(len(prediction), yc),
+                    stage="common_zero_initial_head_constant; all raw heads preserved per replica",
+                )
+                np.savez_compressed(
+                    args.output / "paired-cohort.npz",
+                    fit_source_id=data["source_id"][fit],
+                    fit_input=safe[fit],
+                    fit_target=data["fit_truth"][fit],
+                    fit_measurements=data["fit_native_measurements"],
+                    test_input=safe[test["used_row"]],
+                    test_measurements=test["measurements"],
+                    label_center=yc,
+                    label_scale=ys,
+                    input_note="unperturbed reference; actual corrected inputs are per replica",
+                )
+                atomic_json(
+                    args.output / "replicas.json",
+                    dict(
+                        status="complete",
+                        predictions_are_multi_model_extrapolation=True,
+                        no_single_aggregate_checkpoint=True,
+                        replicas=replica_records,
+                    ),
+                )
+                reconstruction = dict(
+                    available=False,
+                    reason="No unique extrapolated decoder; each replica has its own reconstruction diagnostics",
+                    per_replica=[
+                        dict(index=r["index"], **r["reconstruction"])
+                        for r in replica_records
+                    ],
                 )
             truth = test["measurements"]["value"]
             comparison = {
@@ -709,13 +878,17 @@ def main():
             atomic_json(
                 args.output / "checkpoint_verification.json",
                 dict(
-                    all_test_member_outputs_byte_exact=not contrastive,
+                    all_test_member_outputs_byte_exact=not contrastive
+                    and len(replicas) == 1,
                     all_test_standardized_mle_byte_exact=contrastive,
                     rows=len(outputs),
                     model_and_head_strict_reload=True,
                     all_validation_decoder_outputs_byte_exact=True,
                     same_device=True,
                     optimizer_state_saved_not_resumed_tested=True,
+                    replica_count=len(replicas),
+                    all_replica_test_outputs_byte_exact=True,
+                    aggregate_prediction_is_single_checkpoint=len(replicas) == 1,
                 ),
             )
             manifest.update(
@@ -725,16 +898,24 @@ def main():
                 cohort_sha256=COHORT_SHA,
                 unit_audit=units,
                 replay_source_counts=counts,
-                presentations=seen,
-                optimizer_updates=steps,
+                presentations=sum(r["presentations"] for r in replica_records),
+                optimizer_updates=sum(r["optimizer_updates"] for r in replica_records),
+                replica_count=len(replicas),
+                presentations_per_replica=seen,
+                optimizer_updates_per_replica=steps,
                 row_sha256=row_digest.hexdigest(),
                 mask_sha256=mask_digest.hexdigest(),
                 supervised_stream_sha256=supervised_digest.hexdigest(),
-                head_parameters=sum(p.numel() for p in head.parameters()),
-                supervised_warmup_presentations=warmup * suite["contrast_batch"],
-                supervised_adaptation_presentations=steps
-                * groups
-                * suite["contrast_batch"],
+                stream_hash_scope="shared per-replica stream"
+                if len(replicas) > 1
+                else "single model",
+                head_parameters=replica_records[-1]["head_parameters"],
+                supervised_warmup_presentations=sum(
+                    r["supervised_warmup_presentations"] for r in replica_records
+                ),
+                supervised_adaptation_presentations=sum(
+                    r["supervised_adaptation_presentations"] for r in replica_records
+                ),
                 supervised_loss=(
                     "Mean of eight 256-star InfoNCE losses per optimizer update; p(summary(latent)|FeH), fixed label rolls, independent 10M reconstruction budget."
                     if contrastive
@@ -751,6 +932,9 @@ def main():
                     if len(replicas) > 1
                     else "single adapted head"
                 ),
+                aggregate_checkpoint="replicas.json; all listed checkpoints required"
+                if len(replicas) > 1
+                else "checkpoint.pth",
             )
     except Exception as error:
         manifest.update(status="failed", error=f"{type(error).__name__}: {error}")
