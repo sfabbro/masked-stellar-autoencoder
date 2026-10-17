@@ -16,6 +16,7 @@ from masked_stellar_autoencoder.training.joint_native_labels import (
     SOURCE_COLUMNS,
     TARGET_NAMES,
     TARGET_UNITS,
+    apogee_parameter_metadata,
     assign_roles,
     project_catalogue,
 )
@@ -116,10 +117,9 @@ def materialize(
         feature_rows = native_row[selected]
         with fits.open(sources[source], memmap=True) as hdul:
             symbols = None
+            metadata_hdu = None
             if source == "apogee":
-                symbols = (
-                    np.asarray(hdul[2].data["PARAM_SYMBOL"][0]).reshape(-1).tolist()
-                )
+                metadata_hdu, symbols = apogee_parameter_metadata(hdul)
             projected = project_catalogue(
                 hdul[1].data, source, requested, parameter_symbols=symbols
             )
@@ -132,6 +132,7 @@ def materialize(
                 "sha256": source_sha[source],
                 "rows": len(hdul[1].data),
                 "selected_rows": len(requested),
+                "parameter_metadata_hdu": metadata_hdu,
                 "parameter_symbols": [str(s) for s in symbols]
                 if symbols is not None
                 else None,

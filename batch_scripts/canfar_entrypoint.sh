@@ -124,9 +124,9 @@ case "$stage" in
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog && "${MSA_CATALOG_MODE:-}" == joint-native-preparation ]]; then
       "${pixi_run[@]}" python -u scripts/prepare_joint_native_labels.py \
-        --config configs/joint-native-preparation.yaml --record-source-pins
+        --config configs/joint-native-preparation.yaml --record-source-pins --output-directory "$experiment_output"
       "${pixi_run[@]}" python -u scripts/prepare_joint_native_labels.py \
-        --config configs/joint-native-preparation.yaml --execute
+        --config configs/joint-native-preparation.yaml --execute --output-directory "$experiment_output"
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog ]]; then

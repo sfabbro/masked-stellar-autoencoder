@@ -1,0 +1,27 @@
+[
+  [
+    "unchanged_control",
+    "running",
+    null
+  ],
+  [
+    "spectral_auxiliary_mae",
+    "preparing",
+    null
+  ],
+  [
+    "observed_photometry_mae",
+    "preparing",
+    null
+  ],
+  [
+    "photometry_spectral_mae",
+    "preparing",
+    null
+  ],
+  [
+    "anchored_decoder_consistency_mae",
+    "preparing",
+    null
+  ]
+]

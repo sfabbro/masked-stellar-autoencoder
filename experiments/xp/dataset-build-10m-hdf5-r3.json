@@ -1,0 +1,13 @@
+{
+  "session_ids": [
+    "err4iugx"
+  ],
+  "git_sha": "d3a0c9830e0dc5f3d24267a84a0d638fe42a02d4",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3",
+  "train_rows": 9000000,
+  "validation_rows": 1000000,
+  "workers": 8,
+  "replaces": "fcqz46mz",
+  "old_session_stop_pending": false,
+  "handover_source_id_verified": true
+}

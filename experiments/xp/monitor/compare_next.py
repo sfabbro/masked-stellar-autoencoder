@@ -1,0 +1,250 @@
+"""Verify matched completed epoch-47 experiments and save count-weighted comparisons."""
+
+import csv
+import json
+from pathlib import Path
+
+root = Path("experiments/xp/results-next-e47")
+launch = json.loads(Path("experiments/xp/launch-next-e47-20261013.json").read_text())
+data = {}
+for job in launch["jobs"]:
+    name = job["run_id"]
+    folder = root / name
+    nested = folder / name
+    m = json.loads((folder / "manifest.json").read_text())
+    q = json.loads((nested / "residual_latest.json").read_text())
+    v = json.loads((nested / "checkpoint_verification.json").read_text())
+    policy = json.loads((nested / "optimizer_policy.json").read_text())
+    metrics = [
+        json.loads(x)
+        for x in (nested / "metrics.jsonl").read_text().splitlines()
+        if x.strip()
+    ]
+    final, initial = metrics[-1], metrics[0]
+    assert m["status"] == final["phase"] == "complete"
+    assert all(x["status"] == "complete" for x in m["experiments"])
+    assert final["rows_seen_total"] == 20_000_000 and final["optimizer_steps"] == 612
+    assert (
+        v["reload_predictions_equal"] and v["parent_sha256"] == m["checkpoint_sha256"]
+    )
+    assert q["validation_id"] == m["validation_id"] == final["validation_id"]
+    assert (
+        m["sample"]["train_rows"] == 9_000_000
+        and m["sample"]["validation_rows"] == 1_000_000
+    )
+    assert (
+        m["benchmark_source_id_sha256"]
+        == "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2"
+    )
+    assert m["checkpoint_epoch"] == 47
+    expected_sha = job.get("git_sha", launch["git_sha"])
+    assert m["git_sha"] == expected_sha, (name, m["git_sha"])
+    data[name] = (m, q, final, initial, policy)
+control = data["unchanged_control"]
+checks = [
+    "checkpoint_sha256",
+    "checkpoint_epoch",
+    "benchmark_source_id_sha256",
+    "benchmark_manifest_sha256",
+    "validation_id",
+    "seed",
+    "validation_seed",
+    "independent_rng",
+    "mask_policy",
+    "runner_sha256",
+    "source_code_sha256",
+    "experiment_environment_lock_sha256",
+    "spectral_projection",
+    "diagnostic_snapshot_policy",
+    "diagnostic_validation_rows",
+    "presentations_per_experiment",
+]
+for name, (m, q, final, initial, policy) in data.items():
+    for key in checks:
+        assert m[key] == control[0][key], (name, key)
+    assert m["config"]["data"] == control[0]["config"]["data"]
+    assert m["config"]["training"] == control[0]["config"]["training"]
+    assert initial["per_column_mae"] == control[3]["per_column_mae"]
+    assert initial["all_columns_mae"] == control[3]["all_columns_mae"]
+    assert initial["xp_only_mae"] == control[3]["xp_only_mae"]
+    if name != "spectral_auxiliary_mae":
+        assert m["xp_helpers_sha256"] == control[0]["xp_helpers_sha256"]
+    reset = name.startswith("adam_reset")
+    factor = 2 if name == "adam_reset_lr2_mae" else 1
+    assert policy["reset_moments"] == reset
+    assert policy["source_learning_rates"] == control[4]["source_learning_rates"]
+    assert policy["learning_rates"] == [
+        factor * lr for lr in policy["source_learning_rates"]
+    ]
+rows, entries = [], []
+
+
+def delta(value, ref):
+    return 100 * (value / ref - 1)
+
+
+def group(features, band, low, high):
+    selected = [
+        f
+        for f in features
+        if f["name"].startswith(band + "_")
+        and low <= int(f["name"].split("_")[1]) <= high
+    ]
+    assert len(selected) == high - low + 1
+    count = sum(f["count"] for f in selected)
+    return {
+        "count": count,
+        "mae": sum(f["mae"] * f["count"] for f in selected if f["count"]) / count
+        if count
+        else None,
+    }
+
+
+for name, (m, q, final, initial, policy) in data.items():
+    groups = {}
+    for regime, diagnostics in q["regimes"].items():
+        baseline = {f["name"]: f for f in control[1]["regimes"][regime]["features"]}
+        assert set(baseline) == {f["name"] for f in diagnostics["features"]}
+        for f in diagnostics["features"]:
+            ref = baseline[f["name"]]
+            assert f["count"] == ref["count"], (name, regime, f["name"])
+            difference = (
+                f["mae"] - ref["mae"]
+                if f["mae"] is not None and ref["mae"] is not None
+                else None
+            )
+            rows.append(
+                {
+                    "experiment": name,
+                    "regime": regime,
+                    "column": f["name"],
+                    "count": f["count"],
+                    "mae": f["mae"],
+                    "control_mae": ref["mae"],
+                    "delta_mae": difference,
+                    "delta_percent": delta(f["mae"], ref["mae"])
+                    if difference is not None and ref["mae"]
+                    else None,
+                }
+            )
+        groups[regime] = {}
+        for low, high in [(1, 10), (11, 30), (31, 55)]:
+            bp, rp = [
+                group(diagnostics["features"], band, low, high) for band in ["bp", "rp"]
+            ]
+            ref_bp, ref_rp = [
+                group(list(baseline.values()), band, low, high) for band in ["bp", "rp"]
+            ]
+            total = bp["count"] + rp["count"]
+            combined = (
+                ((bp["mae"] or 0) * bp["count"] + (rp["mae"] or 0) * rp["count"])
+                / total
+                if total
+                else None
+            )
+            ref_total = ref_bp["count"] + ref_rp["count"]
+            ref_combined = (
+                (
+                    (ref_bp["mae"] or 0) * ref_bp["count"]
+                    + (ref_rp["mae"] or 0) * ref_rp["count"]
+                )
+                / ref_total
+                if ref_total
+                else None
+            )
+            groups[regime][f"{low}-{high}"] = {
+                "bp": bp,
+                "rp": rp,
+                "combined_count": total,
+                "combined_mae": combined,
+                "combined_delta_percent": delta(combined, ref_combined)
+                if combined is not None
+                else None,
+            }
+    spectral = q["regimes"]["common"]["spectral"]
+    ref_spectral = control[1]["regimes"]["common"]["spectral"]
+    assert spectral["rows"] == ref_spectral["rows"]
+    entry = {
+        "experiment": name,
+        "session_id": next(
+            j["session_ids"][0] for j in launch["jobs"] if j["run_id"] == name
+        ),
+        "all_reconstructed_mae": final["all_columns_mae"],
+        "xp_only_mae": final["xp_only_mae"],
+        "all_mae_delta_percent": delta(
+            final["all_columns_mae"], control[2]["all_columns_mae"]
+        ),
+        "xp_mae_delta_percent": delta(final["xp_only_mae"], control[2]["xp_only_mae"]),
+        "xp_mae_delta_from_parent_percent": delta(
+            final["xp_only_mae"], initial["xp_only_mae"]
+        ),
+        "spectral_rows": spectral["rows"],
+        "spectral_mean": spectral["integrated_absolute_fraction_mean"],
+        "spectral_median": spectral["integrated_absolute_fraction_median"],
+        "spectral_mean_delta_percent": delta(
+            spectral["integrated_absolute_fraction_mean"],
+            ref_spectral["integrated_absolute_fraction_mean"],
+        ),
+        "spectral_median_delta_percent": delta(
+            spectral["integrated_absolute_fraction_median"],
+            ref_spectral["integrated_absolute_fraction_median"],
+        ),
+        "order_groups": groups,
+        "optimizer_policy": policy,
+    }
+    entries.append(entry)
+summary = {
+    "identity_checks": "passed",
+    "parent_checkpoint_sha256": control[0]["checkpoint_sha256"],
+    "benchmark_source_id_sha256": control[0]["benchmark_source_id_sha256"],
+    "validation_id": control[0]["validation_id"],
+    "training_stars": 9000000,
+    "validation_stars": 1000000,
+    "presentations": 20000000,
+    "optimizer_steps": 612,
+    "known_source_difference": "Spectral replacement fixes only loss flux-unit invariance; other runs retain original helper hash.",
+    "experiments": entries,
+}
+with (root / "per-column-mae.csv").open("w", newline="") as f:
+    writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+    writer.writeheader()
+    writer.writerows(rows)
+(root / "comparison.json").write_text(json.dumps(summary, indent=2) + "\n")
+report = [
+    "# Epoch-47 XP reconstruction experiments",
+    "",
+    "All five completed 20M presentations and 612 optimizer steps on the same 9M training and 1M validation stars. Parent checkpoint, scaler/configuration, benchmark identity, validation IDs/masks, row-order policy, seeds, initial per-column MAE, diagnostic projection and checkpoint reload probes pass. Optimizer changes and the tested spectral-only helper correction are intentional. The retired spectral session is excluded.",
+    "",
+    "Ordinary MAE scores hidden finite entries in network-scaled coordinates. Spectral diagnostics score 4,996 shared common-mask stars from the deterministic 10,000-row snapshot; their mean/median are integrated absolute error divided by integrated absolute reference flux. Negative percentage changes improve on the matched unchanged control.",
+    "",
+]
+for e in entries:
+    report.append(
+        f"- {e['experiment']}: all-column MAE {e['all_reconstructed_mae']:.9f} ({e['all_mae_delta_percent']:+.3f}%); XP MAE {e['xp_only_mae']:.9f} ({e['xp_mae_delta_percent']:+.3f}%); spectral mean {e['spectral_mean']:.9f} ({e['spectral_mean_delta_percent']:+.3f}%), median {e['spectral_median']:.9f} ({e['spectral_median_delta_percent']:+.3f}%)."
+    )
+    for orders, g in e["order_groups"]["common"].items():
+        report.append(
+            f"  BP/RP orders {orders}: count-weighted BP MAE {g['bp']['mae']:.9f}, RP {g['rp']['mae']:.9f}, combined {g['combined_mae']:.9f} ({g['combined_delta_percent']:+.3f}%)."
+        )
+report += [
+    "",
+    "The spectral auxiliary experiment improves both coefficient MAE (0.490%) and spectral mean error (3.019%) against control. Adam reset gives the lowest coefficient MAE (0.506% improvement), but slightly worsens spectral mean error (0.573%). Signal weighting improves coefficients (0.437%) while worsening spectral mean error (3.128%). Reset plus doubled LR worsens both coefficients (0.699%) and spectra (10.384%). These point estimates favor spectral auxiliary loss when reconstructed spectral quality matters, and Adam reset at the inherited LR when coefficient MAE is the priority.",
+    "",
+    "These are single-seed, short continuations. Small final differences need repeat-seed or longer matched confirmation; do not infer significance from one run. The fixed-budget final checkpoint is compared, without choosing the best validation interval. The control ends slightly worse than the starting parent; deltas relative to the parent are retained in comparison.json. Doubling the inherited LR should be assessed separately from resetting Adam state.",
+    "",
+    "Raw downloaded artifacts are preserved in each experiment folder. Per-column counts/MAE/deltas for all six validation mask regimes are in per-column-mae.csv; count-weighted order groups for every regime are in comparison.json. Persistent checkpoints remain on ARC.",
+]
+(root / "comparison.md").write_text("\n".join(report) + "\n")
+print(
+    json.dumps(
+        [
+            {
+                k: v
+                for k, v in e.items()
+                if k not in ["order_groups", "optimizer_policy"]
+            }
+            for e in entries
+        ],
+        indent=2,
+    )
+)

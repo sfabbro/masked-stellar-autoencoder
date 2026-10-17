@@ -11,14 +11,14 @@ Full checks passed: exactly 9M train and 1M validation records; all record and r
 ```python
 import h5py
 
-path = '/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5'
-with h5py.File(path, 'r') as f:
-    group = f['train']  # or f['validation']
-    for start in range(0, len(group['records']), 4096):
-        stop = min(start + 4096, len(group['records']))
-        records = group['records'][start:stop]
-        correlations = group['xp_correlations'][start:stop]
-        metadata = group['xp_band_metadata'][start:stop]
+path = "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5"
+with h5py.File(path, "r") as f:
+    group = f["train"]  # or f['validation']
+    for start in range(0, len(group["records"]), 4096):
+        stop = min(start + 4096, len(group["records"]))
+        records = group["records"][start:stop]
+        correlations = group["xp_correlations"][start:stop]
+        metadata = group["xp_band_metadata"][start:stop]
         # Apply the reference scaler and original field-cleaning/masking policy here.
 ```
 

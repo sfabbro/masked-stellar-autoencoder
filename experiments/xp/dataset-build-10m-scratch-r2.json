@@ -1,0 +1,10 @@
+{
+  "session_ids": [
+    "fcqz46mz"
+  ],
+  "git_sha": "87772939bcd8f63992628d100d2f9d956f6311fa",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261011-scratch-r2",
+  "train_rows": 9000000,
+  "validation_rows": 1000000,
+  "workers": 8
+}

@@ -25,6 +25,32 @@ SOURCE_COLUMNS = {
 }
 
 
+def apogee_parameter_metadata(hdul):
+    """Find the unique native metadata table without assuming a physical HDU index.
+
+    Actual allStar includes non-table image HDUs before its parameter metadata.
+    Do not identify HDUs through a possibly blank EXTNAME or table ordinal.
+    """
+    candidates = []
+    for index, hdu in enumerate(hdul):
+        columns = getattr(hdu, "columns", None)
+        names = getattr(columns, "names", None)
+        if names is not None and "PARAM_SYMBOL" in names:
+            candidates.append((index, hdu))
+    if len(candidates) != 1:
+        raise ValueError("APOGEE requires exactly one PARAM_SYMBOL metadata table")
+    index, hdu = candidates[0]
+    if hdu.data is None or len(hdu.data) != 1:
+        raise ValueError("APOGEE PARAM_SYMBOL metadata must contain exactly one row")
+    symbols = [
+        str(s.decode() if isinstance(s, bytes) else s).strip().upper()
+        for s in np.asarray(hdu.data["PARAM_SYMBOL"][0]).reshape(-1)
+    ]
+    if symbols.count("TEFF") != 1 or symbols.count("LOGG") != 1:
+        raise ValueError("APOGEE PARAM_SYMBOL must identify TEFF and LOGG uniquely")
+    return index, symbols
+
+
 def identity_hash(ids):
     """Match the accepted experiment identity hash exactly."""
     x = np.asarray(ids, dtype=np.uint64) ^ np.uint64(42)

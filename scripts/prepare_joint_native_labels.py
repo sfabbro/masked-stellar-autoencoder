@@ -13,7 +13,10 @@ from astropy.io import fits
 from materialize_joint_native_labels import materialize, sha
 from verify_joint_native_sidecar import verify
 
-from masked_stellar_autoencoder.training.joint_native_labels import SOURCE_COLUMNS
+from masked_stellar_autoencoder.training.joint_native_labels import (
+    SOURCE_COLUMNS,
+    apogee_parameter_metadata,
+)
 
 
 def immutable_json(path, data):
@@ -57,10 +60,8 @@ def preflight(config):
                 raise ValueError(
                     f"{source} required native columns missing: {sorted(missing_columns)}"
                 )
-            if source == "apogee" and (
-                len(hdul) < 3 or "PARAM_SYMBOL" not in hdul[2].columns.names
-            ):
-                raise ValueError("APOGEE native PARAM_SYMBOL metadata is missing")
+            if source == "apogee":
+                apogee_parameter_metadata(hdul)
     return state
 
 
@@ -228,12 +229,19 @@ def main():
     p.add_argument(
         "--config", type=Path, default=Path("configs/joint-native-preparation.yaml")
     )
+    p.add_argument(
+        "--output-directory",
+        type=Path,
+        help="New immutable output for a distinct recovery attempt",
+    )
     modes = p.add_mutually_exclusive_group(required=True)
     modes.add_argument("--dry-run", action="store_true")
     modes.add_argument("--record-source-pins", action="store_true")
     modes.add_argument("--execute", action="store_true")
     a = p.parse_args()
     config = yaml.safe_load(a.config.read_text())
+    if a.output_directory is not None:
+        config["output_directory"] = str(a.output_directory)
     if (
         config["schema"] != "joint-native-preparation-v1"
         or config["cpu_only"] is not True

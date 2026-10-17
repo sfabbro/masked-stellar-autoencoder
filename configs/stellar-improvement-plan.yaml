@@ -487,7 +487,11 @@ jobs:
   - enriched_feature_cohort_v1
   - distance_feature_cohort_v1
 
-# Distinct replacements preserve all three failed v1 outputs.
+# Distinct bounded recovery of uu3u8h43; preserve failed v1 output.
+- run_id: joint-native-preparation-v2
+  task: catalog
+  mode: joint-native-preparation
+  depends_on: [enriched_feature_cohort_v1, distance_feature_cohort_v1]
 - run_id: prediction_e72_rc_shared_xp_10m_v2
   task: prediction-comparison
   depends_on:

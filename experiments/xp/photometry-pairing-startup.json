@@ -1,0 +1,37 @@
+{
+  "unchanged_control": {
+    "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+    "benchmark_source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+    "validation_id": "bc876bac32e4e1746c8e3824ccaeabbe05ab9a499418a3b9550fefca30fc8227",
+    "photometry_calibration_sha256": "a2acfb14ffee48a7c9307e5c189eb86f23da6bb2b811d383d9c66a6febf84331",
+    "photometry_projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a"
+  },
+  "spectral_auxiliary_mae": {
+    "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+    "benchmark_source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+    "validation_id": "bc876bac32e4e1746c8e3824ccaeabbe05ab9a499418a3b9550fefca30fc8227",
+    "photometry_calibration_sha256": "a2acfb14ffee48a7c9307e5c189eb86f23da6bb2b811d383d9c66a6febf84331",
+    "photometry_projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a"
+  },
+  "observed_photometry_mae": {
+    "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+    "benchmark_source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+    "validation_id": "bc876bac32e4e1746c8e3824ccaeabbe05ab9a499418a3b9550fefca30fc8227",
+    "photometry_calibration_sha256": "a2acfb14ffee48a7c9307e5c189eb86f23da6bb2b811d383d9c66a6febf84331",
+    "photometry_projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a"
+  },
+  "photometry_spectral_mae": {
+    "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+    "benchmark_source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+    "validation_id": "bc876bac32e4e1746c8e3824ccaeabbe05ab9a499418a3b9550fefca30fc8227",
+    "photometry_calibration_sha256": "a2acfb14ffee48a7c9307e5c189eb86f23da6bb2b811d383d9c66a6febf84331",
+    "photometry_projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a"
+  },
+  "anchored_decoder_consistency_mae": {
+    "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+    "benchmark_source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+    "validation_id": "bc876bac32e4e1746c8e3824ccaeabbe05ab9a499418a3b9550fefca30fc8227",
+    "photometry_calibration_sha256": "a2acfb14ffee48a7c9307e5c189eb86f23da6bb2b811d383d9c66a6febf84331",
+    "photometry_projection_sha256": "13dd885ddc50f3317d7f24253d797a9564b81af8d5c9d5263cc1a5e65c90a18a"
+  }
+}

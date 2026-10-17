@@ -1,0 +1,33 @@
+{
+  "git_sha": "661c79c43354cbdc0e81ea9d1e65e67093d9d138",
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_57.pth",
+  "checkpoint_sha256": "9b033ae63a3b87c93dcfeffd989172f7888d029f77143e6cf315cf7a032ab2ca",
+  "checkpoint_epoch": 57,
+  "read_only_evaluation": true,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-latest-standard-e57-20261014",
+  "jobs": [
+    {
+      "run_id": "probe_latest_standard57",
+      "name": "msa-xp-standard57-analysis",
+      "task": "analysis",
+      "output": "/arc/projects/k-pop/msa_runs/xp-latest-standard-e57-20261014/probe_latest_standard57",
+      "session_ids": [
+        "hb5pav1n"
+      ],
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:03:04.915034+00:00"
+    },
+    {
+      "run_id": "evaluate_latest_standard57",
+      "name": "msa-xp-standard57-evaluation",
+      "task": "evaluation",
+      "output": "/arc/projects/k-pop/msa_runs/xp-latest-standard-e57-20261014/evaluate_latest_standard57",
+      "session_ids": [
+        "wjkgfrgg"
+      ],
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:03:09.111334+00:00"
+    }
+  ]
+}

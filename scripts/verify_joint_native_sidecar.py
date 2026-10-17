@@ -91,10 +91,23 @@ def verify(sidecar, cohort, sources, pins, output):
                 else:
                     good &= ((raw["ASPCAPFLAG"] == 0) & (raw["STARFLAG"] == 0))[:, None]
                     good[:, 2] &= raw["FE_H_FLAG"] == 0
+                    metadata_hdus = [
+                        hdu
+                        for hdu in hdul
+                        if "PARAM_SYMBOL"
+                        in (getattr(getattr(hdu, "columns", None), "names", None) or [])
+                    ]
+                    assert len(metadata_hdus) == 1, (
+                        "Expected unique native parameter metadata table"
+                    )
+                    assert len(metadata_hdus[0].data) == 1
                     symbols = [
                         str(s.decode() if isinstance(s, bytes) else s).strip().upper()
-                        for s in np.asarray(hdul[2].data["PARAM_SYMBOL"][0]).reshape(-1)
+                        for s in np.asarray(
+                            metadata_hdus[0].data["PARAM_SYMBOL"][0]
+                        ).reshape(-1)
                     ]
+                    assert symbols.count("TEFF") == symbols.count("LOGG") == 1
                     for j, symbol in enumerate(["TEFF", "LOGG"]):
                         flag = raw["PARAMFLAG"][:, symbols.index(symbol)].astype("u8")
                         # Published BAD/fixed bits, rebuilt without the producer helper.

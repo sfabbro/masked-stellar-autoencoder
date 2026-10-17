@@ -1,0 +1,142 @@
+[
+  {
+    "id": "a50rdpwj",
+    "name": "msa-xpf14-control-s44",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:51:58Z"
+  },
+  {
+    "id": "b0voa8eo",
+    "name": "msa-xpf14-photometry-spectral-s44",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:17Z"
+  },
+  {
+    "id": "bn5a9vh8",
+    "name": "msa-xpf14-spectral-decoder-dropout0-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:43Z"
+  },
+  {
+    "id": "fcluv83n",
+    "name": "msa-xpf14-spectral-weight003-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:20Z"
+  },
+  {
+    "id": "g4ddckgb",
+    "name": "msa-xpf14-spectral-reset-warmup-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:33Z"
+  },
+  {
+    "id": "ggpwkvma",
+    "name": "msa-xpf14-spectral-dropout0-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:36Z"
+  },
+  {
+    "id": "gxfkx1yw",
+    "name": "msa-xpf14-spectral-s43",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:04Z"
+  },
+  {
+    "id": "hxcojgfa",
+    "name": "msa-xpf14-control-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:51:33Z"
+  },
+  {
+    "id": "i5ls8nry",
+    "name": "msa-xpf14-spectral-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52Z"
+  },
+  {
+    "id": "ijpzvfvl",
+    "name": "msa-xpf14-spectral-weight030-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:24Z"
+  },
+  {
+    "id": "k7tmwq71",
+    "name": "msa-xpf14-photometry-spectral-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:11Z"
+  },
+  {
+    "id": "nuto44qs",
+    "name": "msa-xpf14-multiscale-spectral-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:47Z"
+  },
+  {
+    "id": "oqxlgwdm",
+    "name": "msa-xpf14-spectral-lr05-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:27Z"
+  },
+  {
+    "id": "ra9o4fea",
+    "name": "msa-xpf14-full-decoder-spectral-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:49Z"
+  },
+  {
+    "id": "rgly0amw",
+    "name": "msa-xpf14-photometry-spectral-s43",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:14Z"
+  },
+  {
+    "id": "uhhpisyo",
+    "name": "msa-xpf14-control-s43",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:51:45Z"
+  },
+  {
+    "id": "uj8tfdpb",
+    "name": "msa-xpf14-spectral-dropout005-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:40Z"
+  },
+  {
+    "id": "xcrnvdqr",
+    "name": "msa-xpf14-spectral-s44",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:07Z"
+  },
+  {
+    "id": "yih2z9ep",
+    "name": "msa-xpf14-spectral-latent-views-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:53Z"
+  },
+  {
+    "id": "zxzkpnvw",
+    "name": "msa-xpf14-spectral-lr125-s42",
+    "status": "Running",
+    "requestedGPUCores": "1",
+    "startTime": "2026-10-14T18:52:30Z"
+  }
+]

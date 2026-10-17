@@ -1,0 +1,12 @@
+{
+  "session_ids": [
+    "uccldgm2"
+  ],
+  "git_sha": "357a0a54e2186e13f97741bc480768124c410e8f",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261011",
+  "train_rows": 9000000,
+  "validation_rows": 1000000,
+  "workers": 8,
+  "status": "superseded_by_scratch_rebuild",
+  "replacement_record": "experiments/xp/dataset-build-10m-scratch-r2.json"
+}

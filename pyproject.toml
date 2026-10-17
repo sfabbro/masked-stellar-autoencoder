@@ -25,6 +25,7 @@ dependencies = [
     "tqdm>=4.66.0",
     "pyyaml>=6.0.1",
     "wandb>=0.16.0",
+    "torchregress @ git+https://github.com/sfabbro/torchregress.git@6311d708435884123906d3236da217d856e13806",
 ]
 
 [tool.setuptools.packages.find]
@@ -39,6 +40,7 @@ platforms = [
 ]
 
 [tool.pixi.tasks]
+check-training = "pixi run -e monitor --no-install python scripts/check_training.py"
 lint = "ruff check ."
 format = "ruff format ."
 test = "pytest tests/"
@@ -69,6 +71,7 @@ wandb = ">=0.16.0"
 ruff = "*"
 pytest = "*"
 pytest-mock = "*"
+healpy = ">=1.20.1,<2"
 
 [tool.pixi.target."*-cuda".pypi-dependencies]
 torch = { version = "*", index = "https://download.pytorch.org/whl/cu130" }
@@ -98,6 +101,7 @@ matplotlib = ">=3.8.0"
 [tool.pixi.feature.monitor.pypi-dependencies]
 marimo = "*"
 vos = "*"
+canfar = ">=1.4.1, <2"
 
 [tool.pixi.feature.monitor.tasks]
 monitor-pretrain = "marimo run monitor/msa_pretrain.py --host 127.0.0.1 --port 2718"

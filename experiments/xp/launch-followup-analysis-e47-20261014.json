@@ -1,0 +1,871 @@
+{
+  "git_sha": "c495d87d8ed3d565a070d121651d62ac19680c3f",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014",
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "specification_sha256": "2d90ff90d55ba434df0e23f67a4988f9fb674fb5dd080c66b05ad48fabe4cf28",
+  "jobs": [
+    {
+      "run_id": "probe_parent47",
+      "name": "msa-xpf14-probe-parent47",
+      "settings": {
+        "run_id": "probe_parent47",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+        "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "ynufl91h"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_parent47",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:05.865309+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_unchanged_control",
+      "name": "msa-xpf14-probe-unchanged-control",
+      "settings": {
+        "run_id": "probe_unchanged_control",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/unchanged_control/unchanged_control/checkpoint.pth",
+        "checkpoint_sha256": "009ff36ed79487d50c1697295c5c49748a5e41e5eaf4455c75d4482b11d6f163",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "mzcsv7vo"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_unchanged_control",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:09.877998+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_spectral_auxiliary_mae",
+      "name": "msa-xpf14-probe-spectral-auxiliary-mae",
+      "settings": {
+        "run_id": "probe_spectral_auxiliary_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae/spectral_auxiliary_mae/checkpoint.pth",
+        "checkpoint_sha256": "699a23d52ebdd2b83ebfc210415f8b72e651498f5673baa8f310fe39aa25cfbe",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "lgbq3zrw"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_spectral_auxiliary_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:13.772773+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_observed_photometry_mae",
+      "name": "msa-xpf14-probe-observed-photometry-mae",
+      "settings": {
+        "run_id": "probe_observed_photometry_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/observed_photometry_mae/observed_photometry_mae/checkpoint.pth",
+        "checkpoint_sha256": "b654be6587c05854767527c47e7697311dd126931f06e300205fff01f0f41f82",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "x76fr79r"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_observed_photometry_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:18.808811+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_photometry_spectral_mae",
+      "name": "msa-xpf14-probe-photometry-spectral-mae",
+      "settings": {
+        "run_id": "probe_photometry_spectral_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae/photometry_spectral_mae/checkpoint.pth",
+        "checkpoint_sha256": "513c604edb9560b329521665e03ec160f971721f11fb8a0802b8010ea7151142",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "o03r73yb"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_photometry_spectral_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:22.042698+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_anchored_decoder_consistency_mae",
+      "name": "msa-xpf14-probe-anchored-decoder-consistency-mae",
+      "settings": {
+        "run_id": "probe_anchored_decoder_consistency_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/anchored_decoder_consistency_mae/anchored_decoder_consistency_mae/checkpoint.pth",
+        "checkpoint_sha256": "52409f21747fec72564d6df1b2086a102b233c21e5e59d7c7c70a0314033c4db",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "jmyaj2j5"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_anchored_decoder_consistency_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:24.986968+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_corrected_signal_weighted_mae",
+      "name": "msa-xpf14-probe-corrected-signal-weighted-mae",
+      "settings": {
+        "run_id": "probe_corrected_signal_weighted_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/corrected_signal_weighted_mae/corrected_signal_weighted_mae/checkpoint.pth",
+        "checkpoint_sha256": "cccfe3909d3eef6f656a1d50c638952b40320afeada6a713f3f3a1b419a69695",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "pa8rptv5"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_corrected_signal_weighted_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:28.471123+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_adam_reset_mae",
+      "name": "msa-xpf14-probe-adam-reset-mae",
+      "settings": {
+        "run_id": "probe_adam_reset_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_mae/adam_reset_mae/checkpoint.pth",
+        "checkpoint_sha256": "83b65d1ad1c9051b287afbcb529cbc88723781e440097f092f060a3d3aae0678",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "o3r41ld4"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_adam_reset_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:34.072303+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_adam_reset_lr2_mae",
+      "name": "msa-xpf14-probe-adam-reset-lr2-mae",
+      "settings": {
+        "run_id": "probe_adam_reset_lr2_mae",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_lr2_mae/adam_reset_lr2_mae/checkpoint.pth",
+        "checkpoint_sha256": "779302b42d5a0573ec7c81413698f171329cfdd1ca795d1dc06b3f462eb1d084",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "iwc2tx3n"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_adam_reset_lr2_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:37.448269+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "latent_refine_parent47",
+      "name": "msa-xpf14-latent-refine-parent47",
+      "settings": {
+        "run_id": "latent_refine_parent47",
+        "mode": "latent_refinement",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+        "checkpoint_sha256": "4ee3c98c6db2e75d50aa54611a2beedd5ecbbb70c5af94e4c718d23eae208482",
+        "splits": [
+          "inference"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "v3e2gdxu"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/latent_refine_parent47",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:41.432716+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "latent_refine_spectral_auxiliary_mae",
+      "name": "msa-xpf14-latent-refine-spectral-auxiliary-mae",
+      "settings": {
+        "run_id": "latent_refine_spectral_auxiliary_mae",
+        "mode": "latent_refinement",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae/spectral_auxiliary_mae/checkpoint.pth",
+        "checkpoint_sha256": "699a23d52ebdd2b83ebfc210415f8b72e651498f5673baa8f310fe39aa25cfbe",
+        "splits": [
+          "inference"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "yilr4id5"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/latent_refine_spectral_auxiliary_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:44.172272+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "latent_refine_photometry_spectral_mae",
+      "name": "msa-xpf14-latent-refine-photometry-spectral-mae",
+      "settings": {
+        "run_id": "latent_refine_photometry_spectral_mae",
+        "mode": "latent_refinement",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae/photometry_spectral_mae/checkpoint.pth",
+        "checkpoint_sha256": "513c604edb9560b329521665e03ec160f971721f11fb8a0802b8010ea7151142",
+        "splits": [
+          "inference"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "dac6q2ej"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/latent_refine_photometry_spectral_mae",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:54:47.946330+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_control_s42",
+      "name": "msa-xpf14-probe-new-control-s42",
+      "settings": {
+        "run_id": "probe_new_control_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s42/control_s42/checkpoint.pth",
+        "depends_on": "control_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "eb53w6br"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_control_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T23:59:29.275931+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_control_s43",
+      "name": "msa-xpf14-probe-new-control-s43",
+      "settings": {
+        "run_id": "probe_new_control_s43",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s43/control_s43/checkpoint.pth",
+        "depends_on": "control_s43",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "nugv0mwq"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_control_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T23:59:45.311001+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_control_s44",
+      "name": "msa-xpf14-probe-new-control-s44",
+      "settings": {
+        "run_id": "probe_new_control_s44",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s44/control_s44/checkpoint.pth",
+        "depends_on": "control_s44",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "r3hpgfy7"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_control_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T23:59:48.890675+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_s42",
+      "name": "msa-xpf14-probe-new-spectral-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s42/spectral_s42/checkpoint.pth",
+        "depends_on": "spectral_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "yzwkm04t"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:02.798603+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_s43",
+      "name": "msa-xpf14-probe-new-spectral-s43",
+      "settings": {
+        "run_id": "probe_new_spectral_s43",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s43/spectral_s43/checkpoint.pth",
+        "depends_on": "spectral_s43",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "tj8ozqke"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:06.788094+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_s44",
+      "name": "msa-xpf14-probe-new-spectral-s44",
+      "settings": {
+        "run_id": "probe_new_spectral_s44",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s44/spectral_s44/checkpoint.pth",
+        "depends_on": "spectral_s44",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "su1dcd33"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:10.566983+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_photometry_spectral_s42",
+      "name": "msa-xpf14-probe-new-photometry-spectral-s42",
+      "settings": {
+        "run_id": "probe_new_photometry_spectral_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s42/photometry_spectral_s42/checkpoint.pth",
+        "depends_on": "photometry_spectral_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "yhasrz57"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_photometry_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:14.010421+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_photometry_spectral_s43",
+      "name": "msa-xpf14-probe-new-photometry-spectral-s43",
+      "settings": {
+        "run_id": "probe_new_photometry_spectral_s43",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s43/photometry_spectral_s43/checkpoint.pth",
+        "depends_on": "photometry_spectral_s43",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "f7soawn9"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_photometry_spectral_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:30.582495+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_photometry_spectral_s44",
+      "name": "msa-xpf14-probe-new-photometry-spectral-s44",
+      "settings": {
+        "run_id": "probe_new_photometry_spectral_s44",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s44/photometry_spectral_s44/checkpoint.pth",
+        "depends_on": "photometry_spectral_s44",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "frk5xd0m"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_photometry_spectral_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:33.801868+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_weight003_s42",
+      "name": "msa-xpf14-probe-new-spectral-weight003-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_weight003_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight003_s42/spectral_weight003_s42/checkpoint.pth",
+        "depends_on": "spectral_weight003_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "g1u2kavn"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_weight003_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:37.364923+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_weight030_s42",
+      "name": "msa-xpf14-probe-new-spectral-weight030-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_weight030_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight030_s42/spectral_weight030_s42/checkpoint.pth",
+        "depends_on": "spectral_weight030_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "yrk2nj1d"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_weight030_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:40.810562+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_lr05_s42",
+      "name": "msa-xpf14-probe-new-spectral-lr05-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_lr05_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr05_s42/spectral_lr05_s42/checkpoint.pth",
+        "depends_on": "spectral_lr05_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "ukpn38o9"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_lr05_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:44.376382+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_lr125_s42",
+      "name": "msa-xpf14-probe-new-spectral-lr125-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_lr125_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr125_s42/spectral_lr125_s42/checkpoint.pth",
+        "depends_on": "spectral_lr125_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "f4pe07lf"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_lr125_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:48.423368+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_reset_warmup_s42",
+      "name": "msa-xpf14-probe-new-spectral-reset-warmup-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_reset_warmup_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_reset_warmup_s42/spectral_reset_warmup_s42/checkpoint.pth",
+        "depends_on": "spectral_reset_warmup_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "z9421nwp"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_reset_warmup_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:52.325007+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_dropout0_s42",
+      "name": "msa-xpf14-probe-new-spectral-dropout0-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_dropout0_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout0_s42/spectral_dropout0_s42/checkpoint.pth",
+        "depends_on": "spectral_dropout0_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "lhg8h3yu"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_dropout0_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:00:56.170704+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_dropout005_s42",
+      "name": "msa-xpf14-probe-new-spectral-dropout005-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_dropout005_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout005_s42/spectral_dropout005_s42/checkpoint.pth",
+        "depends_on": "spectral_dropout005_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "qg1kjevo"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_dropout005_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:01:00.213695+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_decoder_dropout0_s42",
+      "name": "msa-xpf14-probe-new-spectral-decoder-dropout0-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_decoder_dropout0_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_decoder_dropout0_s42/spectral_decoder_dropout0_s42/checkpoint.pth",
+        "depends_on": "spectral_decoder_dropout0_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "j33vgwhl"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_decoder_dropout0_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:01:03.698655+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_multiscale_spectral_s42",
+      "name": "msa-xpf14-probe-new-multiscale-spectral-s42",
+      "settings": {
+        "run_id": "probe_new_multiscale_spectral_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/multiscale_spectral_s42/multiscale_spectral_s42/checkpoint.pth",
+        "depends_on": "multiscale_spectral_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "ox9kdib2"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_multiscale_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:01:07.867599+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_full_decoder_spectral_s42",
+      "name": "msa-xpf14-probe-new-full-decoder-spectral-s42",
+      "settings": {
+        "run_id": "probe_new_full_decoder_spectral_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/full_decoder_spectral_s42/full_decoder_spectral_s42/checkpoint.pth",
+        "depends_on": "full_decoder_spectral_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "b76gz7pr"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_full_decoder_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:01:12.212551+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "probe_new_spectral_latent_views_s42",
+      "name": "msa-xpf14-probe-new-spectral-latent-views-s42",
+      "settings": {
+        "run_id": "probe_new_spectral_latent_views_s42",
+        "mode": "probes",
+        "checkpoint": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_latent_views_s42/spectral_latent_views_s42/checkpoint.pth",
+        "depends_on": "spectral_latent_views_s42",
+        "splits": [
+          "identity",
+          "sky"
+        ],
+        "task": "analysis"
+      },
+      "session_ids": [
+        "w0cvnfhq"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/probe_new_spectral_latent_views_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-15T00:01:38.280249+00:00",
+      "attempts": 1
+    }
+  ]
+}

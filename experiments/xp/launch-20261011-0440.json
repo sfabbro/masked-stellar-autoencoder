@@ -1,0 +1,111 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_27.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "9f90964b14ff9583442ba0813764f129e0eb6477",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440",
+  "train_stars": 10000000,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": [
+    {
+      "run_id": "unchanged_control",
+      "session_ids": [
+        "bxdj2seh"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/unchanged_control",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/unchanged_control.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "mixed_coefficients",
+      "session_ids": [
+        "xw6jacw9"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_coefficients",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_coefficients.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "mixed_blocks",
+      "session_ids": [
+        "vtij6vj7"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_blocks",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_blocks.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "mixed_bp_rp",
+      "session_ids": [
+        "ikvj5ciu"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_bp_rp",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/mixed_bp_rp.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "xp_mse_control",
+      "session_ids": [
+        "pg9i7h63"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/xp_mse_control",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/xp_mse_control.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "torchregress_noisy_xp",
+      "session_ids": [
+        "vyq1oxie"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/torchregress_noisy_xp",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/torchregress_noisy_xp.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "signal_weighted_xp",
+      "session_ids": [
+        "c0jg26gz"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/signal_weighted_xp",
+      "log": "/arc/projects/k-pop/msa_runs/xp-reconstruction-e27-20261011-0440/signal_weighted_xp.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    }
+  ],
+  "startup_verified": "All seven sessions Running; locked environment installed; H100 MIG GPU detected; training data prefixes being staged."
+}

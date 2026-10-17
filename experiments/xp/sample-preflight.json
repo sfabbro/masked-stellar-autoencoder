@@ -1,0 +1,14 @@
+{
+  "source": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261011/benchmark.h5.building",
+  "train": {
+    "rows": 9000000,
+    "available": 558978
+  },
+  "validation": {
+    "rows": 1000000,
+    "available": 131229
+  },
+  "source_id_sha256": "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2",
+  "checkpoint_sha256": "c60dfd816cade1b2ee255063840d4bee3e918f58e8bce3a907baa63e352f6d86",
+  "status": "verified_sample"
+}

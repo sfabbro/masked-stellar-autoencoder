@@ -1,0 +1,57 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_27.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "a0fd133720b7dd8a24add02c0da2fc49cc906df8",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013",
+  "train_stars": 9000000,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "experiments_config": "configs/pretrain.xp-covariance.yaml",
+  "micro_batch_size": 512,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": [
+    {
+      "run_id": "full_covariance_xp",
+      "session_ids": [
+        "apujv15p"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/full_covariance_xp",
+      "log": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/full_covariance_xp.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "unchanged_control",
+      "session_ids": [
+        "pyyrguz8"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/unchanged_control",
+      "log": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/unchanged_control.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "corrected_diagonal_xp",
+      "session_ids": [
+        "ha85pxx7"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/corrected_diagonal_xp",
+      "log": "/arc/projects/k-pop/msa_runs/xp-covariance-e27-20261013/corrected_diagonal_xp.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    }
+  ]
+}

@@ -4,10 +4,39 @@ import numpy as np
 import pytest
 
 from masked_stellar_autoencoder.training.joint_native_labels import (
+    apogee_parameter_metadata,
     assign_roles,
     identity_hash,
     project_catalogue,
 )
+
+
+def test_apogee_metadata_discovery_rejects_missing_ambiguous_and_invalid_symbols():
+    from astropy.io import fits
+
+    def metadata(symbols):
+        return fits.BinTableHDU.from_columns(
+            [
+                fits.Column(
+                    name="PARAM_SYMBOL",
+                    format="15A",
+                    dim="(5,3)",
+                    array=np.asarray([symbols], dtype="S5"),
+                )
+            ]
+        )
+
+    empty = [fits.PrimaryHDU(), fits.ImageHDU(data=np.zeros(3))]
+    with pytest.raises(ValueError, match="exactly one PARAM_SYMBOL"):
+        apogee_parameter_metadata(empty)
+    good = metadata(["TEFF", "LOGG", "M_H"])
+    with pytest.raises(ValueError, match="exactly one PARAM_SYMBOL"):
+        apogee_parameter_metadata([*empty, good, good])
+    with pytest.raises(ValueError, match="TEFF and LOGG uniquely"):
+        apogee_parameter_metadata([*empty, metadata(["TEFF", "TEFF", "M_H"])])
+    index, symbols = apogee_parameter_metadata([*empty, fits.ImageHDU(), good])
+    assert index == 3
+    assert symbols == ["TEFF", "LOGG", "M_H"]
 
 
 def native_table(source="galah"):
@@ -206,6 +235,8 @@ def test_fits_to_hdf5_materialization_integration(tmp_path, monkeypatch):
         p = tmp_path / (source + ".fits")
         hdus = [fits.PrimaryHDU(), fits.BinTableHDU(data=table)]
         if source == "apogee":
+            # Match the actual production layout that rejected the original hardcoded HDU2.
+            hdus.append(fits.ImageHDU(data=np.zeros(2, dtype="f4")))
             hdus.append(
                 fits.BinTableHDU.from_columns(
                     [

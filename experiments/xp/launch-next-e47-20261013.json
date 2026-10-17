@@ -1,0 +1,91 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "2176cab9afa666c03a2e1cfc474864b103e2df19",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013",
+  "train_stars": 9000000,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "experiments_config": "configs/pretrain.xp-next.yaml",
+  "micro_batch_size": 512,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": [
+    {
+      "run_id": "unchanged_control",
+      "session_ids": [
+        "kwpg3uco"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/unchanged_control",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/unchanged_control.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "corrected_signal_weighted_mae",
+      "session_ids": [
+        "mqjxw6mv"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/corrected_signal_weighted_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/corrected_signal_weighted_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "spectral_auxiliary_mae",
+      "session_ids": [
+        "otyufn0f"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013-spectral-r2/spectral_auxiliary_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013-spectral-r2/spectral_auxiliary_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "retired_session_ids": [
+        "x9bn27im"
+      ],
+      "replacement_reason": "Fix relative spectral loss invariance to small physical flux units",
+      "git_sha": "90a2fd873d44b48bb94296f19ff4efcd7ec70313",
+      "replacement_launch_record": "experiments/xp/launch-next-e47-spectral-r2-20261013.json"
+    },
+    {
+      "run_id": "adam_reset_mae",
+      "session_ids": [
+        "k25473g4"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "adam_reset_lr2_mae",
+      "session_ids": [
+        "x734qthl"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_lr2_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013/adam_reset_lr2_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    }
+  ]
+}
