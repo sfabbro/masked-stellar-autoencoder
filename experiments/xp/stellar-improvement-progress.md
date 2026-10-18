@@ -459,3 +459,14 @@ PublishedimmutableMSAsource7355baf, torchregress66d52fe. Allfouractualparent/coh
 - prediction_e72_residual_group_dro_10m_v1 => cz6y3ru8 => /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_group_dro_10m_v1
 
 Launcher26395DONE;96acceptedincludingretainedfailedpredecessors. NEVERduplicateanyacceptedID/output. Acceptanceonly, actualoriginal128XP/erroraudit/GPUruntimegates stillrequired; no newperformanceclaims. Sameactualparent72/cohort/10Mbudget andmatchedstreams. Mainrrrc2ihf unchanged. SIMEXall17+278artifactscollected; independentall17CPUverification RUNNING exec21751, log/tmp/msa-simex-independent-all17.log, reusecompletedper-replicareports. Oldflowfinalverificationinterrupted/unverified; do notrestartobsoleteformulation. NewNRE needsitsownclassifiergridCPUverifier, notoldflow.distribution replay. Newrawpointarms canuseexistingpointverifier withobjective-specificaudit. Startupmetadatafetch53511 active; readexistingprocessbeforeanyrepeat.
+
+
+## 2026-10-18T15:21:00.745661+00:00 — Status audit and confirmed mechanism launch failure
+
+Allfour7355baf mechanism v1 runs ACTUALmanifestFAILED beforetraining: Pinned parent digest differs. Rootcause: newplans omittedMSA_PRETRAIN_RESUME override, so genericlauncher suppliedlegacyepoch57while numericalpolicypinnedepoch72. This is a launchconfiguration error, not scientificfailure; originalacceptedIDs/outputspreserved, NEVERreuse. Fixedcentralbind_prediction_policy derivesparent/budgetfromnumericalsuiteandrejectsexplicitconflicts;2testsPASSincludingALLpredictionplans. Distinct4v2arms/plans preparedwithexplicit72env andexistingcohortauditdependency; no acceptanceclaimeduntilactualIDs.
+
+GlobalCANFARconfig nowversion2;PyPIcanfar1.4.1rejectedit. Monitorpin alignedwithhumanalready-installedpublishedgit0d96a72761cc6dc7063d6cd97049ae3743133efa supportingthat schema; didNOTreset/delete/rewriteglobalcredentials/config. FreshSessionfetchconfirmsrrrc2ihfRUNNING1GPU.
+
+Originalpretrain87/100underway,86completed; epoch72val.72525322,73.72324967,80.71807748,85.71045768,86.71208143. It ispretraining-only, noautomaticfinetuning. FULLactualcheckpoint85+86downloaded/checksummed/torchloadedmodel+optimizer+schedulerstate under main-checkpoints/preservation.json. Bestrecent85 retained. MainNOTstopped: useraskedrecommendation, earliermainunchangedinstructionstillappliesuntilgoahead.
+
+SIMEXall17CPU+aggregateverification COMPLETEPASS (maxmember3.4332275e-5, aggregate2.4868996e-14), reportpreserved. No scientificrankingbeforepairedreport/CSV/PNG/PDF+visualinspection.

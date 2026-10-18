@@ -101,7 +101,7 @@ matplotlib = ">=3.8.0"
 [tool.pixi.feature.monitor.pypi-dependencies]
 marimo = "*"
 vos = "*"
-canfar = ">=1.4.1, <2"
+canfar = { git = "https://github.com/opencadc/canfar.git", rev = "0d96a72761cc6dc7063d6cd97049ae3743133efa" }
 
 [tool.pixi.feature.monitor.tasks]
 monitor-pretrain = "marimo run monitor/msa_pretrain.py --host 127.0.0.1 --port 2718"

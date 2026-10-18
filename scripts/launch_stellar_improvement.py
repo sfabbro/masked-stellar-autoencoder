@@ -54,6 +54,27 @@ def eligible(plan, now, dependencies):
     return all(dependencies.get(name, False) for name in plan.get("depends_on", []))
 
 
+def bind_prediction_policy(
+    plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
+):
+    """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] != "prediction-comparison":
+        return env
+    suite = yaml.safe_load(config_path.read_text())
+    if not any(a["run_id"] == plan["run_id"] for a in suite["arms"]):
+        raise ValueError("Prediction run absent from numerical policy")
+    expected = {
+        "MSA_PRETRAIN_RESUME": suite["checkpoint"],
+        "MSA_EXPERIMENT_PRESENTATIONS": str(suite["reconstruction_presentations"]),
+    }
+    for key, value in expected.items():
+        explicit = plan.get("env", {}).get(key)
+        if explicit is not None and str(explicit) != value:
+            raise ValueError(f"Launch override {key} differs from numerical policy")
+        env[key] = value
+    return env
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--git-sha", required=True)
@@ -197,6 +218,7 @@ def main():
             "MSA_EXPERIMENT_VALIDATION_SEED": "42",
         }
         env.update(plan.get("env", {}))
+        env = bind_prediction_policy(plan, env)
         resources = (
             {"cores": 4, "ram": 64, "gpu": 1}
             if plan["task"] != "catalog"

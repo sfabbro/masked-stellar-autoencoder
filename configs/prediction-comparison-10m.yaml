@@ -140,3 +140,20 @@ arms:
   head: residual
   loss: group_dro_huber
   library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_mse_mechanism_10m_v2
+  head: residual
+  loss: mse
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_corrected_score_xp_10m_v2
+  head: residual
+  loss: corrected_score
+  error_convention: raw_xp
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_classifier_nre_b_10m_v2
+  head: neural_ratio
+  loss: neural_ratio
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_group_dro_10m_v2
+  head: residual
+  loss: group_dro_huber
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
