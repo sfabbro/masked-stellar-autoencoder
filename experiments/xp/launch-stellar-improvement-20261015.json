@@ -2599,6 +2599,54 @@
       "attempts": 1,
       "remote_status": "failed",
       "remote_error": "GPU tensor implicit NumPy conversion while writing paired-cohort before head SGD; original ID/output retained"
+    },
+    {
+      "run_id": "frozen_e72_vir_screen_v2",
+      "name": "msa-si15-frozen-e72-vir-screen-v2",
+      "source_sha": "6234264658c1577959c1aa494f1efc817a84ea6d",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/frozen_e72_vir_screen_v2",
+      "plan": {
+        "run_id": "frozen_e72_vir_screen_v2",
+        "task": "frozen-head-screen",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "b0hl94il"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T22:23:14.019646+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "frozen_e72_cnf_screen_v2",
+      "name": "msa-si15-frozen-e72-cnf-screen-v2",
+      "source_sha": "6234264658c1577959c1aa494f1efc817a84ea6d",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/frozen_e72_cnf_screen_v2",
+      "plan": {
+        "run_id": "frozen_e72_cnf_screen_v2",
+        "task": "frozen-head-screen",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "w2sv4mip"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T22:23:17.737079+00:00",
+      "attempts": 1
     }
   ]
 }

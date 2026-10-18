@@ -534,3 +534,10 @@ Each unique output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/<ru
 ## 2026-10-18 — confirmed GPU screen serialization failure and bounded recovery
 
 Both v1 actualmanifests FAILED before head SGD at np.savez_compressed(paired-cohort), sourceec11587; fullstartup logs preserved. Root cause located: test_z was overwritten from raw NumPy encoder latents to standardized CUDA tensor, then passed both implicitly to NumPy and misleadingly as raw test_latent. CPU smoke did not reject implicit host conversion or identify the raw-vs-standardized artifact discrepancy. Fixed distinct raw_test_latent variable, explicit detachedCPUserialization helper, exact paired raw-latent equality gate and real-device serialization preflight. Regression test rejects implicit Tensor.__array__ conversion even on CPU. Same algorithms/budgets. Distinct v2 run IDs/outputs prepared; no acceptance claim yet, original zcfqjm8y/au2aumk7 preserved/annotatedfailed. RecoveryCI466PASS/4skip, final actual-parent/cohort smoke-v3 exercises raw-latent gate and full strictreloads. No training-result claims for failed v1 runs.
+
+## 2026-10-18T22:24:01.037110+00:00 — fixed frozen screen replacements ACCEPTED
+
+Published immutable source6234264658c1577959c1aa494f1efc817a84ea6d/libraryf9f71f2. CI466PASS/4skip, finalcommit/pushhooksPASS; actualparent/cohort smoke-v3 bothcomplete all7heads/features/scalers plus raw-latent preservation gate PASS. New actualGPUserialization preflight precedes data encoding/fitting.
+- frozen_e72_vir_screen_v2 => b0hl94il
+- frozen_e72_cnf_screen_v2 => w2sv4mip
+Eachdistinctoutput /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/<run_id>. Ledger104accepted includingretainedfailed v1. NEVERreuse v1IDs/outputs or duplicatev2. Launcher23080DONE. Acceptance only, source/GPU/measurement/reload/independentCPU gates required before scientificclaims. Mainstopped; existingcomparisonscomplete except explicitNREstrictfailure. No newacquisition/largewave.
