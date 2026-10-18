@@ -4,15 +4,15 @@ The inspected harness `cnf_parity` at04bb08e/a2a39f8 implements the binary densi
 
 ## Continuous FeH adaptation
 
-The target task remains point regression of measured native FeH. Define two *training* regimes from existing strict-fit labels only: signal FeH<-2dex; background FeH>=-2dex. Learn two unconditional densities of fixed, fit-only PCA8 projections of the frozen epoch72 encoder. The PCA is shared by NLL/CNF controls and fitted after a fit-only latent standardization. Preserve its components, centering and signs; no test labels or test-latent statistics may fit preprocessing.
+The target task remains point regression of measured native FeH. Define two *training* regimes from existing strict-fit labels only: signal FeH<-1dex; background FeH>=-1dex. This preregistered screen has446unique signalfits; only29strict fits are below-2, so that rarer cutoff is used for evaluation rather than density training. Learn two unconditional densities of fixed, fit-only PCA8 projections of the frozen epoch72 encoder. The PCA is shared by NLL/CNF controls and fitted after a fit-only latent standardization. Preserve its components, centering and signs; no test labels or test-latent statistics may fit preprocessing.
 
 For the signal flow use `-mean(log p_s(signal)) + 2*mean(log p_s(background))`. For the background flow reverse the batches and use coefficient0.5. Clamp the *scalar batch objective* from below at-50 exactly as the harness recipe. This is a density-shaping objective, not conditional maximum likelihood; the guard can yield zero-gradient updates and its clamp fraction must be recorded. Sampling with replacement is necessary for the sparse signal regime; both class populations/counts and actual ordered source-ID streams must be recorded. This does not create additional unique metal-poor labels.
 
-Freeze both flows before training the continuous head. Append `Phi_s = sigmoid(clamp(log p_s,-30,30))` and `Phi_b` to all256 standardized original latents, fit the appended-feature means/scales only on strict fits, then train the same residual-MSE point head. Inference uses no labels, bins or test-target values. Do not turn the binary ratio into a continuous FeH posterior. Density-shaping features provide a possible useful representation for regression, not an assertion of identifiable physical metallicity or nuisance invariance.
+Freeze both flows before training the continuous head. Append `Phi_s = sigmoid(clamp(log p_s,-30,30))` and `Phi_b` to all256 standardized original latents, fit the appended-feature means/scales only on strict fits, then train the same MLP-MSE point head. Inference uses no labels, bins or test-target values. Do not turn the binary ratio into a continuous FeH posterior. Density-shaping features provide a possible useful representation for regression, not an assertion of identifiable physical metallicity or nuisance invariance.
 
 ## Matched controls and proposed budget
 
-- Raw residual-MSE head on256 standardized latent channels plus two fixed zero columns (same258input parameter count).
+- Raw MLP-MSE head on256 standardized latent channels plus two fixed zero columns (same258input parameter count).
 - NLL-flow feature augmentation: same PCA8, two NSF flows, optimizer, class sampling, updates and appended-feature scaling; ordinary positive-class NLL only.
 - CNF-flow feature augmentation: same stages and models, shaped flow losses above.
 
