@@ -558,3 +558,10 @@ jobs:
 - run_id: frozen_e72_cnf_screen_v1
   task: frozen-head-screen
   depends_on: [enriched_feature_audit_v1]
+
+- run_id: frozen_e72_vir_screen_v2
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]
+- run_id: frozen_e72_cnf_screen_v2
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]

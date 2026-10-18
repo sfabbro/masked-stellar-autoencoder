@@ -27,6 +27,27 @@ from masked_stellar_autoencoder.training.cnf_regression_features import (
 from masked_stellar_autoencoder.training.prediction_vir import VIRPredictionHead
 
 
+def save_host_npz(path, **arrays):
+    """Explicit host transfer: NumPy must never implicitly coerce CUDA tensors."""
+    host = {
+        key: value.detach().cpu().numpy() if isinstance(value, torch.Tensor) else value
+        for key, value in arrays.items()
+    }
+    atomic_json(
+        Path(path).with_suffix(".storage.json"),
+        {
+            key: {
+                "type": type(value).__name__,
+                "device": str(value.device)
+                if isinstance(value, torch.Tensor)
+                else "host",
+            }
+            for key, value in arrays.items()
+        },
+    )
+    np.savez_compressed(path, **host)
+
+
 def stream(count, updates, batch, seed=42):
     rng = np.random.default_rng(seed)
     for _ in range(updates):
@@ -128,7 +149,7 @@ def train_head(fit, labels, test, mode, policy, out, smoke):
     np.testing.assert_array_equal(final, replay)
     if vir:
         np.testing.assert_array_equal(posterior, replay_posterior)
-    np.savez_compressed(
+    save_host_npz(
         out / (mode + "-predictions.npz"),
         initial_standardized=initial,
         final_standardized=final,
@@ -337,6 +358,12 @@ def main():
         if not args.smoke and not torch.cuda.is_available():
             raise ValueError("Production screen requires actual GPU")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        save_host_npz(
+            args.output / "device-serialization-preflight.npz",
+            probe=torch.arange(6.0, device=device).reshape(2, 3),
+        )
+        with np.load(args.output / "device-serialization-preflight.npz") as serialized:
+            np.testing.assert_array_equal(serialized["probe"], [[0, 1, 2], [3, 4, 5]])
         data, fit, test, safe, _, yc, ys = native_inputs(args.cohort)
         if args.smoke:
             # Include an actual fit-tail star so binary density smoke has support.
@@ -381,19 +408,21 @@ def main():
         all_rows = np.concatenate((fit, test["used_row"]))
         latent = probe.encode(model, safe[all_rows], device)
         train_z = latent[: len(fit)]
-        test_z = latent[len(fit) :]
+        raw_test_latent = latent[len(fit) :]
         latent_center = train_z.mean(0)
         latent_scale = train_z.std(0)
         latent_scale = np.maximum(latent_scale, 1e-6)
         fit_z = torch.as_tensor((train_z - latent_center) / latent_scale, device=device)
-        test_z = torch.as_tensor((test_z - latent_center) / latent_scale, device=device)
+        test_z = torch.as_tensor(
+            (raw_test_latent - latent_center) / latent_scale, device=device
+        )
         labels = torch.as_tensor(
             (data["fit_truth"][fit] - yc) / ys, dtype=torch.float32, device=device
         )
         raw_labels = torch.as_tensor(
             data["fit_truth"][fit], dtype=torch.float32, device=device
         )
-        np.savez_compressed(
+        save_host_npz(
             args.output / "paired-cohort.npz",
             fit_source_id=data["source_id"][fit],
             fit_measurements=data["fit_native_measurements"],
@@ -401,13 +430,18 @@ def main():
             fit_input=safe[fit],
             test_input=safe[test["used_row"]],
             fit_latent=train_z,
-            test_latent=test_z,
+            test_latent=raw_test_latent,
             latent_center=latent_center,
             latent_scale=latent_scale,
             label_center=yc,
             label_scale=ys,
             fit_target=data["fit_truth"][fit],
         )
+        with np.load(
+            args.output / "paired-cohort.npz", allow_pickle=False
+        ) as preserved:
+            np.testing.assert_array_equal(preserved["fit_latent"], latent[: len(fit)])
+            np.testing.assert_array_equal(preserved["test_latent"], latent[len(fit) :])
         before = hashlib.sha256(
             b"".join(
                 v.detach().cpu().numpy().tobytes() for v in model.state_dict().values()

@@ -15,3 +15,10 @@ jobs:
 - run_id: frozen_e72_cnf_screen_v1
   kind: cnf
   methods: [raw_mse, nll, cnf]
+
+- run_id: frozen_e72_vir_screen_v2
+  kind: vir
+  methods: [raw_mse, unweighted_nig, density_nig, vir]
+- run_id: frozen_e72_cnf_screen_v2
+  kind: cnf
+  methods: [raw_mse, nll, cnf]

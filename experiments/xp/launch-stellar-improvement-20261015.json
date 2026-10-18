@@ -2570,7 +2570,9 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T22:15:58.763534+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "GPU tensor implicit NumPy conversion while writing paired-cohort before head SGD; original ID/output retained"
     },
     {
       "run_id": "frozen_e72_cnf_screen_v1",
@@ -2594,7 +2596,9 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T22:16:06.227695+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "GPU tensor implicit NumPy conversion while writing paired-cohort before head SGD; original ID/output retained"
     }
   ]
 }
