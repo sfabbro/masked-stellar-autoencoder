@@ -470,3 +470,14 @@ GlobalCANFARconfig nowversion2;PyPIcanfar1.4.1rejectedit. Monitorpin alignedwith
 Originalpretrain87/100underway,86completed; epoch72val.72525322,73.72324967,80.71807748,85.71045768,86.71208143. It ispretraining-only, noautomaticfinetuning. FULLactualcheckpoint85+86downloaded/checksummed/torchloadedmodel+optimizer+schedulerstate under main-checkpoints/preservation.json. Bestrecent85 retained. MainNOTstopped: useraskedrecommendation, earliermainunchangedinstructionstillappliesuntilgoahead.
 
 SIMEXall17CPU+aggregateverification COMPLETEPASS (maxmember3.4332275e-5, aggregate2.4868996e-14), reportpreserved. No scientificrankingbeforepairedreport/CSV/PNG/PDF+visualinspection.
+
+
+## 2026-10-18T15:23:38.271943+00:00 — Parent-policy recovery ACCEPTED
+
+Source4e1e55c publishedorigin;445testsPASS/7skipandcommit/pushhooksPASS. Clientcompatibilityfixedwithoutchangingglobalconfig. Fourdistinctv2replacements accepted; oldfailedv1sessionsretained.
+- prediction_e72_residual_mse_mechanism_10m_v2 => k0k1wcxi => /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_mse_mechanism_10m_v2
+- prediction_e72_corrected_score_xp_10m_v2 => lfm6ypi3 => /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_corrected_score_xp_10m_v2
+- prediction_e72_classifier_nre_b_10m_v2 => rf4djqbr => /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_classifier_nre_b_10m_v2
+- prediction_e72_residual_group_dro_10m_v2 => tv6vu8sj => /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_group_dro_10m_v2
+
+Launcher2182DONE;100acceptedtotalincludingfailedhistory. NEVERresubmittheseIDs/outputs. Actualruntimecheckpoint/unit/GPUgates stillpending; no scienceclaimed. Originalrrrc2ihfstillunchanged;85/86preservedlocallyverifiedload+optimizer/scheduler. Recommendationstoprequireshumanreplybecausespecificpriorinstructionmainunchanged.

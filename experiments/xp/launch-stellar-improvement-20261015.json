@@ -2354,7 +2354,9 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T05:51:04.605234+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "ValueError: Pinned parent digest differs; legacy launcher parent57 versus policy72; no training completed"
     },
     {
       "run_id": "prediction_e72_corrected_score_xp_10m_v1",
@@ -2378,7 +2380,9 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T05:51:18.533723+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "ValueError: Pinned parent digest differs; legacy launcher parent57 versus policy72; no training completed"
     },
     {
       "run_id": "prediction_e72_classifier_nre_b_10m_v1",
@@ -2402,7 +2406,9 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T05:51:30.762628+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "ValueError: Pinned parent digest differs; legacy launcher parent57 versus policy72; no training completed"
     },
     {
       "run_id": "prediction_e72_residual_group_dro_10m_v1",
@@ -2426,6 +2432,120 @@
       ],
       "status": "accepted",
       "attempted_at": "2026-10-18T05:51:33.969252+00:00",
+      "attempts": 1,
+      "remote_status": "failed",
+      "remote_error": "ValueError: Pinned parent digest differs; legacy launcher parent57 versus policy72; no training completed"
+    },
+    {
+      "run_id": "prediction_e72_residual_mse_mechanism_10m_v2",
+      "name": "msa-si15-prediction-e72-residual-mse-mechanism-10m-v2",
+      "source_sha": "4e1e55c2ae0bdee37582d8e75376f9e60f7f1e3b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_mse_mechanism_10m_v2",
+      "plan": {
+        "run_id": "prediction_e72_residual_mse_mechanism_10m_v2",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ],
+        "env": {
+          "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth",
+          "MSA_EXPERIMENT_PRESENTATIONS": "10000000"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "k0k1wcxi"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T15:22:39.794904+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_corrected_score_xp_10m_v2",
+      "name": "msa-si15-prediction-e72-corrected-score-xp-10m-v2",
+      "source_sha": "4e1e55c2ae0bdee37582d8e75376f9e60f7f1e3b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_corrected_score_xp_10m_v2",
+      "plan": {
+        "run_id": "prediction_e72_corrected_score_xp_10m_v2",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ],
+        "env": {
+          "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth",
+          "MSA_EXPERIMENT_PRESENTATIONS": "10000000"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lfm6ypi3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T15:22:44.020064+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_classifier_nre_b_10m_v2",
+      "name": "msa-si15-prediction-e72-classifier-nre-b-10m-v2",
+      "source_sha": "4e1e55c2ae0bdee37582d8e75376f9e60f7f1e3b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_classifier_nre_b_10m_v2",
+      "plan": {
+        "run_id": "prediction_e72_classifier_nre_b_10m_v2",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ],
+        "env": {
+          "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth",
+          "MSA_EXPERIMENT_PRESENTATIONS": "10000000"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "rf4djqbr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T15:22:47.838825+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_residual_group_dro_10m_v2",
+      "name": "msa-si15-prediction-e72-residual-group-dro-10m-v2",
+      "source_sha": "4e1e55c2ae0bdee37582d8e75376f9e60f7f1e3b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_group_dro_10m_v2",
+      "plan": {
+        "run_id": "prediction_e72_residual_group_dro_10m_v2",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ],
+        "env": {
+          "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth",
+          "MSA_EXPERIMENT_PRESENTATIONS": "10000000"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tv6vu8sj"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T15:22:51.851806+00:00",
       "attempts": 1
     }
   ]
