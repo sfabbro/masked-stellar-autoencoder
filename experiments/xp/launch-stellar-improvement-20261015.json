@@ -2331,6 +2331,102 @@
       "status": "accepted",
       "attempted_at": "2026-10-17T20:29:28.220753+00:00",
       "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_residual_mse_mechanism_10m_v1",
+      "name": "msa-si15-prediction-e72-residual-mse-mechanism-10m-v1",
+      "source_sha": "7355bafff6a11012b76c754c1005cda2bcf82517",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_mse_mechanism_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_residual_mse_mechanism_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_cohort_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zplolvlg"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T05:51:04.605234+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_corrected_score_xp_10m_v1",
+      "name": "msa-si15-prediction-e72-corrected-score-xp-10m-v1",
+      "source_sha": "7355bafff6a11012b76c754c1005cda2bcf82517",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_corrected_score_xp_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_corrected_score_xp_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_cohort_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bi8v3op0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T05:51:18.533723+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_classifier_nre_b_10m_v1",
+      "name": "msa-si15-prediction-e72-classifier-nre-b-10m-v1",
+      "source_sha": "7355bafff6a11012b76c754c1005cda2bcf82517",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_classifier_nre_b_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_classifier_nre_b_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_cohort_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uhmjt0uu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T05:51:30.762628+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_residual_group_dro_10m_v1",
+      "name": "msa-si15-prediction-e72-residual-group-dro-10m-v1",
+      "source_sha": "7355bafff6a11012b76c754c1005cda2bcf82517",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_group_dro_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_residual_group_dro_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_cohort_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "cz6y3ru8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-18T05:51:33.969252+00:00",
+      "attempts": 1
     }
   ]
 }
