@@ -58,6 +58,16 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "frozen-head-screen":
+        suite = yaml.safe_load(Path("configs/frozen-head-screen.yaml").read_text())
+        if not any(a["run_id"] == plan["run_id"] for a in suite["jobs"]):
+            raise ValueError("Frozen screen absent from numerical policy")
+        explicit = plan.get("env", {}).get("MSA_PRETRAIN_RESUME")
+        if explicit is not None and explicit != suite["checkpoint"]:
+            raise ValueError("Frozen screen parent differs from numerical policy")
+        env["MSA_PRETRAIN_RESUME"] = suite["checkpoint"]
+        env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
+        return env
     if plan["task"] != "prediction-comparison":
         return env
     suite = yaml.safe_load(config_path.read_text())

@@ -11,7 +11,7 @@ mpmath = "<1.4"
 
 [pypi-dependencies]
 masked-stellar-autoencoder = { path = "../..", editable = true }
-torchregress = { git = "https://github.com/sfabbro/torchregress.git", rev = "66d52feacb2a7139bca9a294541aec7c09def83e" }
+torchregress = { git = "https://github.com/sfabbro/torchregress.git", rev = "f9f71f234902881925acc44b2efdd244d794f4a1" }
 gaiaxpy = "==2.1.2"
 pytest = "*"
 ruff = "*"

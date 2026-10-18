@@ -25,7 +25,7 @@ dependencies = [
     "tqdm>=4.66.0",
     "pyyaml>=6.0.1",
     "wandb>=0.16.0",
-    "torchregress @ git+https://github.com/sfabbro/torchregress.git@66d52feacb2a7139bca9a294541aec7c09def83e",
+    "torchregress @ git+https://github.com/sfabbro/torchregress.git@f9f71f234902881925acc44b2efdd244d794f4a1",
 ]
 
 [tool.setuptools.packages.find]
@@ -109,6 +109,7 @@ monitor-pretrain = "marimo run monitor/msa_pretrain.py --host 127.0.0.1 --port 2
 [tool.pixi.pypi-dependencies]
 masked-stellar-autoencoder = { path = ".", editable = true }
 pre-commit = "*"
+zuko = ">=1.6.0, <2"
 
 [tool.ruff]
 target-version = "py312"

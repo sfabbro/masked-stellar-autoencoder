@@ -1,0 +1,17 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+checkpoint_sha256: 9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec
+torchregress_revision: f9f71f234902881925acc44b2efdd244d794f4a1
+head_updates: 3000
+batch_size: 256
+head_lr: 0.001
+flow_updates: 1000
+flow_lr: 0.0003
+pca_dimensions: 8
+cnf_cut_dex: -1.0
+jobs:
+- run_id: frozen_e72_vir_screen_v1
+  kind: vir
+  methods: [raw_mse, unweighted_nig, density_nig, vir]
+- run_id: frozen_e72_cnf_screen_v1
+  kind: cnf
+  methods: [raw_mse, nll, cnf]

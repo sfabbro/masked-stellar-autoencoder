@@ -352,7 +352,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.0%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -369,6 +369,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/95/95/86342356ff5953b3fb06f7ef7c5bee212d45e770abc7218d451b9148313c/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl
@@ -711,7 +712,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -739,6 +740,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8a/24/9c01edfd2210737ee9471b47db857a079e5a23f2677e5d9778c0ff23d099/cuda_bindings-13.4.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/95/95/86342356ff5953b3fb06f7ef7c5bee212d45e770abc7218d451b9148313c/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/59/239c7259e669c46ddbcac0aa60e3a0ef00bfeaaa687f905b24dd6a7a10fe/cuda_pathfinder-1.8.2-py3-none-any.whl
@@ -1057,7 +1059,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -1070,6 +1072,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/70/4c/ba64c450164fa4feaa9c4bb1c6445811d89d6a1995bfc58d039273b698af/progressbar2-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c3/a2/c7f6ebf546f8f644edf0f999aa98ece106986a77a7b922316bf6414ff825/torchmetrics-1.9.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c5/2c/8b107f9e029da006c39af38a0a150dde57ecce48b495c79917d1ad963821/virtualenv-21.13.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ca/17/fcf593cc07f6b060318d3590c09ca7793b45d14428ebbc121e392c240b60/dustmaps-1.0.14-py3-none-any.whl
@@ -1410,7 +1413,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.0%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -1427,6 +1430,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/95/95/86342356ff5953b3fb06f7ef7c5bee212d45e770abc7218d451b9148313c/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl
@@ -1769,7 +1773,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -1797,6 +1801,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8a/24/9c01edfd2210737ee9471b47db857a079e5a23f2677e5d9778c0ff23d099/cuda_bindings-13.4.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/95/95/86342356ff5953b3fb06f7ef7c5bee212d45e770abc7218d451b9148313c/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/59/239c7259e669c46ddbcac0aa60e3a0ef00bfeaaa687f905b24dd6a7a10fe/cuda_pathfinder-1.8.2-py3-none-any.whl
@@ -2115,7 +2120,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -2128,6 +2133,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/70/4c/ba64c450164fa4feaa9c4bb1c6445811d89d6a1995bfc58d039273b698af/progressbar2-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c3/a2/c7f6ebf546f8f644edf0f999aa98ece106986a77a7b922316bf6414ff825/torchmetrics-1.9.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c5/2c/8b107f9e029da006c39af38a0a150dde57ecce48b495c79917d1ad963821/virtualenv-21.13.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/ca/17/fcf593cc07f6b060318d3590c09ca7793b45d14428ebbc121e392c240b60/dustmaps-1.0.14-py3-none-any.whl
@@ -10963,7 +10969,7 @@ packages:
   - tqdm>=4.66.0
   - pyyaml>=6.0.1
   - wandb>=0.16.0
-  - torchregress @ git+https://github.com/sfabbro/torchregress.git@66d52feacb2a7139bca9a294541aec7c09def83e
+  - torchregress @ git+https://github.com/sfabbro/torchregress.git@f9f71f234902881925acc44b2efdd244d794f4a1
   requires_python: '>=3.12'
 - pypi: git+https://github.com/opencadc/canfar.git?rev=0d96a72761cc6dc7063d6cd97049ae3743133efa#0d96a72761cc6dc7063d6cd97049ae3743133efa
   name: canfar
@@ -10983,7 +10989,7 @@ packages:
   - fss-cli @ git+https://github.com/shinybrar/vostools@main#subdirectory=libs/fss-cli
   - cryptography>=45.0.1
   requires_python: '>=3.10'
-- pypi: git+https://github.com/sfabbro/torchregress.git?rev=66d52feacb2a7139bca9a294541aec7c09def83e#66d52feacb2a7139bca9a294541aec7c09def83e
+- pypi: git+https://github.com/sfabbro/torchregress.git?rev=f9f71f234902881925acc44b2efdd244d794f4a1#f9f71f234902881925acc44b2efdd244d794f4a1
   name: torchregress
   version: 0.2.0
   requires_dist:
@@ -11933,6 +11939,23 @@ packages:
   - h2>=4,<5 ; extra == 'h2'
   - pysocks>=1.5.6,!=1.5.7,<2.0 ; extra == 'socks'
   - backports-zstd>=1.0.0 ; python_full_version < '3.14' and extra == 'zstd'
+  requires_python: '>=3.10'
+- pypi: https://files.pythonhosted.org/packages/95/10/ff159867f522cd98e039e748c5e9777446e8b797a79be691c6b730676094/zuko-1.6.0-py3-none-any.whl
+  name: zuko
+  version: 1.6.0
+  sha256: 5c073b613a84a7cd65470ddb94855169020ac49432f73b85f25207e377248a4a
+  requires_dist:
+  - numpy>=1.20.0
+  - torch>=1.12.0
+  - ipykernel>=6.29.0 ; extra == 'dev'
+  - matplotlib>=3.8.0 ; extra == 'dev'
+  - pre-commit>=3.7.0 ; extra == 'dev'
+  - ruff==0.9.9 ; extra == 'dev'
+  - docutils==0.19 ; extra == 'docs'
+  - furo==2024.5.6 ; extra == 'docs'
+  - myst-nb==1.0.0 ; extra == 'docs'
+  - sphinx==7.3.7 ; extra == 'docs'
+  - pytest>=8.0.0 ; extra == 'test'
   requires_python: '>=3.10'
 - pypi: https://files.pythonhosted.org/packages/95/95/86342356ff5953b3fb06f7ef7c5bee212d45e770abc7218d451b9148313c/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
   name: cffi

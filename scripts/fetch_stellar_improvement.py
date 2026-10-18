@@ -89,6 +89,16 @@ def main():
                     "overlap-summary.json",
                     "overlap-pairs.npz",
                 ]
+        elif task == "frozen-head-screen":
+            import yaml
+
+            suite = yaml.safe_load(Path("configs/frozen-head-screen.yaml").read_text())
+            arm = next(a for a in suite["jobs"] if a["run_id"] == job["run_id"])
+            files += ["paired-cohort.npz", "progress.json", "metrics.jsonl"]
+            for method in arm["methods"]:
+                files += [method + "-head.pth", method + "-predictions.npz"]
+                if method in {"nll", "cnf"}:
+                    files += [method + "-features.pth", method + "-feature-report.json"]
         elif task == "prediction-comparison":
             files += [
                 "paired-cohort.npz",

@@ -524,7 +524,7 @@ def finetune_loss(
         out.joint_mean, out.joint_factor, out.joint_diag, observed, mask=usable
     )
     if model.flow is not None:
-        joint = joint + model.flow(out.latent, observed, mask=usable)
+        joint = joint + model.flow(out.latent, observed, mask=usable.all(dim=-1))
     total = supervised + recon_weight * recon + joint
     return Finetune(total, recon.detach(), joint.detach())
 
