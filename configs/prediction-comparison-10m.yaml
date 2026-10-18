@@ -4,7 +4,7 @@ benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87
 reconstruction_presentations: 10000000
 effective_batch: 32768
 micro_batch: 16384
-encoder_lr: 0.00000125
+encoder_lr: 1.25e-06
 head_lr: 0.001
 warmup_updates: 500
 supervised_batches_per_update: 8
@@ -51,10 +51,20 @@ arms:
     context_dim: 1
     flow_type: nsf
     n_transforms: 3
-    hidden_features: [64, 64]
+    hidden_features:
+    - 64
+    - 64
     temperature: 1.0
     margin: 0.0
-    negative_shifts: [1, 2, 4, 8, 16, 32, 64, 128]
+    negative_shifts:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+    - 32
+    - 64
+    - 128
     grid_points: 201
     grid_margin_standardized: 0.5
 - run_id: prediction_e72_rc_shared_xp_10m_v1
@@ -113,3 +123,20 @@ arms:
     error_convention: raw_xp
     simex_extrapolant: affine_rational
   replaces_run_id: prediction_e72_simex_xp_10m_v1
+- run_id: prediction_e72_residual_mse_mechanism_10m_v1
+  head: residual
+  loss: mse
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_corrected_score_xp_10m_v1
+  head: residual
+  loss: corrected_score
+  error_convention: raw_xp
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_classifier_nre_b_10m_v1
+  head: neural_ratio
+  loss: neural_ratio
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_group_dro_10m_v1
+  head: residual
+  loss: group_dro_huber
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e

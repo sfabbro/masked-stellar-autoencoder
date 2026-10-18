@@ -8,6 +8,7 @@ import argparse
 import copy
 import gc
 import hashlib
+import importlib.metadata
 import json
 import os
 import shutil
@@ -32,6 +33,8 @@ from masked_stellar_autoencoder.training.input_measurement import (
     mean_prediction_by_lambda,
     prepare_replicas,
     rational_extrapolate,
+    standardized_xp_errors,
+    xp_indices,
 )
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     build_contrastive_flow,
@@ -41,6 +44,12 @@ from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     point_prediction,
     prediction_loss,
     rank_contrast_loss,
+)
+from masked_stellar_autoencoder.training.prediction_mechanisms import (
+    NeuralRatioEstimator,
+    corrected_score_objective,
+    group_dro_objective,
+    ratio_grid,
 )
 from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
     spectrophotometric_inputs,
@@ -242,6 +251,17 @@ def main():
     atomic_json(args.output / "manifest.json", manifest)
     started = time.monotonic()
     try:
+        if arm.get("library_revision"):
+            direct = json.loads(
+                importlib.metadata.distribution("torchregress").read_text(
+                    "direct_url.json"
+                )
+            )
+            if direct.get("vcs_info", {}).get("commit_id") != arm["library_revision"]:
+                raise ValueError(
+                    "Installed torchregress differs from the arm's immutable library pin"
+                )
+            manifest["torchregress_provenance"] = direct
         checkpoint_sha = digest(args.checkpoint)
         if not args.smoke and checkpoint_sha != suite["checkpoint_sha256"]:
             raise ValueError("Pinned parent digest differs")
@@ -258,7 +278,7 @@ def main():
             args.cohort, 128 if args.smoke else None
         )
         features = data["feature_columns"]
-        if "input_correction" in arm:
+        if "input_correction" in arm or arm["loss"] == "corrected_score":
             if args.smoke:
                 error_audit = dict(
                     status="smoke_only", original_error_source_verified=False
@@ -273,10 +293,9 @@ def main():
                     data["feature_row"],
                     features,
                 )
-                if (
-                    error_audit["error_convention"]
-                    != arm["input_correction"]["error_convention"]
-                ):
+                if error_audit["error_convention"] != arm.get(
+                    "input_correction", {}
+                ).get("error_convention", arm.get("error_convention")):
                     raise ValueError(
                         "Declared XP error convention differs from actual sources"
                     )
@@ -406,13 +425,18 @@ def main():
                 for group in optimizer.param_groups:
                     group["lr"] = suite["encoder_lr"]
                 torch.manual_seed(42)
-                contrastive = arm["loss"] == "contrastive_flow"
-                if contrastive and arm["head"] != "contrastive_flow":
+                contrastive = arm["loss"] in {"contrastive_flow", "neural_ratio"}
+                if contrastive and arm["head"] not in {
+                    "contrastive_flow",
+                    "neural_ratio",
+                }:
                     raise ValueError(
                         "contrastive flow uses its own estimator, not a point head"
                     )
                 head = (
-                    build_contrastive_flow(arm["contrastive_flow"]).to(device)
+                    NeuralRatioEstimator().to(device)
+                    if arm["head"] == "neural_ratio"
+                    else build_contrastive_flow(arm["contrastive_flow"]).to(device)
                     if contrastive
                     else build_prediction_head(arm["head"], input_dim=256).to(device)
                 )
@@ -466,7 +490,11 @@ def main():
                         ),
                     )
                 grid = (
-                    contrastive_grid(labels, arm["contrastive_flow"])
+                    (
+                        ratio_grid(labels)
+                        if arm["head"] == "neural_ratio"
+                        else contrastive_grid(labels, arm["contrastive_flow"])
+                    )
                     if contrastive
                     else None
                 )
@@ -477,7 +505,9 @@ def main():
                             points=int(grid.numel()),
                             min_standardized=float(grid[0]),
                             max_standardized=float(grid[-1]),
-                            estimand="grid_mle_of_p_summary_latent_given_FeH",
+                            estimand="grid_argmax_neural_log_likelihood_ratio"
+                            if arm["head"] == "neural_ratio"
+                            else "grid_mle_of_p_summary_latent_given_FeH",
                             negatives="fixed_batch_rolls",
                             not_a_training_prior_posterior=True,
                         ),
@@ -485,7 +515,88 @@ def main():
                 train = torch.as_tensor(encoder_matrix[fit], device=device)
                 test_x = encoder_matrix[test["used_row"]]
 
+                corrected = None
+                sigma_fit = None
+                dro = None
+                if arm["loss"] == "corrected_score":
+                    with h5py.File(args.cohort) as raw_cohort:
+                        errors = raw_cohort["features/reported_feature_errors"][:][
+                            data["feature_row"]
+                        ]
+                    columns = xp_indices(features)
+                    sigma = standardized_xp_errors(
+                        errors,
+                        data["scale"],
+                        columns,
+                        g_magnitude=data["raw_values"][:, features.index("G")],
+                        error_convention=arm["error_convention"],
+                    )
+                    sigma_fit = torch.zeros(
+                        (len(fit), len(features)), device=device, dtype=torch.float32
+                    )
+                    sigma_fit[:, torch.as_tensor(columns, device=device)] = (
+                        torch.as_tensor(sigma[fit], device=device, dtype=torch.float32)
+                    )
+                    corrected = corrected_score_objective(model, head)
+                    atomic_json(
+                        replica_output / "mechanism.json",
+                        dict(
+                            method="corrected_score",
+                            raw_XP_error_audit=error_audit,
+                            standardized_fit_XP_sigma_min=float(sigma[fit].min()),
+                            standardized_fit_XP_sigma_max=float(sigma[fit].max()),
+                            non_XP_sigma_assumed_zero=True,
+                            shared_G_uncertainty_omitted=True,
+                            off_diagonal_XP_covariance_omitted=True,
+                            nonlinear_correction_is_first_order=True,
+                            negative_loss_allowed=True,
+                            clipping_or_physical_floor=False,
+                        ),
+                    )
+                if arm["loss"] == "group_dro_huber":
+                    dro = group_dro_objective(labels, yc, ys)
+                    atomic_json(
+                        replica_output / "mechanism.json",
+                        dict(
+                            method="group_dro_huber",
+                            eta=0.01,
+                            min_group_weight=0.01,
+                            standardized_group_edges=dro.group_edges.detach()
+                            .cpu()
+                            .tolist()
+                            if hasattr(dro, "group_edges")
+                            else [],
+                            label_bins_dex=[-2, -1, 0],
+                            fit_counts=[
+                                int((labels < (-2 - yc) / ys).sum()),
+                                int(
+                                    (
+                                        (labels >= (-2 - yc) / ys)
+                                        & (labels < (-1 - yc) / ys)
+                                    ).sum()
+                                ),
+                                int(
+                                    (
+                                        (labels >= (-1 - yc) / ys)
+                                        & (labels < (0 - yc) / ys)
+                                    ).sum()
+                                ),
+                                int((labels >= (0 - yc) / ys).sum()),
+                            ],
+                        ),
+                    )
+
                 def batch_objective(latent, rows):
+                    if corrected is not None:
+                        model.eval()
+                        head.eval()
+                        return corrected(
+                            train[rows],
+                            labels[rows],
+                            sigma_x=torch.diag_embed(sigma_fit[rows].square()),
+                        )
+                    if dro is not None:
+                        return dro(head(latent)[:, 0, 0], labels[rows])
                     if contrastive:
                         return head.criterion(latent, labels[rows])
                     return prediction_loss(
@@ -548,6 +659,7 @@ def main():
                     with torch.no_grad():
                         z = model.encoder(train[rows])
                     head_opt.zero_grad(set_to_none=True)
+                    model.zero_grad(set_to_none=True)
                     loss = batch_objective(z, rows)
                     loss.backward()
                     head_opt.step()
@@ -660,6 +772,8 @@ def main():
                     lambda_value=float(replica["lambda_value"]),
                     simulation=int(replica["simulation"]),
                 )
+                if dro is not None:
+                    state["objective_state_dict"] = dro.state_dict()
                 torch.save(state, replica_output / "checkpoint.pth")
                 restored = torch_load_trusted(
                     replica_output / "checkpoint.pth",

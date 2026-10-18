@@ -10,6 +10,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNS = [
+    "prediction_e72_residual_mse_mechanism_10m_v1",
+    "prediction_e72_corrected_score_xp_10m_v1",
+    "prediction_e72_classifier_nre_b_10m_v1",
+    "prediction_e72_residual_group_dro_10m_v1",
     "prediction_e72_rc_shared_xp_10m_v2",
     "prediction_e72_rc_per_star_xp_10m_v2",
     "prediction_e72_simex_xp_10m_v2",

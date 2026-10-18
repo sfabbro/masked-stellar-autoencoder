@@ -145,6 +145,7 @@ def prediction_loss(
         raise ValueError("target must contain only finite eligible labels")
     if kind not in {
         "huber",
+        "mse",
         "gaussian_nll",
         "gaussian_crps",
         "lds_huber",
@@ -171,6 +172,8 @@ def prediction_loss(
         return output.sum()
     truth = target[:, None].expand(-1, output.shape[1])
     mean = output[:, :, 0]
+    if kind == "mse":
+        return torch.nn.functional.mse_loss(mean, truth)
     if kind in {"huber", "lds_huber"}:
         if kind == "huber":
             return torch.nn.functional.huber_loss(mean, truth, delta=1.0)

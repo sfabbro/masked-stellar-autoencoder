@@ -350,52 +350,46 @@ jobs:
   task: native-age
   depends_on:
   - age_feature_cohort_v1
-
 - run_id: distance_feature_cohort_v1
   task: catalog
   mode: distance-feature-cohort
   depends_on:
   - posterior_labels_v2
   - dataset_view_v2
-
 - run_id: distance_value_frozen_v1
   task: distance-value
   depends_on:
   - distance_feature_cohort_v1
-
 - run_id: distance_value_frozen_v2
   task: distance-value
   supersedes: distance_value_frozen_v1
-  reason: Read original compound benchmark source_id field rather than grouped-index path
+  reason: Read original compound benchmark source_id field rather than grouped-index
+    path
   depends_on:
   - distance_feature_cohort_v1
-
 - run_id: distance_value_frozen_v3
   task: distance-value
   supersedes: distance_value_frozen_v2
-  reason: Use verified original nested records provenance and audited ID index as completed age controls
+  reason: Use verified original nested records provenance and audited ID index as
+    completed age controls
   depends_on:
   - distance_feature_cohort_v1
-
 - run_id: enriched_feature_cohort_v1
   task: catalog
   mode: enriched-feature-cohort
   depends_on:
   - enriched_label_view_v1
   - dataset_view_v2
-
 - run_id: enriched_feature_audit_v1
   task: catalog
   mode: enriched-feature-audit
   depends_on:
   - enriched_feature_cohort_v1
-
 - run_id: enriched_value_frozen_v1
   task: enriched-value
   depends_on:
   - enriched_feature_cohort_v1
   - enriched_feature_audit_v1
-
 - run_id: prediction_e72_huber_10m_v1
   task: prediction-comparison
   depends_on:
@@ -486,12 +480,12 @@ jobs:
   depends_on:
   - enriched_feature_cohort_v1
   - distance_feature_cohort_v1
-
-# Distinct bounded recovery of uu3u8h43; preserve failed v1 output.
 - run_id: joint-native-preparation-v2
   task: catalog
   mode: joint-native-preparation
-  depends_on: [enriched_feature_cohort_v1, distance_feature_cohort_v1]
+  depends_on:
+  - enriched_feature_cohort_v1
+  - distance_feature_cohort_v1
 - run_id: prediction_e72_rc_shared_xp_10m_v2
   task: prediction-comparison
   depends_on:
@@ -513,3 +507,19 @@ jobs:
   env:
     MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
     MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_mse_mechanism_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_corrected_score_xp_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_classifier_nre_b_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_residual_group_dro_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1

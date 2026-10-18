@@ -434,3 +434,17 @@ Verified observed-label result: populationMAE plain0.08680719/sharedRC0.09209744
 ## Human-requested contrastive-flow independent verification
 
 Actual complete asuoy0u4/source8978bc87 artifacts and fullcheckpoint preserved at prediction_e72_contrastive_flow_10m_v1. New independent label-major likelihood grid enumeration tested in actual production environment (1PASS); source/cohort/stream checks share established verifier. Full100620initial+finalCPUgridMLE+10000decoder verification ACTIVE exec14093, log/tmp/msa-contrastive-flow-independent.log, cpu-flow-progress.json. NEVERduplicate. Flow initial head is seed42, not zero-output MLP. No science claim until completed report/pairedCSV/figure visualgate.
+
+
+## 2026-10-18T00:07UTC — Flow verification discrepancy, final stage pending
+
+exec14093 ended at fullINITIAL100620 gridMLE comparison:369mismatches(0.367%) underdeclared5e-5relative+absolute tolerance; maxstandardizeddifference0.5645857. This is NOT a verified final-model failure or a scientific ranking. Original fullinitialCPUoutput was notpersisted; assertionlogpreserved, failure recordedexplicitly. Do notreruncompletedinitialpass or relaxfailedgate. Newstageresume preservesCPUarrays+stageJSON, diagnoses5knowninitialmismatches via score gaps and independent versusproductionCPUlayouts, continuesFINAL100620+decoder separately. Rootstatus cannotPASSwhileinitialfailed. Verificationcodecommit7ac2b3c completed hooksPASS.
+
+
+## 2026-10-18 — Human-authorized torchregress66d mechanisms wave preparation
+
+Human added torchregress c4aa157/66d52fe and explicitly requests a few CANFAR experiments ASAP. Four distinct10M arms prepared: residualMSEcontrol, corrected-scoreXP EIV, full256latent classifierNRE-B, residualgroupDROHuber. Sameparent72/cohort/streams, no newcatalogueorlabelmerge, mainunchanged. Library66d52feacb2a7139bca9a294541aec7c09def83e verified published on origin/main; bothroot/XPenvpins+lockfiles updated; direct_url commit gate added fornewarms. Method assumptions in docs/prediction-mechanisms-20261017.md. No independent repeats forsplitmeasurement; no FeH-only forwardinversion over spectra withunmodelledTeff/logg.
+
+Focusedtests9PASS, then5PASS aftergroupedgefix; requiredci_local442PASS/7skip. First3actualparent72/cohortsmoke+strictreload COMPLETEPASS in new-mechanisms-actual-parent-smoke-v1; groupDROfixture initiallyfailed smallsubset absenttail, correctedfiniteouteredges includephysicalcuts, distinctgroupDROsmoke-v2 ACTIVE. Covariance ambiguity [batch,features] whenbatch==features detected byknownlinearidentity; adapter passesexplicitperstar diagonalvariance covariance, notambiguous2Dsigmas. No librarymodification needed. No submissionsclaimedbeforeactualacceptedIDs.
+
+SIMEXgtejmorq actualCOMPLETE; collector30839FINISHED preservingALL17replica checkpoints+278listedartifacts/SHAinventory underinput-corrections-e72. Independent17-modelQA stillpending; no scienceclaim. Oldcontrastiveflow verifier10585 process unavailable/no livePID; finalprogress49280/100620, initial369gridargmaxmismatchespersist. Fiveknowninitialrows haveCPUlikelihoodscoregaps0to2.86e-6 (diagnostic only, failedgateunchanged). Oldflow NOTverified/running; usernewdirection supersedes restarting thatobsoleteformulation.
