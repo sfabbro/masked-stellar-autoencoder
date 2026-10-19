@@ -2744,6 +2744,30 @@
       "status": "accepted",
       "attempted_at": "2026-10-19T03:24:37.890205+00:00",
       "attempts": 1
+    },
+    {
+      "run_id": "forward_eiv_xp_screen_v1",
+      "name": "msa-si15-forward-eiv-xp-screen-v1",
+      "source_sha": "d3969514b30e9357badc4876ecaf040375a2936d",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/forward_eiv_xp_screen_v1",
+      "plan": {
+        "run_id": "forward_eiv_xp_screen_v1",
+        "task": "forward-eiv-screen",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "p84fpd54"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T05:23:59.464399+00:00",
+      "attempts": 1
     }
   ]
 }
