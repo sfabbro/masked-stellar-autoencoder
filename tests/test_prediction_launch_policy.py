@@ -59,3 +59,17 @@ def test_targeted_overrides_and_testtime_bind_actual_parent():
     )
     assert env["MSA_PRETRAIN_RESUME"] == suite["checkpoint"]
     assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+
+
+def test_form_transport_preserves_repeated_env_special_characters():
+    from urllib.parse import parse_qsl
+
+    from launch_stellar_improvement import encode_creation_form
+
+    fields = [
+        ("name", "test"),
+        ("env", "A=a b&c=2"),
+        ("env", "B=λ"),
+        ("args", "-u -c code()"),
+    ]
+    assert parse_qsl(encode_creation_form(fields).decode()) == fields

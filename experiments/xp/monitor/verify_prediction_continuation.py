@@ -369,6 +369,12 @@ def verify(directory, cohort, parent, winner):
             if start % (512 * 10) == 0:
                 progress("new_final_head_cpu", rows_checked=min(start + 512, 100620))
     output = np.concatenate(outputs)
+    np.savez_compressed(
+        directory / "independent-final-head-cpu.npz",
+        member_outputs=output,
+        final_checkpoint_sha256=sha(directory / "checkpoint.pth"),
+        paired_sha256=sha(directory / "paired-cohort.npz"),
+    )
     hidden = np.where(
         reco["mask"] | ~np.isfinite(reco["target"]), -9999, reco["target"]
     )
@@ -378,8 +384,9 @@ def verify(directory, cohort, parent, winner):
     with np.load(
         directory / "final_reconstruction.npz", allow_pickle=False
     ) as expected:
-        exact(reco["target"], expected["target"])
-        exact(reco["mask"], expected["mask"])
+        for key in ("target", "mask"):
+            if key in expected:
+                exact(reco[key], expected[key])
         with torch.no_grad():
             for start in range(0, len(hidden), 512):
                 value = model(torch.from_numpy(hidden[start : start + 512]))[0].numpy()

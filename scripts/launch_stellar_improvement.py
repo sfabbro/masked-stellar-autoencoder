@@ -6,7 +6,7 @@ import json
 import socket
 import subprocess
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlencode, urlparse
 
 import yaml
 from launch_xp_followup import atomic_json, bootstrap, dns_addresses
@@ -113,6 +113,29 @@ def bind_prediction_policy(
     return env
 
 
+def encode_creation_form(parameters):
+    """Keep repeated env fields intact in a standard URL-encoded POST body."""
+    content = urlencode(parameters).encode()
+    if parse_qsl(content.decode(), keep_blank_values=True) != [
+        (str(k), str(v)) for k, v in parameters
+    ]:
+        raise ValueError("Submission fields changed during form encoding")
+    return content
+
+
+def create_form_session(client, **fields):
+    from canfar.helpers.session import _response_session_id
+    from canfar.utils import build
+
+    payloads = build.create_parameters(**fields)
+    if len(payloads) != 1:
+        raise ValueError("This bounded launcher requires one session per job")
+    response = client.client.post(
+        url="session", content=encode_creation_form(payloads[0])
+    )
+    return [_response_session_id(response)]
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--git-sha", required=True)
@@ -127,6 +150,8 @@ def main():
     p.add_argument("--runs", nargs="+")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--max-submit", type=int, default=12)
+    p.add_argument("--request-timeout", type=int, default=30)
+    p.add_argument("--form-body", action="store_true")
     args = p.parse_args()
     if len(args.git_sha) != 40:
         p.error("Require immutable source SHA")
@@ -141,7 +166,7 @@ def main():
     if not args.dry_run:
         from canfar.sessions import Session
 
-        client = Session(timeout=30)
+        client = Session(timeout=args.request_timeout)
         existing = client.fetch()
     dependencies = {}
     for name in {x for job in plans for x in job.get("depends_on", [])}:
@@ -224,16 +249,11 @@ def main():
             atomic_json(args.record, record)
             continue
         if prior and prior.get("attempted_at") and not args.dry_run:
-            elapsed = (
-                dt.datetime.now(dt.UTC)
-                - dt.datetime.fromisoformat(prior["attempted_at"])
-            ).total_seconds()
-            if elapsed < 120:
-                print(
-                    json.dumps({"run_id": run, "status": "awaiting_reconciliation"}),
-                    flush=True,
-                )
-                continue
+            print(
+                json.dumps({"run_id": run, "status": "awaiting_reconciliation"}),
+                flush=True,
+            )
+            continue
         if submitted >= args.max_submit:
             break
         env = {
@@ -275,23 +295,26 @@ def main():
             "status": "dry_run" if args.dry_run else "submission_pending",
             "attempted_at": dt.datetime.now(dt.UTC).isoformat(),
             "attempts": (prior or {}).get("attempts", 0) + 1,
+            "submission_transport": "form_body" if args.form_body else "native_query",
         }
         record["jobs"] = [x for x in record["jobs"] if x["run_id"] != run] + [job]
         atomic_json(args.record, record)
         if client:
             try:
                 job["session_ids"] = (
-                    client.create(
-                        name=name,
-                        image="images.canfar.net/astroai/base:latest",
-                        kind="headless",
-                        cmd="python",
-                        args=payload,
-                        env=env,
-                        **resources,
-                    )
-                    or []
-                )
+                    create_form_session
+                    if args.form_body
+                    else lambda client, **fields: client.create(**fields)
+                )(
+                    client,
+                    name=name,
+                    image="images.canfar.net/astroai/base:latest",
+                    kind="headless",
+                    cmd="python",
+                    args=payload,
+                    env=env,
+                    **resources,
+                ) or []
                 job["status"] = (
                     "accepted" if job["session_ids"] else "submission_ambiguous"
                 )
@@ -309,6 +332,8 @@ def main():
             flush=True,
         )
         submitted += 1
+        if client and not job["session_ids"]:
+            break
 
 
 if __name__ == "__main__":

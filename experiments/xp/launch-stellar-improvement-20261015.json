@@ -2768,6 +2768,657 @@
       "status": "accepted",
       "attempted_at": "2026-10-19T05:23:59.464399+00:00",
       "attempts": 1
+    },
+    {
+      "run_id": "target_e72_huber_s42_10m_v1",
+      "name": "msa-si15-target-e72-huber-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_huber_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_huber_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T18:52:03.540614+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "target_e72_huber_s43_10m_v1",
+      "name": "msa-si15-target-e72-huber-s43-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_huber_s43_10m_v1",
+      "plan": {
+        "run_id": "target_e72_huber_s43_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T18:52:33.610237+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "target_e72_mse_s43_10m_v1",
+      "name": "msa-si15-target-e72-mse-s43-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_mse_s43_10m_v1",
+      "plan": {
+        "run_id": "target_e72_mse_s43_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zhlpu0t9"
+      ],
+      "status": "accepted_recovered",
+      "attempted_at": "2026-10-19T18:53:03.665415+00:00",
+      "attempts": 1,
+      "recovered": {
+        "id": "zhlpu0t9",
+        "name": "msa-si15-target-e72-mse-s43-10m-v1",
+        "startTime": "2026-10-19T18:53:37Z",
+        "status": "Running",
+        "requestedGPUCores": "1",
+        "requestedCPUCores": "4",
+        "requestedRAM": "68.72"
+      },
+      "startup_source_pin_verified": false
+    },
+    {
+      "run_id": "target_e72_flow_nsf8_s42_10m_v1",
+      "name": "msa-si15-target-e72-flow-nsf8-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_flow_nsf8_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_flow_nsf8_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "b3i6hhn0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T18:55:59.838279+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3410,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_ranksim_s43_10m_v1",
+      "name": "msa-si15-target-e72-ranksim-s43-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_ranksim_s43_10m_v1",
+      "plan": {
+        "run_id": "target_e72_ranksim_s43_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T18:57:03.076445+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3404,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "test_time_reconstruction_screen_v1",
+      "name": "msa-si15-test-time-reconstruction-screen-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/test_time_reconstruction_screen_v1",
+      "plan": {
+        "run_id": "test_time_reconstruction_screen_v1",
+        "task": "test-time-screen",
+        "depends_on": [
+          "enriched_feature_audit_v1",
+          "prediction_e72_residual_huber_10m_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "b3m8hry1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T18:58:46.905411+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3390,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_huber_s44_10m_v1",
+      "name": "msa-si15-target-e72-huber-s44-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_huber_s44_10m_v1",
+      "plan": {
+        "run_id": "target_e72_huber_s44_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T18:59:17.413594+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3400,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "target_e72_xpnoise_mask_s42_10m_v1",
+      "name": "msa-si15-target-e72-xpnoise-mask-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_xpnoise_mask_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_xpnoise_mask_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "l3d5fle2"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:00:01.310186+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3417,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_mse_s44_10m_v1",
+      "name": "msa-si15-target-e72-mse-s44-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_mse_s44_10m_v1",
+      "plan": {
+        "run_id": "target_e72_mse_s44_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ou0j9fv7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:00:33.369922+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3380,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_ranksim_s44_10m_v1",
+      "name": "msa-si15-target-e72-ranksim-s44-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_ranksim_s44_10m_v1",
+      "plan": {
+        "run_id": "target_e72_ranksim_s44_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:01:41.638916+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3398,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "target_e72_huber_ranksim_s42_10m_v1",
+      "name": "msa-si15-target-e72-huber-ranksim-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_huber_ranksim_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_huber_ranksim_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "iqe8ktmp"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:02:50.270713+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3442,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_xpnoise_s42_10m_v1",
+      "name": "msa-si15-target-e72-xpnoise-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_xpnoise_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_xpnoise_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:04:01.383461+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3410,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "ReadTimeout: The read operation timed out"
+    },
+    {
+      "run_id": "target_e72_xpmask_s42_10m_v1",
+      "name": "msa-si15-target-e72-xpmask-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_xpmask_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_xpmask_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "nf2hgf8z"
+      ],
+      "status": "accepted_recovered",
+      "attempted_at": "2026-10-19T19:07:07.455844+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3409,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "ReadTimeout: The read operation timed out",
+      "recovered": {
+        "id": "nf2hgf8z",
+        "name": "msa-si15-target-e72-xpmask-s42-10m-v1",
+        "startTime": "2026-10-19T19:37:43Z",
+        "status": "Running",
+        "requestedGPUCores": "1",
+        "requestedCPUCores": "4",
+        "requestedRAM": "68.72"
+      },
+      "startup_source_pin_verified": false
+    },
+    {
+      "run_id": "target_e72_reco003_s42_10m_v1",
+      "name": "msa-si15-target-e72-reco003-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_reco003_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_reco003_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jn4rqv5b"
+      ],
+      "status": "accepted_recovered",
+      "attempted_at": "2026-10-19T19:10:11.528180+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3442,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "ReadTimeout: The read operation timed out",
+      "recovered": {
+        "id": "jn4rqv5b",
+        "name": "msa-si15-target-e72-reco003-s42-10m-v1",
+        "startTime": "2026-10-19T19:40:19Z",
+        "status": "Running",
+        "requestedGPUCores": "1",
+        "requestedCPUCores": "4",
+        "requestedRAM": "68.72"
+      },
+      "startup_source_pin_verified": false
+    },
+    {
+      "run_id": "target_e72_enc_lr_quarter_s42_10m_v1",
+      "name": "msa-si15-target-e72-enc-lr-quarter-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_enc_lr_quarter_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_enc_lr_quarter_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:13:15.162783+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3445,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "target_e72_frozen_encoder_s42_10m_v1",
+      "name": "msa-si15-target-e72-frozen-encoder-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_frozen_encoder_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_frozen_encoder_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:13:18.942971+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3445,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "target_e72_parent85_s42_10m_v1",
+      "name": "msa-si15-target-e72-parent85-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_parent85_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_parent85_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ew7kiz0h"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:13:22.367713+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3427,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_parent86_s42_10m_v1",
+      "name": "msa-si15-target-e72-parent86-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_parent86_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_parent86_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ayqn1pu3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:13:32.589086+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3411,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_flow_affine_s42_10m_v1",
+      "name": "msa-si15-target-e72-flow-affine-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_flow_affine_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_flow_affine_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uvtg34u7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T19:13:40.190945+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3420,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      }
+    },
+    {
+      "run_id": "target_e72_flow_nsf16_s42_10m_v1",
+      "name": "msa-si15-target-e72-flow-nsf16-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_flow_nsf16_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_flow_nsf16_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:13:47.749875+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3427,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    {
+      "run_id": "target_e72_flow_nsf8_frozen_s42_10m_v1",
+      "name": "msa-si15-target-e72-flow-nsf8-frozen-s42-10m-v1",
+      "source_sha": "94929b13d2552af21261a722297b5a44f034b1ed",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/target_e72_flow_nsf8_frozen_s42_10m_v1",
+      "plan": {
+        "run_id": "target_e72_flow_nsf8_frozen_s42_10m_v1",
+        "task": "targeted-prediction",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-19T19:13:51.369469+00:00",
+      "attempts": 1,
+      "submission_transport": "standard_urlencoded_form_body",
+      "request_field_roundtrip_exact": true,
+      "request_bytes": 3445,
+      "dependency_receipts": {
+        "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
+        "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
     }
   ]
 }
