@@ -27,8 +27,16 @@ from run_enriched_value import COHORT_SHA, prepare
 from run_native_age import SCALER_SHA
 from run_stellar_label_experiments import BENCH
 from stellar_catalog_jobs import atomic_json, identity_split
+from targeted_policy import dropout_offset, experiment_seed, resolve_policy
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
+from masked_stellar_autoencoder.training.conditional_flow_head import (
+    ConditionalFlowHead,
+)
+from masked_stellar_autoencoder.training.experiment_augmentation import (
+    canonical_xp_columns,
+    supervised_augmentation,
+)
 from masked_stellar_autoencoder.training.imbalance_screen import (
     imbalance_loss,
     imbalance_objective,
@@ -55,6 +63,10 @@ from masked_stellar_autoencoder.training.prediction_mechanisms import (
     corrected_score_objective,
     group_dro_objective,
     ratio_grid,
+)
+from masked_stellar_autoencoder.training.reserved_tuning import (
+    evaluate_reserved_predictions,
+    load_reserved_tuning,
 )
 from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
     spectrophotometric_inputs,
@@ -144,6 +156,8 @@ def native_inputs(cohort, limit=None):
 def predict(model, head, values, device, batch_size=512):
     model.eval()
     head.eval()
+    if isinstance(head, ConditionalFlowHead):
+        batch_size = min(batch_size, 128)
     return np.concatenate(
         [
             head(model.encoder(torch.as_tensor(block, device=device))).cpu().numpy()
@@ -241,6 +255,9 @@ def main():
     )
     suite = yaml.safe_load(Path(args.config).read_text())
     arm = next(a for a in suite["arms"] if a["run_id"] == args.run_id)
+    suite = resolve_policy(suite, arm)
+    seed = experiment_seed(suite, arm)
+    seed_offset = dropout_offset(int(arm.get("experiment_seed", 42)))
     args.output.mkdir(parents=True, exist_ok=False)
     manifest = dict(
         status="running",
@@ -279,7 +296,7 @@ def main():
         config["training"]["micro_batch_size"] = (
             32 if args.smoke else suite["micro_batch"]
         )
-        data, fit, test, safe, _, yc, ys = native_inputs(
+        data, fit, test, safe, visible, yc, ys = native_inputs(
             args.cohort,
             128 if args.smoke and not suite.get("continuation_checkpoint") else None,
         )
@@ -291,7 +308,29 @@ def main():
                 "measurements": test["measurements"][:128],
             }
         features = data["feature_columns"]
-        if "input_correction" in arm or arm["loss"] == "corrected_score":
+        augmentation = arm.get("supervised_augmentation")
+        if augmentation is not None:
+            if set(augmentation) - {
+                "noise_multiplier",
+                "xp_mask_probability",
+                "mask_mode",
+            }:
+                raise ValueError("Unknown supervised augmentation policy")
+            if "input_correction" in arm or arm["loss"] == "corrected_score":
+                raise ValueError(
+                    "Augmentation cannot silently combine with EIV correction"
+                )
+        augmentation_noise = float((augmentation or {}).get("noise_multiplier", 0.0))
+        augmentation_mask = float((augmentation or {}).get("xp_mask_probability", 0.0))
+        if not np.isfinite(augmentation_noise) or augmentation_noise < 0:
+            raise ValueError("Augmentation noise must be finite and nonnegative")
+        if not np.isfinite(augmentation_mask) or not 0 <= augmentation_mask <= 1:
+            raise ValueError("Augmentation mask probability must be in [0, 1]")
+        if (
+            "input_correction" in arm
+            or arm["loss"] == "corrected_score"
+            or augmentation_noise > 0
+        ):
             if args.smoke:
                 error_audit = dict(
                     status="smoke_only", original_error_source_verified=False
@@ -308,7 +347,7 @@ def main():
                 )
                 if error_audit["error_convention"] != arm.get(
                     "input_correction", {}
-                ).get("error_convention", arm.get("error_convention")):
+                ).get("error_convention", arm.get("error_convention", "raw_xp")):
                     raise ValueError(
                         "Declared XP error convention differs from actual sources"
                     )
@@ -378,6 +417,8 @@ def main():
                 args.output,
             )
             model, device = wrapper.model, wrapper.device
+            if arm.get("freeze_encoder", False):
+                model.encoder.requires_grad_(False)
             continuation = None
             if suite.get("continuation_checkpoint"):
                 continuation = load_segment(
@@ -453,8 +494,32 @@ def main():
                         group["lr"] = suite["encoder_lr"]
                 for group in optimizer.param_groups:
                     group["lr"] = suite["encoder_lr"]
-                torch.manual_seed(42)
+                torch.manual_seed(seed)
                 contrastive = arm["loss"] in {"contrastive_flow", "neural_ratio"}
+                conditional = arm["loss"] == "conditional_flow_nll"
+                flow_options = None
+                if conditional:
+                    from torchregress.losses.nflows import recommended_tail_bound
+
+                    # Full native fit labels only, before constructing the optimizer.
+                    fit_standardized = (data["fit_truth"][fit] - yc) / ys
+                    bound = recommended_tail_bound(fit_standardized)
+                    flow_options = dict(arm["conditional_flow"], bound=bound)
+                    atomic_json(
+                        replica_output / "conditional-flow-policy.json",
+                        dict(
+                            **flow_options,
+                            fit_rows=len(fit),
+                            fit_max_abs=float(np.abs(fit_standardized).max()),
+                            fit_outside_bound=int(
+                                (np.abs(fit_standardized) > bound).sum()
+                            ),
+                            density="reported standardized native FeH conditional on encoder latent",
+                            initialization="standard normal; mean and logvariance within 2e-6",
+                            moments="64-panel eight-point composite Legendre; analytic identity tails",
+                            refinement="128-panel mean saved for every test row; not Gaussian scores",
+                        ),
+                    )
                 if contrastive and arm["head"] not in {
                     "contrastive_flow",
                     "neural_ratio",
@@ -463,7 +528,9 @@ def main():
                         "contrastive flow uses its own estimator, not a point head"
                     )
                 head = (
-                    NeuralRatioEstimator().to(device)
+                    ConditionalFlowHead(**flow_options).to(device)
+                    if conditional
+                    else NeuralRatioEstimator().to(device)
                     if arm["head"] == "neural_ratio"
                     else build_contrastive_flow(arm["contrastive_flow"]).to(device)
                     if contrastive
@@ -550,6 +617,61 @@ def main():
                     )
                 train = torch.as_tensor(encoder_matrix[fit], device=device)
                 test_x = encoder_matrix[test["used_row"]]
+                augmentation_rng = torch.Generator(device=device).manual_seed(
+                    seed + 1701
+                )
+                augmentation_digest = hashlib.sha256()
+                augmentation_counts = dict(batches=0, observed_xp=0, hidden_xp=0)
+                augmentation_columns = (
+                    canonical_xp_columns(features) if augmentation else ()
+                )
+                train_visible = torch.as_tensor(visible[fit], device=device)
+                augmentation_sigma = None
+                if augmentation_noise > 0:
+                    with h5py.File(args.cohort) as raw_cohort:
+                        augmentation_errors = raw_cohort[
+                            "features/reported_feature_errors"
+                        ][:][data["feature_row"]]
+                    augmentation_sigma = torch.as_tensor(
+                        standardized_xp_errors(
+                            augmentation_errors,
+                            data["scale"],
+                            np.asarray(augmentation_columns),
+                            g_magnitude=data["raw_values"][:, features.index("G")],
+                            error_convention="raw_xp",
+                        )[fit],
+                        dtype=train.dtype,
+                        device=device,
+                    )
+                if (
+                    continuation is not None
+                    and "augmentation_rng_state" in continuation
+                ):
+                    augmentation_rng.set_state(
+                        continuation["augmentation_rng_state"].cpu()
+                    )
+
+                def supervised_view(rows):
+                    if augmentation is None:
+                        return train[rows]
+                    view, view_visible, audit = supervised_augmentation(
+                        train[rows],
+                        train_visible[rows],
+                        augmentation_columns,
+                        generator=augmentation_rng,
+                        sigma_xp=None
+                        if augmentation_sigma is None
+                        else augmentation_sigma[rows],
+                        noise_scale=augmentation_noise,
+                        mask_probability=augmentation_mask,
+                        mask_mode=augmentation.get("mask_mode", "coefficients"),
+                    )
+                    augmentation_digest.update(view.detach().cpu().numpy().tobytes())
+                    augmentation_digest.update(view_visible.cpu().numpy().tobytes())
+                    augmentation_counts["batches"] += 1
+                    augmentation_counts["observed_xp"] += audit["observed_xp"]
+                    augmentation_counts["hidden_xp"] += audit["hidden_xp"]
+                    return view
 
                 corrected = None
                 sigma_fit = None
@@ -637,7 +759,7 @@ def main():
                         )
                     if dro is not None:
                         return dro(head(latent)[:, 0, 0], labels[rows])
-                    if contrastive:
+                    if contrastive or conditional:
                         return head.criterion(latent, labels[rows])
                     return prediction_loss(
                         head(latent),
@@ -685,6 +807,8 @@ def main():
                     label_scale=ys,
                 )
                 initial = current_outputs(model, head)
+                if conditional:
+                    np.testing.assert_allclose(initial, 0, rtol=0, atol=2e-6)
                 if continuation is not None:
                     previous_predictions = np.load(
                         Path(suite["continuation_checkpoint"]).parent
@@ -701,7 +825,7 @@ def main():
                     )
                     atomic_json(args.output / "manifest.json", manifest)
                 save_outputs(replica_output / "initial_predictions.npz", initial)
-                rng = np.random.default_rng(suite.get("continuation_seed", 42))
+                rng = np.random.default_rng(seed)
                 if continuation is not None and "label_rng_state" in continuation:
                     rng.bit_generator.state = continuation["label_rng_state"]
                 supervised_digest, row_digest, mask_digest = (
@@ -720,7 +844,7 @@ def main():
                     model.eval()
                     head.train()
                     with torch.no_grad():
-                        z = model.encoder(train[rows])
+                        z = model.encoder(supervised_view(rows))
                     head_opt.zero_grad(set_to_none=True)
                     model.zero_grad(set_to_none=True)
                     loss = batch_objective(z, rows)
@@ -728,9 +852,7 @@ def main():
                     head_opt.step()
                 budget = 512 if args.smoke else suite["reconstruction_presentations"]
                 effective = 256 if args.smoke else suite["effective_batch"]
-                mask_rng = torch.Generator(device=device).manual_seed(
-                    suite.get("continuation_seed", 42)
-                )
+                mask_rng = torch.Generator(device=device).manual_seed(seed)
                 if continuation is not None and "mask_rng_state" in continuation:
                     mask_rng.set_state(continuation["mask_rng_state"].cpu())
                 update_offset = (
@@ -770,7 +892,7 @@ def main():
                     head_opt.zero_grad(set_to_none=True)
                     model.train()
                     head.train()
-                    torch.manual_seed(1000 + update_offset + steps)
+                    torch.manual_seed(1000 + seed_offset + update_offset + steps)
                     reconstruction_total = 0.0
                     for start in range(0, len(raw), micro):
                         stop = start + micro
@@ -791,9 +913,12 @@ def main():
                         rows = rng.integers(len(fit), size=suite["contrast_batch"])
                         supervised_digest.update(rows.tobytes())
                         torch.manual_seed(
-                            100_000 + (update_offset + steps) * groups + group
+                            100_000
+                            + seed_offset
+                            + (update_offset + steps) * groups
+                            + group
                         )
-                        z = model.encoder(train[rows])
+                        z = model.encoder(supervised_view(rows))
                         loss = batch_objective(z, rows)
                         if arm.get("rnc_weight", 0):
                             if contrastive:
@@ -862,13 +987,96 @@ def main():
                                 completed_updates=update_offset + steps,
                                 label_rng_state=rng.bit_generator.state,
                                 mask_rng_state=mask_rng.get_state(),
+                                augmentation_rng_state=augmentation_rng.get_state(),
                                 source_sha=manifest["source_sha"],
                             )
                             atomic_json(
                                 replica_output / "latest-checkpoint.json", receipt
                             )
 
+                if arm.get("experiment_seed") is not None:
+                    tuning = load_reserved_tuning(
+                        args.cohort,
+                        identity_split=identity_split,
+                        size=64 if args.smoke else 4096,
+                    )
+                    if set(tuning["source_id"]) & set(data["source_id"][fit]):
+                        raise ValueError("Reserved tuning overlaps fitting")
+                    if set(tuning["source_id"]) & set(
+                        test["measurements"]["source_id"]
+                    ):
+                        raise ValueError("Reserved tuning overlaps identity test")
+                    tune_output = predict(
+                        model,
+                        head,
+                        tuning["safe"],
+                        device,
+                        batch_size=32 if conditional else 512,
+                    )
+                    tune_point = (
+                        point_prediction(torch.from_numpy(tune_output)).numpy() * ys
+                        + yc
+                    )
+                    np.savez_compressed(
+                        replica_output / "reserved-tuning.npz",
+                        source_id=tuning["source_id"],
+                        measurements=tuning["measurements"],
+                        feature_row=tuning["feature_row"],
+                        raw_values=tuning["raw_values"],
+                        safe=tuning["safe"],
+                        member_outputs=tune_output,
+                        prediction=tune_point,
+                        label_center=yc,
+                        label_scale=ys,
+                    )
+                    atomic_json(
+                        replica_output / "reserved-tuning.json",
+                        dict(
+                            **tuning["audit"],
+                            metrics=evaluate_reserved_predictions(
+                                tuning, tune_point, tuning["source_id"]
+                            ),
+                            used_for_current_training_or_stopping=False,
+                        ),
+                    )
+
                 outputs = current_outputs(model, head)
+                if conditional:
+                    flow_diagnostics = {}
+                    with torch.no_grad():
+                        for block in np.array_split(
+                            test_x, max(1, int(np.ceil(len(test_x) / 128)))
+                        ):
+                            start = sum(
+                                len(item) for item in flow_diagnostics.get("cdf", [])
+                            )
+                            latent = model.encoder(
+                                torch.as_tensor(np.array(block), device=device)
+                            )
+                            truth_block = torch.as_tensor(
+                                (
+                                    test["measurements"]["value"][
+                                        start : start + len(block)
+                                    ]
+                                    - yc
+                                )
+                                / ys,
+                                dtype=latent.dtype,
+                                device=device,
+                            )
+                            for key, value in head.diagnostics(
+                                latent, truth_block
+                            ).items():
+                                flow_diagnostics.setdefault(key, []).append(
+                                    value.cpu().numpy()
+                                )
+                    np.savez_compressed(
+                        replica_output / "conditional-flow-diagnostics.npz",
+                        **{
+                            key: np.concatenate(value)
+                            for key, value in flow_diagnostics.items()
+                        },
+                    )
                 state = dict(
                     model_state_dict=model.state_dict(),
                     head_state_dict=head.state_dict(),
@@ -896,8 +1104,33 @@ def main():
                         else [],
                         continuation_sha256=suite["continuation_sha256"],
                     )
+                if augmentation is not None:
+                    augmentation_audit = dict(
+                        policy=augmentation,
+                        seed=seed + 1701,
+                        actual_device=str(device),
+                        training_view_sha256=augmentation_digest.hexdigest(),
+                        counts=augmentation_counts,
+                        test_inputs_augmented=False,
+                        reconstruction_inputs_augmented=False,
+                        reconstruction_targets_augmented=False,
+                        labels_augmented=False,
+                        error_convention="raw_xp",
+                        G_uncertainty_omitted=True,
+                        off_diagonal_XP_covariance_omitted=True,
+                        CPU_independent_random_regeneration_claimed=False,
+                    )
+                    atomic_json(
+                        replica_output / "supervised-augmentation.json",
+                        augmentation_audit,
+                    )
+                    manifest["supervised_augmentation"] = augmentation_audit
+                    state["augmentation_rng_state"] = augmentation_rng.get_state()
+                    state["supervised_augmentation"] = augmentation_audit
                 if dro is not None:
                     state["objective_state_dict"] = dro.state_dict()
+                if conditional:
+                    state["conditional_flow_options"] = flow_options
                 torch.save(state, replica_output / "checkpoint.pth")
                 restored = torch_load_trusted(
                     replica_output / "checkpoint.pth",
@@ -1089,7 +1322,24 @@ def main():
                     "below_minus3": truth < -3,
                 }.items()
             }
-            if arm["loss"] in {
+            if conditional:
+                density = np.concatenate(flow_diagnostics["observed_label_log_density"])
+                quantiles = np.concatenate(flow_diagnostics["quantiles"]) * ys + yc
+                refinement = np.concatenate(flow_diagnostics["moment_refinement_mean"])
+                comparison["probabilistic"] = dict(
+                    available=True,
+                    family="conditional flow; moments are not Gaussian parameters",
+                    observed_label_nll_dex=float(-density.mean() + np.log(ys)),
+                    nominal95_coverage=float(
+                        (
+                            (truth >= quantiles[:, 0]) & (truth <= quantiles[:, -1])
+                        ).mean()
+                    ),
+                    moment_refinement_max_abs_standardized=float(
+                        np.max(np.abs(refinement - outputs[:, 0, 0]))
+                    ),
+                )
+            elif arm["loss"] in {
                 "gaussian_nll",
                 "gaussian_crps",
                 "gaussian_nll_label_error",

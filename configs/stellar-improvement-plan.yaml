@@ -585,3 +585,87 @@ jobs:
 - run_id: forward_eiv_xp_screen_v1
   task: forward-eiv-screen
   depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_mse_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_ranksim_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_mse_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_ranksim_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_ranksim_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpnoise_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpmask_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpnoise_mask_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_reco003_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_enc_lr_quarter_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_frozen_encoder_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_parent85_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_parent86_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_affine_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf8_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf16_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf8_frozen_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: test_time_reconstruction_screen_v1
+  task: test-time-screen
+  depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]

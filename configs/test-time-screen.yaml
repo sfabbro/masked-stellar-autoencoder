@@ -1,0 +1,12 @@
+run_id: test_time_reconstruction_screen_v1
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_huber_10m_v1/checkpoint.pth
+checkpoint_sha256: 558a317ec8d2101d9caae7fe4a29db5a67ba6124dac27daaaf3ce14b624453ac
+views: 8
+steps: 3
+adapt_objects: 512
+tune_objects: 256
+layernorm_lr: 0.0001
+adapt_mask_probability: 0.2
+anchor: 0.1
+consistency: 0.1
+seed: 1042

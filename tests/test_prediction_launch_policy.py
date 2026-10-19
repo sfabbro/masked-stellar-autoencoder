@@ -41,3 +41,21 @@ def test_forward_eiv_is_explicitly_not_reconstruction_training():
     assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
     with pytest.raises(ValueError, match="differs"):
         bind_prediction_policy(dict(task="forward-eiv-screen", run_id="wrong"), {})
+
+
+def test_targeted_overrides_and_testtime_bind_actual_parent():
+    suite = yaml.safe_load(Path("configs/targeted-10m-20261019.yaml").read_text())
+    for arm in suite["arms"]:
+        env = bind_prediction_policy(
+            dict(task="targeted-prediction", run_id=arm["run_id"]), {}
+        )
+        assert env["MSA_PRETRAIN_RESUME"] == arm.get("policy_overrides", {}).get(
+            "checkpoint", suite["checkpoint"]
+        )
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "10000000"
+    suite = yaml.safe_load(Path("configs/test-time-screen.yaml").read_text())
+    env = bind_prediction_policy(
+        dict(task="test-time-screen", run_id=suite["run_id"]), {}
+    )
+    assert env["MSA_PRETRAIN_RESUME"] == suite["checkpoint"]
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"

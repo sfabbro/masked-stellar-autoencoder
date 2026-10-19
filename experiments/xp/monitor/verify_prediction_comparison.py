@@ -57,7 +57,10 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
     final = np.load(directory / "predictions.npz", allow_pickle=False)
     initial = np.load(directory / "initial_predictions.npz", allow_pickle=False)
     flow = arm["loss"] == "contrastive_flow"
-    if not flow:
+    conditional = "conditional_flow" in arm
+    if conditional:
+        np.testing.assert_allclose(initial["member_outputs"], 0, rtol=0, atol=2e-6)
+    elif not flow:
         assert np.all(initial["member_outputs"] == 0)
     with h5py.File(cohort) as f:
         raw = f["raw_layers/native/measurements"][:]
@@ -129,7 +132,10 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
     assert (
         manifest["presentations"] == 10_000_000 and manifest["optimizer_updates"] == 306
     )
-    rng, label_digest = np.random.default_rng(42), hashlib.sha256()
+    rng, label_digest = (
+        np.random.default_rng(int(arm.get("experiment_seed", 42))),
+        hashlib.sha256(),
+    )
     for _ in range(500 + 306 * 8):
         label_digest.update(rng.integers(19859, size=256).tobytes())
     assert label_digest.hexdigest() == manifest["supervised_stream_sha256"]
@@ -146,6 +152,12 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
     model = probe.load_model(config, checkpoint, torch.device("cpu"))
     model.load_state_dict(saved["model_state_dict"], strict=True)
     model.eval()
+    if arm.get("freeze_encoder", False):
+        parent_encoder = probe.load_model(
+            config, checkpoint, torch.device("cpu")
+        ).encoder.state_dict()
+        for key, value in model.encoder.state_dict().items():
+            assert torch.equal(value, parent_encoder[key]), key
     flow_report = {}
     if flow:
         from contrastive_flow_reference import replay
@@ -156,19 +168,52 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         )
         del parent_model
     else:
-        head = build_prediction_head(arm["head"])
+        if conditional:
+            from torchregress.losses.nflows import recommended_tail_bound
+
+            from masked_stellar_autoencoder.training.conditional_flow_head import (
+                ConditionalFlowHead,
+            )
+
+            options = saved["conditional_flow_options"]
+            expected_bound = recommended_tail_bound(
+                (target - float(paired["label_center"])) / float(paired["label_scale"])
+            )
+            assert options["bound"] == expected_bound
+            head = ConditionalFlowHead(**options)
+        else:
+            head = build_prediction_head(arm["head"])
         head.load_state_dict(saved["head_state_dict"], strict=True)
         head.eval()
         predictions = []
         with torch.no_grad():
-            for start in range(0, 100620, 512):
-                predictions.append(
-                    head(
-                        model.encoder(
-                            torch.from_numpy(paired["test_input"][start : start + 512])
-                        )
-                    ).numpy()
+            for start in range(0, 100620, 32 if conditional else 512):
+                width = 32 if conditional else 512
+                latent = model.encoder(
+                    torch.from_numpy(paired["test_input"][start : start + width])
                 )
+                predictions.append(head(latent).numpy())
+                if conditional:
+                    truth_block = torch.as_tensor(
+                        (
+                            paired["test_measurements"]["value"][start : start + width]
+                            - float(paired["label_center"])
+                        )
+                        / float(paired["label_scale"]),
+                        dtype=latent.dtype,
+                    )
+                    diagnostics = head.diagnostics(latent, truth_block)
+                    with np.load(
+                        directory / "conditional-flow-diagnostics.npz"
+                    ) as reference:
+                        for key, value in diagnostics.items():
+                            np.testing.assert_allclose(
+                                value.numpy(),
+                                reference[key][start : start + width],
+                                rtol=5e-5,
+                                atol=5e-5,
+                            )
+
         output = np.concatenate(predictions)
         np.testing.assert_allclose(
             output, final["member_outputs"], rtol=5e-5, atol=5e-5
@@ -225,7 +270,9 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         corrected_input_max_absolute_difference=input_max_difference,
         corrected_input_rtol=5e-6 if input_reference else 0.0,
         corrected_input_atol=5e-6 if input_reference else 0.0,
-        initial_outputs_zero=not flow,
+        initial_outputs_zero=not flow and not conditional,
+        conditional_initial_standard_normal=conditional,
+        experiment_seed=int(arm.get("experiment_seed", 42)),
         replay_and_supervised_streams_independently_regenerated=True,
         mask_sha256=manifest["mask_sha256"],
         mask_note="Compare across matched GPU jobs; not independently CPU-regenerated",
@@ -235,6 +282,9 @@ def verify(directory, cohort, parent, *, input_reference=None, manifest_override
         source_sha=manifest["source_sha"],
     )
     report.update(flow_report)
+    if conditional:
+        report["conditional_density_cdf_quantiles_refined_moments_cpu_verified"] = True
+        report["conditional_density_is_not_gaussian_moments"] = True
     if arm["loss"] in ("gaussian_nll", "gaussian_crps"):
         mu = final["member_outputs"][:, 0, 0].astype("f8") * ys + yc
         sigma = np.exp(final["member_outputs"][:, 0, 1].astype("f8") / 2) * ys

@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 import yaml
 from launch_xp_followup import atomic_json, bootstrap, dns_addresses
+from targeted_policy import resolve_policy
 
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
 PARENT = "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_57.pth"
@@ -58,6 +59,16 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "test-time-screen":
+        suite = yaml.safe_load(Path("configs/test-time-screen.yaml").read_text())
+        if plan["run_id"] != suite["run_id"]:
+            raise ValueError("Test-time screen differs from numerical policy")
+        explicit = plan.get("env", {}).get("MSA_PRETRAIN_RESUME")
+        if explicit is not None and explicit != suite["checkpoint"]:
+            raise ValueError("Test-time checkpoint differs")
+        env["MSA_PRETRAIN_RESUME"] = suite["checkpoint"]
+        env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
+        return env
     if plan["task"] == "forward-eiv-screen":
         suite = yaml.safe_load(Path("configs/forward-eiv-screen.yaml").read_text())
         if plan["run_id"] != suite["run_id"]:
@@ -78,13 +89,18 @@ def bind_prediction_policy(
         env["MSA_PRETRAIN_RESUME"] = suite["checkpoint"]
         env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
         return env
-    if plan["task"] == "prediction-continuation":
+    if plan["task"] == "targeted-prediction":
+        config_path = Path("configs/targeted-10m-20261019.yaml")
+    elif plan["task"] == "prediction-continuation":
         config_path = Path("configs/residual-huber-long.yaml")
     elif plan["task"] != "prediction-comparison":
         return env
     suite = yaml.safe_load(config_path.read_text())
     if not any(a["run_id"] == plan["run_id"] for a in suite["arms"]):
         raise ValueError("Prediction run absent from numerical policy")
+    suite = resolve_policy(
+        suite, next(a for a in suite["arms"] if a["run_id"] == plan["run_id"])
+    )
     expected = {
         "MSA_PRETRAIN_RESUME": suite["checkpoint"],
         "MSA_EXPERIMENT_PRESENTATIONS": str(suite["reconstruction_presentations"]),

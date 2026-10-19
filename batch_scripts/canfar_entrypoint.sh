@@ -134,6 +134,12 @@ case "$stage" in
         --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == test-time-screen ]]; then
+      "${pixi_run[@]}" python -u scripts/run_test_time_screen.py \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == forward-eiv-screen ]]; then
       "${pixi_run[@]}" python -u scripts/run_forward_eiv_screen.py \
         --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
@@ -149,6 +155,13 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == prediction-continuation ]]; then
       "${pixi_run[@]}" python -u scripts/run_prediction_comparison.py \
         --config configs/residual-huber-long.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == targeted-prediction ]]; then
+      "${pixi_run[@]}" python -u scripts/run_prediction_comparison.py \
+        --config configs/targeted-10m-20261019.yaml \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
         --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
       exit 0
     fi

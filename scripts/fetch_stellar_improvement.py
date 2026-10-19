@@ -10,7 +10,7 @@ from pathlib import Path
 def fetch(task):
     job, relative, out = task
     out.parent.mkdir(parents=True, exist_ok=True)
-    if relative.endswith(".npz") and out.exists():
+    if relative.endswith((".npz", ".pth")) and out.exists():
         return job["run_id"], relative, "preserved"
     remote = job["output"] + (
         ".session.log" if relative == "session.log" else "/" + relative
@@ -23,7 +23,11 @@ def fetch(task):
             "--silent",
             "--show-error",
             "--max-time",
-            "120" if relative.endswith(".npz") else "25",
+            "180"
+            if relative.endswith(".pth")
+            else "120"
+            if relative.endswith(".npz")
+            else "25",
             "--cert",
             "/Users/fabbros/.ssl/cadcproxy.pem",
             "https://ws-uv.canfar.net/arc/files" + remote.removeprefix("/arc"),
@@ -65,7 +69,25 @@ def main():
             continue
         task = job["plan"]["task"]
         files = ["manifest.json", "session.log"]
-        if task == "forward-eiv-screen":
+        if task == "test-time-screen":
+            files += [
+                "paired-inputs.npz",
+                "predictions.npz",
+                "tune-predictions.npz",
+                "comparison.json",
+                "artifact-sha256.json",
+                "xp-unit-audit.json",
+                "xp-error-source-audit.json",
+            ]
+            for role in ("test", "tune"):
+                for mode in (
+                    "masked_view",
+                    "latent_recon",
+                    "layernorm_recon",
+                    "layernorm_recon_consistency",
+                ):
+                    files += [f"{role}-{mode}.npz", f"{role}-{mode}-diagnostics.json"]
+        elif task == "forward-eiv-screen":
             files += [
                 "comparison.json",
                 "paired-cohort.npz",
@@ -113,7 +135,7 @@ def main():
                 files += [method + "-head.pth", method + "-predictions.npz"]
                 if method in {"nll", "cnf"}:
                     files += [method + "-features.pth", method + "-feature-report.json"]
-        elif task == "prediction-comparison":
+        elif task in {"prediction-comparison", "targeted-prediction"}:
             files += [
                 "paired-cohort.npz",
                 "predictions.npz",
@@ -128,6 +150,29 @@ def main():
                 "snapshot-9000000.npz",
                 "snapshot-10000000.npz",
             ]
+            if task == "targeted-prediction":
+                files += [
+                    "checkpoint.pth",
+                    "reserved-tuning.npz",
+                    "reserved-tuning.json",
+                ]
+                arm = next(
+                    a
+                    for a in yaml.safe_load(
+                        Path("configs/targeted-10m-20261019.yaml").read_text()
+                    )["arms"]
+                    if a["run_id"] == job["run_id"]
+                )
+                if "conditional_flow" in arm:
+                    files += [
+                        "conditional-flow-policy.json",
+                        "conditional-flow-diagnostics.npz",
+                    ]
+                if "supervised_augmentation" in arm:
+                    files += [
+                        "supervised-augmentation.json",
+                        "xp-error-source-audit.json",
+                    ]
             if args.initial_predictions:
                 files += ["initial_predictions.npz"]
         elif task == "enriched-value":

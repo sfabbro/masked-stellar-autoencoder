@@ -31,3 +31,16 @@ def test_ranksim_reaches_encoder_and_is_added_once():
     torch.testing.assert_close(loss, F.mse_loss(mu[:, 0, 0], y) + objective(latent, y))
     gradient = torch.autograd.grad(objective(latent, y), latent)[0]
     assert torch.isfinite(gradient).all() and gradient.abs().sum() > 0
+
+
+def test_huber_ranksim_uses_huber_and_representation_gradient():
+    torch.manual_seed(3)
+    latent = torch.randn(256, 256, requires_grad=True)
+    y = torch.linspace(-2, 1, 256)
+    output = latent[:, :1, None]
+    objective = imbalance_objective("huber_ranksim", {"gamma": 0.1})
+    actual = imbalance_loss(objective, "huber_ranksim", output, latent, y)
+    expected = F.huber_loss(output[:, 0, 0], y, delta=1.0) + objective(latent, y)
+    torch.testing.assert_close(actual, expected)
+    gradient = torch.autograd.grad(actual, latent)[0]
+    assert torch.isfinite(gradient).all() and gradient.abs().sum() > 0
