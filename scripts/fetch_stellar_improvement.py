@@ -6,6 +6,8 @@ import json
 import subprocess
 from pathlib import Path
 
+import yaml
+
 
 def fetch(task):
     job, relative, out = task
@@ -126,8 +128,6 @@ def main():
                     "overlap-pairs.npz",
                 ]
         elif task == "frozen-head-screen":
-            import yaml
-
             suite = yaml.safe_load(Path("configs/frozen-head-screen.yaml").read_text())
             arm = next(a for a in suite["jobs"] if a["run_id"] == job["run_id"])
             files += ["paired-cohort.npz", "progress.json", "metrics.jsonl"]
