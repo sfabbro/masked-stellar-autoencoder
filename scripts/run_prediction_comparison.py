@@ -22,6 +22,7 @@ import run_pretrain_experiments as pretrain
 import run_xp_representation_probes as probe
 import torch
 import yaml
+from prediction_continuation import load_segment, save_epoch
 from run_enriched_value import COHORT_SHA, prepare
 from run_native_age import SCALER_SHA
 from run_stellar_label_experiments import BENCH
@@ -275,8 +276,16 @@ def main():
             32 if args.smoke else suite["micro_batch"]
         )
         data, fit, test, safe, _, yc, ys = native_inputs(
-            args.cohort, 128 if args.smoke else None
+            args.cohort,
+            128 if args.smoke and not suite.get("continuation_checkpoint") else None,
         )
+        if args.smoke and suite.get("continuation_checkpoint"):
+            fit = fit[:128]
+            data["fit_native_measurements"] = data["fit_native_measurements"][:128]
+            test = {
+                "used_row": test["used_row"][:128],
+                "measurements": test["measurements"][:128],
+            }
         features = data["feature_columns"]
         if "input_correction" in arm or arm["loss"] == "corrected_score":
             if args.smoke:
@@ -365,6 +374,22 @@ def main():
                 args.output,
             )
             model, device = wrapper.model, wrapper.device
+            continuation = None
+            if suite.get("continuation_checkpoint"):
+                continuation = load_segment(
+                    suite["continuation_checkpoint"],
+                    suite["continuation_sha256"],
+                    model,
+                    optimizer,
+                    features=features,
+                    center=yc,
+                    scale=ys,
+                )
+                manifest["continuation_sha256"] = suite["continuation_sha256"]
+                manifest["continuation_policy"] = (
+                    "Model/head/both Adam states retained; no head warmup. New declared streams if predecessor RNG absent; not an interrupted exact-RNG resume."
+                )
+                atomic_json(args.output / "manifest.json", manifest)
             width = len(config["data"]["recon_cols"])
             if config["data"]["recon_cols"] != features[:width]:
                 raise ValueError(
@@ -443,6 +468,9 @@ def main():
                 head_opt = torch.optim.AdamW(
                     head.parameters(), lr=suite["head_lr"], weight_decay=1e-4
                 )
+                if continuation is not None:
+                    head.load_state_dict(continuation["head_state_dict"], strict=True)
+                    head_opt.load_state_dict(continuation["head_optimizer_state_dict"])
                 labels = torch.as_tensor(
                     (data["fit_truth"][fit] - yc) / ys,
                     dtype=torch.float32,
@@ -645,12 +673,35 @@ def main():
                     label_scale=ys,
                 )
                 initial = current_outputs(model, head)
+                if continuation is not None:
+                    previous_predictions = np.load(
+                        Path(suite["continuation_checkpoint"]).parent
+                        / "predictions.npz",
+                        allow_pickle=False,
+                    )["member_outputs"]
+                    if args.smoke:
+                        previous_predictions = previous_predictions[: len(initial)]
+                    np.testing.assert_allclose(
+                        initial, previous_predictions, rtol=5e-5, atol=5e-5
+                    )
+                    manifest["continuation_initial_max_difference"] = float(
+                        np.max(np.abs(initial - previous_predictions))
+                    )
+                    atomic_json(args.output / "manifest.json", manifest)
                 save_outputs(replica_output / "initial_predictions.npz", initial)
-                rng = np.random.default_rng(42)
+                rng = np.random.default_rng(suite.get("continuation_seed", 42))
+                if continuation is not None and "label_rng_state" in continuation:
+                    rng.bit_generator.state = continuation["label_rng_state"]
                 supervised_digest, row_digest, mask_digest = (
                     hashlib.sha256() for _ in range(3)
                 )
-                warmup = 2 if args.smoke else suite["warmup_updates"]
+                warmup = (
+                    0
+                    if continuation is not None
+                    else 2
+                    if args.smoke
+                    else suite["warmup_updates"]
+                )
                 for _ in range(warmup):
                     rows = rng.integers(len(fit), size=suite["contrast_batch"])
                     supervised_digest.update(rows.tobytes())
@@ -665,11 +716,34 @@ def main():
                     head_opt.step()
                 budget = 512 if args.smoke else suite["reconstruction_presentations"]
                 effective = 256 if args.smoke else suite["effective_batch"]
-                mask_rng = torch.Generator(device=device).manual_seed(42)
+                mask_rng = torch.Generator(device=device).manual_seed(
+                    suite.get("continuation_seed", 42)
+                )
+                if continuation is not None and "mask_rng_state" in continuation:
+                    mask_rng.set_state(continuation["mask_rng_state"].cpu())
+                update_offset = (
+                    int(
+                        continuation.get(
+                            "completed_updates",
+                            suite.get("continuation_previous_updates", 0),
+                        )
+                    )
+                    if continuation is not None
+                    else 0
+                )
                 xp = [i for i, n in enumerate(features) if n.startswith(("bp_", "rp_"))]
                 micro = config["training"]["micro_batch_size"]
                 seen, steps = 0, 0
-                snapshots = [0, 3_000_000, 6_000_000, 9_000_000, budget]
+                interval = (
+                    256
+                    if args.smoke
+                    else suite.get("checkpoint_interval_presentations", 0)
+                )
+                snapshots = (
+                    list(range(interval, budget + 1, interval))
+                    if interval
+                    else [0, 3_000_000, 6_000_000, 9_000_000, budget]
+                )
                 after_warmup = current_outputs(model, head)
                 save_outputs(replica_output / "snapshot-0.npz", after_warmup)
                 for indices, raw in replay_batches(cache, budget, effective):
@@ -684,7 +758,7 @@ def main():
                     head_opt.zero_grad(set_to_none=True)
                     model.train()
                     head.train()
-                    torch.manual_seed(1000 + steps)
+                    torch.manual_seed(1000 + update_offset + steps)
                     reconstruction_total = 0.0
                     for start in range(0, len(raw), micro):
                         stop = start + micro
@@ -704,7 +778,9 @@ def main():
                     for group in range(groups):
                         rows = rng.integers(len(fit), size=suite["contrast_batch"])
                         supervised_digest.update(rows.tobytes())
-                        torch.manual_seed(100_000 + steps * groups + group)
+                        torch.manual_seed(
+                            100_000 + (update_offset + steps) * groups + group
+                        )
                         z = model.encoder(train[rows])
                         loss = batch_objective(z, rows)
                         if arm.get("rnc_weight", 0):
@@ -755,6 +831,31 @@ def main():
                     ):
                         outputs = current_outputs(model, head)
                         save_outputs(replica_output / f"snapshot-{seen}.npz", outputs)
+                        if suite.get("checkpoint_interval_presentations"):
+                            receipt = save_epoch(
+                                replica_output
+                                / "checkpoints"
+                                / f"checkpoint-{seen:012d}.pth",
+                                model,
+                                head,
+                                optimizer,
+                                head_opt,
+                                arm=arm,
+                                feature_columns=features,
+                                label_center=yc,
+                                label_scale=ys,
+                                parent_sha256=checkpoint_sha,
+                                continuation_sha256=suite.get("continuation_sha256"),
+                                presentations=seen,
+                                completed_updates=update_offset + steps,
+                                label_rng_state=rng.bit_generator.state,
+                                mask_rng_state=mask_rng.get_state(),
+                                source_sha=manifest["source_sha"],
+                            )
+                            atomic_json(
+                                replica_output / "latest-checkpoint.json", receipt
+                            )
+
                 outputs = current_outputs(model, head)
                 state = dict(
                     model_state_dict=model.state_dict(),
@@ -772,6 +873,17 @@ def main():
                     lambda_value=float(replica["lambda_value"]),
                     simulation=int(replica["simulation"]),
                 )
+                if continuation is not None:
+                    state.update(
+                        completed_updates=update_offset + steps,
+                        label_rng_state=rng.bit_generator.state,
+                        mask_rng_state=mask_rng.get_state(),
+                        torch_rng=torch.get_rng_state(),
+                        cuda_rng=torch.cuda.get_rng_state_all()
+                        if torch.cuda.is_available()
+                        else [],
+                        continuation_sha256=suite["continuation_sha256"],
+                    )
                 if dro is not None:
                     state["objective_state_dict"] = dro.state_dict()
                 torch.save(state, replica_output / "checkpoint.pth")
@@ -1031,13 +1143,17 @@ def main():
                     r["supervised_adaptation_presentations"] for r in replica_records
                 ),
                 supervised_loss=(
-                    "Mean of eight 256-star InfoNCE losses per optimizer update; p(summary(latent)|FeH), fixed label rolls, independent 10M reconstruction budget."
+                    "Mean of eight 256-star InfoNCE losses per optimizer update; p(summary(latent)|FeH), fixed label rolls, declared reconstruction budget."
                     if contrastive
-                    else "Mean of eight 256-star losses per optimizer update; independent 10M reconstruction budget. RnC normalized single-view auxiliary, not full Chang recipe."
+                    else "Mean of eight 256-star losses per optimizer update; declared reconstruction budget. RnC normalized single-view auxiliary, not full Chang recipe."
                 ),
                 comparison=comparison,
                 test_not_used_for_selection=True,
-                optimizer_policy="Retained parent Adam moments; fixed encoder/model LR and fresh warmed-up head optimizer; no scheduler steps",
+                optimizer_policy=(
+                    "Retained winner model/head and both Adam states; no warmup or scheduler steps"
+                    if suite.get("continuation_checkpoint")
+                    else "Retained parent Adam moments; fixed encoder/model LR and fresh warmed-up head optimizer; no scheduler steps"
+                ),
                 input_correction=correction_summary
                 if "input_correction" in arm
                 else None,

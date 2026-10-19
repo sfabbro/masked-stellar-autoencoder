@@ -68,7 +68,9 @@ def bind_prediction_policy(
         env["MSA_PRETRAIN_RESUME"] = suite["checkpoint"]
         env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
         return env
-    if plan["task"] != "prediction-comparison":
+    if plan["task"] == "prediction-continuation":
+        config_path = Path("configs/residual-huber-long.yaml")
+    elif plan["task"] != "prediction-comparison":
         return env
     suite = yaml.safe_load(config_path.read_text())
     if not any(a["run_id"] == plan["run_id"] for a in suite["arms"]):

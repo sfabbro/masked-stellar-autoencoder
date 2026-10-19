@@ -565,3 +565,7 @@ jobs:
 - run_id: frozen_e72_cnf_screen_v2
   task: frozen-head-screen
   depends_on: [enriched_feature_audit_v1]
+
+- run_id: residual_huber_long_30e_v1
+  task: prediction-continuation
+  depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]
