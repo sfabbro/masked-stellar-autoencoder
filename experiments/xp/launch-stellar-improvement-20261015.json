@@ -2672,6 +2672,78 @@
       "status": "accepted",
       "attempted_at": "2026-10-19T03:16:24.298031+00:00",
       "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_mse_imbalance_10m_v1",
+      "name": "msa-si15-prediction-e72-mse-imbalance-10m-v1",
+      "source_sha": "a8c5bb6b116e1eb436403b08c0b700f0dea037e4",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_mse_imbalance_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_mse_imbalance_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "xqz8biev"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T03:24:13.807303+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_bmc_imbalance_10m_v1",
+      "name": "msa-si15-prediction-e72-bmc-imbalance-10m-v1",
+      "source_sha": "a8c5bb6b116e1eb436403b08c0b700f0dea037e4",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_bmc_imbalance_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_bmc_imbalance_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gmx6qoqc"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T03:24:34.225894+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "prediction_e72_ranksim_imbalance_10m_v1",
+      "name": "msa-si15-prediction-e72-ranksim-imbalance-10m-v1",
+      "source_sha": "a8c5bb6b116e1eb436403b08c0b700f0dea037e4",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_ranksim_imbalance_10m_v1",
+      "plan": {
+        "run_id": "prediction_e72_ranksim_imbalance_10m_v1",
+        "task": "prediction-comparison",
+        "depends_on": [
+          "enriched_feature_audit_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "f4vv3nnd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T03:24:37.890205+00:00",
+      "attempts": 1
     }
   ]
 }
