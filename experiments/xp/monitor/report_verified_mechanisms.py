@@ -122,11 +122,39 @@ def reconstruction(label, path, initial, declared):
     return rows
 
 
+def imbalance_runs():
+    """Only the fresh matched arms, with the same installed library revision."""
+    return [
+        (BASE / "prediction_e72_mse_imbalance_10m_v1", "Matched residual MSE"),
+        (BASE / "prediction_e72_bmc_imbalance_10m_v1", "BMC"),
+        (BASE / "prediction_e72_ranksim_imbalance_10m_v1", "MSE + RankSim"),
+    ]
+
+
+def validate_imbalance_policy(manifest, label):
+    arm = manifest["arm"]
+    assert arm["head"] == "residual"
+    assert arm["library_revision"] == "2a99f4ca5b1508b430937a3b9b71fbece99186f6"
+    expected = {
+        "Matched residual MSE": "mse",
+        "BMC": "bmc",
+        "MSE + RankSim": "mse_ranksim",
+    }
+    assert arm["loss"] == expected[label]
+    if label == "BMC":
+        assert arm["imbalance"] == {"sigma_standardized": 0.5}
+    elif label == "MSE + RankSim":
+        assert arm["imbalance"] == {"gamma": 0.1}
+
+
 def main(kind):
-    out = BASE / (
-        "mechanism-v2-verified-comparison"
-        if kind == "mechanisms"
-        else "input-corrections-e72/verified-simex-comparison"
+    out = (
+        BASE
+        / {
+            "mechanisms": "mechanism-v2-verified-comparison",
+            "simex": "input-corrections-e72/verified-simex-comparison",
+            "imbalance": "imbalance-verified-comparison",
+        }[kind]
     )
     out.mkdir(parents=True, exist_ok=True)
     controls = [
@@ -134,7 +162,9 @@ def main(kind):
         (BASE / "prediction_e72_residual_huber_10m_v1", "Residual Huber"),
         (BASE / "prediction_e72_residual_mse_mechanism_10m_v2", "Residual MSE"),
     ]
-    if kind == "mechanisms":
+    if kind == "imbalance":
+        runs = imbalance_runs()
+    elif kind == "mechanisms":
         runs = controls + [
             (BASE / "prediction_e72_corrected_score_xp_10m_v2", "Corrected-score EIV"),
             (BASE / "prediction_e72_residual_group_dro_10m_v2", "Group DRO Huber"),
@@ -162,10 +192,17 @@ def main(kind):
             load_npz(path / "paired-cohort.npz"),
             load_npz(path / "initial_reconstruction.npz"),
         )
+        if kind == "imbalance":
+            validate_imbalance_policy(manifest, label)
         if reference is None:
             reference = manifest, arrays, initial
         else:
             pair(reference, manifest, arrays, initial)
+            if kind == "imbalance":
+                assert manifest["source_sha"] == reference[0]["source_sha"]
+                for key in ("fit_input", "test_input"):
+                    assert arrays[key].dtype == reference[1][key].dtype, key
+                    assert arrays[key].tobytes() == reference[1][key].tobytes(), key
         y = arrays["test_measurements"]["value"]
         masks = conditional_masks(arrays["test_measurements"])
         prediction = load_npz(path / "predictions.npz")["prediction"]
@@ -359,7 +396,11 @@ def main(kind):
     axes[1, 1].legend(fontsize=8)
     fig.suptitle(
         "Epoch 72 · "
-        + ("point mechanisms" if kind == "mechanisms" else "17-model affine SIMEX")
+        + {
+            "mechanisms": "point mechanisms",
+            "simex": "17-model affine SIMEX",
+            "imbalance": "matched MSE / BMC / RankSim",
+        }[kind]
         + " · one seed"
     )
     fig.savefig(out / (kind + "-comparison.png"), dpi=170)
@@ -369,7 +410,14 @@ def main(kind):
     lines = [
         "# Independently replayed " + kind + " comparison",
         "",
-        "All contributing final heads and fixed validation decoders passed independent CPU replay. Same epoch72 parent, source-ID roles, target scaling and reconstruction/label streams; GPU masks compared across runs, not independently CPU regenerated. All non-input paired fields and initial reconstruction arrays are byte-equal. Corrected-score objective-specific training audit is separate from its completed output replay. Classifier NRE and old contrastive flow are excluded because verification failed.",
+        (
+            "All contributing final heads and fixed validation decoders passed independent CPU replay. Same epoch72 parent, source-ID roles, target scaling and reconstruction/label streams; GPU masks compared across runs, not independently CPU regenerated. All non-input paired fields and initial reconstruction arrays are byte-equal."
+            + (
+                " For this imbalance comparison, fit/test input arrays are also byte-equal, and all three arms share immutable source and library revisions."
+                if kind == "imbalance"
+                else " Corrected-score objective-specific training audit is separate from its completed output replay. Classifier NRE and old contrastive flow are excluded because verification failed."
+            )
+        ),
         "",
         "| Arm | Population MAE [dex] | Below −2 MAE [dex] | Below −2 bias [dex] |",
         "|---|---:|---:|---:|",
@@ -386,7 +434,12 @@ def main(kind):
         "",
         "Source-specific, APOGEE/GALAH-only, below−3 (14 labels), snapshots and reconstruction/spectral metrics are preserved as CSV. Below−2 has 185 labels, including 39 retained Li-VMPS stars; these are reported noisy native measurements, not latent physical truth. Source-ID supervised holdout does not exclude unsupervised overlap. One seed, no SOTA or attenuation-cured claim.",
     ]
-    if kind == "simex":
+    if kind == "imbalance":
+        lines += [
+            "",
+            "These are three fresh matched residual-head arms at 10M reconstruction presentations each, using torchregress 2a99f4ca5b1508b430937a3b9b71fbece99186f6. Uniform-prior BMC uses fixed sigma=0.5 in native-fit standardized label units, multiplied by 2*sigma^2 for reference MSE-like scaling. Sigma is an empirical temperature, not a calibrated physical error. RankSim adds gamma=0.1 with mean reduction, cosine similarities, interpolation strength 2 and duplicate-label mean grouping to MSE on trainable encoder latents; gamma is included once. Neither method establishes EIV correction or calibrated predictive uncertainty. Final fixed checkpoints are compared, rather than selected using tail-test snapshots; interpret observed population/tail differences as exploratory single-seed results against reused noisy labels.",
+        ]
+    elif kind == "simex":
         lines += [
             "",
             "SIMEX costs 17 independent fits ×10M =170M reconstruction presentations, versus10M per control. It is an affine rational extrapolation of float64 lambda means, with shared diagonal XP noise and omitted native correlations/common G uncertainty; it is not a calibrated physical predictive PDF. All17 checkpoints are verified; there is no single aggregate model or decoder. Reconstruction/spectral CSV is per replica and must not be interpreted as an aggregate decoder. Snapshot abscissa is per-model presentations; total SIMEX work is17 times larger. Finite noisy curve extrapolation can amplify errors and does not guarantee an unbiased neural estimator.",
@@ -418,5 +471,7 @@ def main(kind):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--kind", choices=["mechanisms", "simex"], required=True)
+    parser.add_argument(
+        "--kind", choices=["mechanisms", "simex", "imbalance"], required=True
+    )
     main(parser.parse_args().kind)

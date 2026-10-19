@@ -81,3 +81,31 @@ def test_affine_snapshot_extrapolation_preserves_label_origin():
     np.testing.assert_array_equal(
         report.independent_extrapolate(levels, constant), [-0.2, 2.0]
     )
+
+
+def test_imbalance_report_contains_only_fresh_matched_arms_and_locked_policies():
+    runs = report.imbalance_runs()
+    assert [path.name for path, _ in runs] == [
+        "prediction_e72_mse_imbalance_10m_v1",
+        "prediction_e72_bmc_imbalance_10m_v1",
+        "prediction_e72_ranksim_imbalance_10m_v1",
+    ]
+    import pytest
+
+    for (_, label), loss, policy in zip(
+        runs,
+        ["mse", "bmc", "mse_ranksim"],
+        [{}, {"sigma_standardized": 0.5}, {"gamma": 0.1}],
+        strict=True,
+    ):
+        arm = dict(
+            head="residual",
+            loss=loss,
+            library_revision="2a99f4ca5b1508b430937a3b9b71fbece99186f6",
+            imbalance=policy,
+        )
+        report.validate_imbalance_policy({"arm": arm}, label)
+        with pytest.raises(AssertionError):
+            report.validate_imbalance_policy(
+                {"arm": {**arm, "library_revision": "stale"}}, label
+            )
