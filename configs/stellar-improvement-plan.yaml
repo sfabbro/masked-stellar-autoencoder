@@ -569,3 +569,15 @@ jobs:
 - run_id: residual_huber_long_30e_v1
   task: prediction-continuation
   depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]
+
+- run_id: prediction_e72_mse_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: prediction_e72_bmc_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: prediction_e72_ranksim_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]

@@ -29,6 +29,10 @@ from run_stellar_label_experiments import BENCH
 from stellar_catalog_jobs import atomic_json, identity_split
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
+from masked_stellar_autoencoder.training.imbalance_screen import (
+    imbalance_loss,
+    imbalance_objective,
+)
 from masked_stellar_autoencoder.training.input_measurement import (
     audit_xp_error_sources,
     mean_prediction_by_lambda,
@@ -476,6 +480,10 @@ def main():
                     dtype=torch.float32,
                     device=device,
                 )
+                imbalance = imbalance_objective(arm["loss"], arm.get("imbalance", {}))
+                if imbalance is not None:
+                    imbalance = imbalance.to(device)
+                    atomic_json(replica_output / "imbalance-policy.json", arm)
                 lds = None
                 label_variance = None
                 if arm["loss"] == "lds_huber":
@@ -615,6 +623,10 @@ def main():
                     )
 
                 def batch_objective(latent, rows):
+                    if imbalance is not None:
+                        return imbalance_loss(
+                            imbalance, arm["loss"], head(latent), latent, labels[rows]
+                        )
                     if corrected is not None:
                         model.eval()
                         head.eval()

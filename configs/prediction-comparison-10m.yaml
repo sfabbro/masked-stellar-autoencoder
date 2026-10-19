@@ -157,3 +157,19 @@ arms:
   head: residual
   loss: group_dro_huber
   library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_mse_imbalance_10m_v1
+  head: residual
+  loss: mse
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: prediction_e72_bmc_imbalance_10m_v1
+  head: residual
+  loss: bmc
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    sigma_standardized: 0.5
+- run_id: prediction_e72_ranksim_imbalance_10m_v1
+  head: residual
+  loss: mse_ranksim
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    gamma: 0.1
