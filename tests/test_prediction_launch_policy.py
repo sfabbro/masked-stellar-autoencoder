@@ -30,3 +30,14 @@ def test_conflicting_explicit_parent_is_rejected():
     )
     with pytest.raises(ValueError, match="differs"):
         bind_prediction_policy(plan, {})
+
+
+def test_forward_eiv_is_explicitly_not_reconstruction_training():
+    suite = yaml.safe_load(Path("configs/forward-eiv-screen.yaml").read_text())
+    env = bind_prediction_policy(
+        dict(task="forward-eiv-screen", run_id=suite["run_id"]), {}
+    )
+    assert env["MSA_PRETRAIN_RESUME"] == suite["checkpoint"]
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+    with pytest.raises(ValueError, match="differs"):
+        bind_prediction_policy(dict(task="forward-eiv-screen", run_id="wrong"), {})

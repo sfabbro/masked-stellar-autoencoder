@@ -134,6 +134,12 @@ case "$stage" in
         --mode "$MSA_CATALOG_MODE" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == forward-eiv-screen ]]; then
+      "${pixi_run[@]}" python -u scripts/run_forward_eiv_screen.py \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == frozen-head-screen ]]; then
       "${pixi_run[@]}" python -u scripts/run_frozen_head_screen.py \
         --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \

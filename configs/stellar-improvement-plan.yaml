@@ -581,3 +581,7 @@ jobs:
 - run_id: prediction_e72_ranksim_imbalance_10m_v1
   task: prediction-comparison
   depends_on: [enriched_feature_audit_v1]
+
+- run_id: forward_eiv_xp_screen_v1
+  task: forward-eiv-screen
+  depends_on: [enriched_feature_audit_v1]

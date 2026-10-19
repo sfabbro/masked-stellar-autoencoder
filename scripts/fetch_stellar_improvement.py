@@ -65,7 +65,21 @@ def main():
             continue
         task = job["plan"]["task"]
         files = ["manifest.json", "session.log"]
-        if task == "catalog":
+        if task == "forward-eiv-screen":
+            files += [
+                "comparison.json",
+                "paired-cohort.npz",
+                "predictions.npz",
+                "checkpoint_verification.json",
+                "artifact-sha256.json",
+                "xp-error-source-audit.json",
+                "xp-unit-audit.json",
+                "direct_mlp.pth",
+                "forward_plugin.pth",
+                "integrated_flat.pth",
+                "flow_eb.pth",
+            ]
+        elif task == "catalog":
             files += ["inventory.json", "collection.json", "dataset-design.json"]
             if job["plan"].get("mode") == "distance-feature-cohort":
                 files += [
