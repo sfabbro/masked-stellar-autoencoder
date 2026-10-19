@@ -2647,6 +2647,31 @@
       "status": "accepted",
       "attempted_at": "2026-10-18T22:23:17.737079+00:00",
       "attempts": 1
+    },
+    {
+      "run_id": "residual_huber_long_30e_v1",
+      "name": "msa-si15-residual-huber-long-30e-v1",
+      "source_sha": "3829b23afacad4b1b2f50439d09cb1e51711cd1d",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_long_30e_v1",
+      "plan": {
+        "run_id": "residual_huber_long_30e_v1",
+        "task": "prediction-continuation",
+        "depends_on": [
+          "enriched_feature_audit_v1",
+          "prediction_e72_residual_huber_10m_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dj0h6mwl"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-19T03:16:24.298031+00:00",
+      "attempts": 1
     }
   ]
 }
