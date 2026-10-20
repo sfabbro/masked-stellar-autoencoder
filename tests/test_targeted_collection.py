@@ -19,6 +19,7 @@ def test_targeted_first_job_builds_flow_and_augmentation_inventory(
     runs = [
         "target_e72_flow_nsf8_s42_10m_v1",
         "target_e72_xpnoise_mask_s42_10m_v1",
+        "target_e72_xpmask_s42_10m_v1",
     ]
     record = tmp_path / "record.json"
     record.write_text(
@@ -56,3 +57,6 @@ def test_targeted_first_job_builds_flow_and_augmentation_inventory(
         } <= files[run]
     assert "conditional-flow-diagnostics.npz" in files[runs[0]]
     assert "xp-error-source-audit.json" in files[runs[1]]
+
+    assert "supervised-augmentation.json" in files[runs[2]]
+    assert "xp-error-source-audit.json" not in files[runs[2]]

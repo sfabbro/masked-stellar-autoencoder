@@ -169,10 +169,9 @@ def main():
                         "conditional-flow-diagnostics.npz",
                     ]
                 if "supervised_augmentation" in arm:
-                    files += [
-                        "supervised-augmentation.json",
-                        "xp-error-source-audit.json",
-                    ]
+                    files += ["supervised-augmentation.json"]
+                    if arm["supervised_augmentation"].get("noise_multiplier", 0) > 0:
+                        files += ["xp-error-source-audit.json"]
             if args.initial_predictions:
                 files += ["initial_predictions.npz"]
         elif task == "enriched-value":
