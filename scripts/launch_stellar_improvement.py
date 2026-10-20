@@ -59,6 +59,29 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multilabel-screen":
+        suite = yaml.safe_load(
+            Path("configs/multilabel-screen-20261020.yaml").read_text()
+        )
+        arm = next((a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None)
+        if arm is None:
+            raise ValueError("Multilabel screen absent from numerical policy")
+        expected = {
+            "MSA_PRETRAIN_RESUME": suite["checkpoint"],
+            "MSA_EXPERIMENT_PRESENTATIONS": str(
+                0
+                if arm.get("kind") == "forward"
+                else suite["reconstruction_presentations"]
+            ),
+        }
+        for key, value in expected.items():
+            explicit = plan.get("env", {}).get(key)
+            if explicit is not None and str(explicit) != value:
+                raise ValueError(
+                    f"Multilabel override {key} differs from numerical policy"
+                )
+            env[key] = value
+        return env
     if plan["task"] == "test-time-screen":
         suite = yaml.safe_load(Path("configs/test-time-screen.yaml").read_text())
         if plan["run_id"] != suite["run_id"]:

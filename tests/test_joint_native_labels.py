@@ -378,6 +378,47 @@ def test_fits_to_hdf5_materialization_integration(tmp_path, monkeypatch):
     badconfig["cohort"] = {"path": str(tmp_path / "missing-cohort.h5")}
     with pytest.raises(FileNotFoundError, match="Existing source mounts"):
         preparation.preflight(badconfig)
+    quality_path = Path(__file__).parents[1] / "scripts/run_joint_native_quality.py"
+    quality_spec = importlib.util.spec_from_file_location(
+        "run_joint_native_quality", quality_path
+    )
+    quality_runner = importlib.util.module_from_spec(quality_spec)
+    quality_spec.loader.exec_module(quality_runner)
+    quality_directory = tmp_path / "distinct-quality-qa"
+    quality_manifest = quality_runner.verify_existing(
+        config, tmp_path, quality_directory, source_sha="fixture-not-production"
+    )
+    assert quality_manifest["status"] == "complete"
+    assert quality_manifest["all_target_quality_masks_verified"]
+    assert quality_manifest["sidecar_sha256"] == module.sha(output)
+    assert quality_manifest["source_pins"] == pins
+    assert quality_manifest["role_target_counts"]["fit"]["complete_targets"] >= 1
+    assert quality_manifest["training_launch_ready"] is False
+    assert (
+        quality_runner.verify_existing(
+            config, tmp_path, quality_directory, source_sha="fixture-not-production"
+        )
+        == quality_manifest
+    )
+    with pytest.raises(ValueError, match="must differ"):
+        quality_runner.verify_existing(
+            config, tmp_path, tmp_path, source_sha="fixture-not-production"
+        )
+    # A stale/corrupted quality mask must not escape verification merely because
+    # the independently checked observed mask still has its original value.
+    with h5py.File(output, "r+") as f:
+        f["targets/quality_pass"][0, 0] = False
+    with pytest.raises(AssertionError):
+        verifier.verify(
+            output,
+            cohort,
+            sources,
+            {s: module.sha(p) for s, p in sources.items()},
+            tmp_path / "bad-quality-verified.json",
+        )
+    assert not (tmp_path / "bad-quality-verified.json").exists()
+    with h5py.File(output, "r+") as f:
+        f["targets/quality_pass"][0, 0] = True
     with h5py.File(output, "r+") as f:
         f["targets/value"][0, 0] += 1
     with pytest.raises(AssertionError):

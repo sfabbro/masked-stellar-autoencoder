@@ -3489,6 +3489,32 @@
         "classification": "unresolved; absence does not establish failure or authorize retry",
         "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
       }
+    },
+    {
+      "run_id": "joint-native-preparation-v2",
+      "name": "msa-si15-joint-native-preparation-v2",
+      "source_sha": "5df6e24764d0f1466bac727e19cb3af9edcaf220",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2",
+      "plan": {
+        "run_id": "joint-native-preparation-v2",
+        "task": "catalog",
+        "mode": "joint-native-preparation",
+        "depends_on": [
+          "enriched_feature_cohort_v1",
+          "distance_feature_cohort_v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "sk17i01q"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T14:08:24.628149+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

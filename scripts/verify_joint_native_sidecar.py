@@ -85,12 +85,17 @@ def verify(sidecar, cohort, sources, pins, output):
                     & (expected_value > -999)
                 )
                 good[:, 0] &= expected_value[:, 0] > 0
+                quality = np.ones_like(good)
                 if source == "galah":
-                    good &= ((raw["flag_sp"] == 0) & (raw["flag_sp_fit"] == 0))[:, None]
-                    good[:, 2] &= raw["flag_fe_h"] == 0
+                    quality &= ((raw["flag_sp"] == 0) & (raw["flag_sp_fit"] == 0))[
+                        :, None
+                    ]
+                    quality[:, 2] &= raw["flag_fe_h"] == 0
                 else:
-                    good &= ((raw["ASPCAPFLAG"] == 0) & (raw["STARFLAG"] == 0))[:, None]
-                    good[:, 2] &= raw["FE_H_FLAG"] == 0
+                    quality &= ((raw["ASPCAPFLAG"] == 0) & (raw["STARFLAG"] == 0))[
+                        :, None
+                    ]
+                    quality[:, 2] &= raw["FE_H_FLAG"] == 0
                     metadata_hdus = [
                         hdu
                         for hdu in hdul
@@ -114,7 +119,11 @@ def verify(sidecar, cohort, sources, pins, output):
                         bad = np.zeros(len(raw), bool)
                         for bit in [0, 1, 2, 3, 4, 6, 16]:
                             bad |= (flag & np.uint64(2**bit)) != 0
-                        good[:, j] &= ~bad
+                        quality[:, j] &= ~bad
+                np.testing.assert_array_equal(
+                    quality, f["targets/quality_pass"][:][row]
+                )
+                good &= quality
                 good[:, 2] &= expected_error[:, 2] < 0.5
                 np.testing.assert_array_equal(good, observed[row])
                 for name, saved in f["raw/" + source].items():
@@ -129,6 +138,7 @@ def verify(sidecar, cohort, sources, pins, output):
                 "complete_targets": int(good.all(1).sum()),
             }
         assert not observed[~supported].any()
+        assert not f["targets/quality_pass"][:][~supported].any()
         assert np.isnan(value[~supported]).all() and np.isnan(error[~supported]).all()
         refs = f["reference_holdout_source_id"][:]
         assert len(refs) == 99574 and len(np.unique(refs)) == len(refs)
@@ -184,6 +194,7 @@ def verify(sidecar, cohort, sources, pins, output):
         "status": "passed",
         "native_labels_verified": True,
         "all_original_source_target_values_errors_flags_rows_verified": True,
+        "all_target_quality_masks_verified": True,
         "all_source_id_roles_and_reference_bans_verified": True,
         "source_counts": counts,
         "sidecar_sha256": digest(sidecar),

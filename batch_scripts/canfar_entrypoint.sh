@@ -122,6 +122,20 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-screen ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py \
+        --config configs/multilabel-screen-20261020.yaml \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog && "${MSA_CATALOG_MODE:-}" == joint-native-quality-verification ]]; then
+      "${pixi_run[@]}" python -u scripts/run_joint_native_quality.py \
+        --config configs/joint-native-preparation.yaml \
+        --sidecar-directory "${MSA_NATIVE_SIDECAR_DIRECTORY:?Set existing audited native sidecar directory}" \
+        --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog && "${MSA_CATALOG_MODE:-}" == joint-native-preparation ]]; then
       "${pixi_run[@]}" python -u scripts/prepare_joint_native_labels.py \
         --config configs/joint-native-preparation.yaml --record-source-pins --output-directory "$experiment_output"
