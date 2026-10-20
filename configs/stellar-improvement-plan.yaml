@@ -669,3 +669,9 @@ jobs:
 - run_id: test_time_reconstruction_screen_v1
   task: test-time-screen
   depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]
+- run_id: residual_huber_e86_150m_30e_v1
+  task: large-huber
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1

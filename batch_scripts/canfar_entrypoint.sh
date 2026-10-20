@@ -166,6 +166,12 @@ case "$stage" in
         --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == large-huber ]]; then
+      "${pixi_run[@]}" python -u scripts/run_prediction_comparison.py \
+        --config configs/residual-huber-150m.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == prediction-continuation ]]; then
       "${pixi_run[@]}" python -u scripts/run_prediction_comparison.py \
         --config configs/residual-huber-long.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \

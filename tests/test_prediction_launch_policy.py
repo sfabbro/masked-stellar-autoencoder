@@ -73,3 +73,28 @@ def test_form_transport_preserves_repeated_env_special_characters():
         ("args", "-u -c code()"),
     ]
     assert parse_qsl(encode_creation_form(fields).decode()) == fields
+
+
+def test_large_huber_binds_parent86_and_real150m_budget():
+    suite = yaml.safe_load(Path("configs/residual-huber-150m.yaml").read_text())
+    env = bind_prediction_policy(
+        dict(task="large-huber", run_id="residual_huber_e86_150m_30e_v1"), {}
+    )
+    assert env["MSA_PRETRAIN_RESUME"].endswith("checkpoint_86.pth")
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "4500000000"
+    assert suite["reconstruction_training_rows"] == 150_000_000
+    assert (
+        suite["reconstruction_presentations"]
+        == 30 * suite["reconstruction_training_rows"]
+    )
+    assert suite["checkpoint_interval_presentations"] == 150_000_000
+    assert suite["early_checkpoint_presentations"] == [9_000_000, 50_000_000]
+    with pytest.raises(ValueError, match="differs"):
+        bind_prediction_policy(
+            dict(
+                task="large-huber",
+                run_id="residual_huber_e86_150m_30e_v1",
+                env={"MSA_PRETRAIN_RESUME": PARENT},
+            ),
+            {},
+        )

@@ -1,0 +1,29 @@
+# Parent86 encoder/decoder + retained Adam; fresh residual-Huber FeH head.
+# 150M distinct original TRAIN rows, 30 passes; benchmark held-out rows never fit.
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+reconstruction_source: original_sample
+reconstruction_original: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_training_rows: 150000000
+reconstruction_validation_keys: [sslset11_part0, sslset14_part0, sslset2_part0, sslset5_part0, sslset20_part0]
+reconstruction_sample_seed: 42
+reconstruction_presentations: 4500000000
+effective_batch: 32768
+micro_batch: 4096
+encoder_lr: 1.25e-06
+head_lr: 0.001
+warmup_updates: 500
+supervised_batches_per_update: 8
+contrast_batch: 256
+reconstruction_weight: 0.01
+checkpoint_interval_presentations: 150000000
+early_checkpoint_presentations: [9000000, 50000000]
+require_cuda: true
+arms:
+- run_id: residual_huber_e86_150m_30e_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92

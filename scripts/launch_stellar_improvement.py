@@ -114,6 +114,8 @@ def bind_prediction_policy(
         return env
     if plan["task"] == "targeted-prediction":
         config_path = Path("configs/targeted-10m-20261019.yaml")
+    elif plan["task"] == "large-huber":
+        config_path = Path("configs/residual-huber-150m.yaml")
     elif plan["task"] == "prediction-continuation":
         config_path = Path("configs/residual-huber-long.yaml")
     elif plan["task"] != "prediction-comparison":
@@ -305,6 +307,15 @@ def main():
             if plan["task"] != "catalog"
             else {"cores": 4, "ram": 32}
         )
+        if plan.get("resources"):
+            resources = plan["resources"]
+            if set(resources) - {"cores", "ram", "gpu"} or any(
+                isinstance(value, bool) or not isinstance(value, int) or value < 1
+                for value in resources.values()
+            ):
+                raise ValueError(
+                    "Resource override must contain positive integer cores/ram/gpu"
+                )
         if plan["task"] == "catalog":
             env.update(MSA_EXPERIMENT_CPU_ONLY="1", MSA_CATALOG_MODE=plan["mode"])
         job = {

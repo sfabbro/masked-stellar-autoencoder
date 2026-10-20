@@ -49,6 +49,9 @@ from masked_stellar_autoencoder.training.input_measurement import (
     standardized_xp_errors,
     xp_indices,
 )
+from masked_stellar_autoencoder.training.large_reconstruction import (
+    prepare_original_reconstruction,
+)
 from masked_stellar_autoencoder.training.prediction_experiment_heads import (
     build_contrastive_flow,
     build_prediction_head,
@@ -384,16 +387,30 @@ def main():
                         cohort["features/source_id"][:],
                         "g_normalized",
                     )
-            cache, _, counts = pretrain.read_prefixes(
-                source,
-                keys,
-                features,
-                None,
-                512 if args.smoke else 9_000_000,
-                center,
-                scale,
-                args.output / "replay-cache.npy",
-            )
+            if (
+                suite.get("reconstruction_source") == "original_sample"
+                and not args.smoke
+            ):
+                manifest["status"] = "preparing"
+                atomic_json(args.output / "manifest.json", manifest)
+                cache, counts, sample = prepare_original_reconstruction(
+                    suite, checkpoint, features, center, scale
+                )
+                atomic_json(args.output / "reconstruction-sample.json", sample)
+                manifest["reconstruction_sample"] = sample
+                manifest["status"] = "running"
+                atomic_json(args.output / "manifest.json", manifest)
+            else:
+                cache, _, counts = pretrain.read_prefixes(
+                    source,
+                    keys,
+                    features,
+                    None,
+                    512 if args.smoke else 9_000_000,
+                    center,
+                    scale,
+                    args.output / "replay-cache.npy",
+                )
             validation, _, _ = pretrain.read_prefixes(
                 source,
                 validation_keys,
@@ -417,6 +434,8 @@ def main():
                 args.output,
             )
             model, device = wrapper.model, wrapper.device
+            if suite.get("require_cuda") and not args.smoke and device.type != "cuda":
+                raise RuntimeError("Large continuation requires an actual CUDA device")
             if arm.get("freeze_encoder", False):
                 model.encoder.requires_grad_(False)
             continuation = None
@@ -878,6 +897,11 @@ def main():
                     if interval
                     else [0, 3_000_000, 6_000_000, 9_000_000, budget]
                 )
+                if not args.smoke:
+                    snapshots = sorted(
+                        set(snapshots)
+                        | set(suite.get("early_checkpoint_presentations", []))
+                    )
                 after_warmup = current_outputs(model, head)
                 save_outputs(replica_output / "snapshot-0.npz", after_warmup)
                 for indices, raw in replay_batches(cache, budget, effective):
@@ -1092,16 +1116,16 @@ def main():
                     replica_index=replica_number,
                     lambda_value=float(replica["lambda_value"]),
                     simulation=int(replica["simulation"]),
+                    completed_updates=update_offset + steps,
+                    label_rng_state=rng.bit_generator.state,
+                    mask_rng_state=mask_rng.get_state(),
+                    torch_rng=torch.get_rng_state(),
+                    cuda_rng=torch.cuda.get_rng_state_all()
+                    if torch.cuda.is_available()
+                    else [],
                 )
                 if continuation is not None:
                     state.update(
-                        completed_updates=update_offset + steps,
-                        label_rng_state=rng.bit_generator.state,
-                        mask_rng_state=mask_rng.get_state(),
-                        torch_rng=torch.get_rng_state(),
-                        cuda_rng=torch.cuda.get_rng_state_all()
-                        if torch.cuda.is_available()
-                        else [],
                         continuation_sha256=suite["continuation_sha256"],
                     )
                 if augmentation is not None:
