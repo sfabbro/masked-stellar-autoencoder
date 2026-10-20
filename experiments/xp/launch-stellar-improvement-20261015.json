@@ -3893,6 +3893,33 @@
       "attempted_at": "2026-10-20T19:56:41.010979+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "residual_huber_e86_150m_30e_v1",
+      "name": "msa-si15-residual-huber-e86-150m-30e-v1",
+      "source_sha": "e525ae75c3eaf162c9a72fbde6b386cce9374eb0",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1",
+      "plan": {
+        "run_id": "residual_huber_e86_150m_30e_v1",
+        "task": "large-huber",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dd27e718"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T23:40:43.047436+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
