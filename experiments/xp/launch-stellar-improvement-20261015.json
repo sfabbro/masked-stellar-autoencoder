@@ -3515,6 +3515,359 @@
       "attempted_at": "2026-10-20T14:08:24.628149+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint-native-preparation-v2-quality-v1",
+      "name": "msa-si15-joint-native-preparation-v2-quality-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1",
+      "plan": {
+        "run_id": "joint-native-preparation-v2-quality-v1",
+        "task": "catalog",
+        "mode": "joint-native-quality-verification",
+        "depends_on": [
+          "joint-native-preparation-v2"
+        ],
+        "env": {
+          "MSA_NATIVE_SIDECAR_DIRECTORY": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "br0epa0m"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:29:39.229372+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_huber_recon_s42_v1",
+      "name": "msa-si15-multi-huber-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_huber_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_huber_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "u1x1i8vn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:17.089583+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_recon_s42_v1",
+      "name": "msa-si15-multi-gaussian-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_gaussian_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mvijulmk"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:20.089849+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_labelnoise_recon_s42_v1",
+      "name": "msa-si15-multi-gaussian-labelnoise-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_labelnoise_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_gaussian_labelnoise_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "f0wwwjql"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:23.511491+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_nsf_recon_s42_v1",
+      "name": "msa-si15-multi-nsf-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_nsf_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_nsf_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "k0vcrws4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:27.127765+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_maf_recon_s42_v1",
+      "name": "msa-si15-multi-maf-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_maf_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_maf_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "oqpw4r4w"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:30.262960+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_cinn_recon_s42_v1",
+      "name": "msa-si15-multi-cinn-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_cinn_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_cinn_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "cfnagyho"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:33.941116+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_bpf_recon_s42_v1",
+      "name": "msa-si15-multi-bpf-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_bpf_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_bpf_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "yy7oyuw9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:39.690620+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_nsf_labelnoise_recon_s42_v1",
+      "name": "msa-si15-multi-nsf-labelnoise-recon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_nsf_labelnoise_recon_s42_v1",
+      "plan": {
+        "run_id": "multi_nsf_labelnoise_recon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hoyvdce0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:43.718398+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_norecon_s42_v1",
+      "name": "msa-si15-multi-gaussian-norecon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_norecon_s42_v1",
+      "plan": {
+        "run_id": "multi_gaussian_norecon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tjnd5vt7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:46.683258+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_labelnoise_norecon_s42_v1",
+      "name": "msa-si15-multi-gaussian-labelnoise-norecon-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_labelnoise_norecon_s42_v1",
+      "plan": {
+        "run_id": "multi_gaussian_labelnoise_norecon_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "to482e9x"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:49.711806+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_recon_s43_v1",
+      "name": "msa-si15-multi-gaussian-recon-s43-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_recon_s43_v1",
+      "plan": {
+        "run_id": "multi_gaussian_recon_s43_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ispcluw9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:52.973786+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_recon_s44_v1",
+      "name": "msa-si15-multi-gaussian-recon-s44-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_recon_s44_v1",
+      "plan": {
+        "run_id": "multi_gaussian_recon_s44_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zp8j9qq5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:32:56.475398+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_forward_xp_s42_v1",
+      "name": "msa-si15-multi-forward-xp-s42-v1",
+      "source_sha": "34e3e29c911c37cac8712757d64288c2c27dc636",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_forward_xp_s42_v1",
+      "plan": {
+        "run_id": "multi_forward_xp_s42_v1",
+        "task": "multilabel-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "npaoc1lo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-20T18:33:00.619025+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
