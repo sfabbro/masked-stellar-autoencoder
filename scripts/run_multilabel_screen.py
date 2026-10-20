@@ -752,6 +752,41 @@ def main():
         head.point_nodes = qmc_normal_nodes(
             8 if args.smoke else cfg["point_samples"]
         ).to(device)
+        if arm.get("recovery_of"):
+            # Exercise the original failing evaluation shape before new SGD.
+            model.eval()
+            head.eval()
+            if device.type == "cuda":
+                torch.cuda.reset_peak_memory_stats(device)
+            with torch.no_grad():
+                preflight_latent = model.encoder(
+                    torch.tensor(data["input"][fit[:128]], device=device)
+                )
+                preflight_mean, preflight_variance = head.moments(preflight_latent)
+                if not (
+                    torch.isfinite(preflight_mean).all()
+                    and torch.isfinite(preflight_variance).all()
+                    and (preflight_variance > 0).all()
+                ):
+                    raise FloatingPointError("Recovery moment memory preflight failed")
+            if device.type == "cuda":
+                torch.cuda.synchronize(device)
+            atomic(
+                args.output / "flow-moment-memory-preflight.json",
+                {
+                    "recovery_of": arm["recovery_of"],
+                    "context_rows": len(preflight_latent),
+                    "fixed_point_nodes": len(head.point_nodes),
+                    "inverse_node_chunk": 16,
+                    "device": str(device),
+                    "peak_allocated_bytes": torch.cuda.max_memory_allocated(device)
+                    if device.type == "cuda"
+                    else None,
+                    "finite_positive_moments": True,
+                    "before_supervised_sgd": True,
+                },
+            )
+            del preflight_latent, preflight_mean, preflight_variance
         optimizer = torch.optim.Adam(model.parameters(), lr=cfg["encoder_lr"])
         head_optimizer = torch.optim.Adam(head.parameters(), lr=cfg["head_lr"])
         rng = np.random.default_rng(arm["seed"])

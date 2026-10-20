@@ -165,8 +165,13 @@ class MultiLabelHead(nn.Module):
     def moments(self, latent):
         if self.kind == "flow":
             dist = self.distribution(latent)
-            nodes = self.point_nodes[:, None, :].expand(-1, len(latent), -1)
-            sample = dist.transform.inv(nodes)
+            # Preserve all fixed nodes and their reduction order while bounding
+            # the spline inverse's temporary sample-by-context allocation.
+            samples = [
+                dist.transform.inv(nodes[:, None, :].expand(-1, len(latent), -1))
+                for nodes in self.point_nodes.split(16)
+            ]
+            sample = torch.cat(samples, dim=0)
             mean = sample.double().mean(0).to(latent.dtype)
             covariance = (sample - mean).square().double().mean(0).to(latent.dtype)
             return mean, covariance

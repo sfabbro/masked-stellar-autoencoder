@@ -40,3 +40,4 @@ arms:
   - {run_id: multi_gaussian_recon_s43_v1, kind: gaussian, seed: 43, reconstruction_weight: 0.03, ttt: true}
   - {run_id: multi_gaussian_recon_s44_v1, kind: gaussian, seed: 44, reconstruction_weight: 0.03, ttt: true}
   - {run_id: multi_forward_xp_s42_v1, kind: forward, seed: 42, reconstruction_weight: 0.0, ttt: false, reconstruction_presentations: 0}
+  - {run_id: multi_nsf_recon_s42_v2, kind: flow, flow_type: nsf, seed: 42, reconstruction_weight: 0.03, ttt: true, recovery_of: multi_nsf_recon_s42_v1}

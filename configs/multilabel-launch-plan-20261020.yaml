@@ -58,3 +58,7 @@ jobs:
   task: multilabel-screen
   depends_on:
   - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_recon_s42_v2
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1

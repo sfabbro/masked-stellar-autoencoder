@@ -142,7 +142,7 @@ def test_policy_has_independent_methods_and_matched_training_budgets():
             Path(__file__).parents[1] / "configs/multilabel-screen-20261020.yaml"
         ).read_text()
     )
-    assert len(policy["arms"]) == len({arm["run_id"] for arm in policy["arms"]}) == 13
+    assert len(policy["arms"]) == len({arm["run_id"] for arm in policy["arms"]}) == 14
     assert policy["reconstruction_presentations"] == 10_000_000
     forward = [arm for arm in policy["arms"] if arm["kind"] == "forward"]
     assert len(forward) == 1 and forward[0]["reconstruction_presentations"] == 0
@@ -213,3 +213,54 @@ def test_forward_errors_ignore_unrelated_missing_xp_but_reject_used_missing():
 
     with pytest.raises(ValueError, match="finite"):
         native_xp_error_subset(errors, np.ones(3), np.array([0, 1]), g, [1])
+
+
+def test_nsf_chunked_moments_preserve_fixed_samples_and_gradients():
+    torch.manual_seed(314)
+    head = MultiLabelHead("flow", latent_dim=4, width=16, flow_type="nsf")
+    head.point_nodes = qmc_normal_nodes(32)
+    with torch.no_grad():
+        head.output.weight.normal_(std=0.02)
+    latent = torch.randn(3, 4, requires_grad=True)
+    dist = head.distribution(latent)
+    sample = dist.transform.inv(head.point_nodes[:, None, :].expand(-1, 3, -1))
+    mean = sample.double().mean(0).to(latent.dtype)
+    variance = (sample - mean).square().double().mean(0).to(latent.dtype)
+    expected_gradient = torch.autograd.grad((mean + variance).sum(), latent)[0]
+    actual_mean, actual_variance = head.moments(latent)
+    actual_gradient = torch.autograd.grad(
+        (actual_mean + actual_variance).sum(), latent
+    )[0]
+    torch.testing.assert_close(actual_mean, mean, rtol=5e-5, atol=5e-5)
+    torch.testing.assert_close(actual_variance, variance, rtol=5e-5, atol=5e-5)
+    torch.testing.assert_close(actual_gradient, expected_gradient, rtol=5e-5, atol=5e-5)
+
+
+def test_flow_moments_bound_inverse_node_allocation(monkeypatch):
+    from types import SimpleNamespace
+
+    head = MultiLabelHead("flow", latent_dim=4, width=16, flow_type="nsf")
+    calls = []
+
+    def inverse(nodes):
+        calls.append(nodes.shape)
+        assert len(nodes) <= 16
+        return nodes * 2 + 3
+
+    monkeypatch.setattr(
+        head,
+        "distribution",
+        lambda latent: SimpleNamespace(transform=SimpleNamespace(inv=inverse)),
+    )
+    mean, variance = head.moments(torch.zeros(128, 4))
+    assert len(calls) == 16 and sum(shape[0] for shape in calls) == 256
+    expected = head.point_nodes.double() * 2 + 3
+    torch.testing.assert_close(
+        mean.double(), expected.mean(0).expand(128, -1), rtol=5e-5, atol=5e-5
+    )
+    torch.testing.assert_close(
+        variance.double(),
+        ((expected - expected.mean(0)) ** 2).mean(0).expand(128, -1),
+        rtol=5e-5,
+        atol=5e-5,
+    )
