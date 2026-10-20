@@ -2789,7 +2789,14 @@
       "session_ids": [],
       "status": "submission_ambiguous",
       "attempted_at": "2026-10-19T18:52:03.540614+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_huber_s43_10m_v1",
@@ -2811,7 +2818,14 @@
       "session_ids": [],
       "status": "submission_ambiguous",
       "attempted_at": "2026-10-19T18:52:33.610237+00:00",
-      "attempts": 1
+      "attempts": 1,
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_mse_s43_10m_v1",
@@ -2906,7 +2920,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "test_time_reconstruction_screen_v1",
@@ -2968,7 +2989,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_xpnoise_mask_s42_10m_v1",
@@ -3060,7 +3088,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_huber_ranksim_s42_10m_v1",
@@ -3121,7 +3156,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "ReadTimeout: The read operation timed out"
+      "error": "ReadTimeout: The read operation timed out",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_xpmask_s42_10m_v1",
@@ -3235,7 +3277,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_frozen_encoder_s42_10m_v1",
@@ -3265,7 +3314,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_parent85_s42_10m_v1",
@@ -3388,7 +3444,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     },
     {
       "run_id": "target_e72_flow_nsf8_frozen_s42_10m_v1",
@@ -3418,7 +3481,14 @@
         "experiments/xp/results-stellar-improvement/enriched_feature_audit_v1/independent-verification.json": "efaee082482bc590f52399d557542a1e96434a3816fb16020db25be89afde644",
         "experiments/xp/results-stellar-improvement/prediction_e72_residual_huber_10m_v1/independent-verification.json": "ce1d93a1db7f772f62f470eb6351d629658a50a16bfc6cdc78bb6d2152e22667"
       },
-      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "latest_reconciliation": {
+        "checked_at": "2026-10-20T07:00:39.893101+00:00",
+        "exact_name_inventory_match": false,
+        "manifest_http_status": 404,
+        "classification": "unresolved; absence does not establish failure or authorize retry",
+        "evidence": "experiments/xp/results-stellar-improvement/targeted-ambiguous-reconciliation-20261020/reconciliation.json"
+      }
     }
   ]
 }
