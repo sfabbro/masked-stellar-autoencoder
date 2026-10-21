@@ -3947,6 +3947,81 @@
       "attempted_at": "2026-10-21T00:17:20.225359+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_nsf_density_nll_s42_v1",
+      "name": "msa-si15-multi-nsf-density-nll-s42-v1",
+      "source_sha": "7aeb4acbcac8cd19622eea9f4f7056626a72ba06",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_nsf_density_nll_s42_v1",
+      "plan": {
+        "run_id": "multi_nsf_density_nll_s42_v1",
+        "task": "multilabel-density-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lnxaovw5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-21T23:35:52.323053+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_nsf_density_contrastive_s42_v1",
+      "name": "msa-si15-multi-nsf-density-contrastive-s42-v1",
+      "source_sha": "7aeb4acbcac8cd19622eea9f4f7056626a72ba06",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_nsf_density_contrastive_s42_v1",
+      "plan": {
+        "run_id": "multi_nsf_density_contrastive_s42_v1",
+        "task": "multilabel-density-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "x0m40mgn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-21T23:35:58.488995+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_nsf_density_nllcontrastive_s42_v1",
+      "name": "msa-si15-multi-nsf-density-nllcontrastive-s42-v1",
+      "source_sha": "7aeb4acbcac8cd19622eea9f4f7056626a72ba06",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_nsf_density_nllcontrastive_s42_v1",
+      "plan": {
+        "run_id": "multi_nsf_density_nllcontrastive_s42_v1",
+        "task": "multilabel-density-screen",
+        "depends_on": [
+          "joint-native-preparation-v2-quality-v1"
+        ]
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "pu0bbxpb"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-21T23:36:01.691278+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
