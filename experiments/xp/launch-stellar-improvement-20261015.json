@@ -3920,6 +3920,33 @@
       "attempted_at": "2026-10-20T23:40:43.047436+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_gaussian_noise_recon_30e_v1",
+      "name": "msa-si15-multi-gaussian-noise-recon-30e-v1",
+      "source_sha": "1a0051ded24062c840bd2a502c73d65f46a4cc2b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1",
+      "plan": {
+        "run_id": "multi_gaussian_noise_recon_30e_v1",
+        "task": "multilabel-long",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fp0qj7pm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-21T00:17:20.225359+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
