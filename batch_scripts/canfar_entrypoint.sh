@@ -129,6 +129,13 @@ case "$stage" in
         --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-long ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py \
+        --config configs/multilabel-long-20261020.yaml \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" \
+        --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalog && "${MSA_CATALOG_MODE:-}" == joint-native-quality-verification ]]; then
       "${pixi_run[@]}" python -u scripts/run_joint_native_quality.py \
         --config configs/joint-native-preparation.yaml \

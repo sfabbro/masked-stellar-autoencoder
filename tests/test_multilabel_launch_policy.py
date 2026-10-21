@@ -52,3 +52,26 @@ def test_multilabel_parent_and_fit_vs_reconstruction_budget(tmp_path, monkeypatc
             },
             {},
         )
+
+
+def test_long_multilabel_binds_one_noise_density_and_fixed_budget():
+    suite = yaml.safe_load(Path("configs/multilabel-long-20261020.yaml").read_text())
+    assert len(suite["arms"]) == 1
+    arm = suite["arms"][0]
+    assert arm["kind"] == "gaussian" and arm["noise_aware"] is True
+    assert arm["reconstruction_weight"] == 0.03
+    assert suite["reconstruction_presentations"] == 30 * 9_000_000
+    assert suite["checkpoint_interval_presentations"] == 9_000_000
+    assert suite["selection_policy"] == "reserved_tune_mean_observed_nll"
+    env = bind_prediction_policy(dict(task="multilabel-long", run_id=arm["run_id"]), {})
+    assert env["MSA_PRETRAIN_RESUME"] == suite["checkpoint"]
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "270000000"
+    with pytest.raises(ValueError, match="differs"):
+        bind_prediction_policy(
+            dict(
+                task="multilabel-long",
+                run_id=arm["run_id"],
+                env={"MSA_PRETRAIN_RESUME": "/wrong"},
+            ),
+            {},
+        )

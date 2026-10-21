@@ -1,0 +1,7 @@
+jobs:
+- run_id: multi_gaussian_noise_recon_30e_v1
+  task: multilabel-long
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1

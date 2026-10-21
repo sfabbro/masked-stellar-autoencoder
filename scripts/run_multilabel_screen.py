@@ -11,6 +11,7 @@ import copy
 import hashlib
 import importlib.metadata
 import json
+import random
 import subprocess
 import time
 from pathlib import Path
@@ -60,6 +61,97 @@ def save_checkpoint(path, value):
     temporary = path.with_suffix(".tmp")
     torch.save(value, temporary)
     temporary.replace(path)
+
+
+def interval_crossed(previous, current, interval):
+    """A short boundary batch still commits exactly one crossed checkpoint."""
+    if not interval:
+        return False
+    if isinstance(interval, bool) or not isinstance(interval, int) or interval < 1:
+        raise ValueError("Checkpoint/snapshot intervals must be positive integers")
+    return previous // interval < current // interval
+
+
+def _assert_checkpoint_equal(expected, actual):
+    if torch.is_tensor(expected):
+        assert expected.dtype == actual.dtype and expected.shape == actual.shape
+        assert torch.equal(expected.detach().cpu(), actual.cpu())
+    elif isinstance(expected, np.ndarray):
+        assert expected.dtype == actual.dtype
+        np.testing.assert_array_equal(expected, actual)
+    elif isinstance(expected, dict):
+        assert expected.keys() == actual.keys()
+        for key in expected:
+            _assert_checkpoint_equal(expected[key], actual[key])
+    elif isinstance(expected, list | tuple):
+        assert type(expected) is type(actual) and len(expected) == len(actual)
+        for left, right in zip(expected, actual, strict=True):
+            _assert_checkpoint_equal(left, right)
+    else:
+        assert expected == actual
+
+
+def save_periodic_checkpoint(output, state):
+    """Keep immutable full states, reload every tensor, publish receipt last."""
+    directory = output / "checkpoints"
+    directory.mkdir(exist_ok=True)
+    path = directory / f"checkpoint-{state['completed_presentations']:012d}.pth"
+    if path.exists():
+        raise FileExistsError(f"Refusing to replace periodic checkpoint: {path}")
+    save_checkpoint(path, state)
+    restored = torch_load_trusted(path, map_location="cpu", weights_only=False)
+    _assert_checkpoint_equal(state, restored)
+    receipt = {
+        "file": str(path.relative_to(output)),
+        "sha256": sha(path),
+        "bytes": path.stat().st_size,
+        "presentations": state["completed_presentations"],
+        "updates": state["completed_updates"],
+        "all_saved_state_values_reload_equal": True,
+    }
+    atomic(path.with_suffix(".json"), receipt)
+    atomic(output / "latest-checkpoint.json", receipt)
+    return receipt
+
+
+def select_by_reserved_tuning(output, receipt, data, rows, result):
+    """Select only by the declared disjoint tuning observed-label likelihood."""
+    values = np.asarray(result["observed_log_prob_native"])
+    if values.shape != (len(rows),) or not len(rows) or not np.isfinite(values).all():
+        raise ValueError("Finite joint tuning densities required for selection")
+    score = float(-values.mean() / 3)
+    prediction = result["mean"] * data["label_scale"] + data["label_center"]
+    path = output / f"tuning-{receipt['presentations']:012d}.npz"
+    np.savez_compressed(
+        path,
+        rows=rows,
+        source_id=data["source_id"][rows],
+        value=data["value"][rows],
+        error=data["error"][rows],
+        **result,
+    )
+    summary = {
+        **receipt,
+        "selection_policy": "reserved_tune_mean_observed_nll",
+        "tuning_mean_observed_nll_per_label_native": score,
+        "tuning_mae_native": np.abs(prediction - data["value"][rows]).mean(0).tolist(),
+        "tuning_rows": len(rows),
+        "tuning_ordered_source_id_sha256": hashlib.sha256(
+            data["source_id"][rows].astype("<i8").tobytes()
+        ).hexdigest(),
+        "tuning_predictions_file": path.name,
+        "tuning_predictions_sha256": sha(path),
+        "calibration_or_test_used_for_selection": False,
+    }
+    atomic(path.with_suffix(".json"), summary)
+    selected_path = output / "selected-checkpoint.json"
+    selected = json.loads(selected_path.read_text()) if selected_path.exists() else None
+    if (
+        selected is None
+        or score < selected["tuning_mean_observed_nll_per_label_native"]
+    ):
+        atomic(selected_path, summary)
+    return summary
 
 
 def load_native(cfg, cohort, sidecar, qa, features, center, scale, *, synthetic=False):
@@ -334,6 +426,17 @@ def postprocess(output, model, head, data, test, cal, device, cfg, smoke):
     )
     baseline_test = predictions(model, head, data, test_rows, device)["mean"]
     baseline_cal = predictions(model, head, data, cal_rows, device)["mean"]
+    # Preserve the exact separately batched means used in these CP intervals.
+    # Earlier full-test batches can differ by float32 rounding.
+    np.savez_compressed(
+        output / "ttt-matched-clean-predictions.npz",
+        test_rows=test_rows,
+        calibration_rows=cal_rows,
+        test_source_id=data["source_id"][test_rows],
+        calibration_source_id=data["source_id"][cal_rows],
+        test_standardized_prediction=baseline_test,
+        calibration_standardized_prediction=baseline_cal,
+    )
     result["matched_clean_cp"] = calibrate_and_save(
         output,
         data,
@@ -860,6 +963,52 @@ def main():
             reconstruction_training_presentations=budget if weight else 0,
         )
         atomic(args.output / "manifest.json", manifest)
+        checkpoint_interval = cfg.get("checkpoint_interval_presentations", 0)
+        snapshot_interval = cfg.get("snapshot_interval_presentations", 0)
+        selection_policy = cfg.get("selection_policy")
+        if selection_policy not in {None, "reserved_tune_mean_observed_nll"}:
+            raise ValueError("Unknown checkpoint selection policy")
+        if selection_policy and (not checkpoint_interval or head.kind == "huber"):
+            raise ValueError(
+                "Tuning density selection requires density head and checkpoints"
+            )
+        tuning_rows = roles["tune"][:16] if args.smoke else roles["tune"]
+        for other in (fit, test, cal):
+            if selection_policy and np.intersect1d(tuning_rows, other).size:
+                raise ValueError("Tuning selection overlaps another source role")
+        selection_provenance = None
+        if args.smoke:
+            checkpoint_interval = 256 if checkpoint_interval else 0
+            snapshot_interval = 256 if snapshot_interval else 0
+
+        def training_state():
+            return {
+                "model_state_dict": model.state_dict(),
+                "head_state_dict": head.state_dict(),
+                "model_optimizer_state_dict": optimizer.state_dict(),
+                "head_optimizer_state_dict": head_optimizer.state_dict(),
+                "rng_state": torch.get_rng_state(),
+                "cuda_rng_state": torch.cuda.get_rng_state_all()
+                if device.type == "cuda"
+                else None,
+                "numpy_rng_state": np.random.get_state(),
+                "python_rng_state": random.getstate(),
+                "supervised_rng_state": rng.bit_generator.state,
+                "mask_rng_state": mask_rng.get_state(),
+                "label_center": data["label_center"],
+                "label_scale": data["label_scale"],
+                "feature_columns": features,
+                "policy": cfg,
+                "arm": arm,
+                "completed_presentations": seen,
+                "completed_updates": steps,
+                "replay_rows": len(cache),
+                "next_replay_row": seen % len(cache),
+                "parent_sha256": manifest["parent_sha256"],
+                "source_sha": manifest["source_sha"],
+                "selection_provenance": selection_provenance,
+            }
+
         for indices, raw in replay_batches(cache, budget, effective):
             row_hash.update(indices.tobytes())
             raw = np.array(raw, copy=True)
@@ -920,11 +1069,54 @@ def main():
             }
             with (args.output / "metrics.jsonl").open("a") as f:
                 f.write(json.dumps(record) + "\n")
-            if steps == 1 or seen >= budget or steps % 92 == 0:
+            if checkpoint_interval and (
+                seen >= budget
+                or interval_crossed(seen - len(raw), seen, checkpoint_interval)
+            ):
+                receipt = save_periodic_checkpoint(args.output, training_state())
+                if selection_policy:
+                    tune = predictions(model, head, data, tuning_rows, device)
+                    select_by_reserved_tuning(
+                        args.output, receipt, data, tuning_rows, tune
+                    )
+            scheduled_snapshot = (
+                interval_crossed(seen - len(raw), seen, snapshot_interval)
+                if snapshot_interval
+                else steps % 92 == 0
+            )
+            if steps == 1 or seen >= budget or scheduled_snapshot:
                 snapshot = predictions(model, head, data, test, device)
                 np.savez_compressed(
                     args.output / f"snapshot-{seen}.npz", test_rows=test, **snapshot
                 )
+        training_seen, training_steps = seen, steps
+        if selection_policy:
+            selection_provenance = json.loads(
+                (args.output / "selected-checkpoint.json").read_text()
+            )
+            selected_path = args.output / selection_provenance["file"]
+            if sha(selected_path) != selection_provenance["sha256"]:
+                raise ValueError("Selected checkpoint checksum differs")
+            selected_state = torch_load_trusted(
+                selected_path, map_location=device, weights_only=False
+            )
+            if selected_state["source_sha"] != manifest["source_sha"]:
+                raise ValueError("Selected checkpoint source differs")
+            model.load_state_dict(selected_state["model_state_dict"], strict=True)
+            head.load_state_dict(selected_state["head_state_dict"], strict=True)
+            optimizer.load_state_dict(selected_state["model_optimizer_state_dict"])
+            head_optimizer.load_state_dict(selected_state["head_optimizer_state_dict"])
+            torch.set_rng_state(selected_state["rng_state"].cpu())
+            if selected_state["cuda_rng_state"] is not None:
+                torch.cuda.set_rng_state_all(
+                    [item.cpu() for item in selected_state["cuda_rng_state"]]
+                )
+            np.random.set_state(selected_state["numpy_rng_state"])
+            random.setstate(selected_state["python_rng_state"])
+            rng.bit_generator.state = selected_state["supervised_rng_state"]
+            mask_rng.set_state(selected_state["mask_rng_state"].cpu())
+            seen = selected_state["completed_presentations"]
+            steps = selected_state["completed_updates"]
         output_test = predictions(model, head, data, test, device)
         output_cal = predictions(model, head, data, cal, device)
         model.eval()
@@ -935,26 +1127,7 @@ def main():
         )
         save_checkpoint(
             args.output / "checkpoint.pth",
-            {
-                "model_state_dict": model.state_dict(),
-                "head_state_dict": head.state_dict(),
-                "model_optimizer_state_dict": optimizer.state_dict(),
-                "head_optimizer_state_dict": head_optimizer.state_dict(),
-                "rng_state": torch.get_rng_state(),
-                "cuda_rng_state": torch.cuda.get_rng_state_all()
-                if device.type == "cuda"
-                else None,
-                "supervised_rng_state": rng.bit_generator.state,
-                "mask_rng_state": mask_rng.get_state(),
-                "label_center": data["label_center"],
-                "label_scale": data["label_scale"],
-                "feature_columns": features,
-                "policy": cfg,
-                "arm": arm,
-                "completed_presentations": seen,
-                "completed_updates": steps,
-                "parent_sha256": manifest["parent_sha256"],
-            },
+            training_state(),
         )
         restored = torch_load_trusted(
             args.output / "checkpoint.pth", map_location=device, weights_only=False
@@ -993,9 +1166,12 @@ def main():
             )
         manifest.update(
             status="complete",
-            presentations=seen,
-            optimizer_updates=steps,
-            reconstruction_optimizer_updates=steps if weight else 0,
+            presentations=training_seen,
+            optimizer_updates=training_steps,
+            reconstruction_optimizer_updates=training_steps if weight else 0,
+            selected_model_presentations=seen,
+            selected_model_updates=steps,
+            checkpoint_selection=selection_provenance,
             row_sha256=row_hash.hexdigest(),
             mask_sha256=mask_hash.hexdigest(),
             supervised_stream_sha256=supervised_hash.hexdigest(),
