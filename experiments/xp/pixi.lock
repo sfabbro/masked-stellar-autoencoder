@@ -54,7 +54,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/python_abi-3.13-9_cp313.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
       - pypi: ../..
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=d94a969483e5abba120ac7e306cc1240d7a47f92#d94a969483e5abba120ac7e306cc1240d7a47f92
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=1d735c6a94456e5edbb4fd53f404121598c85830#1d735c6a94456e5edbb4fd53f404121598c85830
       - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/69/6af86ff66492b481c6a4c05dcfd68beb47ed8ba046440a26a2aac76b95c7/opentelemetry_exporter_http_transport-0.66b1-py3-none-any.whl
@@ -226,7 +226,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/sleef-3.9.0-hb028509_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tk-8.6.13-hbeba79b_4.conda
       - pypi: ../..
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=d94a969483e5abba120ac7e306cc1240d7a47f92#d94a969483e5abba120ac7e306cc1240d7a47f92
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=1d735c6a94456e5edbb4fd53f404121598c85830#1d735c6a94456e5edbb4fd53f404121598c85830
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/04/69/6af86ff66492b481c6a4c05dcfd68beb47ed8ba046440a26a2aac76b95c7/opentelemetry_exporter_http_transport-0.66b1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/06/90/8a88cfc4a09d02a741f7cb365d7545ea380b084bb259808c7cd0a3b701bf/fastavro-1.13.1-cp313-cp313-macosx_10_13_universal2.whl
@@ -1716,9 +1716,9 @@ packages:
   - tqdm>=4.66.0
   - pyyaml>=6.0.1
   - wandb>=0.16.0
-  - torchregress @ git+https://github.com/sfabbro/torchregress.git@d94a969483e5abba120ac7e306cc1240d7a47f92
+  - torchregress @ git+https://github.com/sfabbro/torchregress.git@1d735c6a94456e5edbb4fd53f404121598c85830
   requires_python: '>=3.12'
-- pypi: git+https://github.com/sfabbro/torchregress.git?rev=d94a969483e5abba120ac7e306cc1240d7a47f92#d94a969483e5abba120ac7e306cc1240d7a47f92
+- pypi: git+https://github.com/sfabbro/torchregress.git?rev=1d735c6a94456e5edbb4fd53f404121598c85830#1d735c6a94456e5edbb4fd53f404121598c85830
   name: torchregress
   version: 0.3.0rc1
   requires_dist:
@@ -1735,6 +1735,7 @@ packages:
   - pandas>=3.0 ; extra == 'test'
   - scoringrules>=0.11 ; extra == 'test'
   - properscoring>=0.1 ; extra == 'test'
+  - statsmodels>=0.14 ; extra == 'test'
   - hypothesis>=6.100 ; extra == 'test'
   - zensical>=0.0.52 ; extra == 'docs'
   - matplotlib>=3.11 ; extra == 'viz'

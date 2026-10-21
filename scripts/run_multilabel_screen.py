@@ -38,6 +38,7 @@ from masked_stellar_autoencoder.training.multilabel_experiments import (
     native_xp_error_subset,
     qmc_normal_nodes,
     refine_one,
+    supervised_fit_rows,
 )
 from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
     spectrophotometric_inputs,
@@ -851,11 +852,29 @@ def main():
             flow_type=arm.get("flow_type", "nsf"),
             noise_aware=arm.get("noise_aware", False),
             mc_samples=cfg["noise_mc_samples"],
+            flow_objective=arm.get("flow_objective", "nll"),
+            contrastive_weight=arm.get("contrastive_weight", 0.1),
         ).to(device)
+        if cfg.get("density_conformal", False):
+            # Fail before SGD if the published environment lacks post-fit APIs.
+            from torchregress.losses.conformal import (
+                ConformalizedDensity,
+                ContrastiveFlowConformal,
+            )
+
+            assert ConformalizedDensity and ContrastiveFlowConformal
+            if len(np.unique(data["source_id"][fit])) != len(fit):
+                raise ValueError("FIT source IDs must be unique for negative contexts")
+            manifest["density_api_preflight"] = {
+                "passed": True,
+                "before_sgd": True,
+                "group_feature": "actual apparent G; boundaries FIT-only",
+                "contrastive_negatives": cfg["contrastive_negative_policy"],
+            }
         head.point_nodes = qmc_normal_nodes(
             8 if args.smoke else cfg["point_samples"]
         ).to(device)
-        if arm.get("recovery_of"):
+        if arm.get("recovery_of") or cfg.get("flow_memory_preflight", False):
             # Exercise the original failing evaluation shape before new SGD.
             model.eval()
             head.eval()
@@ -877,7 +896,7 @@ def main():
             atomic(
                 args.output / "flow-moment-memory-preflight.json",
                 {
-                    "recovery_of": arm["recovery_of"],
+                    "recovery_of": arm.get("recovery_of"),
                     "context_rows": len(preflight_latent),
                     "fixed_point_nodes": len(head.point_nodes),
                     "inverse_node_chunk": 16,
@@ -912,7 +931,7 @@ def main():
         supervised_hash = hashlib.sha256()
 
         def supervised(warmup=False):
-            rows = rng.choice(fit, size=min(batch, len(fit)), replace=len(fit) < batch)
+            rows = supervised_fit_rows(rng, fit, batch)
             supervised_hash.update(rows.astype("i8").tobytes())
             x = torch.tensor(data["input"][rows], device=device)
             y = torch.tensor(
@@ -929,7 +948,14 @@ def main():
                     latent = model.encoder(x)
             else:
                 latent = model.encoder(x)
-            return head.criterion(latent, y, sigma)
+            return head.criterion(
+                latent,
+                y,
+                sigma,
+                source_ids=torch.tensor(
+                    data["source_id"][rows].astype("i8"), device=device
+                ),
+            )
 
         model.eval()
         head.train()
@@ -1153,6 +1179,33 @@ def main():
             **{"test_" + k: v for k, v in output_test.items()},
             **{"calibration_" + k: v for k, v in output_cal.items()},
         )
+        if cfg.get("density_conformal", False):
+            from masked_stellar_autoencoder.training.density_calibration import (
+                calibrate_density_scores,
+                save_density_calibration,
+            )
+
+            apparent_g = data["raw"][:, features.index("G")]
+            density_summary, density_arrays = calibrate_density_scores(
+                calibration_scores=-output_cal["intrinsic_log_prob_standardized"],
+                test_scores=-output_test["intrinsic_log_prob_standardized"],
+                fit_g=apparent_g[fit],
+                calibration_g=apparent_g[cal],
+                test_g=apparent_g[test],
+                fit_ids=data["source_id"][fit],
+                calibration_ids=data["source_id"][cal],
+                test_ids=data["source_id"][test],
+                provenance={
+                    "checkpoint_sha256": sha(args.output / "checkpoint.pth"),
+                    "scaler_sha256": hashlib.sha256(
+                        np.r_[data["label_center"], data["label_scale"]].tobytes()
+                    ).hexdigest(),
+                    "source_sha256": sha(cfg["cohort"]),
+                },
+                api="density" if head.flow_objective == "nll" else "contrastive",
+            )
+            save_density_calibration(args.output, density_summary, density_arrays)
+            manifest["joint_density_conformal"] = density_summary
         ttt = (
             postprocess(
                 args.output, model, head, data, test, cal, device, cfg, args.smoke

@@ -57,6 +57,13 @@ def qmc_normal_nodes(count=256, dimensions=3, seed=2026):
     return torch.cat([normal, -normal]).float()
 
 
+def supervised_fit_rows(rng, fit, batch_size=256):
+    """Draw a bounded FIT minibatch without repeated source positions."""
+    if batch_size < 1 or len(fit) < 2:
+        raise ValueError("At least two FIT objects and a positive batch are required")
+    return rng.choice(fit, size=min(batch_size, len(fit)), replace=False)
+
+
 class MultiLabelHead(nn.Module):
     """Native three-output Huber, diagonal Gaussian or conditional joint flow."""
 
@@ -70,12 +77,22 @@ class MultiLabelHead(nn.Module):
         noise_aware=False,
         mc_samples=32,
         flow_bound=8.0,
+        flow_objective="nll",
+        contrastive_weight=0.1,
     ):
         super().__init__()
         if kind not in {"huber", "gaussian", "flow"}:
             raise ValueError("Unsupported multilabel head")
         if noise_aware and kind == "huber":
             raise ValueError("Huber is not a density measurement likelihood")
+        if flow_objective not in {"nll", "contrastive", "nll_contrastive"}:
+            raise ValueError("Unsupported flow objective")
+        if flow_objective != "nll" and (kind != "flow" or noise_aware):
+            raise ValueError("Contrastive contexts require a clean joint flow")
+        if contrastive_weight < 0:
+            raise ValueError("Contrastive weight must be nonnegative")
+        self.flow_objective = flow_objective
+        self.contrastive_weight = float(contrastive_weight)
         self.kind, self.noise_aware, self.flow_type = kind, bool(noise_aware), flow_type
         self.input = nn.Linear(latent_dim, width)
         self.block = nn.Sequential(
@@ -114,7 +131,14 @@ class MultiLabelHead(nn.Module):
                 kwargs.update(bound=flow_bound, bins=16)
             if flow_type == "bpf":
                 kwargs.update(degree=8)
-            base = NormalizingFlowLoss(create_flow_model(**kwargs))
+            flow = create_flow_model(**kwargs)
+            if flow_objective == "nll":
+                base = NormalizingFlowLoss(flow)
+            else:
+                from torchregress.losses.nflows import ContrastiveFlowLoss
+
+                base = ContrastiveFlowLoss(flow, temperature=1.0, margin=0.0)
+
             if noise_aware:
                 from torchregress.losses.noise_aware_density import (
                     NoiseAwareDensityLoss,
@@ -138,7 +162,7 @@ class MultiLabelHead(nn.Module):
         loss = self.loss_fn.base_loss if self.noise_aware else self.loss_fn
         return loss.flow(self(latent))
 
-    def criterion(self, latent, target, sigma):
+    def criterion(self, latent, target, sigma, *, source_ids=None):
         if target.shape != (len(latent), 3) or sigma.shape != target.shape:
             raise ValueError("Complete standardized three-target rows required")
         if (
@@ -160,6 +184,18 @@ class MultiLabelHead(nn.Module):
             return self.loss_fn((mean, variance), target)
         if self.noise_aware:
             return self.loss_fn(raw, target, sigma=sigma).mean() / 3
+        if self.flow_objective != "nll":
+            if source_ids is None or len(raw) < 2:
+                raise ValueError("Contrastive batches require unique source IDs")
+            if len(torch.unique(source_ids)) != len(raw):
+                raise ValueError("Contrastive negatives cannot contain duplicate stars")
+            # One fixed cyclic derangement; both context branches retain gradients.
+            negative = torch.roll(raw, shifts=1, dims=0).unsqueeze(1)
+            contrastive = self.loss_fn(raw, target, negative_context=negative)
+            if self.flow_objective == "contrastive":
+                return contrastive / 3
+            nll = -self.loss_fn.log_prob(raw, target).mean()
+            return (nll + self.contrastive_weight * contrastive) / 3
         return self.loss_fn(raw, target) / 3
 
     def moments(self, latent):

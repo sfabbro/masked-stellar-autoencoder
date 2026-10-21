@@ -75,3 +75,22 @@ def test_long_multilabel_binds_one_noise_density_and_fixed_budget():
             ),
             {},
         )
+
+
+def test_density_wave_matches_parent_budget_and_disjoint_postfit_policy():
+    suite = yaml.safe_load(Path("configs/multilabel-density-20261021.yaml").read_text())
+    assert len(suite["arms"]) == 3
+    assert suite["density_conformal"] and suite["flow_memory_preflight"]
+    assert {a["flow_objective"] for a in suite["arms"]} == {
+        "nll",
+        "contrastive",
+        "nll_contrastive",
+    }
+    for arm in suite["arms"]:
+        assert arm["seed"] == 42 and not arm["ttt"]
+        assert arm["reconstruction_weight"] == 0.03
+        env = bind_prediction_policy(
+            {"task": "multilabel-density-screen", "run_id": arm["run_id"]}, {}
+        )
+        assert env["MSA_PRETRAIN_RESUME"] == suite["checkpoint"]
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "10000000"

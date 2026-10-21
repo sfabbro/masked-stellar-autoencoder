@@ -1,0 +1,57 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+sidecar: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+native_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+head_warmup_updates: 500
+supervised_batches_per_update: 8
+minimum_role_rows: 128
+point_samples: 256
+noise_mc_samples: 32
+ttt_objects: 512
+ttt_calibration_objects: 256
+ttt_steps: 3
+forward_epochs: 40
+forward_iterations: 30
+arms:
+- run_id: multi_nsf_density_nll_s42_v1
+  kind: flow
+  flow_type: nsf
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  flow_objective: nll
+  contrastive_weight: 0.1
+- run_id: multi_nsf_density_contrastive_s42_v1
+  kind: flow
+  flow_type: nsf
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  flow_objective: contrastive
+  contrastive_weight: 0.1
+- run_id: multi_nsf_density_nllcontrastive_s42_v1
+  kind: flow
+  flow_type: nsf
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  flow_objective: nll_contrastive
+  contrastive_weight: 0.1
+flow_memory_preflight: true
+density_conformal: true
+contrastive_negative_policy:
+  source: FIT minibatch only, sampled without replacement
+  derangement: roll context by one within batch
+  negatives_per_positive: 1
+  duplicate_source_ids: reject
+  temperature: 1.0
+  margin: 0.0
+  joint_loss_divisor: 3

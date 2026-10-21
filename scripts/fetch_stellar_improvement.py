@@ -89,6 +89,33 @@ def main():
                     "layernorm_recon_consistency",
                 ):
                     files += [f"{role}-{mode}.npz", f"{role}-{mode}-diagnostics.json"]
+        elif task == "multilabel-density-screen":
+            files += [
+                "paired-cohort.npz",
+                "predictions.npz",
+                "checkpoint.pth",
+                "initial_reconstruction.npz",
+                "final_reconstruction.npz",
+                "metrics.jsonl",
+                "conformal.npz",
+                "native-provenance.json",
+                "xp-unit-audit.json",
+                "flow-moment-memory-preflight.json",
+                "density-calibration-summary.json",
+                "density-calibration-arrays.npz",
+            ]
+            # Actual 10M replay schedule: the 9M cohort boundary makes the
+            # third 92-update snapshot 9032768 rather than 9043968 rows.
+            files += [
+                f"snapshot-{presentations}.npz"
+                for presentations in (
+                    32768,
+                    3014656,
+                    6029312,
+                    9032768,
+                    10000000,
+                )
+            ]
         elif task == "forward-eiv-screen":
             files += [
                 "comparison.json",

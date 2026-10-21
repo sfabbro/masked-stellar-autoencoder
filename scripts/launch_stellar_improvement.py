@@ -59,10 +59,16 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
-    if plan["task"] in {"multilabel-screen", "multilabel-long"}:
+    if plan["task"] in {
+        "multilabel-screen",
+        "multilabel-long",
+        "multilabel-density-screen",
+    }:
         suite = yaml.safe_load(
             Path(
-                "configs/multilabel-long-20261020.yaml"
+                "configs/multilabel-density-20261021.yaml"
+                if plan["task"] == "multilabel-density-screen"
+                else "configs/multilabel-long-20261020.yaml"
                 if plan["task"] == "multilabel-long"
                 else "configs/multilabel-screen-20261020.yaml"
             ).read_text()

@@ -887,3 +887,32 @@ Pairedreport12338 DONE/PNG+PDFVISUALPASS; verified-density-point-cp-comparison i
 Large latestsmallreceiptstill750M/22890, normalepochschedule, noheavyfetch/notification. NoactiveCPU/collector/launcher. Forwardstrictfailure/trajectorycache retained/no repeatedsolver; no forwardverifiedranking. RemainingNSF/cINN/BPF/noisyflow/rawbenchmarkprovenance gates requireindependentwork; no newwaves.
 
 ValidatedMAFtoolpromoted to tracked experiments/xp/monitor/verify_multilabel_maf.py with strictcompleted-audit provenance reuse: originalsourcearchiveSHA+allinputbindings must match; completedpass/fail reportreusedwithoutmodel load, changedinputs rejected, incompleteoldversion requires exactarchive resume. Two focusedanalytictriangularJacobian/inverse andno-model-replaycache regressionsPASS. Actualproductionenv invocation oncompletedMAFreturnedoriginalreportwithno modelreplay. RequiredCI19819 DONE551PASS/4skip/allchecks; initialCIinvocationstoppedbeforechecks duePATHmissingPixi, explicitPATHcorrected. Ruff/diffchecksPASS; proofboundoriginalarchive preserved despitepromotedtoolformat/CLI changes. Source/newtests+docs/report ready for onepublication; no trainingcode or acceptedexperiment changed.
+
+## 2026-10-21T22:52UTC — large training passes one billion presentations; ninth-epoch full state preserved
+
+Actual latestreceipt1350000000presentations/41202updates, nine completepasses overthefixed150MdistinctTRAINsample (30% ofplanned4.5B). Ledgerdd27e718/sourcee525ae7/outputbindingunchanged. Newcheckpoint checkpoint-001350000000.pth SHA dcb5ff32ecef370c31b4cc2e505db5b4e5f8a6b4329d9908f033117227b29152/410367373bytes. Singlelockedpreservation92797 DONE/exit0: downloadedmissingfileONCE, exactSHA/size/CPUtorchload/source+parent/counters/model+headfinite/bothAdamfinite+steps/trainingRNGpresencePASS. Model65Adamstatesall570268=parent529066+41202;head10all41702=500warmup+41202. CUDA/torch/label/mask/augmentationRNGs present. Receipt/local-verification.json undercheckpoints; exactpreservationscript+smallreceipt archivedruntime-20261021T2252. Neverredownload/reloadthiscompletedmilestoneforroutineQA;50Mpreservationunchanged/norepeat. Safety/loadstateaudit only, nohead/decoderreplay/scientificaccuracy/exactinterruptedresume claim. Firstbillion/ninth-epochmilestoneNOTIFIEDthisheartbeat,suppressrepeat; nextsubstantialmilestone aroundhalfbudget orcompletion/failure. No newjobs/sourcechanges/publication; noteslocal. MAF/long/ensemblescientificfindings unchanged/alreadyreported, no repeatedchecks; remainingflowvariants/rawsourcegates stillpending. Noactivecollector/CPU/publisher.
+
+## New human authorization — matched conformal contrastive density screen
+
+The human explicitly requested review of the latest torchregress density summaries
+and implementation, fixes where needed, and actual comparative prediction launches.
+This supersedes the earlier no-new-wave instruction. The running 150M job remains
+untouched. Library review traced a6328be documentation to the new conformal APIs,
+found a scalar interval callback-sign bug and grouped missing-input error, and
+requires their tested publication before the new pin. These do not clear any
+historical density or inverse-solver verification failure.
+
+New bounded policy configs/multilabel-density-20261021.yaml declares three unique
+10M parent86/native Teff/logg/FeH/recon0.03/seed42 arms: NSF NLL control, pure
+context-contrastive NSF, and NLL+0.1 contrastive NSF. Explicit one-context cyclic
+FIT-only negatives retain both gradient branches; source IDs must be unique.
+A small-FIT smoke sampling bug was fixed by bounded sampling without replacement;
+production FIT was already larger than256. No target-noise wrapper silently
+bypasses contrastive training. Postfit global and FIT-apparent-G-tertile Mondrian
+90/95 joint-density level sets reuse each fit, alongside previous marginal CP;
+all scores/groups/thresholds/IDs/weights and NumPy order-statistic checks saved.
+TTT disabled for isolation. New task dispatch/parent-budget binding, actual
+128-context inverse-memory preflight and missing-only core/snapshot collection
+registered. Focused objective equation+gradient/source-duplicate checks pass;
+actual native smokes, new-pin environment locks and full required CI/publication
+must pass before any one-attempt submission. No new accepted IDs claimed yet.
