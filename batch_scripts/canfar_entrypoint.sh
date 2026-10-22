@@ -122,6 +122,11 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == density-precision-certificate ]]; then
+      "${pixi_run[@]}" python -u scripts/run_density_precision_certificate.py \
+        --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-screen ]]; then
       "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py \
         --config configs/multilabel-screen-20261020.yaml \

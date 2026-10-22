@@ -59,6 +59,23 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "density-precision-certificate":
+        suite = yaml.safe_load(
+            Path("configs/density-precision-certificate-20261022.yaml").read_text()
+        )
+        if plan["run_id"] != suite["run_id"]:
+            raise ValueError("Certificate run differs from pinned policy")
+        expected = {
+            "MSA_PRETRAIN_RESUME": suite["checkpoint"],
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError(
+                    "Certificate parent/budget override differs from policy"
+                )
+            env[key] = value
+        return env
     if plan["task"] in {
         "multilabel-screen",
         "multilabel-long",
