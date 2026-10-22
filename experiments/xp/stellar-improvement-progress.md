@@ -1080,3 +1080,5 @@ Human authorized all checkup fixes. Implemented exact shared-latent joint Gaussi
 Existing-data identity recovery: versioned Willett Kepler KIC→Gaia crossmatch recovered10,081/10,169 rows from APOKASC3;88 Kepler and32,883 nonKepler rows remain unmatched. Exact64-bit IDs/inputSHAs preserved. Shared seismic inputs mean correlated teacher errors, not independent truth. New crossmatch5testsPASS; rescoring-policy15testsPASS.
 
 RequiredCI v2 DONE793PASS4skip/allchecks; initialrun exposed inheritedRuffUP038/codespell/format issues, correctedwithoutnumericalchanges. AdditionalWillettcrossmatch5PASS andtorchregressfocused23PASS. Finalhookrun/publication inprogress. New nativepilot remainscodepath-only, no newCANFARjob/pinchange.
+
+Publication complete: d95311d PUSHEDorigin/hooksPASS; finalfresh fullsuite798PASS4skip (includes5newcrossmatchtests), treeclean. NoactiveCPU/collector/commit/push. Nativepilot andrescoringtool scopes above unchanged; fullrolecorrectedrescoring remainsNEXT, blockedtargetdata/holdoutgates explicit.

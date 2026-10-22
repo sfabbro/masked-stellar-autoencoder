@@ -29,3 +29,5 @@
 No new CANFAR training wave, catalogue acquisition or accepted experiment repin is part of these repairs.
 
 Existing-data identity recovery: versioned Willett Kepler KIC→Gaia crossmatch recovered10,081/10,169 rows from APOKASC3;88 Kepler and32,883 nonKepler rows remain unmatched. Exact64-bit IDs/inputSHAs preserved. Shared seismic inputs mean correlated teacher errors, not independent truth. New crossmatch5testsPASS; rescoring-policy15testsPASS.
+
+Final verification: **798 tests passed, 4 skipped**, repository hooks passed; implementation published to origin at `d95311d`. No active pilot/test process remains. Full-role density rescoring is prepared, not yet executed; blocked native-target gates above remain explicit.
