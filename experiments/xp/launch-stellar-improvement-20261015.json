@@ -4022,6 +4022,37 @@
       "attempted_at": "2026-10-21T23:36:01.691278+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "density_fp64_precision_certificate_v1",
+      "name": "msa-si15-density-fp64-precision-certificate-v1",
+      "source_sha": "65e2243c4cb24f5000e6f8b1f9a87ae082bf0ddb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/density_fp64_precision_certificate_v1",
+      "plan": {
+        "run_id": "density_fp64_precision_certificate_v1",
+        "task": "density-precision-certificate",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        },
+        "env": {
+          "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+          "MSA_EXPERIMENT_PRESENTATIONS": "0"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wetmolvn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T15:31:06.533149+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
