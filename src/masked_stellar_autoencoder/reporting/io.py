@@ -38,7 +38,12 @@ from .schema import (
 )
 
 #: Row fields that do not count towards "a null cell needs a null_reason":
-#: pure metadata (identity, notes, derived flag) and optional counts.
+#: pure metadata (identity, notes, derived flag), optional counts, and the
+#: additive R1 calibration/theory annotations.  The last group is deliberately
+#: excluded so a complete 1.0.0 row (no Mondrian/theory product) still validates
+#: unchanged after the optional columns were added; a producer that does run the
+#: product fills them, and a producer that does not leaves them blank rather than
+#: inventing a null_reason for a metric it never computed.
 _NON_DATA_FIELDS = frozenset(
     {
         "null_reason",
@@ -48,6 +53,12 @@ _NON_DATA_FIELDS = frozenset(
         "model_id",
         "bootstrap_reps",
         "gt10Gyr_n",
+        "calibration_kind",
+        "pooled_strata",
+        "theory_sigma",
+        "gamma",
+        "theory_envelope_low",
+        "theory_envelope_high",
     }
 )
 

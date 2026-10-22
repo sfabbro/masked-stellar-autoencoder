@@ -25,8 +25,14 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 CONTRACT_ID = "C6"
+
+# 1.1.0 (R1, 2026-10-22): additive *optional* columns for the Mondrian +
+# theory-error conformal product -- ``calibration_kind``, ``pooled_strata``,
+# ``theory_sigma``, ``gamma`` and ``theory_envelope_low/high``.  No required
+# column changed, so a 1.0.0 producer still validates (new cells are null with an
+# explicit ``null_reason``).
 
 #: Frozen target order of the plan (``teff, logg, fe_h, s=log d, tau=log age, alpha``).
 #: C2 owns the executable ``TargetSpec`` registry; this module only carries the
@@ -74,6 +80,18 @@ LEVELSET_METHODS: tuple[str, ...] = (
     "none",
 )
 CONFORMAL_METHODS: tuple[str, ...] = ("split_rank", "cqr", "none")
+#: Which calibration construction produced an interval/region.  ``split_rank``
+#: is marginal split conformal, ``mondrian_split_rank`` is the stage/tier
+#: Mondrian product and ``theory_scaled_*`` carries a cross-fitted theory-error
+#: scale (see ``reporting.theory``).
+CALIBRATION_KINDS: tuple[str, ...] = (
+    "split_rank",
+    "mondrian_split_rank",
+    "theory_scaled_split_rank",
+    "theory_scaled_mondrian",
+    "cqr",
+    "none",
+)
 JOINT_METHODS: tuple[str, ...] = (
     "rank_score_mahalanobis",
     "rank_score_neg_log_p",
@@ -96,6 +114,17 @@ STRATUM_KINDS: tuple[str, ...] = (
     "healpix64",
     "survey",
     "custom",
+    # R1 stage strata (reporting.strata.stage_stratum).
+    "dwarf_ms",
+    "turnoff_sgb",
+    "rgb",
+    "rc",
+    "agb_other",
+    # R1 tier strata (reporting.strata.tier_stratum).
+    "xp_full",
+    "xp_partial",
+    "no_xp",
+    "gaia_only",
 )
 
 
@@ -253,6 +282,48 @@ _UNIT_FIELD = _s(
 )
 _STRATUM_FIELD = _s("stratum", desc="pre-registered slice name (see STRATUM_KINDS)")
 
+# R1 optional calibration/theory columns.  They are additive: a producer that
+# does not run the Mondrian/theory product leaves them null (and therefore must
+# state a null_reason, as for every other optional metric cell).
+_CALIBRATION_KIND_FIELD = _s(
+    "calibration_kind",
+    enum=CALIBRATION_KINDS,
+    required=False,
+    nullable=True,
+    desc="marginal split | Mondrian | theory-scaled conformal construction",
+)
+_POOLED_STRATA_FIELD = _s(
+    "pooled_strata",
+    required=False,
+    nullable=True,
+    desc="comma-joined pooled Mondrian group (includes this stratum); empty if unpooled",
+)
+_THEORY_SIGMA_FIELD = _f(
+    "theory_sigma",
+    unit="native",
+    rng=(0.0, None),
+    required=False,
+    desc="mean per-row model-family dispersion sigma_theo in native label units",
+)
+_GAMMA_FIELD = _f(
+    "gamma",
+    rng=(0.0, None),
+    required=False,
+    desc="cross-fitted theory-error scale in sigma_exp + gamma * sigma_theo",
+)
+_THEORY_ENVELOPE_LOW_FIELD = _f(
+    "theory_envelope_low",
+    unit="native",
+    required=False,
+    desc="mean lower bound of the model-family sensitivity envelope (not a CI)",
+)
+_THEORY_ENVELOPE_HIGH_FIELD = _f(
+    "theory_envelope_high",
+    unit="native",
+    required=False,
+    desc="mean upper bound of the model-family sensitivity envelope (not a CI)",
+)
+
 METRICS_FIELDS: tuple[Field, ...] = (
     _PROVENANCE_FIELDS[0],
     _s("model_id", desc="model/arm identity inside a run"),
@@ -296,6 +367,12 @@ METRICS_FIELDS: tuple[Field, ...] = (
     _f("cov_nominal", rng=(0.0, 1.0), desc="nominal level matching cov_90 (0.9)"),
     _f("width_90", unit="native", rng=(0.0, None), desc="mean 90% interval width"),
     _f("interval_score_90", unit="native", rng=(0.0, None)),
+    _CALIBRATION_KIND_FIELD,
+    _POOLED_STRATA_FIELD,
+    _THEORY_SIGMA_FIELD,
+    _GAMMA_FIELD,
+    _THEORY_ENVELOPE_LOW_FIELD,
+    _THEORY_ENVELOPE_HIGH_FIELD,
     _f("calib_slope", desc="OLS slope of cover-indicator on log width"),
     _f("ci_lo", desc="grouped-bootstrap lower CI bound of the headline error"),
     _f("ci_hi", desc="grouped-bootstrap upper CI bound of the headline error"),
@@ -327,6 +404,8 @@ JOINT_FIELDS: tuple[Field, ...] = (
     _f("joint_cov_90_rank_score", rng=(0.0, 1.0), desc="rank-score region (primary)"),
     _f("region_volume_native", rng=(0.0, None), desc="mean native-unit region volume"),
     _s("levelset_method", enum=LEVELSET_METHODS),
+    _CALIBRATION_KIND_FIELD,
+    _POOLED_STRATA_FIELD,
     _f("tarp_coverage", rng=(0.0, 1.0), required=False),
     _f("energy_score", rng=(0.0, None)),
     _f("variogram_score", rng=(0.0, None)),
@@ -362,6 +441,11 @@ DISTANCE_FIELDS: tuple[Field, ...] = (
     _f("frac_err_q90", rng=(0.0, None)),
     _f("cov90_mas", rng=(0.0, 1.0)),
     _f("cov90_kpc", rng=(0.0, 1.0)),
+    _GAMMA_FIELD,
+    _CALIBRATION_KIND_FIELD,
+    _THEORY_SIGMA_FIELD,
+    _THEORY_ENVELOPE_LOW_FIELD,
+    _THEORY_ENVELOPE_HIGH_FIELD,
     _f(
         "frac_ci_empty",
         rng=(0.0, 1.0),
@@ -389,6 +473,11 @@ AGE_FIELDS: tuple[Field, ...] = (
     _f("cov68", rng=(0.0, 1.0)),
     _f("cov90", rng=(0.0, 1.0)),
     _f("width90_log", unit="dex", rng=(0.0, None)),
+    _GAMMA_FIELD,
+    _CALIBRATION_KIND_FIELD,
+    _THEORY_SIGMA_FIELD,
+    _THEORY_ENVELOPE_LOW_FIELD,
+    _THEORY_ENVELOPE_HIGH_FIELD,
     _i("gt10Gyr_n", rng=(0.0, None), required=False),
     _f("gt10Gyr_bias_log", unit="dex"),
     _s(

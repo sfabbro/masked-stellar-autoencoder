@@ -13,7 +13,14 @@ and ``05-heads-losses-metrics.md`` section 7.1:
   conformal rank, joint rank-score regions (primary) and Bonferroni boxes
   (secondary), Mondrian wrapper and region-size helpers;
 * :mod:`~masked_stellar_autoencoder.reporting.io` -- validating writers/readers
-  that never emit a bare ``NaN`` and never erase a failed verdict.
+  that never emit a bare ``NaN`` and never erase a failed verdict;
+* :mod:`~masked_stellar_autoencoder.reporting.strata` -- pre-registered
+  Teff/logg stage strata, explicit-data tier strata, minimum-n Mondrian
+  calibration with adjacent-stage pooling, and per-stratum coverage/width;
+* :mod:`~masked_stellar_autoencoder.reporting.theory` -- model-family theory
+  dispersion/envelope (a sensitivity bound, not coverage) and the
+  theory-scaled conformal score with a cross-fitted ``gamma`` on calibration
+  rows only.
 
 All functions are NumPy/float64 and checkpoint-free.  ``density_kind`` is
 mandatory on every proper-score call: intrinsic and observed-label densities are
@@ -22,7 +29,7 @@ different estimands and are never mixed in one aggregator.
 
 from __future__ import annotations
 
-from . import calibration, io, metrics, schema
+from . import calibration, io, metrics, schema, strata, theory
 from .calibration import (
     InsufficientCalibrationError,
     bonferroni_box_region,
@@ -77,6 +84,7 @@ from .metrics import (
     variogram_score,
 )
 from .schema import (
+    CALIBRATION_KINDS,
     CONTRACT_ID,
     NULL_REASONS,
     ROW_SCHEMAS,
@@ -91,21 +99,52 @@ from .schema import (
     record_verdict,
     schema_document,
 )
+from .strata import (
+    STAGE_BOUNDARIES,
+    STAGE_DESCRIPTIONS,
+    STAGE_ORDER,
+    STRATUM_SEPARATOR,
+    TIER_ORDER,
+    MondrianCalibrator,
+    compose_strata,
+    stage_stratum,
+    stratum_metrics,
+    tier_stratum,
+)
+from .theory import (
+    CALIBRATION_KIND,
+    THEORY_MODEL_ORDER,
+    THEORY_SCORE_KIND,
+    TheoryScaledScore,
+    theory_dispersion,
+    theory_envelope,
+)
 
 __all__ = [
+    "CALIBRATION_KIND",
+    "CALIBRATION_KINDS",
     "CONTRACT_ID",
-    "MIN_COUNT",
-    "NULL_REASONS",
-    "ROW_SCHEMAS",
-    "SCHEMA_VERSION",
-    "TARGET_ORDER",
-    "TARGET_TRANSFORMS",
-    "TARGET_UNITS",
     "ContractError",
     "InsufficientCalibrationError",
+    "MIN_COUNT",
+    "MondrianCalibrator",
+    "NULL_REASONS",
     "NonFiniteValueError",
     "NullReason",
     "NullReasonError",
+    "ROW_SCHEMAS",
+    "SCHEMA_VERSION",
+    "STAGE_BOUNDARIES",
+    "STAGE_DESCRIPTIONS",
+    "STAGE_ORDER",
+    "STRATUM_SEPARATOR",
+    "TARGET_ORDER",
+    "TARGET_TRANSFORMS",
+    "TARGET_UNITS",
+    "THEORY_MODEL_ORDER",
+    "THEORY_SCORE_KIND",
+    "TIER_ORDER",
+    "TheoryScaledScore",
     "benjamini_hochberg",
     "bonferroni",
     "bonferroni_box_region",
@@ -114,6 +153,7 @@ __all__ = [
     "calibrate_mondrian_intervals",
     "calibration",
     "certificate_template",
+    "compose_strata",
     "coverage",
     "coverage_calibration_slope",
     "crps_from_samples",
@@ -149,6 +189,13 @@ __all__ = [
     "schema",
     "schema_document",
     "split_conformal_interval",
+    "stage_stratum",
+    "strata",
+    "stratum_metrics",
+    "theory",
+    "theory_dispersion",
+    "theory_envelope",
+    "tier_stratum",
     "validate_row",
     "validate_rows",
     "variogram_score",
