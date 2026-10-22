@@ -247,6 +247,19 @@ and kpc; never bin by inverted noisy ϖ; hold out all 99,574 reference IDs.
 
 **Detailed loss specification:** [08-losses-age-distance-alpha.md](08-losses-age-distance-alpha.md) §2–§3.
 
+**Age data and systematics:** [09-age-data-and-systematics.md](09-age-data-and-systematics.md).
+The current StarHorse labels are **MSTO/SGB only** (APOGEE DR17 + GALAH DR3, 4,440 strict)
+and show a +1.7–2.3 Gyr bias against 50 held-out LEGACY seismic stars. New sources:
+**APOKASC-3** (15,808 giants; already local; 8,895 in the enriched cohort but only 672 in
+the 10M benchmark → train giant ages on the 150M cache), **Willett et al. 2026**
+(17,000 Kepler/K2/TESS asteroseismic ages, Zenodo 20428851, 44 MB; Gaia-ID column currently
+unusable — crossmatch via KIC/TESS/APOGEE IDs), open/globular-cluster coeval anchors, and
+**Gaia DR4 FLAME** after 2 Dec 2026 (`ap_rvs` 35.8M, `ap_xp` 1B; crosswalk via
+`dr3_neighbourhood`). APOKASC3 and Willett differ by 0.2–0.4 Gyr median and up to 3.3 Gyr
+NMAD for the oldest stars, so age must be trained with a **multi-teacher hierarchical
+loss + meta-correction layer** and reported on a **named age scale with a systematic
+envelope**, never as truth.
+
 **Age.** `τ=log(age/Gyr)`. Primary: multi-quantile `(0.16,0.5,0.84)` (+0.05/0.95) with
 crossover, because it matches the reported asymmetric percentiles and is proper. Controls:
 split-normal in τ (documented approximation), heteroscedastic Gaussian on τ, flow third. Declare

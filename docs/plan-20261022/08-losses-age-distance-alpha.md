@@ -282,7 +282,37 @@ fit role; report `κ_age` in the certificate. No physical ensemble spread may be
 substitute. Define the estimand as `p(age_obs | x)` and state calibration is only as good
 as the StarHorse labels.
 
-### 2.5 External anchors (held out)
+### 2.5 Multi-teacher correction learning (new data; full note in [09](09-age-data-and-systematics.md))
+
+The current labels are **MSTO/SGB** StarHorse ages (APOGEE DR17/GALAH DR3), while the new
+giant labels (APOKASC-3, Willett 2026 Kepler/K2/TESS) are a different evolutionary regime
+and a different age scale. Treat each catalogue/pipeline `s` as a teacher with its own bias
+and scale; never merge their values:
+
+```
+t_i ~ p_pop(tau | x_i; psi)                         # learned population prior / flow
+y_{i,s} | t_i, x_i ~ N( a_s(x_i) + b_s(x_i) t_i,    # teacher offset + scale
+                       sigma_s^2(x_i) + kappa_s^2 sigma_quoted,is^2 )
+L_age = sum_i log sum/ integrate over t_i  +  cluster coeval term
+```
+
+- `a_s(x), b_s(x)` are smooth functions of Teff/logg/FeH/alpha/stage (small MLPs or
+  stage-binned affine); `kappa_s` is fitted from overlap scatter (APOKASC3 vs Willett
+  measured 0.73–1.25 Gyr NMAD).
+- **Bridging**: zero overlap exists between StarHorse MSTO/SGB and APOKASC3 giants; use
+  **cluster coevality** (members share one age) and globular/open-cluster anchors to
+  identify the relative scale.
+- **Predict-time correction layer** `tau_corr = tau_base + g_phi(tau_base, x, target_scale)`
+  (monotone, small) is fitted on anchors/new-survey overlaps; when a new catalogue arrives,
+  re-fit only `g_phi` (few-shot), not the full model. This is the practical "correction
+  learning as we predict".
+- **Uncertainty**: `Var(age) = Var_model + Var_within_teacher + Var_between_teacher +
+  Var_scale`. Conformal within a teacher cannot cover teacher/scale systematics; report the
+  between-teacher spread as a **systematic envelope**, not truth coverage.
+- **Anchor policy**: APOKASC3/Willett/cluster/LEGACY IDs are held out of fit/tune/cal;
+  leave-one-teacher-out and cluster-holdout evaluation; "age on a named scale", never truth.
+
+### 2.6 External anchors (held out)
 
 - **APOKASC3** `table4.dat` (15,808 stars) is **entirely held out** of fit/tune/cal and
   used only as an external comparison.
@@ -291,7 +321,7 @@ as the StarHorse labels.
   unless an explicit cross-validation policy is declared.
 - All reference IDs are banned from fit/tune; report the ban in the manifest.
 
-### 2.6 Evaluation and metrics
+### 2.7 Evaluation and metrics
 
 - Bias/MAE in **Gyr and log Gyr**, PIT and coverage at 0.68/0.90 in `τ`, interval width,
   CRPS/NLL where a full distribution exists.
