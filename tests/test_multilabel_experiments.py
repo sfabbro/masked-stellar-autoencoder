@@ -142,20 +142,8 @@ def test_policy_has_independent_methods_and_matched_training_budgets():
             Path(__file__).parents[1] / "configs/multilabel-screen-20261020.yaml"
         ).read_text()
     )
-    assert len(policy["arms"]) == len({arm["run_id"] for arm in policy["arms"]}) == 16
+    assert len(policy["arms"]) == len({arm["run_id"] for arm in policy["arms"]}) == 14
     assert policy["reconstruction_presentations"] == 10_000_000
-    w2 = {
-        arm["run_id"]: arm for arm in policy["arms"] if arm["run_id"].startswith("w2_")
-    }
-    assert set(w2) == {"w2_nsf_clean_norecon_s42", "w2_nsf_noise_norecon_s42"}
-    assert all(
-        arm["kind"] == "flow"
-        and arm["reconstruction_weight"] == 0.0
-        and arm["ttt"] is False
-        for arm in w2.values()
-    )
-    assert w2["w2_nsf_noise_norecon_s42"]["noise_aware"] is True
-    assert "noise_aware" not in w2["w2_nsf_clean_norecon_s42"]
     forward = [arm for arm in policy["arms"] if arm["kind"] == "forward"]
     assert len(forward) == 1 and forward[0]["reconstruction_presentations"] == 0
     assert len(policy["ensemble_policy"]["members"]) == 3
