@@ -4323,6 +4323,60 @@
       "attempted_at": "2026-10-22T17:12:06.867838+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_nsf_clean_norecon_s42_v2",
+      "name": "msa-si15-w2-nsf-clean-norecon-s42-v2",
+      "source_sha": "8e655d6c40274932674e7d05c1d59baabe664be9",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_nsf_clean_norecon_s42_v2",
+      "plan": {
+        "run_id": "w2_nsf_clean_norecon_s42_v2",
+        "task": "multilabel-w2",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "iugfs75b"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:10:00+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_nsf_noise_norecon_s42_v2",
+      "name": "msa-si15-w2-nsf-noise-norecon-s42-v2",
+      "source_sha": "8e655d6c40274932674e7d05c1d59baabe664be9",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_nsf_noise_norecon_s42_v2",
+      "plan": {
+        "run_id": "w2_nsf_noise_norecon_s42_v2",
+        "task": "multilabel-w2",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "be6uz3mx"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:10:00+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
