@@ -4573,6 +4573,168 @@
       "attempted_at": "2026-10-22T18:08:40.211042+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_mvgaussian_s44",
+      "name": "msa-si15-w2-mvgaussian-s44",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_mvgaussian_s44",
+      "plan": {
+        "run_id": "w2_mvgaussian_s44",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tmint7tu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:29:32.585766+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_mdn8_s44",
+      "name": "msa-si15-w2-mdn8-s44",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_mdn8_s44",
+      "plan": {
+        "run_id": "w2_mdn8_s44",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zwoobaqs"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:29:41.436532+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_lowrank_s44",
+      "name": "msa-si15-w2-lowrank-s44",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_lowrank_s44",
+      "plan": {
+        "run_id": "w2_lowrank_s44",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "xsi7dsby"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:29:56.483752+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_mdn4_s43",
+      "name": "msa-si15-w2-mdn4-s43",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_mdn4_s43",
+      "plan": {
+        "run_id": "w2_mdn4_s43",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mysctms8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:30:06.582874+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_mdn4_s44",
+      "name": "msa-si15-w2-mdn4-s44",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_mdn4_s44",
+      "plan": {
+        "run_id": "w2_mdn4_s44",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "of5uuv0p"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:30:20.489497+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w2_mvgaussian_noise_s43",
+      "name": "msa-si15-w2-mvgaussian-noise-s43",
+      "source_sha": "6b0f8fa8b3dbc11cb5ffd9cdb3b72508a43efe62",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w2_mvgaussian_noise_s43",
+      "plan": {
+        "run_id": "w2_mvgaussian_noise_s43",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ooh61a79"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:30:41.434875+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
