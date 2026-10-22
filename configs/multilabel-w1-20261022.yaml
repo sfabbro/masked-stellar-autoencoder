@@ -124,4 +124,39 @@ arms:
   reconstruction_weight: 0.03
   ttt: false
   lowrank_rank: 2
+- run_id: w2_mvgaussian_s44
+  kind: mvgaussian
+  seed: 44
+  reconstruction_weight: 0.03
+  ttt: false
+- run_id: w2_mdn8_s44
+  kind: mdn
+  seed: 44
+  reconstruction_weight: 0.03
+  ttt: false
+  mdn_components: 8
+- run_id: w2_lowrank_s44
+  kind: lowrank
+  seed: 44
+  reconstruction_weight: 0.03
+  ttt: false
+  lowrank_rank: 2
+- run_id: w2_mdn4_s43
+  kind: mdn
+  seed: 43
+  reconstruction_weight: 0.03
+  ttt: false
+  mdn_components: 4
+- run_id: w2_mdn4_s44
+  kind: mdn
+  seed: 44
+  reconstruction_weight: 0.03
+  ttt: false
+  mdn_components: 4
+- run_id: w2_mvgaussian_noise_s43
+  kind: mvgaussian
+  seed: 43
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
 run_id: multilabel_w1_20261022
