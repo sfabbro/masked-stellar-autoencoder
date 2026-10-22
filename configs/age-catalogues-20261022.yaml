@@ -1,0 +1,21 @@
+# A0 age-catalogue pins. Local paths for the audit; ARC paths used by the CANFAR job.
+apokasc3:
+  local: experiments/xp/results-stellar-improvement/apokasc3_collection_v1/table4.dat
+  arc: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/table4.dat.gz
+  gzip_sha256: af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d
+  role: APOKASC-3 Kepler giant ages (RGB/RC); model-dependent, not truth
+willett:
+  record: https://zenodo.org/records/20428851
+  base: https://zenodo.org/records/20428851/files
+  files:
+    cat_Kepler_APG.csv: 5e6f04e3dc4f5e929eef20863f3a7edda18af49d4ea58f53199f0e9d85186c74
+    cat_K2_APG_BHM.csv: d546118ddd73378d9f06abbaea5f80f02b9709110970a770eb514f68ad5c9110
+    cat_K2_APG_COR.csv: 54c5edc1dee6de4cfb68c5f39a4a12af30388f8bf32508b0ddda03727d34ec4a
+    cat_K2_GAL_BHM.csv: 6535cb2f377ef73e65299451ec5cffdb8051f6a8d7311bfb04fa61c33f2698ee
+    cat_TESS_APG.csv: 61170dbac20c9c391d51f478dfb9c4a605e31b361afb50f28f130e1d72d641afaf
+  caveat: GAIADR3_ID is constant in the current release; crossmatch via KIC/TESS/APOGEE IDs
+current:
+  age_cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_feature_cohort_v1/age-feature-cohort.h5
+  dataset_view: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/dataset_view_v2/dataset-view.h5
+  posterior_labels: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5

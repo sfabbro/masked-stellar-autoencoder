@@ -122,6 +122,17 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == age-data-audit ]]; then
+      : "${MSA_AGE_APOKASC3:?Set MSA_AGE_APOKASC3}" "${MSA_AGE_COHORT:?}" "${MSA_AGE_DATASET_VIEW:?}" "${MSA_AGE_POSTERIOR:?}"
+      "${pixi_run[@]}" python -u scripts/age_data_audit.py \
+        --apokasc3 "$MSA_AGE_APOKASC3" \
+        --willett-dir "/scratch/willett-age-${MSA_EXPERIMENT_RUNS}" \
+        --age-cohort "$MSA_AGE_COHORT" \
+        --dataset-view "$MSA_AGE_DATASET_VIEW" \
+        --posterior-labels "$MSA_AGE_POSTERIOR" \
+        --output "$experiment_output" --download
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == density-precision-certificate ]]; then
       "${pixi_run[@]}" python -u scripts/run_density_precision_certificate.py \
         --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
