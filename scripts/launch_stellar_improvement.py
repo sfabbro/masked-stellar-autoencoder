@@ -81,12 +81,14 @@ def bind_prediction_policy(
         "multilabel-long",
         "multilabel-density-screen",
         "multilabel-w2",
+        "multilabel-w1",
     }:
         suite_path = {
             "multilabel-screen": "configs/multilabel-screen-20261020.yaml",
             "multilabel-long": "configs/multilabel-long-20261020.yaml",
             "multilabel-density-screen": "configs/multilabel-density-20261021.yaml",
             "multilabel-w2": "configs/multilabel-w2-20261022.yaml",
+            "multilabel-w1": "configs/multilabel-w1-20261022.yaml",
         }[plan["task"]]
         suite = yaml.safe_load(Path(suite_path).read_text())
         arm = next((a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None)

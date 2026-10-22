@@ -15,7 +15,7 @@
 
 Standardize fit-only `u_j=(T_j(y_j)−c_j)/w_j` [V] `multilabel_experiments.py:36-43`; frozen order `(teff,logg,fe_h,s,τ,alpha)`. `eval_ensemble.py:46-63,74-95` inverts **positionally** (`i==5` parallax, `i==0` teff) [V] ⇒ any reorder silently breaks inversion (F12). For flows, order coordinates so the **most-observed** dimension is last (fewest partials in the autoregressive tail; §1 last para).
 
-**Native-unit density (Jacobian).** For coordinate-wise `T`: `log p_Y(y|x) = log p_U(u|x) − Σ_{j∈obs} log w_j − Σ_{j∈obs} log|T'_j(y_j)|`, with `T'=1` (identity), `T'=1/d` (log kpc; `+log1000` if pc), `T'=1/age` (log Gyr). **Verified defect:** `scripts/run_multilabel_screen.py:337` computes **one scalar** `jacobian=Σlog(label_scale)` and subtracts it from every row [V] — valid only for identity transforms; with distance/age it is wrong by `+log d`/`+log age` per row. **It must become per-row, per-observed-coordinate before any distance/age density number is quoted.**
+**Native-unit density (Jacobian).** For coordinate-wise `T`: `log p_Y(y|x) = log p_U(u|x) − Σ_{j∈obs} log w_j + Σ_{j∈obs} log|T'_j(y_j)|`, with `T'=1` (identity), `T'=1/d` (log kpc; `+log1000` if pc), `T'=1/age` (log Gyr). **Verified defect:** `scripts/run_multilabel_screen.py:337` computes **one scalar** `jacobian=Σlog(label_scale)` and subtracts it from every row [V] — valid only for identity transforms; with distance/age it is missing the `+log|T'|` term (`−log d` for log-kpc, `−log age` for log-Gyr) per row; the correct offset is `log w + log d` / `log w + log age`. **It must become per-row, per-observed-coordinate before any distance/age density number is quoted.**
 
 **Teff linear-Kelvin.** Wired today (affine standardizer on raw K, [V]); quoted labels/errors are symmetric K and the metric layer is in K (`point.csv.units ∈ {K,dex}` [P] `04:29`); at 3.5–7 kK a 70 K error is 1–2%, so for the *model* linear-vs-log is a 1e-4 NLL effect. For the *label term* it is not a choice: log-Teff × additive-K error is a different integral.
 
@@ -58,7 +58,7 @@ Options: declared complete-case cohort, per-label marginal heads, or `2^d−1` s
 
 ## 3. Losses and likelihoods
 
-`L_obs = −(1/N)Σ_i[ log p_U(u_i^{obs}) − Σ_{j∈obs}log w_j − Σ_{j∈obs}log|T'_j(y_ij)| ]`, `N` = observed eligible **coordinates** for marginal heads (`LossSum(total,count,rows)` contract [V] `joint_prediction.py:239`) or **rows** for joint flows. Declare `loss_denominator ∈ {per_coordinate,per_row}`: a flow NLL and a per-coordinate Gaussian NLL are not the same unit and must never share a column.
+`L_obs = −(1/N)Σ_i[ log p_U(u_i^{obs}) − Σ_{j∈obs}log w_j + Σ_{j∈obs}log|T'_j(y_ij)| ]`, `N` = observed eligible **coordinates** for marginal heads (`LossSum(total,count,rows)` contract [V] `joint_prediction.py:239`) or **rows** for joint flows. Declare `loss_denominator ∈ {per_coordinate,per_row}`: a flow NLL and a per-coordinate Gaussian NLL are not the same unit and must never share a column.
 
 1. **Observed-label vs intrinsic.** `p_obs(y_obs|x)=∫p_intr(y|x)N(y_obs;y,R)dy` — two estimands. `p_intr` is **not identified** from `p_obs` without `R`; deconvolution is ill-posed and worst exactly in the tails we care about. Never call `p_intr` a PDF of truth; never score `p_intr` against noisy labels and call it calibration (it rewards over-wide distributions). Stamp `density_kind∈{intrinsic,observed_label}` on every NLL/CRPS. **Verified aliasing to fix:** `observed_lp = log_prob(...,σ) if noise_aware else lp` [V]`:322-326` ⇒ non-noise-aware arms' "observed" **is** "intrinsic"; `moments()` is always intrinsic (no `+σ²`) [V]`:201-218` ⇒ saved `variance` and `observed_log_prob` are inconsistent for every noise-aware arm. Save both accessors explicitly.
 2. **Analytic Gaussian convolution.** `N(μ,Σ+R)=N(μ,Σ)*N(0,R)` **exactly** for Gaussian `p_intr` and diagonal `R` — no MC, no approximation. Already correct for the diagonal head [V]`:180-184` and via `Σ+R` in the masked marginal [V]`joint_prediction.py:222`.
@@ -131,7 +131,7 @@ APOGEE `α/M` ≠ GALAH `α/Fe` ≠ RVS `alphafe` — **different observables**.
 run_id, source_sha, library_commit, checkpoint_sha256, cohort_sha256, scaler_sha256,
 eval{dtype,device,batch_size,torch}, labels:[6], units:["K","dex","dex","kpc","Gyr","dex"],
 target_transforms:["identity","identity","identity","log_kpc","log_gyr","identity"],
-**jacobian{form:"per_row_per_coordinate", applied, terms["-log w","-log d","-log age"]},
+**jacobian{form:"per_row_per_coordinate", applied, terms["log w + log d","log w + log age","log w"]},
 **density_kind:"intrinsic"|"observed_label",
 **loss_denominator:"per_coordinate"|"per_row",
 **noise_model{kind:"diag"|"full"|"none", source_tagged, kappa{APOGEE,GALAH,DESI,…}},

@@ -94,15 +94,37 @@ a context input for the same arm, except the explicitly named measurement-assist
 L_dist = − (1/N_obs) Σ_i log ∫ p_θ(s | x_i) · N(π_obs,i | z_i + e^{-s}, σ_eff,i) ds
 ```
 
-**Gaussian head (GH-32).** Substitute `s = μ + σ u`, `u ~ N(0,1)`:
+**Gaussian head — two fixed quadrature rules.** A literal "GH-32 in `s`" rule is
+**not adequate** for bright/near stars: with `σ_s = 0.3`, `h* = e^{−μ} = 1` mas it
+errs by 1.7e-3 at `σ_eff = 0.1 h*`, 1.6e-4 at `0.14 h*`, and diverges (NLL 29.1 vs
+−0.285) at `0.01 h*` because fixed `s` nodes cannot resolve a narrow likelihood in
+`h = e^{−s}`. Implement **two fixed rules, both saved with the certificate**:
 
-```
-∫ = (1/√π) Σ_{k=1}^{32} w_k · N(π_obs,i | z_i + exp(−(μ_i + σ_i u_k)), σ_eff,i)
-```
+1. **Prior-space GH in `s`** (`rule="gh_prior"`): `s = μ + σ_s u`,
+   ```
+   ∫ = (1/√π) Σ_k w_k · N(π_obs | z + e^{−(μ+σ_s u_k)}, σ_eff)
+   ```
+   used only where the prior can resolve the likelihood
+   (`σ_eff / (σ_s h*)` above a declared threshold).
+2. **Residual-space GH in `h`** (`rule="gh_residual"`, default via `rule="auto"`):
+   GH nodes in the standardized residual `h_k = (π_obs − z) − σ_eff r_k`,
+   `s_k = −log h_k`, with exact Jacobian `1/h_k`:
+   ```
+   ∫ = (1/√π) Σ_k w_k · p_s(s_k) · (1/h_k) · N(π_obs | z + h_k, σ_eff) / N(r_k | 0,1)   [normalized form]
+   ```
+   This rule is exact in the narrow-error limit (`σ_eff → 0`: 1.9e-11 at
+   `σ_eff = 1e-6`) and representable while `σ_eff < h*/6.63`; per-row `rule="auto"`
+   selects it when valid and falls back to `gh_prior` otherwise.
+   **Do not** write the naive "prior density × likelihood" formula without the
+   Jacobian: `∫ p(s) N(π | z+e^{−s}, σ) ds = E_{s∼p}[N(...)]`; a naive version
+   double-counts the prior density.
 
-with Gauss–Hermite nodes `u_k`, weights `w_k`; compute in log space with `logsumexp`.
-No importance weights are needed because the Gaussian `e^{−u²/2}` decay dominates the
-`exp(−s)` growth. The loss is differentiable through `μ` and `σ`.
+**Mandatory certificate fields:** `quadrature.rule`, `residual_rule_rows`,
+`min_prior_resolution = min σ_eff/(σ_s h*)` over prior rows, and the GH16→GH256
+convergence check run **on the actual `σ_eff/h*` population** (prior-branch error at
+the switch point was measured at 5e-9 for `σ_s=0.2`, 5e-5 for 0.3, 8e-3 for 0.5,
+0.27 for 0.8 — flag prior rows where the ratio is below the declared threshold).
+A "GH-32" statement alone is not sufficient.
 
 **MDN head.** Apply the same GH rule to every component and combine with
 `logsumexp(log w_k + log integral_k)`.

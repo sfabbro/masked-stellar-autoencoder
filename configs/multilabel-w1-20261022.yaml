@@ -1,0 +1,90 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+sidecar: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+native_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+head_warmup_updates: 500
+supervised_batches_per_update: 8
+minimum_role_rows: 128
+point_samples: 256
+noise_mc_samples: 32
+ttt_objects: 512
+ttt_calibration_objects: 256
+ttt_steps: 3
+forward_epochs: 40
+forward_iterations: 30
+ensemble_policy:
+  members:
+  - multi_gaussian_recon_s42_v1
+  - multi_gaussian_recon_s43_v1
+  - multi_gaussian_recon_s44_v1
+  point_estimator: fixed_equal_member_mean
+  total_reconstruction_presentations: 30000000
+  aggregate_checkpoint: null
+  note: All three checkpoints required; post-fit aggregation only, no calibrated spread
+    claim.
+arms:
+- run_id: w1_quantile_s42
+  kind: quantile
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  quantiles:
+  - 0.05
+  - 0.16
+  - 0.5
+  - 0.84
+  - 0.95
+  quantile_crossover: true
+  quantile_crossover_penalty: 10.0
+- run_id: w1_expectile_s42
+  kind: expectile
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  expectiles:
+  - 0.1
+  - 0.5
+  - 0.9
+- run_id: w1_mvgaussian_s42
+  kind: mvgaussian
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+- run_id: w1_lowrank_s42
+  kind: lowrank
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  lowrank_rank: 2
+- run_id: w1_mdn4_s42
+  kind: mdn
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  mdn_components: 4
+- run_id: w1_mdn8_s42
+  kind: mdn
+  seed: 42
+  reconstruction_weight: 0.03
+  ttt: false
+  mdn_components: 8
+- run_id: w1_mvgaussian_norecon_s42
+  kind: mvgaussian
+  seed: 42
+  reconstruction_weight: 0.0
+  ttt: false
+- run_id: w1_mdn4_norecon_s42
+  kind: mdn
+  seed: 42
+  reconstruction_weight: 0.0
+  ttt: false
+  mdn_components: 4
+run_id: multilabel_w1_20261022

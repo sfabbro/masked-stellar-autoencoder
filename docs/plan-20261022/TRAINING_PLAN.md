@@ -75,7 +75,7 @@ grid:
 | D8 | **Distance is two products forever:** predictive PDF `p(s|x)` and profile-likelihood confidence set `C_α`; a normalized `p·L` is a posterior under a learned prior, not prior-free inference | Statistically correct naming; avoids the "Bayesian distance" overclaim |
 | D9 | **Age is `log(age/Gyr)`** with multi-quantile primary; APOKASC3 held out entirely; report Gyr and log Gyr; no "true age" | StarHorse posteriors are model/parallax-conditioned; asymmetric percentiles are the native label |
 | D10 | **α is interface-only** this round: source-tagged output layer, gauge constraint, per-source κ_o; five gates before any number | APOGEE α/M ≠ GALAH α/Fe; zero α rows ingested; tail has no overlap pairs |
-| D11 | **Per-row Jacobian, `density_kind`, `loss_denominator`** in every density path; current single-scalar Jacobian is wrong for log-distance/log-age | `run_multilabel_screen.py:337` subtracts one scalar; with log d/log age the native density is off by +log d/+log age per row |
+| D11 | **Per-row Jacobian, `density_kind`, `loss_denominator`** in every density path; current single-scalar Jacobian is wrong for log-distance/log-age | `run_multilabel_screen.py` subtracts one scalar (log w) and omits `+log|T'|`; with log d/log age the native density misses the `−log d`/`−log age` term per row (correct offset `log w + log d`) |
 | D12 | **Metrics:** exact conformal rank `⌈(n+1)(1−α)⌉`; joint rank-score region primary, Bonferroni box secondary; grouped two-way bootstrap; proper scores from samples for flows | Current CP uses plug-in quantile (+6.0e-4 at n=2046); 91.9%/29.1% joint numbers are Bonferroni-only |
 
 **Corrected no-XP fact (must replace earlier wording).** The 83,491 "no-XP" rows in the
@@ -103,7 +103,7 @@ Full specification in [05](05-heads-losses-metrics.md) §1–§7. Summary:
 Standardization fitted on fit only; frozen order; no positional inversion (`eval_ensemble` today
 hardcodes index 5=parallax, index 0=Teff — must become registry-driven).
 
-**Native-unit density.** `log p_Y(y|x) = log p_U(u|x) − Σ_obs log w_j − Σ_obs log|T'_j(y_j)|`
+**Native-unit density.** `log p_Y(y|x) = log p_U(u|x) − Σ_obs log w_j + Σ_obs log|T'_j(y_j)|`
 with `T'=1` (identity), `T'=1/d` (log kpc), `T'=1/age` (log Gyr). Per row and per observed
 coordinate, not one scalar.
 
@@ -156,7 +156,7 @@ and can be enabled as a **declared representation experiment** with role exclusi
 | Module | Inputs | Output | Loss | Adds |
 |---|---|---|---|---|
 | A 3-label core | latent 256 | μ + full 3×3 `scale_tril` (observed-label `Σ+R`) | masked Gaussian measurement NLL (exact observed-subvector, already implemented) | anchor |
-| B distance | `[latent‖context]` 384 | `s=log(d/kpc)`, `log σ_s` or a 1-D flow/MDN | convolved raw-parallax NLL, GH-32 (delta-method as control only) | new |
+| B distance | `[latent‖context]` 384 | `s=log(d/kpc)`, `log σ_s` or a 1-D flow/MDN | convolved raw-parallax NLL: residual-space GH default + prior-space GH fallback (delta-method as control only) | new |
 | C age | 256 (+declared context) | log-age quantiles / split-normal / flow | pinball + crossover (primary), split-normal NLL (control), flow (third) | new |
 | D alpha | 256 | source-tagged μ, log σ | NLL with per-source affine scale, gauge-fixed | interface |
 | E joint | 256 | block-structured 3×3 core + separate s/age | sum of A+B+C terms with own denominators | superset, later |
@@ -212,9 +212,14 @@ L_A = −Σ_i log ∫ p_θ(s|x_i) · N(ϖ_i | z_i + exp(−s), σ_eff,i) ds
 σ_eff² = κ_ϖ² σ_ϖ,quoted² + σ_zp²(G,colour)
 ```
 
-No StarHorse distance targets, no `1/ϖ`, negative parallaxes retained. Gaussian `p_θ`: GH-32 in
-`s`; flow/MDN: QMC-64 fixed nodes. Report the prior-vs-likelihood mass fraction (how much the
-answer is data-driven) and per-ϖ/σ-bin fallback.
+No StarHorse distance targets, no `1/ϖ`, negative parallaxes retained. Gaussian `p_θ`: **two fixed
+quadrature rules** — residual-space GH in `h=e^{−s}` (default; exact in the narrow-error limit and
+representable while `σ_eff < h*/6.63`) with prior-space GH in `s` as the fallback; `rule="auto"`
+selects per row. The literal "GH-32 in `s`" alone is **not adequate** (measured error 1.7e-3 at
+`σ_eff=0.1h*`, divergent at `0.01h*`). Certificate records `quadrature.rule`,
+`residual_rule_rows`, `min_prior_resolution`; flow/MDN use QMC-64 fixed nodes. Report the
+prior-vs-likelihood mass fraction (how much the answer is data-driven) and per-ϖ/σ-bin fallback.
+Do not implement the naive prior-density×likelihood form (double counts the prior).
 
 **Products (named separately forever):**
 - **A. predictive PDF** `p_θ(s|x)` — a normalized predictive distribution (population-dependent).
@@ -327,7 +332,7 @@ use a second session from 23 Oct 18 UTC.
 | C2 | Target registry `TargetSpec` (unit, transform, positivity, error kind, source tag, status) and registry-driven inversion | new `training/targets.py`; `eval_ensemble.py`, `infer_msa.py` | reorder labels test; legacy config regression <1e-6 |
 | C3 | Head-family union: `mvgaussian`, `lowrank`, `mdn`, `quantile`, `expectile`, `sls` (+ `slsconformal` post-fit); flow/nfm/cfm after pin | `training/multilabel_experiments.py:84-151`; `scripts/run_multilabel_screen.py:876-884` | one synthetic test per family; finite loss; exact NLL on known Σ/π/τ; `--smoke` |
 | C4 | Post-latent context conditioner (22→128) + distance head B + age head C + α interface D; block-structured joint E | `training/joint_prediction.py`, new `training/context_heads.py`; `run_joint_continuation.py` stage | checkpoint loads unmodified; gradcheck; context ablation |
-| C5 | Distance likelihood: convolved raw-parallax NLL, GH-32, zero point, profile-likelihood CI; tests from §5 | `training/parallax_likelihood.py` (exists), new runner | §5 nine tests; no-pollution check |
+| C5 | Distance likelihood: convolved raw-parallax NLL (residual-space GH default + prior-space GH fallback), zero point, profile-likelihood CI; tests from §5 | `training/parallax_likelihood.py` (exists), new `training/distance_heads.py` | §5 nine tests; no-pollution check; `residual_rule_rows`/`min_prior_resolution` in certificate |
 | C6 | Metrics/reporting module + schema; exact conformal rank; joint rank-score; grouped bootstrap; energy/variogram/region size; certificate | new `src/masked_stellar_autoencoder/reporting/`; `scripts/make_release_report.py`; fix `training/conformal.py` | synthetic exchangeable coverage ≥1−α over 2,000 reps; plug-in version shown to fail |
 | C7 | CANFAR stages: joint-continuation; 10M/20M staging; peak-GPU/dtype/batch receipt; library pin + provenance test | `batch_scripts/canfar_entrypoint.sh`, `scripts/launch_stellar_improvement.py`, `scripts/stage_joint_reconstruction.py`, `pyproject.toml` | smoke + staging hash; `peak_allocated_bytes` present; library commit test |
 | C8 | Fix observed/intrinsic aliasing; flows' complete-case selection printed; MC convolution convergence gate | `run_multilabel_screen.py:322-326`; `multilabel_experiments.py:201-218` | certificate `density_kind`; complete-case n printed |

@@ -30,6 +30,7 @@ from masked_stellar_autoencoder.training.input_measurement import (
     xp_indices,
 )
 from masked_stellar_autoencoder.training.multilabel_experiments import (
+    NON_DENSITY_KINDS,
     MultiLabelHead,
     complete_roles,
     conformal_intervals,
@@ -42,6 +43,17 @@ from masked_stellar_autoencoder.training.multilabel_experiments import (
 )
 from masked_stellar_autoencoder.training.spectrophotometric_inputs import (
     spectrophotometric_inputs,
+)
+from masked_stellar_autoencoder.training.targets import (
+    REGISTRY,
+    density_offsets,
+    log_abs_det_jacobian,
+    model_coordinates,
+    native_from_standardized,
+    validate_targets,
+)
+from masked_stellar_autoencoder.training.targets import (
+    TARGET_NAMES as REGISTRY_TARGET_NAMES,
 )
 
 COHORT_SHA = "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120"
@@ -116,12 +128,36 @@ def save_periodic_checkpoint(output, state):
 
 
 def select_by_reserved_tuning(output, receipt, data, rows, result):
-    """Select only by the declared disjoint tuning observed-label likelihood."""
-    values = np.asarray(result["observed_log_prob_native"])
+    """Select only by the declared disjoint tuning likelihood.
+
+    The density estimand is explicit: a noise-aware arm is selected on the
+    observed-label density, a plain density arm on the intrinsic one. The
+    observed-label array is NaN (never silently aliased) when no measurement
+    model was declared.
+    """
+    dim = len(np.asarray(data["label_center"]))
+    observed = np.asarray(
+        result.get("observed_log_prob_native", np.full(len(rows), np.nan)), dtype="f8"
+    )
+    if "observed_log_prob_available" in result:
+        available = bool(np.asarray(result["observed_log_prob_available"]).item())
+    else:
+        # Legacy in-memory mapping: the observed array was the selection key.
+        available = True
+    if available and np.isfinite(observed).all():
+        values, density_kind = observed, "observed_label"
+    else:
+        values = np.asarray(
+            result.get("intrinsic_log_prob_native", np.full(len(rows), np.nan)),
+            dtype="f8",
+        )
+        density_kind = "intrinsic"
     if values.shape != (len(rows),) or not len(rows) or not np.isfinite(values).all():
         raise ValueError("Finite joint tuning densities required for selection")
-    score = float(-values.mean() / 3)
-    prediction = result["mean"] * data["label_scale"] + data["label_center"]
+    score = float(-values.mean() / dim)
+    prediction = native_from_standardized(
+        target_names(data), result["mean"], data["label_center"], data["label_scale"]
+    )
     path = output / f"tuning-{receipt['presentations']:012d}.npz"
     np.savez_compressed(
         path,
@@ -135,6 +171,10 @@ def select_by_reserved_tuning(output, receipt, data, rows, result):
         **receipt,
         "selection_policy": "reserved_tune_mean_observed_nll",
         "tuning_mean_observed_nll_per_label_native": score,
+        "tuning_density_kind": density_kind,
+        "tuning_loss_denominator": str(
+            np.asarray(result.get("loss_denominator", "per_coordinate")).item()
+        ),
         "tuning_mae_native": np.abs(prediction - data["value"][rows]).mean(0).tolist(),
         "tuning_rows": len(rows),
         "tuning_ordered_source_id_sha256": hashlib.sha256(
@@ -281,17 +321,45 @@ def predictions(model, head, data, rows, device, batch=128):
     not recover the lost context precision. Keep the entire evaluation path,
     including label standardization and native-unit conversion, in float64.
     Saved quadrature nodes retain their values; no estimator is resampled.
+
+    The native-unit conversion is now **per row and per observed coordinate**.
+    For a declared transform ``T`` the exact relation is::
+
+        log p_Y(y|x) = log p_U(u|x) - sum_obs log w - sum_obs log|T'(y)|
+
+    A single scalar ``sum(log(scale))`` is only correct for identity
+    transforms; with ``log_kpc``/``log_gyr`` it is wrong by ``+log d`` /
+    ``+log age`` on every row. The emitting keys ``density_kind``,
+    ``loss_denominator`` and ``jacobian*`` make the two estimands
+    (intrinsic versus observed-label) explicit instead of aliased.
     """
     encoder = copy.deepcopy(model.encoder).to(device=device, dtype=torch.float64)
     evaluation_head = copy.deepcopy(head).to(device=device, dtype=torch.float64)
     encoder.eval()
     evaluation_head.eval()
+    names = target_names(data)
+    dim = len(names)
     label_center = np.asarray(data["label_center"], dtype="f8")
     label_scale = np.asarray(data["label_scale"], dtype="f8")
+    if label_center.shape != (dim,) or label_scale.shape != (dim,):
+        raise ValueError("label center/scale must match the declared target names")
+    observed_source = data.get("observed")
+    quality_source = data.get("quality")
+    has_density = bool(
+        getattr(head, "has_density", head.kind not in NON_DENSITY_KINDS)
+    )
+    density_kind = getattr(head, "density_kind", None)
+    loss_denominator = getattr(head, "loss_denominator", "per_coordinate")
     means = []
     variances = []
+    observed_variances = []
     intrinsic = []
+    intrinsic_standardized = []
     observed = []
+    observed_standardized = []
+    jacobian = []
+    transform_terms = []
+    observed_rows_all = []
     with torch.no_grad():
         for start in range(0, len(rows), batch):
             selected = rows[start : start + batch]
@@ -303,15 +371,20 @@ def predictions(model, head, data, rows, device, batch=128):
             mean, variance = evaluation_head.moments(latent)
             if not torch.isfinite(mean).all():
                 raise FloatingPointError("Nonfinite multilabel point predictions")
-            if evaluation_head.kind != "huber" and (
+            if has_density and (
                 not torch.isfinite(variance).all() or not (variance > 0).all()
             ):
                 raise FloatingPointError("Invalid predictive variance")
+            native = np.asarray(data["value"][selected], dtype="f8")
+            if native.shape[1] != dim:
+                raise ValueError("native target width differs from the registry names")
+            observed_rows = np.isfinite(native)
+            if observed_source is not None:
+                observed_rows &= np.asarray(observed_source)[selected].astype(bool)
+            if quality_source is not None:
+                observed_rows &= np.asarray(quality_source)[selected].astype(bool)
             y = torch.tensor(
-                (
-                    (np.asarray(data["value"][selected], dtype="f8") - label_center)
-                    / label_scale
-                ),
+                (model_coordinates(names, native) - label_center) / label_scale,
                 device=device,
                 dtype=torch.float64,
             )
@@ -320,38 +393,105 @@ def predictions(model, head, data, rows, device, batch=128):
                 device=device,
                 dtype=torch.float64,
             )
-            lp = evaluation_head.log_prob(latent, y)
-            observed_lp = (
-                evaluation_head.log_prob(latent, y, sigma)
-                if evaluation_head.noise_aware
-                else lp
+            if has_density:
+                lp = evaluation_head.log_prob(latent, y)
+                if density_kind == "observed_label":
+                    observed_lp = evaluation_head.log_prob(latent, y, sigma)
+                else:
+                    # No measurement model was declared: the observed-label
+                    # density is NOT identified. Store NaN, never the intrinsic
+                    # value under the observed name.
+                    observed_lp = torch.full_like(lp, float("nan"))
+                if not torch.isfinite(lp).all():
+                    raise FloatingPointError("Nonfinite intrinsic density")
+                if density_kind == "observed_label" and not torch.isfinite(
+                    observed_lp
+                ).all():
+                    raise FloatingPointError("Nonfinite observed-label density")
+            else:
+                lp = torch.full((len(selected),), float("nan"), device=device)
+                observed_lp = lp.clone()
+            offsets = density_offsets(names, native, label_scale, observed=observed_rows)
+            transform = log_abs_det_jacobian(
+                names, native, observed=observed_rows
             )
-            if evaluation_head.kind != "huber" and (
-                not torch.isfinite(lp).all() or not torch.isfinite(observed_lp).all()
-            ):
-                raise FloatingPointError("Nonfinite intrinsic/observed density")
+            jacobian.append(offsets)
+            transform_terms.append(transform)
+            observed_rows_all.append(observed_rows)
             means.append(mean.cpu().numpy())
             variances.append(variance.cpu().numpy())
-            intrinsic.append(lp.cpu().numpy())
-            observed.append(observed_lp.cpu().numpy())
-    jacobian = float(np.log(label_scale).sum())
+            if density_kind == "observed_label":
+                observed_variances.append(
+                    (variance + sigma.square()).cpu().numpy()
+                )
+            else:
+                observed_variances.append(np.full_like(variance.cpu().numpy(), np.nan))
+            reduction = offsets.sum(1)
+            intrinsic_standardized.append(lp.cpu().numpy())
+            observed_standardized.append(observed_lp.cpu().numpy())
+            intrinsic.append(lp.cpu().numpy() - reduction)
+            observed.append(observed_lp.cpu().numpy() - reduction)
     intrinsic, observed = np.concatenate(intrinsic), np.concatenate(observed)
     return dict(
         mean=np.concatenate(means),
         variance=np.concatenate(variances),
-        intrinsic_log_prob_standardized=intrinsic,
-        observed_log_prob_standardized=observed,
-        intrinsic_log_prob_native=intrinsic - jacobian,
-        observed_log_prob_native=observed - jacobian,
+        observed_variance=np.concatenate(observed_variances),
+        intrinsic_log_prob_standardized=np.concatenate(intrinsic_standardized),
+        observed_log_prob_standardized=np.concatenate(observed_standardized),
+        intrinsic_log_prob_native=intrinsic,
+        observed_log_prob_native=observed,
+        jacobian=np.concatenate(jacobian),
+        jacobian_transform=np.concatenate(transform_terms),
+        target_observed=np.concatenate(observed_rows_all),
+        density_kind=np.array(density_kind if density_kind else "none"),
+        loss_denominator=np.array(loss_denominator),
+        observed_log_prob_available=np.array(density_kind == "observed_label"),
+        target_names=np.array(names),
+        label_scale=np.asarray(label_scale, dtype="f8"),
     )
+
+
+def target_names(data):
+    """Declared target names for this arm; registry-validated, never positional."""
+    return validate_targets(tuple(data.get("target_names", REGISTRY_TARGET_NAMES[:3])))
+
+
+def _point_estimator(head):
+    """Declare how the reported point estimate was formed, per head family."""
+    if head.kind == "flow":
+        return (
+            "Fixed antithetic Sobol inverse-base sample mean, not exact analytic "
+            "marginal mean"
+        )
+    if head.kind == "mdn":
+        return "exact analytic mixture mean and mixture variance"
+    if head.kind in {"mvgaussian", "lowrank"}:
+        return "exact analytic joint mean and marginal variances"
+    if head.kind == "quantile":
+        return (
+            "0.5-quantile output; variance from a Gaussian location-scale fit to "
+            "the predicted levels (diagnostic, not a density)"
+        )
+    if head.kind == "expectile":
+        return (
+            "0.5-expectile output; variance from a Gaussian location-scale fit to "
+            "the predicted expectiles (diagnostic, not a density)"
+        )
+    if head.kind == "huber":
+        return "Huber point output; no predictive variance"
+    return f"{int(getattr(head, 'target_dim', 3))} conditional point means"
 
 
 def calibrate_and_save(output, data, test, cal, means_test, means_cal, prefix=""):
     center = np.asarray(data["label_center"], dtype="f8")
     scale = np.asarray(data["label_scale"], dtype="f8")
+    names = target_names(data)
+    calibration_target = (
+        model_coordinates(names, np.asarray(data["value"][cal], dtype="f8")) - center
+    ) / scale
     intervals = conformal_intervals(
         torch.tensor(means_cal),
-        torch.tensor((np.asarray(data["value"][cal], dtype="f8") - center) / scale),
+        torch.tensor(calibration_target),
         torch.tensor(means_test),
     )
     np.savez_compressed(
@@ -360,7 +500,9 @@ def calibrate_and_save(output, data, test, cal, means_test, means_cal, prefix=""
         test_source_id=data["source_id"][test],
         **{key: value.cpu().numpy() for key, value in intervals.items()},
     )
-    y = (np.asarray(data["value"][test], dtype="f8") - center) / scale
+    y = (
+        model_coordinates(names, np.asarray(data["value"][test], dtype="f8")) - center
+    ) / scale
     lower, upper = [
         intervals[key].numpy() for key in ("marginal_lower", "marginal_upper")
     ]
@@ -571,8 +713,20 @@ def main():
         "prediction_evaluation": {
             "dtype": "float64",
             "modules": "isolated encoder and head copies; training state unchanged",
-            "targets": "float64 standardization and native log-Jacobian",
+            "targets": "float64 standardization and per-row, per-observed-coordinate native log-Jacobian",
             "quadrature": "original saved nodes promoted exactly, not resampled",
+        },
+        "target_registry": {
+            spec.name: {
+                "unit": spec.unit,
+                "transform": spec.transform,
+                "positive": spec.positive,
+                "error_kind": spec.error_kind,
+                "source_tag": spec.source_tag,
+                "observable_kind": spec.observable_kind,
+                "status": spec.status,
+            }
+            for spec in REGISTRY.values()
         },
     }
     atomic(args.output / "manifest.json", manifest)
@@ -876,11 +1030,18 @@ def main():
         torch.manual_seed(arm["seed"])
         head = MultiLabelHead(
             arm["kind"],
+            target_dim=len(data["label_center"]),
             flow_type=arm.get("flow_type", "nsf"),
             noise_aware=arm.get("noise_aware", False),
             mc_samples=cfg["noise_mc_samples"],
             flow_objective=arm.get("flow_objective", "nll"),
             contrastive_weight=arm.get("contrastive_weight", 0.1),
+            quantiles=tuple(arm.get("quantiles", (0.16, 0.5, 0.84))),
+            expectiles=tuple(arm.get("expectiles", (0.1, 0.5, 0.9))),
+            quantile_crossover=arm.get("quantile_crossover", True),
+            quantile_crossover_penalty=arm.get("quantile_crossover_penalty", 10.0),
+            mdn_components=arm.get("mdn_components", 4),
+            lowrank_rank=arm.get("lowrank_rank", 2),
         ).to(device)
         if cfg.get("density_conformal", False):
             # Fail before SGD if the published environment lacks post-fit APIs.
@@ -899,7 +1060,7 @@ def main():
                 "contrastive_negatives": cfg["contrastive_negative_policy"],
             }
         head.point_nodes = qmc_normal_nodes(
-            8 if args.smoke else cfg["point_samples"]
+            8 if args.smoke else cfg["point_samples"], dimensions=head.target_dim
         ).to(device)
         if arm.get("recovery_of") or cfg.get("flow_memory_preflight", False):
             # Exercise the original failing evaluation shape before new SGD.
@@ -963,7 +1124,13 @@ def main():
             x = torch.tensor(data["input"][rows], device=device)
             y = torch.tensor(
                 (
-                    (data["value"][rows] - data["label_center"]) / data["label_scale"]
+                    (
+                        model_coordinates(
+                            target_names(data), data["value"][rows]
+                        )
+                        - data["label_center"]
+                    )
+                    / data["label_scale"]
                 ).astype("f4"),
                 device=device,
             )
@@ -1008,7 +1175,14 @@ def main():
         manifest.update(
             status="running",
             input_policy="Named photometry+110XP only for prediction and reconstruction; EBV/parallax/positions/PM withheld, raw fields retained; no native target aliases in benchmark",
-            noise_likelihood_evaluation="Raw model and primary observed-label log densities saved separately; only noise-aware heads convolve quoted errors. Plain heads directly model observed native labels. Flow convolution uses fixed antithetic QMC; native density subtracts fit-scale log-Jacobian",
+            noise_likelihood_evaluation=(
+                "Intrinsic and observed-label log densities are saved under explicit "
+                "names and stamped with density_kind: a noise-aware head convolves the "
+                "quoted diagonal errors exactly (Gaussian analytic / fixed-QMC flows), "
+                "a plain density head declares intrinsic only and its observed-label "
+                "array is NaN rather than an alias. Native density subtracts the "
+                "per-row, per-observed-coordinate Jacobian (log w + log|T'|)"
+            ),
             optimizer_policy="Fresh matched Adam states for model/head at same parent86; no inherited optimizer moments",
             reconstruction_weight=weight,
             reconstruction_presentations=budget,
@@ -1021,9 +1195,9 @@ def main():
         selection_policy = cfg.get("selection_policy")
         if selection_policy not in {None, "reserved_tune_mean_observed_nll"}:
             raise ValueError("Unknown checkpoint selection policy")
-        if selection_policy and (not checkpoint_interval or head.kind == "huber"):
+        if selection_policy and (not checkpoint_interval or not head.has_density):
             raise ValueError(
-                "Tuning density selection requires density head and checkpoints"
+                "Tuning density selection requires a density head and checkpoints"
             )
         tuning_rows = roles["tune"][:16] if args.smoke else roles["tune"]
         for other in (fit, test, cal):
@@ -1262,9 +1436,39 @@ def main():
             all_test_reload_byte_equal=True,
             all_validation_decoder_reload_byte_equal=True,
             runtime_seconds=time.monotonic() - started,
-            point_estimator="Fixed antithetic Sobol inverse-base sample mean, not exact analytic marginal mean"
-            if head.kind == "flow"
-            else "three conditional point means",
+            point_estimator=_point_estimator(head),
+            density_kind=output_test["density_kind"].item(),
+            loss_denominator=output_test["loss_denominator"].item(),
+            jacobian={
+                "form": "per_row_per_observed_coordinate",
+                "applied": True,
+                "target_names": output_test["target_names"].tolist(),
+                "target_transforms": [
+                    REGISTRY[name].transform
+                    for name in output_test["target_names"].tolist()
+                ],
+                "terms": "log w + log|T'(y)|, zero for unobserved coordinates",
+                "scale_log": np.log(np.asarray(output_test["label_scale"])).tolist(),
+                "arrays": "predictions.npz:test_jacobian,test_jacobian_transform",
+            },
+            observed_log_prob_available=bool(
+                output_test["observed_log_prob_available"].item()
+            ),
+            density_contract={
+                "intrinsic": "intrinsic_log_prob_{standardized,native}",
+                "observed_label": "observed_log_prob_{standardized,native}"
+                if bool(output_test["observed_log_prob_available"].item())
+                else "NaN (no measurement model declared)",
+                "never_alias_intrinsic_as_observed": True,
+                "loss_denominator": "per_coordinate",
+                "unit_convention": "native target units "
+                + str(
+                    [
+                        REGISTRY[name].unit
+                        for name in output_test["target_names"].tolist()
+                    ]
+                ),
+            },
             noise_aware_scope="Diagonal native target measurement errors only; no input EIV claim"
             if head.noise_aware
             else "reported-label predictive loss",

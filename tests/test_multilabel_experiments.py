@@ -190,11 +190,17 @@ def test_plain_observed_density_does_not_double_convolve_label_errors():
                 result["observed_log_prob_standardized"]
                 < result["intrinsic_log_prob_standardized"]
             )
+            assert bool(result["observed_log_prob_available"]) is True
+            assert str(result["density_kind"]) == "observed_label"
         else:
-            np.testing.assert_array_equal(
-                result["observed_log_prob_standardized"],
-                result["intrinsic_log_prob_standardized"],
-            )
+            # No measurement model is declared, so the observed-label density is
+            # not identified. It must be absent (NaN), never aliased to the
+            # intrinsic value: the two are different estimands.
+            assert np.isnan(result["observed_log_prob_standardized"]).all()
+            assert np.isnan(result["observed_log_prob_native"]).all()
+            assert bool(result["observed_log_prob_available"]) is False
+            assert str(result["density_kind"]) == "intrinsic"
+            assert np.isfinite(result["intrinsic_log_prob_standardized"]).all()
 
 
 def test_forward_errors_ignore_unrelated_missing_xp_but_reject_used_missing():

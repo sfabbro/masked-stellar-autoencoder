@@ -123,7 +123,98 @@ def test_nonidentity_flow_scoring_is_batch_stable_without_changing_saved_nodes(
         model, head, data, np.arange(9), torch.device("cpu"), batch=1
     )
     for key in batched:
+        if batched[key].dtype.kind != "f":
+            # Declared metadata (density kind, denominator, names, masks) is
+            # carried alongside the float64 scoring arrays and is compared
+            # separately; it is not part of the numerical payload.
+            np.testing.assert_array_equal(batched[key], singles[key])
+            continue
         assert batched[key].dtype == np.float64
         np.testing.assert_allclose(batched[key], singles[key], rtol=1e-10, atol=1e-10)
     assert torch.equal(head.point_nodes, nodes)
     assert head.point_nodes.dtype == torch.float32
+
+
+def _log_target_data(names, native, center, scale):
+    return dict(
+        input=np.zeros(native.shape, dtype="f4"),
+        value=np.asarray(native, dtype="f8"),
+        error=np.full(native.shape, 0.1, dtype="f8"),
+        label_center=np.asarray(center, dtype="f8"),
+        label_scale=np.asarray(scale, dtype="f8"),
+        target_names=names,
+        observed=np.ones(native.shape, dtype=bool),
+        quality=np.ones(native.shape, dtype=bool),
+    )
+
+
+def test_native_density_uses_per_row_per_coordinate_jacobian_for_log_targets():
+    """log-distance/log-age densities are corrected row by row, not by one scalar."""
+    model = nn.Module()
+    model.encoder = nn.Identity()
+    head = MultiLabelHead("gaussian", target_dim=2, latent_dim=2, width=8).eval()
+    names = ("distance", "age")
+    native = np.array([[0.5, 1.0], [4.0, 3.0], [20.0, 30.0]])
+    center = np.array([1.0, 2.0])
+    scale = np.array([0.4, 0.6])
+    standardized = (np.log(native) - center) / scale
+    standard_log_prob = -0.5 * (
+        standardized**2 + math.log(2 * math.pi)
+    ).sum(1)
+    data = _log_target_data(names, native, center, scale)
+    result = runner().predictions(
+        model, head, data, np.arange(3), torch.device("cpu")
+    )
+    np.testing.assert_allclose(
+        result["intrinsic_log_prob_standardized"], standard_log_prob, rtol=1e-13
+    )
+    expected_native = standard_log_prob - np.log(scale).sum() - np.log(native).sum(1)
+    np.testing.assert_allclose(
+        result["intrinsic_log_prob_native"], expected_native, rtol=1e-13
+    )
+    expected_jacobian = np.log(scale)[None, :] + np.log(native)
+    np.testing.assert_allclose(
+        result["jacobian"], expected_jacobian, rtol=1e-13, atol=1e-13
+    )
+    assert result["jacobian"].shape == (3, 2)
+    assert str(result["density_kind"]) == "intrinsic"
+    assert str(result["loss_denominator"]) == "per_coordinate"
+    assert bool(result["observed_log_prob_available"]) is False
+    # The legacy single scalar is wrong by exactly +log d / +log age per row,
+    # i.e. the correct native density is lower by the row sum of log(native).
+    legacy = standard_log_prob - float(np.log(scale).sum())
+    np.testing.assert_allclose(
+        legacy - expected_native, np.log(native).sum(1), rtol=1e-13
+    )
+
+
+def test_runner_rejects_a_target_order_outside_the_frozen_registry():
+    model = nn.Module()
+    model.encoder = nn.Identity()
+    head = MultiLabelHead("gaussian", target_dim=2, latent_dim=2, width=8).eval()
+    native = np.ones((2, 2))
+    data = _log_target_data(
+        ("age", "distance"), native, np.zeros(2), np.ones(2)
+    )
+    import pytest
+
+    with pytest.raises(ValueError, match="registry order"):
+        runner().predictions(model, head, data, np.arange(2), torch.device("cpu"))
+
+
+def test_huber_arm_reports_no_density_instead_of_a_nan_hidden_behind_metadata():
+    model = nn.Module()
+    model.encoder = nn.Identity()
+    head = MultiLabelHead("huber", latent_dim=3, width=8).eval()
+    data = dict(
+        input=np.zeros((2, 3), dtype="f4"),
+        value=np.zeros((2, 3)),
+        error=np.ones((2, 3)),
+        label_center=np.zeros(3),
+        label_scale=np.ones(3),
+    )
+    result = runner().predictions(model, head, data, np.arange(2), torch.device("cpu"))
+    assert str(result["density_kind"]) == "none"
+    assert np.isnan(result["intrinsic_log_prob_native"]).all()
+    assert np.isnan(result["observed_log_prob_native"]).all()
+    assert np.isnan(result["variance"]).all()

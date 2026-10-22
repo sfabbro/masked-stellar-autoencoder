@@ -64,13 +64,199 @@ def supervised_fit_rows(rng, fit, batch_size=256):
     return rng.choice(fit, size=min(batch_size, len(fit)), replace=False)
 
 
+HEAD_KINDS = (
+    "huber",
+    "gaussian",
+    "flow",
+    "mvgaussian",
+    "lowrank",
+    "mdn",
+    "quantile",
+    "expectile",
+)
+DENSITY_KINDS = ("gaussian", "flow", "mvgaussian", "lowrank", "mdn")
+NON_DENSITY_KINDS = ("huber", "quantile", "expectile")
+
+
+def _observed_mask(shape, mask, device):
+    if mask is None:
+        return torch.ones(shape, dtype=torch.bool, device=device)
+    mask = torch.as_tensor(mask, dtype=torch.bool, device=device)
+    if mask.shape != shape:
+        raise ValueError(f"observed mask must have shape {tuple(shape)}")
+    return mask
+
+
+def _gaussian_diagonal_log_prob(residual, variance):
+    if not torch.isfinite(variance).all() or not (variance > 0).all():
+        raise FloatingPointError("Non-positive or nonfinite predictive variance")
+    return -0.5 * (
+        residual.square() / variance + variance.log() + math.log(2 * math.pi)
+    )
+
+
+def masked_gaussian_row_log_prob(mean, scale_tril, target, sigma=None, *, mask=None):
+    """Per-row exact Gaussian log density of the observed target subvector.
+
+    Iterates the ``2**d - 1`` observed patterns (same arithmetic as
+    ``joint_prediction.masked_gaussian_measurement_nll``), so a row with missing
+    coordinates gets the marginal density of the coordinates it does have. Rows
+    with no observed coordinate return a log density of ``0``; callers must count
+    them separately. A non-positive combined covariance raises: no jitter.
+    """
+    if mean.ndim != 2:
+        raise ValueError("mean must be a [row, target] tensor")
+    rows, dims = mean.shape
+    if target.shape != (rows, dims) or scale_tril.shape != (rows, dims, dims):
+        raise ValueError("target/scale_tril must share the [row, target] layout")
+    if not torch.isfinite(mean).all() or not torch.isfinite(scale_tril).all():
+        raise ValueError("model parameters must be finite")
+    if not (scale_tril.diagonal(dim1=-2, dim2=-1) > 0).all():
+        raise ValueError("model scale diagonal must be strictly positive")
+    if torch.count_nonzero(torch.triu(scale_tril, diagonal=1)):
+        raise ValueError("model scale must be lower triangular")
+    valid = _observed_mask((rows, dims), mask, mean.device) & torch.isfinite(target)
+    if sigma is not None:
+        if sigma.shape != target.shape:
+            raise ValueError("measurement errors must share the target layout")
+        valid = valid & torch.isfinite(sigma) & (sigma > 0)
+    out = mean.new_zeros(rows)
+    code = (valid.to(torch.int64) * (2 ** torch.arange(dims, device=mean.device))).sum(1)
+    for pattern in range(1, 2**dims):
+        keep = code == pattern
+        if not keep.any():
+            continue
+        selected = [i for i in range(dims) if pattern & (1 << i)]
+        # Keep ALL factor columns: a lower-triangular submatrix is a Cholesky
+        # factor only for a *contiguous* leading subvector. The marginal factor
+        # is the selected ROWS of the full factor, so Sigma_obs = L_obs L_obs^T.
+        factor = scale_tril[keep][:, selected, :]
+        covariance = factor @ factor.transpose(-1, -2)
+        if sigma is not None:
+            covariance = covariance + torch.diag_embed(
+                sigma[keep][:, selected].square()
+            )
+        chol, info = torch.linalg.cholesky_ex(covariance)
+        if (info != 0).any():
+            raise ValueError(
+                "observed-subvector covariance is not positive definite; no jitter"
+            )
+        residual = target[keep][:, selected] - mean[keep][:, selected]
+        whitened = torch.linalg.solve_triangular(chol, residual[..., None], upper=False)
+        density = -0.5 * (
+            whitened.square().sum((1, 2)) + len(selected) * math.log(2 * math.pi)
+        ) - chol.diagonal(dim1=-2, dim2=-1).log().sum(1)
+        if not torch.isfinite(density).all():
+            raise FloatingPointError("Nonfinite masked Gaussian density")
+        index = torch.nonzero(keep).squeeze(1)
+        out = out.index_copy(0, index, density)
+    return out
+
+
+def masked_mixture_row_log_prob(
+    log_weights, means, log_stds, target, sigma=None, *, mask=None
+):
+    """Per-row diagonal-mixture density of the observed target subvector.
+
+    Exact marginal: every component is a diagonal Gaussian, so dropping a
+    coordinate means dropping its factor from each component and keeping the
+    mixture weights unchanged. No renormalization, no imputation.
+    """
+    if means.ndim != 3 or log_weights.ndim != 2:
+        raise ValueError("log_weights [row, component] and means [row, K, d] required")
+    rows, components, dims = means.shape
+    if log_stds.shape != means.shape or log_weights.shape != (rows, components):
+        raise ValueError("mixture parameter shapes disagree")
+    if target.shape != (rows, dims):
+        raise ValueError("target must be [row, target]")
+    if not torch.isfinite(means).all() or not torch.isfinite(log_stds).all():
+        raise ValueError("mixture parameters must be finite")
+    variance_all = (2 * log_stds).exp()
+    if not (variance_all > 0).all() or not torch.isfinite(variance_all).all():
+        raise FloatingPointError("invalid mixture component variance")
+    valid = _observed_mask((rows, dims), mask, target.device) & torch.isfinite(target)
+    if sigma is not None:
+        if sigma.shape != target.shape:
+            raise ValueError("measurement errors must share the target layout")
+        valid = valid & torch.isfinite(sigma) & (sigma > 0)
+    out = target.new_zeros(rows)
+    code = (valid.to(torch.int64) * (2 ** torch.arange(dims, device=target.device))).sum(1)
+    for pattern in range(1, 2**dims):
+        keep = code == pattern
+        if not keep.any():
+            continue
+        selected = [i for i in range(dims) if pattern & (1 << i)]
+        variance = variance_all[keep][:, :, selected]
+        if sigma is not None:
+            variance = variance + sigma[keep][:, None, selected].square()
+        residual = target[keep][:, None, selected] - means[keep][:, :, selected]
+        component = _gaussian_diagonal_log_prob(residual, variance).sum(-1)
+        density = torch.logsumexp(component + log_weights[keep], -1)
+        index = torch.nonzero(keep).squeeze(1)
+        out = out.index_copy(0, index, density)
+    return out
+
+
+def _standard_normal_quantiles(levels):
+    values = torch.tensor(tuple(float(level) for level in levels), dtype=torch.float64)
+    return torch.special.ndtri(values)
+
+
+def _standard_normal_expectiles(levels):
+    """Constants ``c_tau`` with ``E_tau[Z] = c_tau`` for ``Z ~ N(0, 1)``.
+
+    Bisection on ``tau*A(c) = (1-tau)*B(c)`` with ``A = phi(c) - c(1-Phi(c))`` and
+    ``B = c*Phi(c) + phi(c)``; ``A`` is the upper partial first moment and ``B`` the
+    lower one. Exact to float64 before the buffer is stored in the head dtype.
+    """
+    tau = torch.tensor(tuple(float(level) for level in levels), dtype=torch.float64)
+    root2 = math.sqrt(2.0)
+    inverse_sqrt_2pi = 1.0 / math.sqrt(2.0 * math.pi)
+
+    def misfit(c):
+        normal = 0.5 * (1.0 + torch.erf(c / root2))
+        density = torch.exp(-0.5 * c * c) * inverse_sqrt_2pi
+        upper = density - c * (1.0 - normal)
+        lower = c * normal + density
+        return tau * upper - (1.0 - tau) * lower
+
+    low = torch.full_like(tau, -8.0)
+    high = torch.full_like(tau, 8.0)
+    for _ in range(200):
+        middle = 0.5 * (low + high)
+        above = misfit(middle) > 0
+        low = torch.where(above, middle, low)
+        high = torch.where(above, high, middle)
+    return 0.5 * (low + high)
+
+
+def _level_sequence(levels, name, minimum=2):
+    values = tuple(float(level) for level in levels)
+    if len(values) < minimum:
+        raise ValueError(f"at least {minimum} {name} levels required")
+    if not all(0.0 < value < 1.0 for value in values):
+        raise ValueError(f"{name} levels must lie strictly inside (0, 1)")
+    if any(right <= left for left, right in zip(values, values[1:])):
+        raise ValueError(f"{name} levels must be strictly ascending")
+    return values
+
+
 class MultiLabelHead(nn.Module):
-    """Native three-output Huber, diagonal Gaussian or conditional joint flow."""
+    """Native multi-target head: Huber, Gaussian, flow, MDN, quantile, expectile.
+
+    Every kind shares one encoder latent interface and one output block. The
+    declared ``target_dim`` sets the output layout and replaces the old hardcoded
+    three-target normalization. Density kinds return per-``density_kind``
+    log densities; point/interval kinds (Huber, quantile, expectile) return no
+    density, and the scoring path must record that explicitly instead of storing
+    a silently-aliased intrinsic value.
+    """
 
     def __init__(
         self,
         kind="gaussian",
         *,
+        target_dim=3,
         latent_dim=256,
         width=128,
         flow_type="nsf",
@@ -79,21 +265,55 @@ class MultiLabelHead(nn.Module):
         flow_bound=8.0,
         flow_objective="nll",
         contrastive_weight=0.1,
+        quantiles=(0.16, 0.5, 0.84),
+        expectiles=(0.1, 0.5, 0.9),
+        quantile_crossover=True,
+        quantile_crossover_penalty=10.0,
+        mdn_components=4,
+        lowrank_rank=2,
     ):
         super().__init__()
-        if kind not in {"huber", "gaussian", "flow"}:
-            raise ValueError("Unsupported multilabel head")
-        if noise_aware and kind == "huber":
-            raise ValueError("Huber is not a density measurement likelihood")
+        if kind not in HEAD_KINDS:
+            raise ValueError(f"Unsupported multilabel head {kind!r}; expected {HEAD_KINDS}")
+        if (
+            isinstance(target_dim, bool)
+            or not isinstance(target_dim, int)
+            or not 1 <= target_dim <= 8
+        ):
+            raise ValueError("target_dim must be an integer in 1..8")
+        if isinstance(mdn_components, bool) or not isinstance(mdn_components, int):
+            raise ValueError("mdn_components must be a positive integer")
+        if mdn_components < 1:
+            raise ValueError("mdn_components must be a positive integer")
+        if isinstance(lowrank_rank, bool) or not isinstance(lowrank_rank, int):
+            raise ValueError("lowrank_rank must be a positive integer")
+        if kind == "lowrank" and not 1 <= lowrank_rank < target_dim:
+            raise ValueError("lowrank_rank must satisfy 1 <= rank < target_dim")
+        if noise_aware and kind in NON_DENSITY_KINDS:
+            raise ValueError(f"{kind} is not a density measurement likelihood")
         if flow_objective not in {"nll", "contrastive", "nll_contrastive"}:
             raise ValueError("Unsupported flow objective")
         if flow_objective != "nll" and (kind != "flow" or noise_aware):
             raise ValueError("Contrastive contexts require a clean joint flow")
         if contrastive_weight < 0:
             raise ValueError("Contrastive weight must be nonnegative")
+        if quantile_crossover_penalty < 0:
+            raise ValueError("Quantile crossover penalty must be nonnegative")
+        self.kind = kind
+        self.target_dim = target_dim
+        self.noise_aware = bool(noise_aware)
+        self.flow_type = flow_type
         self.flow_objective = flow_objective
         self.contrastive_weight = float(contrastive_weight)
-        self.kind, self.noise_aware, self.flow_type = kind, bool(noise_aware), flow_type
+        self.quantile_crossover_penalty = float(quantile_crossover_penalty)
+        self.mdn_components = int(mdn_components)
+        self.lowrank_rank = int(lowrank_rank)
+        self.quantiles = (
+            _level_sequence(quantiles, "quantile") if kind == "quantile" else ()
+        )
+        self.expectiles = (
+            _level_sequence(expectiles, "expectile") if kind == "expectile" else ()
+        )
         self.input = nn.Linear(latent_dim, width)
         self.block = nn.Sequential(
             nn.LayerNorm(width),
@@ -101,11 +321,10 @@ class MultiLabelHead(nn.Module):
             nn.GELU(),
             nn.Linear(width // 4, width),
         )
-        self.output = nn.Linear(
-            width, 16 if kind == "flow" else 6 if kind == "gaussian" else 3
-        )
+        self.output = nn.Linear(width, self._output_size())
         nn.init.zeros_(self.output.weight)
         nn.init.zeros_(self.output.bias)
+        self.loss_fn = None
         if kind == "gaussian":
             from torchregress.losses.gaussian import GaussianNLLLoss
 
@@ -121,7 +340,7 @@ class MultiLabelHead(nn.Module):
             )
 
             kwargs = dict(
-                n_features=3,
+                n_features=target_dim,
                 context_dim=16,
                 flow_type=flow_type,
                 n_transforms=3,
@@ -149,8 +368,80 @@ class MultiLabelHead(nn.Module):
                 )
             else:
                 self.loss_fn = base
-        self.register_buffer("point_nodes", qmc_normal_nodes())
-        self.register_buffer("measurement_nodes", qmc_normal_nodes(mc_samples))
+        elif kind == "quantile":
+            from torchregress.losses.quantile import (
+                MultiQuantileLoss,
+                QuantileCrossoverLoss,
+            )
+
+            if quantile_crossover:
+                self.loss_fn = QuantileCrossoverLoss(
+                    list(self.quantiles), crossover_penalty=quantile_crossover_penalty
+                )
+            else:
+                self.loss_fn = MultiQuantileLoss(list(self.quantiles))
+        elif kind == "expectile":
+            from torchregress.losses.expectile import MultiExpectileLoss
+
+            self.loss_fn = MultiExpectileLoss(list(self.expectiles))
+        self.register_buffer(
+            "point_nodes", qmc_normal_nodes(dimensions=target_dim)
+        )
+        self.register_buffer(
+            "measurement_nodes", qmc_normal_nodes(mc_samples, dimensions=target_dim)
+        )
+        if kind == "quantile":
+            self.register_buffer(
+                "level_constants", _standard_normal_quantiles(self.quantiles).float()
+            )
+        elif kind == "expectile":
+            self.register_buffer(
+                "level_constants", _standard_normal_expectiles(self.expectiles).float()
+            )
+        index = torch.tril_indices(target_dim, target_dim)
+        self.register_buffer("tril_row", index[0], persistent=False)
+        self.register_buffer("tril_col", index[1], persistent=False)
+
+    def _output_size(self):
+        dims = self.target_dim
+        if self.kind == "huber":
+            return dims
+        if self.kind == "gaussian":
+            return 2 * dims
+        if self.kind == "flow":
+            return 16
+        if self.kind == "mvgaussian":
+            return dims + dims * (dims + 1) // 2
+        if self.kind == "lowrank":
+            return dims + dims * self.lowrank_rank + dims
+        if self.kind == "mdn":
+            return self.mdn_components + 2 * self.mdn_components * dims
+        if self.kind == "quantile":
+            return dims * len(self.quantiles)
+        if self.kind == "expectile":
+            return dims * len(self.expectiles)
+        raise ValueError(f"Unsupported multilabel head {self.kind!r}")
+
+    @property
+    def has_density(self):
+        """Whether this head defines a normalized predictive density."""
+        return self.kind in DENSITY_KINDS
+
+    @property
+    def density_kind(self):
+        """Which estimand the density accessors refer to.
+
+        ``intrinsic`` is the latent-label predictive density; ``observed_label``
+        is the correctly convolved density of the reported (noisy) labels. A
+        head that is not noise-aware can only report the intrinsic one.
+        """
+        if not self.has_density:
+            return None
+        return "observed_label" if self.noise_aware else "intrinsic"
+
+    @property
+    def loss_denominator(self):
+        return "per_coordinate"
 
     def forward(self, latent):
         hidden = torch.nn.functional.gelu(self.input(latent))
@@ -162,9 +453,52 @@ class MultiLabelHead(nn.Module):
         loss = self.loss_fn.base_loss if self.noise_aware else self.loss_fn
         return loss.flow(self(latent))
 
-    def criterion(self, latent, target, sigma, *, source_ids=None):
-        if target.shape != (len(latent), 3) or sigma.shape != target.shape:
-            raise ValueError("Complete standardized three-target rows required")
+    def _gaussian_parameters(self, raw):
+        mean = raw[:, : self.target_dim]
+        dims = self.target_dim
+        if self.kind == "mvgaussian":
+            packed = raw[:, dims:].clone()
+            diagonal = self.tril_row == self.tril_col
+            packed[:, diagonal] = packed[:, diagonal].exp()
+            scale_tril = packed.new_zeros((len(raw), dims, dims))
+            scale_tril[:, self.tril_row, self.tril_col] = packed
+            if not torch.isfinite(scale_tril).all() or not (
+                scale_tril.diagonal(dim1=-2, dim2=-1) > 0
+            ).all():
+                raise FloatingPointError("Invalid full covariance; no silent clipping")
+            return mean, scale_tril
+        factor = raw[:, dims : dims + dims * self.lowrank_rank].view(
+            len(raw), dims, self.lowrank_rank
+        )
+        variance = raw[:, dims + dims * self.lowrank_rank :].exp()
+        if not torch.isfinite(variance).all() or not (variance > 0).all():
+            raise FloatingPointError("Invalid low-rank Gaussian variance")
+        covariance = factor @ factor.transpose(-1, -2) + torch.diag_embed(variance)
+        scale_tril, info = torch.linalg.cholesky_ex(covariance)
+        if (info != 0).any():
+            raise ValueError("Low-rank covariance is not positive definite; no jitter")
+        return mean, scale_tril
+
+    def _mixture_parameters(self, raw):
+        dims, components = self.target_dim, self.mdn_components
+        start = components
+        means = raw[:, start : start + components * dims].view(
+            len(raw), components, dims
+        )
+        log_stds = raw[:, start + components * dims :].view(
+            len(raw), components, dims
+        )
+        if not torch.isfinite(means).all() or not torch.isfinite(log_stds).all():
+            raise FloatingPointError("Nonfinite mixture parameters")
+        return torch.log_softmax(raw[:, :components], -1), means, log_stds
+
+    def _level_values(self, raw):
+        levels = len(self.quantiles) if self.kind == "quantile" else len(self.expectiles)
+        return raw.view(len(raw), levels, self.target_dim)
+
+    def criterion(self, latent, target, sigma, *, source_ids=None, mask=None):
+        if target.shape != (len(latent), self.target_dim) or sigma.shape != target.shape:
+            raise ValueError("Complete standardized target rows required")
         if (
             not torch.isfinite(target).all()
             or not torch.isfinite(sigma).all()
@@ -172,6 +506,7 @@ class MultiLabelHead(nn.Module):
         ):
             raise ValueError("Invalid native target/error")
         raw = self(latent)
+        dims = self.target_dim
         if self.kind == "huber":
             return torch.nn.functional.huber_loss(raw, target)
         if self.kind == "gaussian":
@@ -182,8 +517,39 @@ class MultiLabelHead(nn.Module):
             if not torch.isfinite(variance).all() or not (variance > 0).all():
                 raise FloatingPointError("Nonfinite Gaussian variance")
             return self.loss_fn((mean, variance), target)
+        if self.kind in {"mvgaussian", "lowrank"}:
+            mean, scale_tril = self._gaussian_parameters(raw)
+            if self.noise_aware:
+                # Audited exact observed-subvector likelihood (diagonal R).
+                from masked_stellar_autoencoder.training.joint_prediction import (
+                    masked_gaussian_measurement_nll,
+                )
+
+                total = masked_gaussian_measurement_nll(
+                    mean, scale_tril, target, sigma, eligible=mask
+                )
+                if total.observation_count == 0:
+                    return mean.reshape(-1)[:0].sum()
+                return total.numerator / total.observation_count
+            density = masked_gaussian_row_log_prob(
+                mean, scale_tril, target, mask=mask
+            )
+            return -density.mean() / dims
+        if self.kind == "mdn":
+            log_weights, means, log_stds = self._mixture_parameters(raw)
+            density = masked_mixture_row_log_prob(
+                log_weights,
+                means,
+                log_stds,
+                target,
+                sigma if self.noise_aware else None,
+                mask=mask,
+            )
+            return -density.mean() / dims
+        if self.kind in {"quantile", "expectile"}:
+            return self.loss_fn(self._level_values(raw), target, mask=mask)
         if self.noise_aware:
-            return self.loss_fn(raw, target, sigma=sigma).mean() / 3
+            return self.loss_fn(raw, target, sigma=sigma).mean() / dims
         if self.flow_objective != "nll":
             if source_ids is None or len(raw) < 2:
                 raise ValueError("Contrastive batches require unique source IDs")
@@ -193,10 +559,24 @@ class MultiLabelHead(nn.Module):
             negative = torch.roll(raw, shifts=1, dims=0).unsqueeze(1)
             contrastive = self.loss_fn(raw, target, negative_context=negative)
             if self.flow_objective == "contrastive":
-                return contrastive / 3
+                return contrastive / dims
             nll = -self.loss_fn.log_prob(raw, target).mean()
-            return (nll + self.contrastive_weight * contrastive) / 3
-        return self.loss_fn(raw, target) / 3
+            return (nll + self.contrastive_weight * contrastive) / dims
+        return self.loss_fn(raw, target) / dims
+
+    def _location_scale_from_levels(self, values, constants):
+        """Least-squares ``level = mean + constant * sigma`` over the level axis."""
+        location = constants.to(values.dtype).to(values.device)
+        centered = location - location.mean()
+        weight = centered.square().sum()
+        if not torch.isfinite(weight) or weight <= 0:
+            raise ValueError("Level constants must not be all equal")
+        deviation = values - values.mean(1, keepdim=True)
+        spread = (deviation * centered[None, :, None]).sum(1) / weight
+        # Diagnostic point moments only: a degenerate head yields zero spread,
+        # which the scoring path reports instead of inventing a variance floor.
+        variance = spread.clamp_min(0).square()
+        return values.mean(1), variance
 
     def moments(self, latent):
         if self.kind == "flow":
@@ -214,10 +594,26 @@ class MultiLabelHead(nn.Module):
         raw = self(latent)
         if self.kind == "huber":
             return raw, torch.full_like(raw, float("nan"))
-        mean, logvar = raw.chunk(2, -1)
-        return mean, logvar.exp()
+        if self.kind == "gaussian":
+            mean, logvar = raw.chunk(2, -1)
+            return mean, logvar.exp()
+        if self.kind in {"mvgaussian", "lowrank"}:
+            mean, scale_tril = self._gaussian_parameters(raw)
+            covariance = (scale_tril @ scale_tril.transpose(-1, -2)).diagonal(
+                dim1=-2, dim2=-1
+            )
+            return mean, covariance
+        if self.kind == "mdn":
+            log_weights, means, log_stds = self._mixture_parameters(raw)
+            weights = log_weights.exp()
+            mean = (weights[:, :, None] * means).sum(1)
+            second = (weights[:, :, None] * (means.square() + (2 * log_stds).exp())).sum(1)
+            return mean, second - mean.square()
+        return self._location_scale_from_levels(
+            self._level_values(raw), self.level_constants
+        )
 
-    def log_prob(self, latent, target, sigma=None):
+    def log_prob(self, latent, target, sigma=None, *, mask=None):
         if self.kind == "flow":
             distribution = self.distribution(latent)
             if sigma is None:
@@ -229,21 +625,22 @@ class MultiLabelHead(nn.Module):
             return torch.logsumexp(distribution.log_prob(perturbed), 0) - math.log(
                 len(self.measurement_nodes)
             )
-        if self.kind == "huber":
+        if not self.has_density:
             return torch.full((len(latent),), float("nan"), device=latent.device)
-        mean, variance = self.moments(latent)
-        if sigma is not None:
-            variance = variance + sigma.square()
-        return (
-            -0.5
-            * (
-                (target - mean).square() / variance
-                + variance.log()
-                + math.log(2 * math.pi)
-            )
-        ).sum(-1)
-
-
+        raw = self(latent)
+        if self.kind == "gaussian":
+            mean, logvar = raw.chunk(2, -1)
+            variance = logvar.exp()
+            if sigma is not None:
+                variance = variance + sigma.square()
+            return _gaussian_diagonal_log_prob(target - mean, variance).sum(-1)
+        if self.kind in {"mvgaussian", "lowrank"}:
+            mean, scale_tril = self._gaussian_parameters(raw)
+            return masked_gaussian_row_log_prob(mean, scale_tril, target, sigma, mask=mask)
+        log_weights, means, log_stds = self._mixture_parameters(raw)
+        return masked_mixture_row_log_prob(
+            log_weights, means, log_stds, target, sigma, mask=mask
+        )
 def conformal_intervals(
     calibration_prediction, calibration_target, test_prediction, alpha=0.1
 ):
