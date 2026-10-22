@@ -1,0 +1,39 @@
+scope: paired_catalogue_evaluation_zero_training
+cases:
+- run_id: catalogue_comparison_andrae175m_v1
+  task: catalogue-comparison
+  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/andrae175m.npz
+  targets:
+  - Teff_K
+  - logg_dex
+  - FeH_vs_MH_proxy_dex
+  target_caveat: Catalogue MH versus native FeH is a proxy; alpha-dependent offsets
+    not modelled
+  input_npz_sha256: 49b145b4daf90d475a0a41db7b41d971e824f2761e5218db9635766a8e2a5a78
+  source_csv_sha256: afe99a86e0a4ff51558cb239c5867af36ebba2a32ced8a9b108167aafd764d63
+  source_csv: docs/reports/fair-comparison-andrae175m-20261022.csv
+  n_rows: 95245
+- run_id: catalogue_comparison_gspphot_v1
+  task: catalogue-comparison
+  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/gspphot.npz
+  targets:
+  - Teff_K
+  - logg_dex
+  - FeH_vs_MH_proxy_dex
+  target_caveat: Catalogue MH versus native FeH is a proxy; alpha-dependent offsets
+    not modelled
+  input_npz_sha256: e98deb200964a2e172b83382b1515f98ebf905db17a367a01d6f357ea1bbb9f8
+  source_csv_sha256: 66f24e2e0e6796277c303ef20959b548cd714f1587309fefaeea8f0cb7c8195c
+  source_csv: docs/reports/fair-comparison-gspphot-long-20261022.csv
+  n_rows: 67667
+- run_id: catalogue_comparison_srivastava_v1
+  task: catalogue-comparison
+  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/srivastava.npz
+  targets:
+  - FeH_dex
+  target_caveat: Native measured FeH comparison only; overlap selection and training
+    contamination require separate assessment
+  input_npz_sha256: f9a3569131bceac2cad5d8cd172f3967a30f35ea00ccefe7af0a37841c526686
+  source_csv_sha256: e810116c15bf01c246f7fc2192fdccf82ed5a9cc603e111c7d2bba528e523983
+  source_csv: docs/reports/fair-comparison-feh-long-20261022.csv
+  n_rows: 1773

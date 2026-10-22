@@ -1,0 +1,262 @@
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+parent: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+model_config: configs/pretrain.canfar.yaml
+training_updates: 0
+evaluation_batch: 128
+cases:
+- run_id: rescore_fp64_multi_bpf_recon_s42_v1
+  artifact_policy:
+    run_id: multi_bpf_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: bda437ecaaebe9610e4a343645a5d5097275335794ea169c55eb256f33061003
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: 470ce7e1bf969b0c1e8fd4cee6a41458a5297ae17dc8cf0d39f8da7c210a0db5
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: bpf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_cinn_recon_s42_v1
+  artifact_policy:
+    run_id: multi_cinn_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 35d4ea5206a61795118420aa7c87adce1417a9ba09fa8380a264642aadb16cd5
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: b579b7ba9132efcdea8bb6ecb41353daa0cda78f48043dd5eae0ba640bb530cf
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: cinn
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_labelnoise_norecon_s42_v1
+  artifact_policy:
+    run_id: multi_gaussian_labelnoise_norecon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 562f275e9a3804496a063e6a93d2f98dc5360751875acc4e9aa7e0036358c20f
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: c96561fddb80b96b6271733b89714e4ab665022550093111018f3bc84da7dfec
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: true
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_labelnoise_recon_s42_v1
+  artifact_policy:
+    run_id: multi_gaussian_labelnoise_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 2dc7ae4a562cebd85dcfd69063e04432b59938df4c004620cf9ee2db8b7af94b
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: 46650e99527f5602f8487d68634f089b339a593c834b9233b788bb16f6529bcb
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: true
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_noise_recon_30e_v1
+  artifact_policy:
+    run_id: multi_gaussian_noise_recon_30e_v1
+    source_sha: 1a0051ded24062c840bd2a502c73d65f46a4cc2b
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: f59b424e3e01ac697ce12f9f8bf19c3cee6234f01ca8e6daeba1205dec99c936
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: fab770c27d23063a343378a7d180be9b941dbb05fe7ecdfb8ff8049af660a028
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: true
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_norecon_s42_v1
+  artifact_policy:
+    run_id: multi_gaussian_norecon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 928e771bd0dabd8090f372466cddd68788740953a4dc76e2d22112524ba2e048
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: aff2dc2dd96526ae952cdef035744b8cce56a1e1a071a4d91b1c5924b104d0ad
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_recon_s42_v1
+  artifact_policy:
+    run_id: multi_gaussian_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: a6797df3e4e33f8d1bd0326c837b534a7979a6940f3d44046941134afb72e615
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: e4f39f15ac99281e1a8aba452c847af03a2d659054eff6cc42e038fd29e7121d
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_recon_s43_v1
+  artifact_policy:
+    run_id: multi_gaussian_recon_s43_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: a666103a937a0152ff06c063f900ebbd5d7efea1052a7e4281381fd2099a0cdc
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: ec7cebe690453ecc14dae29ac33afc1d4ba3b0e7f05b03a1331679ee4116bacc
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_gaussian_recon_s44_v1
+  artifact_policy:
+    run_id: multi_gaussian_recon_s44_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 5f4b506502b574274bd32f42c7ced504553e7410dd5d5448391d30ffa6a3d9f7
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: cd1eae37bfde2df5198801b4690e3e71bfdf2e7f6b537894a396ba9683abad37
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: gaussian
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_maf_recon_s42_v1
+  artifact_policy:
+    run_id: multi_maf_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: fba92834e69a2725aee0f58bd4f6b77eb5c56b67597abf097439217f3cb4029a
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: 1eacca9b22a23f41f7f3dcf9327f6c5a7c59db79f7a985033326a68d3d1d9543
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: maf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_nsf_density_contrastive_s42_v1
+  artifact_policy:
+    run_id: multi_nsf_density_contrastive_s42_v1
+    source_sha: 7aeb4acbcac8cd19622eea9f4f7056626a72ba06
+    original_library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+    checkpoint_sha256: c65a9555a605dc13c9fb0b0230585d420b19334145db3c81504e6d5747903447
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: ef60ae230cc7dfcef47ddbaa769835456f671b8ffd1b0c8de0f57359ea723305
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: contrastive
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_nsf_density_nll_s42_v1
+  artifact_policy:
+    run_id: multi_nsf_density_nll_s42_v1
+    source_sha: 7aeb4acbcac8cd19622eea9f4f7056626a72ba06
+    original_library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+    checkpoint_sha256: 27b578b346c6e7e9742367181663a14334c57c936cbb9652ab91b3bf5716a805
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: a238ebfd53abb461cfadad53d9c14e9ad0907ebd0462fa3fcaf01ebc77ff45c6
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_nsf_density_nllcontrastive_s42_v1
+  artifact_policy:
+    run_id: multi_nsf_density_nllcontrastive_s42_v1
+    source_sha: 7aeb4acbcac8cd19622eea9f4f7056626a72ba06
+    original_library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+    checkpoint_sha256: 008f42b4916c80c49376c241cfd7010c88417bb7173c3aa52f1f76dc20bb24ca
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: a091032886c1dbb3b3e9c621be38b0b8c8460c3bd1687ce86185600a43bdbd3b
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll_contrastive
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_nsf_labelnoise_recon_s42_v1
+  artifact_policy:
+    run_id: multi_nsf_labelnoise_recon_s42_v1
+    source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 4331d7a89e69a1e6ae80d3b4fa35db1ff08011633e84445eeb93a086edfad145
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: dfe79e6d44d5b38b4f3545473de2e6a5f11d8034ba5c885f6bda1d45f93f79c3
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: true
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1
+- run_id: rescore_fp64_multi_nsf_recon_s42_v2
+  artifact_policy:
+    run_id: multi_nsf_recon_s42_v2
+    source_sha: 258a8ba1a7fccec3269737409cf92d44d01e9ce1
+    original_library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
+    checkpoint_sha256: 02439b20b5f5aa36378af878163ed7b988db3e4a1435c4721de9429ff65c1eaf
+    paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    manifest_sha256: c4f1936b80d9906b2eb96ba2251c8ab3d099ebfcbcc3e77c13e413647d61ff9d
+    parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    head_kwargs:
+      kind: flow
+      target_dim: 3
+      flow_type: nsf
+      noise_aware: false
+      mc_samples: 32
+      flow_objective: nll
+      contrastive_weight: 0.1

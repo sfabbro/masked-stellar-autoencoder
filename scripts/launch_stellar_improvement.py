@@ -59,6 +59,21 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {
+        "density-rescore",
+        "conformal-validation",
+        "target-head-pilot",
+        "catalogue-comparison",
+    }:
+        expected = {
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Evaluation/pilot parent and replay budget differ")
+            env[key] = value
+        return env
     if plan["task"] == "density-precision-certificate":
         suite = yaml.safe_load(
             Path("configs/density-precision-certificate-20261022.yaml").read_text()
@@ -82,6 +97,7 @@ def bind_prediction_policy(
         "multilabel-density-screen",
         "multilabel-w2",
         "multilabel-w1",
+        "multilabel-validation",
     }:
         suite_path = {
             "multilabel-screen": "configs/multilabel-screen-20261020.yaml",
@@ -89,6 +105,7 @@ def bind_prediction_policy(
             "multilabel-density-screen": "configs/multilabel-density-20261021.yaml",
             "multilabel-w2": "configs/multilabel-w2-20261022.yaml",
             "multilabel-w1": "configs/multilabel-w1-20261022.yaml",
+            "multilabel-validation": "configs/multilabel-validation-wave-20261022.yaml",
         }[plan["task"]]
         suite = yaml.safe_load(Path(suite_path).read_text())
         arm = next((a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None)
@@ -337,6 +354,9 @@ def main():
         cpu_only_tasks = {
             "catalog",
             "age-data-audit",
+            "conformal-validation",
+            "target-head-pilot",
+            "catalogue-comparison",
             "analysis",
             "prediction-comparison",
         }

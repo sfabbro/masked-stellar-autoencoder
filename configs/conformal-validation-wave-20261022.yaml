@@ -1,0 +1,30 @@
+scope: evaluation_only_zero_SGD_native_means_no_density_ranking
+cases:
+- run_id: conformal_validation_gaussian_family_v1
+  task: conformal-validation
+  source_run: multi_gaussian_recon_s42_v1
+  source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+  sha256:
+    paired-cohort.npz: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    predictions.npz: 802c7a6203a6ec8087c9ea68c2dcb2f7605a68deae993bc1ffe8a4ab64d90455
+  family_members:
+  - run_id: multi_gaussian_recon_s42_v1
+    sha256: 802c7a6203a6ec8087c9ea68c2dcb2f7605a68deae993bc1ffe8a4ab64d90455
+  - run_id: multi_gaussian_recon_s43_v1
+    sha256: 4c4df57c37953e3cedb7e5269a187d7494dd1da23338dc078ddfcac7f94c27cf
+  - run_id: multi_gaussian_recon_s44_v1
+    sha256: 6bb290a61c462e2c1cbc8ab7c6864a119a78cee641ceee62bfe6072eff4e563d
+- run_id: conformal_validation_long_gaussian_v1
+  task: conformal-validation
+  source_run: multi_gaussian_noise_recon_30e_v1
+  source_sha: 1a0051ded24062c840bd2a502c73d65f46a4cc2b
+  sha256:
+    paired-cohort.npz: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    predictions.npz: 276b5cfac70b6894d263b95420f783c60b0fa09a0afdcebbc0b2e04f54b19b8f
+- run_id: conformal_validation_maf_v1
+  task: conformal-validation
+  source_run: multi_maf_recon_s42_v1
+  source_sha: 34e3e29c911c37cac8712757d64288c2c27dc636
+  sha256:
+    paired-cohort.npz: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+    predictions.npz: c0f847e6e6dd44e564b79b4a46516f539a2a718647a96e61ef99e9e375acfddc

@@ -167,3 +167,15 @@ def test_scoring_orchestration_full_roles_distinct_output(tmp_path, monkeypatch)
     assert originals == {path.name: r.digest(path) for path in directory.iterdir()}
     with pytest.raises(FileExistsError):
         r.main(argv)
+
+
+def test_explicit_original_library_separate_from_scoring_revision(tmp_path):
+    p, directory, parent, config = policy_fixture(tmp_path)
+    old = json.loads((directory / "manifest.json").read_text())
+    old["policy"]["library_revision"] = "c" * 40
+    (directory / "manifest.json").write_text(json.dumps(old))
+    p["manifest_sha256"] = r.digest(directory / "manifest.json")
+    with pytest.raises(ValueError, match="original library"):
+        r.validate_policy(p, directory, parent, config, installed_revision="b" * 40)
+    p["original_library_revision"] = "c" * 40
+    r.validate_policy(p, directory, parent, config, installed_revision="b" * 40)

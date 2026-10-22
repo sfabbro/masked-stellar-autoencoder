@@ -1040,7 +1040,7 @@ def main():
             mdn_components=arm.get("mdn_components", 4),
             lowrank_rank=arm.get("lowrank_rank", 2),
         ).to(device)
-        if cfg.get("density_conformal", False):
+        if cfg.get("density_conformal", False) or arm.get("density_conformal", False):
             # Fail before SGD if the published environment lacks post-fit APIs.
             from torchregress.losses.conformal import (
                 ConformalizedDensity,
@@ -1375,7 +1375,7 @@ def main():
             **{"test_" + k: v for k, v in output_test.items()},
             **{"calibration_" + k: v for k, v in output_cal.items()},
         )
-        if cfg.get("density_conformal", False):
+        if cfg.get("density_conformal", False) or arm.get("density_conformal", False):
             from masked_stellar_autoencoder.training.density_calibration import (
                 calibrate_density_scores,
                 save_density_calibration,

@@ -76,7 +76,9 @@ def validate_policy(policy, directory, parent, model_config, *, installed_revisi
         or old.get("run_id", directory.name) != policy["run_id"]
     ):
         raise ValueError("run identity mismatch")
-    if old["policy"]["library_revision"] != policy["library_revision"]:
+    if old["policy"]["library_revision"] != policy.get(
+        "original_library_revision", policy["library_revision"]
+    ):
         raise ValueError("original library revision mismatch")
     if old["checkpoint_sha256"] != policy["checkpoint_sha256"]:
         raise ValueError("original checkpoint receipt mismatch")

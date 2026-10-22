@@ -150,8 +150,11 @@ def run_pilot(
     width: int = 32,
     seed: int = 42,
     lr: float = 1e-3,
+    objective: str = "joint",
 ):
     """Train only a fresh head on frozen FIT embeddings and select on TUNE NLL."""
+    if objective not in ("joint", "composite"):
+        raise ValueError("Unknown age objective")
     if (
         target not in ("age", "distance")
         or not 1 <= steps <= 1000
@@ -195,7 +198,7 @@ def run_pilot(
                 embeddings[mask],
                 torch.tensor(data["teacher_features"][mask], dtype=torch.float64),
                 labels,
-                objective="joint",
+                objective=objective,
             )
         return head.loss(
             embeddings[mask],
@@ -272,7 +275,11 @@ def run_pilot(
         "selection": "first minimum tune NLL; test targets never used in optimization or selection",
         "role_counts": {role: int(mask.sum()) for role, mask in masks.items()},
         "history": history,
-        "objective": "shared_latent_joint_gaussian"
+        "objective": (
+            "shared_latent_joint_gaussian"
+            if objective == "joint"
+            else "weighted_composite_marginal"
+        )
         if target == "age"
         else "signed_parallax_convolution_GH64",
         "coordinate": manifest["units"],

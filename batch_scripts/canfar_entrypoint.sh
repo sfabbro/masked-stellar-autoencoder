@@ -138,6 +138,26 @@ case "$stage" in
         --output "$experiment_output" --download
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-validation ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py --config configs/multilabel-validation-wave-20261022.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == density-rescore ]]; then
+      "${pixi_run[@]}" python -u scripts/run_density_rescoring_wave.py --config configs/density-rescoring-wave-20261022.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == conformal-validation ]]; then
+      "${pixi_run[@]}" python -u scripts/run_conformal_validation.py --config configs/conformal-validation-wave-20261022.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == target-head-pilot ]]; then
+      "${pixi_run[@]}" python -u scripts/run_target_pilot_wave.py --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == catalogue-comparison ]]; then
+      "${pixi_run[@]}" python -u scripts/run_catalogue_comparison_validation.py --config configs/catalogue-comparison-wave-20261022.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == density-precision-certificate ]]; then
       "${pixi_run[@]}" python -u scripts/run_density_precision_certificate.py \
         --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"

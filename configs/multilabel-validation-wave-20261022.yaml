@@ -1,0 +1,273 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+sidecar: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+native_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+head_warmup_updates: 500
+supervised_batches_per_update: 8
+minimum_role_rows: 128
+point_samples: 256
+noise_mc_samples: 32
+ttt_objects: 512
+ttt_calibration_objects: 256
+ttt_steps: 3
+forward_epochs: 40
+forward_iterations: 30
+run_id: multilabel_validation_wave_20261022
+target_names:
+- teff
+- logg
+- fe_h
+flow_memory_preflight: true
+density_conformal: false
+evaluation_policy:
+  precision: isolated_float64_encoder_and_head
+  point_mean: saved fixed256 samples for flows; analytic for Gaussian/MDN
+  median: postfit only; quantile q50 distinct from mean
+  test_selection: forbidden; report all predeclared arms
+  metal_poor: same native FeH<-2 mask, report counts per survey
+  distribution_metrics: native joint NLL and proper distribution scores where actual
+    samples/CDF supported; no Gaussian proxy for flows
+budget:
+  independent_jobs: 24
+  nominal_presentations_per_job: 10000000
+  total_nominal_presentations: 240000000
+  no_new_catalogues: true
+  reconstruction_source: existing benchmarkTRAIN9M plus repeat to10M per arm
+deferred_targets:
+  alpha: not in current quality-bound native3 runner
+  age: separate named-scale prepared-embedding joint-age pilot
+  distance: separate signed-parallax prepared-embedding pilot
+postfit_ensemble_policy:
+  new_training_jobs: 0
+  aggregation: fixed equal mixture, not Gaussian fitted to averaged moments
+  members: reuse source/proof-bound matched seed42 plus new45+46 at recon.03 after
+    full verification
+  checkpoint_requirement: allthree original fitted checkpoints; no aggregate encoder
+  selection: fixed predeclared members, never test-ranked subset
+arms:
+- run_id: validation_gaussian_clean_r01_s45_10m_v1
+  kind: gaussian
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+- run_id: validation_gaussian_clean_r03_s45_10m_v1
+  kind: gaussian
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+- run_id: validation_gaussian_clean_r03_s46_10m_v1
+  kind: gaussian
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+- run_id: validation_gaussian_noise_r01_s45_10m_v1
+  kind: gaussian
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+- run_id: validation_gaussian_noise_r03_s45_10m_v1
+  kind: gaussian
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+- run_id: validation_gaussian_noise_r03_s46_10m_v1
+  kind: gaussian
+  seed: 46
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+- run_id: validation_mdn4_clean_r01_s45_10m_v1
+  kind: mdn
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_mdn4_clean_r03_s45_10m_v1
+  kind: mdn
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_mdn4_clean_r03_s46_10m_v1
+  kind: mdn
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_mdn4_noise_r01_s45_10m_v1
+  kind: mdn
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_mdn4_noise_r03_s45_10m_v1
+  kind: mdn
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_mdn4_noise_r03_s46_10m_v1
+  kind: mdn
+  seed: 46
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  mdn_components: 4
+- run_id: validation_nsf_clean_r01_s45_10m_v1
+  kind: flow
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_clean_r03_s45_10m_v1
+  kind: flow
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_clean_r03_s46_10m_v1
+  kind: flow
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_noise_r01_s45_10m_v1
+  kind: flow
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.01
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_noise_r03_s45_10m_v1
+  kind: flow
+  seed: 45
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_noise_r03_s46_10m_v1
+  kind: flow
+  seed: 46
+  noise_aware: true
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_type: nsf
+  flow_objective: nll
+- run_id: validation_nsf_purecontrastive_clean_r03_s45_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: contrastive
+  contrastive_weight: 0.1
+  density_conformal: true
+- run_id: validation_nsf_purecontrastive_clean_r03_s46_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: contrastive
+  contrastive_weight: 0.1
+  density_conformal: true
+- run_id: validation_nsf_nllcontrastive01_clean_r03_s45_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: nll_contrastive
+  contrastive_weight: 0.1
+  density_conformal: true
+- run_id: validation_nsf_nllcontrastive01_clean_r03_s46_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: nll_contrastive
+  contrastive_weight: 0.1
+  density_conformal: true
+- run_id: validation_nsf_nllcontrastive10_clean_r03_s45_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 45
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: nll_contrastive
+  contrastive_weight: 1.0
+  density_conformal: true
+- run_id: validation_nsf_nllcontrastive10_clean_r03_s46_10m_v1
+  kind: flow
+  flow_type: nsf
+  seed: 46
+  noise_aware: false
+  reconstruction_weight: 0.03
+  ttt: false
+  library_tta: false
+  flow_objective: nll_contrastive
+  contrastive_weight: 1.0
+  density_conformal: true
+contrastive_negative_policy:
+  source: FIT minibatch only, sampled without replacement
+  derangement: roll context by one within batch
+  negatives_per_positive: 1
+  duplicate_source_ids: reject
+  temperature: 1.0
+  margin: 0.0
+  joint_loss_divisor: 3
