@@ -330,20 +330,29 @@ def main():
         }
         env.update(plan.get("env", {}))
         env = bind_prediction_policy(plan, env)
-        resources = (
-            {"cores": 4, "ram": 64, "gpu": 1}
-            if plan["task"] != "catalog"
-            else {"cores": 4, "ram": 32}
-        )
+        # H100 MIGs are allocated as indivisible 1g slices (10-12 GiB, 1/7 SMs).
+        # CPU-only phases must not consume a slice: route them to CPU sessions and
+        # omit the GPU request entirely. ``gpu`` may be 0/omitted; >1 only makes
+        # sense when the runner itself uses multiple devices.
+        cpu_only_tasks = {"catalog", "age-data-audit", "analysis", "prediction-comparison"}
+        if plan["task"] in cpu_only_tasks:
+            resources = {"cores": 8, "ram": 32}
+        else:
+            resources = {"cores": 4, "ram": 64, "gpu": 1}
         if plan.get("resources"):
-            resources = plan["resources"]
-            if set(resources) - {"cores", "ram", "gpu"} or any(
-                isinstance(value, bool) or not isinstance(value, int) or value < 1
-                for value in resources.values()
-            ):
-                raise ValueError(
-                    "Resource override must contain positive integer cores/ram/gpu"
-                )
+            resources = dict(plan["resources"])
+            if set(resources) - {"cores", "ram", "gpu"}:
+                raise ValueError("Resource override may only contain cores/ram/gpu")
+            for key, value in resources.items():
+                if isinstance(value, bool) or not isinstance(value, int):
+                    raise ValueError("Resource override must contain integers")
+                if key == "gpu" and value < 0:
+                    raise ValueError("gpu must be >= 0")
+                if key != "gpu" and value < 1:
+                    raise ValueError("cores/ram must be positive")
+        if resources.get("gpu", 0) == 0:
+            resources.pop("gpu", None)
+            env["MSA_EXPERIMENT_CPU_ONLY"] = "1"
         if plan["task"] == "catalog":
             env.update(MSA_EXPERIMENT_CPU_ONLY="1", MSA_CATALOG_MODE=plan["mode"])
         job = {
@@ -352,7 +361,7 @@ def main():
             "source_sha": args.git_sha,
             "output": ROOT + "/" + run,
             "plan": plan,
-            "resources": resources,
+            "resources": dict(resources),
             "session_ids": [],
             "status": "dry_run" if args.dry_run else "submission_pending",
             "attempted_at": dt.datetime.now(dt.UTC).isoformat(),

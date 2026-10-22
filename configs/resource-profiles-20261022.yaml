@@ -1,0 +1,64 @@
+# CANFAR H100 MIG resource profiles.
+#
+# Measured behaviour (2026-10-22):
+#   * `--gpu 1`  -> one H100 NVL MIG 1g.12gb (94GB node) or 1g.10gb (80GB node)
+#   * `--gpu 2`  -> TWO separate 1g MIG instances (probe x3iio030: 2 x 16 SM,
+#                   each ~11 GiB); it does NOT create a single 2g.24gb instance.
+#   * There is no CLI flag to request 1g.20/24gb, 2g.20/24gb or 3g/4g profiles.
+#   * Smallest compute slice is 1g = 1/7 SMs; cannot be split further.
+#
+# Use these presets in launch plans (`resources:`), not raw numbers:
+profiles:
+  cpu-small:
+    cores: 4
+    ram: 16
+  cpu-medium:
+    cores: 8
+    ram: 32
+  cpu-large:
+    cores: 16
+    ram: 64
+  gpu-1g:
+    cores: 4
+    ram: 64
+    gpu: 1
+  gpu-1g-large-ram:
+    cores: 8
+    ram: 128
+    gpu: 1
+  gpu-2g-ddp:
+    cores: 8
+    ram: 128
+    gpu: 2       # only for a runner that uses two CUDA devices
+tasks:
+  # CPU-only: never allocate a MIG slice.
+  cpu_only:
+    - catalog
+    - age-data-audit
+    - analysis
+    - prediction-comparison
+    - scoring
+    - plotting
+    - reporting
+    - tabular-xgboost
+    - tabular-lightgbm
+  # GPU: normal 1g slice.
+  gpu_1g:
+    - multilabel-screen
+    - multilabel-w1
+    - multilabel-w2
+    - multilabel-density-screen
+    - multilabel-long
+    - density-precision-certificate
+    - test-time-screen
+    - forward-eiv-screen
+    - frozen-head-screen
+    - native-age
+    - distance-value
+    - enriched-value
+    - prediction-continuation
+  # GPU: only if the code uses both devices (DDP/sharded inference).
+  gpu_multi:
+    - pretrain
+    - pretrain-experiments
+    - finetune

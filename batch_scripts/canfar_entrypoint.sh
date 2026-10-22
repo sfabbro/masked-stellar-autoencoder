@@ -122,6 +122,11 @@ case "$stage" in
     if [[ "${MSA_EXPERIMENT_PHOTOMETRY_PREFLIGHT:-0}" != 1 && "${MSA_EXPERIMENT_CPU_ONLY:-0}" != 1 ]]; then
       "${pixi_run[@]}" python -c 'import torch; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
     fi
+    if command -v nvidia-smi >/dev/null 2>&1; then
+      echo "=== GPU allocation (node/profile):"
+      nvidia-smi -L || true
+      nvidia-smi --query-gpu=name,memory.total,memory.used,utilization.gpu --format=csv,noheader || true
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == age-data-audit ]]; then
       : "${MSA_AGE_APOKASC3:?Set MSA_AGE_APOKASC3}" "${MSA_AGE_COHORT:?}" "${MSA_AGE_DATASET_VIEW:?}" "${MSA_AGE_POSTERIOR:?}"
       "${pixi_run[@]}" python -u scripts/age_data_audit.py \

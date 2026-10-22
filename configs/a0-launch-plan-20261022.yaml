@@ -2,9 +2,8 @@ jobs:
 - run_id: age_data_audit_v1
   task: age-data-audit
   resources:
-    cores: 4
+    cores: 8
     ram: 32
-    gpu: 1
   env:
     MSA_EXPERIMENT_CPU_ONLY: '1'
     MSA_AGE_APOKASC3: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
