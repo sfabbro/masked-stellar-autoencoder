@@ -1012,3 +1012,9 @@ Corrective certificate source65e2243c4cb24f5000e6f8b1f9a87ae082bf0ddb PUBLISHEDo
 ## 2026-10-22T18:05UTC — W2 retry after immutable-pin mismatch (failed attempts preserved)
 
 Two accepted W2 arms (go2lnnor w2_nsf_clean_norecon_s42, p39a5ygi w2_nsf_noise_norecon_s42) failed before SGD: installed torchregress commit1d735c6 vs legacy screen config pin d94a969. Original IDs/outputs/ledger entries preserved; no same-ID retry. Corrective path: new versioned config configs/multilabel-w2-20261022.yaml pins1d735c6; new entrypoint task multilabel-w2; new IDs w2_nsf_clean_norecon_s42_v2 and w2_nsf_noise_norecon_s42_v2. Failure is a pin-contract failure, not a training failure; no science result.
+
+## 2026-10-22T18:30UTC — W2 pinned retry and W1 eight-arm screen launched in parallel
+
+W2 versioned retry after the immutable-pin failure: new config configs/multilabel-w2-20261022.yaml pins torchregress1d735c6 and new stage multilabel-w2. Accepted sessions iugfs75b (w2_nsf_clean_norecon_s42_v2) and be6uz3mx (w2_nsf_noise_norecon_s42_v2); original failed IDs go2lnnor/p39a5ygi preserved, no same-ID retry.
+
+W1 eight matched 10M arms accepted in parallel from parent86/cohort/sidecar at source8c8c5a8: upjihmx6 quantile, t7lx6ccn expectile, e6yw6d3g mvgaussian, lbhxlljq lowrank, luam09dn mdn4, fihziqtr mdn8, mi9mj2wg mvgaussian-norecon, jwomoa47 mdn4-norecon. These are launch acceptances, not certificates or results; no metric claim until W0 certificate + independent verification.

@@ -4107,6 +4107,222 @@
       "attempted_at": "2026-10-22T16:59:21.760311+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_quantile_s42",
+      "name": "msa-si15-w1-quantile-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_quantile_s42",
+      "plan": {
+        "run_id": "w1_quantile_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "upjihmx6"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:14.014231+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_expectile_s42",
+      "name": "msa-si15-w1-expectile-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_expectile_s42",
+      "plan": {
+        "run_id": "w1_expectile_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "t7lx6ccn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:24.325498+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_mvgaussian_s42",
+      "name": "msa-si15-w1-mvgaussian-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_mvgaussian_s42",
+      "plan": {
+        "run_id": "w1_mvgaussian_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "e6yw6d3g"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:33.164096+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_lowrank_s42",
+      "name": "msa-si15-w1-lowrank-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_lowrank_s42",
+      "plan": {
+        "run_id": "w1_lowrank_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lbhxlljq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:37.416464+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_mdn4_s42",
+      "name": "msa-si15-w1-mdn4-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_mdn4_s42",
+      "plan": {
+        "run_id": "w1_mdn4_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "luam09dn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:45.922037+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_mdn8_s42",
+      "name": "msa-si15-w1-mdn8-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_mdn8_s42",
+      "plan": {
+        "run_id": "w1_mdn8_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fihziqtr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:51.271376+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_mvgaussian_norecon_s42",
+      "name": "msa-si15-w1-mvgaussian-norecon-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_mvgaussian_norecon_s42",
+      "plan": {
+        "run_id": "w1_mvgaussian_norecon_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mi9mj2wg"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:11:58.865029+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "w1_mdn4_norecon_s42",
+      "name": "msa-si15-w1-mdn4-norecon-s42",
+      "source_sha": "8c8c5a8e949b41551eae42931772455a8d913ccb",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/w1_mdn4_norecon_s42",
+      "plan": {
+        "run_id": "w1_mdn4_norecon_s42",
+        "task": "multilabel-w1",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jwomoa47"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T17:12:06.867838+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
