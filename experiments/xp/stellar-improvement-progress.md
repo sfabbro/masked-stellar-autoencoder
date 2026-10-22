@@ -1044,3 +1044,7 @@ Completed local scores for all 10M arms (paired-cohort test rows 97,695; tail Fe
 A0 CANFAR job qfybnmle complete; ARC age-data-audit.json fetched: APOKASC3 15,808/15,808 Gaia IDs, 12,376 recommended ages, 672 in10M train/0 validation, 18 in current cohort; Willett SHA-verified five files; teacher offsets as in local audit. No age model launched yet.
 Six seed-43/44 replica arms accepted from source6b0f8fa: tmint7tu mvgaussian-s44, zwoobaqs mdn8-s44, xsi7dsby lowrank-s44, mysctms8 mdn4-s43, of5uuv0p mdn4-s44, ooh61a79 mvgaussian-noise-s43. These enable 3-seed distributional-ensemble scoring; no results yet.
 R1 (Mondrian + theory envelope) and multi-teacher age module are being implemented in parallel; A1/A2 age training waits on their tests.
+
+## 2026-10-22T20:05UTC — standard residual panel added
+
+scripts/plot_stellar_residuals.py now renders a 3x3 residual diagnostic (residual vs truth, residual histogram, binned median residual vs true [Fe/H]) from a saved predictions.npz + paired-cohort.npz, with JSON metrics. Generated docs/reports/stellar-residuals-long-noise-20261022.{png,pdf,json} for the long noise Gaussian selected99M and stellar-residuals-diag-gaussian-20261022.* for the matched diag Gaussian. Long model: global Teff MAE58.8K/bias+2.89/NMAD61.2; logg .1200/-0.0021/.1224; FeH .0758/-0.0016/.0773; tail FeH<-2 n141: Teff +155K bias/161K MAE, logg +0.131/0.200, FeH +0.388/0.393. Figure is local preliminary scoring, not certificate/truth.
