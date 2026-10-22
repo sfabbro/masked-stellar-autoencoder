@@ -5,9 +5,9 @@
 
 The earlier comparison used published summary numbers from different samples. Here we
 crossmatch the **exact MSA test cohort** with released catalogues and recompute
-identical metrics on the common stars. Both legs are now complete:
-**Gaia DR3 GSP-Phot** and the **Srivastava+2026 XP [Fe/H] catalogue** (Zenodo
-20645375).
+identical metrics on the common stars. All three legs are now complete:
+**Gaia DR3 GSP-Phot**, the **Srivastava+2026 XP [Fe/H] catalogue** (Zenodo 20645375),
+and the **Andrae+2023 175M XGBoost catalogue**.
 
 ---
 
@@ -89,21 +89,46 @@ catalogue on the stars where they overlap.
 
 ![Same-cohort Fe/H comparison](fair-comparison-feh-long-20261022.png)
 
+### Third leg — Andrae+2023 175M XGBoost (95,245 common stars)
+
+The 175M catalogue covers almost the whole test cohort: **95,245 / 97,695** stars
+have finite Andrae values; **69,414** are outside its training sample; the metal-poor
+tail has **141** stars. Andrae reports `[M/H]`, not `[Fe/H]`, so the FeH comparison is
+approximate.
+
+| Label | MSA long MAE / MedAD / bias | Andrae MAE / MedAD / bias | Andrae held-out MAE |
+|---|---:|---:|---:|
+| T_eff | **57.7 / 41.0 K / +2.2 K** | 62.8 / 42.8 K / −26.0 K | 72.3 K |
+| log g | 0.118 / 0.082 dex / −0.003 | **0.071 / 0.049 dex / −0.0004** | 0.073 dex |
+| [Fe/H] | 0.074 / 0.052 dex / −0.002 | **0.070 / 0.049 dex / −0.001** | 0.070 dex |
+
+Tail [Fe/H] < −2 (n=141): MSA long 161 K / 0.200 dex / 0.393 dex;
+**Andrae 146 K / 0.152 dex / 0.209 dex**. Andrae is better on the tail, especially
+`[M/H]`.
+
+![Same-cohort Andrae 175M comparison](fair-comparison-andrae175m-20261022.png)
+
+This is the most informative leg: on the same stars, **MSA wins T_eff (lower bias and
+MAE), Andrae wins log g and [Fe/H], and Andrae is better in the metal-poor tail.**
+So the current MSA model is competitive globally but is **not yet the best** on
+log g, FeH and the tail — exactly the gap the A1/A2/A3 anchor work and the tail
+correction programme are meant to close.
+
 ---
 
 ## 3. What it says
 
-1. **On the same stars/labels, MSA long is substantially better than GSP-Phot** for
-   T_eff, log g and [Fe/H], including the metal-poor tail. The matched-budget 10M model
-   is also better, except its tail is wider. On the 1,773 stars shared with the
-   Srivastava 5M catalogue, MSA and Srivastava have essentially identical [Fe/H]
-   accuracy (MAE 0.063 vs 0.063); GSP-Phot is 4× worse.
-2. **GSP-Phot degrades catastrophically for the metal-poor stars in this cohort**
-   ([M/H] bias +1.8 dex at [Fe/H] < −2, T_eff +1.1e3 K). That is consistent with its
-   known [M/H] limitations and with the reason its own paper says [M/H] is the weakest
-   GSP-Phot parameter.
-3. **This does not prove MSA is “more correct”**: it is supervised on these labels,
-   while GSP-Phot is not. The right interpretation is that the label prior carries
+1. **MSA long is much better than GSP-Phot** for T_eff, log g and [Fe/H], including
+   the metal-poor tail, but this is partly because MSA is trained on these labels and
+   GSP-Phot is zero-shot.
+2. **Against the best released data-driven catalogue (Andrae 175M), MSA is mixed**:
+   better T_eff (MAE 57.7 vs 62.8 K, bias +2 vs −26 K), worse log g (0.118 vs 0.071)
+   and slightly worse [Fe/H] (0.074 vs 0.070), and **worse in the metal-poor tail**
+   (FeH 0.393 vs 0.209; log g 0.200 vs 0.152). The held-out Andrae subset gives the
+   same ordering.
+3. **This does not prove MSA is “more correct”** in either direction: it is supervised
+   on these labels, while GSP-Phot is zero-shot and Andrae is trained on APOGEE plus a
+   metal-poor augmentation. The right interpretation is that the label prior carries
    enormous information, and that any final claim must be validated on labels the
    model has not seen (new surveys, clusters, seismic anchors).
 4. **Selection matters:** only 67,667/97,695 test stars have finite GSP-Phot values;
@@ -116,13 +141,11 @@ catalogue on the stars where they overlap.
 
 ## 4. Next legs
 
-- **Andrae+2023 175M [M/H]** (Zenodo 7599788/7599789): the catalogues are 2.5–3.7 GB
-  gz; feasible but lower priority than the completed Srivastava leg for [Fe/H].
-- **Uncertainty comparison:** repeat with 16/84 released intervals and our conformal
-  intervals; check coverage on the same stars, not just point residuals.
+- **Uncertainty comparison:** done separately — see
+  [uncertainty-comparison-20261022.md](uncertainty-comparison-20261022.md).
 - **Independent anchors:** clusters/seismic; the only way to break the “trained on
-  the labels” circularity and to validate the metal-poor tail (no released catalogue
-  has a useful common tail sample).
+  the labels” circularity and to validate the metal-poor tail. A1/A2/A3 plan:
+  [11-anchors-a1-a2-a3.md](../plan-20261022/11-anchors-a1-a2-a3.md).
 
 ---
 
