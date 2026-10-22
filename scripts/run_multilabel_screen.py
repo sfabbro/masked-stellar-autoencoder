@@ -273,37 +273,60 @@ def load_native(cfg, cohort, sidecar, qa, features, center, scale, *, synthetic=
 
 
 def predictions(model, head, data, rows, device, batch=128):
+    """Score fixed weights in float64 without changing training modules.
+
+    Float32 encoder/context roundoff can be amplified by a trained spline's
+    log-Jacobian: even a different CPU batch size can change a density beyond
+    the declared replay tolerance. Promoting only the final log density does
+    not recover the lost context precision. Keep the entire evaluation path,
+    including label standardization and native-unit conversion, in float64.
+    Saved quadrature nodes retain their values; no estimator is resampled.
+    """
+    encoder = copy.deepcopy(model.encoder).to(device=device, dtype=torch.float64)
+    evaluation_head = copy.deepcopy(head).to(device=device, dtype=torch.float64)
+    encoder.eval()
+    evaluation_head.eval()
+    label_center = np.asarray(data["label_center"], dtype="f8")
+    label_scale = np.asarray(data["label_scale"], dtype="f8")
     means = []
     variances = []
     intrinsic = []
     observed = []
-    model.eval()
-    head.eval()
     with torch.no_grad():
         for start in range(0, len(rows), batch):
             selected = rows[start : start + batch]
-            latent = model.encoder(torch.tensor(data["input"][selected], device=device))
-            mean, variance = head.moments(latent)
+            latent = encoder(
+                torch.as_tensor(
+                    data["input"][selected], device=device, dtype=torch.float64
+                )
+            )
+            mean, variance = evaluation_head.moments(latent)
             if not torch.isfinite(mean).all():
                 raise FloatingPointError("Nonfinite multilabel point predictions")
-            if head.kind != "huber" and (
+            if evaluation_head.kind != "huber" and (
                 not torch.isfinite(variance).all() or not (variance > 0).all()
             ):
                 raise FloatingPointError("Invalid predictive variance")
             y = torch.tensor(
                 (
-                    (data["value"][selected] - data["label_center"])
-                    / data["label_scale"]
-                ).astype("f4"),
+                    (np.asarray(data["value"][selected], dtype="f8") - label_center)
+                    / label_scale
+                ),
                 device=device,
+                dtype=torch.float64,
             )
             sigma = torch.tensor(
-                (data["error"][selected] / data["label_scale"]).astype("f4"),
+                np.asarray(data["error"][selected], dtype="f8") / label_scale,
                 device=device,
+                dtype=torch.float64,
             )
-            lp = head.log_prob(latent, y)
-            observed_lp = head.log_prob(latent, y, sigma) if head.noise_aware else lp
-            if head.kind != "huber" and (
+            lp = evaluation_head.log_prob(latent, y)
+            observed_lp = (
+                evaluation_head.log_prob(latent, y, sigma)
+                if evaluation_head.noise_aware
+                else lp
+            )
+            if evaluation_head.kind != "huber" and (
                 not torch.isfinite(lp).all() or not torch.isfinite(observed_lp).all()
             ):
                 raise FloatingPointError("Nonfinite intrinsic/observed density")
@@ -311,7 +334,7 @@ def predictions(model, head, data, rows, device, batch=128):
             variances.append(variance.cpu().numpy())
             intrinsic.append(lp.cpu().numpy())
             observed.append(observed_lp.cpu().numpy())
-    jacobian = float(np.log(data["label_scale"]).sum())
+    jacobian = float(np.log(label_scale).sum())
     intrinsic, observed = np.concatenate(intrinsic), np.concatenate(observed)
     return dict(
         mean=np.concatenate(means),
@@ -324,13 +347,11 @@ def predictions(model, head, data, rows, device, batch=128):
 
 
 def calibrate_and_save(output, data, test, cal, means_test, means_cal, prefix=""):
+    center = np.asarray(data["label_center"], dtype="f8")
+    scale = np.asarray(data["label_scale"], dtype="f8")
     intervals = conformal_intervals(
         torch.tensor(means_cal),
-        torch.tensor(
-            ((data["value"][cal] - data["label_center"]) / data["label_scale"]).astype(
-                "f4"
-            )
-        ),
+        torch.tensor((np.asarray(data["value"][cal], dtype="f8") - center) / scale),
         torch.tensor(means_test),
     )
     np.savez_compressed(
@@ -339,7 +360,7 @@ def calibrate_and_save(output, data, test, cal, means_test, means_cal, prefix=""
         test_source_id=data["source_id"][test],
         **{key: value.cpu().numpy() for key, value in intervals.items()},
     )
-    y = (data["value"][test] - data["label_center"]) / data["label_scale"]
+    y = (np.asarray(data["value"][test], dtype="f8") - center) / scale
     lower, upper = [
         intervals[key].numpy() for key in ("marginal_lower", "marginal_upper")
     ]
@@ -547,6 +568,12 @@ def main():
             ["git", "rev-parse", "HEAD"], text=True
         ).strip(),
         "scope": "Three native high-resolution reported labels, complete-case joint density; no distance/age/alpha/astrometry",
+        "prediction_evaluation": {
+            "dtype": "float64",
+            "modules": "isolated encoder and head copies; training state unchanged",
+            "targets": "float64 standardization and native log-Jacobian",
+            "quadrature": "original saved nodes promoted exactly, not resampled",
+        },
     }
     atomic(args.output / "manifest.json", manifest)
     try:
