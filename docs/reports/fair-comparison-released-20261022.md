@@ -4,9 +4,10 @@
 [released-stellar-parameter-benchmarks-20261022.md](released-stellar-parameter-benchmarks-20261022.md).
 
 The earlier comparison used published summary numbers from different samples. Here we
-crossmatch the **exact MSA test cohort** with a released catalogue and recompute
-identical metrics on the common stars. First leg: **Gaia DR3 GSP-Phot**; the
-Srivastava+2026 XP [Fe/H] catalogue is downloading for the second leg.
+crossmatch the **exact MSA test cohort** with released catalogues and recompute
+identical metrics on the common stars. Both legs are now complete:
+**Gaia DR3 GSP-Phot** and the **Srivastava+2026 XP [Fe/H] catalogue** (Zenodo
+20645375).
 
 ---
 
@@ -67,13 +68,36 @@ Tail [Fe/H] < −2 (n=56): T_eff MedAD 1225 K / MAE 1148 K; log g 0.896 / 0.867;
 The GSP-Phot numbers are consistent with its published literature MedADs
 (110–169 K, 0.059–0.218, 0.20–0.21), so the same-cohort check is behaving as expected.
 
+### Second leg — Srivastava+2026 XP [Fe/H] (5M catalogue)
+
+The released 5M catalogue overlaps only **1,773** of our 97,695 test stars (it is a
+5M subset of Gaia XP stars, not the full 220M), and **none** of the metal-poor tail
+(n=0 at [Fe/H] < −2). On that common subset:
+
+| Method | n | MedAD | MAE | bias | NMAD |
+|---|---:|---:|---:|---:|---:|
+| MSA long | 1,773 | **0.0455** | **0.0629** | −0.0031 | 0.0676 |
+| Srivastava+2026 XGBoost | 1,773 | 0.0471 | 0.0634 | +0.0032 | 0.0702 |
+| GSP-Phot | 1,773 | 0.2067 | 0.2499 | −0.0985 | 0.2155 |
+
+**MSA and Srivastava are statistically indistinguishable on this subset**, while
+GSP-Phot is ~4× worse. The published Srivastava MAE is 0.052 on its LAMOST held-out
+set; 0.063 here is consistent with the different truth labels (APOGEE/GALAH) and the
+selected 5M subset. The common subset has no metal-poor stars, so this does **not**
+validate the tail; it only establishes global parity with the best released [Fe/H]
+catalogue on the stars where they overlap.
+
+![Same-cohort Fe/H comparison](fair-comparison-feh-long-20261022.png)
+
 ---
 
 ## 3. What it says
 
 1. **On the same stars/labels, MSA long is substantially better than GSP-Phot** for
    T_eff, log g and [Fe/H], including the metal-poor tail. The matched-budget 10M model
-   is also better, except its tail is wider.
+   is also better, except its tail is wider. On the 1,773 stars shared with the
+   Srivastava 5M catalogue, MSA and Srivastava have essentially identical [Fe/H]
+   accuracy (MAE 0.063 vs 0.063); GSP-Phot is 4× worse.
 2. **GSP-Phot degrades catastrophically for the metal-poor stars in this cohort**
    ([M/H] bias +1.8 dex at [Fe/H] < −2, T_eff +1.1e3 K). That is consistent with its
    known [M/H] limitations and with the reason its own paper says [M/H] is the weakest
@@ -92,15 +116,13 @@ The GSP-Phot numbers are consistent with its published literature MedADs
 
 ## 4. Next legs
 
-- **Srivastava+2026 XP [Fe/H]** (Zenodo 20645375, 628 MB): same-ID crossmatch and
-  identical metrics; this is the strongest released [Fe/H] comparison. Download in
-  progress.
 - **Andrae+2023 175M [M/H]** (Zenodo 7599788/7599789): the catalogues are 2.5–3.7 GB
-  gz; feasible but lower priority than Srivastava for [Fe/H].
+  gz; feasible but lower priority than the completed Srivastava leg for [Fe/H].
 - **Uncertainty comparison:** repeat with 16/84 released intervals and our conformal
   intervals; check coverage on the same stars, not just point residuals.
 - **Independent anchors:** clusters/seismic; the only way to break the “trained on
-  the labels” circularity.
+  the labels” circularity and to validate the metal-poor tail (no released catalogue
+  has a useful common tail sample).
 
 ---
 
