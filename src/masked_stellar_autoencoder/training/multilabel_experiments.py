@@ -121,7 +121,9 @@ def masked_gaussian_row_log_prob(mean, scale_tril, target, sigma=None, *, mask=N
             raise ValueError("measurement errors must share the target layout")
         valid = valid & torch.isfinite(sigma) & (sigma > 0)
     out = mean.new_zeros(rows)
-    code = (valid.to(torch.int64) * (2 ** torch.arange(dims, device=mean.device))).sum(1)
+    code = (valid.to(torch.int64) * (2 ** torch.arange(dims, device=mean.device))).sum(
+        1
+    )
     for pattern in range(1, 2**dims):
         keep = code == pattern
         if not keep.any():
@@ -180,7 +182,9 @@ def masked_mixture_row_log_prob(
             raise ValueError("measurement errors must share the target layout")
         valid = valid & torch.isfinite(sigma) & (sigma > 0)
     out = target.new_zeros(rows)
-    code = (valid.to(torch.int64) * (2 ** torch.arange(dims, device=target.device))).sum(1)
+    code = (
+        valid.to(torch.int64) * (2 ** torch.arange(dims, device=target.device))
+    ).sum(1)
     for pattern in range(1, 2**dims):
         keep = code == pattern
         if not keep.any():
@@ -274,7 +278,9 @@ class MultiLabelHead(nn.Module):
     ):
         super().__init__()
         if kind not in HEAD_KINDS:
-            raise ValueError(f"Unsupported multilabel head {kind!r}; expected {HEAD_KINDS}")
+            raise ValueError(
+                f"Unsupported multilabel head {kind!r}; expected {HEAD_KINDS}"
+            )
         if (
             isinstance(target_dim, bool)
             or not isinstance(target_dim, int)
@@ -384,9 +390,7 @@ class MultiLabelHead(nn.Module):
             from torchregress.losses.expectile import MultiExpectileLoss
 
             self.loss_fn = MultiExpectileLoss(list(self.expectiles))
-        self.register_buffer(
-            "point_nodes", qmc_normal_nodes(dimensions=target_dim)
-        )
+        self.register_buffer("point_nodes", qmc_normal_nodes(dimensions=target_dim))
         self.register_buffer(
             "measurement_nodes", qmc_normal_nodes(mc_samples, dimensions=target_dim)
         )
@@ -462,9 +466,10 @@ class MultiLabelHead(nn.Module):
             packed[:, diagonal] = packed[:, diagonal].exp()
             scale_tril = packed.new_zeros((len(raw), dims, dims))
             scale_tril[:, self.tril_row, self.tril_col] = packed
-            if not torch.isfinite(scale_tril).all() or not (
-                scale_tril.diagonal(dim1=-2, dim2=-1) > 0
-            ).all():
+            if (
+                not torch.isfinite(scale_tril).all()
+                or not (scale_tril.diagonal(dim1=-2, dim2=-1) > 0).all()
+            ):
                 raise FloatingPointError("Invalid full covariance; no silent clipping")
             return mean, scale_tril
         factor = raw[:, dims : dims + dims * self.lowrank_rank].view(
@@ -485,19 +490,22 @@ class MultiLabelHead(nn.Module):
         means = raw[:, start : start + components * dims].view(
             len(raw), components, dims
         )
-        log_stds = raw[:, start + components * dims :].view(
-            len(raw), components, dims
-        )
+        log_stds = raw[:, start + components * dims :].view(len(raw), components, dims)
         if not torch.isfinite(means).all() or not torch.isfinite(log_stds).all():
             raise FloatingPointError("Nonfinite mixture parameters")
         return torch.log_softmax(raw[:, :components], -1), means, log_stds
 
     def _level_values(self, raw):
-        levels = len(self.quantiles) if self.kind == "quantile" else len(self.expectiles)
+        levels = (
+            len(self.quantiles) if self.kind == "quantile" else len(self.expectiles)
+        )
         return raw.view(len(raw), levels, self.target_dim)
 
     def criterion(self, latent, target, sigma, *, source_ids=None, mask=None):
-        if target.shape != (len(latent), self.target_dim) or sigma.shape != target.shape:
+        if (
+            target.shape != (len(latent), self.target_dim)
+            or sigma.shape != target.shape
+        ):
             raise ValueError("Complete standardized target rows required")
         if (
             not torch.isfinite(target).all()
@@ -531,9 +539,7 @@ class MultiLabelHead(nn.Module):
                 if total.observation_count == 0:
                     return mean.reshape(-1)[:0].sum()
                 return total.numerator / total.observation_count
-            density = masked_gaussian_row_log_prob(
-                mean, scale_tril, target, mask=mask
-            )
+            density = masked_gaussian_row_log_prob(mean, scale_tril, target, mask=mask)
             return -density.mean() / dims
         if self.kind == "mdn":
             log_weights, means, log_stds = self._mixture_parameters(raw)
@@ -607,7 +613,9 @@ class MultiLabelHead(nn.Module):
             log_weights, means, log_stds = self._mixture_parameters(raw)
             weights = log_weights.exp()
             mean = (weights[:, :, None] * means).sum(1)
-            second = (weights[:, :, None] * (means.square() + (2 * log_stds).exp())).sum(1)
+            second = (
+                weights[:, :, None] * (means.square() + (2 * log_stds).exp())
+            ).sum(1)
             return mean, second - mean.square()
         return self._location_scale_from_levels(
             self._level_values(raw), self.level_constants
@@ -636,11 +644,15 @@ class MultiLabelHead(nn.Module):
             return _gaussian_diagonal_log_prob(target - mean, variance).sum(-1)
         if self.kind in {"mvgaussian", "lowrank"}:
             mean, scale_tril = self._gaussian_parameters(raw)
-            return masked_gaussian_row_log_prob(mean, scale_tril, target, sigma, mask=mask)
+            return masked_gaussian_row_log_prob(
+                mean, scale_tril, target, sigma, mask=mask
+            )
         log_weights, means, log_stds = self._mixture_parameters(raw)
         return masked_mixture_row_log_prob(
             log_weights, means, log_stds, target, sigma, mask=mask
         )
+
+
 def conformal_intervals(
     calibration_prediction, calibration_target, test_prediction, alpha=0.1
 ):

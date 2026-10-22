@@ -1088,3 +1088,105 @@ def test_head_supports_stage_binned_affine_links():
     bad[0, FEATURES.index("stage")] = 2.0
     with pytest.raises(ValueError):
         head.loss(torch.randn(3, 4, dtype=DOUBLE), bad, labels)
+
+
+def test_joint_shared_latent_covariance_sparse_masks_and_gradients():
+    calibrations = {
+        "a": _affine_calibration("a", 0.2, 1.3, 0.15, 1.1),
+        "b": _affine_calibration("b", -0.1, 0.8, 0.2, 1.4),
+    }
+    labels = mt.TeacherLabelBatch.from_rows(
+        [
+            {"a": _label("a", 0.7, 0.1), "b": _label("b", 0.3, 0.2)},
+            {"b": _label("b", 1.1, 0.15)},
+            {"a": _label("a", 99.0, 0.1, quality=0)},
+            {},
+        ],
+        teacher_names=("a", "b"),
+    )
+    mu = torch.tensor([0.4, 0.8, 0.0, 0.1], dtype=DOUBLE, requires_grad=True)
+    log_sigma = torch.tensor([-0.6, -0.5, -0.7, -0.2], dtype=DOUBLE, requires_grad=True)
+    result = mt.joint_teacher_age_loss(
+        mu, log_sigma, _features(4), labels, calibrations
+    )
+    b = mu.new_tensor([1.3, 0.8])
+    noise = mu.new_tensor([0.15**2 + (1.1 * 0.1) ** 2, 0.2**2 + (1.4 * 0.2) ** 2])
+    covariance = (
+        torch.diag(noise) + log_sigma[0].exp().square() * b[:, None] * b[None, :]
+    )
+    assert covariance[0, 1] > 0
+    oracle = torch.distributions.MultivariateNormal(
+        mu.new_tensor([0.2, -0.1]) + b * mu[0], covariance_matrix=covariance
+    )
+    expected0 = -oracle.log_prob(mu.new_tensor([0.7, 0.3]))
+    expected1 = -torch.distributions.Normal(
+        -0.1 + 0.8 * mu[1],
+        (0.2**2 + (1.4 * 0.15) ** 2 + 0.8**2 * log_sigma[1].exp().square()).sqrt(),
+    ).log_prob(mu.new_tensor(1.1))
+    assert torch.allclose(
+        result.per_row,
+        torch.stack([expected0, expected1, mu[2] * 0, mu[3] * 0]),
+        atol=1e-13,
+    )
+    assert result.row_count == 2 and result.label_count == 3
+    joint_grad = torch.autograd.grad(result.mean, (mu, log_sigma), retain_graph=True)
+    oracle_grad = torch.autograd.grad(
+        (expected0 + expected1) / 2, (mu, log_sigma), retain_graph=True
+    )
+    for actual, expected in zip(joint_grad, oracle_grad, strict=True):
+        assert torch.allclose(actual, expected, atol=1e-12)
+        assert torch.equal(actual[2:], torch.zeros_like(actual[2:]))
+    result.mean.backward()
+    assert torch.isfinite(calibrations["a"].log_slope.grad)
+    composite = mt.multi_teacher_age_loss(
+        mu, log_sigma, _features(4), labels, calibrations
+    )
+    assert composite.diagnostics()["objective"] == "weighted_composite_marginal"
+    assert result.diagnostics()["shared_latent_joint"]
+    assert not torch.allclose(
+        expected0,
+        sum(
+            -torch.distributions.Normal(
+                offset + slope * mu[0],
+                (noise[j] + slope**2 * log_sigma[0].exp().square()).sqrt(),
+            ).log_prob(mu.new_tensor(value))
+            for j, (offset, slope, value) in enumerate(
+                [(0.2, 1.3, 0.7), (-0.1, 0.8, 0.3)]
+            )
+        ),
+    )
+
+
+def test_joint_teacher_rejects_fractional_quality_and_handles_empty_rows():
+    calibration = {"a": _affine_calibration("a", 0.0, 1.0, 0.1, 1.0)}
+    mu = torch.zeros(2, dtype=DOUBLE, requires_grad=True)
+    scale = torch.zeros_like(mu, requires_grad=True)
+    labels = mt.TeacherLabelBatch.from_rows([{}, {}], teacher_names=("a",))
+    result = mt.joint_teacher_age_loss(mu, scale, _features(2), labels, calibration)
+    assert result.row_count == 0 and result.mean.item() == 0
+    result.mean.backward()
+    assert torch.equal(mu.grad, torch.zeros_like(mu))
+    labels = mt.TeacherLabelBatch.from_rows(
+        [{"a": _label("a", 1.0, 0.1, quality=0.5)}, {}], teacher_names=("a",)
+    )
+    with pytest.raises(ValueError, match="binary quality"):
+        mt.joint_teacher_age_loss(mu, scale, _features(2), labels, calibration)
+
+
+def test_head_explicit_joint_dispatch_keeps_composite_default():
+    head = mt.MultiTeacherAgeHead(
+        ("a",), input_dim=2, width=4, reference_teacher="a"
+    ).double()
+    labels = mt.TeacherLabelBatch.from_rows(
+        [{"a": _label("a", 0.4, 0.1)}], teacher_names=("a",)
+    )
+    latent = torch.zeros(1, 2, dtype=DOUBLE)
+    features = _features(1)
+    assert isinstance(head.loss(latent, features, labels), mt.MultiTeacherAgeLoss)
+    joint = head.loss(latent, features, labels, objective="joint")
+    assert isinstance(joint, mt.JointTeacherAgeLoss)
+    assert torch.equal(joint.mean, head.joint_loss(latent, features, labels).mean)
+    with pytest.raises(ValueError, match="teacher_weights"):
+        head.loss(latent, features, labels, objective="joint", teacher_weights=(1.0,))
+    with pytest.raises(ValueError, match="objective"):
+        head.loss(latent, features, labels, objective="unknown")

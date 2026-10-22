@@ -59,7 +59,7 @@ Also **library-version drift in reporting**: `density-review-20261022/metrics.js
    `:18-19` two-sided score implemented as two one-sided gaps but the level is not split.
 7. `density_calibration.py` — reference implementation of the exact contract (`numpy_threshold` `:31-37`,
    membership `:238`, library-vs-numpy assertion `:216-220`); **this is the arithmetic the strict gate
-   should be re-declared against**. `:171-176` uses zero placeholder targets for CTI (documented).
+   should be redeclared against**. `:171-176` uses zero placeholder targets for CTI (documented).
 8. `forward_eiv.py:56-96` — fixed 64-node GH with detached local-linear proposal; `:96` normalizes by
    width *after* summing (per-coefficient NLL); `:104-109` rejects non-uniform grids; `:138` boundary
    mass counts 4 nodes only. Rank-deficient/global-mode failure is architectural (F5/F6).
@@ -127,7 +127,7 @@ change systematically, so `rescored-v2-lib8973bcd/` outputs are new artifacts wi
 
 ## 5. Repair wave (ordered, bounded; each phase has its own gate)
 
-**P0 — re-declare the scoring contract (0.5 d, local, no launches).**
+**P0 — redeclare the scoring contract (0.5 d, local, no launches).**
 Write the gate before touching models: (a) compare **float64 CPU vs float64 GPU** first (isolates device
 effects from precision); (b) apply tolerances to **shift-invariant** quantities (per-object joint *native*
 log-density, and the CP/level-set *scores*), never to an offset log-density with a flat rtol; (c) declare
@@ -148,7 +148,7 @@ dtype recorded, `kind=="huber"` raises instead of NaN). Emit `prediction-certifi
            "cp_order_stat_match": true, "cdf_levelset_match": true},
  "verdicts": {"point": "pass", "density": "pass|fail", "cp": "pass"},
  "supersedes": {"old_report_sha256": "...", "old_verdict": "complete_strict_failed",
-                "reason": "float64 device certification under re-declared gate"}}
+                "reason": "float64 device certification under redeclared gate"}}
 ```
 **Coordination (seen in-tree at audit time, not authored here):** `configs/density-precision-certificate-20261022.yaml`
 + `scripts/run_density_precision_certificate.py` + `tests/test_density_precision_certificate.py` implement a
@@ -215,7 +215,7 @@ blocked** until P2+P3 certificates exist, and distance/age/alpha labels stay blo
 ## 6. What this implies for the plan
 
 1. The failures are **two families**, not one: (i) *precision/contract* failures that are fixed by
-   float64 scoring + a re-declared shift-invariant gate with **no retraining** (F1–F4, F9, F17), and
+   float64 scoring + a redeclared shift-invariant gate with **no retraining** (F1–F4, F9, F17), and
    (ii) *method* failures that a tolerance change cannot fix (F5–F8: under-resolved integration, local
    stationarity, grid near-ties) — schedule them as retire/demote, not as "repair".
 2. The current point/CP numbers for Teff/logg/FeH are not blocked by any failure: they rest on

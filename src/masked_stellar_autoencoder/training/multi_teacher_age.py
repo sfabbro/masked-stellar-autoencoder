@@ -28,9 +28,11 @@ affine over ``Teff/logg/FeH/alpha/stage``); ``kappa_s`` inflates the quoted
 label error and ``q_{i,s}`` is the declared label quality weight. **Each teacher
 keeps its own denominator**, so a teacher with a million labels has the same
 weight in the objective as one with ten, and a teacher's term never depends on
-another teacher's rows. Several teachers of one star enter as a *product* of
-likelihoods (a sum of log-densities) given the shared latent ``t_i``; the
-teacher values are never averaged into a pseudo-label. ``gaussian_convolution_nll``
+another teacher's rows. This is a weighted composite of separately marginalized
+likelihoods, not the shared-latent joint likelihood. For the latter use
+``joint_teacher_age_loss``: it integrates the product of observed teacher
+likelihoods once per star and includes shared-latent cross-covariance. Neither
+API averages teacher values into a pseudo-label. ``gaussian_convolution_nll``
 is the exact closed form of that integral for a Gaussian latent and exists as
 the numerical certificate of the quadrature (``teacher_marginal_nll`` with
 ``rule="auto"``), not as a replacement for a non-Gaussian latent.
@@ -119,6 +121,7 @@ __all__ = [
     "MetaCorrectionOutput",
     "MultiTeacherAgeHead",
     "MultiTeacherAgeLoss",
+    "JointTeacherAgeLoss",
     "QuadratureDiagnostics",
     "SystematicVariance",
     "TeacherAgeLabel",
@@ -129,6 +132,7 @@ __all__ = [
     "cluster_coeval_loss",
     "gaussian_convolution_nll",
     "multi_teacher_age_loss",
+    "joint_teacher_age_loss",
     "systematic_variance_decomposition",
     "teacher_marginal_nll",
 ]
@@ -190,7 +194,7 @@ def _require_name(what: str, value: object) -> str:
 
 
 def _require_finite(what: str, value: float) -> float:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if isinstance(value, bool) or not isinstance(value, int | float):
         raise TypeError(f"{what} must be a real number")
     number = float(value)
     if not math.isfinite(number):
@@ -1216,7 +1220,7 @@ class TeacherNLL:
 
 @dataclass(frozen=True, eq=False)
 class MultiTeacherAgeLoss:
-    """Multi-teacher age objective plus its per-teacher diagnostics.
+    """Composite marginal age objective plus its per-teacher diagnostics.
 
     ``numerator`` is ``sum_s w_s * (sum_i q_is nll_is / sum_i q_is)``: a sum of
     per-teacher mean NLLs. ``observation_count`` counts *active teachers*, not
@@ -1274,6 +1278,8 @@ class MultiTeacherAgeLoss:
             "evidence_status": MULTI_TEACHER_EVIDENCE_STATUS,
             "coordinate": AGE_COORDINATE,
             "loss_denominator": "per_teacher_observation_mean",
+            "objective": "weighted_composite_marginal",
+            "shared_latent_joint": False,
             "partial_label_policy": "per_teacher_mask; no imputation",
             "reference_teacher": self.reference_teacher,
             "age_scale": self.age_scale,
@@ -1321,7 +1327,7 @@ def multi_teacher_age_loss(
     qmc_seed: int = DEFAULT_QMC_SEED,
     reference_teacher: str | None = None,
 ) -> MultiTeacherAgeLoss:
-    """Multi-teacher latent-age likelihood with per-teacher denominators.
+    """Weighted composite marginal age likelihood with per-teacher denominators.
 
     ``mu``/``log_sigma`` (``[row]``) are the latent age distribution
     ``N(tau | mu, exp(log_sigma)^2)`` in ``tau``; ``teacher_features`` are the
@@ -1331,8 +1337,9 @@ def multi_teacher_age_loss(
     its teacher's own Gaussian marginal likelihood (see
     :func:`teacher_marginal_nll`), the per-teacher means are summed with the
     declared ``teacher_weights``, and no teacher value is ever averaged with
-    another: the joint term for a star with two teachers is the *product* of the
-    two likelihoods given the shared latent.
+    another. Marginalizing each teacher separately discards shared-latent
+    covariance across teachers. This is not a per-star joint likelihood; use
+    :func:`joint_teacher_age_loss` for that explicit alternative.
 
     ``reference_teacher`` is bookkeeping for the diagnostics (the named scale);
     the gauge itself lives in the calibrations, whose reference link is frozen to
@@ -1455,6 +1462,120 @@ def multi_teacher_age_loss(
     )
 
 
+@dataclass(frozen=True, eq=False)
+class JointTeacherAgeLoss:
+    """Per-star joint Gaussian NLL; empty rows contribute differentiable zero."""
+
+    per_row: Tensor
+    observed_count: Tensor
+    reference_teacher: str | None = None
+    age_scale: str | None = None
+
+    @property
+    def row_count(self) -> int:
+        return int((self.observed_count > 0).sum())
+
+    @property
+    def label_count(self) -> int:
+        return int(self.observed_count.sum())
+
+    @property
+    def numerator(self) -> Tensor:
+        return self.per_row.sum()
+
+    @property
+    def mean(self) -> Tensor:
+        return self.numerator / max(1, self.row_count)
+
+    def diagnostics(self) -> dict[str, object]:
+        return {
+            "objective": "shared_latent_joint_gaussian",
+            "shared_latent_joint": True,
+            "loss_denominator": "per_star_with_observation",
+            "teacher_balancing": "none; each observed likelihood enters once",
+            "quality_policy": "binary inclusion only; fractional quality rejected",
+            "conditional_noise": "independent teachers given latent age",
+            "partial_label_policy": "per_teacher_mask; no imputation",
+            "n_rows_with_label": self.row_count,
+            "n_labels": self.label_count,
+            "reference_teacher": self.reference_teacher,
+            "age_scale": self.age_scale,
+            "evidence_status": MULTI_TEACHER_EVIDENCE_STATUS,
+            "mean_nll": float(self.mean.detach()),
+        }
+
+
+def joint_teacher_age_loss(
+    mu: Tensor,
+    log_sigma: Tensor,
+    teacher_features: Tensor,
+    labels: TeacherLabelBatch,
+    calibrations: Mapping[str, TeacherCalibration],
+    *,
+    reference_teacher: str | None = None,
+) -> JointTeacherAgeLoss:
+    r"""Exactly integrate one shared Gaussian latent over all present teachers.
+
+    For each star, observed labels have mean ``a + b*mu`` and covariance
+    ``diag(sigma_intrinsic**2 + (kappa*sigma_quoted)**2)
+    + exp(2*log_sigma) * b*b.T``. Conditional teacher noises are independent;
+    additional shared catalogue systematics are not modeled. Missing and
+    quality-zero labels are excluded before covariance construction. Fractional
+    quality weights are rejected: powered likelihoods/teacher balancing are a
+    different objective and must not silently change this normalized density.
+    Existing ``multi_teacher_age_loss`` retains its composite semantics.
+    """
+    if not isinstance(labels, TeacherLabelBatch):
+        raise TypeError("labels must be a TeacherLabelBatch")
+    rows = labels.n_rows
+    _check_1d("mu", mu, rows)
+    _check_1d("log_sigma", log_sigma, rows)
+    _check_features(
+        teacher_features,
+        calibrations_feature_names(calibrations),
+        what="teacher_features",
+    )
+    if teacher_features.shape[0] != rows:
+        raise ValueError("teacher_features must have one row per label row")
+    variance = log_sigma.exp().square()
+    if not bool((torch.isfinite(variance) & (variance > 0)).all()):
+        raise ValueError("invalid latent variance; no clipping")
+    residuals, slopes, noises, masks = [], [], [], []
+    for column, name in enumerate(labels.teacher_names):
+        if name not in calibrations:
+            raise ValueError(f"no calibration supplied for teacher {name!r}")
+        quality = labels.quality[column]
+        observed = labels.observed[column]
+        if bool((observed & (quality != 0) & (quality != 1)).any()):
+            raise ValueError("joint likelihood requires binary quality inclusion")
+        mask = observed & (quality > 0)
+        mapping = calibrations[name](teacher_features)
+        # Safe placeholders prevent absent NaNs contaminating values or gradients.
+        quoted = torch.where(mask, labels.sigma_quoted[column], 0.0)
+        y = torch.where(mask, labels.tau[column], 0.0)
+        residuals.append(
+            torch.where(mask, y - mapping.offset - mapping.slope * mu, 0.0)
+        )
+        slopes.append(torch.where(mask, mapping.slope, 0.0))
+        noises.append(torch.where(mask, mapping.effective_sigma(quoted).square(), 1.0))
+        masks.append(mask)
+    residual = torch.stack(residuals, dim=-1)
+    slope = torch.stack(slopes, dim=-1)
+    diagonal = torch.stack(noises, dim=-1)
+    count = torch.stack(masks, dim=-1).sum(-1)
+    covariance = torch.diag_embed(diagonal) + variance[:, None, None] * (
+        slope.unsqueeze(-1) * slope.unsqueeze(-2)
+    )
+    factor = torch.linalg.cholesky(covariance)
+    solved = torch.cholesky_solve(residual.unsqueeze(-1), factor).squeeze(-1)
+    logdet = 2 * factor.diagonal(dim1=-2, dim2=-1).log().sum(-1)
+    nll = 0.5 * (count * _LOG_2PI + logdet + (residual * solved).sum(-1))
+    age_scale = None
+    if reference_teacher is not None:
+        age_scale = labels.age_scales[labels.index_of(reference_teacher)]
+    return JointTeacherAgeLoss(nll, count, reference_teacher, age_scale)
+
+
 def calibrations_feature_names(
     calibrations: Mapping[str, TeacherCalibration],
 ) -> tuple[str, ...]:
@@ -1480,7 +1601,8 @@ class MultiTeacherAgeHead(nn.Module):
     is fitted by maximizing the teacher-label marginal likelihood, not by
     regressing on one catalogue. Because the integral in
     :func:`teacher_marginal_nll` is a Gaussian convolution for this latent, the
-    head's optimum is the exact marginal MLE; a flow latent can replace it at
+    likelihood is evaluated exactly for this Gaussian latent; this does not
+    certify a global optimizer optimum. A flow latent can replace it at
     inference time through the fixed QMC nodes.
 
     ``reference_teacher`` (default: the first teacher) defines the named age
@@ -1565,8 +1687,21 @@ class MultiTeacherAgeHead(nn.Module):
         labels: TeacherLabelBatch,
         *,
         teacher_weights: Sequence[float] | None = None,
-    ) -> MultiTeacherAgeLoss:
-        """Multi-teacher objective for one batch (see ``multi_teacher_age_loss``)."""
+        objective: str = "composite",
+    ) -> MultiTeacherAgeLoss | JointTeacherAgeLoss:
+        """Choose composite (historical default) or shared-latent joint evidence.
+
+        Joint evidence rejects teacher weights rather than silently interpreting
+        them as likelihood powers or changing the covariance model.
+        """
+        if objective == "joint":
+            if teacher_weights is not None:
+                raise ValueError(
+                    "teacher_weights are only supported for composite loss"
+                )
+            return self.joint_loss(latent_features, teacher_features, labels)
+        if objective != "composite":
+            raise ValueError("objective must be 'composite' or 'joint'")
         unknown = [
             name for name in labels.teacher_names if name not in self.teacher_names
         ]
@@ -1588,6 +1723,26 @@ class MultiTeacherAgeHead(nn.Module):
             nodes=self.nodes,
             qmc_count=self.qmc_count,
             qmc_seed=self.qmc_seed,
+            reference_teacher=self.reference_teacher,
+        )
+
+    def joint_loss(
+        self,
+        latent_features: Tensor,
+        teacher_features: Tensor,
+        labels: TeacherLabelBatch,
+    ) -> JointTeacherAgeLoss:
+        """Opt in to exact per-star joint evidence, without teacher balancing."""
+        unknown = set(labels.teacher_names) - set(self.teacher_names)
+        if unknown:
+            raise ValueError(f"labels carry undeclared teachers: {sorted(unknown)}")
+        outputs = self(latent_features)
+        return joint_teacher_age_loss(
+            outputs["mean"],
+            outputs["log_scale"],
+            teacher_features,
+            labels,
+            self.calibrations,
             reference_teacher=self.reference_teacher,
         )
 

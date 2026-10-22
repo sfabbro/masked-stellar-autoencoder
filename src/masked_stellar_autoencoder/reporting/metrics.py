@@ -790,7 +790,7 @@ def _normalise_groups(groups, n: int) -> list[np.ndarray]:
             candidates = [groups[index] for index in range(groups.shape[0])]
         else:
             raise ValueError("a groups array must be 1-D or 2-D")
-    elif isinstance(groups, (list, tuple)):
+    elif isinstance(groups, list | tuple):
         if not groups:
             raise ValueError("groups must not be empty")
         first = np.asarray(groups[0])

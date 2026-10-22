@@ -272,7 +272,7 @@ def chi2_1dof_quantile(level: float) -> float:
     ``chi2_1(1-alpha) = 2 erfinv(1-alpha)^2``, computed here so the
     confidence-set helper needs no SciPy dependency.
     """
-    if isinstance(level, bool) or not isinstance(level, (int, float)):
+    if isinstance(level, bool) or not isinstance(level, int | float):
         raise TypeError("confidence level must be a real number")
     if not 0.0 < float(level) < 1.0:
         raise ValueError("confidence level must lie strictly between 0 and 1")
@@ -311,7 +311,7 @@ def _zero_point_tensor(
         if not torch.isfinite(zero[valid]).all():
             raise ValueError("zero points used by the likelihood must be finite")
         return zero
-    if isinstance(zero_point_mas, bool) or not isinstance(zero_point_mas, (int, float)):
+    if isinstance(zero_point_mas, bool) or not isinstance(zero_point_mas, int | float):
         raise TypeError("zero point must be a tensor or a real scalar")
     if not math.isfinite(float(zero_point_mas)):
         raise ValueError("zero point must be finite and expressed in mas")

@@ -158,13 +158,9 @@ def test_native_density_uses_per_row_per_coordinate_jacobian_for_log_targets():
     center = np.array([1.0, 2.0])
     scale = np.array([0.4, 0.6])
     standardized = (np.log(native) - center) / scale
-    standard_log_prob = -0.5 * (
-        standardized**2 + math.log(2 * math.pi)
-    ).sum(1)
+    standard_log_prob = -0.5 * (standardized**2 + math.log(2 * math.pi)).sum(1)
     data = _log_target_data(names, native, center, scale)
-    result = runner().predictions(
-        model, head, data, np.arange(3), torch.device("cpu")
-    )
+    result = runner().predictions(model, head, data, np.arange(3), torch.device("cpu"))
     np.testing.assert_allclose(
         result["intrinsic_log_prob_standardized"], standard_log_prob, rtol=1e-13
     )
@@ -193,9 +189,7 @@ def test_runner_rejects_a_target_order_outside_the_frozen_registry():
     model.encoder = nn.Identity()
     head = MultiLabelHead("gaussian", target_dim=2, latent_dim=2, width=8).eval()
     native = np.ones((2, 2))
-    data = _log_target_data(
-        ("age", "distance"), native, np.zeros(2), np.ones(2)
-    )
+    data = _log_target_data(("age", "distance"), native, np.zeros(2), np.ones(2))
     import pytest
 
     with pytest.raises(ValueError, match="registry order"):

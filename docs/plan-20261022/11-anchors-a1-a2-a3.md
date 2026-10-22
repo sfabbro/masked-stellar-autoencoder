@@ -2,7 +2,7 @@
 
 **Prepared:** 2026-10-22. Status after the multi-teacher module landed
 (`training/multi_teacher_age.py`, 36 tests passing) and the first anchor label layer
-was built (`age_teacher_anchors_v1`).
+was built (`age_teacher_anchors_v2`).
 
 The point of A1/A2/A3 is to stop validating age only against the StarHorse labels
 the model trained on. Seismic and cluster anchors give a second, independent scale;
@@ -40,8 +40,9 @@ Caveats:
 and cluster coevality; no per-star free latents.
 
 - **Head:** `MultiTeacherAgeHead(teacher_names, reference_teacher=...)` on frozen
-  MSA encoder features; `TeacherLabelBatch` masks missing teachers; loss is a
-  product of per-teacher likelihoods with teacher-specific denominators and quality.
+  MSA encoder features; `TeacherLabelBatch` masks missing teachers; use explicit `objective="joint"` for the shared-latent joint Gaussian likelihood.
+  The historical default remains a weighted composite of marginal likelihoods;
+  its teacher-specific denominators are not a joint likelihood.
 - **Reference scale:** run two arms:
   1. `ref=apokasc3` — target the giant seismic scale; StarHorse MSTO/SGB is the
      heterogeneous teacher; clusters bridge.
@@ -118,3 +119,16 @@ with its n.
   the 150M cache.
 - Gaia DR4 FLAME (Dec 2026) will add a large teacher layer; ingest as an additional
   scale, not truth.
+
+## Repair status after independent checkup
+
+APOKASC3 v1 bound columns were misinterpreted signed uncertainties; v2 uses
+`age16=age50+e_age` and `age84=age50+E_age` from the catalogue ReadMe,
+with invalid/nonpositive bounds masked. Existing v1 artifacts are retained.
+Only 12,301 of 15,808 rows have valid positive ordered bounds.
+Native audit found three APOKASC IDs in the old age tuning cohort; new
+anchor holdouts must be assigned by identity/family before A1/A2 evaluation.
+The new bounded prepared-embedding pilot provides FIT-only gradients/TUNE
+selection and explicit source/units/SHA contracts for age and distance.
+It is a code-path validation, not a replacement for stage/cluster holdouts.
+Alpha evidence and raw Gaia parallax/zero-point inputs remain required gates.

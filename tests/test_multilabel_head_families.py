@@ -43,9 +43,7 @@ def _numpy_gaussian_log_prob(mean, covariance, target):
     covariance = np.asarray(covariance, dtype="f8")
     _, logdet = np.linalg.slogdet(covariance)
     solved = np.linalg.solve(covariance, residual.T).T
-    return -0.5 * (
-        (solved * residual).sum(-1) + logdet + residual.shape[-1] * LOG_2PI
-    )
+    return -0.5 * ((solved * residual).sum(-1) + logdet + residual.shape[-1] * LOG_2PI)
 
 
 def _pack_tril(scale_tril):
@@ -75,9 +73,7 @@ def _runner():
 
 def test_full_covariance_nll_matches_an_independent_numpy_gaussian():
     mean = np.array([0.4, -1.2, 0.7])
-    scale_tril = np.array(
-        [[0.9, 0.0, 0.0], [0.35, 0.6, 0.0], [-0.2, 0.15, 0.45]]
-    )
+    scale_tril = np.array([[0.9, 0.0, 0.0], [0.35, 0.6, 0.0], [-0.2, 0.15, 0.45]])
     covariance = scale_tril @ scale_tril.T
     target = np.array([[0.1, -0.9, 0.2], [-0.6, -1.5, 1.1], [1.3, 0.4, 0.0]])
     head = _pin(
@@ -100,9 +96,7 @@ def test_full_covariance_nll_matches_an_independent_numpy_gaussian():
 
 def test_noise_aware_full_covariance_adds_the_measurement_covariance():
     mean = np.array([0.2, 0.5, -0.1])
-    scale_tril = np.array(
-        [[0.7, 0.0, 0.0], [0.1, 0.5, 0.0], [-0.05, 0.2, 0.4]]
-    )
+    scale_tril = np.array([[0.7, 0.0, 0.0], [0.1, 0.5, 0.0], [-0.05, 0.2, 0.4]])
     target = np.array([[0.0, 0.4, 0.1], [1.0, -0.2, 0.6]])
     errors = np.array([[0.2, 0.3, 0.1], [0.15, 0.05, 0.25]])
     head = _pin(
@@ -125,16 +119,17 @@ def test_noise_aware_full_covariance_adds_the_measurement_covariance():
         head.log_prob(latent, y).detach().numpy(), intrinsic, rtol=1e-12, atol=1e-12
     )
     np.testing.assert_allclose(
-        head.log_prob(latent, y, sigma).detach().numpy(), observed, rtol=1e-12, atol=1e-12
+        head.log_prob(latent, y, sigma).detach().numpy(),
+        observed,
+        rtol=1e-12,
+        atol=1e-12,
     )
     assert not np.allclose(observed, intrinsic)
 
 
 def test_masked_marginal_equals_the_lower_dimensional_gaussian():
     mean = np.array([0.3, -0.4, 0.8])
-    scale_tril = np.array(
-        [[1.0, 0.0, 0.0], [0.4, 0.7, 0.0], [-0.1, 0.25, 0.5]]
-    )
+    scale_tril = np.array([[1.0, 0.0, 0.0], [0.4, 0.7, 0.0], [-0.1, 0.25, 0.5]])
     covariance = scale_tril @ scale_tril.T
     target = np.array([[0.2, -0.1, 0.9], [1.1, 0.3, -0.2]])
     keep = [0, 2]
@@ -192,7 +187,9 @@ def test_mixture_masked_marginal_matches_independent_numpy_mixture():
         )
         return per_coordinate.sum()
 
-    components = np.array([reference_component(means[0, k], stds[0, k]) for k in range(2)])
+    components = np.array(
+        [reference_component(means[0, k], stds[0, k]) for k in range(2)]
+    )
     expected = np.logaddexp(
         np.log(weights[0]) + components[0], np.log(weights[1]) + components[1]
     )
@@ -221,7 +218,11 @@ def test_single_component_mdn_equals_the_diagonal_gaussian(noise_aware):
     )
     mdn = _pin(
         MultiLabelHead(
-            "mdn", latent_dim=2, width=8, mdn_components=1, **{"noise_aware": noise_aware}
+            "mdn",
+            latent_dim=2,
+            width=8,
+            mdn_components=1,
+            **{"noise_aware": noise_aware},
         ),
         np.r_[0.0, mean, log_stds],
     )
@@ -303,9 +304,7 @@ def test_quantile_head_recovers_gaussian_quantiles_without_crossing():
         optimizer.step()
     levels = head._level_values(head(latent[:1])).detach().numpy()[0, :, 0]
     assert levels[0] < levels[1] < levels[2], "quantile levels crossed"
-    np.testing.assert_allclose(
-        levels, [-0.9945, 0.0, 0.9945], atol=0.12
-    )
+    np.testing.assert_allclose(levels, [-0.9945, 0.0, 0.9945], atol=0.12)
     assert not head.has_density
     assert np.isnan(head.log_prob(latent[:1], samples[:1]).detach().numpy()).all()
     mean, variance = head.moments(latent[:1])
@@ -354,7 +353,8 @@ def test_expectile_location_scale_recovery_matches_gaussian_constants():
 def test_gaussian_quantile_constants_are_the_inverse_normal_cdf():
     z = _standard_normal_quantiles((0.05, 0.16, 0.5, 0.84, 0.95)).detach().numpy()
     np.testing.assert_allclose(
-        z, [-1.644853626951, -0.994457883210, 0.0, 0.994457883210, 1.644853626951],
+        z,
+        [-1.644853626951, -0.994457883210, 0.0, 0.994457883210, 1.644853626951],
         rtol=1e-10,
         atol=1e-10,
     )
@@ -384,7 +384,9 @@ def test_non_three_dimensional_denominators(dims):
         mean, variance = head.moments(latent)
         assert mean.shape == (6, dims) and variance.shape == (6, dims)
         if head.has_density:
-            per_coordinate = -head.log_prob(latent, y).detach().mean().detach().numpy() / dims
+            per_coordinate = (
+                -head.log_prob(latent, y).detach().mean().detach().numpy() / dims
+            )
             if kind in {"mvgaussian", "lowrank"} or kind == "gaussian":
                 np.testing.assert_allclose(loss, per_coordinate, rtol=1e-5, atol=1e-6)
         with pytest.raises(ValueError, match="Unsupported"):
@@ -447,18 +449,14 @@ def test_float64_scoring_is_batch_stable_for_every_family(kind, extra):
         np.testing.assert_allclose(
             batched[key][finite], singles[key][finite], rtol=1e-10, atol=1e-10
         )
-        np.testing.assert_array_equal(
-            np.isnan(batched[key]), np.isnan(singles[key])
-        )
+        np.testing.assert_array_equal(np.isnan(batched[key]), np.isnan(singles[key]))
 
 
 def test_noise_aware_arms_save_distinct_intrinsic_and_observed_densities():
     torch.manual_seed(23)
     model = nn.Module()
     model.encoder = nn.Identity()
-    head = MultiLabelHead(
-        "mvgaussian", latent_dim=3, width=16, noise_aware=True
-    )
+    head = MultiLabelHead("mvgaussian", latent_dim=3, width=16, noise_aware=True)
     with torch.no_grad():
         head.output.weight.normal_(0, 0.2)
     data = dict(

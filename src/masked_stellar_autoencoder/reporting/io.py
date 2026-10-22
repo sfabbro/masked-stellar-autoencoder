@@ -129,7 +129,7 @@ def _coerce(field: schema.Field, value):
             )
         return value
     if field.dtype == "bool":
-        if isinstance(value, (bool, np.bool_)):
+        if isinstance(value, bool | np.bool_):
             return bool(value)
         if isinstance(value, str):
             token = value.strip().lower()
@@ -137,7 +137,7 @@ def _coerce(field: schema.Field, value):
                 return True
             if token in ("false", "0", "no"):
                 return False
-        if isinstance(value, (int, np.integer)) and not isinstance(value, bool):
+        if isinstance(value, int | np.integer) and not isinstance(value, bool):
             if int(value) in (0, 1):
                 return bool(int(value))
         raise ContractError(f"{field.name}: expected bool, got {value!r}")
@@ -145,7 +145,7 @@ def _coerce(field: schema.Field, value):
         if isinstance(value, bool):
             raise ContractError(f"{field.name}: bool is not an int")
         if (
-            isinstance(value, (int, np.integer))
+            isinstance(value, int | np.integer)
             or isinstance(value, float)
             and value.is_integer()
         ):

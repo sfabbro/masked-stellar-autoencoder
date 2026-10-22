@@ -80,12 +80,12 @@ The released 5M catalogue overlaps only **1,773** of our 97,695 test stars (it i
 | Srivastava+2026 XGBoost | 1,773 | 0.0471 | 0.0634 | +0.0032 | 0.0702 |
 | GSP-Phot | 1,773 | 0.2067 | 0.2499 | −0.0985 | 0.2155 |
 
-**MSA and Srivastava are statistically indistinguishable on this subset**, while
+**MSA and Srivastava have similar observed errors on this subset; no paired uncertainty analysis establishes statistical equivalence**, while
 GSP-Phot is ~4× worse. The published Srivastava MAE is 0.052 on its LAMOST held-out
 set; 0.063 here is consistent with the different truth labels (APOGEE/GALAH) and the
 selected 5M subset. The common subset has no metal-poor stars, so this does **not**
-validate the tail; it only establishes global parity with the best released [Fe/H]
-catalogue on the stars where they overlap.
+validate the tail; it only describes similar point errors on these overlapping stars. It does not
+establish equivalence, a catalogue-wide ranking, or identical [M/H] and [Fe/H] targets.
 
 ![Same-cohort Fe/H comparison](fair-comparison-feh-long-20261022.png)
 

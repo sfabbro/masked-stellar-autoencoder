@@ -41,7 +41,6 @@ def test_grouped_offsets_skips_unclassified_groups():
 
 
 def test_constant_identifier_column_detected(tmp_path):
-    audit = _audit()
     path = tmp_path / "cat_TESS_APG.csv"
     path.write_text("TESS_ID,GAIADR3_ID,age_Dnu\n1,42,3.0\n2,42,4.0\n")
     frame = pd.read_csv(path, dtype=str)

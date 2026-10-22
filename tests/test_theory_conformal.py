@@ -503,7 +503,7 @@ def test_theory_scaled_reports_envelope_apart_and_never_as_coverage():
         envelope_high=hi,
         strata=strata,
     )
-    assert evaluation["coverage_kind"] == "marginal_conformal"
+    assert evaluation["coverage_kind"] == "empirical_calibration_selected_score"
     assert evaluation["envelope_claim"] == "sensitivity_only"
     assert evaluation["coverage"] == pytest.approx(
         float(
@@ -724,3 +724,55 @@ def test_schema_round_trip_with_theory_and_mondrian_fields(tmp_path):
     age_path = io.write_csv(tmp_path / "age.csv", "age", [age_row])
     assert io.read_csv(distance_path, "distance") == [distance_row]
     assert io.read_csv(age_path, "age") == [age_row]
+
+
+def test_gamma_selection_validity_metadata_distinguishes_adaptive_and_fixed():
+    arrays = _theory_dgp(np.random.default_rng(118), 120)
+    adaptive = TheoryScaledScore()
+    doc = adaptive.fit(*arrays)
+    assert doc["order_statistic_exact"] is True
+    assert doc["finite_sample_exact"] is False
+    assert doc["score_independent_of_calibration_labels"] is False
+    for evaluation in (
+        adaptive.evaluate(*arrays),
+        adaptive.evaluate(*[a[:0] for a in arrays]),
+    ):
+        assert evaluation["coverage_kind"] == "empirical_calibration_selected_score"
+        assert evaluation["finite_sample_exact"] is False
+    fixed = TheoryScaledScore(fixed_gamma=1.0)
+    assert fixed.fit(*arrays)["finite_sample_exact"] is True
+    assert fixed.evaluate(*arrays)["coverage_kind"] == "marginal_conformal"
+
+
+def test_independent_tuning_freezes_gamma_before_final_calibration():
+    rng = np.random.default_rng(235)
+    tune = _theory_dgp(rng, 120)
+    cal = _theory_dgp(rng, 100)
+    score = TheoryScaledScore()
+    document = score.fit_with_tuning(
+        tune, cal, tuning_ids=np.arange(120), calibration_ids=np.arange(120, 220)
+    )
+    gamma = document["gamma"]
+    assert document["finite_sample_exact"] is True
+    assert document["split_identity_disjoint"] is True
+    expected = np.abs(cal[0] - cal[1]) / (cal[2] + gamma * cal[3])
+    assert document["threshold"] == pytest.approx(
+        calibration.exact_quantile(expected, ALPHA)
+    )
+    changed = (cal[0] + 10.0, *cal[1:])
+    again = score.fit_with_tuning(
+        tune, changed, tuning_ids=np.arange(120), calibration_ids=np.arange(120, 220)
+    )
+    assert again["gamma"] == gamma
+    assert again["threshold"] != document["threshold"]
+    assert score.fixed_gamma is None  # no mutation of the configured selection policy
+
+
+@pytest.mark.parametrize("cal_ids", [np.arange(100), np.full(100, 999), np.arange(99)])
+def test_independent_tuning_rejects_leaked_duplicate_or_misaligned_identities(cal_ids):
+    rng = np.random.default_rng(234)
+    tune, cal = _theory_dgp(rng, 120), _theory_dgp(rng, 100)
+    with pytest.raises(ValueError):
+        TheoryScaledScore().fit_with_tuning(
+            tune, cal, tuning_ids=np.arange(120), calibration_ids=cal_ids
+        )

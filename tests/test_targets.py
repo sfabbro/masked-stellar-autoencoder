@@ -92,8 +92,10 @@ def test_identity_transform_has_unit_jacobian_and_round_trips():
 def _expected_lognormal_log_density(native, center, scale):
     """Independent NumPy log density of LogNormal(log-mean=center, log-sd=scale)."""
     standardized = (np.log(native) - center) / scale
-    return -0.5 * (standardized**2 + math.log(2 * math.pi)) - np.log(scale) - np.log(
-        native
+    return (
+        -0.5 * (standardized**2 + math.log(2 * math.pi))
+        - np.log(scale)
+        - np.log(native)
     )
 
 
@@ -106,11 +108,12 @@ def test_log_transform_jacobian_gives_the_exact_lognormal_density(name, scale):
     center = 1.3
     standardized = (np.log(native) - center) / scale
     log_prob_standardized = -0.5 * (standardized**2 + math.log(2 * math.pi))
-    actual = native_log_prob(
-        (name,), log_prob_standardized, native, np.array([scale])
-    )
+    actual = native_log_prob((name,), log_prob_standardized, native, np.array([scale]))
     np.testing.assert_allclose(
-        actual, _expected_lognormal_log_density(native, center, scale), rtol=1e-13, atol=1e-13
+        actual,
+        _expected_lognormal_log_density(native, center, scale),
+        rtol=1e-13,
+        atol=1e-13,
     )
     offsets = density_offsets((name,), native, np.array([scale]))
     np.testing.assert_allclose(
@@ -160,7 +163,9 @@ def test_inverse_mapping_is_name_driven_not_positional():
     # The same model coordinates read under a different declared order would be
     # rejected outright, so no positional inversion is possible.
     with pytest.raises(ValueError, match="registry order"):
-        native_from_standardized(("age", "teff"), standardized[:, :2], center[:2], scale[:2])
+        native_from_standardized(
+            ("age", "teff"), standardized[:, :2], center[:2], scale[:2]
+        )
     with pytest.raises(ValueError, match="(row|values)"):
         native_from_standardized(names, standardized[:, :2], center, scale)
 

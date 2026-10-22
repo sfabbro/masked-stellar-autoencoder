@@ -101,32 +101,47 @@ def main(argv: list[str] | None = None) -> None:
                 lo, hi = clip[col + 1]
                 keep = finite & (values >= lo) & (values <= hi)
                 ax.hexbin(
-                    truth[keep, col], values[keep], gridsize=55, bins="log",
-                    cmap="viridis", mincnt=1, rasterized=True,
+                    truth[keep, col],
+                    values[keep],
+                    gridsize=55,
+                    bins="log",
+                    cmap="viridis",
+                    mincnt=1,
+                    rasterized=True,
                 )
                 ax.axhline(0, color="0.3", lw=0.8)
                 stats = metrics(values)
                 ax.set_title(f"{LABELS[col]}: residual vs truth", fontsize=10)
                 ax.text(
-                    0.02, 0.97,
+                    0.02,
+                    0.97,
                     f"MAE={stats['mae']:.3g} {UNITS[col]}\n"
                     f"bias={stats['bias']:+.3g} {UNITS[col]}\n"
                     f"NMAD={stats['nmad']:.3g} {UNITS[col]}",
-                    transform=ax.transAxes, va="top", fontsize=8.5,
+                    transform=ax.transAxes,
+                    va="top",
+                    fontsize=8.5,
                     bbox=dict(boxstyle="round", fc="white", alpha=0.78, lw=0),
                 )
                 ax.set_xlabel(f"true {LABELS[col]} [{UNITS[col]}]")
                 ax.set_ylabel(f"pred − true [{UNITS[col]}]")
                 if keep.sum() < finite.sum():
                     ax.text(
-                        0.01, 0.02, f"display clipped; {finite.sum() - keep.sum()} points",
-                        transform=ax.transAxes, fontsize=7, color="0.4",
+                        0.01,
+                        0.02,
+                        f"display clipped; {finite.sum() - keep.sum()} points",
+                        transform=ax.transAxes,
+                        fontsize=7,
+                        color="0.4",
                     )
             elif row == 1:
                 q = np.nanpercentile(np.abs(values), [0.1, 99.9])
                 ax.hist(
-                    values[finite], bins=70, range=(-q[1], q[1]),
-                    color="#4c72b0", alpha=0.85,
+                    values[finite],
+                    bins=70,
+                    range=(-q[1], q[1]),
+                    color="#4c72b0",
+                    alpha=0.85,
                 )
                 ax.axvline(0, color="0.3", lw=0.8)
                 ax.set_yscale("log")
@@ -151,15 +166,22 @@ def main(argv: list[str] | None = None) -> None:
                 for x, y, nbin in zip(centers, medians, counts):
                     if np.isfinite(y):
                         ax.annotate(
-                            f"{nbin}", (x, y), textcoords="offset points",
-                            xytext=(0, 6), ha="center", fontsize=7,
+                            f"{nbin}",
+                            (x, y),
+                            textcoords="offset points",
+                            xytext=(0, 6),
+                            ha="center",
+                            fontsize=7,
                         )
                 tail_stats = summary["tail"][LABELS[col]]
                 ax.text(
-                    0.01, 0.98,
+                    0.01,
+                    0.98,
                     f"tail n={tail_stats['n']}  MAE={tail_stats['mae']:.3g}  "
                     f"bias={tail_stats['bias']:+.3g}",
-                    transform=ax.transAxes, va="top", fontsize=8,
+                    transform=ax.transAxes,
+                    va="top",
+                    fontsize=8,
                     bbox=dict(boxstyle="round", fc="white", alpha=0.75, lw=0),
                 )
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -169,7 +191,16 @@ def main(argv: list[str] | None = None) -> None:
     plt.close(fig)
     summary_path = args.output.with_suffix(".json")
     summary_path.write_text(json.dumps(summary, indent=2))
-    print(json.dumps({"status": "complete", "png": str(args.output), "pdf": str(pdf), "json": str(summary_path)}))
+    print(
+        json.dumps(
+            {
+                "status": "complete",
+                "png": str(args.output),
+                "pdf": str(pdf),
+                "json": str(summary_path),
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

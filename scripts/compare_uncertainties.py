@@ -20,6 +20,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from comparison_pairing import bound_predictions
 
 LABELS = ("T_eff", "log g", "[Fe/H]")
 UNITS = ("K", "dex", "dex")
@@ -27,24 +28,49 @@ FEH_BINS = np.array([-3.0, -2.0, -1.5, -1.0, -0.5, 0.0, 0.3, 0.6])
 
 
 def exact_rank(n: int, alpha: float) -> int:
+    if n < 1 or not 0 < alpha < 1:
+        raise ValueError("positive calibration count and alpha in (0, 1) required")
     return int(np.ceil((n + 1) * (1.0 - alpha))) - 1
 
 
 def split_conformal(
-    pred_cal: np.ndarray, sigma_cal: np.ndarray, y_cal: np.ndarray, pred_test: np.ndarray, sigma_test: np.ndarray, alpha: float
+    pred_cal: np.ndarray,
+    sigma_cal: np.ndarray,
+    y_cal: np.ndarray,
+    pred_test: np.ndarray,
+    sigma_test: np.ndarray,
+    alpha: float,
 ) -> tuple[np.ndarray, np.ndarray, float]:
-    score = np.abs(y_cal - pred_cal) / np.maximum(sigma_cal, 1e-12)
-    score = score[np.isfinite(score)]
-    rank = min(max(exact_rank(len(score), alpha), 0), len(score) - 1)
-    q = float(np.sort(score)[rank])
+    for sigma in (sigma_cal, sigma_test):
+        if not np.all(np.isfinite(sigma)) or np.any(sigma <= 0):
+            raise ValueError("positive finite sigmas required")
+    if (
+        pred_cal.shape != y_cal.shape
+        or pred_cal.shape != sigma_cal.shape
+        or pred_test.shape != sigma_test.shape
+    ):
+        raise ValueError("conformal arrays must have matching role shapes")
+    if not all(np.all(np.isfinite(array)) for array in (pred_cal, pred_test, y_cal)):
+        raise ValueError("conformal means and labels must be finite")
+    score = np.abs(y_cal - pred_cal) / sigma_cal
+    if not len(score):
+        raise ValueError("no finite calibration scores")
+    rank = exact_rank(len(score), alpha)
+    q = float(np.sort(score)[rank]) if rank < len(score) else float("inf")
     return pred_test - q * sigma_test, pred_test + q * sigma_test, q
 
 
 def coverage(frame: pd.DataFrame, lo: str, hi: str, truth: str) -> dict:
-    finite = np.isfinite(frame[lo]) & np.isfinite(frame[hi]) & np.isfinite(frame[truth])
+    finite = frame[lo].notna() & frame[hi].notna() & np.isfinite(frame[truth])
     part = frame[finite]
     if not len(part):
-        return {"n": 0, "coverage": None, "median_width": None, "mean_width": None, "coverage_poisson_se": None}
+        return {
+            "n": 0,
+            "coverage": None,
+            "median_width": None,
+            "mean_width": None,
+            "coverage_poisson_se": None,
+        }
     covered = (part[truth] >= part[lo]) & (part[truth] <= part[hi])
     width = part[hi] - part[lo]
     return {
@@ -52,11 +78,15 @@ def coverage(frame: pd.DataFrame, lo: str, hi: str, truth: str) -> dict:
         "coverage": float(covered.mean()),
         "median_width": float(np.median(width)),
         "mean_width": float(np.mean(width)),
-        "coverage_poisson_se": float(np.sqrt((covered.mean() * (1 - covered.mean())) / len(part))),
+        "coverage_poisson_se": float(
+            np.sqrt((covered.mean() * (1 - covered.mean())) / len(part))
+        ),
     }
 
 
-def binned_coverage(frame: pd.DataFrame, lo: str, hi: str, truth: str) -> tuple[list[float], list[float], list[int]]:
+def binned_coverage(
+    frame: pd.DataFrame, lo: str, hi: str, truth: str
+) -> tuple[list[float], list[float], list[int]]:
     xs, ys, ns = [], [], []
     for a, b in zip(FEH_BINS[:-1], FEH_BINS[1:]):
         part = frame[(frame["feh_true"] >= a) & (frame["feh_true"] < b)]
@@ -76,22 +106,23 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--cohort", type=Path, required=True)
     parser.add_argument("--gspphot-cache", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--alpha", type=float, default=0.3173, help="nominal two-sided tail (16/84 ~= 0.3173)")
+    parser.add_argument(
+        "--alpha",
+        type=float,
+        default=0.3173,
+        help="nominal two-sided tail (16/84 ~= 0.3173)",
+    )
     args = parser.parse_args(argv)
 
     cohort = np.load(args.cohort, allow_pickle=False)
-    center = np.asarray(cohort["label_center"], dtype="f8")
-    scale = np.asarray(cohort["label_scale"], dtype="f8")
     test_rows = np.asarray(cohort["test_rows"])
     cal_rows = np.asarray(cohort["calibration_rows"])
     test_truth = np.asarray(cohort["value"][test_rows], dtype="f8")
     cal_truth = np.asarray(cohort["value"][cal_rows], dtype="f8")
     pred = np.load(args.predictions, allow_pickle=False)
+    pred_test, sigma_test = bound_predictions(cohort, pred, "test", variance=True)
+    pred_cal, sigma_cal = bound_predictions(cohort, pred, "calibration", variance=True)
     test_source_id = np.asarray(pred["test_source_id"], dtype="i8")
-    pred_test = np.asarray(pred["test_mean"], dtype="f8") * scale + center
-    sigma_test = np.sqrt(np.maximum(np.asarray(pred["test_variance"], dtype="f8"), 0.0)) * scale
-    pred_cal = np.asarray(pred["calibration_mean"], dtype="f8") * scale + center
-    sigma_cal = np.sqrt(np.maximum(np.asarray(pred["calibration_variance"], dtype="f8"), 0.0)) * scale
 
     gsp = pd.read_csv(args.gspphot_cache)
     for column in gsp.columns:
@@ -107,19 +138,38 @@ def main(argv: list[str] | None = None) -> None:
             "logg_ours": pred_test[:, 1],
             "feh_ours": pred_test[:, 2],
         }
-    ).merge(gsp, on="source_id", how="left")
+    ).merge(gsp, on="source_id", how="left", validate="one_to_one")
     for j, key in enumerate(("teff", "logg", "feh")):
         lo, hi, q = split_conformal(
-            pred_cal[:, j], sigma_cal[:, j], cal_truth[:, j], pred_test[:, j], sigma_test[:, j], args.alpha
+            pred_cal[:, j],
+            sigma_cal[:, j],
+            cal_truth[:, j],
+            pred_test[:, j],
+            sigma_test[:, j],
+            args.alpha,
         )
         frame[f"{key}_conf_lo"] = lo
         frame[f"{key}_conf_hi"] = hi
         frame[f"{key}_q"] = q
 
     frame = frame[
-        np.isfinite(frame["teff_gspphot"]) & np.isfinite(frame["logg_gspphot"]) & np.isfinite(frame["mh_gspphot"])
+        np.isfinite(frame["teff_gspphot"])
+        & np.isfinite(frame["logg_gspphot"])
+        & np.isfinite(frame["mh_gspphot"])
     ].copy()
-    summary = {"alpha": args.alpha, "nominal_coverage": 1.0 - args.alpha, "calibration_n": int(len(cal_rows))}
+    summary = {
+        "target_caveat": "GSP-Phot [M/H] is a proxy for native [Fe/H], not an identical target",
+        "alpha": args.alpha,
+        "nominal_coverage": 1.0 - args.alpha,
+        "calibration_n": int(len(cal_rows)),
+    }
+    # Interval metrics for each method must use exactly the same finite released bounds.
+    released = [
+        f"{key}_gspphot_{side}"
+        for key in ("teff", "logg", "mh")
+        for side in ("lower", "upper")
+    ]
+    frame = frame[np.isfinite(frame[released]).all(axis=1)].copy()
     for key, label in zip(("teff", "logg", "feh"), LABELS):
         gsp_lo, gsp_hi = f"{key}_gspphot_lower", f"{key}_gspphot_upper"
         if key == "feh":
@@ -130,7 +180,9 @@ def main(argv: list[str] | None = None) -> None:
             "gspphot": coverage(frame, gsp_lo, gsp_hi, truth),
         }
         tail = frame[frame["feh_true"] < -2.0]
-        summary[key]["msa_conformal_tail"] = coverage(tail, f"{key}_conf_lo", f"{key}_conf_hi", truth)
+        summary[key]["msa_conformal_tail"] = coverage(
+            tail, f"{key}_conf_lo", f"{key}_conf_hi", truth
+        )
         summary[key]["gspphot_tail"] = coverage(tail, gsp_lo, gsp_hi, truth)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     frame.to_csv(args.output.with_suffix(".csv"), index=False)
@@ -139,24 +191,46 @@ def main(argv: list[str] | None = None) -> None:
     fig, axes = plt.subplots(2, 3, figsize=(15.0, 8.2), constrained_layout=True)
     fig.suptitle(
         f"Released 16/84 vs MSA split conformal; common n={len(frame):,}; "
-        f"calibration n={len(cal_rows):,}; nominal={1-args.alpha:.3f}",
+        f"calibration n={len(cal_rows):,}; nominal={1 - args.alpha:.3f}",
         fontsize=11.5,
     )
-    for col, (key, label, unit) in enumerate(zip(("teff", "logg", "feh"), LABELS, UNITS)):
+    for col, (key, label, unit) in enumerate(
+        zip(("teff", "logg", "feh"), LABELS, UNITS)
+    ):
         ax = axes[0, col]
         msa = summary[key]["msa_conformal"]["coverage"]
         gsp = summary[key]["gspphot"]["coverage"]
-        ax.bar([0, 1], [msa if msa is not None else 0, gsp if gsp is not None else 0],
-               color=["#c44e52", "#4c72b0"], alpha=0.85)
+        ax.bar(
+            [0, 1],
+            [msa if msa is not None else 0, gsp if gsp is not None else 0],
+            color=["#c44e52", "#4c72b0"],
+            alpha=0.85,
+        )
         ax.axhline(1 - args.alpha, color="0.3", ls="--", lw=0.9)
         ax.set_xticks([0, 1], ["MSA conformal", "GSP-Phot"])
         ax.set_ylim(0, 1.05)
         ax.set_ylabel("empirical 68.3% coverage")
-        ax.set_title(f"{label}: coverage (n={summary[key]['msa_conformal']['n']})", fontsize=10)
-        ax.text(0, (msa or 0) + 0.02, f"MSA {msa:.3f}" if msa is not None else "MSA —", ha="center", fontsize=8)
-        ax.text(1, (gsp or 0) + 0.02, f"GSP {gsp:.3f}" if gsp is not None else "GSP —", ha="center", fontsize=8)
+        ax.set_title(
+            f"{label}: coverage (n={summary[key]['msa_conformal']['n']})", fontsize=10
+        )
+        ax.text(
+            0,
+            (msa or 0) + 0.02,
+            f"MSA {msa:.3f}" if msa is not None else "MSA —",
+            ha="center",
+            fontsize=8,
+        )
+        ax.text(
+            1,
+            (gsp or 0) + 0.02,
+            f"GSP {gsp:.3f}" if gsp is not None else "GSP —",
+            ha="center",
+            fontsize=8,
+        )
         ax = axes[1, col]
-        xs, ys, ns = binned_coverage(frame, f"{key}_conf_lo", f"{key}_conf_hi", f"{key}_true")
+        xs, ys, ns = binned_coverage(
+            frame, f"{key}_conf_lo", f"{key}_conf_hi", f"{key}_true"
+        )
         ax.plot(xs, ys, "o-", color="#c44e52", label="MSA conformal", lw=1.2)
         gsp_lo, gsp_hi = f"{key}_gspphot_lower", f"{key}_gspphot_upper"
         if key == "feh":
@@ -173,7 +247,16 @@ def main(argv: list[str] | None = None) -> None:
     fig.savefig(args.output, dpi=170)
     fig.savefig(args.output.with_suffix(".pdf"), dpi=200)
     plt.close(fig)
-    print(json.dumps({"status": "complete", "png": str(args.output), "n_common": len(frame), "calibration_n": len(cal_rows)}))
+    print(
+        json.dumps(
+            {
+                "status": "complete",
+                "png": str(args.output),
+                "n_common": len(frame),
+                "calibration_n": len(cal_rows),
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -30,7 +30,9 @@ What is *not* claimed
 * ``gamma`` is selected by cross-fitting on calibration rows and the conformal
   threshold is then an exact finite-sample rank on the calibration split for
   that frozen ``gamma``; this is the plan's recommended compromise, but it is a
-  calibration heuristic, not a conditional-coverage theorem.  Report the
+  calibration heuristic with no ordinary split-conformal marginal guarantee.
+  Use independent tuning followed by calibration for that guarantee, assuming
+  exchangeability and independently fitted predictions/error models.  Report the
   gamma-sensitivity table alongside the selected value.
 * Coverage is evaluated empirically on the test rows against measured/predicted
   labels, never against physical truth.
@@ -40,7 +42,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import numpy as np
 
@@ -441,7 +443,10 @@ class TheoryScaledScore:
         *,
         fold_ids=None,
     ) -> dict:
-        """Select ``gamma`` on calibration rows and fit the exact threshold.
+        """Fit a rank threshold; calibration-selected gamma is empirical only.
+
+        For ordinary split-conformal validity use a predeclared ``fixed_gamma``
+        or :meth:`fit_with_tuning` with disjoint tuning/calibration objects.
 
         Parameters
         ----------
@@ -580,7 +585,14 @@ class TheoryScaledScore:
             "order_stat_index": int(rank),
             "n_cal": n,
             "achievable_coverage": rank / float(n + 1),
-            "finite_sample_exact": True,
+            "finite_sample_exact": self.fixed_gamma is not None,
+            "order_statistic_exact": True,
+            "coverage_guarantee": (
+                "marginal_under_exchangeability_and_independent_score"
+                if self.fixed_gamma is not None
+                else "none_calibration_selected_gamma"
+            ),
+            "score_independent_of_calibration_labels": self.fixed_gamma is not None,
             "n_folds": n_folds,
             "fold_sizes": fold_sizes,
             "fold_thresholds": fold_thresholds,
@@ -589,6 +601,86 @@ class TheoryScaledScore:
             "oof_coverage": float(np.mean(oof_membership)),
             "oof_mean_width": float(selected_record["oof_mean_width"]),
             "oof_interval_score": float(selected_record["oof_interval_score"]),
+            "n_denominator_floored": int(floored),
+            "denominator_floor": self.denominator_floor,
+            "used_test_rows": False,
+            "n_test_rows_used": 0,
+            "null_reason": "",
+        }
+        self.document_ = document
+        return document
+
+    def fit_with_tuning(
+        self,
+        tuning: tuple,
+        calibration: tuple,
+        *,
+        tuning_ids,
+        calibration_ids,
+    ) -> dict:
+        """Choose gamma on tuning only, then calibrate a frozen score.
+
+        Each tuple is ``(y, median_prediction, sigma_exp, sigma_theo)``.
+        IDs must be unique object identities, disjoint across splits. This
+        checks identity leakage, not independence: predictions and error models
+        must also have been fitted independently of final calibration labels.
+        Marginal validity assumes exchangeability of calibration/future objects;
+        it does not imply conditional or physical-truth coverage.
+        """
+        if len(tuning) != 4 or len(calibration) != 4:
+            raise ValueError("tuning and calibration require four aligned arrays")
+        tuned_arrays = _as_aligned_1d(
+            *zip(("y", "median_prediction", "sigma_exp", "sigma_theo"), tuning)
+        )
+        cal_arrays = _as_aligned_1d(
+            *zip(("y", "median_prediction", "sigma_exp", "sigma_theo"), calibration)
+        )
+        id_sets = []
+        for name, values, n in (
+            ("tuning_ids", tuning_ids, tuned_arrays[0].size),
+            ("calibration_ids", calibration_ids, cal_arrays[0].size),
+        ):
+            ids = np.asarray(values)
+            if ids.ndim != 1 or ids.size != n:
+                raise ValueError(f"{name} must align with its split")
+            if any(value is None or value != value for value in ids.tolist()):
+                raise ValueError(f"{name} must not contain missing identities")
+            unique = set(ids.tolist())
+            if len(unique) != n:
+                raise ValueError(f"{name} must contain unique object identities")
+            id_sets.append(unique)
+        if id_sets[0] & id_sets[1]:
+            raise ValueError("tuning and calibration object identities overlap")
+        # A fresh selector prevents this call from mutating the configured gamma
+        # or using an earlier calibration fit to select it.
+        selector = replace(self)
+        tuned = selector.fit(*tuned_arrays)
+        selected = float(tuned["gamma"])
+        denominator, floored = self.denominator(
+            cal_arrays[2], cal_arrays[3], gamma=selected
+        )
+        scores = np.abs(cal_arrays[0] - cal_arrays[1]) / denominator
+        n = scores.size
+        threshold = exact_quantile(scores, self.alpha)
+        rank = finite_sample_rank(n, self.alpha)
+        document = {
+            "method": "theory_scaled_split_rank",
+            "calibration_kind": CALIBRATION_KIND,
+            "score_kind": THEORY_SCORE_KIND,
+            "alpha": self.alpha,
+            "gamma": selected,
+            "gamma_selection": "independent_tuning_" + tuned["gamma_selection"],
+            "gamma_sensitivity": tuned["gamma_sensitivity"],
+            "n_tune": int(tuned_arrays[0].size),
+            "n_cal": int(n),
+            "split_identity_disjoint": True,
+            "score_independent_of_calibration_labels": True,
+            "threshold": float(threshold),
+            "order_stat_index": int(rank),
+            "achievable_coverage": rank / float(n + 1),
+            "order_statistic_exact": True,
+            "finite_sample_exact": True,
+            "coverage_guarantee": "marginal_under_exchangeability_and_independent_score",
             "n_denominator_floored": int(floored),
             "denominator_floor": self.denominator_floor,
             "used_test_rows": False,
@@ -670,7 +762,13 @@ class TheoryScaledScore:
                 "gamma": self.gamma,
                 "threshold": self.threshold,
                 "calibration_kind": CALIBRATION_KIND,
-                "coverage_kind": "marginal_conformal",
+                "coverage_kind": (
+                    "marginal_conformal"
+                    if self.document_["finite_sample_exact"]
+                    else "empirical_calibration_selected_score"
+                ),
+                "finite_sample_exact": self.document_["finite_sample_exact"],
+                "coverage_guarantee": self.document_["coverage_guarantee"],
                 "theory_sigma_mean": None,
                 "n_denominator_floored": 0,
                 "theory_envelope_width": None,
@@ -735,7 +833,13 @@ class TheoryScaledScore:
             "gamma": self.gamma,
             "threshold": threshold,
             "calibration_kind": CALIBRATION_KIND,
-            "coverage_kind": "marginal_conformal",
+            "coverage_kind": (
+                "marginal_conformal"
+                if self.document_["finite_sample_exact"]
+                else "empirical_calibration_selected_score"
+            ),
+            "finite_sample_exact": self.document_["finite_sample_exact"],
+            "coverage_guarantee": self.document_["coverage_guarantee"],
             "theory_sigma_mean": float(np.mean(sigma_theo_arr)),
             "n_denominator_floored": int(floored),
             "theory_envelope_width": envelope_width,

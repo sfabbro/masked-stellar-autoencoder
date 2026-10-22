@@ -334,7 +334,12 @@ def main():
         # CPU-only phases must not consume a slice: route them to CPU sessions and
         # omit the GPU request entirely. ``gpu`` may be 0/omitted; >1 only makes
         # sense when the runner itself uses multiple devices.
-        cpu_only_tasks = {"catalog", "age-data-audit", "analysis", "prediction-comparison"}
+        cpu_only_tasks = {
+            "catalog",
+            "age-data-audit",
+            "analysis",
+            "prediction-comparison",
+        }
         if plan["task"] in cpu_only_tasks:
             resources = {"cores": 8, "ram": 32}
         else:

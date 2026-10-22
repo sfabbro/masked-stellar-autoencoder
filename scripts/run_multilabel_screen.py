@@ -345,9 +345,7 @@ def predictions(model, head, data, rows, device, batch=128):
         raise ValueError("label center/scale must match the declared target names")
     observed_source = data.get("observed")
     quality_source = data.get("quality")
-    has_density = bool(
-        getattr(head, "has_density", head.kind not in NON_DENSITY_KINDS)
-    )
+    has_density = bool(getattr(head, "has_density", head.kind not in NON_DENSITY_KINDS))
     density_kind = getattr(head, "density_kind", None)
     loss_denominator = getattr(head, "loss_denominator", "per_coordinate")
     means = []
@@ -404,26 +402,25 @@ def predictions(model, head, data, rows, device, batch=128):
                     observed_lp = torch.full_like(lp, float("nan"))
                 if not torch.isfinite(lp).all():
                     raise FloatingPointError("Nonfinite intrinsic density")
-                if density_kind == "observed_label" and not torch.isfinite(
-                    observed_lp
-                ).all():
+                if (
+                    density_kind == "observed_label"
+                    and not torch.isfinite(observed_lp).all()
+                ):
                     raise FloatingPointError("Nonfinite observed-label density")
             else:
                 lp = torch.full((len(selected),), float("nan"), device=device)
                 observed_lp = lp.clone()
-            offsets = density_offsets(names, native, label_scale, observed=observed_rows)
-            transform = log_abs_det_jacobian(
-                names, native, observed=observed_rows
+            offsets = density_offsets(
+                names, native, label_scale, observed=observed_rows
             )
+            transform = log_abs_det_jacobian(names, native, observed=observed_rows)
             jacobian.append(offsets)
             transform_terms.append(transform)
             observed_rows_all.append(observed_rows)
             means.append(mean.cpu().numpy())
             variances.append(variance.cpu().numpy())
             if density_kind == "observed_label":
-                observed_variances.append(
-                    (variance + sigma.square()).cpu().numpy()
-                )
+                observed_variances.append((variance + sigma.square()).cpu().numpy())
             else:
                 observed_variances.append(np.full_like(variance.cpu().numpy(), np.nan))
             reduction = offsets.sum(1)
@@ -1125,9 +1122,7 @@ def main():
             y = torch.tensor(
                 (
                     (
-                        model_coordinates(
-                            target_names(data), data["value"][rows]
-                        )
+                        model_coordinates(target_names(data), data["value"][rows])
                         - data["label_center"]
                     )
                     / data["label_scale"]

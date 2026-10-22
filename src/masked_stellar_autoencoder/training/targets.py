@@ -93,7 +93,9 @@ class TargetSpec:
         if self.error_kind not in ERROR_KINDS:
             raise ValueError(f"{self.name}: unsupported error kind {self.error_kind!r}")
         if self.observable_kind not in OBSERVABLE_KINDS:
-            raise ValueError(f"{self.name}: invalid observable kind {self.observable_kind!r}")
+            raise ValueError(
+                f"{self.name}: invalid observable kind {self.observable_kind!r}"
+            )
         if self.status not in STATUSES:
             raise ValueError(f"{self.name}: invalid status {self.status!r}")
         if self.transform in (LOG_KPC, LOG_GYR) and not self.positive:
@@ -272,7 +274,10 @@ def log_abs_det_jacobian(names, native, *, observed=None):
     """Per-row, per-coordinate ``log|T'_j(y_j)|`` (0 for unobserved coordinates)."""
     names, native = _as_matrix(names, native)
     terms = np.column_stack(
-        [REGISTRY[name].log_abs_det_jacobian(native[:, j]) for j, name in enumerate(names)]
+        [
+            REGISTRY[name].log_abs_det_jacobian(native[:, j])
+            for j, name in enumerate(names)
+        ]
     )
     if observed is None:
         return terms

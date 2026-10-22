@@ -31,16 +31,29 @@ UNITS = ("K", "dex", "dex")
 FEH_BINS = np.array([-3.0, -2.0, -1.5, -1.0, -0.5, 0.0, 0.3, 0.6])
 GSP_COLUMNS = [
     "source_id",
-    "teff_gspphot", "teff_gspphot_lower", "teff_gspphot_upper",
-    "logg_gspphot", "logg_gspphot_lower", "logg_gspphot_upper",
-    "mh_gspphot", "mh_gspphot_lower", "mh_gspphot_upper",
+    "teff_gspphot",
+    "teff_gspphot_lower",
+    "teff_gspphot_upper",
+    "logg_gspphot",
+    "logg_gspphot_lower",
+    "logg_gspphot_upper",
+    "mh_gspphot",
+    "mh_gspphot_lower",
+    "mh_gspphot_upper",
 ]
 
 
 def metrics(residual: np.ndarray) -> dict:
     finite = residual[np.isfinite(residual)]
     if not len(finite):
-        return {"n": 0, "mae": None, "medad": None, "bias": None, "nmad": None, "rmse": None}
+        return {
+            "n": 0,
+            "mae": None,
+            "medad": None,
+            "bias": None,
+            "nmad": None,
+            "rmse": None,
+        }
     med = float(np.median(finite))
     return {
         "n": int(len(finite)),
@@ -90,7 +103,9 @@ def fetch_gspphot(ids: np.ndarray, cache: Path, chunk: int = 10000) -> pd.DataFr
     return cached
 
 
-def binned(frame: pd.DataFrame, column: str) -> tuple[list[float], list[float], list[int]]:
+def binned(
+    frame: pd.DataFrame, column: str
+) -> tuple[list[float], list[float], list[int]]:
     xs, ys, ns = [], [], []
     for lo, hi in zip(FEH_BINS[:-1], FEH_BINS[1:]):
         part = frame[(frame["feh_true"] >= lo) & (frame["feh_true"] < hi)]
@@ -106,7 +121,9 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--predictions", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cache", type=Path, required=True)
-    parser.add_argument("--title", default="MSA long vs released Gaia DR3 GSP-Phot, same test cohort")
+    parser.add_argument(
+        "--title", default="MSA long vs released Gaia DR3 GSP-Phot, same test cohort"
+    )
     args = parser.parse_args(argv)
 
     cohort = np.load(args.cohort, allow_pickle=False)
@@ -155,12 +172,24 @@ def main(argv: list[str] | None = None) -> None:
         "n_common_gspphot": int(len(frame)),
         "tail_n": int(tail.sum()),
         "ours": {
-            "all": {k: metrics(frame[f"d{k}_ours"].to_numpy()) for k in ("teff", "logg", "feh")},
-            "tail": {k: metrics(frame.loc[tail, f"d{k}_ours"].to_numpy()) for k in ("teff", "logg", "feh")},
+            "all": {
+                k: metrics(frame[f"d{k}_ours"].to_numpy())
+                for k in ("teff", "logg", "feh")
+            },
+            "tail": {
+                k: metrics(frame.loc[tail, f"d{k}_ours"].to_numpy())
+                for k in ("teff", "logg", "feh")
+            },
         },
         "gspphot": {
-            "all": {k: metrics(frame[f"d{k}_gsp"].to_numpy()) for k in ("teff", "logg", "feh")},
-            "tail": {k: metrics(frame.loc[tail, f"d{k}_gsp"].to_numpy()) for k in ("teff", "logg", "feh")},
+            "all": {
+                k: metrics(frame[f"d{k}_gsp"].to_numpy())
+                for k in ("teff", "logg", "feh")
+            },
+            "tail": {
+                k: metrics(frame.loc[tail, f"d{k}_gsp"].to_numpy())
+                for k in ("teff", "logg", "feh")
+            },
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -168,11 +197,17 @@ def main(argv: list[str] | None = None) -> None:
     args.output.with_suffix(".json").write_text(json.dumps(summary, indent=2))
 
     fig, axes = plt.subplots(2, 3, figsize=(16.0, 9.2), constrained_layout=True)
-    fig.suptitle(f"{args.title}\ncommon n={len(frame):,}; tail [Fe/H]<-2 n={int(tail.sum())}; local preliminary", fontsize=12)
+    fig.suptitle(
+        f"{args.title}\ncommon n={len(frame):,}; tail [Fe/H]<-2 n={int(tail.sum())}; local preliminary",
+        fontsize=12,
+    )
     for col, (label, unit) in enumerate(zip(LABELS, UNITS)):
         for row, prefix, name in ((0, "ours", "MSA long"), (1, "gsp", "GSP-Phot")):
             ax = axes[row, col]
-            xs, med, ns = binned(frame, f"d{'teff' if col == 0 else 'logg' if col == 1 else 'feh'}_{prefix}")
+            xs, med, ns = binned(
+                frame,
+                f"d{'teff' if col == 0 else 'logg' if col == 1 else 'feh'}_{prefix}",
+            )
             ax.plot(xs, med, "o-", color="#c44e52" if row == 0 else "#4c72b0", lw=1.3)
             ax.axhline(0, color="0.3", lw=0.8)
             ax.axvline(-2.0, color="0.55", ls=":", lw=1.0)
@@ -183,19 +218,37 @@ def main(argv: list[str] | None = None) -> None:
                 "teff" if col == 0 else "logg" if col == 1 else "feh"
             ]
             ax.text(
-                0.01, 0.98,
+                0.01,
+                0.98,
                 f"n={stat_all['n']}  MAE={stat_all['mae']:.3g}\nbias={stat_all['bias']:+.3g}",
-                transform=ax.transAxes, va="top", fontsize=8,
+                transform=ax.transAxes,
+                va="top",
+                fontsize=8,
                 bbox=dict(boxstyle="round", fc="white", alpha=0.8, lw=0),
             )
             for x, y, nbin in zip(xs, med, ns):
                 if np.isfinite(y):
-                    ax.annotate(str(nbin), (x, y), textcoords="offset points", xytext=(0, 6),
-                                ha="center", fontsize=7)
+                    ax.annotate(
+                        str(nbin),
+                        (x, y),
+                        textcoords="offset points",
+                        xytext=(0, 6),
+                        ha="center",
+                        fontsize=7,
+                    )
     fig.savefig(args.output, dpi=170)
     fig.savefig(args.output.with_suffix(".pdf"), dpi=200)
     plt.close(fig)
-    print(json.dumps({"status": "complete", "png": str(args.output), "n_common": len(frame), "tail_n": int(tail.sum())}))
+    print(
+        json.dumps(
+            {
+                "status": "complete",
+                "png": str(args.output),
+                "n_common": len(frame),
+                "tail_n": int(tail.sum()),
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

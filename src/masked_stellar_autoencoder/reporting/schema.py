@@ -672,15 +672,15 @@ def validate_certificate(doc: Mapping[str, Any]) -> None:
     labels = doc["labels"]
     units = doc["units"]
     transforms = doc["target_transforms"]
-    if not isinstance(labels, (list, tuple)) or len(labels) != len(TARGET_ORDER):
+    if not isinstance(labels, list | tuple) or len(labels) != len(TARGET_ORDER):
         raise ValueError(
             f"certificate labels must list exactly {len(TARGET_ORDER)} targets"
         )
     if len(set(map(str, labels))) != len(labels):
         raise ValueError("certificate labels must be unique (no positional inversion)")
-    if not isinstance(units, (list, tuple)) or len(units) != len(labels):
+    if not isinstance(units, list | tuple) or len(units) != len(labels):
         raise ValueError("certificate units must match labels length")
-    if not isinstance(transforms, (list, tuple)) or len(transforms) != len(labels):
+    if not isinstance(transforms, list | tuple) or len(transforms) != len(labels):
         raise ValueError("certificate target_transforms must match labels length")
     bad = [t for t in transforms if t not in ("identity", "log_kpc", "log_gyr")]
     if bad:
@@ -735,7 +735,7 @@ def validate_certificate(doc: Mapping[str, Any]) -> None:
 
     verdicts = _require_mapping(doc["verdicts"], "verdicts")
     failed = doc.get("failed_verdicts", [])
-    if not isinstance(failed, (list, tuple)):
+    if not isinstance(failed, list | tuple):
         raise ValueError("certificate failed_verdicts must be a list")
     for gate, node in verdicts.items():
         if not isinstance(node, Mapping) or "current" not in node:
@@ -748,7 +748,7 @@ def validate_certificate(doc: Mapping[str, Any]) -> None:
                 f"certificate verdicts[{gate!r}].current.status is invalid"
             )
         history = node.get("history", [])
-        if not isinstance(history, (list, tuple)):
+        if not isinstance(history, list | tuple):
             raise ValueError(f"certificate verdicts[{gate!r}].history must be a list")
         for entry in history:
             if (
