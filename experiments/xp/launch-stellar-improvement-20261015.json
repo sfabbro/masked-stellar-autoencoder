@@ -4539,6 +4539,40 @@
       "attempted_at": "2026-10-22T17:32:53.498756+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_data_audit_v1",
+      "name": "msa-si15-age-data-audit-v1",
+      "source_sha": "52419548b5f93d80c9d82781f42b64c5953b7ae7",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_data_audit_v1",
+      "plan": {
+        "run_id": "age_data_audit_v1",
+        "task": "age-data-audit",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        },
+        "env": {
+          "MSA_EXPERIMENT_CPU_ONLY": "1",
+          "MSA_AGE_APOKASC3": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz",
+          "MSA_AGE_COHORT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_feature_cohort_v1/age-feature-cohort.h5",
+          "MSA_AGE_DATASET_VIEW": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/dataset_view_v2/dataset-view.h5",
+          "MSA_AGE_POSTERIOR": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5"
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qfybnmle"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T18:08:40.211042+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

@@ -288,6 +288,11 @@ overlap stars; cal-split coverage; 2-D level-set coverage. Until then F05 stays 
 - **Proper scores:** NLL only within the same family and `density_kind`; CRPS from samples for
   flows (never a Gaussian proxy); energy and variogram for dependence; PIT/rank/SBC per
   coordinate; interval score + width + region size alongside coverage.
+- **Frequentist cross-check and theory errors:** [10-rfit-profile-likelihood-and-theoretical-conformal.md](10-rfit-profile-likelihood-and-theoretical-conformal.md).
+  Keep two independent tracks: (A) ML predictive intervals with Mondrian/grouped conformal and
+  a model-family theory envelope; (B) profile-likelihood physical inference on anchors/rich-data
+  stars, with fake-star-calibrated Wilks thresholds. Publish both plus joint samples for
+  correlated pairs; never average the tracks or call the theory envelope truth coverage.
 - **Uncertainty:** grouped paired bootstrap by unique `source_id` **and** HEALPix nside-64 block
   (duplicates exist), 1,000 reps, seed recorded; multiplicity stated (Bonferroni over
   pre-registered slices or BH-FDR); n<20 descriptive.
