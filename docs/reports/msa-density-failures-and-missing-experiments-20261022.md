@@ -1,6 +1,8 @@
 # Density prediction failures and remaining multi-target experiments
 
-Status: 2026-10-22. This inventory records numerical verification failures separately from training failures. Most affected models passed separate point-mean and variance checks. Original failed reports remain authoritative until a versioned repair is independently verified.
+Historical failure inventory: 2026-10-22. **Updated23 October:** [current multi-target summary](msa-multitarget-summary-20261023.md). All24 new10M fits completed; all12 Gaussian/MDN and all9 clean NSF arms now passed independent full-role numerical scoring checks. Three noisyNSF audits continue. Original failed versions below remain archived, not relabeled.
+
+Status of the original versions: 2026-10-22. This inventory records numerical verification failures separately from training failures. Most affected models passed separate point-mean and variance checks. Original failed reports remain authoritative until a versioned repair is independently verified.
 
 ## Failed density or distribution-related checks
 
@@ -26,7 +28,7 @@ All original checks retain their declared tolerances. A change of log-density un
 
 ## Repairs and remaining checks on existing experiments
 
-- [ ] Complete the bounded FP64 CUDA certificate, `density_fp64_precision_certificate_v1`, CANFAR ID `wetmolvn`. Last observed state: queued. It compares three immutable NSF checkpoints against independent CPU calculations, with zero training updates.
+- [x] Bounded FP64 CUDA certificate `density_fp64_precision_certificate_v1` (`wetmolvn`) passed on three immutable NSF checkpoints/128 rows each, with zero training updates. Maximum independent CPU/CUDA difference1.27e-13. This is not full-role clearance.
 - [ ] After the certificate passes, produce versioned full-test/calibration rescoring for affected Gaussian and NSF models. A bounded 128-row certificate alone does not clear full-role failures.
 - [ ] Independently verify corrected outputs and recompute global and metal-poor metrics, preserving original failed reports and outputs.
 - [ ] Evaluate the corrected BPF tail map with explicit library-version provenance. Retrain where the requested architecture differs from the architecture actually trained; do not retroactively relabel old scores.
@@ -35,13 +37,13 @@ All original checks retain their declared tolerances. A change of log-density un
 - [ ] Complete independent flow-TTT checks before making flow-specific test-time adaptation claims.
 - [ ] Resolve older weighted conformal provenance gaps: calibration weights/scores and domain-classifier state/seed were not saved. Existing subset geometry checks do not verify weighted coverage.
 
-## Multi-target distribution families not yet tested on MSA
+## Multi-target distribution family coverage
 
 These are capability gaps, not completed experiments or measured results.
 
 - [ ] SLS.
 - [ ] SLSConformal.
-- [ ] Mixture density networks.
+- [x] MDN4: six new matched clean/noise-aware fits completed; full-role numerical point/density and cached residual-CP checks passed. Training objective/stream/decoder gates remain pending.
 - [ ] Full-covariance Gaussian NLL.
 - [ ] Low-rank Gaussian NLL.
 - [ ] Quantile models.
