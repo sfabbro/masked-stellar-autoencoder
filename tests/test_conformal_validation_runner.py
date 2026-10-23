@@ -64,3 +64,25 @@ def test_metalpoor_only_posthoc_evaluation():
     )
     assert result["n"] == 1
     assert result["coverage"] == 1.0
+
+
+def test_saved_standardized_moments_are_converted_before_native_calibration():
+    data, pred = fixture_arrays()
+    data["label_center"] = np.array([5000.0, 3.0, -0.2])
+    data["label_scale"] = np.array([700.0, 1.1, 0.3])
+    pred["test_mean"] = np.array([[1.0, -1.0, 2.0], [0.0, 0.0, 0.0]])
+    native = module.native_moments(data, pred)
+    np.testing.assert_allclose(
+        native["test_mean"], [[5700.0, 1.9, 0.4], [5000.0, 3.0, -0.2]]
+    )
+    np.testing.assert_allclose(
+        native["test_variance"], np.tile([490000.0, 1.21, 0.09], (2, 1))
+    )
+    # Mixed-coordinate residuals would be enormous; the affine-native conversion is exact.
+    y = native["test_mean"].copy()
+    np.testing.assert_allclose(y - native["test_mean"], 0)
+    assert abs(y[0, 0] - pred["test_mean"][0, 0]) > 5000
+    np.testing.assert_array_equal(pred["test_mean"][0], [1.0, -1.0, 2.0])
+    data["label_scale"][2] = -1
+    with pytest.raises(ValueError, match="positive scale"):
+        module.native_moments(data, pred)

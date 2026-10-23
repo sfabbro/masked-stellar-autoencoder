@@ -70,6 +70,33 @@ def evaluate(y, lo, hi, *, group, method, target, joint=False):
     }
 
 
+def native_moments(data, pred):
+    """Saved prediction moments are standardized; labels and output intervals are native.
+
+    This runner is restricted to the original affine Teff/logg/FeH cohort.
+    Convert each coordinate exactly once, before gamma selection or calibration.
+    """
+    center = np.asarray(data["label_center"], dtype=np.float64)
+    scale = np.asarray(data["label_scale"], dtype=np.float64)
+    if (
+        center.shape != (3,)
+        or scale.shape != (3,)
+        or not np.isfinite(center).all()
+        or not np.isfinite(scale).all()
+        or (scale <= 0).any()
+    ):
+        raise ValueError("finite three-target label center and positive scale required")
+    result = dict(pred)
+    for role in ("test", "calibration"):
+        result[role + "_mean"] = (
+            np.asarray(pred[role + "_mean"], dtype=np.float64) * scale + center
+        )
+        result[role + "_variance"] = (
+            np.asarray(pred[role + "_variance"], dtype=np.float64) * scale**2
+        )
+    return result
+
+
 def run(case, base, output):
     source = base / case["source_run"]
     manifest = json.loads((source / "manifest.json").read_text())
@@ -95,6 +122,8 @@ def run(case, base, output):
                 "tune_rows",
                 "calibration_rows",
                 "test_rows",
+                "label_center",
+                "label_scale",
             )
         }
     with np.load(source / "predictions.npz") as f:
@@ -112,6 +141,7 @@ def run(case, base, output):
             )
         }
     validate_roles(data, pred)
+    pred = native_moments(data, pred)
     family = {
         role: np.zeros_like(pred[role + "_mean"]) for role in ("test", "calibration")
     }
@@ -121,13 +151,20 @@ def run(case, base, output):
             path = base / member["run_id"] / "predictions.npz"
             if digest(path) != member["sha256"]:
                 raise ValueError("family artifact SHA mismatch")
+            member_cohort = base / member["run_id"] / "paired-cohort.npz"
+            if digest(member_cohort) != case["sha256"]["paired-cohort.npz"]:
+                raise ValueError("family cohort identity and normalizer SHA mismatch")
             with np.load(path) as f:
                 for role in family:
                     if not np.array_equal(
                         f[role + "_source_id"], pred[role + "_source_id"]
                     ):
                         raise ValueError("family identity mismatch")
-                    members[role].append(f[role + "_mean"])
+                    members[role].append(
+                        np.asarray(f[role + "_mean"], dtype=np.float64)
+                        * data["label_scale"]
+                        + data["label_center"]
+                    )
         family = {role: np.std(members[role], axis=0, ddof=1) for role in family}
     ids = pred["calibration_source_id"]
     # Predeclared label-free split; source-ID order creates no test-label access.
@@ -234,6 +271,10 @@ def run(case, base, output):
     )
     report = {
         "status": "evaluation_only_complete",
+        "moment_input_coordinate": "standardized_saved_moments",
+        "calibration_coordinate": "native_Teff_K_logg_dex_FeH_dex",
+        "native_moment_conversion": "mean=label_center+label_scale*saved_mean; variance=label_scale**2*saved_variance",
+        "supersedes_old_mixed_coordinate_evaluation": True,
         "run_id": case["run_id"],
         "source_run": case["source_run"],
         "artifact_sha256": proof,
