@@ -74,6 +74,68 @@ def bind_prediction_policy(
                 raise ValueError("Evaluation/pilot parent and replay budget differ")
             env[key] = value
         return env
+    if plan["task"] in {"target-predictions", "target-source-evidence", "mae-ttt"}:
+        suite = yaml.safe_load(
+            Path("configs/posterior-target-wave-20261023.yaml").read_text()
+        )
+        expected = {
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+        }
+        if plan["task"] == "target-predictions":
+            arm = next(
+                (a for a in suite["runs"] if a["run_id"] == plan["run_id"]), None
+            )
+            if arm is None:
+                raise ValueError("Target run absent from immutable source policy")
+            prep = suite["preparation"][arm["preparation"]]
+            remote = ROOT + "/" + Path(prep["local_directory"]).name
+            expected.update(
+                MSA_TARGET_PREPARED=remote + "/prepared.npz",
+                MSA_TARGET_PREPARATION_MANIFEST=remote + "/manifest.json",
+                MSA_TARGET_KIND=arm["kind"],
+                MSA_TARGET_SEED=str(arm["seed"]),
+                MSA_TARGET_STEPS=str(suite["training_policy"]["steps"]),
+            )
+        elif plan["task"] == "target-source-evidence":
+            if plan["run_id"] != suite["source_projection"]["run_id"]:
+                raise ValueError("Alpha source run absent from immutable policy")
+        else:
+            mae = yaml.safe_load(
+                Path("configs/mae-ttt-screen-20261023.yaml").read_text()
+            )
+            if plan["run_id"] not in {a["run_id"] for a in mae["arms"]}:
+                raise ValueError("TTT run absent from immutable policy")
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Target/TTT source policy override differs")
+            env[key] = value
+        return env
+    if plan["task"] == "forward-floweb":
+        suite = yaml.safe_load(
+            Path("configs/forward-optimizer-wave-20261023.yaml").read_text()
+        )
+        arm = next((a for a in suite["runs"] if a["run_id"] == plan["run_id"]), None)
+        if arm is None:
+            raise ValueError("Inversion run absent from immutable policy")
+        expected = {
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+            "MSA_FORWARD_ORIGINAL": suite["original"],
+            "MSA_FORWARD_MODE": arm["mode"],
+            "MSA_FORWARD_SEED": str(arm["seed"]),
+            "MSA_FORWARD_TEST_COUNT": str(
+                arm.get("test_count", suite["policy"]["test_count"])
+            ),
+            "MSA_FORWARD_CAL_COUNT": str(
+                arm.get("cal_count", suite["policy"]["calibration_count"])
+            ),
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Forward optimizer policy override differs")
+            env[key] = value
+        return env
     if plan["task"] == "density-precision-certificate":
         suite = yaml.safe_load(
             Path("configs/density-precision-certificate-20261022.yaml").read_text()
@@ -98,6 +160,8 @@ def bind_prediction_policy(
         "multilabel-w2",
         "multilabel-w1",
         "multilabel-validation",
+        "multilabel-sls",
+        "multilabel-noise-contrastive",
     }:
         suite_path = {
             "multilabel-screen": "configs/multilabel-screen-20261020.yaml",
@@ -106,6 +170,8 @@ def bind_prediction_policy(
             "multilabel-w2": "configs/multilabel-w2-20261022.yaml",
             "multilabel-w1": "configs/multilabel-w1-20261022.yaml",
             "multilabel-validation": "configs/multilabel-validation-wave-20261022.yaml",
+            "multilabel-sls": "configs/multilabel-sls-20261023.yaml",
+            "multilabel-noise-contrastive": "configs/multilabel-noise-contrastive-20261023.yaml",
         }[plan["task"]]
         suite = yaml.safe_load(Path(suite_path).read_text())
         arm = next((a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None)
@@ -354,6 +420,7 @@ def main():
         cpu_only_tasks = {
             "catalog",
             "age-data-audit",
+            "target-source-evidence",
             "conformal-validation",
             "target-head-pilot",
             "catalogue-comparison",

@@ -138,6 +138,30 @@ case "$stage" in
         --output "$experiment_output" --download
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-sls ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multilabel_sls.py --config configs/multilabel-sls-20261023.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-noise-contrastive ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py --config configs/multilabel-noise-contrastive-20261023.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == forward-floweb ]]; then
+      "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == mae-ttt ]]; then
+      "${pixi_run[@]}" python -u scripts/run_mae_ttt_screen.py --config configs/mae-ttt-screen-20261023.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == target-source-evidence ]]; then
+      "${pixi_run[@]}" python -u scripts/prepare_alpha_source_evidence.py --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == target-predictions ]]; then
+      "${pixi_run[@]}" python -u scripts/run_posterior_target_wave.py --prepared "$MSA_TARGET_PREPARED" --preparation-manifest "$MSA_TARGET_PREPARATION_MANIFEST" --output "$experiment_output" --kind "$MSA_TARGET_KIND" --seed "$MSA_TARGET_SEED" --steps "$MSA_TARGET_STEPS"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multilabel-validation ]]; then
       "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py --config configs/multilabel-validation-wave-20261022.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
       exit 0

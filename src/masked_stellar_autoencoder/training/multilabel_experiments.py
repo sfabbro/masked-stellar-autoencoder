@@ -269,6 +269,7 @@ class MultiLabelHead(nn.Module):
         flow_bound=8.0,
         flow_objective="nll",
         contrastive_weight=0.1,
+        measurement_contrastive=False,
         quantiles=(0.16, 0.5, 0.84),
         expectiles=(0.1, 0.5, 0.9),
         quantile_crossover=True,
@@ -299,8 +300,18 @@ class MultiLabelHead(nn.Module):
             raise ValueError(f"{kind} is not a density measurement likelihood")
         if flow_objective not in {"nll", "contrastive", "nll_contrastive"}:
             raise ValueError("Unsupported flow objective")
-        if flow_objective != "nll" and (kind != "flow" or noise_aware):
-            raise ValueError("Contrastive contexts require a clean joint flow")
+        if flow_objective != "nll" and (
+            kind != "flow" or (noise_aware and not measurement_contrastive)
+        ):
+            raise ValueError(
+                "Contrastive contexts require a clean joint flow or explicit measurement composition"
+            )
+        if measurement_contrastive and not (
+            kind == "flow" and noise_aware and flow_objective != "nll"
+        ):
+            raise ValueError(
+                "Explicit measurement contrastive requires a noisy contrastive flow"
+            )
         if contrastive_weight < 0:
             raise ValueError("Contrastive weight must be nonnegative")
         if quantile_crossover_penalty < 0:
@@ -311,6 +322,7 @@ class MultiLabelHead(nn.Module):
         self.flow_type = flow_type
         self.flow_objective = flow_objective
         self.contrastive_weight = float(contrastive_weight)
+        self.measurement_contrastive = bool(measurement_contrastive)
         self.quantile_crossover_penalty = float(quantile_crossover_penalty)
         self.mdn_components = int(mdn_components)
         self.lowrank_rank = int(lowrank_rank)
@@ -554,6 +566,23 @@ class MultiLabelHead(nn.Module):
             return -density.mean() / dims
         if self.kind in {"quantile", "expectile"}:
             return self.loss_fn(self._level_values(raw), target, mask=mask)
+        if self.measurement_contrastive:
+            if source_ids is None or len(latent) < 2:
+                raise ValueError("Contrastive batches require unique source IDs")
+            if len(torch.unique(source_ids)) != len(latent):
+                raise ValueError("Contrastive negatives cannot contain duplicate stars")
+            # Integrate the SAME target-error model under both positive and
+            # negative contexts before taking their likelihood ratio. Common
+            # fixed antithetic nodes reduce gradient noise; neither branch is detached.
+            positive = self.log_prob(latent, target, sigma=sigma)
+            negative = self.log_prob(latent.roll(1, 0), target, sigma=sigma)
+            contrastive = torch.nn.functional.softplus(negative - positive).mean()
+            total = (
+                contrastive
+                if self.flow_objective == "contrastive"
+                else (-positive.mean() + self.contrastive_weight * contrastive)
+            )
+            return total / dims
         if self.noise_aware:
             return self.loss_fn(raw, target, sigma=sigma).mean() / dims
         if self.flow_objective != "nll":

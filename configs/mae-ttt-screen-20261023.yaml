@@ -1,0 +1,37 @@
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/checkpoint.pth
+paired: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/paired-cohort.npz
+predictions: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/predictions.npz
+checkpoint_sha256: f59b424e3e01ac697ce12f9f8bf19c3cee6234f01ca8e6daeba1205dec99c936
+paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+predictions_sha256: 276b5cfac70b6894d263b95420f783c60b0fa09a0afdcebbc0b2e04f54b19b8f
+parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+checkpoint_source_sha: 1a0051ded24062c840bd2a502c73d65f46a4cc2b
+global_objects: 512
+calibration_objects: 256
+metal_poor_policy: all XP-eligible TEST FeH<-2 as separate post-policy-freeze evaluation stratum; deduplicate global union; no unweighted pooled population inference
+input_policy: same original photometry+XP-only checked paired inputs; no astrometry/EBV prediction inputs
+baseline: source-bound saved original selected checkpoint predictions; no completed baseline model replay
+objective: observed-XP masked MSE only; fresh stateless per-step masks; no label/error/prediction consistency target
+paper_scope: analogous adaptation only; tabular MSA with jointly trained frozen Gaussian head, not image MAE pretrained encoder plus independently frozen linear probe
+arms:
+- run_id: mae_ttt_encoderdecoder_sgd20_mask20_v1
+  scope: encoder_decoder
+  steps: 20
+  lr: 0.0001
+  mask_fraction: 0.2
+- run_id: mae_ttt_encoderdecoder_sgd3_mask20_v1
+  scope: encoder_decoder
+  steps: 3
+  lr: 0.0001
+  mask_fraction: 0.2
+- run_id: mae_ttt_layernorm_sgd20_mask20_v1
+  scope: layernorm
+  steps: 20
+  lr: 0.0001
+  mask_fraction: 0.2
+- run_id: mae_ttt_encoderdecoder_sgd20_mask75_v1
+  scope: encoder_decoder
+  steps: 20
+  lr: 0.0001
+  mask_fraction: 0.75

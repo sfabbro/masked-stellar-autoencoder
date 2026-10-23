@@ -1,0 +1,49 @@
+schema: source-bound-posterior-target-wave-v1
+parent_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+preparation:
+  starhorse_age_distance:
+    local_directory: experiments/xp/results-stellar-improvement/posterior-age-distance-preparation-20261023-v1
+    input_sha256: f06c4b4c2761f620ec2e9d953a3e6d6c90313903cd5a7bb4864cbd45b133d30b
+    target_units: [ln_Gyr, ln_kpc]
+    role_counts: {fit: 2836, tune: 1024, cal: 1024, test: 2048}
+    caveat: Catalogue posterior targets depend on astrometry and stellar models; not raw-parallax likelihood or independent age truth.
+  apokasc_age:
+    local_directory: experiments/xp/results-stellar-improvement/apokasc-age-preparation-20261023-v1
+    input_sha256: f93a13712426b042fb8720451e770e7ae440e52c1b61266e513dae63462aa7fd
+    role_counts: {fit: 4096, tune: 1024, cal: 719, test: 739}
+    target_units: [ln_Gyr]
+    caveat: Native APOKASC3 seismic model-dependent age scale, separately fitted; no identified StarHorse/APOKASC cross-teacher scale.
+source_projection:
+  run_id: alpha_desi_source_projection_v1
+  script: scripts/prepare_alpha_source_evidence.py
+  raw: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits
+  raw_sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
+  resources: {cores: 4, ram_gib: 32, gpus: 0, runtime_seconds: 3600}
+  training_ready: false
+  next_gate: Actual source/schema/unit/quality/ID associations plus photXP feature overlap and independent source QA before alpha GPU fit.
+training_policy:
+  script: scripts/run_posterior_target_wave.py
+  frozen_parent_embeddings: true
+  features: photometry_and_XP_only
+  seeds: [45, 46]
+  steps: 1000
+  batch_size: 256
+  target_dim: from_prepared_contract
+  dtype: float64
+  selection: First minimum TUNE standardized joint NLL per target; TEST/CAL unused in gradients or selection.
+  reconstruction_presentations: 0
+  cpu_smoke_is_production_certificate: false
+  resources: {cores: 4, ram_gib: 32, gpus: 1, runtime_seconds: 7200}
+runs:
+  - {run_id: posterior_age_distance_gaussian_s45_v1, preparation: starhorse_age_distance, kind: gaussian, seed: 45}
+  - {run_id: posterior_age_distance_mdn_s45_v1, preparation: starhorse_age_distance, kind: mdn, seed: 45}
+  - {run_id: posterior_age_distance_nsf_s45_v1, preparation: starhorse_age_distance, kind: nsf, seed: 45}
+  - {run_id: posterior_age_distance_gaussian_s46_v1, preparation: starhorse_age_distance, kind: gaussian, seed: 46}
+  - {run_id: posterior_age_distance_mdn_s46_v1, preparation: starhorse_age_distance, kind: mdn, seed: 46}
+  - {run_id: posterior_age_distance_nsf_s46_v1, preparation: starhorse_age_distance, kind: nsf, seed: 46}
+  - {run_id: apokasc_age_gaussian_s45_v1, preparation: apokasc_age, kind: gaussian, seed: 45}
+  - {run_id: apokasc_age_mdn_s45_v1, preparation: apokasc_age, kind: mdn, seed: 45}
+  - {run_id: apokasc_age_nsf_s45_v1, preparation: apokasc_age, kind: nsf, seed: 45}
+  - {run_id: apokasc_age_gaussian_s46_v1, preparation: apokasc_age, kind: gaussian, seed: 46}
+  - {run_id: apokasc_age_mdn_s46_v1, preparation: apokasc_age, kind: mdn, seed: 46}
+  - {run_id: apokasc_age_nsf_s46_v1, preparation: apokasc_age, kind: nsf, seed: 46}

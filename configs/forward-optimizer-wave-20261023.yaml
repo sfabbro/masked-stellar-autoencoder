@@ -1,0 +1,26 @@
+schema: forward-optimizer-wave-v1
+original: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_forward_xp_s42_v1
+entrypoint: scripts/run_forward_optimizer_wave.py
+policy:
+  original_decoder_training: reused_immutable_40_epoch_fit
+  reconstruction_presentations: 0
+  new_decoder_updates: 0
+  prediction_dtype: float64
+  optimizer: per_object_multistart_lbfgs_strong_wolfe
+  iterations: 150
+  test_count: 2048
+  calibration_count: 512
+  selection: fixed_source_id_sha256_no_test_label_selection
+  flow_prior: joint3D_NSF_FIT_only_quoted_diagonal_label_error_convolution
+  flow_prior_steps: 1000
+  qmc_train_nodes: 64
+  qmc_tune_convergence_nodes: [64, 128, 256, 512]
+  qmc_tune_absolute_tolerance: 0.01
+  posterior_claim: MAP_local_Hessian_or_explicit_defensive_importance_approximation_not_exact_global_posterior
+  input_noise: original_source_verified_110XP_diagonal_errors
+runs:
+  - {run_id: forward_lbfgs_fp64_multistart_v2, mode: mle, seed: 42}
+  - {run_id: joint_floweb_map_fp64_s42_v1, mode: flow_prior_map, seed: 42}
+  - {run_id: joint_floweb_map_fp64_s43_v1, mode: flow_prior_map, seed: 43}
+  - {run_id: joint_floweb_posterior_fp64_s42_v1, mode: flow_prior_posterior, seed: 42, test_count: 512, cal_count: 512, importance_samples: 16384, proposal: equal_joint_flow_prior_and_local_laplace, tune_objects: 16, convergence_logZ_and_standardized_mean: 0.05, minimum_effective_samples: 100}
+  - {run_id: forward_gn_fp64_multistart_v2, mode: mle_gauss_newton, seed: 42, test_count: 2048, cal_count: 512, iterations: 150, dtype: float64, note: same_inputs_starts_likelihood_dtype_and_budget_as_LBFGS}

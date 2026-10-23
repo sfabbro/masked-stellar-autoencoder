@@ -1033,6 +1033,7 @@ def main():
             mc_samples=cfg["noise_mc_samples"],
             flow_objective=arm.get("flow_objective", "nll"),
             contrastive_weight=arm.get("contrastive_weight", 0.1),
+            measurement_contrastive=arm.get("measurement_contrastive", False),
             quantiles=tuple(arm.get("quantiles", (0.16, 0.5, 0.84))),
             expectiles=tuple(arm.get("expectiles", (0.1, 0.5, 0.9))),
             quantile_crossover=arm.get("quantile_crossover", True),
@@ -1094,6 +1095,58 @@ def main():
                 },
             )
             del preflight_latent, preflight_mean, preflight_variance
+        if arm.get("measurement_contrastive", False):
+            model.eval()
+            head.train()
+            probe_rows = fit[: min(256, len(fit))]
+            x_probe = torch.tensor(data["input"][probe_rows], device=device)
+            y_probe = torch.tensor(
+                (data["value"][probe_rows] - data["label_center"])
+                / data["label_scale"],
+                device=device,
+            ).float()
+            s_probe = torch.tensor(
+                data["error"][probe_rows] / data["label_scale"], device=device
+            ).float()
+            if device.type == "cuda":
+                torch.cuda.reset_peak_memory_stats(device)
+            objective = head.criterion(
+                model.encoder(x_probe),
+                y_probe,
+                s_probe,
+                source_ids=torch.tensor(data["source_id"][probe_rows], device=device),
+            )
+            objective.backward()
+            gradients = [
+                p.grad
+                for p in list(model.parameters()) + list(head.parameters())
+                if p.grad is not None
+            ]
+            if (
+                not gradients
+                or not torch.isfinite(objective)
+                or not all(torch.isfinite(g).all() for g in gradients)
+            ):
+                raise FloatingPointError(
+                    "Measurement-contrastive gradient preflight failed"
+                )
+            atomic(
+                args.output / "measurement-contrastive-preflight.json",
+                {
+                    "before_sgd": True,
+                    "rows": len(probe_rows),
+                    "nodes": len(head.measurement_nodes),
+                    "finite_objective_and_gradients": True,
+                    "both_contexts_integrated": True,
+                    "peak_allocated_bytes": torch.cuda.max_memory_allocated(device)
+                    if device.type == "cuda"
+                    else None,
+                    "input_eiv": False,
+                },
+            )
+            model.zero_grad(set_to_none=True)
+            head.zero_grad(set_to_none=True)
+            del objective, gradients, x_probe, y_probe, s_probe
         optimizer = torch.optim.Adam(model.parameters(), lr=cfg["encoder_lr"])
         head_optimizer = torch.optim.Adam(head.parameters(), lr=cfg["head_lr"])
         rng = np.random.default_rng(arm["seed"])
@@ -1382,9 +1435,21 @@ def main():
             )
 
             apparent_g = data["raw"][:, features.index("G")]
+            density_kind = arm.get("density_score_kind", "intrinsic")
+            if density_kind not in {"intrinsic", "observed_label"}:
+                raise ValueError(
+                    "Explicit intrinsic or observed-label density score required"
+                )
+            if density_kind == "observed_label" and not head.noise_aware:
+                raise ValueError(
+                    "Observed-label calibration requires a measurement model"
+                )
+            score_key = (
+                "observed" if density_kind == "observed_label" else "intrinsic"
+            ) + "_log_prob_standardized"
             density_summary, density_arrays = calibrate_density_scores(
-                calibration_scores=-output_cal["intrinsic_log_prob_standardized"],
-                test_scores=-output_test["intrinsic_log_prob_standardized"],
+                calibration_scores=-output_cal[score_key],
+                test_scores=-output_test[score_key],
                 fit_g=apparent_g[fit],
                 calibration_g=apparent_g[cal],
                 test_g=apparent_g[test],
@@ -1399,6 +1464,10 @@ def main():
                     "source_sha256": sha(cfg["cohort"]),
                 },
                 api="density" if head.flow_objective == "nll" else "contrastive",
+            )
+            density_summary["density_kind"] = density_kind
+            density_summary["known_test_label_error_required"] = (
+                density_kind == "observed_label"
             )
             save_density_calibration(args.output, density_summary, density_arrays)
             manifest["joint_density_conformal"] = density_summary
