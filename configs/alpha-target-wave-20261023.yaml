@@ -5,7 +5,7 @@ source_projection:
   requires_actual_status: native_source_projection_complete_not_training_certificate
   original_source_sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
 feature_preparation:
-  run_id: alpha_desi_feature_preparation_v1
+  run_id: alpha_desi_feature_preparation_v2
   depends_on:
   - alpha_desi_source_projection_v1
   script: scripts/prepare_alpha_target_wave.py
@@ -28,12 +28,12 @@ feature_preparation:
   source_qa_repeated_for_each_head: false
 training_policy:
   depends_on:
-  - alpha_desi_feature_preparation_v1
+  - alpha_desi_feature_preparation_v2
   requires_actual_status: source_audited_alpha_features_complete
   script: scripts/run_alpha_target_wave.py
-  prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v1/prepared.npz
-  preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v1/manifest.json
-  independent_source_audit: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v1/independent-source-audit.json
+  prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/prepared.npz
+  preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/manifest.json
+  independent_source_audit: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/independent-source-audit.json
   resources:
     cores: 4
     ram_gib: 32

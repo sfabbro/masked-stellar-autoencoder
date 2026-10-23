@@ -1,0 +1,7 @@
+jobs:
+- run_id: joint_floweb_map_fp64_s43_qmc64k_v3
+  task: floweb-quadrature-recovery
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1

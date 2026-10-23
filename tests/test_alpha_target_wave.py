@@ -129,3 +129,46 @@ def test_native_alpha_affine_density_preserves_negative_signed_coordinate():
     np.testing.assert_allclose(
         density, np.array([-1.0, -2.0]) - np.log(0.2), rtol=0, atol=1e-15
     )
+
+
+def test_parent_is_explicit_and_preflighted_before_original_row_audit(
+    tmp_path, monkeypatch
+):
+    projection = tmp_path / "projection"
+    projection.mkdir()
+    (projection / "manifest.json").write_text(
+        json.dumps(
+            dict(
+                status="native_source_projection_complete_not_training_certificate",
+                source_sha256=alpha.RAW_SHA,
+                sidecar_sha256="sidecar",
+            )
+        )
+    )
+    evidence = tmp_path / "policy.json"
+    evidence.write_text(json.dumps(policy()))
+    checkpoint = tmp_path / "canonical-arc-parent-86.pth"
+    seen = []
+
+    def fake_sha(path):
+        path = Path(path)
+        seen.append(path)
+        return {
+            "desi-alpha-native.h5": "sidecar",
+            "enriched-feature-cohort.h5": alpha.FEATURE_SHA,
+            "distance-feature-cohort.h5": alpha.REFERENCE_SHA,
+            checkpoint.name: alpha.PARENT_SHA,
+        }[path.name]
+
+    def audit_reached(*args, **kwargs):
+        raise RuntimeError("input contracts checked before expensive audit")
+
+    monkeypatch.setattr(alpha, "sha", fake_sha)
+    monkeypatch.setattr(alpha, "independently_audit_projection", audit_reached)
+    with pytest.raises(RuntimeError, match="input contracts checked"):
+        alpha.prepare(projection, tmp_path, tmp_path / "output", evidence, checkpoint)
+    assert checkpoint in seen
+    assert not any("main-checkpoints" in str(path) for path in seen)
+    assert json.loads((tmp_path / "output/manifest.json").read_text())[
+        "checkpoint_path"
+    ] == str(checkpoint)

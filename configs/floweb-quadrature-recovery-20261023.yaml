@@ -33,3 +33,13 @@ runs:
   prior_sha256: d4465068b67c6fc2ae9bdd1d549c78ee3aa73ce11b4b2b2a04bedcbedce3e9cb
   test_count: 512
   cal_count: 512
+- run_id: joint_floweb_map_fp64_s43_qmc64k_v3
+  mode: flow_prior_map
+  seed: 43
+  prior: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_v1/prior.pth
+  prior_sha256: 9752a441971be6c0f3ef2d68ee849f07cdc43c66d9b6ea9f9c3ab33f090e7874
+  test_count: 2048
+  cal_count: 512
+  prior_node_cap: 65536
+  resume_convergence: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_qmc_v2/prior-quadrature-convergence.json
+  resume_convergence_sha256: 67ca60e9d3d514e6756add9e66e1ab0af53108cb50d83f921757e402461a54d2

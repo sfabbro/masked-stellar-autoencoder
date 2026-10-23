@@ -46,6 +46,8 @@ def main():
     parser.add_argument("--expected-prior-sha")
     parser.add_argument("--adaptive-prior", action="store_true")
     parser.add_argument("--prior-node-cap", type=int, default=16384)
+    parser.add_argument("--resume-prior-convergence", type=Path)
+    parser.add_argument("--expected-convergence-sha")
     parser.add_argument("--test-count", type=int, default=2048)
     parser.add_argument("--cal-count", type=int, default=512)
     parser.add_argument("--max-iter", type=int, default=150)
@@ -179,11 +181,40 @@ def main():
             )
         prior.eval().requires_grad_(False)
         if args.adaptive_prior:
+            resume = None
+            if args.resume_prior_convergence:
+                if (
+                    not args.expected_convergence_sha
+                    or sha(args.resume_prior_convergence)
+                    != args.expected_convergence_sha
+                ):
+                    raise ValueError("Prior convergence report SHA changed")
+                before = json.loads(
+                    (args.resume_prior_convergence.parent / "manifest.json").read_text()
+                )
+                resume = json.loads(args.resume_prior_convergence.read_text())
+                if (
+                    before.get("status")
+                    != "failed_adaptive_prior_quadrature_convergence"
+                    or before.get("source") != source
+                    or before.get("reused_prior_sha256") != args.expected_prior_sha
+                    or before.get("seed") != args.seed
+                    or before.get("adaptive_prior_convergence") != resume
+                ):
+                    raise ValueError(
+                        "Convergence predecessor source/prior binding differs"
+                    )
+                metadata.update(
+                    resumed_convergence_sha256=args.expected_convergence_sha,
+                    recomputed_final_baseline_nodes=resume["nodes"],
+                    earlier_resolution_results_reused=True,
+                )
             convergence = adaptive_prior_convergence(
                 prior(),
                 labels[pair["tune_rows"][:128]],
                 errors[pair["tune_rows"][:128]],
                 max_nodes=args.prior_node_cap,
+                resume_report=resume,
             )
             (args.output / "prior-quadrature-convergence.json").write_text(
                 json.dumps(convergence, indent=2)

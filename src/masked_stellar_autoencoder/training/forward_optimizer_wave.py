@@ -47,7 +47,9 @@ def chunked_observed_prior_log_prob(prior, labels, errors, nodes, chunk=256):
     return total - math.log(len(nodes))
 
 
-def adaptive_prior_convergence(prior, labels, errors, max_nodes=16384, tolerance=0.01):
+def adaptive_prior_convergence(
+    prior, labels, errors, max_nodes=16384, tolerance=0.01, resume_report=None
+):
     """TUNE-only nested-QMC resolution and independent-scramble stability gate.
 
     Two successive refinements AND a second scramble must pass the same fixed
@@ -61,6 +63,38 @@ def adaptive_prior_convergence(prior, labels, errors, max_nodes=16384, tolerance
     consecutive = 0
     levels = []
     count = 64
+    if resume_report is not None:
+        old_cap = resume_report.get("nodes", 0)
+        if (
+            resume_report.get("status") != "failed_at_bounded_cap"
+            or resume_report.get("tolerance") != tolerance
+            or old_cap < 512
+            or old_cap >= max_nodes
+            or old_cap & (old_cap - 1)
+        ):
+            raise ValueError(
+                "Only a source-bound failed lower-resolution gate can resume"
+            )
+        levels = [dict(row) for row in resume_report["levels"]]
+        if [row["nodes"] for row in levels] != [
+            2**i for i in range(6, old_cap.bit_length())
+        ]:
+            raise ValueError("Incomplete predecessor quadrature schedule")
+        for row in reversed(levels):
+            delta = row.get("maximum_refinement_delta")
+            if delta is None or delta > tolerance:
+                break
+            consecutive += 1
+        # Old producer did not preserve vectors: recompute only its final
+        # baseline, never all earlier resolutions, to compare the NEW level.
+        with torch.no_grad():
+            previous = chunked_observed_prior_log_prob(
+                prior,
+                labels,
+                errors,
+                measurement_nodes(old_cap, labels.shape[-1], device=labels.device),
+            )
+        count = old_cap * 2
     with torch.no_grad():
         while count <= max_nodes:
             nodes = measurement_nodes(count, labels.shape[-1], device=labels.device)

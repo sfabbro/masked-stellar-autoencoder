@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import h5py
@@ -158,9 +159,22 @@ def independently_audit_projection(raw, sidecar, *, policy, chunk_rows=65536):
     )
 
 
-def prepare(projection_directory, base, output, unit_evidence):
+def prepare(projection_directory, base, output, unit_evidence, checkpoint_path):
     if output.exists():
         raise FileExistsError(output)
+    output.mkdir(parents=True, exist_ok=False)
+    source_revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], text=True
+    ).strip()
+    (output / "manifest.json").write_text(
+        json.dumps(
+            dict(
+                status="preparing",
+                source_revision=source_revision,
+                checkpoint_path=str(checkpoint_path),
+            )
+        )
+    )
     source_manifest = json.loads((projection_directory / "manifest.json").read_text())
     policy = json.loads(unit_evidence.read_text())
     if (
@@ -173,16 +187,19 @@ def prepare(projection_directory, base, output, unit_evidence):
     sidecar = projection_directory / "desi-alpha-native.h5"
     if sha(sidecar) != source_manifest["sidecar_sha256"]:
         raise ValueError("Actual alpha projection checksum changed")
-    audit = independently_audit_projection(raw, sidecar, policy=policy)
     feature = base / "enriched_feature_cohort_v1/enriched-feature-cohort.h5"
     reference = base / "distance_feature_cohort_v1/distance-feature-cohort.h5"
-    parent = base / "main-checkpoints/checkpoint-86.pth"
+    parent = Path(checkpoint_path)
     if (
         sha(feature) != FEATURE_SHA
         or sha(reference) != REFERENCE_SHA
         or sha(parent) != PARENT_SHA
     ):
         raise ValueError("Alpha feature/reference/parent source pin changed")
+    audit = independently_audit_projection(raw, sidecar, policy=policy)
+    (output / "independent-source-audit.json").write_text(
+        json.dumps(audit, indent=2) + "\n"
+    )
     with h5py.File(feature) as h5:
         fids = h5["features/source_id"][:]
         if fids.dtype.kind not in "iu" or len(np.unique(fids)) != len(fids):
@@ -268,7 +285,6 @@ def prepare(projection_directory, base, output, unit_evidence):
                 for i in range(0, len(values), 128)
             ]
         ).numpy()
-    output.mkdir(parents=True, exist_ok=False)
     np.savez_compressed(
         output / "prepared.npz",
         source_id=ids,
@@ -285,6 +301,8 @@ def prepare(projection_directory, base, output, unit_evidence):
     )
     manifest = dict(
         status="source_audited_alpha_features_complete",
+        source_revision=source_revision,
+        checkpoint_path=str(parent),
         input_sha256=sha(output / "prepared.npz"),
         encoder_checkpoint_sha256=PARENT_SHA,
         source_audit_sha256=sha(output / "independent-source-audit.json"),
@@ -317,13 +335,24 @@ def main():
         default=Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"),
     )
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--checkpoint", type=Path, required=True)
     p.add_argument(
         "--unit-evidence",
         type=Path,
         default=Path("configs/desi-alpha-source-policy-20261023.json"),
     )
     a = p.parse_args()
-    prepare(a.projection_directory, a.base, a.output, a.unit_evidence)
+    try:
+        prepare(a.projection_directory, a.base, a.output, a.unit_evidence, a.checkpoint)
+    except Exception as error:
+        if a.output.is_dir():
+            path = a.output / "manifest.json"
+            state = json.loads(path.read_text()) if path.exists() else {}
+            state.update(
+                status="failed", error=str(error), exception=type(error).__name__
+            )
+            path.write_text(json.dumps(state, indent=2))
+        raise
 
 
 if __name__ == "__main__":

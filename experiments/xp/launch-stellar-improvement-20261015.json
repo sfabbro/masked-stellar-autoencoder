@@ -7295,6 +7295,116 @@
       "attempted_at": "2026-10-23T18:19:29.328265+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_feature_preparation_v1",
+      "name": "msa-si15-alpha-desi-feature-preparation-v1",
+      "source_sha": "e71a79ec420bf049bd891a5f921317a80d19f61a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v1",
+      "plan": {
+        "run_id": "alpha_desi_feature_preparation_v1",
+        "task": "alpha-feature-preparation",
+        "depends_on": [
+          "alpha_desi_source_projection_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "z19jnmqq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:00:38.616554+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_map_fp64_s42_qmc_v2",
+      "name": "msa-si15-joint-floweb-map-fp64-s42-qmc-v2",
+      "source_sha": "e71a79ec420bf049bd891a5f921317a80d19f61a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s42_qmc_v2",
+      "plan": {
+        "run_id": "joint_floweb_map_fp64_s42_qmc_v2",
+        "task": "floweb-quadrature-recovery",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "b7b5k08z"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:00:47.493873+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_map_fp64_s43_qmc_v2",
+      "name": "msa-si15-joint-floweb-map-fp64-s43-qmc-v2",
+      "source_sha": "e71a79ec420bf049bd891a5f921317a80d19f61a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_qmc_v2",
+      "plan": {
+        "run_id": "joint_floweb_map_fp64_s43_qmc_v2",
+        "task": "floweb-quadrature-recovery",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "oxs0394l"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:00:53.453450+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_posterior_fp64_s42_qmc_v2",
+      "name": "msa-si15-joint-floweb-posterior-fp64-s42-qmc-v2",
+      "source_sha": "e71a79ec420bf049bd891a5f921317a80d19f61a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_posterior_fp64_s42_qmc_v2",
+      "plan": {
+        "run_id": "joint_floweb_posterior_fp64_s42_qmc_v2",
+        "task": "floweb-quadrature-recovery",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qbkr0qk5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:01:01.176657+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

@@ -170,7 +170,11 @@ def bind_prediction_policy(
             expected.update(
                 MSA_FLOWEB_PRIOR=arm["prior"],
                 MSA_FLOWEB_PRIOR_SHA=arm["prior_sha256"],
-                MSA_FLOWEB_PRIOR_NODE_CAP=str(suite["policy"]["prior_node_cap"]),
+                MSA_FLOWEB_PRIOR_NODE_CAP=str(
+                    arm.get("prior_node_cap", suite["policy"]["prior_node_cap"])
+                ),
+                MSA_FLOWEB_CONVERGENCE_REPORT=arm.get("resume_convergence", ""),
+                MSA_FLOWEB_CONVERGENCE_SHA=arm.get("resume_convergence_sha256", ""),
             )
         for key, value in expected.items():
             if key in plan.get("env", {}) and str(plan["env"][key]) != value:
@@ -376,6 +380,7 @@ def main():
             expected_status = {
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
+                "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
             }.get(name, "complete")
             dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":

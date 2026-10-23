@@ -61,7 +61,7 @@ def test_alpha_jobs_require_declared_independent_source_dependencies():
         if job["task"] == "alpha-target-predictions":
             assert env["MSA_TARGET_KIND"] in {"gaussian", "mdn", "nsf"}
             assert len(env["MSA_TARGET_LIBRARY_REV"]) == 40
-            assert job["depends_on"] == ["alpha_desi_feature_preparation_v1"]
+            assert job["depends_on"] == ["alpha_desi_feature_preparation_v2"]
         else:
             assert job["depends_on"] == ["alpha_desi_source_projection_v1"]
         assert not launcher.eligible(job, None, {})

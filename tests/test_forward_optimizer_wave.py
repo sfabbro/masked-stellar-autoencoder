@@ -244,3 +244,45 @@ def test_adaptive_integral_does_not_accept_refinement_without_scramble_agreement
     assert result["status"] == "failed_at_bounded_cap"
     assert result["levels"][-1]["maximum_refinement_delta"] <= 1e-12
     assert result["levels"][-1]["independent_scramble_delta"] > 0.01
+
+
+def test_adaptive_resume_does_not_repeat_old_resolutions_or_replay_passed_gate(
+    monkeypatch,
+):
+    import pytest
+
+    import masked_stellar_autoencoder.training.forward_optimizer_wave as module
+
+    original = module.measurement_nodes
+
+    def unstable_second_scramble(count, dimensions=3, *, device="cpu", seed=314159):
+        value = original(count, dimensions, device=device, seed=seed)
+        return value + 100 if seed == 271828 else value
+
+    prior = torch.distributions.Independent(
+        torch.distributions.Normal(
+            torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)
+        ),
+        1,
+    )
+    labels = torch.zeros((1, 1), dtype=torch.double)
+    error = torch.full_like(labels, 0.1)
+    monkeypatch.setattr(module, "measurement_nodes", unstable_second_scramble)
+    failed = module.adaptive_prior_convergence(prior, labels, error, max_nodes=512)
+    assert failed["status"] == "failed_at_bounded_cap"
+    calls = []
+
+    def record_nodes(count, dimensions=3, *, device="cpu", seed=314159):
+        calls.append(count)
+        return original(count, dimensions, device=device, seed=seed)
+
+    monkeypatch.setattr(module, "measurement_nodes", record_nodes)
+    result = module.adaptive_prior_convergence(
+        prior, labels, error, max_nodes=1024, resume_report=failed
+    )
+    assert result["status"] == "converged_finite_qmc_only"
+    assert set(calls) == {512, 1024}
+    with pytest.raises(ValueError, match="failed lower-resolution"):
+        module.adaptive_prior_convergence(
+            prior, labels, error, max_nodes=2048, resume_report=result
+        )

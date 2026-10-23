@@ -147,7 +147,11 @@ case "$stage" in
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == floweb-quadrature-recovery ]]; then
-      "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT" --reuse-prior "$MSA_FLOWEB_PRIOR" --expected-prior-sha "$MSA_FLOWEB_PRIOR_SHA" --adaptive-prior --prior-node-cap "$MSA_FLOWEB_PRIOR_NODE_CAP"
+      recovery_args=(--reuse-prior "$MSA_FLOWEB_PRIOR" --expected-prior-sha "$MSA_FLOWEB_PRIOR_SHA" --adaptive-prior --prior-node-cap "$MSA_FLOWEB_PRIOR_NODE_CAP")
+      if [[ -n "${MSA_FLOWEB_CONVERGENCE_REPORT:-}" ]]; then
+        recovery_args+=(--resume-prior-convergence "$MSA_FLOWEB_CONVERGENCE_REPORT" --expected-convergence-sha "$MSA_FLOWEB_CONVERGENCE_SHA")
+      fi
+      "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT" "${recovery_args[@]}"
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == forward-floweb ]]; then
@@ -155,7 +159,7 @@ case "$stage" in
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-feature-preparation ]]; then
-      "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --projection-directory /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1 --base /arc/projects/k-pop/msa_runs/stellar-improvement-20261015 --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
+      "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --checkpoint "$MSA_PRETRAIN_RESUME" --projection-directory /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1 --base /arc/projects/k-pop/msa_runs/stellar-improvement-20261015 --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-target-predictions ]]; then
