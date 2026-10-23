@@ -7405,6 +7405,242 @@
       "attempted_at": "2026-10-23T23:01:01.176657+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_feature_preparation_v2",
+      "name": "msa-si15-alpha-desi-feature-preparation-v2",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2",
+      "plan": {
+        "run_id": "alpha_desi_feature_preparation_v2",
+        "task": "alpha-feature-preparation",
+        "depends_on": [
+          "alpha_desi_source_projection_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "jvbmn7u9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:16:13.598232+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_map_fp64_s43_qmc64k_v3",
+      "name": "msa-si15-joint-floweb-map-fp64-s43-qmc64k-v3",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_qmc64k_v3",
+      "plan": {
+        "run_id": "joint_floweb_map_fp64_s43_qmc64k_v3",
+        "task": "floweb-quadrature-recovery",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "py1q31e7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:16:39.711689+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_gaussian_s45_v1",
+      "name": "msa-si15-alpha-desi-gaussian-s45-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_gaussian_s45_v1",
+      "plan": {
+        "run_id": "alpha_desi_gaussian_s45_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fch6tul4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:18:21.214412+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_mdn_s45_v1",
+      "name": "msa-si15-alpha-desi-mdn-s45-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_mdn_s45_v1",
+      "plan": {
+        "run_id": "alpha_desi_mdn_s45_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "sgt10wv3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:18:49.000313+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_nsf_s45_v1",
+      "name": "msa-si15-alpha-desi-nsf-s45-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_nsf_s45_v1",
+      "plan": {
+        "run_id": "alpha_desi_nsf_s45_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jl6lpjmy"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:18:52.497248+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_gaussian_s46_v1",
+      "name": "msa-si15-alpha-desi-gaussian-s46-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_gaussian_s46_v1",
+      "plan": {
+        "run_id": "alpha_desi_gaussian_s46_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "e07j1vvv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:18:58.324317+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_mdn_s46_v1",
+      "name": "msa-si15-alpha-desi-mdn-s46-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_mdn_s46_v1",
+      "plan": {
+        "run_id": "alpha_desi_mdn_s46_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dn0712bu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:19:02.699771+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_nsf_s46_v1",
+      "name": "msa-si15-alpha-desi-nsf-s46-v1",
+      "source_sha": "8d4d8faee98e0b282706ec70a3b56c914554e80c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_nsf_s46_v1",
+      "plan": {
+        "run_id": "alpha_desi_nsf_s46_v1",
+        "task": "alpha-target-predictions",
+        "depends_on": [
+          "alpha_desi_feature_preparation_v2"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ds8g30wi"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T23:19:07.749889+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
