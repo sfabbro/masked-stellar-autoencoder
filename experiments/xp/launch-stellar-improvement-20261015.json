@@ -4735,6 +4735,1403 @@
       "attempted_at": "2026-10-22T18:30:41.434875+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_gaussian_clean_r01_s45_10m_v1",
+      "name": "msa-si15-validation-gaussian-clean-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_clean_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_clean_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "g2u913ec"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T22:30:38.693332+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_gaussian_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-gaussian-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "yxwb9p72"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T22:30:56.896195+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_gaussian_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-gaussian-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zgilm0oc"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T22:31:05.384863+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_gaussian_noise_r01_s45_10m_v1",
+      "name": "msa-si15-validation-gaussian-noise-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_noise_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_noise_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "js8dlaqr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-22T22:31:13.482108+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_gaussian_noise_r03_s45_10m_v1",
+      "name": "msa-si15-validation-gaussian-noise-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_noise_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_noise_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [],
+      "status": "execution_confirmed_without_session_id",
+      "attempted_at": "2026-10-22T22:31:22.486431+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "The read operation timed out",
+      "reconciliation_20261023T0405": {
+        "run_id": "validation_gaussian_noise_r03_s45_10m_v1",
+        "status": "complete",
+        "error": null,
+        "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+        "exact_source_run": true,
+        "session_matches": [],
+        "manifest": "experiments/xp/results-stellar-improvement/validation-runtime-20261023T0405/validation_gaussian_noise_r03_s45_10m_v1.json"
+      }
+    },
+    {
+      "run_id": "validation_gaussian_noise_r03_s46_10m_v1",
+      "name": "msa-si15-validation-gaussian-noise-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_gaussian_noise_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_gaussian_noise_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qpxngd94"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:06:25.034988+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_mdn4_clean_r01_s45_10m_v1",
+      "name": "msa-si15-validation-mdn4-clean-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_clean_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_clean_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jlq06hty"
+      ],
+      "status": "accepted_recovered",
+      "attempted_at": "2026-10-23T03:06:33.885630+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "The read operation timed out",
+      "reconciliation_20261023T0405": {
+        "run_id": "validation_mdn4_clean_r01_s45_10m_v1",
+        "status": "complete",
+        "error": null,
+        "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+        "exact_source_run": true,
+        "session_matches": [
+          "jlq06hty"
+        ],
+        "manifest": "experiments/xp/results-stellar-improvement/validation-runtime-20261023T0405/validation_mdn4_clean_r01_s45_10m_v1.json"
+      }
+    },
+    {
+      "run_id": "validation_mdn4_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-mdn4-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "p376vxh1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:09:27.513401+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_mdn4_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-mdn4-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "cgljdn71"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:09:34.945385+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_mdn4_noise_r01_s45_10m_v1",
+      "name": "msa-si15-validation-mdn4-noise-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_noise_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_noise_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wdpcqmtx"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:09:44.580852+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_mdn4_noise_r03_s45_10m_v1",
+      "name": "msa-si15-validation-mdn4-noise-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_noise_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_noise_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ahnvql4k"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:09:53.820180+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_mdn4_noise_r03_s46_10m_v1",
+      "name": "msa-si15-validation-mdn4-noise-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_mdn4_noise_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_mdn4_noise_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wyja799i"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:10:00.967129+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_clean_r01_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-clean-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_clean_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_clean_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "prc55vxo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:10:09.077467+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fcauqn73"
+      ],
+      "status": "accepted_recovered",
+      "attempted_at": "2026-10-23T03:10:15.892961+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "The read operation timed out",
+      "reconciliation_20261023T0405": {
+        "run_id": "validation_nsf_clean_r03_s45_10m_v1",
+        "status": "complete",
+        "error": null,
+        "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+        "exact_source_run": true,
+        "session_matches": [
+          "fcauqn73"
+        ],
+        "manifest": "experiments/xp/results-stellar-improvement/validation-runtime-20261023T0405/validation_nsf_clean_r03_s45_10m_v1.json"
+      }
+    },
+    {
+      "run_id": "validation_nsf_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-nsf-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qshzug2g"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:10:34.580120+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_noise_r01_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-noise-r01-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_noise_r01_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_noise_r01_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "r87n29af"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:10:46.257318+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_noise_r03_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-noise-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_noise_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_noise_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "xphwf7x6"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:10:56.767691+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_noise_r03_s46_10m_v1",
+      "name": "msa-si15-validation-nsf-noise-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_noise_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_noise_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "w3wsjfqv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:06.014271+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_purecontrastive_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-purecontrastive-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_purecontrastive_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_purecontrastive_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tsxgle4k"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:14.471756+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_purecontrastive_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-nsf-purecontrastive-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_purecontrastive_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_purecontrastive_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dal70x21"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:22.741532+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_nllcontrastive01_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-nllcontrastive01-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_nllcontrastive01_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_nllcontrastive01_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hb02u2u8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:30.451771+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_nllcontrastive01_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-nsf-nllcontrastive01-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_nllcontrastive01_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_nllcontrastive01_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "soopchb3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:39.128889+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_nllcontrastive10_clean_r03_s45_10m_v1",
+      "name": "msa-si15-validation-nsf-nllcontrastive10-clean-r03-s45-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_nllcontrastive10_clean_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_nllcontrastive10_clean_r03_s45_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lkuc5tp0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:47.467868+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "validation_nsf_nllcontrastive10_clean_r03_s46_10m_v1",
+      "name": "msa-si15-validation-nsf-nllcontrastive10-clean-r03-s46-10m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/validation_nsf_nllcontrastive10_clean_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "validation_nsf_nllcontrastive10_clean_r03_s46_10m_v1",
+        "task": "multilabel-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gucpa2k2"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:11:57.112014+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_bpf_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-bpf-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_bpf_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_bpf_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "a5h2vzss"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:06.758350+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_cinn_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-cinn-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_cinn_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_cinn_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ffuiyrh4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:15.789863+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_labelnoise_norecon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-labelnoise-norecon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_labelnoise_norecon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_labelnoise_norecon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dr4hf1ro"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:24.220733+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_labelnoise_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-labelnoise-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_labelnoise_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_labelnoise_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "n82u9xca"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:32.706718+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_noise_recon_30e_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-noise-recon-30e-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_noise_recon_30e_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_noise_recon_30e_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zg54vver"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:41.864428+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_norecon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-norecon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_norecon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_norecon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zbnba5df"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:12:55.879123+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "l8uyo6q0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:13:10.094261+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_recon_s43_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-recon-s43-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_recon_s43_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_recon_s43_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mrpv33k7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:13:20.559493+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_gaussian_recon_s44_v1",
+      "name": "msa-si15-rescore-fp64-multi-gaussian-recon-s44-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_gaussian_recon_s44_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_gaussian_recon_s44_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "iw7er80w"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:13:32.798726+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_maf_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-maf-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_maf_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_maf_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "g6184zd9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:13:47.777404+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_nsf_density_contrastive_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-nsf-density-contrastive-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_nsf_density_contrastive_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_nsf_density_contrastive_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gkh801tz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:13:59.265227+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_nsf_density_nll_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-nsf-density-nll-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_nsf_density_nll_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_nsf_density_nll_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "b0l9olvs"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:14:11.932623+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_nsf_density_nllcontrastive_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-nsf-density-nllcontrastive-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_nsf_density_nllcontrastive_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_nsf_density_nllcontrastive_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qe052qcm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:14:24.632808+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_nsf_labelnoise_recon_s42_v1",
+      "name": "msa-si15-rescore-fp64-multi-nsf-labelnoise-recon-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_nsf_labelnoise_recon_s42_v1",
+      "plan": {
+        "run_id": "rescore_fp64_multi_nsf_labelnoise_recon_s42_v1",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mqngg6yw"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:14:36.609883+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "rescore_fp64_multi_nsf_recon_s42_v2",
+      "name": "msa-si15-rescore-fp64-multi-nsf-recon-s42-v2",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_fp64_multi_nsf_recon_s42_v2",
+      "plan": {
+        "run_id": "rescore_fp64_multi_nsf_recon_s42_v2",
+        "task": "density-rescore",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ys1qy42c"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:14:50.326821+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "conformal_validation_gaussian_family_v1",
+      "name": "msa-si15-conformal-validation-gaussian-family-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/conformal_validation_gaussian_family_v1",
+      "plan": {
+        "run_id": "conformal_validation_gaussian_family_v1",
+        "task": "conformal-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "kzxq8kcr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:02.094446+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "conformal_validation_long_gaussian_v1",
+      "name": "msa-si15-conformal-validation-long-gaussian-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/conformal_validation_long_gaussian_v1",
+      "plan": {
+        "run_id": "conformal_validation_long_gaussian_v1",
+        "task": "conformal-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "mn8o2848"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:15.103968+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "conformal_validation_maf_v1",
+      "name": "msa-si15-conformal-validation-maf-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/conformal_validation_maf_v1",
+      "plan": {
+        "run_id": "conformal_validation_maf_v1",
+        "task": "conformal-validation",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "ru6pcm2p"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:27.697486+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_joint_s42_v1",
+      "name": "msa-si15-age-joint-validation-joint-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_joint_s42_v1",
+      "plan": {
+        "run_id": "age_joint_validation_joint_s42_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "ayvr6bhy"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:39.709638+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_joint_s43_v1",
+      "name": "msa-si15-age-joint-validation-joint-s43-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_joint_s43_v1",
+      "plan": {
+        "run_id": "age_joint_validation_joint_s43_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "odudpmer"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:48.652277+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_joint_s44_v1",
+      "name": "msa-si15-age-joint-validation-joint-s44-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_joint_s44_v1",
+      "plan": {
+        "run_id": "age_joint_validation_joint_s44_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "cpcf64ak"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:15:58.181612+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_composite_s42_v1",
+      "name": "msa-si15-age-joint-validation-composite-s42-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_composite_s42_v1",
+      "plan": {
+        "run_id": "age_joint_validation_composite_s42_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "ifeiablq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:07.634768+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_composite_s43_v1",
+      "name": "msa-si15-age-joint-validation-composite-s43-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_composite_s43_v1",
+      "plan": {
+        "run_id": "age_joint_validation_composite_s43_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "olr1tone"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:19.129991+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "age_joint_validation_composite_s44_v1",
+      "name": "msa-si15-age-joint-validation-composite-s44-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_joint_validation_composite_s44_v1",
+      "plan": {
+        "run_id": "age_joint_validation_composite_s44_v1",
+        "task": "target-head-pilot",
+        "resources": {
+          "cores": 4,
+          "ram": 8,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 8
+      },
+      "session_ids": [
+        "jl3nsjtw"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:28.370617+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "catalogue_comparison_andrae175m_v1",
+      "name": "msa-si15-catalogue-comparison-andrae175m-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue_comparison_andrae175m_v1",
+      "plan": {
+        "run_id": "catalogue_comparison_andrae175m_v1",
+        "task": "catalogue-comparison",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "url89ge9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:39.966365+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "catalogue_comparison_gspphot_v1",
+      "name": "msa-si15-catalogue-comparison-gspphot-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue_comparison_gspphot_v1",
+      "plan": {
+        "run_id": "catalogue_comparison_gspphot_v1",
+        "task": "catalogue-comparison",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "xrvn7zty"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:48.061098+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "catalogue_comparison_srivastava_v1",
+      "name": "msa-si15-catalogue-comparison-srivastava-v1",
+      "source_sha": "a45ae15759fa158026ff6473b0e02816bb828802",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue_comparison_srivastava_v1",
+      "plan": {
+        "run_id": "catalogue_comparison_srivastava_v1",
+        "task": "catalogue-comparison",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "xntifowz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T03:16:57.915753+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
