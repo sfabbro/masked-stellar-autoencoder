@@ -47,3 +47,41 @@ def test_target_and_solver_overrides_rejected():
         launcher.bind_prediction_policy(
             dict(task="target-source-evidence", run_id="invented"), {}
         )
+
+
+def test_alpha_jobs_require_declared_independent_source_dependencies():
+    jobs = yaml.safe_load(
+        (ROOT / "configs/alpha-launch-wave-20261023.yaml").read_text()
+    )["jobs"]
+    assert len(jobs) == 7
+    for job in jobs:
+        env = launcher.bind_prediction_policy(job, {})
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+        assert len(job["depends_on"]) == 1
+        if job["task"] == "alpha-target-predictions":
+            assert env["MSA_TARGET_KIND"] in {"gaussian", "mdn", "nsf"}
+            assert len(env["MSA_TARGET_LIBRARY_REV"]) == 40
+            assert job["depends_on"] == ["alpha_desi_feature_preparation_v1"]
+        else:
+            assert job["depends_on"] == ["alpha_desi_source_projection_v1"]
+        assert not launcher.eligible(job, None, {})
+        assert launcher.eligible(job, None, {job["depends_on"][0]: True})
+
+
+def test_floweb_recovery_reuses_exact_prior_without_retraining_or_wider_tolerance():
+    cfg = yaml.safe_load(
+        (ROOT / "configs/floweb-quadrature-recovery-20261023.yaml").read_text()
+    )
+    assert cfg["policy"]["absolute_log_density_tolerance"] == 0.01
+    assert (
+        cfg["policy"]["prior_training_updates"] == cfg["policy"]["decoder_updates"] == 0
+    )
+    for job in yaml.safe_load(
+        (ROOT / "configs/floweb-recovery-launch-20261023.yaml").read_text()
+    )["jobs"]:
+        env = launcher.bind_prediction_policy(job, {})
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+        assert len(env["MSA_FLOWEB_PRIOR_SHA"]) == 64
+        altered = dict(job, env={"MSA_FLOWEB_PRIOR_SHA": "bad"})
+        with pytest.raises(ValueError):
+            launcher.bind_prediction_policy(altered, {})

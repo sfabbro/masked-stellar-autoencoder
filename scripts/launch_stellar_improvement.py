@@ -111,10 +111,45 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
-    if plan["task"] == "forward-floweb":
+    if plan["task"] in {"alpha-feature-preparation", "alpha-target-predictions"}:
         suite = yaml.safe_load(
-            Path("configs/forward-optimizer-wave-20261023.yaml").read_text()
+            Path("configs/alpha-target-wave-20261023.yaml").read_text()
         )
+        expected = {
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+        }
+        if plan["task"] == "alpha-feature-preparation":
+            if plan["run_id"] != suite["feature_preparation"]["run_id"]:
+                raise ValueError("Unknown alpha preparation")
+        else:
+            arm = next(
+                (a for a in suite["runs"] if a["run_id"] == plan["run_id"]), None
+            )
+            if arm is None:
+                raise ValueError("Unknown alpha predictive arm")
+            expected.update(
+                MSA_TARGET_PREPARED=suite["training_policy"]["prepared"],
+                MSA_TARGET_PREPARATION_MANIFEST=suite["training_policy"][
+                    "preparation_manifest"
+                ],
+                MSA_TARGET_KIND=arm["kind"],
+                MSA_TARGET_SEED=str(arm["seed"]),
+                MSA_TARGET_STEPS=str(suite["training_policy"]["steps"]),
+                MSA_TARGET_LIBRARY_REV=suite["library_revision"],
+            )
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Alpha source/target policy override differs")
+            env[key] = value
+        return env
+    if plan["task"] in {"forward-floweb", "floweb-quadrature-recovery"}:
+        suite_path = (
+            "configs/floweb-quadrature-recovery-20261023.yaml"
+            if plan["task"] == "floweb-quadrature-recovery"
+            else "configs/forward-optimizer-wave-20261023.yaml"
+        )
+        suite = yaml.safe_load(Path(suite_path).read_text())
         arm = next((a for a in suite["runs"] if a["run_id"] == plan["run_id"]), None)
         if arm is None:
             raise ValueError("Inversion run absent from immutable policy")
@@ -131,6 +166,12 @@ def bind_prediction_policy(
                 arm.get("cal_count", suite["policy"]["calibration_count"])
             ),
         }
+        if plan["task"] == "floweb-quadrature-recovery":
+            expected.update(
+                MSA_FLOWEB_PRIOR=arm["prior"],
+                MSA_FLOWEB_PRIOR_SHA=arm["prior_sha256"],
+                MSA_FLOWEB_PRIOR_NODE_CAP=str(suite["policy"]["prior_node_cap"]),
+            )
         for key, value in expected.items():
             if key in plan.get("env", {}) and str(plan["env"][key]) != value:
                 raise ValueError("Forward optimizer policy override differs")
@@ -332,7 +373,11 @@ def main():
                 if response and response.returncode == 0
                 else {}
             )
-            dependencies[name] = content.get("status") == "complete"
+            expected_status = {
+                "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
+                "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
+            }.get(name, "complete")
+            dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":
                 sources = content.get("result", {}).get("sources", [])
                 dependencies[name] &= bool(sources) and all(
@@ -421,6 +466,7 @@ def main():
             "catalog",
             "age-data-audit",
             "target-source-evidence",
+            "alpha-feature-preparation",
             "conformal-validation",
             "target-head-pilot",
             "catalogue-comparison",

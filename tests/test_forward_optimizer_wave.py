@@ -157,3 +157,90 @@ def test_library_gauss_newton_matches_lbfgs_affine_likelihood():
     torch.testing.assert_close(
         gn["prediction"], lbfgs["prediction"], atol=1e-7, rtol=1e-7
     )
+
+
+def test_chunked_prior_integral_matches_full_and_independent_gaussian():
+    from masked_stellar_autoencoder.training.forward_optimizer_wave import (
+        chunked_observed_prior_log_prob,
+    )
+
+    prior = torch.distributions.Independent(
+        torch.distributions.Normal(
+            torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)
+        ),
+        1,
+    )
+    labels = torch.tensor([[-1.0], [0.0], [1.0]], dtype=torch.double)
+    errors = torch.full_like(labels, 0.2)
+    nodes = measurement_nodes(4096, 1)
+    actual = chunked_observed_prior_log_prob(prior, labels, errors, nodes, chunk=37)
+    torch.testing.assert_close(
+        actual,
+        observed_prior_log_prob(prior, labels, errors, nodes),
+        atol=1e-12,
+        rtol=1e-12,
+    )
+    expected = torch.distributions.Normal(0.0, math.sqrt(1.04)).log_prob(labels[:, 0])
+    torch.testing.assert_close(actual, expected, atol=2e-4, rtol=2e-4)
+
+
+def test_adaptive_integral_requires_refinements_and_independent_scramble():
+    import pytest
+
+    from masked_stellar_autoencoder.training.forward_optimizer_wave import (
+        adaptive_prior_convergence,
+    )
+
+    prior = torch.distributions.Independent(
+        torch.distributions.Normal(
+            torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)
+        ),
+        1,
+    )
+    labels = torch.tensor([[-1.0], [0.0], [1.0]], dtype=torch.double)
+    result = adaptive_prior_convergence(
+        prior, labels, torch.full_like(labels, 0.1), max_nodes=1024
+    )
+    assert result["status"] == "converged_finite_qmc_only"
+    assert len(result["levels"]) >= 3
+    assert result["levels"][-1]["independent_scramble_delta"] <= 0.01
+    assert all(row["maximum_refinement_delta"] <= 0.01 for row in result["levels"][-2:])
+    with pytest.raises(ValueError):
+        adaptive_prior_convergence(
+            prior, labels, torch.ones_like(labels), tolerance=0.1
+        )
+    with pytest.raises(ValueError):
+        adaptive_prior_convergence(
+            prior, labels, torch.ones_like(labels), max_nodes=1000
+        )
+
+
+def test_adaptive_integral_does_not_accept_refinement_without_scramble_agreement(
+    monkeypatch,
+):
+    import masked_stellar_autoencoder.training.forward_optimizer_wave as module
+
+    def adversarial_nodes(count, dimensions=3, *, device="cpu", seed=314159):
+        return torch.full(
+            (count, dimensions),
+            0.0 if seed == 314159 else 10.0,
+            dtype=torch.double,
+            device=device,
+        )
+
+    monkeypatch.setattr(module, "measurement_nodes", adversarial_nodes)
+    prior = torch.distributions.Independent(
+        torch.distributions.Normal(
+            torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)
+        ),
+        1,
+    )
+    result = module.adaptive_prior_convergence(
+        prior,
+        torch.zeros((1, 1), dtype=torch.double),
+        torch.ones((1, 1), dtype=torch.double),
+        max_nodes=512,
+    )
+    assert result["status"] == "failed_at_bounded_cap"
+    assert result["levels"][-1]["maximum_refinement_delta"] <= 1e-12
+    assert result["levels"][-1]["independent_scramble_delta"] > 0.01

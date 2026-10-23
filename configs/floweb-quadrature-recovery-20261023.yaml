@@ -1,0 +1,35 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+original: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_forward_xp_s42_v1
+policy:
+  test_count: 2048
+  calibration_count: 512
+  prior_node_cap: 16384
+  absolute_log_density_tolerance: 0.01
+  requires_two_successive_refinements: true
+  requires_independent_scramble: true
+  prior_training_updates: 0
+  decoder_updates: 0
+  quoted_label_convolution: unchanged approximate64-node predecessor training; improved
+    evaluation resolution only; no exact-integral claim
+runs:
+- run_id: joint_floweb_map_fp64_s42_qmc_v2
+  mode: flow_prior_map
+  seed: 42
+  prior: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s42_v1/prior.pth
+  prior_sha256: d4465068b67c6fc2ae9bdd1d549c78ee3aa73ce11b4b2b2a04bedcbedce3e9cb
+  test_count: 2048
+  cal_count: 512
+- run_id: joint_floweb_map_fp64_s43_qmc_v2
+  mode: flow_prior_map
+  seed: 43
+  prior: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_v1/prior.pth
+  prior_sha256: 9752a441971be6c0f3ef2d68ee849f07cdc43c66d9b6ea9f9c3ab33f090e7874
+  test_count: 2048
+  cal_count: 512
+- run_id: joint_floweb_posterior_fp64_s42_qmc_v2
+  mode: flow_prior_posterior
+  seed: 42
+  prior: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s42_v1/prior.pth
+  prior_sha256: d4465068b67c6fc2ae9bdd1d549c78ee3aa73ce11b4b2b2a04bedcbedce3e9cb
+  test_count: 512
+  cal_count: 512

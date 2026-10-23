@@ -17,6 +17,7 @@ from torchregress.losses.nflows import create_flow_model
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
 from masked_stellar_autoencoder.training.forward_optimizer_wave import (
+    adaptive_prior_convergence,
     defensive_flow_posterior,
     measurement_nodes,
     observed_prior_log_prob,
@@ -41,6 +42,10 @@ def main():
     )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--prior-steps", type=int, default=1000)
+    parser.add_argument("--reuse-prior", type=Path)
+    parser.add_argument("--expected-prior-sha")
+    parser.add_argument("--adaptive-prior", action="store_true")
+    parser.add_argument("--prior-node-cap", type=int, default=16384)
     parser.add_argument("--test-count", type=int, default=2048)
     parser.add_argument("--cal-count", type=int, default=512)
     parser.add_argument("--max-iter", type=int, default=150)
@@ -116,56 +121,113 @@ def main():
             .to(device)
             .double()
         )
-        optimizer = torch.optim.Adam(prior.parameters(), lr=1e-3)
-        generator = torch.Generator().manual_seed(args.seed)
-        nodes = measurement_nodes(64, device=device)
-        for step in range(2 if args.smoke else args.prior_steps):
-            selected = fit[torch.randperm(len(fit), generator=generator)[:256].numpy()]
-            optimizer.zero_grad(set_to_none=True)
-            loss = -observed_prior_log_prob(
-                prior(), labels[selected], errors[selected], nodes
-            ).mean()
-            if not torch.isfinite(loss):
-                raise FloatingPointError("Nonfinite prior objective")
-            loss.backward()
-            optimizer.step()
-        prior.eval().requires_grad_(False)
-        torch.save(
-            {
-                "prior": prior.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "fit_rows": fit,
-                "seed": args.seed,
-            },
-            args.output / "prior.pth",
-        )
-        # Independent nested-node convergence check uses TUNE only, never test.
-        tune = pair["tune_rows"][:128]
-        with torch.no_grad():
-            convergences = {}
-            previous = None
-            for count in [64, 128, 256, 512]:
-                value = observed_prior_log_prob(
-                    prior(),
-                    labels[tune],
-                    errors[tune],
-                    measurement_nodes(count, device=device),
+        if args.reuse_prior:
+            if (
+                not args.adaptive_prior
+                or not args.expected_prior_sha
+                or sha(args.reuse_prior) != args.expected_prior_sha
+            ):
+                raise ValueError(
+                    "Reused prior needs explicit SHA and adaptive validation"
                 )
-                if previous is not None:
-                    convergences[str(count)] = float((value - previous).abs().max())
-                previous = value
-        (args.output / "prior-quadrature-convergence.json").write_text(
-            json.dumps(convergences, indent=2)
-        )
-        # Preserve approximation evidence; a failed gate stops before predictions.
-        if not args.smoke and convergences["512"] > 0.01:
+            failed = json.loads((args.reuse_prior.parent / "manifest.json").read_text())
+            if (
+                failed.get("status") != "failed_prior_quadrature_convergence"
+                or failed.get("source") != source
+            ):
+                raise ValueError(
+                    "Reused prior is not the exact source-bound failed predecessor"
+                )
+            restored = torch_load_trusted(
+                args.reuse_prior, map_location=device, weights_only=False
+            )
+            if restored["seed"] != args.seed or not np.array_equal(
+                restored["fit_rows"], fit
+            ):
+                raise ValueError("Prior seed/FIT role differs from failed predecessor")
+            prior.load_state_dict(restored["prior"], strict=True)
             metadata.update(
-                status="failed_prior_quadrature_convergence", convergence=convergences
+                reused_prior=str(args.reuse_prior),
+                reused_prior_sha256=args.expected_prior_sha,
+                prior_training_updates=0,
+                prior_training_approximation="unchanged predecessor64-node objective; no refit",
             )
-            (args.output / "manifest.json").write_text(json.dumps(metadata, indent=2))
-            raise RuntimeError(
-                "Prior convolution QMC not converged at fixed absolute .01 log-density tolerance"
+        else:
+            optimizer = torch.optim.Adam(prior.parameters(), lr=1e-3)
+            generator = torch.Generator().manual_seed(args.seed)
+            nodes = measurement_nodes(64, device=device)
+            for step in range(2 if args.smoke else args.prior_steps):
+                selected = fit[
+                    torch.randperm(len(fit), generator=generator)[:256].numpy()
+                ]
+                optimizer.zero_grad(set_to_none=True)
+                loss = -observed_prior_log_prob(
+                    prior(), labels[selected], errors[selected], nodes
+                ).mean()
+                if not torch.isfinite(loss):
+                    raise FloatingPointError("Nonfinite prior objective")
+                loss.backward()
+                optimizer.step()
+            torch.save(
+                {
+                    "prior": prior.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "fit_rows": fit,
+                    "seed": args.seed,
+                },
+                args.output / "prior.pth",
             )
+        prior.eval().requires_grad_(False)
+        if args.adaptive_prior:
+            convergence = adaptive_prior_convergence(
+                prior(),
+                labels[pair["tune_rows"][:128]],
+                errors[pair["tune_rows"][:128]],
+                max_nodes=args.prior_node_cap,
+            )
+            (args.output / "prior-quadrature-convergence.json").write_text(
+                json.dumps(convergence, indent=2)
+            )
+            metadata["adaptive_prior_convergence"] = convergence
+            if convergence["status"] != "converged_finite_qmc_only":
+                metadata["status"] = "failed_adaptive_prior_quadrature_convergence"
+                (args.output / "manifest.json").write_text(
+                    json.dumps(metadata, indent=2)
+                )
+                raise RuntimeError(
+                    "Prior convergence failed at unchanged tolerance and bounded cap"
+                )
+        else:
+            # Independent nested-node convergence check uses TUNE only, never test.
+            tune = pair["tune_rows"][:128]
+            with torch.no_grad():
+                convergences = {}
+                previous = None
+                for count in [64, 128, 256, 512]:
+                    value = observed_prior_log_prob(
+                        prior(),
+                        labels[tune],
+                        errors[tune],
+                        measurement_nodes(count, device=device),
+                    )
+                    if previous is not None:
+                        convergences[str(count)] = float((value - previous).abs().max())
+                    previous = value
+            (args.output / "prior-quadrature-convergence.json").write_text(
+                json.dumps(convergences, indent=2)
+            )
+            # Preserve approximation evidence; a failed gate stops before predictions.
+            if not args.smoke and convergences["512"] > 0.01:
+                metadata.update(
+                    status="failed_prior_quadrature_convergence",
+                    convergence=convergences,
+                )
+                (args.output / "manifest.json").write_text(
+                    json.dumps(metadata, indent=2)
+                )
+                raise RuntimeError(
+                    "Prior convolution QMC not converged at fixed absolute .01 log-density tolerance"
+                )
     if args.mode == "flow_prior_posterior":
         # Freeze sample count on TUNE before looking at any TEST likelihood.
         checks = []

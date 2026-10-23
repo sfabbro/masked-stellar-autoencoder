@@ -1,0 +1,57 @@
+jobs:
+- run_id: alpha_desi_feature_preparation_v1
+  task: alpha-feature-preparation
+  depends_on:
+  - alpha_desi_source_projection_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: alpha_desi_gaussian_s45_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_mdn_s45_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_nsf_s45_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_gaussian_s46_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_mdn_s46_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_nsf_s46_v1
+  task: alpha-target-predictions
+  depends_on:
+  - alpha_desi_feature_preparation_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1

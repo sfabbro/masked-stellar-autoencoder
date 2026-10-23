@@ -146,8 +146,20 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_multilabel_screen.py --config configs/multilabel-noise-contrastive-20261023.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output" --checkpoint "$MSA_PRETRAIN_RESUME" --benchmark "$MSA_EXPERIMENT_BENCHMARK"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == floweb-quadrature-recovery ]]; then
+      "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT" --reuse-prior "$MSA_FLOWEB_PRIOR" --expected-prior-sha "$MSA_FLOWEB_PRIOR_SHA" --adaptive-prior --prior-node-cap "$MSA_FLOWEB_PRIOR_NODE_CAP"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == forward-floweb ]]; then
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-feature-preparation ]]; then
+      "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --projection-directory /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1 --base /arc/projects/k-pop/msa_runs/stellar-improvement-20261015 --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-target-predictions ]]; then
+      "${pixi_run[@]}" python -u scripts/run_alpha_target_wave.py --prepared "$MSA_TARGET_PREPARED" --preparation-manifest "$MSA_TARGET_PREPARATION_MANIFEST" --output "$experiment_output" --kind "$MSA_TARGET_KIND" --seed "$MSA_TARGET_SEED" --steps "$MSA_TARGET_STEPS" --library-revision "$MSA_TARGET_LIBRARY_REV"
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == mae-ttt ]]; then

@@ -6132,6 +6132,1169 @@
       "attempted_at": "2026-10-23T03:16:57.915753+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_desi_source_projection_v1",
+      "name": "msa-si15-alpha-desi-source-projection-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1",
+      "plan": {
+        "run_id": "alpha_desi_source_projection_v1",
+        "task": "target-source-evidence",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "xrqge3ib"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:04:14.253170+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_sls_full_r03_s45_10m_v1",
+      "name": "msa-si15-multi-sls-full-r03-s45-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_sls_full_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "multi_sls_full_r03_s45_10m_v1",
+        "task": "multilabel-sls",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ezmnzzmq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:04:43.132728+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_sls_full_r03_s46_10m_v1",
+      "name": "msa-si15-multi-sls-full-r03-s46-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_sls_full_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "multi_sls_full_r03_s46_10m_v1",
+        "task": "multilabel-sls",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mlg7z8t5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:05:16.686117+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_sls_low_rank_r03_s45_10m_v1",
+      "name": "msa-si15-multi-sls-low-rank-r03-s45-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_sls_low_rank_r03_s45_10m_v1",
+      "plan": {
+        "run_id": "multi_sls_low_rank_r03_s45_10m_v1",
+        "task": "multilabel-sls",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "p8ugahle"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:05:33.230246+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multi_sls_low_rank_r03_s46_10m_v1",
+      "name": "msa-si15-multi-sls-low-rank-r03-s46-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_sls_low_rank_r03_s46_10m_v1",
+      "plan": {
+        "run_id": "multi_sls_low_rank_r03_s46_10m_v1",
+        "task": "multilabel-sls",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ml0oamti"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:12:40.841572+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_nll_clean_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-nll-clean-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_nll_clean_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_nll_clean_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ryp0o9h1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:07.849001+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed01_clean_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed01-clean-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed01_clean_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed01_clean_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bw85rhd7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:18.164015+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed10_clean_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed10-clean-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed10_clean_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed10_clean_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "vrmomgna"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:27.246053+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_pure_clean_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-pure-clean-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_pure_clean_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_pure_clean_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dgdr5do8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:36.319139+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_nll_labelnoise_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-nll-labelnoise-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_nll_labelnoise_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_nll_labelnoise_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uxruwdsv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:45.031735+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed01_labelnoise_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed01-labelnoise-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed01_labelnoise_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed01_labelnoise_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "m24illzf"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:13:54.695211+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed10_labelnoise_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed10-labelnoise-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed10_labelnoise_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed10_labelnoise_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mbipdcpo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:05.496551+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_pure_labelnoise_r03_s47_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-pure-labelnoise-r03-s47-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_pure_labelnoise_r03_s47_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_pure_labelnoise_r03_s47_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mz0rczk7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:17.563897+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_nll_clean_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-nll-clean-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_nll_clean_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_nll_clean_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lnihddi6"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:28.934709+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed01_clean_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed01-clean-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed01_clean_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed01_clean_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "nzgrp6s1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:38.339600+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed10_clean_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed10-clean-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed10_clean_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed10_clean_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "sbvu2in1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:48.847591+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_nll_labelnoise_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-nll-labelnoise-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_nll_labelnoise_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_nll_labelnoise_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "a3mfqsi2"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:14:58.397910+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed01_labelnoise_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed01-labelnoise-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed01_labelnoise_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed01_labelnoise_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "xzk31utk"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:15:09.025682+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "noisecontrastive_nsf_mixed10_labelnoise_r03_s48_10m_v1",
+      "name": "msa-si15-noisecontrastive-nsf-mixed10-labelnoise-r03-s48-10m-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/noisecontrastive_nsf_mixed10_labelnoise_r03_s48_10m_v1",
+      "plan": {
+        "run_id": "noisecontrastive_nsf_mixed10_labelnoise_r03_s48_10m_v1",
+        "task": "multilabel-noise-contrastive",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tmiqvjis"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:15:20.497695+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "forward_lbfgs_fp64_multistart_v2",
+      "name": "msa-si15-forward-lbfgs-fp64-multistart-v2",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/forward_lbfgs_fp64_multistart_v2",
+      "plan": {
+        "run_id": "forward_lbfgs_fp64_multistart_v2",
+        "task": "forward-floweb",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "rmyyvx4f"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:15:30.512659+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_map_fp64_s42_v1",
+      "name": "msa-si15-joint-floweb-map-fp64-s42-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s42_v1",
+      "plan": {
+        "run_id": "joint_floweb_map_fp64_s42_v1",
+        "task": "forward-floweb",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "k4o7iiq4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:15:40.693730+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_map_fp64_s43_v1",
+      "name": "msa-si15-joint-floweb-map-fp64-s43-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_map_fp64_s43_v1",
+      "plan": {
+        "run_id": "joint_floweb_map_fp64_s43_v1",
+        "task": "forward-floweb",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dnxa10pm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:15:49.602263+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "joint_floweb_posterior_fp64_s42_v1",
+      "name": "msa-si15-joint-floweb-posterior-fp64-s42-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint_floweb_posterior_fp64_s42_v1",
+      "plan": {
+        "run_id": "joint_floweb_posterior_fp64_s42_v1",
+        "task": "forward-floweb",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "i7cm0b37"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:01.084297+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "forward_gn_fp64_multistart_v2",
+      "name": "msa-si15-forward-gn-fp64-multistart-v2",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/forward_gn_fp64_multistart_v2",
+      "plan": {
+        "run_id": "forward_gn_fp64_multistart_v2",
+        "task": "forward-floweb",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wr24dqnf"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:10.961132+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_gaussian_s45_v1",
+      "name": "msa-si15-posterior-age-distance-gaussian-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_gaussian_s45_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_gaussian_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "gaussian",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "c41q1swq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:20.379741+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_mdn_s45_v1",
+      "name": "msa-si15-posterior-age-distance-mdn-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_mdn_s45_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_mdn_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "mdn",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mw3oox95"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:30.764295+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_nsf_s45_v1",
+      "name": "msa-si15-posterior-age-distance-nsf-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_nsf_s45_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_nsf_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "nsf",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zaprfle5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:43.139490+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_gaussian_s46_v1",
+      "name": "msa-si15-posterior-age-distance-gaussian-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_gaussian_s46_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_gaussian_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "gaussian",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "eb81yekv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:16:56.425524+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_mdn_s46_v1",
+      "name": "msa-si15-posterior-age-distance-mdn-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_mdn_s46_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_mdn_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "mdn",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hao5xrrc"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:17:08.871054+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "posterior_age_distance_nsf_s46_v1",
+      "name": "msa-si15-posterior-age-distance-nsf-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_age_distance_nsf_s46_v1",
+      "plan": {
+        "run_id": "posterior_age_distance_nsf_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "nsf",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "u8il9uyf"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:17:22.634029+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_gaussian_s45_v1",
+      "name": "msa-si15-apokasc-age-gaussian-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_gaussian_s45_v1",
+      "plan": {
+        "run_id": "apokasc_age_gaussian_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "gaussian",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "p0xpuum5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:17:35.197681+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_mdn_s45_v1",
+      "name": "msa-si15-apokasc-age-mdn-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_mdn_s45_v1",
+      "plan": {
+        "run_id": "apokasc_age_mdn_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "mdn",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "vw4ftcuy"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:17:45.571298+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_nsf_s45_v1",
+      "name": "msa-si15-apokasc-age-nsf-s45-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_nsf_s45_v1",
+      "plan": {
+        "run_id": "apokasc_age_nsf_s45_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "nsf",
+          "MSA_TARGET_SEED": "45",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "m45o2la1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:17:58.027934+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_gaussian_s46_v1",
+      "name": "msa-si15-apokasc-age-gaussian-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_gaussian_s46_v1",
+      "plan": {
+        "run_id": "apokasc_age_gaussian_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "gaussian",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mfcei1hx"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:18:14.472703+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_mdn_s46_v1",
+      "name": "msa-si15-apokasc-age-mdn-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_mdn_s46_v1",
+      "plan": {
+        "run_id": "apokasc_age_mdn_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "mdn",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wqduh7jz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:18:27.278066+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "apokasc_age_nsf_s46_v1",
+      "name": "msa-si15-apokasc-age-nsf-s46-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc_age_nsf_s46_v1",
+      "plan": {
+        "run_id": "apokasc_age_nsf_s46_v1",
+        "task": "target-predictions",
+        "env": {
+          "MSA_TARGET_PREPARED": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz",
+          "MSA_TARGET_PREPARATION_MANIFEST": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json",
+          "MSA_TARGET_KIND": "nsf",
+          "MSA_TARGET_SEED": "46",
+          "MSA_TARGET_STEPS": "1000"
+        },
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ojab0ge0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:18:38.390168+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "mae_ttt_encoderdecoder_sgd20_mask20_v1",
+      "name": "msa-si15-mae-ttt-encoderdecoder-sgd20-mask20-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/mae_ttt_encoderdecoder_sgd20_mask20_v1",
+      "plan": {
+        "run_id": "mae_ttt_encoderdecoder_sgd20_mask20_v1",
+        "task": "mae-ttt",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "h3qmd55e"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:18:50.120115+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "mae_ttt_encoderdecoder_sgd3_mask20_v1",
+      "name": "msa-si15-mae-ttt-encoderdecoder-sgd3-mask20-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/mae_ttt_encoderdecoder_sgd3_mask20_v1",
+      "plan": {
+        "run_id": "mae_ttt_encoderdecoder_sgd3_mask20_v1",
+        "task": "mae-ttt",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dssm76xo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:19:04.621484+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "mae_ttt_layernorm_sgd20_mask20_v1",
+      "name": "msa-si15-mae-ttt-layernorm-sgd20-mask20-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/mae_ttt_layernorm_sgd20_mask20_v1",
+      "plan": {
+        "run_id": "mae_ttt_layernorm_sgd20_mask20_v1",
+        "task": "mae-ttt",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zgpaxhgt"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:19:17.945170+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "mae_ttt_encoderdecoder_sgd20_mask75_v1",
+      "name": "msa-si15-mae-ttt-encoderdecoder-sgd20-mask75-v1",
+      "source_sha": "a361552636e66025bfb1ca7b0b2d5db397f0fc5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/mae_ttt_encoderdecoder_sgd20_mask75_v1",
+      "plan": {
+        "run_id": "mae_ttt_encoderdecoder_sgd20_mask75_v1",
+        "task": "mae-ttt",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "x448dinr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-23T18:19:29.328265+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

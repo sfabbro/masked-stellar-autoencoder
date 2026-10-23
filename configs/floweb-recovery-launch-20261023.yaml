@@ -1,0 +1,19 @@
+jobs:
+- run_id: joint_floweb_map_fp64_s42_qmc_v2
+  task: floweb-quadrature-recovery
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: joint_floweb_map_fp64_s43_qmc_v2
+  task: floweb-quadrature-recovery
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: joint_floweb_posterior_fp64_s42_qmc_v2
+  task: floweb-quadrature-recovery
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1

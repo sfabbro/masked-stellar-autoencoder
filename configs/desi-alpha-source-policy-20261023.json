@@ -1,0 +1,25 @@
+{
+  "schema": "desi-dr1-rvs-alpha-native-policy-v1",
+  "source_sha256": "eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5",
+  "data_model_url": "https://desi-mws-dr1-datamodel.readthedocs.io/en/latest/mwsall.html#hdu1",
+  "release_documentation_url": "https://data.desi.lbl.gov/doc/releases/dr1/vac/mws/",
+  "paper_url": "https://arxiv.org/html/2505.14787v4#A3",
+  "native_extension": "RVTAB",
+  "native_quantity_column": "ALPHAFE",
+  "native_error_column": "ALPHAFE_ERR",
+  "definition": "DESI RVSpecFit template-fit bracket alpha-to-iron abundance [alpha/Fe]",
+  "coordinate": "native linear bracket-abundance coordinate; do not exponentiate or take a logarithm",
+  "unit": "dex",
+  "unit_evidence": "Official DR1 data model identifies ALPHAFE as [alpha/Fe] from template fitting. Immutable paper v4 Appendix C quantifies RVS alpha offsets and residual scatter in dex. Blank FITS TUNIT is recorded, not falsely claimed to contain dex.",
+  "unit_evidence_checked_utc": "2026-10-23",
+  "native_header_blank_allowed_with_this_explicit_policy": true,
+  "definition_is_apogee_alpha_m": false,
+  "quality_policy": "Original SUCCESS and PRIMARY true; RVS_WARN zero; RR_SPECTYPE STAR; SN_R >=10; finite positive native error; positive int64 Gaia SOURCE_ID; native sky association <=1arcsec.",
+  "known_limitations": [
+    "DR1 paper Appendix B warns alpha abundances at FeH below about minus2 are overestimated and not recommended.",
+    "Appendix C reports RVS alpha offset about0.12dex and scatter about0.1dex against APOGEE; no invented correction or uncertainty floor is applied.",
+    "Single native source-scale predictive pilot, not cross-survey alpha calibration or physical-truth claim."
+  ],
+  "primary_fit_tune_minimum_raw_feh_exclusive": -2.0,
+  "metal_poor_cal_test_status": "diagnostic measured-label comparisons only; source alpha labels are not recommended physical abundances in this regime"
+}
