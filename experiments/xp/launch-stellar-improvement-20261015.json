@@ -10555,6 +10555,32 @@
       "attempted_at": "2026-10-24T12:38:04.044579+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_distribution_normalization_v1",
+      "name": "msa-si15-final6-distribution-normalization-v1",
+      "source_sha": "b7561929023d8cff25ffde5e5426163a2e384605",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_distribution_normalization_v1",
+      "plan": {
+        "run_id": "final6_distribution_normalization_v1",
+        "task": "final-six-normalization-export",
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "ck0j14rj"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T13:34:50.604766+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

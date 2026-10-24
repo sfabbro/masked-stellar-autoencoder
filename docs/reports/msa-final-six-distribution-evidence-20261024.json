@@ -1,0 +1,503 @@
+{
+  "status": "all_three_scoped_saved_array_score_checks_pass",
+  "models": [
+    {
+      "run_id": "final6_distribution_gaussian_cecdf50_v1",
+      "producer": "final6_large_gaussian_cecdf_s50_10m_v1",
+      "metric_bindings": {
+        "config": "4ab647bc073d9aaa22ab120f2d26c7c0e3c7fedef94d4373e01cbd40d43eeb40",
+        "checkpoint": "3b5ec7318e030e71c19635d3daba34fdaf2939d83256e2bd084838e2a364aabd",
+        "input": "960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535",
+        "proof": "d4ca264a7e4dad1ce7ac7bc9c27d385e7f9c2e13361b60563fc14a7c61f5045b",
+        "producer_source": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+        "runner": "59cf1a5ea11f411b28d0e9dd5bf7222ab09fb4e4c59db0afa7837ccd654fba3e",
+        "kernel": "4947863a2c80342ed8e3b9371cd8591289d339297f0dcb0f0504b0d1a56f70e8",
+        "torch_version": "2.14.1+cu130",
+        "library": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+        "model_loader": "c257ca7213804c230959fa8cab76e49030d1c64c33ee40d954eaa27aa33e03e8",
+        "encoder_loader": "b75f3f2683852aa42dec696831674d701f0a601d27bb36de6145d59a3b8df81f",
+        "encoder_implementation": "fe7fa64b2ff03f2fdf601d4803d7ce03e75eb97e365ce9830c994bbced95d087",
+        "head_implementation": "88fd47358068abf739bc4b0ac2880359311360609c2a8f6e8daa8318645ae7ea",
+        "head_components": "8bebb761edd02134596198c8f823ec00dd5db9698f022d7db6d15f75216a47bf"
+      },
+      "normalization_sha256": "a784578da35586f3f4ef18fc9e374e93b161a7918ce753d67a20cc7004dd51a2",
+      "checks": {
+        "cal:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 5.684341886080802e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.0649704547566069,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "cal:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 3.552713678800501e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.056758593789803635,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 5.3290705182007514e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.042193835675549574,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 6.750155989720952e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.050112487489026525,
+          "cdf_model_roundtrip_proof_transferred": true
+        }
+      },
+      "roles": {
+        "cal": {
+          "rows": 3556,
+          "observed_counts": [
+            2046,
+            2046,
+            2046,
+            490,
+            1024,
+            1024
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        },
+        "test": {
+          "rows": 97050,
+          "observed_counts": [
+            96621,
+            96621,
+            96621,
+            431,
+            2048,
+            2048
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        }
+      },
+      "limitations": [
+        "Independent raw-pilot scores only for actually observed pilot coordinates; no model or full CDF replay",
+        "CDF source/roundtrip/sample-pilot proofs transferred; all-role PIT values/KS/arithmetic checked, not full independent network-CDF recomputation",
+        "Observed scalarNSF PIT uses finite32-QMC convolution",
+        "Tail PIT KS is descriptive under label conditioning; no uniform-null p-value",
+        "No physical truth or identified6Dcopula claim"
+      ]
+    },
+    {
+      "run_id": "final6_distribution_mdn_rank50_v1",
+      "producer": "final6_large_mdn_ranking_s50_10m_v1",
+      "metric_bindings": {
+        "config": "4ab647bc073d9aaa22ab120f2d26c7c0e3c7fedef94d4373e01cbd40d43eeb40",
+        "checkpoint": "097215c321c1ea0bef9262e14e9d3933753495d958cc6bb58df3953d66d25aa2",
+        "input": "960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535",
+        "proof": "3d6c0ed272229745d0bd79d73654a693d3879ef9ae64adf351c35e74f560ee84",
+        "producer_source": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+        "runner": "59cf1a5ea11f411b28d0e9dd5bf7222ab09fb4e4c59db0afa7837ccd654fba3e",
+        "kernel": "4947863a2c80342ed8e3b9371cd8591289d339297f0dcb0f0504b0d1a56f70e8",
+        "torch_version": "2.14.1+cu130",
+        "library": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+        "model_loader": "c257ca7213804c230959fa8cab76e49030d1c64c33ee40d954eaa27aa33e03e8",
+        "encoder_loader": "b75f3f2683852aa42dec696831674d701f0a601d27bb36de6145d59a3b8df81f",
+        "encoder_implementation": "fe7fa64b2ff03f2fdf601d4803d7ce03e75eb97e365ce9830c994bbced95d087",
+        "head_implementation": "88fd47358068abf739bc4b0ac2880359311360609c2a8f6e8daa8318645ae7ea",
+        "head_components": "8bebb761edd02134596198c8f823ec00dd5db9698f022d7db6d15f75216a47bf"
+      },
+      "normalization_sha256": "a784578da35586f3f4ef18fc9e374e93b161a7918ce753d67a20cc7004dd51a2",
+      "checks": {
+        "cal:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 6.394884621840902e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.05678527768467412,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "cal:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 3.552713678800501e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.05843760543006993,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 2.4868995751603507e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.04018299908864231,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 1.7763568394002505e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.04133595111974964,
+          "cdf_model_roundtrip_proof_transferred": true
+        }
+      },
+      "roles": {
+        "cal": {
+          "rows": 3556,
+          "observed_counts": [
+            2046,
+            2046,
+            2046,
+            490,
+            1024,
+            1024
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        },
+        "test": {
+          "rows": 97050,
+          "observed_counts": [
+            96621,
+            96621,
+            96621,
+            431,
+            2048,
+            2048
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        }
+      },
+      "limitations": [
+        "Independent raw-pilot scores only for actually observed pilot coordinates; no model or full CDF replay",
+        "CDF source/roundtrip/sample-pilot proofs transferred; all-role PIT values/KS/arithmetic checked, not full independent network-CDF recomputation",
+        "Observed scalarNSF PIT uses finite32-QMC convolution",
+        "Tail PIT KS is descriptive under label conditioning; no uniform-null p-value",
+        "No physical truth or identified6Dcopula claim"
+      ]
+    },
+    {
+      "run_id": "final6_distribution_nsf_mixed01_50_v1",
+      "producer": "final6_large_factorized_nsf_mixed01_s50_10m_v1",
+      "metric_bindings": {
+        "config": "4ab647bc073d9aaa22ab120f2d26c7c0e3c7fedef94d4373e01cbd40d43eeb40",
+        "checkpoint": "0a23c6916d8be4f3c427554ad94b47d2bcd7b60d3fa43a4eb572815c2d7e5ddb",
+        "input": "960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535",
+        "proof": "8f1c15551bc0fe2a77f034ae69504b24a5ce132857d5f4e77d0c7279ba9381f0",
+        "producer_source": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+        "runner": "59cf1a5ea11f411b28d0e9dd5bf7222ab09fb4e4c59db0afa7837ccd654fba3e",
+        "kernel": "4947863a2c80342ed8e3b9371cd8591289d339297f0dcb0f0504b0d1a56f70e8",
+        "torch_version": "2.14.1+cu130",
+        "library": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+        "model_loader": "c257ca7213804c230959fa8cab76e49030d1c64c33ee40d954eaa27aa33e03e8",
+        "encoder_loader": "b75f3f2683852aa42dec696831674d701f0a601d27bb36de6145d59a3b8df81f",
+        "encoder_implementation": "fe7fa64b2ff03f2fdf601d4803d7ce03e75eb97e365ce9830c994bbced95d087",
+        "head_implementation": "88fd47358068abf739bc4b0ac2880359311360609c2a8f6e8daa8318645ae7ea",
+        "head_components": "8bebb761edd02134596198c8f823ec00dd5db9698f022d7db6d15f75216a47bf"
+      },
+      "normalization_sha256": "a784578da35586f3f4ef18fc9e374e93b161a7918ce753d67a20cc7004dd51a2",
+      "checks": {
+        "cal:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 7.460698725481052e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.05242543093353558,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "cal:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "alpha",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 2.1316282072803006e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.049784167072433494,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:intrinsic": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 5.684341886080802e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.0338837283825546,
+          "cdf_model_roundtrip_proof_transferred": true
+        },
+        "test:observed": {
+          "brute_pairwise_crps_columns": [
+            "teff",
+            "logg",
+            "fe_h",
+            "age",
+            "distance"
+          ],
+          "max_crps_absolute_error": 7.815970093361102e-14,
+          "geometry": {
+            "native3": {
+              "checked_count": 8,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "age_distance": {
+              "checked_count": 2,
+              "energy128_and_variogram512_pairwise_reference": true
+            },
+            "full6": {
+              "checked_count": 0,
+              "reason": "No complete observed pilot labels"
+            }
+          },
+          "actual_pilot_empirical_cdf_maxgap": 0.045357564930872174,
+          "cdf_model_roundtrip_proof_transferred": true
+        }
+      },
+      "roles": {
+        "cal": {
+          "rows": 3556,
+          "observed_counts": [
+            2046,
+            2046,
+            2046,
+            490,
+            1024,
+            1024
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        },
+        "test": {
+          "rows": 97050,
+          "observed_counts": [
+            96621,
+            96621,
+            96621,
+            431,
+            2048,
+            2048
+          ],
+          "full_array_invariants_and_summary_arithmetic": true
+        }
+      },
+      "limitations": [
+        "Independent raw-pilot scores only for actually observed pilot coordinates; no model or full CDF replay",
+        "CDF source/roundtrip/sample-pilot proofs transferred; all-role PIT values/KS/arithmetic checked, not full independent network-CDF recomputation",
+        "Observed scalarNSF PIT uses finite32-QMC convolution",
+        "Tail PIT KS is descriptive under label conditioning; no uniform-null p-value",
+        "No physical truth or identified6Dcopula claim"
+      ]
+    }
+  ],
+  "plot_visual_pass": true,
+  "full6_test_count": 4,
+  "report_source": "saved arrays; no local model inference",
+  "evaluation_ids": [
+    "a35z514d",
+    "j6cj12m5",
+    "f7hmdlse"
+  ],
+  "evaluation_source": "cfe1e23ef3b0e35759eb138887fb40db6cb452fd",
+  "metadata_export_id": "ck0j14rj",
+  "metadata_export_source": "b7561929023d8cff25ffde5e5426163a2e384605",
+  "raw_network_cdf_replayed_independently": false
+}
