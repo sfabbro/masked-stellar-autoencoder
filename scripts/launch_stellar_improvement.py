@@ -226,6 +226,25 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
+    if plan["task"] == "final-six-distribution-metrics":
+        config_path = "configs/final-six-distribution-metrics-20261024.yaml"
+        config = yaml.safe_load(Path(config_path).read_text())
+        matches = [a for a in config["arms"] if a["run_id"] == plan["run_id"]]
+        if len(matches) != 1 or plan.get("depends_on") != [
+            matches[0]["producer_run_id"]
+        ]:
+            raise ValueError("Distribution diagnostic producer/policy differs")
+        expected = {
+            "MSA_DISTRIBUTION_METRICS_CONFIG": config_path,
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError(
+                    "Distribution diagnostics must not change source or training budget"
+                )
+            env[key] = value
+        return env
     if plan["task"] == "metalpoor-corner-sampling":
         filename = "configs/metalpoor-corner-sampling-20261024.yaml"
         config = yaml.safe_load(Path(filename).read_text())

@@ -220,3 +220,21 @@ def test_metalpoor_corner_launch_has_explicit_tune_selected_descriptors():
         bind_prediction_policy(
             dict(plan, env={"MSA_CORNER_SAMPLING_CONFIG": "wrong"}), {}
         )
+
+
+def test_distribution_metric_jobs_bind_only_immutable_three_models_and_zero_training():
+    plan = yaml.safe_load(
+        Path("configs/final-six-distribution-metrics-launch-20261024.yaml").read_text()
+    )["jobs"]
+    assert len(plan) == 3
+    for job in plan:
+        assert job["resources"]["gpu"] == 1
+        assert len("msa-si15-" + job["run_id"]) <= 63
+        env = bind_prediction_policy(job, {})
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+        with pytest.raises(ValueError):
+            bind_prediction_policy(
+                dict(job, env={"MSA_EXPERIMENT_PRESENTATIONS": "10000000"}), {}
+            )
+    with pytest.raises(ValueError):
+        bind_prediction_policy(dict(plan[0], depends_on=["not_the_model"]), {})

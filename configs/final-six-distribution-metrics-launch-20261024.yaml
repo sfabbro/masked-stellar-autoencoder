@@ -1,0 +1,25 @@
+jobs:
+- run_id: final6_distribution_gaussian_cecdf50_v1
+  task: final-six-distribution-metrics
+  depends_on:
+  - final6_large_gaussian_cecdf_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_distribution_mdn_rank50_v1
+  task: final-six-distribution-metrics
+  depends_on:
+  - final6_large_mdn_ranking_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_distribution_nsf_mixed01_50_v1
+  task: final-six-distribution-metrics
+  depends_on:
+  - final6_large_factorized_nsf_mixed01_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1

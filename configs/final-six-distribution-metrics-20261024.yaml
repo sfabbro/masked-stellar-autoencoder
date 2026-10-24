@@ -1,0 +1,13 @@
+selected_models: configs/metalpoor-corner-sampling-20261024.yaml
+training_policy: configs/final-six-recipes-20261024.yaml
+seed: 20261024
+scope: Additional evaluation only on three immutable TUNE-chosen independently verified
+  models. Native CRPS/PIT/quantiles, FIT-standardized coordinate energy/variogram;
+  no training, latent-truth or identified6Dcopula claim.
+arms:
+- run_id: final6_distribution_gaussian_cecdf50_v1
+  producer_run_id: final6_large_gaussian_cecdf_s50_10m_v1
+- run_id: final6_distribution_mdn_rank50_v1
+  producer_run_id: final6_large_mdn_ranking_s50_10m_v1
+- run_id: final6_distribution_nsf_mixed01_50_v1
+  producer_run_id: final6_large_factorized_nsf_mixed01_s50_10m_v1
