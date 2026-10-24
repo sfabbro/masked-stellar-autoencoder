@@ -10581,6 +10581,152 @@
       "attempted_at": "2026-10-24T13:34:50.604766+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "five_job_broad_test_preparation_v1",
+      "name": "msa-si15-five-job-broad-test-preparation-v1",
+      "source_sha": "7552253630fe22bcd680a91ee9fa658893218d43",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1",
+      "plan": {
+        "run_id": "five_job_broad_test_preparation_v1",
+        "task": "five-job-source-preparation",
+        "resources": {
+          "cores": 8,
+          "ram": 64,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 64
+      },
+      "session_ids": [
+        "uein5h8u"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T14:48:31.839500+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "five_wave_quantile3_s51_450m_v1",
+      "name": "msa-si15-five-wave-quantile3-s51-450m-v1",
+      "source_sha": "7552253630fe22bcd680a91ee9fa658893218d43",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_wave_quantile3_s51_450m_v1",
+      "plan": {
+        "run_id": "five_wave_quantile3_s51_450m_v1",
+        "task": "five-wave-training",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "yr4vfjl3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T14:50:50.926221+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "five_wave_gaussian_noise_s51_450m_v1",
+      "name": "msa-si15-five-wave-gaussian-noise-s51-450m-v1",
+      "source_sha": "7552253630fe22bcd680a91ee9fa658893218d43",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_wave_gaussian_noise_s51_450m_v1",
+      "plan": {
+        "run_id": "five_wave_gaussian_noise_s51_450m_v1",
+        "task": "five-wave-training",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wzo3q1yg"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T14:50:58.561110+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "five_wave_nsf_noise_s51_450m_v1",
+      "name": "msa-si15-five-wave-nsf-noise-s51-450m-v1",
+      "source_sha": "7552253630fe22bcd680a91ee9fa658893218d43",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_wave_nsf_noise_s51_450m_v1",
+      "plan": {
+        "run_id": "five_wave_nsf_noise_s51_450m_v1",
+        "task": "five-wave-training",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qrf5ggn3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T14:51:01.707536+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "five_wave_nsf_noise_mixed01_s51_450m_v1",
+      "name": "msa-si15-five-wave-nsf-noise-mixed01-s51-450m-v1",
+      "source_sha": "7552253630fe22bcd680a91ee9fa658893218d43",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_wave_nsf_noise_mixed01_s51_450m_v1",
+      "plan": {
+        "run_id": "five_wave_nsf_noise_mixed01_s51_450m_v1",
+        "task": "five-wave-training",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "xqvrpnd5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T14:51:06.441990+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
