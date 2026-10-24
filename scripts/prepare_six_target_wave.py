@@ -81,6 +81,8 @@ def assemble_sparse(native, alpha, posterior, *, excluded_ids=()):
             observed &= np.isfinite(values)
             errors = np.asarray(data["error"], dtype="f8")
             sources = np.asarray(data["survey"]).astype("U64")
+            if sources.shape == ids.shape:
+                sources = np.broadcast_to(sources[:, None], values.shape)
             if (
                 values.shape != (len(ids), 3)
                 or observed.shape != values.shape

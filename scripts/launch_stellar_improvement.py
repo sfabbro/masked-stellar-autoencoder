@@ -61,9 +61,14 @@ def bind_prediction_policy(
     """Resolve the actual prediction parent/budget, never the legacy default."""
     if plan["task"] in {"six-target-preparation", "guarded-ttt"}:
         if plan["task"] == "six-target-preparation":
-            suite = yaml.safe_load(
-                Path("configs/six-target-preparation-20261024.yaml").read_text()
-            )
+            config_path = {
+                "six_target_source_preparation_v1": "configs/six-target-preparation-20261024.yaml",
+                "six_target_source_preparation_v2": "configs/six-target-preparation-20261024-v2.yaml",
+            }.get(plan["run_id"])
+            if config_path is None:
+                raise ValueError("Unknown six-target source preparation")
+            suite = yaml.safe_load(Path(config_path).read_text())
+            env["MSA_SIX_SOURCE_CONFIG"] = config_path
             if plan["run_id"] != suite["run_id"]:
                 raise ValueError("Unknown six-target source preparation")
         else:
@@ -419,6 +424,7 @@ def main():
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
                 "six_target_source_preparation_v1": "sparse_six_target_source_assembly_complete",
+                "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
             }.get(name, "complete")
             dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":

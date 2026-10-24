@@ -159,7 +159,7 @@ case "$stage" in
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == six-target-preparation ]]; then
-      "${pixi_run[@]}" python -u scripts/prepare_six_target_wave.py --config configs/six-target-preparation-20261024.yaml --output "$experiment_output"
+      "${pixi_run[@]}" python -u scripts/prepare_six_target_wave.py --config "$MSA_SIX_SOURCE_CONFIG" --output "$experiment_output"
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == guarded-ttt ]]; then

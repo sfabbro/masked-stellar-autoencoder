@@ -95,3 +95,11 @@ def test_invalid_source_evidence_fails_before_assembly(case):
         alpha["raw_feh"][1] = -2.1
     with pytest.raises(ValueError):
         assemble_sparse(native, alpha, posterior)
+
+
+def test_actual_native_one_survey_tag_per_star_is_broadcast_to_targets():
+    native, alpha, posterior = source_fixture()
+    native["survey"] = np.array([b"galah", b"apogee", b"galah", b"apogee"])
+    data, _ = assemble_sparse(native, alpha, posterior)
+    row = np.flatnonzero(data["source_id"] == 14)[0]
+    assert data["label_source"][row, :3].tolist() == ["apogee"] * 3
