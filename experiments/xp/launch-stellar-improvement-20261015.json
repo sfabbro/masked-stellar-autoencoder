@@ -10465,6 +10465,96 @@
       "attempted_at": "2026-10-24T11:27:42.458877+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_distribution_gaussian_cecdf50_v1",
+      "name": "msa-si15-final6-distribution-gaussian-cecdf50-v1",
+      "source_sha": "cfe1e23ef3b0e35759eb138887fb40db6cb452fd",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_distribution_gaussian_cecdf50_v1",
+      "plan": {
+        "run_id": "final6_distribution_gaussian_cecdf50_v1",
+        "task": "final-six-distribution-metrics",
+        "depends_on": [
+          "final6_large_gaussian_cecdf_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "a35z514d"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T12:37:50.892233+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_distribution_mdn_rank50_v1",
+      "name": "msa-si15-final6-distribution-mdn-rank50-v1",
+      "source_sha": "cfe1e23ef3b0e35759eb138887fb40db6cb452fd",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_distribution_mdn_rank50_v1",
+      "plan": {
+        "run_id": "final6_distribution_mdn_rank50_v1",
+        "task": "final-six-distribution-metrics",
+        "depends_on": [
+          "final6_large_mdn_ranking_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "j6cj12m5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T12:37:57.577401+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_distribution_nsf_mixed01_50_v1",
+      "name": "msa-si15-final6-distribution-nsf-mixed01-50-v1",
+      "source_sha": "cfe1e23ef3b0e35759eb138887fb40db6cb452fd",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_distribution_nsf_mixed01_50_v1",
+      "plan": {
+        "run_id": "final6_distribution_nsf_mixed01_50_v1",
+        "task": "final-six-distribution-metrics",
+        "depends_on": [
+          "final6_large_factorized_nsf_mixed01_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "f7hmdlse"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T12:38:04.044579+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
