@@ -168,6 +168,7 @@ def test_final_six_independent_binds_all_forty_producers():
         Path("configs/final-six-independent-launch-20261024.yaml").read_text()
     )["jobs"]
     assert len(plan) == 40
+    assert all(len("msa-si15-" + job["run_id"]) <= 63 for job in plan)
     for job in plan:
         env = bind_prediction_policy(job, {})
         assert env["MSA_FINAL_SIX_PRODUCER_RUN"] == job["producer_run_id"]

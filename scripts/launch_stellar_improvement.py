@@ -238,7 +238,7 @@ def bind_prediction_policy(
             )
         if (
             producer not in arms
-            or plan["run_id"] != "audit_" + producer
+            or plan["run_id"] != "qa_" + producer
             or plan.get("depends_on") != [producer]
         ):
             raise ValueError(
