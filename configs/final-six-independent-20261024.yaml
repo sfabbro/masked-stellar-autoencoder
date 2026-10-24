@@ -1,0 +1,6 @@
+training_policy: configs/final-six-recipes-20261024.yaml
+frozen_policy: configs/final-six-frozen-20261024.yaml
+frozen_encoder_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6-frozen-independent-encoder-cache-v1
+base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+threads: 4
+scope: independent encoder/head source-bound FP64 numerics, native-coordinate densities, source-role masks, split-CP, label streams and Adam counts; no exact CUDA training-mask or optimization trajectory replay

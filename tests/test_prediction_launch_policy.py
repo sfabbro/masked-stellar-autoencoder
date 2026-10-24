@@ -130,3 +130,34 @@ def test_final_preparation_and_guarded_ttt_have_zero_training_budget():
             bind_prediction_policy(
                 dict(plan, env={"MSA_EXPERIMENT_PRESENTATIONS": "1"}), {}
             )
+
+
+def test_final_six_binds_actual_large_parent_and_requires_both_gates():
+    cfg = yaml.safe_load(Path("configs/final-six-recipes-20261024.yaml").read_text())
+    plan = yaml.safe_load(Path("configs/final-six-launch-20261024.yaml").read_text())
+    assert len(plan["jobs"]) == 32
+    for job in plan["jobs"]:
+        env = bind_prediction_policy(job, {})
+        arm = next(a for a in cfg["arms"] if a["run_id"] == job["run_id"])
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "10000000"
+        assert (
+            env["MSA_PRETRAIN_RESUME"] == cfg["reference_checkpoint"]
+            if arm.get("parent86_control")
+            else env["MSA_PRETRAIN_RESUME"] == cfg["checkpoint"]
+        )
+    with pytest.raises(ValueError, match="requires"):
+        bind_prediction_policy(dict(plan["jobs"][0], depends_on=[]), {})
+    with pytest.raises(ValueError, match="override"):
+        bind_prediction_policy(
+            dict(plan["jobs"][0], env={"MSA_PRETRAIN_RESUME": "wrong"}), {}
+        )
+
+
+def test_final_six_smoke_budget_is_bounded_actual_fixture_not_production():
+    plan = yaml.safe_load(
+        Path("configs/final-six-smoke-launch-20261024.yaml").read_text()
+    )["jobs"][0]
+    result = bind_prediction_policy(plan, {})
+    assert result["MSA_EXPERIMENT_PRESENTATIONS"] == "2560"
+    with pytest.raises(ValueError, match="Unknown"):
+        bind_prediction_policy(dict(plan, run_id="wrong"), {})

@@ -1,0 +1,24 @@
+jobs:
+- run_id: final_six_large_feh_ancestry_v1
+  task: final-six-ancestry
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: final_six_cuda_smoke_v1
+  task: final-six-smoke
+  depends_on:
+  - six_target_source_preparation_v3
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: representative_metalpoor_corner_selection_v1
+  task: metalpoor-corner-selection
+  depends_on:
+  - final_six_large_feh_ancestry_v1
+  require_unseen_feh_test: true
+  resources:
+    cores: 4
+    ram: 16
+    gpu: 0

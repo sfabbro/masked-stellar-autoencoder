@@ -1,0 +1,17 @@
+# Not launchable until explicit TUNE-only descriptors and SHA-bound numerical PASS.
+run_id: representative_metalpoor_predictive_corners_v1
+selection: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_corner_selection_v1/selection.npz
+selection_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_corner_selection_v1/manifest.json
+selection_sha256: null
+selection_manifest_sha256: null
+selection_evidence: null
+selection_evidence_sha256: null
+draws: 8192
+seed: 20261024
+models: []
+# Each future descriptor needs run_id,kind,state_format(joint_full/frozen_head),
+# manifest/manifest_sha256, checkpoint/checkpoint_sha256,expected_source_sha,
+# independent_report/independent_report_sha256(complete_strict_pass,input/source-bound).
+# frozen_head additionally needs encoder_checkpoint/encoder_checkpoint_sha256.
+# Selection evidence JSON: selection_role=tune,test_used_for_selection=false,
+# selected_run_ids=[2-3 explicit run IDs]. No TEST-metric based model choice.

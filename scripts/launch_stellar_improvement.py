@@ -52,6 +52,14 @@ def eligible(plan, now, dependencies):
             for name in registries
         ):
             return False
+    if plan.get("require_unseen_ancestry") and not dependencies.get(
+        "final_six_large_feh_ancestry_v1:unseen_heldout", False
+    ):
+        return False
+    if plan.get("require_unseen_feh_test") and not dependencies.get(
+        "final_six_large_feh_ancestry_v1:unseen_test", False
+    ):
+        return False
     return all(dependencies.get(name, False) for name in plan.get("depends_on", []))
 
 
@@ -59,6 +67,85 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {
+        "final-six-frozen",
+        "final-six-ancestry",
+        "metalpoor-corner-selection",
+    }:
+        filenames = {
+            "final-six-frozen": "configs/final-six-frozen-20261024.yaml",
+            "final-six-ancestry": "configs/final-six-ancestry-20261024.yaml",
+            "metalpoor-corner-selection": "configs/metalpoor-corner-selection-20261024.yaml",
+        }
+        suite = yaml.safe_load(Path(filenames[plan["task"]]).read_text())
+        if plan["task"] == "final-six-frozen":
+            if (
+                plan["run_id"] not in {a["run_id"] for a in suite["arms"]}
+                or not {
+                    "six_target_source_preparation_v3",
+                    "final_six_cuda_smoke_v1",
+                    "final_six_large_feh_ancestry_v1",
+                }.issubset(plan.get("depends_on", []))
+                or not plan.get("require_unseen_ancestry")
+            ):
+                raise ValueError(
+                    "Frozen arm or required source/CUDA/ancestry gates differ"
+                )
+        elif plan["run_id"] != suite["run_id"]:
+            raise ValueError("Unknown final source/corner data audit")
+        expected = {
+            "MSA_PRETRAIN_RESUME": yaml.safe_load(
+                Path("configs/final-six-recipes-20261024.yaml").read_text()
+            )["checkpoint"],
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError(
+                    "Final source/zero-reconstruction budget override differs"
+                )
+            env[key] = value
+        return env
+    if plan["task"] in {"final-six-recipes", "final-six-smoke"}:
+        suite = yaml.safe_load(
+            Path("configs/final-six-recipes-20261024.yaml").read_text()
+        )
+        if plan["task"] == "final-six-recipes":
+            arm = next(
+                (a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None
+            )
+            if arm is None:
+                raise ValueError("Six-target arm absent from immutable policy")
+            if not {
+                "six_target_source_preparation_v3",
+                "final_six_cuda_smoke_v1",
+                "final_six_large_feh_ancestry_v1",
+            }.issubset(plan.get("depends_on", [])):
+                raise ValueError(
+                    "Six-target training requires source, CUDA and ancestry gates"
+                )
+            if not plan.get("require_unseen_ancestry"):
+                raise ValueError("Six-target training requires ancestry eligibility")
+        else:
+            if (
+                plan["run_id"] != "final_six_cuda_smoke_v1"
+                or "six_target_source_preparation_v3" not in plan.get("depends_on", [])
+            ):
+                raise ValueError("Unknown six-target smoke or missing source gate")
+            arm = {}
+        expected = {
+            "MSA_PRETRAIN_RESUME": suite["reference_checkpoint"]
+            if arm.get("parent86_control")
+            else suite["checkpoint"],
+            "MSA_EXPERIMENT_PRESENTATIONS": str(suite["reconstruction_presentations"])
+            if plan["task"] == "final-six-recipes"
+            else "2560",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Six-target parent/budget override differs")
+            env[key] = value
+        return env
     if plan["task"] in {"six-target-preparation", "guarded-ttt"}:
         if plan["task"] == "six-target-preparation":
             config_path = {
@@ -428,6 +515,18 @@ def main():
                 "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
             }.get(name, "complete")
+            if name == "final_six_large_feh_ancestry_v1":
+                expected_status = "source_id_feh_aux_ancestry_verified"
+                dependencies[name + ":unseen_heldout"] = (
+                    content.get("direct_target_heldout_overlap_detected") is False
+                )
+                dependencies[name + ":unseen_test"] = (
+                    content.get("eligible_role_counts", content.get("counts", {}))
+                    .get("fe_h", {})
+                    .get("test", {})
+                    .get("feh_aux_fit_exposed_count")
+                    == 0
+                )
             dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":
                 sources = content.get("result", {}).get("sources", [])
@@ -520,6 +619,8 @@ def main():
             "alpha-feature-preparation",
             "alpha-head-verification",
             "six-target-preparation",
+            "final-six-ancestry",
+            "metalpoor-corner-selection",
             "conformal-validation",
             "target-head-pilot",
             "catalogue-comparison",

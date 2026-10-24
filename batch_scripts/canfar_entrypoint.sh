@@ -158,6 +158,26 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-frozen ]]; then
+      "${pixi_run[@]}" python -u scripts/run_final_six_frozen.py --config configs/final-six-frozen-20261024.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-ancestry ]]; then
+      "${pixi_run[@]}" python -u scripts/audit_final_six_ancestry.py --config configs/final-six-ancestry-20261024.yaml --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == metalpoor-corner-selection ]]; then
+      "${pixi_run[@]}" python -u scripts/select_metalpoor_corners.py --config configs/metalpoor-corner-selection-20261024.yaml --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-recipes ]]; then
+      "${pixi_run[@]}" python -u scripts/run_final_six_recipes.py --config configs/final-six-recipes-20261024.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-smoke ]]; then
+      "${pixi_run[@]}" python -u scripts/run_final_six_smoke.py --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == six-target-preparation ]]; then
       "${pixi_run[@]}" python -u scripts/prepare_six_target_wave.py --config "$MSA_SIX_SOURCE_CONFIG" --output "$experiment_output"
       exit 0

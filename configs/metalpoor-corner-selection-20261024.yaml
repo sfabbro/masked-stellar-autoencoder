@@ -1,0 +1,11 @@
+run_id: representative_metalpoor_corner_selection_v1
+prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/prepared.npz
+prepared_sha256: 960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535
+prepared_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/manifest.json
+prepared_source_commit: 8edbf713579013477d5a284120bec8443167d70f
+hash_salt: msa-metalpoor-corners-v1
+feh_bins: ["[-inf,-3)", "[-3,-2.5)", "[-2.5,-2)"]
+brightness: raw G less than globalFIT-only median versus greater/equal
+maximum_per_cell: 2
+prefer_source_diversity: APOGEE and GALAH if both exist, then deterministic hash order
+model_output_used_for_selection: false

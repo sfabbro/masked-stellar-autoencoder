@@ -1,0 +1,89 @@
+jobs:
+- run_id: final6_large_frozen_gaussian_s49_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_gaussian_s50_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_mdn_s49_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_mdn_s50_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_factorized_nsf_s49_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_factorized_nsf_s50_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_factorized_nsf_mixed01_s49_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: final6_large_frozen_factorized_nsf_mixed01_s50_v1
+  task: final-six-frozen
+  depends_on:
+  - six_target_source_preparation_v3
+  - final_six_cuda_smoke_v1
+  - final_six_large_feh_ancestry_v1
+  require_unseen_ancestry: true
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
