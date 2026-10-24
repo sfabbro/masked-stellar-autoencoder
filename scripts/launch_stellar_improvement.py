@@ -64,6 +64,7 @@ def bind_prediction_policy(
             config_path = {
                 "six_target_source_preparation_v1": "configs/six-target-preparation-20261024.yaml",
                 "six_target_source_preparation_v2": "configs/six-target-preparation-20261024-v2.yaml",
+                "six_target_source_preparation_v3": "configs/six-target-preparation-20261024-v3.yaml",
             }.get(plan["run_id"])
             if config_path is None:
                 raise ValueError("Unknown six-target source preparation")
@@ -425,6 +426,7 @@ def main():
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
                 "six_target_source_preparation_v1": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
+                "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
             }.get(name, "complete")
             dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":

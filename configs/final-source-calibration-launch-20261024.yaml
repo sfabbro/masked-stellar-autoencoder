@@ -1,0 +1,7 @@
+jobs:
+- run_id: six_target_source_preparation_v3
+  task: six-target-preparation
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 0

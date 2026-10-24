@@ -103,3 +103,21 @@ def test_actual_native_one_survey_tag_per_star_is_broadcast_to_targets():
     data, _ = assemble_sparse(native, alpha, posterior)
     row = np.flatnonzero(data["source_id"] == 14)[0]
     assert data["label_source"][row, :3].tolist() == ["apogee"] * 3
+
+
+def test_calibration_priority_preserves_calibration_without_using_test_labels():
+    native, alpha, posterior = source_fixture()
+    posterior["source_id"][0] = 14  # Native TEST, but posterior CAL.
+    old, _ = assemble_sparse(native, alpha, posterior)
+    new, _ = assemble_sparse(native, alpha, posterior, calibration_priority=True)
+    old_row = np.flatnonzero(old["source_id"] == 14)[0]
+    row = np.flatnonzero(new["source_id"] == 14)[0]
+    assert old["role"][old_row] == "test" and not old["quality"][old_row, 4:].any()
+    assert new["role"][row] == "cal" and new["quality"][row, 4:].all()
+    assert not new["quality"][
+        row, :3
+    ].any()  # Native TEST labels are not reused as CAL.
+    assert not np.isin(
+        new["source_id"][new["role"] == "fit"],
+        new["source_id"][np.isin(new["role"], ["tune", "cal", "test"])],
+    ).any()

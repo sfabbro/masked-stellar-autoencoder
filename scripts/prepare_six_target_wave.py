@@ -40,12 +40,18 @@ def checked_npz(spec):
         return {key: data[key] for key in data.files}
 
 
-def assemble_sparse(native, alpha, posterior, *, excluded_ids=()):
+def assemble_sparse(
+    native, alpha, posterior, *, excluded_ids=(), calibration_priority=False
+):
     """Assemble exact ID union, preserving NaNs and global held-out priority.
 
     `native` is the SHA-bound original paired cohort, alpha/posterior are the
     original feature-prepared artifacts. This is array assembly, not inference.
     """
+    role_order = (
+        ["fit", "tune", "test", "cal"] if calibration_priority else list(ROLE_PRIORITY)
+    )
+    priority = {role: i for i, role in enumerate(role_order)}
     streams = []
     for name, data in (("native", native), ("alpha", alpha), ("posterior", posterior)):
         ids = np.asarray(data["source_id"])
@@ -175,7 +181,7 @@ def assemble_sparse(native, alpha, posterior, *, excluded_ids=()):
     for _, sids, roles, values, mask, errors, sources, columns, bounds in streams:
         keep = np.isin(sids, ids)
         rows = np.searchsorted(ids, sids[keep])
-        numbers = np.array([ROLE_PRIORITY[role] for role in roles[keep]], dtype="i1")
+        numbers = np.array([priority[role] for role in roles[keep]], dtype="i1")
         conflicts += int(
             ((role_number[rows] >= 0) & (role_number[rows] != numbers)).sum()
         )
@@ -195,7 +201,7 @@ def assemble_sparse(native, alpha, posterior, *, excluded_ids=()):
                 ]
     if np.any(role_number < 0) or not observed.any(1).all():
         raise ValueError("Union has unassigned roles or no observed labels")
-    roles = np.array(list(ROLE_PRIORITY))[role_number]
+    roles = np.array(role_order)[role_number]
     return dict(
         source_id=ids,
         role=roles,
@@ -244,7 +250,12 @@ def prepare(config, output):
     posterior = checked_npz(config["posterior"])
     with h5py.File(paths["references"]) as f:
         excluded = f["ALL_reference_holdout_source_ids"][:]
-    data, conflicts = assemble_sparse(native, alpha, posterior)
+    data, conflicts = assemble_sparse(
+        native,
+        alpha,
+        posterior,
+        calibration_priority=config.get("calibration_priority", False),
+    )
     reference_holdout = np.isin(data["source_id"], excluded)
     if np.any(reference_holdout & np.isin(data["role"], ["fit", "tune"])):
         raise ValueError("Reference identities entered global FIT/TUNE")
@@ -317,6 +328,8 @@ def prepare(config, output):
         raise ValueError(
             f"Insufficient observed target counts after role reconciliation: {counts}"
         )
+    if min(counts["cal"]) < config.get("minimum_calibration_per_target", 16):
+        raise ValueError(f"Insufficient original calibration labels: {counts['cal']}")
     output.mkdir(parents=True)
     np.savez_compressed(output / "prepared.npz", **data)
     report = dict(
@@ -338,7 +351,11 @@ def prepare(config, output):
             )
         },
         role_conflict_events=conflicts,
-        role_conflict_policy="test > cal > tune > fit; never promote held-out source IDs into training",
+        role_conflict_policy=(
+            "cal > test > tune > fit; preserve original per-label CAL, discard overlapping other-target TEST labels; never promote heldout IDs into training"
+            if config.get("calibration_priority", False)
+            else "test > cal > tune > fit; never promote held-out source IDs into training"
+        ),
         reference_exclusions="Original stream restrictions retained: no reference union in global FIT/TUNE; canonical native TEST remains held out rather than deleted",
         source_provenance=config,
         source_commit=subprocess.check_output(

@@ -7774,6 +7774,32 @@
       "attempted_at": "2026-10-24T04:06:23.952454+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "six_target_source_preparation_v2",
+      "name": "msa-si15-six-target-source-preparation-v2",
+      "source_sha": "a755daf4b5d01d2e4961402021f49d25ad370371",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v2",
+      "plan": {
+        "run_id": "six_target_source_preparation_v2",
+        "task": "six-target-preparation",
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64
+      },
+      "session_ids": [
+        "w8yxsqoh"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T04:18:07.613719+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
