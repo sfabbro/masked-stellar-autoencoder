@@ -7826,6 +7826,62 @@
       "attempted_at": "2026-10-24T04:41:21.271088+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final_six_large_feh_ancestry_v1",
+      "name": "msa-si15-final-six-large-feh-ancestry-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1",
+      "plan": {
+        "run_id": "final_six_large_feh_ancestry_v1",
+        "task": "final-six-ancestry",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "dpf49omm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:42:49.357242+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final_six_cuda_smoke_v1",
+      "name": "msa-si15-final-six-cuda-smoke-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_cuda_smoke_v1",
+      "plan": {
+        "run_id": "final_six_cuda_smoke_v1",
+        "task": "final-six-smoke",
+        "depends_on": [
+          "six_target_source_preparation_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "z307q2ix"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:42:59.654059+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
