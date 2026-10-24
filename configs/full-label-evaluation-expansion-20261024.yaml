@@ -1,0 +1,79 @@
+schema: full-label-evaluation-expansion-v1
+status: planned_source_census_not_executed_on_canfar
+training_changes: none
+current_training_source_sha: 7552253630fe22bcd680a91ee9fa658893218d43
+frozen_original_test_input_sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
+submission_policy:
+  additional_training_jobs: 0
+  additional_source_or_inference_jobs: requires_confirmation_of_prior_five_job_limit
+population_policy:
+  maximum_test_rows: null
+  maximum_rows_per_target: null
+  maximum_rows_per_survey: null
+  use_all_quality_eligible_unexposed_rows: true
+  deduplicate_by: exact_integer_gaia_dr3_source_id
+  preserve_original_test_as_separate_benchmark: true
+  exclude_current_global_fit_tune_cal_ids: true
+  exclude_checkpoint_ancestor_direct_target_exposure: true
+  nominal_old_fit_role_is_not_itself_actual_training_evidence: true
+  unresolved_ancestry: separate_unverified_stratum_never_claim_clean_holdout
+  unsupervised_reconstruction_exposure: retain_and_report_separately
+  choose_by_prediction_or_residual: false
+  join_source_labels_before_sampling: true
+  backfill_unused_references_on_existing_test_ids: separate_version_preserve_original_masks
+  reserved_reference_ids: separate_external_test_panel_never_fit_tune_cal
+sources:
+  native_three:
+    primary: [native_GALAH_DR4, native_APOGEE_DR17, DESI_RVSpecFit]
+    preserve_survey_measurement_scales: true
+    preserve_each_target_quality_and_error_flags: true
+  alpha:
+    primary: DESI_RVSpecFit_alpha_fe
+    source_projection: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1/desi-alpha-native.h5
+    sha256: 506fa09d4de88230ba2fee4ae2b23bbaa639c5bedd55b47b86c750c8df6f627a
+    quality_eligible_source_rows_before_dedup_and_overlap: 3682449
+    apogee_alpha_m_is_not_alias: true
+    galah_individual_element_fe_is_not_alias: true
+    desi_below_feh_minus2: diagnostic_only_not_recommended_physical_alpha
+  age_distance:
+    primary: StarHorse_posterior_medians
+    existing_source_files:
+    - /arc/projects/k-pop/catalogues/starhorse_ages/apogee17.fits
+    - /arc/projects/k-pop/catalogues/starhorse_ages/galahdr3.fits
+    old_test_cap_to_remove: 2048
+    require_positive_ordered_native_posterior_bounds: true
+    posterior_width_is_not_measurement_error: true
+  external_age_validation:
+    sources: [APOKASC3, Willett]
+    preserve_source_scales_and_correlated_seismic_provenance: true
+    require_verified_gaia_identity_crossmatch: true
+    pool_as_starhorse_teacher_truth: false
+feature_policy:
+  restrict_to_legacy_756836_feature_cohort: false
+  lookup_order:
+  - existing_original_source_reconstruction_feature_cache_with_verified_parent_scaler
+  - original_large_training_hdf5_with_verified_raw_feature_association
+  - existing_native_catalogue_photometry_and_verified_xp_association
+  copy_training_labels_into_predictor_inputs: false
+  input_staging_unknown_is_not_proof_of_no_xp: true
+  populations: [complete_xp, partial_xp, official_no_published_xp, publication_status_unknown]
+  genuine_no_published_xp_requires: official_false_flag_and_no_coefficients_and_real_photometry
+  missing_feature_cases: retain_in_census_with_exact_exclusion_reason
+  new_catalogue_acquisition_for_initial_census: false
+reporting:
+  source_funnel:
+  - raw_rows
+  - unique_valid_gaia_ids
+  - valid_target_values_and_source_quality
+  - actual_fit_tune_cal_and_ancestry_exclusions
+  - feature_recoverable_by_modality
+  - eligible_heldout_by_target_survey_modality
+  strata: [label_bins, metal_poor_bins, apparent_G, sky, survey, xp_availability, reconstruction_exposure]
+  six_target_complete_cases_required_for_marginal_scoring: false
+  joint_scores_require_actually_observed_target_blocks: true
+  andrae: paired_xp_subset_with_training_membership_and_mh_feh_proxy_warning
+  outputs: [census_json, exclusion_reason_counts_csv, immutable_test_manifest, source_and_policy_hashes]
+  reuse_existing_same_input_checkpoint_predictions: true
+  new_inference_scope: new_source_ids_or_previously_unscored_reference_distribution_metrics
+  repeat_passed_model_audits_or_training: false
+  after_census: immutable_existing_checkpoint_inference_on_canfar_no_retraining
