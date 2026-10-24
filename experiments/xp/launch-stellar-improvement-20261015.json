@@ -10432,6 +10432,39 @@
       "attempted_at": "2026-10-24T10:25:51.840467+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "representative_metalpoor_predictive_corners_v1",
+      "name": "msa-si15-representative-metalpoor-predictive-corners-v1",
+      "source_sha": "18d5f7f0292517437484bcdcdb6861453b417d17",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_predictive_corners_v1",
+      "plan": {
+        "run_id": "representative_metalpoor_predictive_corners_v1",
+        "task": "metalpoor-corner-sampling",
+        "depends_on": [
+          "representative_metalpoor_corner_selection_v1",
+          "final6_large_gaussian_cecdf_s50_10m_v1",
+          "final6_large_mdn_ranking_s50_10m_v1",
+          "final6_large_factorized_nsf_mixed01_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "sq9xxlad"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T11:27:42.458877+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
