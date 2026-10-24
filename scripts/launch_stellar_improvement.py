@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {"five-job-source-preparation", "five-wave-training"}:
+        from five_job_launch_policy import bind_five_job_policy
+
+        return bind_five_job_policy(plan, env)
     if plan["task"] in {
         "final-six-frozen",
         "final-six-ancestry",
@@ -548,6 +552,13 @@ def main():
         if args.record.exists()
         else {"output_root": ROOT, "jobs": []}
     )
+    if any(
+        p["task"] in {"five-job-source-preparation", "five-wave-training"}
+        for p in plans
+    ):
+        from five_job_launch_policy import enforce_submission_budget
+
+        enforce_submission_budget(plans, record)
     client = None
     existing = []
     if not args.dry_run:
@@ -590,6 +601,7 @@ def main():
                 "six_target_source_preparation_v1": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
+                "five_job_broad_test_preparation_v1": "five_job_source_preparation_complete",
                 "representative_metalpoor_corner_selection_v1": "representative_metalpoor_corner_selection_complete",
             }.get(name, "complete")
             if name == "final_six_large_feh_ancestry_v1":
@@ -697,6 +709,7 @@ def main():
             "alpha-head-verification",
             "final-six-independent",
             "six-target-preparation",
+            "five-job-source-preparation",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

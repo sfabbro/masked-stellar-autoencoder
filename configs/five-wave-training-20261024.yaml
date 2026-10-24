@@ -1,0 +1,35 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+large_checkpoint_source_sha: e525ae75c3eaf162c9a72fbde6b386cce9374eb0
+prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz
+preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/manifest.json
+preparation_policy: configs/five-job-source-20261024.yaml
+preparation_source_sha: same_as_runner_source
+preparation_status: five_job_source_preparation_complete
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
+reconstruction_training_rows: 150000000
+reconstruction_epochs: 3
+reconstruction_presentations: 450000000
+reconstruction_validation_keys: [sslset11_part0, sslset14_part0, sslset2_part0, sslset5_part0, sslset20_part0]
+effective_batch: 32768
+micro_batch: 1024
+supervised_batches_per_update: 8
+encoder_lr: 0.00000125
+head_lr: 0.001
+warmup_updates: 250
+reconstruction_weight: 0.03
+spectral_weight: 0.0
+supervised_whole_xp_dropout: 0.25
+internal_preflight_updates: 2
+tuning_presentations: [10000000, 50000000, 150000000, 300000000, 450000000]
+selection_policy: first minimum macro6 FIT-native-standard-deviation-normalized conditional median absolute error; half natural TUNE plus half paired XP-masked TUNE
+scope: four matched3pass actual150M large-model fits; quantile baseline has three quantiles only; density arms are normalized conditionally independent scalar densities, not an identified6D copula
+arms:
+- {run_id: five_wave_quantile3_s51_450m_v1, kind: quantile3, seed: 51}
+- {run_id: five_wave_gaussian_noise_s51_450m_v1, kind: gaussian, seed: 51}
+- {run_id: five_wave_nsf_noise_s51_450m_v1, kind: factorized_nsf, seed: 51}
+- {run_id: five_wave_nsf_noise_mixed01_s51_450m_v1, kind: factorized_nsf, seed: 51, mixed_weight: 0.1}

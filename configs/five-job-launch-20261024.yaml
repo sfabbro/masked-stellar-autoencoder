@@ -1,0 +1,36 @@
+# Hard cap: one source preparation plus four matched training/evaluation sessions.
+jobs:
+- run_id: five_job_broad_test_preparation_v1
+  task: five-job-source-preparation
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 0
+- run_id: five_wave_quantile3_s51_450m_v1
+  task: five-wave-training
+  depends_on: [five_job_broad_test_preparation_v1]
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+- run_id: five_wave_gaussian_noise_s51_450m_v1
+  task: five-wave-training
+  depends_on: [five_job_broad_test_preparation_v1]
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+- run_id: five_wave_nsf_noise_s51_450m_v1
+  task: five-wave-training
+  depends_on: [five_job_broad_test_preparation_v1]
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+- run_id: five_wave_nsf_noise_mixed01_s51_450m_v1
+  task: five-wave-training
+  depends_on: [five_job_broad_test_preparation_v1]
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1

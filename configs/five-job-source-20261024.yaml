@@ -1,0 +1,29 @@
+run_id: five_job_broad_test_preparation_v1
+base:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/prepared.npz
+  sha256: 960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535
+features:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
+native_sidecar:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+  sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
+native_source_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+gaia_vac:
+  path: /arc/projects/k-pop/catalogues/galah_dr4_vac_wise_tmass_gaiadr3_240705.fits
+  bytes: 778199040
+  rows: 917588
+  sha256_status: First mounted hash recorded from existing inventory; publisher SHA unavailable.
+andrae:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/andrae175m.npz
+  sha256: 49b145b4daf90d475a0a41db7b41d971e824f2761e5218db9635766a8e2a5a78
+feh_ancestry:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1/ancestry-masks.npz
+  sha256: e209f6383ec1bf1108c524b40b51663f6b05aaaead063e6a05a775b2b8166ad2
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+policy:
+  preserve_fit_tune_cal_byte_identical: true
+  append_test_only: true
+  no_xp_requires_explicit_gaia_false: true
+  artificial_xp_masking: false
+  no_acquisition: true
