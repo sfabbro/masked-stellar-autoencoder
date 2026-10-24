@@ -309,6 +309,15 @@ def run(args):
     model, head, center, scale = sampling.load_model_and_head(
         descriptor, "cuda", data["feature_names"]
     )
+    atomic(
+        args.output / "normalization.json",
+        dict(
+            center=center.cpu().tolist(),
+            scale=scale.cpu().tolist(),
+            checkpoint_sha256=descriptor["checkpoint_sha256"],
+            coordinates=["K", "dex", "dex", "dex", "ln(Gyr)", "ln(kpc)"],
+        ),
+    )
     model.requires_grad_(False)
     head.requires_grad_(False)
     standardized, sigma, mask, _ = standardized_arrays(

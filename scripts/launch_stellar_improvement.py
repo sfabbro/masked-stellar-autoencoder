@@ -226,6 +226,13 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
+    if plan["task"] == "final-six-normalization-export":
+        if plan["run_id"] != "final6_distribution_normalization_v1":
+            raise ValueError("Unknown immutable normalization export")
+        if plan.get("env", {}).get("MSA_EXPERIMENT_PRESENTATIONS", "0") != "0":
+            raise ValueError("Metadata export cannot train")
+        env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
+        return env
     if plan["task"] == "final-six-distribution-metrics":
         config_path = "configs/final-six-distribution-metrics-20261024.yaml"
         config = yaml.safe_load(Path(config_path).read_text())
@@ -691,6 +698,7 @@ def main():
             "final-six-independent",
             "six-target-preparation",
             "final-six-ancestry",
+            "final-six-normalization-export",
             "metalpoor-corner-selection",
             "conformal-validation",
             "target-head-pilot",

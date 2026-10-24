@@ -158,6 +158,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-normalization-export ]]; then
+      "${pixi_run[@]}" python -u scripts/export_final_six_normalization.py --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-distribution-metrics ]]; then
       "${pixi_run[@]}" python -u scripts/run_final_six_distribution_metrics.py --config "$MSA_DISTRIBUTION_METRICS_CONFIG" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
