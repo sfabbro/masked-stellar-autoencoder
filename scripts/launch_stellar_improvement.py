@@ -226,6 +226,36 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
+    if plan["task"] == "final-six-independent":
+        producer = plan.get("producer_run_id")
+        arms = set()
+        for filename in (
+            "configs/final-six-recipes-20261024.yaml",
+            "configs/final-six-frozen-20261024.yaml",
+        ):
+            arms.update(
+                a["run_id"] for a in yaml.safe_load(Path(filename).read_text())["arms"]
+            )
+        if (
+            producer not in arms
+            or plan["run_id"] != "audit_" + producer
+            or plan.get("depends_on") != [producer]
+        ):
+            raise ValueError(
+                "Independent six-target audit must bind a known completed producer"
+            )
+        expected = {
+            "MSA_FINAL_SIX_PRODUCER_RUN": producer,
+            "MSA_FINAL_SIX_PRODUCER_SHA": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError(
+                    "Independent six-target source or zero-training policy differs"
+                )
+            env[key] = value
+        return env
     if plan["task"] == "alpha-head-verification":
         suite = yaml.safe_load(
             Path("configs/alpha-independent-heads-20261023.yaml").read_text()
@@ -618,6 +648,7 @@ def main():
             "target-source-evidence",
             "alpha-feature-preparation",
             "alpha-head-verification",
+            "final-six-independent",
             "six-target-preparation",
             "final-six-ancestry",
             "metalpoor-corner-selection",

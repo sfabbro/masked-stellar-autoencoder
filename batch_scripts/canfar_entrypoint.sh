@@ -158,6 +158,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-independent ]]; then
+      "${pixi_run[@]}" python -u experiments/xp/monitor/verify_final_six_heads.py --run-id "$MSA_FINAL_SIX_PRODUCER_RUN" --expected-source-sha "$MSA_FINAL_SIX_PRODUCER_SHA" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == final-six-frozen ]]; then
       "${pixi_run[@]}" python -u scripts/run_final_six_frozen.py --config configs/final-six-frozen-20261024.yaml --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0

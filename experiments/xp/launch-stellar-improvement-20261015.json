@@ -7882,6 +7882,1356 @@
       "attempted_at": "2026-10-24T09:42:59.654059+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "representative_metalpoor_corner_selection_v1",
+      "name": "msa-si15-representative-metalpoor-corner-selection-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_corner_selection_v1",
+      "plan": {
+        "run_id": "representative_metalpoor_corner_selection_v1",
+        "task": "metalpoor-corner-selection",
+        "depends_on": [
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_feh_test": true,
+        "resources": {
+          "cores": 4,
+          "ram": 16,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 16
+      },
+      "session_ids": [
+        "vmugssh6"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:45:54.059111+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_base_s49_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "f6es5dkg"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:00.919490+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_spectral_s49_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-spectral-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_spectral_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fmgsqy01"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:05.176310+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_ranking_s49_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-ranking-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_ranking_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_ranking_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zsz3yw6x"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:11.135550+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_triloss_s49_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-triloss-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_triloss_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "r6l3or12"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:22.528603+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_cecdf_s49_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-cecdf-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_cecdf_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_cecdf_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wtg54bq0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:26.601800+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_base_s50_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mzxddy7i"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:31.110143+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_spectral_s50_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-spectral-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_spectral_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fr73xneu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:36.130049+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_ranking_s50_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-ranking-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_ranking_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_ranking_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qwpft9f4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:39.928189+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_triloss_s50_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-triloss-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_triloss_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ncq9cqmv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:45.044291+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_gaussian_cecdf_s50_10m_v1",
+      "name": "msa-si15-final6-large-gaussian-cecdf-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_cecdf_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_gaussian_cecdf_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qtkjl22v"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:47.835293+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_base_s49_10m_v1",
+      "name": "msa-si15-final6-large-mdn-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "agaf9x1n"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:51.804535+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_spectral_s49_10m_v1",
+      "name": "msa-si15-final6-large-mdn-spectral-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_spectral_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "fn0m55ps"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:55.291409+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_ranking_s49_10m_v1",
+      "name": "msa-si15-final6-large-mdn-ranking-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_ranking_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_ranking_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dof1w25e"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:46:58.284967+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_triloss_s49_10m_v1",
+      "name": "msa-si15-final6-large-mdn-triloss-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_triloss_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zlnqa8uq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:02.999180+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_base_s50_10m_v1",
+      "name": "msa-si15-final6-large-mdn-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "cqb20df9"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:10.365466+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_spectral_s50_10m_v1",
+      "name": "msa-si15-final6-large-mdn-spectral-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_spectral_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "aln2aeiz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:13.289188+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_ranking_s50_10m_v1",
+      "name": "msa-si15-final6-large-mdn-ranking-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_ranking_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_ranking_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "mbpd5q7s"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:20.279934+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_mdn_triloss_s50_10m_v1",
+      "name": "msa-si15-final6-large-mdn-triloss-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_mdn_triloss_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jmu6nck0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:26.013023+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_base_s49_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "x9b3hfxh"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:30.692088+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_spectral_s49_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-spectral-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_spectral_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "h3493wzp"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:38.199618+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_mixed01_s49_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-mixed01-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_mixed01_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_mixed01_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "q9op728j"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:45.565263+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_triloss_s49_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-triloss-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_triloss_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "w3ptx7vc"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:52.395173+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_base_s50_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "n1tn35gd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:47:58.483800+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_spectral_s50_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-spectral-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_spectral_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "lo9j1v3u"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:02.670466+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_mixed01_s50_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-mixed01-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_mixed01_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_mixed01_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "imerdfkq"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:06.457210+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_factorized_nsf_triloss_s50_10m_v1",
+      "name": "msa-si15-final6-large-factorized-nsf-triloss-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_large_factorized_nsf_triloss_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "yke5dntz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:14.007234+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_gaussian_base_s49_10m_v1",
+      "name": "msa-si15-final6-parent86-gaussian-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_gaussian_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_gaussian_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "pm9lbeoe"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:17.968959+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_gaussian_base_s50_10m_v1",
+      "name": "msa-si15-final6-parent86-gaussian-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_gaussian_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_gaussian_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wux7mu4x"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:21.948634+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_mdn_base_s49_10m_v1",
+      "name": "msa-si15-final6-parent86-mdn-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_mdn_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_mdn_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hgru2zbr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:25.408355+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_mdn_base_s50_10m_v1",
+      "name": "msa-si15-final6-parent86-mdn-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_mdn_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_mdn_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "x2kwt9i3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:29.275788+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_factorized_nsf_base_s49_10m_v1",
+      "name": "msa-si15-final6-parent86-factorized-nsf-base-s49-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_factorized_nsf_base_s49_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_factorized_nsf_base_s49_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uo8nts15"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:32.498592+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_parent86_factorized_nsf_base_s50_10m_v1",
+      "name": "msa-si15-final6-parent86-factorized-nsf-base-s50-10m-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_parent86_factorized_nsf_base_s50_10m_v1",
+      "plan": {
+        "run_id": "final6_parent86_factorized_nsf_base_s50_10m_v1",
+        "task": "final-six-recipes",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "require_unseen_ancestry": true
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "zlg40r7d"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:35.379109+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_gaussian_s49_v1",
+      "name": "msa-si15-final6-large-frozen-gaussian-s49-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_gaussian_s49_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_gaussian_s49_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bx5n7o8g"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:43.783644+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_gaussian_s50_v1",
+      "name": "msa-si15-final6-large-frozen-gaussian-s50-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_gaussian_s50_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_gaussian_s50_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "pwyuk3pt"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:46.916401+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_mdn_s49_v1",
+      "name": "msa-si15-final6-large-frozen-mdn-s49-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_mdn_s49_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_mdn_s49_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "s0y5ymua"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:49.939483+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_mdn_s50_v1",
+      "name": "msa-si15-final6-large-frozen-mdn-s50-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_mdn_s50_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_mdn_s50_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "d7of3qs3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:52.958118+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_factorized_nsf_s49_v1",
+      "name": "msa-si15-final6-large-frozen-factorized-nsf-s49-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_factorized_nsf_s49_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_factorized_nsf_s49_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "o4ojr24c"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:48:56.897826+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_factorized_nsf_s50_v1",
+      "name": "msa-si15-final6-large-frozen-factorized-nsf-s50-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_factorized_nsf_s50_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_factorized_nsf_s50_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ke7q9fv5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:49:00.432207+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+      "name": "msa-si15-final6-large-frozen-factorized-nsf-mixed01-s49-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "di78i8as"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:49:03.814019+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+      "name": "msa-si15-final6-large-frozen-factorized-nsf-mixed01-s50-v1",
+      "source_sha": "ba3cefdf13939588a5039292d7fb62fa3828dd2a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+      "plan": {
+        "run_id": "final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+        "task": "final-six-frozen",
+        "depends_on": [
+          "six_target_source_preparation_v3",
+          "final_six_cuda_smoke_v1",
+          "final_six_large_feh_ancestry_v1"
+        ],
+        "require_unseen_ancestry": true,
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tlo07a0y"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T09:49:07.085097+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

@@ -161,3 +161,29 @@ def test_final_six_smoke_budget_is_bounded_actual_fixture_not_production():
     assert result["MSA_EXPERIMENT_PRESENTATIONS"] == "2560"
     with pytest.raises(ValueError, match="Unknown"):
         bind_prediction_policy(dict(plan, run_id="wrong"), {})
+
+
+def test_final_six_independent_binds_all_forty_producers():
+    plan = yaml.safe_load(
+        Path("configs/final-six-independent-launch-20261024.yaml").read_text()
+    )["jobs"]
+    assert len(plan) == 40
+    for job in plan:
+        env = bind_prediction_policy(job, {})
+        assert env["MSA_FINAL_SIX_PRODUCER_RUN"] == job["producer_run_id"]
+        assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+        assert (
+            env["MSA_FINAL_SIX_PRODUCER_SHA"]
+            == "ba3cefdf13939588a5039292d7fb62fa3828dd2a"
+        )
+        assert job["resources"]["gpu"] == 0
+
+
+def test_final_six_independent_rejects_source_override_and_wrong_producer():
+    job = yaml.safe_load(
+        Path("configs/final-six-independent-launch-20261024.yaml").read_text()
+    )["jobs"][0]
+    with pytest.raises(ValueError):
+        bind_prediction_policy(dict(job, env={"MSA_FINAL_SIX_PRODUCER_SHA": "bad"}), {})
+    with pytest.raises(ValueError):
+        bind_prediction_policy(dict(job, producer_run_id="unknown"), {})
