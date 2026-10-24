@@ -7641,6 +7641,32 @@
       "attempted_at": "2026-10-23T23:19:07.749889+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "alpha_frozen_heads_independent_v1",
+      "name": "msa-si15-alpha-frozen-heads-independent-v1",
+      "source_sha": "a7d0546300c3f162c1e5601a1dd69104d91eada5",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_frozen_heads_independent_v1",
+      "plan": {
+        "run_id": "alpha_frozen_heads_independent_v1",
+        "task": "alpha-head-verification",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "igeubnea"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T01:12:19.536480+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
