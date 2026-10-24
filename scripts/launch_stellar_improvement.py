@@ -59,6 +59,28 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {"six-target-preparation", "guarded-ttt"}:
+        if plan["task"] == "six-target-preparation":
+            suite = yaml.safe_load(
+                Path("configs/six-target-preparation-20261024.yaml").read_text()
+            )
+            if plan["run_id"] != suite["run_id"]:
+                raise ValueError("Unknown six-target source preparation")
+        else:
+            suite = yaml.safe_load(
+                Path("configs/guarded-ttt-screen-20261024.yaml").read_text()
+            )
+            if plan["run_id"] not in {arm["run_id"] for arm in suite["arms"]}:
+                raise ValueError("Guarded TTT arm absent from immutable policy")
+        expected = {
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Final prediction source/budget override differs")
+            env[key] = value
+        return env
     if plan["task"] in {
         "density-rescore",
         "conformal-validation",
@@ -396,6 +418,7 @@ def main():
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
+                "six_target_source_preparation_v1": "sparse_six_target_source_assembly_complete",
             }.get(name, "complete")
             dependencies[name] = content.get("status") == expected_status
             if content.get("mode") == "collect":
@@ -488,6 +511,7 @@ def main():
             "target-source-evidence",
             "alpha-feature-preparation",
             "alpha-head-verification",
+            "six-target-preparation",
             "conformal-validation",
             "target-head-pilot",
             "catalogue-comparison",

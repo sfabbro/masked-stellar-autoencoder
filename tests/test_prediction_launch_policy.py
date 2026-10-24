@@ -113,3 +113,20 @@ def test_alpha_verification_has_zero_budget_and_rejects_overrides():
         bind_prediction_policy(
             dict(plan, env={"MSA_EXPERIMENT_PRESENTATIONS": "1"}), {}
         )
+
+
+def test_final_preparation_and_guarded_ttt_have_zero_training_budget():
+    for task, run in [
+        ("six-target-preparation", "six_target_source_preparation_v1"),
+        ("guarded-ttt", "guarded_ttt_encoder_sgd20_holdout_v1"),
+    ]:
+        plan = dict(task=task, run_id=run)
+        result = bind_prediction_policy(plan, {})
+        assert result["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+        assert result["MSA_PRETRAIN_RESUME"].endswith("checkpoint_86.pth")
+        with pytest.raises(ValueError, match="Unknown|absent"):
+            bind_prediction_policy(dict(plan, run_id="unknown"), {})
+        with pytest.raises(ValueError, match="override"):
+            bind_prediction_policy(
+                dict(plan, env={"MSA_EXPERIMENT_PRESENTATIONS": "1"}), {}
+            )

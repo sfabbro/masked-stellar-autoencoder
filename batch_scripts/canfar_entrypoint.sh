@@ -158,6 +158,14 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == six-target-preparation ]]; then
+      "${pixi_run[@]}" python -u scripts/prepare_six_target_wave.py --config configs/six-target-preparation-20261024.yaml --output "$experiment_output"
+      exit 0
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == guarded-ttt ]]; then
+      "${pixi_run[@]}" python -u scripts/run_guarded_ttt_screen.py --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-head-verification ]]; then
       "${pixi_run[@]}" python -u experiments/xp/monitor/verify_alpha_frozen_heads.py --config configs/alpha-independent-heads-20261023.yaml --output "$experiment_output"
       exit 0
