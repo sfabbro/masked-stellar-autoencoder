@@ -98,3 +98,18 @@ def test_large_huber_binds_parent86_and_real150m_budget():
             ),
             {},
         )
+
+
+def test_alpha_verification_has_zero_budget_and_rejects_overrides():
+    plan = dict(
+        task="alpha-head-verification", run_id="alpha_frozen_heads_independent_v1"
+    )
+    env = bind_prediction_policy(plan, {})
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+    assert env["MSA_PRETRAIN_RESUME"].endswith("checkpoint_86.pth")
+    with pytest.raises(ValueError, match="Unknown"):
+        bind_prediction_policy(dict(plan, run_id="wrong"), {})
+    with pytest.raises(ValueError, match="override"):
+        bind_prediction_policy(
+            dict(plan, env={"MSA_EXPERIMENT_PRESENTATIONS": "1"}), {}
+        )

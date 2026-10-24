@@ -158,6 +158,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-head-verification ]]; then
+      "${pixi_run[@]}" python -u experiments/xp/monitor/verify_alpha_frozen_heads.py --config configs/alpha-independent-heads-20261023.yaml --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-feature-preparation ]]; then
       "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --checkpoint "$MSA_PRETRAIN_RESUME" --projection-directory /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1 --base /arc/projects/k-pop/msa_runs/stellar-improvement-20261015 --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
       exit 0

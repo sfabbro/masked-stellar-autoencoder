@@ -111,6 +111,21 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
+    if plan["task"] == "alpha-head-verification":
+        suite = yaml.safe_load(
+            Path("configs/alpha-independent-heads-20261023.yaml").read_text()
+        )
+        if plan["run_id"] != suite["run_id"]:
+            raise ValueError("Unknown independent alpha head audit")
+        expected = {
+            "MSA_PRETRAIN_RESUME": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Independent alpha audit policy override differs")
+            env[key] = value
+        return env
     if plan["task"] in {"alpha-feature-preparation", "alpha-target-predictions"}:
         suite = yaml.safe_load(
             Path("configs/alpha-target-wave-20261023.yaml").read_text()
@@ -472,6 +487,7 @@ def main():
             "age-data-audit",
             "target-source-evidence",
             "alpha-feature-preparation",
+            "alpha-head-verification",
             "conformal-validation",
             "target-head-pilot",
             "catalogue-comparison",
