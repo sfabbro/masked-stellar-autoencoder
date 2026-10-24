@@ -188,3 +188,35 @@ def test_final_six_independent_rejects_source_override_and_wrong_producer():
         bind_prediction_policy(dict(job, env={"MSA_FINAL_SIX_PRODUCER_SHA": "bad"}), {})
     with pytest.raises(ValueError):
         bind_prediction_policy(dict(job, producer_run_id="unknown"), {})
+
+
+def test_metalpoor_corner_launch_has_explicit_tune_selected_descriptors():
+    import hashlib
+    import json
+
+    config = yaml.safe_load(
+        Path("configs/metalpoor-corner-sampling-20261024.yaml").read_text()
+    )
+    plan = yaml.safe_load(
+        Path("configs/metalpoor-corner-launch-20261024.yaml").read_text()
+    )["jobs"][0]
+    evidence = json.loads(Path(config["selection_evidence"]).read_text())
+    assert (
+        evidence["selection_role"] == "tune" and not evidence["test_used_for_selection"]
+    )
+    assert (
+        config["selection_evidence_sha256"]
+        == hashlib.sha256(Path(config["selection_evidence"]).read_bytes()).hexdigest()
+    )
+    assert {m["kind"] for m in config["models"]} == {
+        "gaussian",
+        "mdn",
+        "factorized_nsf",
+    }
+    assert all(len(m["independent_report_sha256"]) == 64 for m in config["models"])
+    assert config["draws"] >= 8192
+    assert bind_prediction_policy(plan, {})["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+    with pytest.raises(ValueError):
+        bind_prediction_policy(
+            dict(plan, env={"MSA_CORNER_SAMPLING_CONFIG": "wrong"}), {}
+        )

@@ -226,6 +226,26 @@ def bind_prediction_policy(
                 raise ValueError("Target/TTT source policy override differs")
             env[key] = value
         return env
+    if plan["task"] == "metalpoor-corner-sampling":
+        filename = "configs/metalpoor-corner-sampling-20261024.yaml"
+        config = yaml.safe_load(Path(filename).read_text())
+        if plan["run_id"] != config["run_id"] or len(config["models"]) != 3:
+            raise ValueError("Explicit three verified corner descriptors required")
+        required = {
+            "representative_metalpoor_corner_selection_v1",
+            *(m["run_id"] for m in config["models"]),
+        }
+        if not required.issubset(plan.get("depends_on", [])):
+            raise ValueError("Corner source/model dependencies differ")
+        expected = {
+            "MSA_CORNER_SAMPLING_CONFIG": filename,
+            "MSA_EXPERIMENT_PRESENTATIONS": "0",
+        }
+        for key, value in expected.items():
+            if key in plan.get("env", {}) and str(plan["env"][key]) != value:
+                raise ValueError("Corner policy override differs")
+            env[key] = value
+        return env
     if plan["task"] == "final-six-independent":
         producer = plan.get("producer_run_id")
         arms = set()
@@ -544,6 +564,7 @@ def main():
                 "six_target_source_preparation_v1": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
+                "representative_metalpoor_corner_selection_v1": "representative_metalpoor_corner_selection_complete",
             }.get(name, "complete")
             if name == "final_six_large_feh_ancestry_v1":
                 expected_status = "source_id_feh_aux_ancestry_verified"

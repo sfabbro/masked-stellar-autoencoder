@@ -1,0 +1,12 @@
+jobs:
+- run_id: representative_metalpoor_predictive_corners_v1
+  task: metalpoor-corner-sampling
+  depends_on:
+  - representative_metalpoor_corner_selection_v1
+  - final6_large_gaussian_cecdf_s50_10m_v1
+  - final6_large_mdn_ranking_s50_10m_v1
+  - final6_large_factorized_nsf_mixed01_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1

@@ -9232,6 +9232,1206 @@
       "attempted_at": "2026-10-24T09:49:07.085097+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_base_s49_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "ja1vaqhh"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:22:55.149982+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_spectral_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-spectral-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_spectral_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_spectral_s49_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_spectral_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "x7as956u"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:03.142395+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_ranking_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-ranking-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_ranking_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_ranking_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_ranking_s49_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_ranking_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "wn9aqn2p"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:14.275407+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_triloss_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-triloss-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_triloss_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_triloss_s49_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_triloss_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "ox00gtwy"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:17.097170+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_cecdf_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-cecdf-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_cecdf_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_cecdf_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_cecdf_s49_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_cecdf_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "ims1qi6d"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:20.102955+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_base_s50_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "m7kakh2g"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:27.253802+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_spectral_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-spectral-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_spectral_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_spectral_s50_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_spectral_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "gvdu1xc5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:31.374500+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_ranking_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-ranking-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_ranking_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_ranking_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_ranking_s50_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_ranking_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "i97u3bey"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:35.030788+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_triloss_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-triloss-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_triloss_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_triloss_s50_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_triloss_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "k2to2dyj"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:37.889555+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_gaussian_cecdf_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-gaussian-cecdf-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_cecdf_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_gaussian_cecdf_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_gaussian_cecdf_s50_10m_v1",
+        "depends_on": [
+          "final6_large_gaussian_cecdf_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "m5c4oc31"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:41.852669+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_base_s49_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "aeuwasqs"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:45.360773+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_spectral_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-spectral-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_spectral_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_spectral_s49_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_spectral_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "jl3qsnb8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:49.508279+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_ranking_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-ranking-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_ranking_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_ranking_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_ranking_s49_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_ranking_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "rp5qar59"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:53.831511+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_triloss_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-triloss-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_triloss_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_triloss_s49_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_triloss_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "jbx32acg"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:23:59.174935+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_base_s50_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "bi2qvu09"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:02.995736+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_spectral_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-spectral-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_spectral_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_spectral_s50_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_spectral_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "iyzjo4ha"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:06.102771+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_ranking_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-ranking-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_ranking_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_ranking_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_ranking_s50_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_ranking_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "cpr8rbdd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:10.640436+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_mdn_triloss_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-mdn-triloss-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_mdn_triloss_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_mdn_triloss_s50_10m_v1",
+        "depends_on": [
+          "final6_large_mdn_triloss_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "jbe5ojzx"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:15.880124+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_base_s49_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "oc4se2h3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:21.757314+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_spectral_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-spectral-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_spectral_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_spectral_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_spectral_s49_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_spectral_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "d813elql"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:24.790328+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_mixed01_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-mixed01-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_mixed01_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_mixed01_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_mixed01_s49_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_mixed01_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "nhyvqzn8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:29.471863+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_triloss_s49_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-triloss-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_triloss_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_triloss_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_triloss_s49_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_triloss_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "ulufva0o"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:33.027587+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_base_s50_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "mwm5qwjr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:36.441701+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_spectral_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-spectral-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_spectral_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_spectral_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_spectral_s50_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_spectral_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "byemz5wj"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:39.545774+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_mixed01_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-mixed01-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_mixed01_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_mixed01_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_mixed01_s50_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_mixed01_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "f3knss5m"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:43.789616+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_factorized_nsf_triloss_s50_10m_v1",
+      "name": "msa-si15-qa-final6-large-factorized-nsf-triloss-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_triloss_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_large_factorized_nsf_triloss_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_factorized_nsf_triloss_s50_10m_v1",
+        "depends_on": [
+          "final6_large_factorized_nsf_triloss_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "bh6ww4nn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:47.196768+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_gaussian_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-gaussian-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_gaussian_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_gaussian_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_gaussian_base_s49_10m_v1",
+        "depends_on": [
+          "final6_parent86_gaussian_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "b6b1013j"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:52.865316+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_gaussian_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-gaussian-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_gaussian_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_gaussian_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_gaussian_base_s50_10m_v1",
+        "depends_on": [
+          "final6_parent86_gaussian_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "s69euamz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:24:59.313528+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_mdn_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-mdn-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_mdn_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_mdn_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_mdn_base_s49_10m_v1",
+        "depends_on": [
+          "final6_parent86_mdn_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "v13l3b5h"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:05.471125+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_mdn_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-mdn-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_mdn_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_mdn_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_mdn_base_s50_10m_v1",
+        "depends_on": [
+          "final6_parent86_mdn_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "xxfvh0oe"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:09.558135+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_factorized_nsf_base_s49_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-factorized-nsf-base-s49-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_factorized_nsf_base_s49_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_factorized_nsf_base_s49_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_factorized_nsf_base_s49_10m_v1",
+        "depends_on": [
+          "final6_parent86_factorized_nsf_base_s49_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "i3qbks8w"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:13.959188+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_parent86_factorized_nsf_base_s50_10m_v1",
+      "name": "msa-si15-qa-final6-parent86-factorized-nsf-base-s50-10m-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_parent86_factorized_nsf_base_s50_10m_v1",
+      "plan": {
+        "run_id": "qa_final6_parent86_factorized_nsf_base_s50_10m_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_parent86_factorized_nsf_base_s50_10m_v1",
+        "depends_on": [
+          "final6_parent86_factorized_nsf_base_s50_10m_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "k3hdvk19"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:17.860346+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_gaussian_s49_v1",
+      "name": "msa-si15-qa-final6-large-frozen-gaussian-s49-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_gaussian_s49_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_gaussian_s49_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_gaussian_s49_v1",
+        "depends_on": [
+          "final6_large_frozen_gaussian_s49_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "toflfum4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:21.175833+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_gaussian_s50_v1",
+      "name": "msa-si15-qa-final6-large-frozen-gaussian-s50-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_gaussian_s50_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_gaussian_s50_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_gaussian_s50_v1",
+        "depends_on": [
+          "final6_large_frozen_gaussian_s50_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "o877u2e7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:25.539798+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_mdn_s49_v1",
+      "name": "msa-si15-qa-final6-large-frozen-mdn-s49-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_mdn_s49_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_mdn_s49_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_mdn_s49_v1",
+        "depends_on": [
+          "final6_large_frozen_mdn_s49_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "wh2l7cw7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:28.962512+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_mdn_s50_v1",
+      "name": "msa-si15-qa-final6-large-frozen-mdn-s50-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_mdn_s50_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_mdn_s50_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_mdn_s50_v1",
+        "depends_on": [
+          "final6_large_frozen_mdn_s50_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "ykyxxdzw"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:32.545559+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_factorized_nsf_s49_v1",
+      "name": "msa-si15-qa-final6-large-frozen-factorized-nsf-s49-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_factorized_nsf_s49_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_factorized_nsf_s49_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_factorized_nsf_s49_v1",
+        "depends_on": [
+          "final6_large_frozen_factorized_nsf_s49_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "pe22tnrm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:36.869931+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_factorized_nsf_s50_v1",
+      "name": "msa-si15-qa-final6-large-frozen-factorized-nsf-s50-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_factorized_nsf_s50_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_factorized_nsf_s50_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_factorized_nsf_s50_v1",
+        "depends_on": [
+          "final6_large_frozen_factorized_nsf_s50_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "tyizxzda"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:40.716307+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+      "name": "msa-si15-qa-final6-large-frozen-factorized-nsf-mixed01-s49-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_factorized_nsf_mixed01_s49_v1",
+        "depends_on": [
+          "final6_large_frozen_factorized_nsf_mixed01_s49_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "buvju8s5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:43.738988+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "qa_final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+      "name": "msa-si15-qa-final6-large-frozen-factorized-nsf-mixed01-s50-v1",
+      "source_sha": "ce328a578949d85468a7a38199f362de1277b1d6",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+      "plan": {
+        "run_id": "qa_final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+        "task": "final-six-independent",
+        "producer_run_id": "final6_large_frozen_factorized_nsf_mixed01_s50_v1",
+        "depends_on": [
+          "final6_large_frozen_factorized_nsf_mixed01_s50_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32
+      },
+      "session_ids": [
+        "puiz9rzn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-24T10:25:51.840467+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
