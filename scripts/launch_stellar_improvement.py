@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "expanded-report-recovery":
+        from expanded_report_launch_policy import bind_report_policy
+
+        return bind_report_policy(plan, env)
     if plan["task"] in {
         "full-label-evaluation-preparation",
         "expanded-source-contract-audit",
@@ -745,6 +749,7 @@ def main():
             "five-job-source-preparation",
             "full-label-evaluation-preparation",
             "expanded-source-contract-audit",
+            "expanded-report-recovery",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

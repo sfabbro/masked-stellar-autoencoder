@@ -497,6 +497,7 @@ def plot_pits(data, output, run_id):
         for tail in (False, True):
             fig, axes = plt.subplots(2, 3, figsize=(15, 8))
             for c, ax in enumerate(axes.flat):
+                drawn = False
                 for population, sample in populations(data).items():
                     valid = sample & data["observed"][:, c] & data[key + "_valid"][:, c]
                     if tail:
@@ -504,6 +505,7 @@ def plot_pits(data, output, run_id):
                             data["target_native"][:, 2] < -2
                         )
                     if valid.any():
+                        drawn = True
                         ax.hist(
                             data[key][valid, c],
                             bins=np.linspace(0, 1, 21),
@@ -513,6 +515,27 @@ def plot_pits(data, output, run_id):
                             color=COLORS[population],
                             label=f"{population}: n={int(valid.sum()):,}",
                         )
+                if not drawn:
+                    references = data["observed"][:, c].copy()
+                    if tail:
+                        references &= data["observed"][:, 2] & (
+                            data["target_native"][:, 2] < -2
+                        )
+                    message = (
+                        "Unavailable: quoted errors unknown"
+                        if key == "pit_observed" and references.any()
+                        else "No eligible reference labels"
+                    )
+                    ax.text(
+                        0.5,
+                        0.5,
+                        message,
+                        transform=ax.transAxes,
+                        ha="center",
+                        va="center",
+                        fontsize=9,
+                        wrap=True,
+                    )
                 ax.set_xlim(0, 1)
                 if not tail:
                     ax.axhline(1, color="gray", ls="--", lw=0.7)
@@ -520,7 +543,7 @@ def plot_pits(data, output, run_id):
                 ax.set_xlabel(key)
                 ax.set_ylabel("Density")
                 ax.grid(alpha=0.15)
-                if c == 0:
+                if c == 0 and drawn:
                     ax.legend(fontsize=7)
             title = key + (
                 " · metal-poor conditional subset (descriptive only)"

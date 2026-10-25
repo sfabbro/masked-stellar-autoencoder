@@ -224,3 +224,33 @@ def test_ancestry_slices_and_native_nll_sign():
         and r["target"] == "teff"
     )
     assert score["metric"] == "intrinsic_nll_native" and score["mean"] == 2.0
+
+
+def test_pit_panels_explain_unknown_errors_without_inventing_observed_cdf(
+    tmp_path, monkeypatch
+):
+    captured = {}
+
+    def capture(fig, stem):
+        captured[stem.name] = [
+            [text.get_text() for text in ax.texts] for ax in fig.axes
+        ]
+        import matplotlib.pyplot as plt
+
+        plt.close(fig)
+
+    monkeypatch.setattr(report, "_save", capture)
+    mask = np.ones((3, 6), bool)
+    valid = mask.copy()
+    valid[:, 4:] = False
+    data = dict(
+        evaluation_mode=np.array(["natural"] * 3),
+        xp_status=np.array(["xp_present"] * 3),
+        observed=mask,
+        target_native=np.ones((3, 6)),
+        pit_observed=np.full((3, 6), 0.5),
+        pit_observed_valid=valid,
+    )
+    report.plot_pits(data, tmp_path, "synthetic")
+    assert "quoted errors unknown" in captured["pit_observed-global"][4][0]
+    assert "No eligible reference labels" in captured["pit_observed-metalpoor"][4][0]

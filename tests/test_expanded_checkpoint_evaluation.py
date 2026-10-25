@@ -256,3 +256,24 @@ def test_synthetic_external_age_only_scoring_has_no_invented_primary_label():
     assert np.isfinite(part["external_age_intrinsic_pit"][0])
     assert np.isnan(part["external_age_intrinsic_pit"][1])
     assert np.isfinite(part["external_age_intrinsic_crps_gyr"][0])
+
+
+def test_external_age_report_accepts_readonly_memmap_without_mutating_it(tmp_path):
+    import json
+
+    path = tmp_path / "external-mask.npy"
+    np.save(path, np.array([True, True, True]))
+    original_bytes = path.read_bytes()
+    readonly = np.load(path, mmap_mode="r", allow_pickle=False)
+    point = np.ones((3, 6))
+    point[:, 4] = [5.1, 5.8, 7.0]
+    predictions = dict(
+        external_age_observed=readonly,
+        external_age_value=np.array([5.0, 6.0, np.nan]),
+        point_native=point,
+    )
+    evaluate.external_report(predictions, tmp_path / "report")
+    summary = json.loads((tmp_path / "report/summary.json").read_text())
+    assert summary["count"] == 2 and summary["pooled_with_teacher"] is False
+    assert path.read_bytes() == original_bytes
+    np.testing.assert_array_equal(readonly, [True, True, True])
