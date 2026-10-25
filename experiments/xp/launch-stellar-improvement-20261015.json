@@ -10787,6 +10787,36 @@
       "http_status": 400,
       "response_body": "No authentication provided for unknown or private image.  Use x-skaha-registry-auth request header with base64Encode(username:secret).\n",
       "response_body_truncated": false
+    },
+    {
+      "run_id": "full_label_evaluation_preparation_v2",
+      "name": "msa-si15-full-label-evaluation-preparation-v2",
+      "source_sha": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2",
+      "plan": {
+        "run_id": "full_label_evaluation_preparation_v2",
+        "task": "full-label-evaluation-preparation",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "byb6jw2j"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-25T08:43:45.325383+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
