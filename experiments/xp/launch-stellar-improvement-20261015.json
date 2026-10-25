@@ -10727,6 +10727,34 @@
       "attempted_at": "2026-10-24T14:51:06.441990+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "full_label_evaluation_preparation_v1",
+      "name": "msa-si15-full-label-evaluation-preparation-v1",
+      "source_sha": "6930d70af95b85ed8f678cba9a1c17722945c98e",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v1",
+      "plan": {
+        "run_id": "full_label_evaluation_preparation_v1",
+        "task": "full-label-evaluation-preparation",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-25T06:32:00.906714+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "Client error '400 Bad Request' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
     }
   ]
 }
