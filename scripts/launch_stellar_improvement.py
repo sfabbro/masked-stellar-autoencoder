@@ -69,6 +69,7 @@ def bind_prediction_policy(
     """Resolve the actual prediction parent/budget, never the legacy default."""
     if plan["task"] in {
         "full-label-evaluation-preparation",
+        "expanded-source-contract-audit",
         "expanded-checkpoint-evaluation",
     }:
         from expanded_evaluation_launch_policy import bind_expanded_evaluation_policy
@@ -731,6 +732,7 @@ def main():
             "six-target-preparation",
             "five-job-source-preparation",
             "full-label-evaluation-preparation",
+            "expanded-source-contract-audit",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

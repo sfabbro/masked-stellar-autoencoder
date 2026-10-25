@@ -74,3 +74,18 @@ def test_approval_does_not_authorize_training(pinned):
     policy.APPROVAL_CONFIG.write_text(yaml.safe_dump(data))
     with pytest.raises(ValueError, match="scope"):
         policy.bind_expanded_evaluation_policy(pinned, {})
+
+
+def test_source_contract_audit_is_distinct_zero_gpu_zero_training(pinned):
+    plan = dict(
+        run_id="full_label_source_contract_audit_v1",
+        task="expanded-source-contract-audit",
+        depends_on=["five_job_broad_test_preparation_v1"],
+        resources=dict(gpu=0),
+    )
+    assert (
+        policy.bind_expanded_evaluation_policy(plan, {})["MSA_EXPERIMENT_PRESENTATIONS"]
+        == "0"
+    )
+    with pytest.raises(ValueError):
+        policy.bind_expanded_evaluation_policy(dict(plan, run_id=policy.SOURCE_RUN), {})

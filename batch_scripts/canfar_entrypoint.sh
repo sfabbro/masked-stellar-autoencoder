@@ -158,6 +158,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_forward_optimizer_wave.py --original "$MSA_FORWARD_ORIGINAL" --output "$experiment_output" --mode "$MSA_FORWARD_MODE" --seed "$MSA_FORWARD_SEED" --test-count "$MSA_FORWARD_TEST_COUNT" --cal-count "$MSA_FORWARD_CAL_COUNT"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == expanded-source-contract-audit ]]; then
+      "${pixi_run[@]}" python -u scripts/audit_expanded_source_contract.py --config configs/full-label-source-preparation-20261024.yaml --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == full-label-evaluation-preparation ]]; then
       "${pixi_run[@]}" python -u scripts/prepare_full_label_evaluation.py --config configs/full-label-source-preparation-20261024.yaml --output "$experiment_output"
       exit "$?"

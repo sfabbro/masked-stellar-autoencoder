@@ -24,7 +24,13 @@ def bind_expanded_evaluation_policy(plan, env):
         )
     training = yaml.safe_load(TRAINING_CONFIG.read_text())
     task = plan["task"]
-    if task == "full-label-evaluation-preparation":
+    if task == "expanded-source-contract-audit":
+        if plan["run_id"] != "full_label_source_contract_audit_v1" or plan.get(
+            "depends_on"
+        ) != ["five_job_broad_test_preparation_v1"]:
+            raise ValueError("Unknown metadata-only source contract audit")
+        parent, gpu = training["checkpoint"], 0
+    elif task == "full-label-evaluation-preparation":
         source = yaml.safe_load(SOURCE_CONFIG.read_text())
         if (
             plan["run_id"] != SOURCE_RUN
