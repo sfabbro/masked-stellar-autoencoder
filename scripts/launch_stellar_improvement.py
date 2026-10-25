@@ -67,6 +67,13 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {
+        "full-label-evaluation-preparation",
+        "expanded-checkpoint-evaluation",
+    }:
+        from expanded_evaluation_launch_policy import bind_expanded_evaluation_policy
+
+        return bind_expanded_evaluation_policy(plan, env)
     if plan["task"] in {"five-job-source-preparation", "five-wave-training"}:
         from five_job_launch_policy import bind_five_job_policy
 
@@ -602,6 +609,7 @@ def main():
                 "six_target_source_preparation_v2": "sparse_six_target_source_assembly_complete",
                 "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
                 "five_job_broad_test_preparation_v1": "five_job_source_preparation_complete",
+                "full_label_evaluation_preparation_v1": "full_label_evaluation_source_complete",
                 "representative_metalpoor_corner_selection_v1": "representative_metalpoor_corner_selection_complete",
             }.get(name, "complete")
             if name == "final_six_large_feh_ancestry_v1":
@@ -710,6 +718,7 @@ def main():
             "final-six-independent",
             "six-target-preparation",
             "five-job-source-preparation",
+            "full-label-evaluation-preparation",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

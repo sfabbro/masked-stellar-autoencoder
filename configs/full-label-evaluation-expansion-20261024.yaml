@@ -5,7 +5,7 @@ current_training_source_sha: 7552253630fe22bcd680a91ee9fa658893218d43
 frozen_original_test_input_sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
 submission_policy:
   additional_training_jobs: 0
-  additional_source_or_inference_jobs: requires_confirmation_of_prior_five_job_limit
+  additional_source_or_inference_jobs: explicitly_authorized_as_needed_by_user
 population_policy:
   maximum_test_rows: null
   maximum_rows_per_target: null

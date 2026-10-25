@@ -1,0 +1,23 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+producer_source_sha: 7552253630fe22bcd680a91ee9fa658893218d43
+large_parent_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+original_prepared_sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
+output_root: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v1/prepared.h5
+preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v1/manifest.json
+preparation_policy: configs/full-label-source-preparation-20261024.yaml
+preparation_source_sha: same_as_runner_source
+batch_size: 128
+seed: 510027
+optimization_steps: 0
+reconstruction_presentations: 0
+scope: Uncapped source-expanded reference evaluation; no training, original benchmark retained separately, cached point outputs reused. Unknown label errors and source posterior labels remain explicit.
+arms:
+- run_id: expanded_eval_quantile3_s51_v1
+  producer_run_id: five_wave_quantile3_s51_450m_v1
+- run_id: expanded_eval_gaussian_noise_s51_v1
+  producer_run_id: five_wave_gaussian_noise_s51_450m_v1
+- run_id: expanded_eval_nsf_noise_s51_v1
+  producer_run_id: five_wave_nsf_noise_s51_450m_v1
+- run_id: expanded_eval_nsf_noise_mixed01_s51_v1
+  producer_run_id: five_wave_nsf_noise_mixed01_s51_450m_v1
