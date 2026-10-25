@@ -534,6 +534,17 @@ def submission_error_evidence(error, body_limit=8192):
     return evidence
 
 
+def launch_image(plan):
+    """Allow the published AstroAI runtime explicitly, preserving old defaults."""
+    image = plan.get("image", "images.canfar.net/astroai/base:latest")
+    if image not in {
+        "images.canfar.net/astroai/base:latest",
+        "images.canfar.net/astroai/terminal:latest",
+    }:
+        raise ValueError("Launch image must be an approved AstroAI runtime")
+    return image
+
+
 def create_form_session(client, **fields):
     from canfar.helpers.session import _response_session_id
     from canfar.utils import build
@@ -623,6 +634,7 @@ def main():
                 "six_target_source_preparation_v3": "sparse_six_target_source_assembly_complete",
                 "five_job_broad_test_preparation_v1": "five_job_source_preparation_complete",
                 "full_label_evaluation_preparation_v1": "full_label_evaluation_source_complete",
+                "full_label_evaluation_preparation_v2": "full_label_evaluation_source_complete",
                 "representative_metalpoor_corner_selection_v1": "representative_metalpoor_corner_selection_complete",
             }.get(name, "complete")
             if name == "final_six_large_feh_ancestry_v1":
@@ -786,7 +798,7 @@ def main():
                 )(
                     client,
                     name=name,
-                    image="images.canfar.net/astroai/base:latest",
+                    image=launch_image(plan),
                     kind="headless",
                     cmd="python",
                     args=payload,

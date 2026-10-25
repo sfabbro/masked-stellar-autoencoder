@@ -5,9 +5,9 @@ from pathlib import Path
 import yaml
 
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
-SOURCE_RUN = "full_label_evaluation_preparation_v1"
-SOURCE_CONFIG = Path("configs/full-label-source-preparation-20261024.yaml")
-EVALUATION_CONFIG = Path("configs/expanded-checkpoint-evaluation-20261024.yaml")
+SOURCE_RUN = "full_label_evaluation_preparation_v2"
+SOURCE_CONFIG = Path("configs/full-label-source-preparation-20261025-v2.yaml")
+EVALUATION_CONFIG = Path("configs/expanded-checkpoint-evaluation-20261025-v2.yaml")
 TRAINING_CONFIG = Path("configs/five-wave-training-20261024.yaml")
 APPROVAL_CONFIG = Path("configs/full-label-evaluation-expansion-20261024.yaml")
 
@@ -39,6 +39,7 @@ def bind_expanded_evaluation_policy(plan, env):
         ):
             raise ValueError("Source assembly differs from the frozen-role preparation")
         parent, gpu = training["checkpoint"], 0
+        env["MSA_EXPANDED_SOURCE_POLICY"] = str(SOURCE_CONFIG)
     elif task == "expanded-checkpoint-evaluation":
         suite = yaml.safe_load(EVALUATION_CONFIG.read_text())
         arm = next((a for a in suite["arms"] if a["run_id"] == plan["run_id"]), None)
@@ -53,6 +54,7 @@ def bind_expanded_evaluation_policy(plan, env):
         ):
             raise ValueError("Evaluation requires actual complete source and producer")
         parent, gpu = ROOT + "/" + producer + "/checkpoint.pth", 1
+        env["MSA_EXPANDED_EVALUATION_POLICY"] = str(EVALUATION_CONFIG)
     else:
         raise ValueError("This binding is only for source preparation and inference")
     if plan.get("resources", {}).get("gpu", 0) != gpu:

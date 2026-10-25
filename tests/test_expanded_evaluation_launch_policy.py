@@ -89,3 +89,21 @@ def test_source_contract_audit_is_distinct_zero_gpu_zero_training(pinned):
     )
     with pytest.raises(ValueError):
         policy.bind_expanded_evaluation_policy(dict(plan, run_id=policy.SOURCE_RUN), {})
+
+
+def test_expanded_v2_passes_policy_paths_and_does_not_resubmit_v1(pinned):
+    env = policy.bind_expanded_evaluation_policy(pinned, {})
+    assert env["MSA_EXPANDED_EVALUATION_POLICY"] == str(policy.EVALUATION_CONFIG)
+    plan = dict(
+        task="full-label-evaluation-preparation",
+        run_id=policy.SOURCE_RUN,
+        depends_on=["five_job_broad_test_preparation_v1"],
+        resources=dict(gpu=0),
+    )
+    assert policy.bind_expanded_evaluation_policy(plan, {})[
+        "MSA_EXPANDED_SOURCE_POLICY"
+    ] == str(policy.SOURCE_CONFIG)
+    with pytest.raises(ValueError):
+        policy.bind_expanded_evaluation_policy(
+            dict(plan, run_id="full_label_evaluation_preparation_v1"), {}
+        )

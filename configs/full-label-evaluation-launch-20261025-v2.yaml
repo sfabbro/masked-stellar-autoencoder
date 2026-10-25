@@ -1,0 +1,50 @@
+jobs:
+- run_id: full_label_evaluation_preparation_v2
+  task: full-label-evaluation-preparation
+  depends_on:
+  - five_job_broad_test_preparation_v1
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 0
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: expanded_eval_quantile3_s51_v2
+  task: expanded-checkpoint-evaluation
+  depends_on:
+  - full_label_evaluation_preparation_v2
+  - five_wave_quantile3_s51_450m_v1
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: expanded_eval_gaussian_noise_s51_v2
+  task: expanded-checkpoint-evaluation
+  depends_on:
+  - full_label_evaluation_preparation_v2
+  - five_wave_gaussian_noise_s51_450m_v1
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: expanded_eval_nsf_noise_s51_v2
+  task: expanded-checkpoint-evaluation
+  depends_on:
+  - full_label_evaluation_preparation_v2
+  - five_wave_nsf_noise_s51_450m_v1
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: expanded_eval_nsf_noise_mixed01_s51_v2
+  task: expanded-checkpoint-evaluation
+  depends_on:
+  - full_label_evaluation_preparation_v2
+  - five_wave_nsf_noise_mixed01_s51_450m_v1
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

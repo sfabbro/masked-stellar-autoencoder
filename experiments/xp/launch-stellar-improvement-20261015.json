@@ -10755,6 +10755,38 @@
       "attempts": 1,
       "submission_transport": "form_body",
       "error": "Client error '400 Bad Request' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+    },
+    {
+      "run_id": "full_label_source_contract_audit_v1",
+      "name": "msa-si15-full-label-source-contract-audit-v1",
+      "source_sha": "04df17709481978026594ac46ea05e8a8f35c335",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_source_contract_audit_v1",
+      "plan": {
+        "run_id": "full_label_source_contract_audit_v1",
+        "task": "expanded-source-contract-audit",
+        "depends_on": [
+          "five_job_broad_test_preparation_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        }
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [],
+      "status": "submission_ambiguous",
+      "attempted_at": "2026-10-25T08:37:40.515956+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "Client error '400 Bad Request' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "error_type": "HTTPStatusError",
+      "http_status": 400,
+      "response_body": "No authentication provided for unknown or private image.  Use x-skaha-registry-auth request header with base64Encode(username:secret).\n",
+      "response_body_truncated": false
     }
   ]
 }

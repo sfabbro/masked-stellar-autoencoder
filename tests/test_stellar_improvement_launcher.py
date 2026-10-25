@@ -80,3 +80,15 @@ def test_server_rejection_body_is_preserved_bounded_without_retry():
         "error": "transport",
         "error_type": "TimeoutError",
     }
+
+
+def test_explicit_public_terminal_image_preserves_old_default():
+    import pytest
+
+    assert launch.launch_image({}) == "images.canfar.net/astroai/base:latest"
+    assert (
+        launch.launch_image(dict(image="images.canfar.net/astroai/terminal:latest"))
+        == "images.canfar.net/astroai/terminal:latest"
+    )
+    with pytest.raises(ValueError):
+        launch.launch_image(dict(image="skaha/unreviewed:latest"))
