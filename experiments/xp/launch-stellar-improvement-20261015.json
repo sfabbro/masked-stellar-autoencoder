@@ -10817,6 +10817,134 @@
       "attempted_at": "2026-10-25T08:43:45.325383+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_eval_quantile3_s51_v2",
+      "name": "msa-si15-expanded-eval-quantile3-s51-v2",
+      "source_sha": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2",
+      "plan": {
+        "run_id": "expanded_eval_quantile3_s51_v2",
+        "task": "expanded-checkpoint-evaluation",
+        "depends_on": [
+          "full_label_evaluation_preparation_v2",
+          "five_wave_quantile3_s51_450m_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bkinj5nv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-25T10:09:12.076943+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_eval_gaussian_noise_s51_v2",
+      "name": "msa-si15-expanded-eval-gaussian-noise-s51-v2",
+      "source_sha": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2",
+      "plan": {
+        "run_id": "expanded_eval_gaussian_noise_s51_v2",
+        "task": "expanded-checkpoint-evaluation",
+        "depends_on": [
+          "full_label_evaluation_preparation_v2",
+          "five_wave_gaussian_noise_s51_450m_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jniy7bmw"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-25T10:09:23.459217+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_eval_nsf_noise_s51_v2",
+      "name": "msa-si15-expanded-eval-nsf-noise-s51-v2",
+      "source_sha": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2",
+      "plan": {
+        "run_id": "expanded_eval_nsf_noise_s51_v2",
+        "task": "expanded-checkpoint-evaluation",
+        "depends_on": [
+          "full_label_evaluation_preparation_v2",
+          "five_wave_nsf_noise_s51_450m_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "e3gz5ehd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-25T10:09:34.665135+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_eval_nsf_noise_mixed01_s51_v2",
+      "name": "msa-si15-expanded-eval-nsf-noise-mixed01-s51-v2",
+      "source_sha": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2",
+      "plan": {
+        "run_id": "expanded_eval_nsf_noise_mixed01_s51_v2",
+        "task": "expanded-checkpoint-evaluation",
+        "depends_on": [
+          "full_label_evaluation_preparation_v2",
+          "five_wave_nsf_noise_mixed01_s51_450m_v1"
+        ],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qa5qnbx0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-25T10:09:45.845038+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
