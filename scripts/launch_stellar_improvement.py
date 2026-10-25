@@ -521,6 +521,18 @@ def encode_creation_form(parameters):
     return content
 
 
+def submission_error_evidence(error, body_limit=8192):
+    """Retain bounded server rejection evidence without repeating a request."""
+    evidence = dict(error=str(error), error_type=type(error).__name__)
+    response = getattr(error, "response", None)
+    if response is not None:
+        evidence["http_status"] = response.status_code
+        body = response.content
+        evidence["response_body"] = body[:body_limit].decode("utf-8", errors="replace")
+        evidence["response_body_truncated"] = len(body) > body_limit
+    return evidence
+
+
 def create_form_session(client, **fields):
     from canfar.helpers.session import _response_session_id
     from canfar.utils import build
@@ -783,7 +795,9 @@ def main():
                     "accepted" if job["session_ids"] else "submission_ambiguous"
                 )
             except Exception as error:
-                job.update(status="submission_ambiguous", error=str(error))
+                job.update(
+                    status="submission_ambiguous", **submission_error_evidence(error)
+                )
             atomic_json(args.record, record)
         print(
             json.dumps(

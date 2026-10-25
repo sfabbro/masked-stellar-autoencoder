@@ -61,3 +61,22 @@ def test_catalogue_hosts_are_explicitly_added_without_disabling_tls(monkeypatch)
     assert addresses["zenodo.org"] == "192.0.2.2"
     assert addresses["github.com"] == "192.0.2.1"
     assert "unconfigured.example" not in addresses
+
+
+def test_server_rejection_body_is_preserved_bounded_without_retry():
+    from types import SimpleNamespace
+
+    error = RuntimeError("request rejected")
+    error.response = SimpleNamespace(
+        status_code=400, content=b"unsupported field" + b"x" * 9000
+    )
+    evidence = launch.submission_error_evidence(error)
+    assert evidence["http_status"] == 400
+    assert evidence["response_body"].startswith("unsupported field")
+    assert len(evidence["response_body"]) == 8192
+    assert evidence["response_body_truncated"] is True
+    assert evidence["error_type"] == "RuntimeError"
+    assert launch.submission_error_evidence(TimeoutError("transport")) == {
+        "error": "transport",
+        "error_type": "TimeoutError",
+    }
