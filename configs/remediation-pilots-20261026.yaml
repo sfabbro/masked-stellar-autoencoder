@@ -5,7 +5,7 @@ reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf
 reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
 model_config: configs/pretrain.canfar.yaml
 source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
-input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v3/manifest.json
+input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4/manifest.json
 joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3/manifest.json
 joint_preflight_run_id: remediation_joint6_preflight_v3
 reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1

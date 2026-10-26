@@ -1,0 +1,880 @@
+{
+  "status": "incomplete",
+  "run_id": "remediation_inputs_v3",
+  "training_performed": false,
+  "model_execution": false,
+  "script_sha256": "30886b2b24ecad198fdc7981154748c3cbb8fc725d7b49e254b36bebcdebbe39",
+  "audit_code_commit": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+  "started_utc": "2026-10-26T21:29:57Z",
+  "source_receipts": {
+    "prepared": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5",
+      "bytes": 2885206135,
+      "mtime_ns": 1792922916345626216,
+      "sha256": "6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9"
+    },
+    "native": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5",
+      "bytes": 119732554,
+      "mtime_ns": 1792505487849820341,
+      "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+    },
+    "legacy": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+      "bytes": 663449752,
+      "mtime_ns": 1792160309404364031,
+      "sha256": "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120"
+    },
+    "frozen": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz",
+      "bytes": 208467450,
+      "mtime_ns": 1792853447061526141,
+      "sha256": "01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882"
+    }
+  },
+  "stars": [
+    {
+      "source_id": 4185355646116022528,
+      "prepared_row": 3253052,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 270283,
+      "legacy_input_source": 2,
+      "legacy_original_row": 713379,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 270283,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 759222,
+        "value": [
+          4730.27734375,
+          2.277984619140625,
+          -3.227942943572998
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          76.42166900634766,
+          0.11001906543970108,
+          0.15038827061653137
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.018361667171120644,
+        "parallax_mas": 0.6946268081665039
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 4696862405388526080,
+      "prepared_row": 3809631,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 328602,
+      "legacy_input_source": 2,
+      "legacy_original_row": 36286,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 328602,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 37582,
+        "value": [
+          3975.21435546875,
+          0.8306902647018433,
+          -3.224889039993286
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          110.43136596679688,
+          0.15889540314674377,
+          0.13751864433288574
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.010723309591412544,
+        "parallax_mas": 0.025023208931088448
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 656977993104090624,
+      "prepared_row": 163592,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 31973,
+      "legacy_input_source": 2,
+      "legacy_original_row": 229903,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 31973,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 240565,
+        "value": [
+          4284.03515625,
+          1.5847760438919067,
+          -2.7457594871520996
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          84.84223175048828,
+          0.13830871880054474,
+          0.10707391053438187
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.016622206196188927,
+        "parallax_mas": 0.16308657824993134
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 4077588074752670208,
+      "prepared_row": 3230681,
+      "checks": [
+        "raw/scaler input exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Nonlegacy photometry source branch not independently certified",
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "gaia_vac_photometry",
+      "xp_status": "official_no_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": false,
+      "real_no_xp": true,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "xp_visible_count": 0,
+      "native": {
+        "row": 242095,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 726420,
+        "value": [
+          4458.7021484375,
+          1.8134715557098389,
+          -2.593245029449463
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          79.05026245117188,
+          0.09564956277608871,
+          0.08734479546546936
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": false,
+        "parallax_error_mas": null,
+        "parallax_mas": null
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": false
+    },
+    {
+      "source_id": 3616249836305383296,
+      "prepared_row": 2468222,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 202660,
+      "legacy_input_source": 2,
+      "legacy_original_row": 479080,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 202660,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 504049,
+        "value": [
+          4119.86962890625,
+          0.835330605506897,
+          -2.5266430377960205
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          74.55335235595703,
+          0.2921768128871918,
+          0.08839897066354752
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.014749845489859581,
+        "parallax_mas": 0.019049042835831642
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 2609559667340662912,
+      "prepared_row": 1867421,
+      "checks": [
+        "raw/scaler input exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Nonlegacy photometry source branch not independently certified",
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "gaia_vac_photometry",
+      "xp_status": "official_no_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": false,
+      "real_no_xp": true,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "xp_visible_count": 0,
+      "native": {
+        "row": 108722,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 894758,
+        "value": [
+          4437.1884765625,
+          1.444623589515686,
+          -2.5720839500427246
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          93.91180419921875,
+          0.1464925855398178,
+          0.12268433719873428
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": false,
+        "parallax_error_mas": null,
+        "parallax_mas": null
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": false
+    },
+    {
+      "source_id": 615943806835727872,
+      "prepared_row": 148787,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 29795,
+      "legacy_input_source": 2,
+      "legacy_original_row": 301492,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 29795,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 313159,
+        "value": [
+          6268.4091796875,
+          4.106898307800293,
+          -2.142794609069824
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          66.78931427001953,
+          0.09321300685405731,
+          0.10744490474462509
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.04443430155515671,
+        "parallax_mas": 13.497833251953125
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 2438481739732690176,
+      "prepared_row": 1734547,
+      "checks": [
+        "raw/scaler input exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Nonlegacy photometry source branch not independently certified",
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "gaia_vac_photometry",
+      "xp_status": "official_no_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": false,
+      "real_no_xp": true,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "xp_visible_count": 0,
+      "native": {
+        "row": 99543,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 906561,
+        "value": [
+          5170.9013671875,
+          2.377556562423706,
+          -2.029003620147705
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          74.82411193847656,
+          0.10677148401737213,
+          0.09521596133708954
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": false,
+        "parallax_error_mas": null,
+        "parallax_mas": null
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": false
+    },
+    {
+      "source_id": 78289217922968576,
+      "prepared_row": 16219,
+      "checks": [
+        "original benchmark override exact input/raw bytes",
+        "legacy cohort exact Gaia ID/110 raw XP values",
+        "legacy original ID/row \u2192 all110 XP exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": false,
+      "official_has_xp_continuous": false,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 5307,
+      "legacy_input_source": 2,
+      "legacy_original_row": 882924,
+      "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+      "xp_visible_count": 110,
+      "native": {
+        "row": 5307,
+        "survey": "apogee",
+        "source_file": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+        "source_row": 45728,
+        "value": [
+          4608.49951171875,
+          1.184237003326416,
+          -2.0429000854492188
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          17.403831481933594,
+          0.07183722406625748,
+          0.01922897808253765
+        ],
+        "raw_quality_flags": {
+          "ASPCAPFLAG": 0,
+          "STARFLAG": 0,
+          "FE_H_FLAG": 0,
+          "PARAMFLAG": [
+            0,
+            33554432,
+            32,
+            0,
+            0,
+            32,
+            0,
+            0,
+            0
+          ]
+        },
+        "raw_column_units": {
+          "TEFF": null,
+          "LOGG": null,
+          "FE_H": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": true,
+        "parallax_error_mas": 0.01961166225373745,
+        "parallax_mas": 0.055459652096033096
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": true
+    },
+    {
+      "source_id": 4926812820427520,
+      "prepared_row": 3249,
+      "checks": [
+        "raw/scaler input exact",
+        "raw survey exact integer ID/row/observed labels"
+      ],
+      "unresolved": [
+        "Nonlegacy photometry source branch not independently certified",
+        "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+      ],
+      "feature_origin": "gaia_vac_photometry",
+      "xp_status": "official_no_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": false,
+      "real_no_xp": true,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "xp_visible_count": 0,
+      "native": {
+        "row": 218,
+        "survey": "galah",
+        "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+        "source_row": 38711,
+        "value": [
+          4496.74169921875,
+          1.2567996978759766,
+          -2.1753010749816895
+        ],
+        "observed": [
+          true,
+          true,
+          true
+        ],
+        "quality_pass": [
+          true,
+          true,
+          true
+        ],
+        "uncertainty": [
+          78.0118637084961,
+          0.15588471293449402,
+          0.09151849895715714
+        ],
+        "raw_quality_flags": {
+          "flag_sp": 0,
+          "flag_sp_fit": 0,
+          "flag_fe_h": 0
+        },
+        "raw_column_units": {
+          "teff": null,
+          "logg": null,
+          "fe_h": null
+        }
+      },
+      "astrometry": {
+        "distance_fit_eligible": false,
+        "observed": false,
+        "parallax_error_mas": null,
+        "parallax_mas": null
+      },
+      "astrometry_ready": false,
+      "phot_xp_input_pass": false
+    }
+  ],
+  "unresolved": [],
+  "readiness": {
+    "phot_xp_input_pass": false,
+    "native_label_association_pass": true,
+    "astrometry_physical_likelihood_ready": false
+  },
+  "scope": "Exact selected source rows; no whole-cache content hash, physical truth or model certification",
+  "source_commit": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+  "feature_names": [
+    "W1",
+    "W2",
+    "G",
+    "BP",
+    "RP",
+    "bp_1",
+    "bp_2",
+    "bp_3",
+    "bp_4",
+    "bp_5",
+    "bp_6",
+    "bp_7",
+    "bp_8",
+    "bp_9",
+    "bp_10",
+    "bp_11",
+    "bp_12",
+    "bp_13",
+    "bp_14",
+    "bp_15",
+    "bp_16",
+    "bp_17",
+    "bp_18",
+    "bp_19",
+    "bp_20",
+    "bp_21",
+    "bp_22",
+    "bp_23",
+    "bp_24",
+    "bp_25",
+    "bp_26",
+    "bp_27",
+    "bp_28",
+    "bp_29",
+    "bp_30",
+    "bp_31",
+    "bp_32",
+    "bp_33",
+    "bp_34",
+    "bp_35",
+    "bp_36",
+    "bp_37",
+    "bp_38",
+    "bp_39",
+    "bp_40",
+    "bp_41",
+    "bp_42",
+    "bp_43",
+    "bp_44",
+    "bp_45",
+    "bp_46",
+    "bp_47",
+    "bp_48",
+    "bp_49",
+    "bp_50",
+    "bp_51",
+    "bp_52",
+    "bp_53",
+    "bp_54",
+    "bp_55",
+    "rp_1",
+    "rp_2",
+    "rp_3",
+    "rp_4",
+    "rp_5",
+    "rp_6",
+    "rp_7",
+    "rp_8",
+    "rp_9",
+    "rp_10",
+    "rp_11",
+    "rp_12",
+    "rp_13",
+    "rp_14",
+    "rp_15",
+    "rp_16",
+    "rp_17",
+    "rp_18",
+    "rp_19",
+    "rp_20",
+    "rp_21",
+    "rp_22",
+    "rp_23",
+    "rp_24",
+    "rp_25",
+    "rp_26",
+    "rp_27",
+    "rp_28",
+    "rp_29",
+    "rp_30",
+    "rp_31",
+    "rp_32",
+    "rp_33",
+    "rp_34",
+    "rp_35",
+    "rp_36",
+    "rp_37",
+    "rp_38",
+    "rp_39",
+    "rp_40",
+    "rp_41",
+    "rp_42",
+    "rp_43",
+    "rp_44",
+    "rp_45",
+    "rp_46",
+    "rp_47",
+    "rp_48",
+    "rp_49",
+    "rp_50",
+    "rp_51",
+    "rp_52",
+    "rp_53",
+    "rp_54",
+    "rp_55",
+    "U_SMSS",
+    "V_SMSS",
+    "G_SMSS",
+    "R_SMSS",
+    "I_SMSS",
+    "Z_SMSS",
+    "U_SDSS",
+    "G_SDSS",
+    "R_SDSS",
+    "I_SDSS",
+    "Z_SDSS",
+    "G_PS1",
+    "R_PS1",
+    "I_PS1",
+    "Z_PS1",
+    "Y_PS1",
+    "J",
+    "H",
+    "KS",
+    "PARALLAX",
+    "EBV",
+    "pmra",
+    "pmdec",
+    "RA",
+    "DEC"
+  ],
+  "normalization_sha256": "5fd976729dfe5ccd7b4ec2ce080e679c49f1ca5244f779cad45e148fa4836037",
+  "finished_utc": "2026-10-26T21:30:39Z"
+}

@@ -171,3 +171,62 @@ def test_real_fits_record_uses_table_schema_not_numpy_dtype(tmp_path):
             row, ["G", "bp_1", "rp_1"], hdul[1].columns.names
         )
         np.testing.assert_array_equal(values, [12.5, 7.25, np.nan])
+
+
+def vac_case():
+    from astropy.io import fits
+
+    fields = {
+        "W1mag": 10.0,
+        "W2mag": 11.0,
+        "phot_g_mean_mag": 12.0,
+        "phot_bp_mean_mag": 13.0,
+        "phot_rp_mean_mag": 14.0,
+    }
+    fields.update(
+        {
+            band + suffix: 100.0 if suffix == "_mean_flux" else 1.0
+            for band in ("phot_g", "phot_bp", "phot_rp")
+            for suffix in ("_mean_flux", "_mean_flux_error")
+        }
+    )
+    columns = [
+        fits.Column(name="source_id", format="K", array=np.array([9, 9], dtype="i8")),
+        fits.Column(name="has_xp_continuous", format="L", array=[False, False]),
+    ]
+    columns.extend(
+        fits.Column(name=k, format="D", array=[v, v]) for k, v in fields.items()
+    )
+    table = fits.BinTableHDU.from_columns(columns).data
+    names = ["W1", "W2", "G", "BP", "RP"] + [
+        f"{b}_{i}" for b in ("bp", "rp") for i in range(1, 56)
+    ]
+    raw = np.full(len(names), np.nan, dtype="f4")
+    raw[:5] = [10, 11, 12, 13, 14]
+    return table, names, raw
+
+
+def test_independent_vac_exact_ids_photometry_false_flags_and_duplicate_flux():
+    table, names, raw = vac_case()
+    proof = audit.independent_vac_photometry(table, 9, raw, names)
+    assert (
+        proof["source_rows"] == [0, 1] and proof["official_has_xp_continuous"] is False
+    )
+    table["phot_g_mean_flux"][1] = 101
+    with pytest.raises(ValueError, match="conflict"):
+        audit.independent_vac_photometry(table, 9, raw, names)
+
+
+def test_independent_vac_refuses_published_xp_or_wrong_raw_values():
+    table, names, raw = vac_case()
+    table["has_xp_continuous"][1] = True
+    with pytest.raises(ValueError, match="unanimous"):
+        audit.independent_vac_photometry(table, 9, raw, names)
+    table["has_xp_continuous"][1] = False
+    raw[0] = 15
+    with pytest.raises(ValueError, match="differs"):
+        audit.independent_vac_photometry(table, 9, raw, names)
+    raw[0] = 10
+    raw[5] = 1
+    with pytest.raises(ValueError, match="coefficients"):
+        audit.independent_vac_photometry(table, 9, raw, names)

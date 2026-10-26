@@ -650,6 +650,7 @@ def main():
                 "remediation_inputs_v1": "remediation_input_audit_complete",
                 "remediation_inputs_v2": "remediation_input_audit_complete",
                 "remediation_inputs_v3": "remediation_input_audit_complete",
+                "remediation_inputs_v4": "remediation_input_audit_complete",
                 "remediation_source_v1": "remediation_source_complete",
                 "remediation_source_v2": "remediation_source_complete",
                 "remediation_source_v3": "remediation_source_complete",

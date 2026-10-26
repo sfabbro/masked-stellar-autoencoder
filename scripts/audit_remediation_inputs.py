@@ -592,13 +592,194 @@ def audit(config, output):
     return result
 
 
+def independent_vac_photometry(table, source_id, raw, names):
+    """Independently bind the no-XP photometry fallback to all raw VAC rows."""
+    ids = np.asarray(table["source_id"])
+    if ids.dtype.kind not in "iu":
+        raise ValueError("VAC source identities must be exact integers")
+    rows = np.flatnonzero(ids == source_id)
+    if not len(rows):
+        raise ValueError("VAC source identity missing")
+
+    def flag(value):
+        if isinstance(value, bytes):
+            value = value.decode()
+        token = str(value).strip().lower()
+        return (
+            False
+            if token in ("false", "f", "0")
+            else True
+            if token in ("true", "t", "1")
+            else None
+        )
+
+    if any(flag(table["has_xp_continuous"][r]) is not False for r in rows):
+        raise ValueError("No-XP fallback requires unanimous official false flags")
+    mapping = {
+        "W1": "W1mag",
+        "W2": "W2mag",
+        "G": "phot_g_mean_mag",
+        "BP": "phot_bp_mean_mag",
+        "RP": "phot_rp_mean_mag",
+    }
+    fields = list(mapping.values()) + [
+        band + suffix
+        for band in ("phot_g", "phot_bp", "phot_rp")
+        for suffix in ("_mean_flux", "_mean_flux_error")
+    ]
+    for field in fields:
+        values = np.asarray(table[field][rows], dtype="f8").copy()
+        values[~np.isfinite(values) | (values == -9999)] = np.nan
+        if field in mapping.values():
+            values[(values <= -20) | (values >= 40)] = np.nan
+        if not np.allclose(values, values[0], rtol=1e-10, atol=1e-12, equal_nan=True):
+            raise ValueError("VAC repeated-ID photometry/flux conflict: " + field)
+    actual = []
+    for name, field in mapping.items():
+        value = float(table[field][rows[0]])
+        value = value if np.isfinite(value) and -20 < value < 40 else np.nan
+        actual.append(value)
+        same(
+            np.asarray(raw[names.index(name)], dtype="f4"),
+            np.asarray(value, dtype="f4"),
+            "VAC raw photometry differs: " + name,
+        )
+    xp = [j for j, name in enumerate(names) if name.startswith(("bp_", "rp_"))]
+    if len(xp) != 110 or np.any(np.isfinite(raw[xp]) & (raw[xp] != -9999)):
+        raise ValueError("VAC no-XP branch contains actual XP coefficients")
+    return dict(
+        source_rows=rows.tolist(),
+        canonical_row=int(rows[0]),
+        raw_photometry=dict(zip(mapping, actual, strict=True)),
+        official_has_xp_continuous=False,
+        duplicate_consistency_checked=True,
+    )
+
+
+def augment_vac_audit(config, output):
+    """Reuse hash-bound passed v3 checks; independently add only missing VAC proof."""
+    import copy
+
+    from astropy.io import fits
+
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=False)
+    reuse = config["reuse_prior_audit"]
+    prior_path = Path(reuse["path"])
+    if digest(prior_path) != reuse["sha256"]:
+        raise ValueError("Passed prior audit receipt content differs")
+    prior = json.loads(prior_path.read_text())
+    if (
+        prior["audit_code_commit"] != reuse["code_commit"]
+        or not prior["readiness"]["native_label_association_pass"]
+        or prior["unresolved"]
+    ):
+        raise ValueError("Prior native/source proof cannot be reused")
+    if [a["source_id"] for a in prior["stars"]] != config["source_ids"]:
+        raise ValueError("Diagnostic identities differ from passed prior checks")
+    for key in ("prepared", "native", "legacy", "frozen"):
+        if prior["source_receipts"][key].get("sha256") != config[key]["sha256"]:
+            raise ValueError("Reused source binding differs: " + key)
+    result = copy.deepcopy(prior)
+    result.update(
+        run_id=config["run_id"],
+        status="running",
+        started_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        audit_code_commit=subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], text=True
+        ).strip(),
+        script_sha256=digest(__file__),
+        reuse_prior_audit=reuse,
+        scope="Prior hash-bound native/legacy/scaler checks reused; independent raw Gaia-VAC no-XP photometry proof added; no neural execution",
+    )
+    write_json(output / "manifest.json", result)
+    try:
+        vac = config["gaia_vac"]
+        if (
+            Path(vac["path"]).stat().st_size != vac["bytes"]
+            or digest(vac["path"]) != vac["sha256"]
+        ):
+            raise ValueError("Raw Gaia VAC content differs from mounted-source pin")
+        result["gaia_vac_receipt"] = dict(vac, publisher_sha_known=False)
+        target = [a for a in result["stars"] if not a["phot_xp_input_pass"]]
+        if any(a["feature_origin"] != "gaia_vac_photometry" for a in target):
+            raise ValueError("Unresolved non-VAC branch must not be silently cleared")
+        saved = []
+        with (
+            h5py.File(config["prepared"]["path"], "r") as data,
+            fits.open(vac["path"], memmap=True) as hdus,
+        ):
+            names = [text(v) for v in data["feature_names"][:]]
+            for star in target:
+                row = star["prepared_row"]
+                sid = star["source_id"]
+                if int(data["source_id"][row]) != sid:
+                    raise ValueError("Prepared selected row identity changed")
+                if (
+                    not star.get("official_has_xp_known")
+                    or star.get("official_has_xp_continuous")
+                    or not star.get("real_no_xp")
+                ):
+                    raise ValueError("Prepared official-no-XP classification differs")
+                raw = data["raw"][row]
+                expected, visible = normalize(
+                    raw, names, data["scaler_center"][:], data["scaler_scale"][:]
+                )
+                same(
+                    expected,
+                    data["input"][row],
+                    "Selected VAC parent-normalized input differs",
+                )
+                same(visible, data["visible"][row], "Selected VAC visibility differs")
+                star["gaia_vac"] = independent_vac_photometry(
+                    hdus[1].data, sid, raw, names
+                )
+                star["checks"].append(
+                    "independent raw Gaia VAC exact ID/duplicate flags/flux/magnitude/withheld XP proof"
+                )
+                star["unresolved"] = [
+                    v
+                    for v in star["unresolved"]
+                    if v
+                    != "Nonlegacy photometry source branch not independently certified"
+                ]
+                star["phot_xp_input_pass"] = True
+                saved.append(raw)
+        result["readiness"]["phot_xp_input_pass"] = all(
+            a["phot_xp_input_pass"] for a in result["stars"]
+        )
+        result["status"] = (
+            "remediation_input_audit_complete"
+            if result["readiness"]["phot_xp_input_pass"]
+            else "incomplete"
+        )
+        np.savez_compressed(
+            output / "vac-selected-raw.npz",
+            source_id=np.array([a["source_id"] for a in target], dtype="i8"),
+            raw=np.asarray(saved),
+            feature_names=np.asarray(names),
+        )
+        result["vac_selected_arrays_sha256"] = digest(output / "vac-selected-raw.npz")
+    except Exception as exc:
+        result.update(
+            status="failed", error=dict(type=type(exc).__name__, message=str(exc))
+        )
+    result["finished_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    write_json(output / "manifest.json", result)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     config = yaml.safe_load(Path(args.config).read_text())
-    result = audit(config, args.output)
+    result = (
+        augment_vac_audit(config, args.output)
+        if config.get("reuse_prior_audit")
+        else audit(config, args.output)
+    )
     print(json.dumps({"status": result["status"], "output": args.output}))
     return 1 if result["status"] == "failed" else 0
 

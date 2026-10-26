@@ -11256,6 +11256,88 @@
         "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/quota-block/remediation_joint6_preflight_v2-quota-evidence.log",
         "automatic_retry": false
       }
+    },
+    {
+      "run_id": "remediation_inputs_v3",
+      "name": "msa-si15-remediation-inputs-v3",
+      "source_sha": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v3",
+      "plan": {
+        "run_id": "remediation_inputs_v3",
+        "task": "remediation-input-audit",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "q4xg1538"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:28:38.247886+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_source_v3",
+      "name": "msa-si15-remediation-source-v3",
+      "source_sha": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3",
+      "plan": {
+        "run_id": "remediation_source_v3",
+        "task": "remediation-source",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "d0rny11x"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:28:59.803880+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_joint6_preflight_v3",
+      "name": "msa-si15-remediation-joint6-preflight-v3",
+      "source_sha": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3",
+      "plan": {
+        "run_id": "remediation_joint6_preflight_v3",
+        "task": "remediation-joint-preflight",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tgcwpgsi"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:29:11.246626+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

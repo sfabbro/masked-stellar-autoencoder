@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015"
 REQUIRED = {
-    "remediation_inputs_v3": "remediation_input_audit_complete",
+    "remediation_inputs_v4": "remediation_input_audit_complete",
     "remediation_source_v3": "remediation_source_complete",
     "remediation_joint6_preflight_v3": "remediation_joint6_preflight_pass",
 }
@@ -34,9 +34,14 @@ def ready(manifests, expected_source, head_sha):
         if actual != status:
             return "pending"
         code = manifest.get("audit_code_commit", manifest.get("source_commit"))
-        if code != expected_source or manifest.get("run_id") != run:
+        expected = (
+            expected_source[run]
+            if isinstance(expected_source, dict)
+            else expected_source
+        )
+        if code != expected or manifest.get("run_id") != run:
             raise ValueError("Prerequisite run/source binding differs")
-    audit = manifests["remediation_inputs_v3"]["readiness"]
+    audit = manifests["remediation_inputs_v4"]["readiness"]
     source = manifests["remediation_source_v3"]
     preflight = manifests["remediation_joint6_preflight_v3"]
     if not audit.get("phot_xp_input_pass") or not audit.get(
@@ -75,6 +80,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--prerequisite-sha", required=True)
+    parser.add_argument("--audit-source-sha")
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--hours", type=float, default=12)
@@ -136,7 +142,10 @@ def main():
                     unavailable.append(
                         dict(run_id=run, error_type=type(error).__name__)
                     )
-            gate = ready(manifests, args.prerequisite_sha, head_sha)
+            expected_sources = {run: args.prerequisite_sha for run in REQUIRED}
+            if args.audit_source_sha:
+                expected_sources["remediation_inputs_v4"] = args.audit_source_sha
+            gate = ready(manifests, expected_sources, head_sha)
             state.update(
                 status=gate,
                 manifests=manifests,
