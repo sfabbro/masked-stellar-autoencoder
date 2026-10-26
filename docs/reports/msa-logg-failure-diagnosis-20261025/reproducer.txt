@@ -1,0 +1,55 @@
+import json,csv,hashlib
+from pathlib import Path
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+repo=Path('/Users/fabbros/src/sfabbro/masked-stellar-autoencoder');base=repo/'experiments/xp/results-stellar-improvement/five-job-large-wave-20261024/completed-preservation';out=Path('/tmp/msa-logg-forensics');out.mkdir(exist_ok=True)
+arms=['quantile3','gaussian_noise','nsf_noise','nsf_noise_mixed01'];data={};metrics=[]
+keys=['source_id','target_native','observed','label_source','real_xp_present','real_no_xp','andrae_prediction_native','andrae_matched','error','error_observed']
+for arm in arms:
+ d=base/f'five_wave_{arm}_s51_450m_v1'
+ with np.load(d/'test-natural-predictions.npz',allow_pickle=False) as z:
+  data[arm]={'pred':z['point_native']}
+  if arm==arms[0]:common={k:z[k] for k in keys}
+  else:assert np.array_equal(z['source_id'],common['source_id']) and np.array_equal(z['target_native'],common['target_native'],equal_nan=True)
+ with np.load(d/'test-xp_masked_ablation-predictions.npz',allow_pickle=False) as z:
+  order=np.argsort(common['source_id']);where=np.searchsorted(common['source_id'][order],z['source_id']);assert (where<len(order)).all();idx=order[where];assert np.array_equal(common['source_id'][idx],z['source_id']);data[arm]['masked']=np.full_like(data[arm]['pred'],np.nan);data[arm]['masked'][idx]=z['point_native']
+y=common['target_native'][:,1];valid=common['observed'][:,1]&np.isfinite(y);xp=common['real_xp_present'];src=common['label_source'][:,1]
+def stats(pred,mask):
+ mask=mask&valid&np.isfinite(pred);e=pred[mask]-y[mask]
+ return dict(n=int(mask.sum()),mae=float(np.abs(e).mean()),bias=float(e.mean()),median=float(np.median(e)),p90_abs=float(np.quantile(np.abs(e),.9)),catastrophic_fraction=float((np.abs(e)>.5).mean())) if len(e) else dict(n=0)
+bins=np.array([0,.5,1,1.5,2,2.5,3,3.5,4,4.25,4.5,4.75,5,5.5])
+for arm in arms:
+ for modality,mask in [('xp',xp),('no_xp',common['real_no_xp']),('xp_artificially_masked',xp)]:
+  pred=data[arm]['masked' if modality=='xp_artificially_masked' else 'pred'][:,1]
+  for lo,hi in zip(bins[:-1],bins[1:]):metrics.append(dict(arm=arm,modality=modality,lower=lo,upper=hi,**stats(pred,mask&(y>=lo)&(y<hi))))
+source=[]
+for s in np.unique(src[valid]):
+ for mode,mask in [('xp',xp),('no_xp',common['real_no_xp'])]:
+  for arm in arms:source.append(dict(source=str(s),modality=mode,arm=arm,**stats(data[arm]['pred'][:,1],(src==s)&mask)))
+a=common['andrae_prediction_native'][:,1];matched=common['andrae_matched']&xp
+paired=[]
+for lo,hi in zip(bins[:-1],bins[1:]):
+ for arm in arms+['andrae']:
+  p=a if arm=='andrae' else data[arm]['pred'][:,1];paired.append(dict(arm=arm,lower=lo,upper=hi,**stats(p,matched&(y>=lo)&(y<hi))))
+residuals=np.column_stack([data[arm]['pred'][valid&xp,1]-y[valid&xp] for arm in arms]);cor=np.corrcoef(residuals.T)
+summary=dict(sample='Original104385 identical-ID heldout saved arrays; no model execution',sources=source,paired=paired,residual_correlation=cor.tolist(),bins=metrics)
+(out/'diagnosis.json').write_text(json.dumps(summary,indent=2)+'\n')
+for name,rows in [('logg-bins.csv',metrics),('paired-andrae-bins.csv',paired),('source-summary.csv',source)]:
+ with (out/name).open('w') as f:w=csv.DictWriter(f,fieldnames=list(dict.fromkeys(k for r in rows for k in r)));w.writeheader();w.writerows(rows)
+fig,axes=plt.subplots(2,2,figsize=(13,9));colors=['#717d87','#376b94','#369181','#a55a35']
+for ax,mode in zip(axes.flat[:3],['xp','no_xp','xp_artificially_masked']):
+ for arm,c in zip(arms,colors):
+  rows=[r for r in metrics if r['arm']==arm and r['modality']==mode and r['n']>=20]
+  ax.plot([(r['lower']+r['upper'])/2 for r in rows],[r['median'] for r in rows],label=arm,color=c,marker='.')
+ ax.axhline(0,color='black',lw=.6);ax.set(title=mode,xlabel='Reference log g [dex]',ylabel='Median prediction minus reference [dex]');ax.legend(fontsize=7);ax.grid(alpha=.15)
+ax=axes.flat[3]
+for arm,c in zip(['gaussian_noise','andrae'],['#376b94','#222222']):
+ rows=[r for r in paired if r['arm']==arm and r['n']>=20];ax.plot([(r['lower']+r['upper'])/2 for r in rows],[r['median'] for r in rows],label=arm,color=c,marker='.')
+ax.axhline(0,color='black',lw=.6);ax.set(title='Same XP stars: Gaussian versus Andrae',xlabel='Reference log g [dex]',ylabel='Median prediction minus reference [dex]');ax.legend();ax.grid(alpha=.15)
+fig.suptitle('Where log g fails: identical saved stars, heads and input ablation');fig.tight_layout();fig.savefig(out/'logg-diagnosis.png',dpi=150);fig.savefig(out/'logg-diagnosis.pdf');plt.close(fig)
+print('SOURCE',source)
+print('CORRELATION',cor)
+print('PAIRED',[(r['arm'],r['lower'],r['upper'],r['n'],r.get('mae'),r.get('median')) for r in paired if r['arm'] in ['gaussian_noise','andrae'] and r['n']>=20])
+print('MASK',[(r['modality'],r['lower'],r['upper'],r['n'],r.get('mae'),r.get('median')) for r in metrics if r['arm']=='gaussian_noise' and r['n']>=20])

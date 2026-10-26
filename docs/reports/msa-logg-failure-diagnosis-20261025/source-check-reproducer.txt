@@ -1,0 +1,12 @@
+import csv, math
+from pathlib import Path
+rows=list(csv.DictReader(Path('/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/docs/reports/msa-final-large-sample-20261025/all-point-metrics.csv').open()))
+for arm in ('quantile3','gaussian_noise','nsf_noise','nsf_noise_mixed01'):
+ for pop in ('natural_xp','natural_no_xp'):
+  selected={r['label_source']:r for r in rows if r['arm']==arm and r['target']=='logg' and r['scope']=='global' and r['population']==pop}
+  total=selected['all_sources'];sources=[selected[k] for k in ('galah','apogee')]
+  assert sum(int(x['count']) for x in sources)==int(total['count'])
+  for key in ('mae','bias'):
+   expected=sum(int(x['count'])*float(x[key]) for x in sources)/int(total['count'])
+   assert math.isclose(expected,float(total[key]),rel_tol=1e-12,abs_tol=1e-12)
+  print(arm,pop,'n',total['count'],'MAE',total['mae'],'source weighted identities PASS')

@@ -1,0 +1,62 @@
+[
+  {
+    "path": "diagnosis.json",
+    "bytes": 73412,
+    "sha256": "8af1100d06804cc5d0aa2bf55184895ad889aebcb09a30d2ebe4a961f009361f"
+  },
+  {
+    "path": "label-source-audit.md",
+    "bytes": 5214,
+    "sha256": "0471c8e777bee2e09224722f13709d8ad19b4c078c96973eb0d34ce9a6c821bf"
+  },
+  {
+    "path": "logg-bins.csv",
+    "bytes": 20483,
+    "sha256": "d0bd20f7a1da02d95bf1590a22e950759858a0cb4091a1af4ba6b876c79e41b7"
+  },
+  {
+    "path": "logg-diagnosis.pdf",
+    "bytes": 29754,
+    "sha256": "eb27714f95057f163417aecbb77f0c19fdd00d8e338a1486fd1cee404ad18f2d"
+  },
+  {
+    "path": "logg-diagnosis.png",
+    "bytes": 352897,
+    "sha256": "29140dbf6729e5d6bea064bf51aac1c86be57e54254d19f9a53cc8ca64bfede0"
+  },
+  {
+    "path": "paired-andrae-bins.csv",
+    "bytes": 8218,
+    "sha256": "e05ed05b20898c07879278879f63735147ffb9b013c7f03a622d99bdbf1f2d8a"
+  },
+  {
+    "path": "parent-fit-distribution.json",
+    "bytes": 2184,
+    "sha256": "8629cedf051c6218c3e4c626b8540ab5cf711cee058941165cb7683585d5edc7"
+  },
+  {
+    "path": "reproducer.txt",
+    "bytes": 4920,
+    "sha256": "303be89c62ed7d8d3b89944a234b6be417ae36bee7de2a516346ed8d845eb46e"
+  },
+  {
+    "path": "source-check-reproducer.txt",
+    "bytes": 893,
+    "sha256": "2d4cbfead63aebd6d22b7563de4f2812da2c23247bf9136ce37ccc3ee5fc88d0"
+  },
+  {
+    "path": "source-summary.csv",
+    "bytes": 2169,
+    "sha256": "8b10d3e2a7137c736eb50893a476e297cc61356ab9cb69c765256ef665522509"
+  },
+  {
+    "path": "training-audit.md",
+    "bytes": 6439,
+    "sha256": "e0722d56aade07c768e4466c593bd846cb1b6cd36c53cc784e70f0251eb20adc"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 353,
+    "sha256": "d45bba7150e3d9e246051c1c3ac26b350617b9875462cad54c5ed47102a18239"
+  }
+]

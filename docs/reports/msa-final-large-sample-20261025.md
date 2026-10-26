@@ -1,5 +1,7 @@
 # Final large-sample six-target review
 
+**Follow-up:** [The log g diagnosis](msa-logg-failure-diagnosis-20261025.md) finds major structured failures hidden by global averages. The present recipe should not be treated as reliable across the full gravity range.
+
 The four trained recipes and their expanded scoring/reporting jobs finished. The [complete report with all plots and metric tables](msa-final-large-sample-20261025/index.html) is the main review artifact.
 
 Gaussian gives the best global XP MAE for log g, Fe/H, age and distance; noise-aware NSF is best for Teff and alpha among these four recipes. Mixed NLL + 0.1 contrastive improves metal-poor XP Fe/H MAE from 0.2286 to 0.2198 dex versus matched NSF but worsens global Fe/H/alpha errors. Retain Gaussian and NSF as the two useful candidates; mixed remains a tail-focused alternative, not an automatic promotion.
