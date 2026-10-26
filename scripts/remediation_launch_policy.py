@@ -7,10 +7,10 @@ from pathlib import Path
 import yaml
 
 CONFIGS = {
-    "remediation-input-audit": Path("configs/remediation-input-audit-20261026-v2.yaml"),
-    "remediation-source": Path("configs/remediation-source-20261026-v2.yaml"),
+    "remediation-input-audit": Path("configs/remediation-input-audit-20261026-v3.yaml"),
+    "remediation-source": Path("configs/remediation-source-20261026-v3.yaml"),
     "remediation-joint-preflight": Path(
-        "configs/remediation-joint-preflight-20261026-v2.yaml"
+        "configs/remediation-joint-preflight-20261026-v3.yaml"
     ),
     "remediation-pilot": Path("configs/remediation-pilots-20261026.yaml"),
 }

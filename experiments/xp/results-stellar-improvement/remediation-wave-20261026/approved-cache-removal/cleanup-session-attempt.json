@@ -1,0 +1,18 @@
+{
+  "name": "msa-si15-approved-cache-removal-20261026-v1",
+  "attempted_utc": "2026-10-26T21:10:27.857826+00:00",
+  "task": "human_approved_exact_four_cache_removal",
+  "paths": [
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache"
+  ],
+  "payload_sha256": "99c58a3f3618711d752bfe145d4df3d50c629493bcf33337736e2447b3df0100",
+  "native_model_execution": false,
+  "project_output_writes": false,
+  "session_ids": [],
+  "status": "submission_ambiguous",
+  "error_type": "HTTPStatusError",
+  "error": "Server error '500 Internal Server Error' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500"
+}

@@ -165,6 +165,7 @@ def validate_config(cfg):
     if cfg["run_id"] not in {
         "remediation_joint6_preflight_v1",
         "remediation_joint6_preflight_v2",
+        "remediation_joint6_preflight_v3",
     } or cfg["kinds"] != [
         "gaussian",
         "mdn",

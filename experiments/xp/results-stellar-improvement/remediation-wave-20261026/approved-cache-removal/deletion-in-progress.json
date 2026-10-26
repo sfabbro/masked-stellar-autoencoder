@@ -1,0 +1,88 @@
+{
+  "status": "managing_recursive_jobs",
+  "authorization": "User explicitly approved removal of four reviewed batch-cache trees",
+  "archival_performed": false,
+  "started_utc": "2026-10-26T21:13:10.691690+00:00",
+  "before": {
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache",
+      "type": "directory",
+      "bytes": 1209261006
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+      "type": "directory",
+      "bytes": 9052200935
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache",
+      "type": "directory",
+      "bytes": 9035417666
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache",
+      "type": "directory",
+      "bytes": 9044413307
+    }
+  },
+  "removed": [],
+  "preserved_prediction_arrays": {
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/prediction-arrays": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/prediction-arrays",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/prediction-arrays",
+      "type": "directory",
+      "bytes": 10873591360
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/prediction-arrays": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/prediction-arrays",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/prediction-arrays",
+      "type": "directory",
+      "bytes": 24077244000
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/prediction-arrays": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/prediction-arrays",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/prediction-arrays",
+      "type": "directory",
+      "bytes": 24077244000
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/prediction-arrays": {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/prediction-arrays",
+      "uri": "vos://cadc.nrc.ca~arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/prediction-arrays",
+      "type": "directory",
+      "bytes": 24077244000
+    }
+  },
+  "project_before": {
+    "ivo://cadc.nrc.ca/vospace/core#inheritPermissions": "true",
+    "ivo://ivoa.net/vospace/core#creator": "sfabbro",
+    "ivo://ivoa.net/vospace/core#date": "2026-09-26T02:34:38.329",
+    "ivo://ivoa.net/vospace/core#groupwrite": "ivo://cadc.nrc.ca/gms?k-pop",
+    "ivo://ivoa.net/vospace/core#ispublic": "true",
+    "ivo://ivoa.net/vospace/core#length": "20000005095420",
+    "ivo://ivoa.net/vospace/core#quota": "20000000000000"
+  },
+  "current_path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+  "jobs": {
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache": {
+      "url": "https://ws-uv.canfar.net/arc/async-delete/y1g2ooc4vmssbkrp",
+      "phase": "EXECUTING",
+      "recovered_existing_job": true
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache": {
+      "phase": "EXECUTING",
+      "url": "https://ws-uv.canfar.net/arc/async-delete/u4syqfvp1jo7885g"
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache": {
+      "phase": "EXECUTING",
+      "url": "https://ws-uv.canfar.net/arc/async-delete/x5g2ep7liw5wogpb"
+    },
+    "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache": {
+      "phase": "EXECUTING",
+      "url": "https://ws-uv.canfar.net/arc/async-delete/gm4o53ivezhv3fy6"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+run_id: remediation_joint6_preflight_v3
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+kinds:
+- gaussian
+- mdn
+- nsf
+seed: 20261026
+updates: 750
+batch_size: 512
+holdout_rows: 4096
+width: 64
+components: 4
+learning_rate: 0.001
+training_particles: 32
+diagnostic_particles: 64
+diagnostic_rows: 128
+diagnostic_sigma: 0.05
+draws: 16384
+precision: float32_train_float64_diagnostics
+gates:
+  covariance_relative_frobenius_max: 0.3
+  cross_covariance_absolute_error_max: 0.2
+  mean_absolute_error_max: 0.15
+  nll_improvement_min: 0.1
+  relative_ess_median_min: 0.1
+  relative_ess_min: 0.01
+  replica_gap_p95_max: 0.1
+  refinement_gap_p95_max: 0.1
+scope: CUDA CANFAR synthetic head-only fit; no MSA weights or physical-label certification;
+  64 and 128 independent-scramble QMC diagnostics are finite-particle admission gates,
+  not numerical-parity tolerances
+reuse_preflight:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v1
+  source_commit: 4849f477c5476cfd5bb21069c6e017a42a3107b5
+supersedes_quota_failed_attempt: remediation_joint6_preflight_v2
+storage_recovery: User approved removal of four reviewed evaluation batch-cache trees;
+  launch requires live ARC output reserve >=20GB; preserve v1/v2 outputs

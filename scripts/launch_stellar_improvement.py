@@ -649,10 +649,13 @@ def main():
             expected_status = {
                 "remediation_inputs_v1": "remediation_input_audit_complete",
                 "remediation_inputs_v2": "remediation_input_audit_complete",
+                "remediation_inputs_v3": "remediation_input_audit_complete",
                 "remediation_source_v1": "remediation_source_complete",
                 "remediation_source_v2": "remediation_source_complete",
+                "remediation_source_v3": "remediation_source_complete",
                 "remediation_joint6_preflight_v1": "remediation_joint6_preflight_pass",
                 "remediation_joint6_preflight_v2": "remediation_joint6_preflight_pass",
+                "remediation_joint6_preflight_v3": "remediation_joint6_preflight_pass",
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",

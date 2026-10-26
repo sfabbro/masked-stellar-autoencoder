@@ -66,3 +66,18 @@ def test_project_storage_gate_blocks_actual_over_quota_and_missing_properties():
     assert receipt["available_bytes"] == 50_000_000_000
     with pytest.raises(KeyError):
         policy.assert_project_storage_budget(dict(properties={}))
+
+
+def test_post_cleanup_recovery_plan_is_distinct_and_matches_bound_configs():
+    root = Path(__file__).resolve().parents[1]
+    jobs = yaml.safe_load(
+        (root / "configs/remediation-recovery-launch-20261026-v3.yaml").read_text()
+    )["jobs"]
+    assert len(jobs) == 3
+    for job in jobs:
+        assert job["run_id"].endswith("_v3")
+        assert (
+            yaml.safe_load((root / policy.CONFIGS[job["task"]]).read_text())["run_id"]
+            == job["run_id"]
+        )
+        policy.bind_remediation_policy(job, {})

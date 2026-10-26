@@ -2,9 +2,9 @@ jobs:
 - run_id: remediation_huber_frozen_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -13,9 +13,9 @@ jobs:
 - run_id: remediation_huber_ft_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -24,9 +24,9 @@ jobs:
 - run_id: remediation_huber_ft_recon003_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -35,9 +35,9 @@ jobs:
 - run_id: remediation_gaussian6_frozen_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -46,9 +46,9 @@ jobs:
 - run_id: remediation_gaussian6_ft_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -57,9 +57,9 @@ jobs:
 - run_id: remediation_gaussian6_ft_recon003_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -68,9 +68,9 @@ jobs:
 - run_id: remediation_mdn6_frozen_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -79,9 +79,9 @@ jobs:
 - run_id: remediation_mdn6_ft_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -90,9 +90,9 @@ jobs:
 - run_id: remediation_mdn6_ft_recon003_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -101,9 +101,9 @@ jobs:
 - run_id: remediation_nsf6_frozen_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -112,9 +112,9 @@ jobs:
 - run_id: remediation_nsf6_ft_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -123,9 +123,9 @@ jobs:
 - run_id: remediation_nsf6_ft_recon003_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -134,9 +134,9 @@ jobs:
 - run_id: remediation_gaussian6_ft_parallax_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
@@ -145,9 +145,9 @@ jobs:
 - run_id: remediation_nsf6_ft_parallax_v1
   task: remediation-pilot
   depends_on:
-  - remediation_inputs_v2
-  - remediation_source_v2
-  - remediation_joint6_preflight_v2
+  - remediation_inputs_v3
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
   resources:
     cores: 4
     ram: 64
