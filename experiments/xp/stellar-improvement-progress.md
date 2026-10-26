@@ -1416,3 +1416,12 @@ Distinctv2 source/audit/preflight outputs are prepared; the NSF preflight reuses
 ### Recovery first-attempt submissions at c406bd37610ce13578c20e6f2194682584fd8727
 
 FullCI1089PASS/4skip and53focusedchecks passed, origin publication complete. Corrected inputauditv2 jrupcxht, sparse sourcev2 m9fts3cl and unfinished-NSF preflightv2 u3btlmz2 accepted once. Gaussian/MDN completed checks retained without retraining. All fourteen supervised pilots are prepared, not yet submitted: they require actual source/input/head gates. No recurring monitor recreated. Recovery launch receipts are durable under remediation-wave-20261026/recovery-launch-state.json.
+
+
+### Actual recovery failure: ARC project quota exhausted — no pilot dispatch
+
+All three v2 accepted jobs are actual Failed, each runtime reports Errno122 Disk quota exceeded while writing its initial log/manifest. This is a verified storage failure, not a model/label/NSF science result. ARC configured storage metadata shows project quota20,000,000,000,000 bytes and used20,000,005,095,420 bytes. No fourteen-arm pilot has been submitted; no dispatcher or recurring monitor started. No more attempts until storage is resolved and a distinct checked launch is concrete.
+
+Read-only inventory identifies28,341,292,914 bytes in the four completed expanded-evaluation batch-cache trees as archive candidates, not safe-to-discard duplicates;83,105,323,360 bytes of prediction arrays plus all checkpoints/reports/pilots must stay preserved. No storage contents changed. User asked to choose archive/cleanup review or quota/alternate-storage provision. Small receipts and exact paths are saved in remediation-wave-20261026/quota-block. A new launcher guard reads actual ARC quota and blocks before any job attempt without20GB output reserve;13focused launch/guard tests passed. Previous fullCI1089PASS4skip retained; no native local execution.
+
+Final quota-guard verification: full CI **1090 passed, 4 skipped**, hooks PASS; actual ARC metadata causes guard rejection before any attempt. No dispatcher or recurring monitor started. No storage deletion/transfer performed. Await storage/quota decision.

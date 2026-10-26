@@ -1,5 +1,7 @@
 """Explicitly authorized remediation preflights and pilots; immutable first attempts."""
 
+import ast
+from collections.abc import Mapping
 from pathlib import Path
 
 import yaml
@@ -47,3 +49,27 @@ def bind_remediation_policy(plan, env):
             raise ValueError("Remediation source/config/budget override differs")
         env[key] = value
     return env
+
+
+def assert_project_storage_budget(info, minimum_available_bytes=20_000_000_000):
+    """Fail closed before submission when ARC's project quota lacks output space."""
+    props = info.get("properties", {})
+    if isinstance(props, str):
+        props = ast.literal_eval(props)
+    if not isinstance(props, Mapping):
+        raise ValueError("ARC quota metadata is unavailable")
+    quota = int(props["ivo://ivoa.net/vospace/core#quota"])
+    used = int(props["ivo://ivoa.net/vospace/core#length"])
+    if quota <= 0 or used < 0 or minimum_available_bytes < 0:
+        raise ValueError("Invalid ARC quota accounting")
+    available = quota - used
+    if available < minimum_available_bytes:
+        raise ValueError(
+            f"ARC project quota blocks remediation submission: used={used}, quota={quota}, available={available}, required_output_reserve={minimum_available_bytes}; no job attempted"
+        )
+    return dict(
+        quota_bytes=quota,
+        used_bytes=used,
+        available_bytes=available,
+        minimum_available_bytes=minimum_available_bytes,
+    )

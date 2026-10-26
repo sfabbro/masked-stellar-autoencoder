@@ -48,3 +48,21 @@ def test_remediation_explicit_config_resources_and_pin(
     ]:
         with pytest.raises(ValueError):
             policy.bind_remediation_policy(dict(plan, **bad), {})
+
+
+def test_project_storage_gate_blocks_actual_over_quota_and_missing_properties():
+    props = {
+        "ivo://ivoa.net/vospace/core#quota": "20000000000000",
+        "ivo://ivoa.net/vospace/core#length": "20000005095420",
+    }
+    with pytest.raises(ValueError, match="no job attempted"):
+        policy.assert_project_storage_budget(dict(properties=str(props)))
+    props["ivo://ivoa.net/vospace/core#length"] = "19950000000000"
+    from types import MappingProxyType
+
+    receipt = policy.assert_project_storage_budget(
+        dict(properties=MappingProxyType(props))
+    )
+    assert receipt["available_bytes"] == 50_000_000_000
+    with pytest.raises(KeyError):
+        policy.assert_project_storage_budget(dict(properties={}))

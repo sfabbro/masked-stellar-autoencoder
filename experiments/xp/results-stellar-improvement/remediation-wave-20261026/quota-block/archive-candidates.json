@@ -1,0 +1,111 @@
+{
+  "observed_utc": "2026-10-26T20:54:56.161066+00:00",
+  "entries": [
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/manifest.json",
+      "bytes": 2311,
+      "type": "file"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/prediction-arrays",
+      "bytes": 10873591360,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/external-apokasc3-age",
+      "bytes": 0,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache",
+      "bytes": 1209261006,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/manifest.json",
+      "bytes": 2326,
+      "type": "file"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/prediction-arrays",
+      "bytes": 24077244000,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/external-apokasc3-age",
+      "bytes": 0,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+      "bytes": 9052200935,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/manifest.json",
+      "bytes": 2311,
+      "type": "file"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/prediction-arrays",
+      "bytes": 24077244000,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/external-apokasc3-age",
+      "bytes": 0,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache",
+      "bytes": 9035417666,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/manifest.json",
+      "bytes": 2335,
+      "type": "file"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/prediction-arrays",
+      "bytes": 24077244000,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/external-apokasc3-age",
+      "bytes": 0,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache",
+      "bytes": 9044413307,
+      "type": "directory"
+    }
+  ],
+  "archive_candidates": [
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache",
+      "bytes": 1209261006,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache",
+      "bytes": 9052200935,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache",
+      "bytes": 9035417666,
+      "type": "directory"
+    },
+    {
+      "path": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache",
+      "bytes": 9044413307,
+      "type": "directory"
+    }
+  ],
+  "archive_candidate_bytes": 28341292914,
+  "preserve_prediction_array_bytes": 83105323360,
+  "action_taken": "none; read-only inventory only; no archive/deletion/transfer authorized",
+  "required_before_removal": "User approves destination/list; copy full contents+manifests, verify full content hashes, preserve source bindings and archive location; never discard unique artifacts"
+}

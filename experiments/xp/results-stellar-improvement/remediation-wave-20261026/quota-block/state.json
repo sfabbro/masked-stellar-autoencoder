@@ -1,0 +1,26 @@
+{
+  "observed_utc": "2026-10-26T20:57:18.208104+00:00",
+  "status": "blocked_disk_quota",
+  "quota_bytes": 20000000000000,
+  "used_bytes": 20000005095420,
+  "accepted_jobs": {
+    "remediation_inputs_v2": "jrupcxht",
+    "remediation_source_v2": "m9fts3cl",
+    "remediation_joint6_preflight_v2": "u3btlmz2"
+  },
+  "actual_session_status": {
+    "jrupcxht": "Failed",
+    "m9fts3cl": "Failed",
+    "u3btlmz2": "Failed"
+  },
+  "cause": "Actual Errno122 Disk quota exceeded in all three remote runtime logs",
+  "pilot_count_prepared": 14,
+  "pilot_submissions": 0,
+  "dispatcher_started": false,
+  "scheduled_monitor_recreated": false,
+  "storage_mutations_performed": false,
+  "full_ci_passed": 1090,
+  "full_ci_skipped": 4,
+  "quota_gate_focused_checks_passed": 13,
+  "required_decision": "Provide additional storage/quota or approve verified archival to a destination with capacity"
+}

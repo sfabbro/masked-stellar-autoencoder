@@ -11182,7 +11182,13 @@
       "status": "accepted",
       "attempted_at": "2026-10-26T20:46:36.348199+00:00",
       "attempts": 1,
-      "submission_transport": "form_body"
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "Failed",
+        "error_class": "EDQUOT",
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/quota-block/remediation_inputs_v2-quota-evidence.log",
+        "automatic_retry": false
+      }
     },
     {
       "run_id": "remediation_source_v2",
@@ -11209,7 +11215,13 @@
       "status": "accepted",
       "attempted_at": "2026-10-26T20:46:46.599309+00:00",
       "attempts": 1,
-      "submission_transport": "form_body"
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "Failed",
+        "error_class": "EDQUOT",
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/quota-block/remediation_source_v2-quota-evidence.log",
+        "automatic_retry": false
+      }
     },
     {
       "run_id": "remediation_joint6_preflight_v2",
@@ -11237,7 +11249,13 @@
       "status": "accepted",
       "attempted_at": "2026-10-26T20:46:55.684439+00:00",
       "attempts": 1,
-      "submission_transport": "form_body"
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "Failed",
+        "error_class": "EDQUOT",
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/quota-block/remediation_joint6_preflight_v2-quota-evidence.log",
+        "automatic_retry": false
+      }
     }
   ]
 }

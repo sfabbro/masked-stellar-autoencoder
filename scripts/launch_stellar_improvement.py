@@ -608,6 +608,14 @@ def main():
     if not args.dry_run:
         from canfar.sessions import Session
 
+        if any(plan["task"].startswith("remediation-") for plan in plans):
+            from canfar.storage import filesystem
+            from remediation_launch_policy import assert_project_storage_budget
+
+            storage = assert_project_storage_budget(
+                filesystem("arc").info("projects/k-pop")
+            )
+            print(json.dumps({"remediation_storage_preflight": storage}), flush=True)
         client = Session(timeout=args.request_timeout)
         existing = client.fetch()
     dependencies = {}
