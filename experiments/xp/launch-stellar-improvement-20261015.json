@@ -11338,6 +11338,495 @@
       "attempted_at": "2026-10-26T21:29:11.246626+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_inputs_v4",
+      "name": "msa-si15-remediation-inputs-v4",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4",
+      "plan": {
+        "run_id": "remediation_inputs_v4",
+        "task": "remediation-input-audit",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "whakp3zf"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:44:28.369107+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_huber_frozen_v1",
+      "name": "msa-si15-remediation-huber-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_frozen_v1",
+      "plan": {
+        "run_id": "remediation_huber_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qrysdbbm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:03.599166+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_huber_ft_v1",
+      "name": "msa-si15-remediation-huber-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_v1",
+      "plan": {
+        "run_id": "remediation_huber_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ipbuzbqo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:10.932932+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_huber_ft_recon003_v1",
+      "name": "msa-si15-remediation-huber-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_huber_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tnyfsly4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:29.544197+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_frozen_v1",
+      "name": "msa-si15-remediation-gaussian6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "puc5wm6y"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:33.408321+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tx9fe185"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:37.097442+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_recon003_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hs6sjt07"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:40.392021+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_frozen_v1",
+      "name": "msa-si15-remediation-mdn6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qv0f7cod"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:43.793908+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_ft_v1",
+      "name": "msa-si15-remediation-mdn6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "c1vozo13"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:46.975395+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_ft_recon003_v1",
+      "name": "msa-si15-remediation-mdn6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ujligcsn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:50.140196+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_frozen_v1",
+      "name": "msa-si15-remediation-nsf6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uracqg4f"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:53.198244+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_v1",
+      "name": "msa-si15-remediation-nsf6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gz5istkd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:56.706571+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_recon003_v1",
+      "name": "msa-si15-remediation-nsf6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "n3n20n5a"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:00.329280+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_parallax_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-parallax-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_parallax_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_parallax_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "me6fjv9e"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:04.809512+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_v1",
+      "name": "msa-si15-remediation-nsf6-ft-parallax-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_parallax_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_parallax_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "juby59r8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:08.811043+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }

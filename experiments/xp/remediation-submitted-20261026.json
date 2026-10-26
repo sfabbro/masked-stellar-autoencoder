@@ -1,0 +1,226 @@
+{
+  "schema": "msa-remediation-submitted-v1",
+  "recorded_utc": "2026-10-26T21:53:23.888246+00:00",
+  "code_tag": "msa-remediation-pilots-20261026",
+  "launched_source_commit": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+  "library_commit": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+  "parent_checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
+  "parent_checkpoint_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "prepared_source_run": "remediation_source_v3",
+  "prepared_source_commit": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "input_audit_run": "remediation_inputs_v4",
+  "input_audit_session": "whakp3zf",
+  "joint_preflight_run": "remediation_joint6_preflight_v3",
+  "joint_preflight_session": "tgcwpgsi",
+  "target_order": [
+    "teff",
+    "logg",
+    "fe_h",
+    "alpha",
+    "age",
+    "distance"
+  ],
+  "unique_fit_identities": 1736618,
+  "fit_observed_per_target": [
+    506331,
+    493548,
+    506315,
+    1197641,
+    115834,
+    117573
+  ],
+  "fit_full_six_coobserved": 277,
+  "updates_per_pilot": 1000,
+  "scope": "Development pilots on previously inspected source union; no untouched-test or identified physical 6D posterior claim",
+  "terminal_complete_status": "remediation_pilot_complete",
+  "api_root": "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "local_native_model_execution_allowed": false,
+  "recurring_monitor_created": false,
+  "jobs": [
+    {
+      "run_id": "remediation_huber_frozen_v1",
+      "session_id": "qrysdbbm",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_frozen_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_huber_frozen_v1",
+        "kind": "huber",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_huber_ft_v1",
+      "session_id": "ipbuzbqo",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_huber_ft_v1",
+        "kind": "huber",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_huber_ft_recon003_v1",
+      "session_id": "tnyfsly4",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_recon003_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_huber_ft_recon003_v1",
+        "kind": "huber",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.03
+      }
+    },
+    {
+      "run_id": "remediation_gaussian6_frozen_v1",
+      "session_id": "puc5wm6y",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_frozen_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_gaussian6_frozen_v1",
+        "kind": "gaussian",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_v1",
+      "session_id": "tx9fe185",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_gaussian6_ft_v1",
+        "kind": "gaussian",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_recon003_v1",
+      "session_id": "hs6sjt07",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_recon003_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_gaussian6_ft_recon003_v1",
+        "kind": "gaussian",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.03
+      }
+    },
+    {
+      "run_id": "remediation_mdn6_frozen_v1",
+      "session_id": "qv0f7cod",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_frozen_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_mdn6_frozen_v1",
+        "kind": "mdn",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_mdn6_ft_v1",
+      "session_id": "c1vozo13",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_mdn6_ft_v1",
+        "kind": "mdn",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_mdn6_ft_recon003_v1",
+      "session_id": "ujligcsn",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_recon003_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_mdn6_ft_recon003_v1",
+        "kind": "mdn",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.03
+      }
+    },
+    {
+      "run_id": "remediation_nsf6_frozen_v1",
+      "session_id": "uracqg4f",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_frozen_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_nsf6_frozen_v1",
+        "kind": "nsf",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_nsf6_ft_v1",
+      "session_id": "gz5istkd",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_nsf6_ft_v1",
+        "kind": "nsf",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0
+      }
+    },
+    {
+      "run_id": "remediation_nsf6_ft_recon003_v1",
+      "session_id": "n3n20n5a",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_recon003_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_nsf6_ft_recon003_v1",
+        "kind": "nsf",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.03
+      }
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_parallax_v1",
+      "session_id": "me6fjv9e",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_parallax_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_gaussian6_ft_parallax_v1",
+        "kind": "gaussian",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0,
+        "input_profile": "phot_xp_measured_parallax"
+      }
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_v1",
+      "session_id": "juby59r8",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_parallax_v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "submission_status": "accepted",
+      "arm": {
+        "run_id": "remediation_nsf6_ft_parallax_v1",
+        "kind": "nsf",
+        "encoder": "finetune",
+        "reconstruction_weight": 0.0,
+        "input_profile": "phot_xp_measured_parallax"
+      }
+    }
+  ]
+}
