@@ -11057,6 +11057,105 @@
       "attempted_at": "2026-10-26T01:50:36.410805+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_inputs_v1",
+      "name": "msa-si15-remediation-inputs-v1",
+      "source_sha": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v1",
+      "plan": {
+        "run_id": "remediation_inputs_v1",
+        "task": "remediation-input-audit",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "i2b1ww73"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T16:18:56.481236+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "failed",
+        "error": "FITS_record has no dtype",
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/prerequisite-v1-reconciliation/remediation_inputs_v1-manifest.json"
+      }
+    },
+    {
+      "run_id": "remediation_source_v1",
+      "name": "msa-si15-remediation-source-v1",
+      "source_sha": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v1",
+      "plan": {
+        "run_id": "remediation_source_v1",
+        "task": "remediation-source",
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "hz5b1rqb"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T16:19:13.120676+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "session_absent_nonterminal_manifest",
+        "cause": "unknown",
+        "automatic_retry": false,
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/prerequisite-v1-reconciliation/remediation_source_v1-manifest.json"
+      }
+    },
+    {
+      "run_id": "remediation_joint6_preflight_v1",
+      "name": "msa-si15-remediation-joint6-preflight-v1",
+      "source_sha": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v1",
+      "plan": {
+        "run_id": "remediation_joint6_preflight_v1",
+        "task": "remediation-joint-preflight",
+        "resources": {
+          "cores": 4,
+          "ram": 32,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 32,
+        "gpu": 1
+      },
+      "session_ids": [
+        "i4hetw9r"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T16:19:27.837360+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "runtime_observation": {
+        "status": "session_absent_nonterminal_manifest",
+        "cause": "unknown",
+        "automatic_retry": false,
+        "evidence": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/prerequisite-v1-reconciliation/remediation_joint6_preflight_v1-manifest.json"
+      }
     }
   ]
 }

@@ -147,3 +147,27 @@ def test_end_to_end_selected_rows_fixture(tmp_path):
         "legacy cohort exact Gaia ID/110 raw XP values" in result["stars"][0]["checks"]
     )
     assert (tmp_path / "audit" / "selected-arrays.npz").is_file()
+
+
+def test_real_fits_record_uses_table_schema_not_numpy_dtype(tmp_path):
+    from astropy.io import fits
+
+    path = tmp_path / "original.fits"
+    fits.BinTableHDU.from_columns(
+        [
+            fits.Column(
+                name="source_id",
+                format="K",
+                array=np.array([4185355646116022528], dtype="i8"),
+            ),
+            fits.Column(name="G", format="E", array=np.array([12.5], dtype="f4")),
+            fits.Column(name="bp_1", format="E", array=np.array([7.25], dtype="f4")),
+        ]
+    ).writeto(path)
+    with fits.open(path, memmap=True) as hdul:
+        row = hdul[1].data[0]
+        assert not hasattr(row, "dtype")
+        values = audit.raw_record_values(
+            row, ["G", "bp_1", "rp_1"], hdul[1].columns.names
+        )
+        np.testing.assert_array_equal(values, [12.5, 7.25, np.nan])

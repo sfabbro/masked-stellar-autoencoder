@@ -16,7 +16,10 @@ import numpy as np
 import torch
 import yaml
 
-from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+from masked_stellar_autoencoder.training.remediation_joint6 import (
+    JointSixHead,
+    masked_gaussian_log_prob,
+)
 
 
 def atomic(path, value):
@@ -127,8 +130,42 @@ def sparse_checks(diagnostic, mask, gates):
     return result
 
 
+def complete_joint_log_prob(head, context, target):
+    """The fully observed noiseless joint needs no missing/noise integration."""
+    if head.kind == "nsf":
+        return head.flow.distribution(context).log_prob(target)
+    return head.log_prob(
+        context,
+        target,
+        torch.zeros_like(target),
+        torch.ones_like(target, dtype=torch.bool),
+    )
+
+
+def complete_objective(head, context, target):
+    count = target.numel()
+    objective = -complete_joint_log_prob(head, context, target).sum() / count
+    if head.kind == "nsf":
+        mean, lower = head.proposal_parameters(context)
+        proposal = (
+            -masked_gaussian_log_prob(
+                mean,
+                lower,
+                target,
+                torch.zeros_like(target),
+                torch.ones_like(target, dtype=torch.bool),
+            ).sum()
+            / count
+        )
+        objective = objective + head.proposal_weight * proposal
+    return objective
+
+
 def validate_config(cfg):
-    if cfg["run_id"] != "remediation_joint6_preflight_v1" or cfg["kinds"] != [
+    if cfg["run_id"] not in {
+        "remediation_joint6_preflight_v1",
+        "remediation_joint6_preflight_v2",
+    } or cfg["kinds"] != [
         "gaussian",
         "mdn",
         "nsf",
@@ -193,6 +230,34 @@ def run(args):
             raise ValueError("Actual torchregress immutable library pin differs")
         if args.expected_source and source != args.expected_source:
             raise ValueError("Actual source commit differs")
+        if cfg.get("reuse_preflight"):
+            prior_spec = cfg["reuse_preflight"]
+            prior_dir = Path(prior_spec["path"])
+            prior = json.loads((prior_dir / "manifest.json").read_text())
+            if (
+                prior.get("source_commit") != prior_spec["source_commit"]
+                or prior.get("head_module_sha256") != manifest["head_module_sha256"]
+            ):
+                raise ValueError(
+                    "Completed synthetic check source/head bindings differ"
+                )
+            for family in ("gaussian", "mdn"):
+                check = prior.get("checks", {}).get(family, {})
+                artifact = prior_dir / f"{family}-samples-and-diagnostics.npz"
+                if not check.get("passed") or hashlib.sha256(
+                    artifact.read_bytes()
+                ).hexdigest() != check.get("sample_sha256"):
+                    raise ValueError(
+                        "Completed synthetic check/content certificate differs"
+                    )
+                manifest["checks"][family] = check
+            manifest["reused_completed_checks"] = dict(
+                path=str(prior_dir),
+                source_commit=prior["source_commit"],
+                families=["gaussian", "mdn"],
+                no_retraining=True,
+            )
+            atomic(args.output / "manifest.json", manifest)
         torch.backends.cuda.matmul.allow_tf32 = False
         torch.backends.cudnn.allow_tf32 = False
         torch.manual_seed(cfg["seed"])
@@ -200,6 +265,10 @@ def run(args):
         lower, _ = truth_parameters(device="cuda")
         truth_covariance = lower @ lower.T
         for index, kind in enumerate(cfg["kinds"]):
+            if kind in manifest["checks"]:
+                continue
+            manifest.update(current_family=kind, phase="initializing")
+            atomic(args.output / "manifest.json", manifest)
             torch.manual_seed(cfg["seed"] + index)
             torch.cuda.manual_seed_all(cfg["seed"] + index)
             generator = torch.Generator(device="cuda").manual_seed(cfg["seed"] + 100)
@@ -216,19 +285,14 @@ def run(args):
             hx, hy, _ = synthetic_batch(
                 cfg["holdout_rows"], hold_gen, device="cuda", dtype=torch.float32
             )
-            full = torch.ones_like(hy, dtype=torch.bool)
             with torch.no_grad():
-                initial_nll = float(
-                    -head.log_prob(hx, hy, torch.zeros_like(hy), full).mean()
-                )
+                initial_nll = float(-complete_joint_log_prob(head, hx, hy).mean())
             for update in range(cfg["updates"]):
                 x, y, _ = synthetic_batch(
                     cfg["batch_size"], generator, device="cuda", dtype=torch.float32
                 )
                 optimizer.zero_grad(set_to_none=True)
-                loss = head.criterion(
-                    x, y, torch.zeros_like(y), torch.ones_like(y, dtype=torch.bool)
-                )
+                loss = complete_objective(head, x, y)
                 if not torch.isfinite(loss):
                     raise FloatingPointError(f"{kind}: nonfinite synthetic objective")
                 loss.backward()
@@ -250,9 +314,7 @@ def run(args):
             head = head.double().eval()
             with torch.no_grad():
                 final_nll = float(
-                    -head.log_prob(
-                        hx.double(), hy.double(), torch.zeros_like(hy).double(), full
-                    ).mean()
+                    -complete_joint_log_prob(head, hx.double(), hy.double()).mean()
                 )
                 draws = head.sample(
                     torch.zeros((1, 4), device="cuda", dtype=torch.float64),

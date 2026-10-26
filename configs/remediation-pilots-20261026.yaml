@@ -1,0 +1,51 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+model_config: configs/pretrain.canfar.yaml
+source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v2/manifest.json
+input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v2/manifest.json
+joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v2/manifest.json
+joint_preflight_run_id: remediation_joint6_preflight_v2
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
+reconstruction_training_rows: 150000000
+reconstruction_batch: 256
+updates: 1000
+batch_size: 288
+seed: 20261026
+head_width: 128
+mixture_components: 4
+particles: 64
+head_lr: 0.001
+encoder_lr: 0.00000125
+tune_every: 100
+tune_per_label: 128
+evaluation_per_label: 2048
+evaluation_batch: 64
+evaluation_draws: 512
+corner_draws: 8192
+integration_gate_rows: 128
+integration_gate_particles: 64
+integration_gate:
+  median_relative_ess_min: 0.1
+  minimum_relative_ess_min: 0.01
+  gap_p95_max: 0.10
+scope: 1000-update pilots; all eligible per-label FIT pools; no full epoch or untouched-test claim
+corner_source_ids: [4185355646116022528, 4696862405388526080, 656977993104090624, 4077588074752670208, 3616249836305383296, 2609559667340662912, 615943806835727872, 2438481739732690176, 78289217922968576, 4926812820427520]
+arms:
+- {run_id: remediation_huber_frozen_v1, kind: huber, encoder: frozen, reconstruction_weight: 0.0}
+- {run_id: remediation_huber_ft_v1, kind: huber, encoder: finetune, reconstruction_weight: 0.0}
+- {run_id: remediation_huber_ft_recon003_v1, kind: huber, encoder: finetune, reconstruction_weight: 0.03}
+- {run_id: remediation_gaussian6_frozen_v1, kind: gaussian, encoder: frozen, reconstruction_weight: 0.0}
+- {run_id: remediation_gaussian6_ft_v1, kind: gaussian, encoder: finetune, reconstruction_weight: 0.0}
+- {run_id: remediation_gaussian6_ft_recon003_v1, kind: gaussian, encoder: finetune, reconstruction_weight: 0.03}
+- {run_id: remediation_mdn6_frozen_v1, kind: mdn, encoder: frozen, reconstruction_weight: 0.0}
+- {run_id: remediation_mdn6_ft_v1, kind: mdn, encoder: finetune, reconstruction_weight: 0.0}
+- {run_id: remediation_mdn6_ft_recon003_v1, kind: mdn, encoder: finetune, reconstruction_weight: 0.03}
+- {run_id: remediation_nsf6_frozen_v1, kind: nsf, encoder: frozen, reconstruction_weight: 0.0}
+- {run_id: remediation_nsf6_ft_v1, kind: nsf, encoder: finetune, reconstruction_weight: 0.0}
+- {run_id: remediation_nsf6_ft_recon003_v1, kind: nsf, encoder: finetune, reconstruction_weight: 0.03}
+- {run_id: remediation_gaussian6_ft_parallax_v1, kind: gaussian, encoder: finetune, reconstruction_weight: 0.0, input_profile: phot_xp_measured_parallax}
+- {run_id: remediation_nsf6_ft_parallax_v1, kind: nsf, encoder: finetune, reconstruction_weight: 0.0, input_profile: phot_xp_measured_parallax}

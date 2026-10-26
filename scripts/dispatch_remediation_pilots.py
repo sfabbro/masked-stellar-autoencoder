@@ -16,9 +16,9 @@ from pathlib import Path
 
 ROOT = "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015"
 REQUIRED = {
-    "remediation_inputs_v1": "remediation_input_audit_complete",
-    "remediation_source_v1": "remediation_source_complete",
-    "remediation_joint6_preflight_v1": "remediation_joint6_preflight_pass",
+    "remediation_inputs_v2": "remediation_input_audit_complete",
+    "remediation_source_v2": "remediation_source_complete",
+    "remediation_joint6_preflight_v2": "remediation_joint6_preflight_pass",
 }
 
 
@@ -36,9 +36,9 @@ def ready(manifests, expected_source, head_sha):
         code = manifest.get("audit_code_commit", manifest.get("source_commit"))
         if code != expected_source or manifest.get("run_id") != run:
             raise ValueError("Prerequisite run/source binding differs")
-    audit = manifests["remediation_inputs_v1"]["readiness"]
-    source = manifests["remediation_source_v1"]
-    preflight = manifests["remediation_joint6_preflight_v1"]
+    audit = manifests["remediation_inputs_v2"]["readiness"]
+    source = manifests["remediation_source_v2"]
+    preflight = manifests["remediation_joint6_preflight_v2"]
     if not audit.get("phot_xp_input_pass") or not audit.get(
         "native_label_association_pass"
     ):

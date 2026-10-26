@@ -58,3 +58,21 @@ def test_sparse_gate_requires_ess_and_replica_refinement():
     diagnostic["refinement_log_prob_gap"].fill_(0.11)
     assert not runner.sparse_checks(diagnostic, mask, config()["gates"])["passed"]
     assert runner.sparse_checks({"exact": True}, mask, config()["gates"])["passed"]
+
+
+def test_exact_complete_nsf_path_matches_integrated_objective_and_gradient():
+    from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+
+    torch.manual_seed(9)
+    head = JointSixHead("nsf", latent_dim=4, width=8, particles=8).double()
+    x, y, _ = runner.synthetic_batch(3, torch.Generator().manual_seed(2))
+    full = torch.ones_like(y, dtype=torch.bool)
+    integrated = head.criterion(x, y, torch.zeros_like(y), full)
+    exact = runner.complete_objective(head, x, y)
+    torch.testing.assert_close(exact, integrated, rtol=1e-10, atol=1e-10)
+    pars = tuple(head.parameters())
+    a = torch.autograd.grad(integrated, pars, retain_graph=True, allow_unused=True)
+    b = torch.autograd.grad(exact, pars, allow_unused=True)
+    for left, right in zip(a, b, strict=True):
+        if left is not None:
+            torch.testing.assert_close(left, right, rtol=5e-5, atol=5e-5)

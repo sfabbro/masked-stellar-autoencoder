@@ -161,6 +161,15 @@ def write_json(path, data):
     path.write_text(json.dumps(serial(data), indent=2, allow_nan=False) + "\n")
 
 
+def raw_record_values(record, requested_names, available_names):
+    """FITS rows expose fields through their table, unlike NumPy records."""
+    available = set(available_names or ())
+    return np.asarray(
+        [record[name] if name in available else np.nan for name in requested_names],
+        dtype="f4",
+    )
+
+
 def audit(config, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -410,14 +419,10 @@ def audit(config, output):
                                     raise ValueError(
                                         "Legacy benchmark raw ID/row differs"
                                     )
-                                original_xp = np.asarray(
-                                    [
-                                        record[names[j]]
-                                        if names[j] in (record.dtype.names or ())
-                                        else np.nan
-                                        for j in source_features
-                                    ],
-                                    dtype="f4",
+                                original_xp = raw_record_values(
+                                    record,
+                                    [names[j] for j in source_features],
+                                    record.dtype.names,
                                 )
                         else:
                             from astropy.io import fits
@@ -429,14 +434,10 @@ def audit(config, output):
                                 record = table.data[source_row]
                                 if int(record["source_id"]) != sid:
                                     raise ValueError("Legacy FITS raw ID/row differs")
-                                original_xp = np.asarray(
-                                    [
-                                        record[names[j]]
-                                        if names[j] in (record.dtype.names or ())
-                                        else np.nan
-                                        for j in source_features
-                                    ],
-                                    dtype="f4",
+                                original_xp = raw_record_values(
+                                    record,
+                                    [names[j] for j in source_features],
+                                    table.columns.names,
                                 )
                         original_xp[
                             ~np.isfinite(original_xp) | (original_xp == -9999)

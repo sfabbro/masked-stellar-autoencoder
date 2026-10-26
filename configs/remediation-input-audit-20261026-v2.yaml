@@ -1,0 +1,41 @@
+run_id: remediation_inputs_v2
+training_performed: false
+prepared_source_commit: 2ce384c49e3569ef4fd9a273bad2bedf12687a49
+verify_source_sha256: true
+source_ids:
+- 4185355646116022528
+- 4696862405388526080
+- 656977993104090624
+- 4077588074752670208
+- 3616249836305383296
+- 2609559667340662912
+- 615943806835727872
+- 2438481739732690176
+- 78289217922968576
+- 4926812820427520
+prepared:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5
+  sha256: 6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9
+native:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+  sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
+legacy:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
+frozen:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz
+  sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
+cache_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+cache_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
+original_path: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
+policy:
+  source_only: true
+  no_model_or_checkpoint_load: true
+  no_source_writes: true
+  no_new_acquisition: true
+  no_full_150m_scan: true
+  unresolved_is_not_pass: true
+  parallax_zero_point: unresolved_no_invented_correction
+supersedes_failed_attempt: remediation_inputs_v1
+distinct_fix: Use actual FITS table column schema for FITS_record; preserve v1 failed
+  output

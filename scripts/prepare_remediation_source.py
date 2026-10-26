@@ -73,18 +73,21 @@ def materialize(config, output):
         "physical_truth_claim": False,
     }
     write_json(output / "manifest.json", manifest)
-    paths = {
-        key: checked(config[key])
-        for key in (
-            "expanded",
-            "frozen",
-            "galah",
-            "apogee",
-            "ancestry",
-            "references",
-            "native_astrometry",
-        )
-    }
+    paths = {}
+    for key in (
+        "expanded",
+        "frozen",
+        "galah",
+        "apogee",
+        "ancestry",
+        "references",
+        "native_astrometry",
+    ):
+        manifest.update(status="verifying_input", current_input=key)
+        write_json(output / "manifest.json", manifest)
+        paths[key] = checked(config[key])
+        manifest.setdefault("verified_inputs", {})[key] = config[key]
+        write_json(output / "manifest.json", manifest)
     source_commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], text=True
     ).strip()
@@ -176,6 +179,8 @@ def materialize(config, output):
         destination = output / "prepared.h5"
         with h5py.File(destination, "w") as out:
             for source in ("apogee", "galah"):
+                manifest.update(status="materializing_native", current_survey=source)
+                write_json(output / "manifest.json", manifest)
                 with fits.open(paths[source], memmap=True) as hdul:
                     table = hdul[1].data
                     symbols = (
@@ -220,6 +225,10 @@ def materialize(config, output):
             )
             with h5py.File(paths["references"], "r") as refs:
                 reserved = exact_ids(refs["ALL_reference_holdout_source_ids"][:])
+            reserved = np.union1d(
+                reserved,
+                np.asarray(config.get("diagnostic_holdout_ids", []), dtype="i8"),
+            )
             role = development_roles(
                 ids, observed.any(1) & primary_input, reserved, historical
             )
@@ -246,11 +255,21 @@ def materialize(config, output):
                 fillvalue=-9999,
             )
             # Streaming source writes: sorted destination identity order only.
+            manifest.update(status="materializing_features")
+            write_json(output / "manifest.json", manifest)
             for start in range(0, len(ds), config.get("chunk_rows", 32768)):
                 sl = slice(start, min(start + config.get("chunk_rows", 32768), len(ds)))
                 batch = expanded["input"][sl]
                 batch[:, ~allowed] = -9999
                 input_ds[ds[sl]] = batch
+                write_json(
+                    output / "progress.json",
+                    dict(
+                        phase="materializing_features",
+                        completed_rows=sl.stop,
+                        total_rows=len(ds),
+                    ),
+                )
             ordering = np.argsort(fs)
             for key, array in modality.items():
                 out.create_dataset(key, data=array, compression="lzf")
