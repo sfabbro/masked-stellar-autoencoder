@@ -11001,6 +11001,62 @@
       "attempted_at": "2026-10-25T11:56:20.804767+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_report_nsf_noise_s51_v1",
+      "name": "msa-si15-expanded-report-nsf-noise-s51-v1",
+      "source_sha": "d26e2dcf37152900511e424fcd403f29341d73de",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_report_nsf_noise_s51_v1",
+      "plan": {
+        "run_id": "expanded_report_nsf_noise_s51_v1",
+        "task": "expanded-report-recovery",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "m5hup3lu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T00:33:44.888506+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "expanded_report_nsf_noise_mixed01_s51_v1",
+      "name": "msa-si15-expanded-report-nsf-noise-mixed01-s51-v1",
+      "source_sha": "d26e2dcf37152900511e424fcd403f29341d73de",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_report_nsf_noise_mixed01_s51_v1",
+      "plan": {
+        "run_id": "expanded_report_nsf_noise_mixed01_s51_v1",
+        "task": "expanded-report-recovery",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "k288xnz7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T01:50:36.410805+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
