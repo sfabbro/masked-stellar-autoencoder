@@ -67,6 +67,15 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] in {
+        "remediation-input-audit",
+        "remediation-source",
+        "remediation-joint-preflight",
+        "remediation-pilot",
+    }:
+        from remediation_launch_policy import bind_remediation_policy
+
+        return bind_remediation_policy(plan, env)
     if plan["task"] == "expanded-report-recovery":
         from expanded_report_launch_policy import bind_report_policy
 
@@ -630,6 +639,9 @@ def main():
                 else {}
             )
             expected_status = {
+                "remediation_inputs_v1": "remediation_input_audit_complete",
+                "remediation_source_v1": "remediation_source_complete",
+                "remediation_joint6_preflight_v1": "remediation_joint6_preflight_pass",
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
@@ -750,6 +762,8 @@ def main():
             "full-label-evaluation-preparation",
             "expanded-source-contract-audit",
             "expanded-report-recovery",
+            "remediation-input-audit",
+            "remediation-source",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

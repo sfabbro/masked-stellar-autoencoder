@@ -1,0 +1,86 @@
+[
+  {
+    "priority": "P0",
+    "issue": "Correlations absent by construction",
+    "status": "Confirmed architecture limitation",
+    "evidence": "Six independent scalar NSFs/diagonal Gaussian, independent per-coordinate draws",
+    "acceptance_gate": "Real dependent head + valid sparse marginal likelihood and covariance/sample tests"
+  },
+  {
+    "priority": "P0",
+    "issue": "Catastrophic wrong centers and narrow intervals",
+    "status": "Confirmed saved-star output failure; cause unresolved",
+    "evidence": "Example Gaia4185355646116022528 reference4730K/2.278/-3.228 vsGaussianmedian6476K/3.719/-.615",
+    "acceptance_gate": "Exact raw-source/cache/input/scaler/ID end-to-end certificate before blaming labels or retraining"
+  },
+  {
+    "priority": "P0",
+    "issue": "Tiny inherited supervision",
+    "status": "Confirmed data-design restriction",
+    "evidence": "FIT19236native3/2279alpha/2827age/2827distance despite much larger source pools",
+    "acceptance_gate": "New exposure-aware split, per-label eligibility, source/domain coverage census"
+  },
+  {
+    "priority": "P0",
+    "issue": "GALAH DR4 flag policy",
+    "status": "Confirmed publisher-policy deviation",
+    "evidence": "Requiresflag_fe_h==0 despite official warning; explicitrecommendedSNRcut absent",
+    "acceptance_gate": "Versioned raw-data selection correction and affected-ID census"
+  },
+  {
+    "priority": "P0",
+    "issue": "Age-distance intersection/caps",
+    "status": "Confirmed pilot restriction",
+    "evidence": "prepare_posterior_target_wave intersects bothtargets and capsroles",
+    "acceptance_gate": "Independent sparse masks; no requirement for both age and distance"
+  },
+  {
+    "priority": "P0",
+    "issue": "Target/noise semantics not universal",
+    "status": "Confirmed scope limitation",
+    "evidence": "DESIalpha != universalalpha; SHmedian != measurement; quotederrors != totalaccuracy",
+    "acceptance_gate": "Declared source observation layers, overlap calibration, independent anchors"
+  },
+  {
+    "priority": "P0",
+    "issue": "Parallax and physical information mismatch",
+    "status": "Confirmed input restriction",
+    "evidence": "Onlyfiveapparentmagnitudes+XP; parallaxmasked",
+    "acceptance_gate": "Audited measured astrometry control with clear input/likelihood/teacher roles"
+  },
+  {
+    "priority": "P1",
+    "issue": "Dropped sparse/tail labels",
+    "status": "Confirmed assembly omissions; qualification stillneeded",
+    "evidence": "291LiHRS unprojected, ~505nativeFITTeffFeH lost; stagedDESI/PIGS/CaT unused",
+    "acceptance_gate": "Recover per-target validated labels under new split, not blind catalogue union"
+  },
+  {
+    "priority": "P1",
+    "issue": "Target-order contracts disagree",
+    "status": "Confirmed adapter hazard, not current plot swap",
+    "evidence": "Trainingalpha-age-distance vsgenericdistance-age-alpha",
+    "acceptance_gate": "Name-based adapters and distinguishable-value roundtrip tests"
+  },
+  {
+    "priority": "P1",
+    "issue": "Physical age external panel",
+    "status": "Confirmed source-value issue, not parser mismatch",
+    "evidence": "APOKASC valid12301;514>13.8Gyr/240>20/2>60; fixedwidth parser matches",
+    "acceptance_gate": "Source-quality/phase/model reliability policy and separate diagnostic; do notclipintotruth"
+  },
+  {
+    "priority": "P1",
+    "issue": "Joint uncertainty unvalidated",
+    "status": "Confirmed evidencegap",
+    "evidence": "Few independent all-six observations; label/inputcovariance not fullymodelled",
+    "acceptance_gate": "Block/pair validation, missingness/source selection accounting and calibrated region tests"
+  },
+  {
+    "priority": "P1",
+    "issue": "Current TEST already inspected",
+    "status": "Confirmed exposure limitation",
+    "evidence": "Expandedreferenceplots/metricsreviewed",
+    "acceptance_gate": "Untouched external/family/fieldholdouts and fullknownexposureledger"
+  }
+]

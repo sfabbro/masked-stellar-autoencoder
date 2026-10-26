@@ -1,0 +1,30 @@
+{
+  "F": {
+    "Teff": {
+      "valid_measurements": 11797,
+      "unique_ids": 11796
+    },
+    "logg": {
+      "valid_measurements": 11797,
+      "unique_ids": 11796
+    },
+    "[Fe/H]": {
+      "valid_measurements": 11797,
+      "unique_ids": 11796
+    }
+  },
+  "U": {
+    "Teff": {
+      "valid_measurements": 11651,
+      "unique_ids": 11650
+    },
+    "logg": {
+      "valid_measurements": 11651,
+      "unique_ids": 11650
+    },
+    "[Fe/H]": {
+      "valid_measurements": 11651,
+      "unique_ids": 11650
+    }
+  }
+}

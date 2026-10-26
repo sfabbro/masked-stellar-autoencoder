@@ -166,6 +166,22 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/prepare_full_label_evaluation.py --config "${MSA_EXPANDED_SOURCE_POLICY:-configs/full-label-source-preparation-20261024.yaml}" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-input-audit ]]; then
+      "${pixi_run[@]}" python -u scripts/audit_remediation_inputs.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-source ]]; then
+      "${pixi_run[@]}" python -u scripts/prepare_remediation_source.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-joint-preflight ]]; then
+      "${pixi_run[@]}" python -u scripts/run_remediation_joint_preflight.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-pilot ]]; then
+      "${pixi_run[@]}" python -u scripts/run_remediation_pilot.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == expanded-report-recovery ]]; then
       "${pixi_run[@]}" python -u scripts/recover_expanded_evaluation_report.py --config "$MSA_EXPANDED_REPORT_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"

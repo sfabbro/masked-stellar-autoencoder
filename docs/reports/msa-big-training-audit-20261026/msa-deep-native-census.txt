@@ -1,0 +1,29 @@
+import json
+from pathlib import Path
+import h5py,numpy as np
+root=Path('/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement');out={}
+with h5py.File(root/'joint-native-preparation-v2/joint-native-labels.h5') as f:
+ ids=f['source_id'][:];v=f['targets/value'][:];e=f['targets/uncertainty'][:];m=f['targets/observed'][:];src=f['targets/survey'][:].astype(str);part=f['roles/benchmark_partition'][:];native=f['native_measurements'][:];idx=f['native_feature_row'][:]
+ assert len(np.unique(ids))==len(ids) and np.array_equal(ids[idx],native['source_id'])
+ out['native_sidecar']={'identities':len(ids),'observed':dict(zip(['teff','logg','fe_h'],m.sum(0).tolist())),'source_counts':{},'role_target_counts':{},'partition_target_counts':{},'raw_native_not_projected':{}}
+ for s in np.unique(src):
+  q=src==s;out['native_sidecar']['source_counts'][s or '(unprojected)']={'rows':int(q.sum()),'observed':m[q].sum(0).tolist(),'error_quantiles':{}}
+  for c,t in enumerate(['teff','logg','fe_h']):
+   keep=q&m[:,c];out['native_sidecar']['source_counts'][s or '(unprojected)']['error_quantiles'][t]=np.quantile(e[keep,c],[0,.1,.5,.9,1]).tolist() if keep.any() else []
+ for role in ['fit','tune','calibration','test','external_reference']:
+  q=f['roles/'+role][:];out['native_sidecar']['role_target_counts'][role]=m[q].sum(0).tolist()
+ for p in np.unique(part):out['native_sidecar']['partition_target_counts'][str(p)]=m[part==p].sum(0).tolist()
+ for s in np.unique(native['survey']):
+  q=native['survey']==s;out['native_sidecar']['raw_native_not_projected'][s.decode()]={'native_measurements':int(q.sum()),'observed_after_projection':m[idx[q]].sum(0).tolist(),'native_feh_below_minus2':int((native['value'][q]<-2).sum())}
+ fit=f['roles/fit'][:]&m[:,1];out['native_sidecar']['fit_coverage']={'logg_bins':[-1,0,1,1.5,2,2.5,3,3.5,4,4.25,4.5,4.75,5,6],'logg_hist':np.histogram(v[fit,1],[-1,0,1,1.5,2,2.5,3,3.5,4,4.25,4.5,4.75,5,6])[0].tolist(),'feh_below_minus2':int((fit&m[:,2]&(v[:,2]<-2)).sum())}
+ assert not (m & (~np.isfinite(v)|~np.isfinite(e)|(e<=0))).any()
+with h5py.File(root/'label_registry_v2/labels.h5') as f:
+ d=f['measurements'];a=d.fields(['source_id','quantity','survey','quality_pass'])[:];good=a['quality_pass']&(a['quantity']==b'FeH')
+ out['registry']={}
+ for s in np.unique(a['survey']):
+  q=a['survey']==s;g=q&good;out['registry'][s.decode()]={'all_measurements':int(q.sum()),'good_feh_measurements':int(g.sum()),'good_feh_unique_ids':len(np.unique(a['source_id'][g]))}
+ gal=np.unique(a['source_id'][good&(a['survey']==b'galah')]);apo=np.unique(a['source_id'][good&(a['survey']==b'apogee')]);out['galah_apogee_eligible_feh_overlap']=len(np.intersect1d(gal,apo))
+for name,file,ds in [('desi','desi_labels_v1/desi-labels.h5','selected/measurements'),('pigs','pigs_labels_v1/pigs-labels.h5','selected/labels'),('li_cat','li2025-silver-v1/li2025-silver-labels.h5','selected/measurements')]:
+ with h5py.File(root/file) as f:
+  d=f[ds];valfield='feh_corrected' if name=='desi' else 'value';a=d.fields(['source_id',valfield])[:];out[name]={'selected_unique':len(a),'below_minus2':int((a[valfield]<-2).sum()),'below_minus3':int((a[valfield]<-3).sum()),'overlap_native3_ids':len(np.intersect1d(a['source_id'],ids[m[:,2]]))}
+Path('/tmp/msa-deep-native-census.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))

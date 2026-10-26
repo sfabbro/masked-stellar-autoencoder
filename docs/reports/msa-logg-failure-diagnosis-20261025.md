@@ -24,6 +24,11 @@ The pinned parent native FIT before 63 exclusions has 19,299 stars, of which onl
 
 **Checkpoint selection is also broader than log g.** It minimizes a macro six-label criterion with equal natural and XP-masked TUNE weighting. The selected checkpoint need not be best for natural-XP log g, or any difficult gravity bin. Gradient clipping is frequent, but separate reconstruction/supervised gradient norms and their conflict were not independently measured here; reconstruction dominance is not established.
 
+
+### Why only 19,236 FIT labels despite a much larger catalogue?
+
+The inherited role assignment requires `benchmark_partition == 0`: membership in the old benchmark TRAIN, in addition to feature availability and reference exclusions (`joint_native_labels.py:64–94`). It then takes the 70% identity-hash FIT group. Fresh source-only HDF5 counts find 717,777 observed native log g labels, but only 27,770 belong to that old TRAIN partition; 687,415 are outside the old TRAIN/validation membership. The native role gives 19,299 observed log g FIT objects; the later six-target role/conflict exclusions reduce that to 19,236. Expanding evaluation deliberately preserved the FIT/TUNE/CAL bytes, so those additional labels never entered supervision. This was an inherited controlled-comparison restriction, not catalogue exhaustion or a requirement to observe all six labels. Carrying that small FIT unchanged into the large-reconstruction wave was a training-design limitation. A new supervised split must reserve a legitimate untouched evaluation cohort, rather than silently recycling the now-inspected expanded TEST.
+
 ## What to fix before further scaling
 
 - Establish verified measured-parallax/error/zero-point provenance, then run a matched input-control comparison with and without astrometry. Do not create a distance feature by naïvely inverting uncertain parallaxes or leak posterior target distances into inputs.

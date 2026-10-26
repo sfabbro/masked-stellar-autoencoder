@@ -1,0 +1,81 @@
+# Alpha-label audit for the next big six-target training
+
+Scope: read-only local code/config/manifests and primary documentation checked on 2026-10-25 local date. No model/checkpoint execution, CANFAR jobs, automations, acquisitions or repository edits. Raw catalogues were not freshly downloaded and completed all-row source audits were not rerun. Distinguish code/data fidelity from astrophysical validity.
+
+## Executive finding
+
+Our executed big-model alpha label is **one particular spectroscopic measurement: DESI DR1 RVSpecFit `RVTAB.ALPHAFE`**, in signed bracket-abundance dex, with its native `ALPHAFE_ERR`. It is not a universal physical alpha abundance, not APOGEE `ALPHA_M`, not a calibrated cross-survey alpha latent, and not a GALAH alpha composite. The current workflow has a severe supervised-data bottleneck: only 2,279 final FIT alpha labels, despite millions of eligible DESI measurements. The generic six-target output name `alpha` obscures this narrower source-scale definition.
+
+Priority: expand a well-defined, quality-stratified supervised alpha observation layer from already staged spectra, and assess source/regime offsets before adding more head families. No physical metal-poor alpha claim is supported by the existing DESI target.
+
+## Executed sources, fields, selection and counts
+
+1. Source: existing `desi_collection_v1/mwsall-pix-iron.fits`, SHA `eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5`. Producer `scripts/prepare_alpha_source_evidence.py:22–40,82–160` projects RVTAB signed ALPHAFE, ALPHAFE_ERR, FEH/FEH_ERR, Teff/logg, Gaia SOURCE_ID, DESI TARGETID, source_row, separation, flags and S/N. It asserts TARGETID alignment among relevant extensions and stores immutable row provenance.
+2. Quality eligibility: positive integer Gaia ID; finite alpha and positive finite error; association <=1arcsec; RVS_WARN==0; SUCCESS/PRIMARY; RR_SPECTYPE STAR; SN_R>=10. This is an explicit selection, not a certificate that all alpha values are reliable at all temperatures, metallicities, gravities or observing programs. Raw source and selection flags remain archived.
+3. Original projection manifest: **6,372,607 raw rows; 3,682,449 eligible measurement rows; 123,280 eligible rows at DESI raw FeH<-2.** These are measurements, not deduplicated feature-qualified primary stars. `alpha_desi_source_projection_v1/manifest.json` records those counts.
+4. Frozen pilot: actual feature-preparation v2 manifest records **4,607** feature-qualified selected objects, FIT/TUNE/CAL/TEST **2,715/969/490/433**. This small cohort comes from the old feature catalogue overlap/reference exclusions and role selection/caps, not exhaustion of the DESI alpha catalogue. `prepare_alpha_target_wave.py:214–271` joins available old features, uses canonical first eligible source row per Gaia ID, excludes a 99,574-ID reference union from all roles, excludes benchmark validation from FIT/TUNE, and applies role caps via `role_indices`.
+5. Final six-target preparation uses alpha pilot role assignments and preserves raw signed values. Cross-target role conflict/exclusion logic reduces final observed FIT alpha to **2,279**, TUNE828/CAL490. The four 450M reconstruction fits did not grow that supervised pool. `scripts/prepare_six_target_wave.py:120–137` rejects raw DESI FeH<=-2 in FIT/TUNE and preserves native quoted errors; `preparation-latest-manifest.json` under five-job-large-wave-20261024 is authoritative for final per-role counts.
+6. Uncapped expanded evaluation correctly reconstructs the full-source join before features. Primary alpha references **1,707,545**, not millions of extra training examples. `prepare_full_label_evaluation.py:140–185` reuses audited projection, deduplicates by canonical first source row, marks primary when **DESI raw FeH>-2**, and carries others only as diagnostics.
+
+## What is actually verified and what is not
+
+- `prepare_alpha_target_wave.py:35–62` requires a source-bound published unit/definition policy, explicitly allowing a blank native FITS TUNIT only with that evidence. We do not falsely claim the FITS header itself says dex. The official [DESI data model](https://desi-mws-dr1-datamodel.readthedocs.io/en/latest/mwsall.html) defines RVTAB ALPHAFE and ALPHAFE_ERR; the source policy pins the paper/version and source SHA.
+- The completed independent all-row audit verifies every projected field against the pinned raw FITS, extension TARGETID alignment and an independent unit-vector association calculation, then checks declared masks. Manifest/audit hashes are retained. This establishes faithful extraction, **not** physical accuracy, calibrated error bars or transferable source scale.
+- Signed alpha is **not log/exp transformed**. `run_alpha_target_wave.py:38–45` uses ordinary affine dex conversion; `prepare_six_target_wave.py:128–140` handles alpha separately and exponentiates only age/distance posterior coordinates. `final_six_recipes.model_coordinates` logs only columns4/5.
+- The early six frozen alpha pilot heads deliberately fitted the native measured-label density without using quoted errors. The later big six-target noise-aware heads do use alpha's quoted errors in the observation likelihood. These are different estimands and must not be treated as the same alpha uncertainty experiment.
+- Current density components use quoted symmetric alpha errors as a diagonal Gaussian measurement model (and scalar NSF convolution). No empirically fitted survey error inflation, conditional systematic term, FeH–alpha error covariance or cross-source calibration is executed in the current single-DESI path. Quoted random error does not include all template/grid/calibration effects.
+
+## Astrophysical restrictions and uncertainty issues
+
+The [DESI DR1 stellar catalogue paper, Appendix B/C](https://arxiv.org/html/2505.14787v4) warns against alpha use below roughly FeH=-2 and describes grid-edge pile-ups. It reports source-dependent alpha offsets/scatter and validates RVS versus FERRE/SP separately. The current above-minus2 FIT/TUNE gate is therefore appropriate but not sufficient for universal alpha truth. Do not simply subtract a constant published offset: reference definitions, stellar domains and observing-program selection matter.
+
+**The report's metal-poor grouping is not the alpha source's validity coordinate.** It uses native GALAH/APOGEE FeH where present, while the alpha primary mask uses DESI's raw FeH. Consequently the four primary alpha references in the expanded native-FeH<-2 panel can arise from cross-survey metallicity disagreement. They do not establish trustworthy metal-poor alpha accuracy. Preserve both FeH values/source tags and report discordant cases explicitly.
+
+Other missing validations: temperature/gravity/SNR/program slices; grid-edge/upper-limit incidence; repeat-observation excess scatter; dwarf/giant-dependent offsets; chemically peculiar stars and binaries; nativeFeH–alpha joint error covariance. A generic global error floor is not a substitute. Estimate conditional nuisance/noise terms using legitimate overlap FIT data and validate on disjoint objects/fields.
+
+The original canonical-first-row choice avoids favorable-residual selection and makes reproducibility simple, but repeated TARGETIDs for one Gaia ID are not fully exploited. PRIMARY is defined within DESI observation groupings, not a guarantee that all same-Gaia duplicates are independent. Preserve all observations; compare predeclared quality-based canonical selection or an explicit correlated-repeat model before treating repeats as independent labels/calibration objects.
+
+## Existing design interfaces that are not executed training
+
+`src/masked_stellar_autoencoder/training/alpha_heads.py` is explicitly `interface_only`: source-tagged affine links with an identifying gauge and learned excess-noise hooks. Its five gates include native columns/flags, measured overlaps, source-tagged heldout improvement, calibration and joint FeH–alpha level-set coverage. Actual `SparseSixHead` in `final_six_recipes.py` does not call this interface: it learns the single DESI alpha coordinate with no source-calibration layer. The plan must distinguish these two statuses; a module's existence does not mean calibrated multi-survey alpha has been trained.
+
+Related downstream contract risk: actual six-target training order is `(teff, logg, fe_h, alpha, age, distance)`; generic `reporting/schema.py.TARGET_ORDER` declares `(teff, logg, fe_h, distance, age, alpha)`. Current dedicated five-wave reports use the executed order, so this is not evidence that their existing plots swapped labels. Generic export/report adapters must join by explicit names and assert order instead of positional conversion.
+
+## Existing staged but unexploited alpha/element evidence
+
+### A. DESI FERRE/SP: highest-priority same-file extension
+
+The already staged mwsall file includes SPTAB. Its [official data model](https://desi-mws-dr1-datamodel.readthedocs.io/en/latest/mwsall.html) documents FERRE ALPHAFE, PARAM/COVAR and ELEM/ELEM_ERR; RVTAB/SPTAB require actual TARGETID checks. This opens a paired RVS-versus-SP source-scale control and a possible correlated FeH/alpha likelihood without new acquisition. The paper's validation is not identical for the two pipelines. Do not assume SP is universally better or reuse RVS flags. Inspect actual FITS metadata for BESTGRID/SUCCESS and element order/array widths: the online table lists an ELEM shape that is inconsistent with its longer element-order prose, so no positional guess is acceptable.
+
+### B. APOGEE DR17: individual alpha elements and global atmospheric enhancement
+
+The native raw allStar DR17 FITS is already staged, but the executed native sidecar projects Teff/logg/FeH only. Alpha/elemental extraction and count/quality audit remain missing. [Official DR17 abundance guidance](https://www.sdss4.org/dr17/irspec/abundances/) recommends conservative named element-to-iron tags, per-element flags and repeat-derived uncertainties. Mg and Si are strong candidates; Ti is listed as problematic, and abundance reliability depends on stellar regime. Parameter/abundance covariances are not supplied.
+
+Do not rename atmospheric ALPHA_M to DESI ALPHAFE. A global template alpha/M parameter and an element-by-element X/Fe measurement have different response/definition/calibration. Even an algebraic change of reference requires verified definitions and propagated covariance; it does not make two survey composites the same observable. A clearly defined Mg/Fe auxiliary may be preferable to an unspecified universal alpha target.
+
+### C. GALAH DR4: individual elements, not a blindly reusable DR3 alpha composite
+
+The native GALAH raw catalogue is already staged; its [official DR4 schema](https://www.galah-survey.org/dr4/table_schema/) provides X_fe, e_X_fe and flag_X_fe for Mg/Si/Ca/Ti/etc. The DR4 analysis product should not be assumed to contain the old DR3 weighted alpha composite. The author [data-model repository](https://github.com/svenbuder/GALAH_DR4/blob/main/README.md) labels `red_alpha_fe` as a **reduction-pipeline** value: do not alias that into the scientific alpha target. Each element requires its own quality/SNR/domain filtering. A constructed composite needs a declared element set, weights and covariance/scale treatment, not a silent average.
+
+## Newer or missing candidates (verified public, not acquired/used here)
+
+- **SDSS-V DR19 ASPCAP:** newer public parameters and elemental abundances. [Official DR19 ASPCAP documentation](https://www.sdss.org/dr19/mwm/astra/pipelines-in-astra/aspcap/) distinguishes global `alpha_m_atm` from element fits, reports element abundances relative to hydrogen and uses new raw/calibrated naming/flags. DR17 parsers and field definitions must not be reused unchanged. Quantify *new unique* stars versus reprocessed DR17 identities before claiming label growth. In the same release AstroNN inheritance from DR17 makes teacher independence a separate issue, not a fresh spectroscopic truth source.
+- **Gaia DR3 GSP-Spec/RVS:** an attractive independent-of-XP spectroscopic comparison/alpha source. [GSP-Spec primary paper](https://doi.org/10.1051/0004-6361/202243750) says it uses RVS alone, supplies alpha and individual abundances, and requires detailed quality flags. It is not Gaia XP GSP-Phot. Its source scale/calibrations, elemental flags, crowding/binary/single-star assumptions and bright-star selection still require audit. Do not train on GSP-Phot/XP-derived alpha as independent evidence for an XP encoder.
+- **LAMOST DR12 v2.0 MRS:** newly public international release at end September2026 according to [official release notes](https://www.lamost.org/dr12/v2.0/doc/release_note). [Official MRS schema](https://www.lamost.org/dr12/v2.0/table/med_combined) exposes alpha_m_lasp, alpha_m_cnn, errors and individual CNN X/Fe tags. These are distinct pipeline/teacher products, not all independent direct alpha/Fe measurements. Verify LASP versus CNN training lineage, calibrated/raw definitions, masks, SNR and repeat-family IDs before ingesting. This is a future candidate, not a staged/validated source in our current big training.
+- **Gaia-ESO/high-resolution cluster/benchmark samples:** useful external scale/coverage anchors and validation, not a substitute for broad independent alpha training labels. Check native abundance scales and element definitions, cluster-membership/binary/field-selection dependencies and source-ID provenance before pooling. No verified staged count is claimed here.
+- **Gaia XP-derived alpha catalogues / learned abundance predictors:** eligible for candidate selection, representation checks or explicitly declared distillation only. They cannot be independent XP validation labels, and inherited APOGEE/GALAH teacher overlap must be tracked. No catalogue name or public-release claim should replace native source evidence.
+
+## Recommendation and release gates
+
+1. Freeze a target definition: either source-specific DESI [alpha/Fe] measurement product, a named elemental target such as Mg/Fe, or a source-linked latent with an explicit gauge. Do not label all three physical alpha truth.
+2. Build a sparse per-object observation ledger preserving each survey/pipeline/element, native raw/calibrated value, quoted error, flag/upper-limit status, actual source row, version, original ID and canonical Gaia association. Partial alpha must not require all other five labels. Preserve correlations within spectra/repeats and label lineage.
+3. Expand FIT using legitimate unused full-source labels under a new, predeclared split. The millions now inspected in expanded TEST are not automatically fresh training/evaluation material. Use survey/field/family holdouts and isolate truly untouched calibration/external samples.
+4. Start with already staged APOGEE/GALAH per-element and DESI SP/RVS comparisons. Learn conditional scale/error links only where overlap supports them; retain out-of-domain flags elsewhere. The metal-poor alpha gate stays closed until independent high-quality labels cover that domain.
+5. Validate alpha residual/PIT/coverage in Teff/logg/FeH/SNR/program/modality strata, with a FeH-conditioned baseline and source/sky holdouts to test whether apparent alpha performance is merely a population prior. Show joint FeH–alpha diagnostics only when actual two-label observations and measurement dependence are represented.
+6. Export source scale, uncertainty estimand and applicability with every alpha prediction. No uncertainty calibration or physical-tail claim follows merely from a normalized neural density or a complete source-row hash audit.
+
+## Audit status summary
+
+Verified: existing source-policy/source-projection and count metadata; exact executed signed-coordinate code; role/sample restriction; published source cautions; current single-DESI versus unexecuted source-calibration interface; newer public candidate schema differences.
+
+Not performed: fresh raw-source all-row numerical re-audit; new catalogue downloads; large native-model runs; new heldout overlap fit; source-error/covariance calibration; independent physical-alpha truth validation. No numerical production change is proposed as already fixed by this review.

@@ -1,0 +1,36 @@
+{
+  "apogee17": {
+    "rows": 63750,
+    "raw_age_median_above13p8": 0,
+    "old_age_candidates": 58264,
+    "old_distance_candidates": 58449,
+    "expanded_age_candidates": 57152,
+    "expanded_distance_candidates": 58449,
+    "age_mask_differences": 1112,
+    "distance_mask_differences": 0,
+    "selected_age_above13p8": 0,
+    "ageflag_counts": {
+      "b'MSTO'": 48293,
+      "b'SGB'": 15457
+    },
+    "ageinout_nonempty": 1631,
+    "outputflag_nonempty": 3682
+  },
+  "galahdr3": {
+    "rows": 127016,
+    "raw_age_median_above13p8": 0,
+    "old_age_candidates": 120980,
+    "old_distance_candidates": 122574,
+    "expanded_age_candidates": 120972,
+    "expanded_distance_candidates": 122574,
+    "age_mask_differences": 8,
+    "distance_mask_differences": 0,
+    "selected_age_above13p8": 0,
+    "ageflag_counts": {
+      "b'MSTO'": 100698,
+      "b'SGB'": 26318
+    },
+    "ageinout_nonempty": 2146,
+    "outputflag_nonempty": 2444
+  }
+}

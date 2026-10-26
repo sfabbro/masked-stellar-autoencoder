@@ -1,0 +1,10 @@
+{
+  "scope": "Same-ID raw eligible FeH, within-source minimum-reported-error row (matching registry ordering); source quality masks remain old and GALAH flag issue applies. Not independent total uncertainty calibration.",
+  "matched": 14954,
+  "median_galah_minus_apogee_dex": -0.004453251138329506,
+  "mae_difference_dex": 0.044174157064759474,
+  "nmad_difference_dex": 0.04808211348094046,
+  "p90_abs_difference_dex": 0.09163032099604608,
+  "fraction_abs_difference_gt0_2": 0.012036913200481477,
+  "normalized_difference_nmad": 0.8079494713993852
+}

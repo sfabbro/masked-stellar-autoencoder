@@ -1,0 +1,235 @@
+{
+  "native_sidecar": {
+    "identities": 756836,
+    "observed": {
+      "teff": 736710,
+      "logg": 717777,
+      "fe_h": 736710
+    },
+    "source_counts": {
+      "(unprojected)": {
+        "rows": 20126,
+        "observed": [
+          0,
+          0,
+          0
+        ],
+        "error_quantiles": {
+          "teff": [],
+          "logg": [],
+          "fe_h": []
+        }
+      },
+      "apogee": {
+        "rows": 185859,
+        "observed": [
+          185859,
+          185859,
+          185859
+        ],
+        "error_quantiles": {
+          "teff": [
+            2.515549659729004,
+            5.3542839050292965,
+            9.125190734863281,
+            19.649577713012704,
+            181.36427307128906
+          ],
+          "logg": [
+            0.012563148513436317,
+            0.02042912058532238,
+            0.025845058262348175,
+            0.0367014691233635,
+            0.3938019871711731
+          ],
+          "fe_h": [
+            0.003219905309379101,
+            0.0068636882118880745,
+            0.008945896290242672,
+            0.013347056694328788,
+            0.027624888345599174
+          ]
+        }
+      },
+      "galah": {
+        "rows": 550851,
+        "observed": [
+          550851,
+          531918,
+          550851
+        ],
+        "error_quantiles": {
+          "teff": [
+            66.0,
+            67.42290496826172,
+            69.70626068115234,
+            74.31356811523438,
+            149.1287841796875
+          ],
+          "logg": [
+            0.07496829330921173,
+            0.09562939032912254,
+            0.10433881729841232,
+            0.11619346961379051,
+            4.649792671203613
+          ],
+          "fe_h": [
+            0.050999999046325684,
+            0.0559520423412323,
+            0.05956601724028587,
+            0.06513804942369461,
+            0.2801089584827423
+          ]
+        }
+      }
+    },
+    "role_target_counts": {
+      "fit": [
+        19804,
+        19299,
+        19804
+      ],
+      "tune": [
+        2174,
+        2118,
+        2174
+      ],
+      "calibration": [
+        2100,
+        2046,
+        2100
+      ],
+      "test": [
+        100382,
+        97695,
+        100382
+      ],
+      "external_reference": [
+        1356,
+        1315,
+        1356
+      ]
+    },
+    "partition_target_counts": {
+      "0": [
+        28504,
+        27770,
+        28504
+      ],
+      "1": [
+        2640,
+        2592,
+        2640
+      ],
+      "255": [
+        705566,
+        687415,
+        705566
+      ]
+    },
+    "raw_native_not_projected": {
+      "apogee": {
+        "native_measurements": 185859,
+        "observed_after_projection": [
+          185859,
+          185859,
+          185859
+        ],
+        "native_feh_below_minus2": 130
+      },
+      "galah": {
+        "native_measurements": 550851,
+        "observed_after_projection": [
+          550851,
+          531918,
+          550851
+        ],
+        "native_feh_below_minus2": 919
+      },
+      "li_et_al_vmps": {
+        "native_measurements": 291,
+        "observed_after_projection": [
+          0,
+          0,
+          0
+        ],
+        "native_feh_below_minus2": 276
+      }
+    },
+    "fit_coverage": {
+      "logg_bins": [
+        -1,
+        0,
+        1,
+        1.5,
+        2,
+        2.5,
+        3,
+        3.5,
+        4,
+        4.25,
+        4.5,
+        4.75,
+        5,
+        6
+      ],
+      "logg_hist": [
+        0,
+        499,
+        954,
+        1425,
+        3293,
+        2834,
+        1211,
+        2242,
+        3051,
+        2658,
+        1125,
+        5,
+        2
+      ],
+      "feh_below_minus2": 25
+    }
+  },
+  "registry": {
+    "apogee": {
+      "all_measurements": 733901,
+      "good_feh_measurements": 210990,
+      "good_feh_unique_ids": 200813
+    },
+    "apogee-latentage": {
+      "all_measurements": 493075,
+      "good_feh_measurements": 0,
+      "good_feh_unique_ids": 0
+    },
+    "galah": {
+      "all_measurements": 2687070,
+      "good_feh_measurements": 550854,
+      "good_feh_unique_ids": 550854
+    },
+    "li_et_al_vmps": {
+      "all_measurements": 291,
+      "good_feh_measurements": 291,
+      "good_feh_unique_ids": 291
+    }
+  },
+  "galah_apogee_eligible_feh_overlap": 14954,
+  "desi": {
+    "selected_unique": 2976271,
+    "below_minus2": 78419,
+    "below_minus3": 3829,
+    "overlap_native3_ids": 6096
+  },
+  "pigs": {
+    "selected_unique": 11827,
+    "below_minus2": 2069,
+    "below_minus3": 16,
+    "overlap_native3_ids": 52
+  },
+  "li_cat": {
+    "selected_unique": 8304,
+    "below_minus2": 8288,
+    "below_minus3": 24,
+    "overlap_native3_ids": 93
+  }
+}

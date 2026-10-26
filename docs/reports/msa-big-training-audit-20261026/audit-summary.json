@@ -1,0 +1,109 @@
+{
+  "audit_date": "2026-10-26",
+  "scope": "source/code/metadata review and bounded source-only counts; no new native model runs, jobs, acquisitions or schedule",
+  "training_target_order": [
+    "teff",
+    "logg",
+    "fe_h",
+    "alpha",
+    "age",
+    "distance"
+  ],
+  "generic_report_target_order": [
+    "teff",
+    "logg",
+    "fe_h",
+    "distance",
+    "age",
+    "alpha"
+  ],
+  "order_adapter_risk_confirmed": true,
+  "current_dedicated_report_swap_demonstrated": false,
+  "executed_role_target_counts": {
+    "fit": [
+      19236,
+      19236,
+      19236,
+      2279,
+      2827,
+      2827
+    ],
+    "tune": [
+      2116,
+      2116,
+      2116,
+      828,
+      1002,
+      1002
+    ],
+    "cal": [
+      2046,
+      2046,
+      2046,
+      490,
+      1024,
+      1024
+    ],
+    "test": [
+      103956,
+      101191,
+      103956,
+      431,
+      2048,
+      2048
+    ]
+  },
+  "expanded_primary_reference_counts": {
+    "teff": 688406,
+    "logg": 670065,
+    "fe_h": 688406,
+    "alpha": 1707545,
+    "age": 161359,
+    "distance": 163887
+  },
+  "target_definitions": [
+    {
+      "name": "teff",
+      "display": "Teff",
+      "units": "K",
+      "source": "GALAH DR4 teff / APOGEE DR17 TEFF",
+      "semantics": "pipeline/calibrated atmospheric parameter"
+    },
+    {
+      "name": "logg",
+      "display": "log g",
+      "units": "dex(cm/s2)",
+      "source": "GALAH logg / APOGEE LOGG",
+      "semantics": "parallax/seismic-calibrated source scale"
+    },
+    {
+      "name": "fe_h",
+      "display": "Fe/H",
+      "units": "dex",
+      "source": "GALAH fe_h / APOGEE FE_H",
+      "semantics": "iron abundance, not generic M/H"
+    },
+    {
+      "name": "alpha",
+      "display": "alpha",
+      "units": "dex",
+      "source": "DESI RVTAB.ALPHAFE",
+      "semantics": "source-specific template alpha/Fe"
+    },
+    {
+      "name": "age",
+      "display": "Age",
+      "units": "Gyr; modelled ln(Gyr)",
+      "source": "StarHorse median",
+      "semantics": "isochrone/posterior teacher, not direct age measurement"
+    },
+    {
+      "name": "distance",
+      "display": "Distance",
+      "units": "kpc; modelled ln(kpc)",
+      "source": "StarHorse median",
+      "semantics": "spectro-photo-astrometric posterior teacher"
+    }
+  ],
+  "new_training_launch_authorized_by_this_report": false
+}
