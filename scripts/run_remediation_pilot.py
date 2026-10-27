@@ -223,6 +223,55 @@ def integration_gate(diag, thresholds):
     return metrics
 
 
+def diagnostics_in_row_chunks(
+    head, context, target, sigma, mask, *, particles, chunk_rows
+):
+    """Evaluate the same fixed-QMC diagnostics in bounded independent row chunks."""
+    import torch
+
+    if (
+        chunk_rows < 1
+        or len(context) < 1
+        or any(len(x) != len(context) for x in (target, sigma, mask))
+    ):
+        raise ValueError("Aligned nonempty inputs and positive chunk size are required")
+    chunks = [
+        head.diagnostics(
+            context[i : i + chunk_rows],
+            target[i : i + chunk_rows],
+            sigma[i : i + chunk_rows],
+            mask[i : i + chunk_rows],
+            particles=particles,
+        )
+        for i in range(0, len(context), chunk_rows)
+    ]
+    if any(set(chunk) != set(chunks[0]) for chunk in chunks):
+        raise ValueError("Chunked diagnostics have inconsistent fields")
+    result = {}
+    for key in chunks[0]:
+        values = [chunk[key] for chunk in chunks]
+        if isinstance(values[0], torch.Tensor):
+            result[key] = torch.cat(values, dim=0)
+        else:
+            if any(value != values[0] for value in values[1:]):
+                raise ValueError("Chunked diagnostic metadata differs")
+            result[key] = values[0]
+    return result
+
+
+def validate_integration_probe(cfg, arm):
+    """Restrict the inference-only probe to a finite, explicitly versioned design."""
+    if (
+        arm.get("kind") != "nsf"
+        or arm.get("encoder") != "frozen"
+        or arm.get("reconstruction_weight") != 0
+        or not arm.get("integration_probe")
+        or cfg.get("integration_probe_particles") != [128, 256, 512, 1024]
+        or cfg.get("integration_probe_chunk_rows") != 8
+    ):
+        raise ValueError("Integration probe policy differs")
+
+
 def heldout_corner_rows(ids, roles, common):
     """Reject missing or FIT corner identities before any model load/updates."""
     common = np.asarray(common, dtype="i8")
@@ -502,13 +551,23 @@ def run(cfg, arm, output):
                 model.eval()
                 head.eval()
                 with torch.no_grad():
-                    diag = head.diagnostics(
+                    inputs = (
                         latent(rows),
                         tensor(y[rows]),
                         tensor(sigma[rows]),
                         tensor(mask[rows], torch.bool),
-                        particles=cfg["integration_gate_particles"],
                     )
+                    if arm.get("integration_probe"):
+                        diag = diagnostics_in_row_chunks(
+                            head,
+                            *inputs,
+                            particles=cfg["integration_gate_particles"],
+                            chunk_rows=cfg["integration_probe_chunk_rows"],
+                        )
+                    else:
+                        diag = head.diagnostics(
+                            *inputs, particles=cfg["integration_gate_particles"]
+                        )
                 diagnostic_arrays = {
                     name: value.detach().cpu().numpy()
                     for name, value in diag.items()
@@ -535,6 +594,43 @@ def run(cfg, arm, output):
                 atomic(output / ("integration-" + stage + ".json"), proof)
                 return proof
 
+            if arm.get("integration_probe"):
+                validate_integration_probe(cfg, arm)
+                outcomes = []
+                for count in cfg["integration_probe_particles"]:
+                    cfg["integration_gate_particles"] = count
+                    try:
+                        proof = nsf_check(f"probe-{count}")
+                        outcomes.append(
+                            {"particles": count, "passed": True, "metrics": proof}
+                        )
+                    except ValueError as exc:
+                        if not str(exc).startswith(
+                            "Real sparse/noisy NSF integration gate failed:"
+                        ):
+                            raise
+                        outcomes.append(
+                            {"particles": count, "passed": False, "error": str(exc)}
+                        )
+                    manifest["integration_probe_outcomes"] = outcomes
+                    atomic(output / "manifest.json", manifest)
+                passed = [item["particles"] for item in outcomes if item["passed"]]
+                manifest.update(
+                    status="remediation_nsf_qmc_probe_complete"
+                    if passed
+                    else "remediation_nsf_qmc_probe_failed",
+                    training_performed=False,
+                    completed_updates=0,
+                    first_passing_particles=min(passed) if passed else None,
+                    scope="Inference-only fixed-panel estimator diagnostics; no optimizer step, no exact-marginal claim",
+                    artifacts={
+                        path.name: {"bytes": path.stat().st_size, "sha256": sha(path)}
+                        for path in output.glob("integration-probe-*")
+                        if path.is_file()
+                    },
+                )
+                atomic(output / "manifest.json", manifest)
+                return
             if arm["kind"] == "nsf":
                 nsf_check("initial")
             cache = None

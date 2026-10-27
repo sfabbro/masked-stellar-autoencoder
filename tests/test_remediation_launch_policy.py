@@ -121,3 +121,27 @@ def test_gradient_recovery_uses_distinct_run_ids_and_original_inputs():
         assert env["MSA_REMEDIATION_POLICY"].endswith(
             "remediation-pilots-gradient-recovery-20261026.yaml"
         )
+
+
+def test_nsf_probe_launch_uses_distinct_inference_only_config():
+    root = Path(__file__).parents[1]
+    cfg = yaml.safe_load(
+        (root / "configs/remediation-nsf-qmc-probe-20261026.yaml").read_text()
+    )
+    launch = yaml.safe_load(
+        (root / "configs/remediation-nsf-qmc-probe-launch-20261026.yaml").read_text()
+    )
+    assert len(cfg["arms"]) == len(launch["jobs"]) == 1
+    arm = cfg["arms"][0]
+    assert (
+        arm["integration_probe"]
+        and arm["encoder"] == "frozen"
+        and arm["reconstruction_weight"] == 0
+    )
+    assert (
+        arm["run_id"] == launch["jobs"][0]["run_id"] == "remediation_nsf6_qmc_probe_v1"
+    )
+    env = policy.bind_remediation_policy(launch["jobs"][0], {})
+    assert env["MSA_REMEDIATION_POLICY"].endswith(
+        "remediation-nsf-qmc-probe-20261026.yaml"
+    )

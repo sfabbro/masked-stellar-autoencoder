@@ -285,3 +285,55 @@ def test_encoder_guard_rejects_disconnected_or_permanently_zero_encoder():
     encoder.weight.grad = torch.ones_like(encoder.weight)
     with pytest.raises(FloatingPointError, match="no supervised gradient"):
         pilot.enforce_encoder_gradient(encoder, head, "gaussian", 2, 0.0)
+
+
+def test_qmc_diagnostic_row_chunks_preserve_same_joint_flow_estimate():
+    import torch
+
+    from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+
+    torch.manual_seed(32)
+    head = JointSixHead("nsf", latent_dim=3, width=8, particles=16).double()
+    context = torch.randn(5, 3, dtype=torch.double)
+    y = torch.randn(5, 6, dtype=torch.double)
+    sigma = torch.full_like(y, 0.1)
+    mask = torch.tensor(
+        [
+            [1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 0, 1],
+        ],
+        dtype=torch.bool,
+    )
+    with torch.no_grad():
+        full = head.diagnostics(context, y, sigma, mask, particles=16)
+        chunked = pilot.diagnostics_in_row_chunks(
+            head, context, y, sigma, mask, particles=16, chunk_rows=2
+        )
+    for key in full:
+        if isinstance(full[key], torch.Tensor):
+            torch.testing.assert_close(full[key], chunked[key], rtol=1e-11, atol=1e-11)
+        else:
+            assert full[key] == chunked[key]
+
+
+def test_nsf_probe_requires_fixed_no_training_policy():
+    cfg = {
+        "integration_probe_particles": [128, 256, 512, 1024],
+        "integration_probe_chunk_rows": 8,
+    }
+    arm = {
+        "kind": "nsf",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0,
+        "integration_probe": True,
+    }
+    pilot.validate_integration_probe(cfg, arm)
+    with pytest.raises(ValueError, match="policy"):
+        pilot.validate_integration_probe(cfg, {**arm, "encoder": "finetune"})
+    with pytest.raises(ValueError, match="policy"):
+        pilot.validate_integration_probe(
+            {**cfg, "integration_probe_particles": [64]}, arm
+        )

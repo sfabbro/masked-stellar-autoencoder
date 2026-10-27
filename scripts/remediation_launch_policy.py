@@ -27,6 +27,11 @@ def bind_remediation_policy(plan, env):
         "remediation_gaussian6_ft_parallax_gradientfix_v2",
     }:
         config = Path("configs/remediation-pilots-gradient-recovery-20261026.yaml")
+    if (
+        task == "remediation-pilot"
+        and plan["run_id"] == "remediation_nsf6_qmc_probe_v1"
+    ):
+        config = Path("configs/remediation-nsf-qmc-probe-20261026.yaml")
     cfg = yaml.safe_load(config.read_text())
     runs = (
         {a["run_id"] for a in cfg.get("arms", [])}
