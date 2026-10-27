@@ -1,0 +1,91 @@
+{
+  "scope": "Terminal failures after 1000 updates; selected-gate saved-array diagnostics, not model accuracy or exact marginal truth",
+  "jobs": [
+    {
+      "session_id": "bpw6joq8",
+      "run_id": "remediation_nsf6_frozen_qmc256_v2",
+      "status": "failed",
+      "completed_updates": 1000,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.006224334239959717, \"relative_ess_min\": 0.00390625, \"replica_gap_p95\": 11.211302757263184, \"refinement_gap_p95\": 8.719277381896973}",
+      "selected_update": 900,
+      "files": [
+        {
+          "name": "integration-initial.json",
+          "bytes": 323,
+          "sha256": "4f78a963be0602bf0d614d45c2968f79040e13d63195fd0fa2943be38bcecf57"
+        },
+        {
+          "name": "integration-initial.npz",
+          "bytes": 10304,
+          "sha256": "6b190370770dc9bae9f9f78b9c88e01b18aabaaba760b0c736a21e4b882d736b"
+        },
+        {
+          "name": "integration-selected.npz",
+          "bytes": 10532,
+          "sha256": "04fec46a96fe8e1811e1f21c0684816c874892c66882dd6c3790cb317b8bd523"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 6614,
+          "sha256": "633bf9e5228f4547d081192721aecc3db3758941e84c988f0a4922da8ac18f7a"
+        },
+        {
+          "name": "metrics.jsonl",
+          "bytes": 2658,
+          "sha256": "974bb4b6533989a076ef066e3e4e73a0e21eb41ab893bc936e62d6d5d0f19512"
+        }
+      ],
+      "selected_gate_statistics": {
+        "rows": 128,
+        "alpha_only_rows": 65,
+        "median_relative_ess": 0.006224334239959717,
+        "alpha_only_median_relative_ess": 0.003913726191967726,
+        "replica_gap_p95": 11.211302757263184,
+        "refinement_gap_p95": 8.719277381896973
+      }
+    },
+    {
+      "session_id": "hx177dr5",
+      "run_id": "remediation_nsf6_ft_recon003_qmc256_v2",
+      "status": "failed",
+      "completed_updates": 1000,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.006215118803083897, \"relative_ess_min\": 0.00390625, \"replica_gap_p95\": 13.104267120361328, \"refinement_gap_p95\": 10.498072624206543}",
+      "selected_update": 800,
+      "files": [
+        {
+          "name": "integration-initial.json",
+          "bytes": 323,
+          "sha256": "4f78a963be0602bf0d614d45c2968f79040e13d63195fd0fa2943be38bcecf57"
+        },
+        {
+          "name": "integration-initial.npz",
+          "bytes": 10304,
+          "sha256": "6b190370770dc9bae9f9f78b9c88e01b18aabaaba760b0c736a21e4b882d736b"
+        },
+        {
+          "name": "integration-selected.npz",
+          "bytes": 10510,
+          "sha256": "238b260b12aa5d524b23b1e338eb6d067a0a4c85df9d75b5b0ecd4c38a8bf3b6"
+        },
+        {
+          "name": "manifest.json",
+          "bytes": 7325,
+          "sha256": "e3363dd0434207d0b88e9761c1e648af1171fc0a837acd79583003a8d76bf442"
+        },
+        {
+          "name": "metrics.jsonl",
+          "bytes": 2802,
+          "sha256": "c97eda3898d813513834a461fa2ee65b7835606dd149229029def823388d606e"
+        }
+      ],
+      "selected_gate_statistics": {
+        "rows": 128,
+        "alpha_only_rows": 65,
+        "median_relative_ess": 0.006215118803083897,
+        "alpha_only_median_relative_ess": 0.003911595791578293,
+        "replica_gap_p95": 13.104267120361328,
+        "refinement_gap_p95": 10.498072624206543
+      }
+    }
+  ]
+}
