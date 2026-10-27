@@ -1,6 +1,8 @@
 """Explicitly authorized remediation preflights and pilots; immutable first attempts."""
 
 import ast
+import hashlib
+import json
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -16,6 +18,98 @@ CONFIGS = {
 }
 LIBRARY = "6bd8b93b35fe4fe216319870e72e94eb78429106"
 PARENT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth"
+
+NSF_STARTUP_CONFIG = Path("configs/remediation-nsf-qmc256-startupfix-20261027.yaml")
+NSF_QMC256_CONFIG = Path("configs/remediation-nsf-qmc256-recovery-20261026.yaml")
+NSF_STARTUP_PREVIOUS = {
+    "remediation_nsf6_ft_qmc256_startupfix_v3": {
+        "run_id": "remediation_nsf6_ft_qmc256_v2",
+        "session_id": "yv16nrs1",
+        "source_commit": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+        "failed_manifest": "experiments/xp/remediation-nsf-startupfix-evidence-20261027/yv16nrs1.json",
+        "failed_manifest_sha256": "b5a7414ee9def9a31c3f2ee219597e81271a41d8f8c884448d974f635541dd40",
+        "accepted_record": "experiments/xp/remediation-nsf-qmc256-recovery-20261026.json",
+        "failure": "Finetuned encoder has no nonzero gradient",
+        "completed_updates": 0,
+    },
+    "remediation_nsf6_ft_parallax_qmc256_startupfix_v3": {
+        "run_id": "remediation_nsf6_ft_parallax_qmc256_v2",
+        "session_id": "q6lyfrhv",
+        "source_commit": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+        "failed_manifest": "experiments/xp/remediation-nsf-startupfix-evidence-20261027/q6lyfrhv.json",
+        "failed_manifest_sha256": "b9613837e03a21edeba5a1dc4e0f5dc61c3d894ec407d93d042bae7eb181ff5b",
+        "accepted_record": "experiments/xp/remediation-nsf-qmc256-recovery-20261026.json",
+        "failure": "Finetuned encoder has no nonzero gradient",
+        "completed_updates": 0,
+    },
+}
+
+
+def validate_nsf_startup_failure(arm, evidence_root=Path(".")):
+    """Reconcile one distinct recovery with preserved terminal failure evidence.
+
+    The session ID is bound through the accepted-attempt mapping: remote runner
+    manifests contain a run ID but do not contain their hosting session ID.
+    Neither absence nor elapsed time is accepted as evidence of failure.
+    """
+    expected = NSF_STARTUP_PREVIOUS[arm["run_id"]]
+    if arm.get("recovery_from") != expected:
+        raise ValueError("NSF startup recovery provenance binding differs")
+    evidence = evidence_root / expected["failed_manifest"]
+    raw = evidence.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != expected["failed_manifest_sha256"]:
+        raise ValueError("NSF terminal failure evidence SHA differs")
+    failed = json.loads(raw)
+    attempts = json.loads((evidence_root / expected["accepted_record"]).read_text())
+    matches = [j for j in attempts["jobs"] if j.get("run_id") == expected["run_id"]]
+    if len(matches) != 1 or any(
+        matches[0].get(k) != v
+        for k, v in {
+            "session_id": expected["session_id"],
+            "source_sha": expected["source_commit"],
+            "submission_status": "accepted",
+        }.items()
+    ):
+        raise ValueError("NSF failed session ID and accepted attempt differ")
+    gradient = failed.get("encoder_gradient_contract", {})
+    if (
+        failed.get("status") != "failed"
+        or failed.get("run_id") != expected["run_id"]
+        or failed.get("source_commit") != expected["source_commit"]
+        or failed.get("error_type") != "FloatingPointError"
+        or failed.get("error") != expected["failure"]
+        or failed.get("completed_updates") != 0
+        or failed.get("training_performed") is not False
+        or gradient.get("update") != 1
+        or gradient.get("supervised_l2") != 0
+        or gradient.get("reconstruction_unweighted_l2") != 0
+    ):
+        raise ValueError(
+            "NSF recovery requires the exact terminal zero-update startup failure"
+        )
+    return failed
+
+
+def validate_nsf_startup_config(cfg):
+    """Preserve all scientific settings, and recover only the two failed arms."""
+    original = yaml.safe_load(NSF_QMC256_CONFIG.read_text())
+    if {k: v for k, v in cfg.items() if k != "arms"} != {
+        k: v for k, v in original.items() if k != "arms"
+    }:
+        raise ValueError("NSF startup recovery scientific settings differ")
+    arms = cfg.get("arms", [])
+    if len(arms) != 2 or {a["run_id"] for a in arms} != set(NSF_STARTUP_PREVIOUS):
+        raise ValueError(
+            "NSF startup recovery may contain only the two terminal failures"
+        )
+    for arm in arms:
+        expected = NSF_STARTUP_PREVIOUS[arm["run_id"]]
+        old = next(a for a in original["arms"] if a["run_id"] == expected["run_id"])
+        if {k: v for k, v in arm.items() if k not in {"run_id", "recovery_from"}} != {
+            k: v for k, v in old.items() if k != "run_id"
+        }:
+            raise ValueError("NSF startup recovery arm settings differ")
+        validate_nsf_startup_failure(arm)
 
 
 def bind_remediation_policy(plan, env):
@@ -39,7 +133,34 @@ def bind_remediation_policy(plan, env):
         "remediation_nsf6_ft_parallax_qmc256_v2",
     }:
         config = Path("configs/remediation-nsf-qmc256-recovery-20261026.yaml")
+    startup_recovery = (
+        task == "remediation-pilot" and plan["run_id"] in NSF_STARTUP_PREVIOUS
+    )
+    if startup_recovery:
+        config = NSF_STARTUP_CONFIG
     cfg = yaml.safe_load(config.read_text())
+    if startup_recovery:
+        validate_nsf_startup_config(cfg)
+        if plan.get("resources") != {"cores": 4, "ram": 64, "gpu": 1}:
+            raise ValueError("NSF startup recovery resource policy differs")
+        required = {
+            "remediation_inputs_v4",
+            "remediation_source_v3",
+            "remediation_joint6_preflight_v3",
+            "remediation_nsf6_qmc_probe_v1",
+        }
+        if set(plan.get("depends_on", [])) != required:
+            raise ValueError("NSF startup recovery dependencies differ")
+        expected_output = (
+            "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+            + plan["run_id"]
+        )
+        if any(
+            str(source["MSA_EXPERIMENT_OUTPUT"]) != expected_output
+            for source in (env, plan.get("env", {}))
+            if "MSA_EXPERIMENT_OUTPUT" in source
+        ):
+            raise ValueError("NSF startup recovery output must be distinct")
     runs = (
         {a["run_id"] for a in cfg.get("arms", [])}
         if task == "remediation-pilot"

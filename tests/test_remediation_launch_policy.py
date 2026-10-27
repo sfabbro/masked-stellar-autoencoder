@@ -172,3 +172,131 @@ def test_nsf_qmc256_recoveries_bind_passing_probe_and_new_runs():
         assert policy.bind_remediation_policy(job, {})[
             "MSA_REMEDIATION_POLICY"
         ].endswith("remediation-nsf-qmc256-recovery-20261026.yaml")
+
+
+def test_nsf_startupfix_v3_recovers_exactly_two_failed_arms():
+    import copy
+    import hashlib
+
+    root = Path(__file__).parents[1]
+    cfg = yaml.safe_load((root / policy.NSF_STARTUP_CONFIG).read_text())
+    original = yaml.safe_load((root / policy.NSF_QMC256_CONFIG).read_text())
+    plan = yaml.safe_load(
+        (
+            root / "configs/remediation-nsf-qmc256-startupfix-launch-20261027.yaml"
+        ).read_text()
+    )
+    assert len(cfg["arms"]) == len(plan["jobs"]) == 2
+    assert {a["run_id"] for a in cfg["arms"]} == {j["run_id"] for j in plan["jobs"]}
+    assert {a["recovery_from"]["session_id"] for a in cfg["arms"]} == {
+        "yv16nrs1",
+        "q6lyfrhv",
+    }
+    assert not any(
+        "frozen" in a["run_id"] or "recon003" in a["run_id"] for a in cfg["arms"]
+    )
+    assert {k: v for k, v in cfg.items() if k != "arms"} == {
+        k: v for k, v in original.items() if k != "arms"
+    }
+    for arm in cfg["arms"]:
+        assert arm["run_id"].endswith("startupfix_v3")
+        prior = arm["recovery_from"]
+        assert prior["source_commit"] == "4b8d0b5b780366517baecf10e00165a9c9414b21"
+        assert (
+            hashlib.sha256((root / prior["failed_manifest"]).read_bytes()).hexdigest()
+            == prior["failed_manifest_sha256"]
+        )
+        policy.validate_nsf_startup_failure(arm)
+    for job in plan["jobs"]:
+        assert policy.bind_remediation_policy(job, {})["MSA_REMEDIATION_POLICY"] == str(
+            policy.NSF_STARTUP_CONFIG
+        )
+        bad = copy.deepcopy(job)
+        bad["env"] = {
+            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_qmc256_v2"
+        }
+        with pytest.raises(ValueError, match="output must be distinct"):
+            policy.bind_remediation_policy(bad, {})
+        bad = copy.deepcopy(job)
+        bad["depends_on"] = []
+        with pytest.raises(ValueError, match="dependencies"):
+            policy.bind_remediation_policy(bad, {})
+    changed = copy.deepcopy(cfg)
+    changed["particles"] = 64
+    with pytest.raises(ValueError, match="scientific settings"):
+        policy.validate_nsf_startup_config(changed)
+    changed = copy.deepcopy(cfg)
+    changed["arms"][0]["encoder"] = "frozen"
+    with pytest.raises(ValueError, match="arm settings"):
+        policy.validate_nsf_startup_config(changed)
+
+
+def test_nsf_startupfix_preserved_failure_sha_and_host_session_binding(tmp_path):
+    import copy
+    import json
+
+    root = Path(__file__).parents[1]
+    cfg = yaml.safe_load((root / policy.NSF_STARTUP_CONFIG).read_text())
+    arm = copy.deepcopy(cfg["arms"][0])
+    prior = arm["recovery_from"]
+    evidence = tmp_path / prior["failed_manifest"]
+    evidence.parent.mkdir(parents=True)
+    evidence.write_bytes((root / prior["failed_manifest"]).read_bytes())
+    accepted = tmp_path / prior["accepted_record"]
+    accepted.parent.mkdir(parents=True, exist_ok=True)
+    accepted.write_bytes((root / prior["accepted_record"]).read_bytes())
+    policy.validate_nsf_startup_failure(arm, evidence_root=tmp_path)
+    evidence.write_bytes(evidence.read_bytes() + b" ")
+    with pytest.raises(ValueError, match="evidence SHA"):
+        policy.validate_nsf_startup_failure(arm, evidence_root=tmp_path)
+    evidence.write_bytes((root / prior["failed_manifest"]).read_bytes())
+    attempts = json.loads(accepted.read_text())
+    next(j for j in attempts["jobs"] if j["run_id"] == prior["run_id"])[
+        "session_id"
+    ] = "wrong-id"
+    accepted.write_text(json.dumps(attempts))
+    with pytest.raises(ValueError, match="session ID"):
+        policy.validate_nsf_startup_failure(arm, evidence_root=tmp_path)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("status", "running"),
+        ("run_id", "wrong-run"),
+        ("source_commit", "0" * 40),
+        ("error", "a different error"),
+        ("error_type", "RuntimeError"),
+        ("completed_updates", 1),
+        ("training_performed", True),
+        (
+            "encoder_gradient_contract",
+            {"update": 2, "supervised_l2": 0.0, "reconstruction_unweighted_l2": 0.0},
+        ),
+    ],
+)
+def test_nsf_startupfix_rejects_other_terminal_content_after_digest_validation(
+    tmp_path, monkeypatch, field, value
+):
+    import copy
+    import hashlib
+    import json
+
+    root = Path(__file__).parents[1]
+    cfg = yaml.safe_load((root / policy.NSF_STARTUP_CONFIG).read_text())
+    arm = copy.deepcopy(cfg["arms"][0])
+    prior = arm["recovery_from"]
+    failed = json.loads((root / prior["failed_manifest"]).read_text())
+    failed[field] = value
+    evidence = tmp_path / prior["failed_manifest"]
+    evidence.parent.mkdir(parents=True)
+    evidence.write_text(json.dumps(failed))
+    prior["failed_manifest_sha256"] = hashlib.sha256(evidence.read_bytes()).hexdigest()
+    monkeypatch.setitem(
+        policy.NSF_STARTUP_PREVIOUS, arm["run_id"], copy.deepcopy(prior)
+    )
+    accepted = tmp_path / prior["accepted_record"]
+    accepted.parent.mkdir(parents=True, exist_ok=True)
+    accepted.write_bytes((root / prior["accepted_record"]).read_bytes())
+    with pytest.raises(ValueError, match="exact terminal zero-update"):
+        policy.validate_nsf_startup_failure(arm, evidence_root=tmp_path)

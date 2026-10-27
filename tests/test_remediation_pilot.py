@@ -232,7 +232,7 @@ def test_independent_encoder_gradient_angle_without_native_model():
     assert result["cosine"] == 0
 
 
-@pytest.mark.parametrize("kind", ["gaussian", "mdn"])
+@pytest.mark.parametrize("kind", ["gaussian", "mdn", "nsf"])
 def test_zero_projection_warmup_must_reach_encoder_on_second_update(kind):
     """A real joint head initially has zero context gradient; it must recover."""
     import torch
@@ -431,3 +431,66 @@ def test_microbatch_finetuning_rejects_batch_normalization():
         pilot.validate_microbatch_encoder(encoder, finetune=True)
     pilot.validate_microbatch_encoder(encoder, finetune=False)
     pilot.validate_microbatch_encoder(torch.nn.LayerNorm(4), finetune=True)
+
+
+def test_nsf_microbatch_zero_projection_startup_then_supervised_encoder_gradient():
+    """The admitted QMC256 chunked path needs one output-only optimizer step."""
+    import torch
+
+    torch.manual_seed(47)
+    encoder = torch.nn.Linear(3, 4).double()
+    head = pilot.build_head(
+        "nsf", 4, dict(head_width=8, particles=256, seed=11, mixture_components=3)
+    ).double()
+    optimizer = torch.optim.Adam([*encoder.parameters(), *head.parameters()], lr=1e-2)
+    x = torch.randn(8, 3, dtype=torch.double)
+    y = torch.randn(8, 6, dtype=torch.double).numpy()
+    sigma = np.full_like(y, 0.1)
+    mask = np.array(
+        [
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1],
+        ],
+        dtype=bool,
+    )
+    for update in (1, 2):
+        optimizer.zero_grad(set_to_none=True)
+        pilot.backward_supervised_chunks(
+            head,
+            lambda rr: encoder(x[rr]),
+            y,
+            sigma,
+            mask,
+            np.arange(len(x)),
+            chunk_rows=2,
+            tensor=lambda value, dtype=torch.float64: torch.as_tensor(
+                value, dtype=dtype
+            ),
+        )
+        contract = pilot.accumulated_encoder_gradient_contract(
+            x.new_zeros(()), encoder.parameters()
+        )
+        status = pilot.enforce_encoder_gradient(
+            encoder, head, "nsf", update, contract["supervised_l2"]
+        )
+        if update == 1:
+            assert status == "zero_initialized_output_first_step"
+            assert contract["supervised_l2"] == 0
+            # Neither a proposal-only signal nor reconstruction is an excuse
+            # for a disconnected flow output: require both projection signals.
+            flow_gradient = head.flow.output.weight.grad.clone()
+            head.flow.output.weight.grad = None
+            with pytest.raises(FloatingPointError, match="no nonzero gradient"):
+                pilot.enforce_encoder_gradient(encoder, head, "nsf", 1, 0.0)
+            head.flow.output.weight.grad = flow_gradient
+            with pytest.raises(FloatingPointError, match="no supervised gradient"):
+                pilot.enforce_encoder_gradient(encoder, head, "nsf", 2, 0.0)
+        else:
+            assert status == "nonzero" and contract["supervised_l2"] > 0
+        optimizer.step()

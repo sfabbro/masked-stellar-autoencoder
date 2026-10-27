@@ -31,6 +31,17 @@ The distinct inference-only `remediation_nsf6_qmc_probe_v1` (`e62pubx4`) complet
 
 The output directory is `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_qmc_probe_v1/`; local receipts and small arrays are under `experiments/xp/results-stellar-improvement/remediation-wave-20261026/qmc-probe-preservation/`, with a compact tracked `experiments/xp/remediation-nsf-qmc-probe-result-20261026.json`. A separate four-arm recovery is being prepared with 256 particles for both training and admission, 16-row gradient accumulation, 8-row diagnostics, and unchanged numerical thresholds. Its training-time GPU memory and selected-checkpoint gates still require actual verification. Preserve the four original failed NSF runs.
 
+## 256-particle coupled NSF recovery runs
+
+All four distinct recovery jobs were accepted once at `4b8d0b5b780366517baecf10e00165a9c9414b21`. They use 256 particles for the actual joint training objective and initial/selected integration checks, 16-row supervised gradient accumulation, 8-row diagnostic chunks and unchanged gates. Finetuned encoders with batch normalization are rejected; dropout realizations need not match an unchunked run. The initial GPU check showed 50 finite-gradient updates for the frozen arm; the other three manifests were not yet available at that check. No selected checkpoint or scientific result is certified yet.
+
+- `remediation_nsf6_frozen_qmc256_v2`: `bpw6joq8`.
+- `remediation_nsf6_ft_qmc256_v2`: `yv16nrs1`.
+- `remediation_nsf6_ft_recon003_qmc256_v2`: `hx177dr5`.
+- `remediation_nsf6_ft_parallax_qmc256_v2`: `q6lyfrhv`.
+
+Retrieve summaries using the same output-root recipe below and `experiments/xp/remediation-nsf-qmc256-recovery-20261026.json`. Preserve original failed attempts and never resubmit accepted IDs. The actual selected-head QMC gate must also pass before treating a run as complete.
+
 ## Actual accepted run IDs and sessions
 
 - `remediation_huber_frozen_v1` — `qrysdbbm`.
@@ -89,3 +100,9 @@ Treat absent/404/503 metadata as unavailable, not model failure or permission to
 Generate six-panel prediction/reference and metal-poor residual plots, available empirical PITs and common-axis whole-vector corners from saved arrays with NumPy/matplotlib only. Preserve old diagrams and failed outputs. This launched wave is frozen while the new multi-survey atmospheric-calibration plan is implemented; do not silently replace its code, source, estimands or summaries with the new architecture.
 
 No recurring monitor was created. The finite first-attempt dispatcher is done; its state is `experiments/xp/results-stellar-improvement/remediation-wave-20261026/pilot-dispatch-v1/state.json` (`all_pilots_accepted`).
+
+## Recovery status and preserved artifacts, 27 October
+
+The three gradient-fix Gaussian/MDN recoveries completed all 1,000 updates with finite gradients. Their small prediction, normalization, metrics and whole-vector corner files were preserved and checked against the producer's SHA256 and NPZ CRC; the receipt is `experiments/xp/remediation-gradient-recovery-artifact-receipts-20261027.json`. Selected checkpoints remain on ARC. The full bounded manifest snapshot, including the original terminal failures, is `experiments/xp/remediation-recovery-runtime-20261027.json`.
+
+For the four QMC256 NSF recoveries, frozen `bpw6joq8` and reconstruction `hx177dr5` were running at the recorded observation. Fine-tune `yv16nrs1` and parallax fine-tune `q6lyfrhv` stopped before any update because their zero-initialized projections prevent a first-step encoder gradient. A separately versioned startup correction requires finite nonzero gradients in both projections at step one and a supervised encoder gradient at step two; it does not change the 256-particle objective or integration thresholds. Original failed outputs remain intact. No model-ranking conclusion follows from these runtime receipts.

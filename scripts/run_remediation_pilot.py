@@ -435,9 +435,11 @@ def encoder_gradient_contract(supervised, reconstruction, parameters):
 def enforce_encoder_gradient(encoder, head, kind, update, supervised_l2=None):
     """Require supervised encoder gradients after a zero-projection first step.
 
-    A zero-initialized Gaussian/MDN output prevents context gradients on the
-    first update. The projection must receive a finite nonzero gradient, and
-    the next update must reach the encoder through the supervised objective.
+    Zero-initialized output projections prevent context gradients on the first
+    update: Gaussian/MDN have one projection; NSF has both the Gaussian proposal
+    and the flow context output. Every blocking projection must still receive a
+    finite nonzero gradient. The next update must reach the encoder through the
+    supervised objective; reconstruction cannot substitute for that proof.
     """
     import torch
 
@@ -450,13 +452,16 @@ def enforce_encoder_gradient(encoder, head, kind, update, supervised_l2=None):
         raise FloatingPointError("Finetuned encoder has no supervised gradient")
     if nonzero:
         return "nonzero"
-    if update == 1 and kind in ("gaussian", "mdn"):
-        projection = head.gaussian.net[-1].weight
-        if (
+    if update == 1 and kind in ("gaussian", "mdn", "nsf"):
+        projections = [head.gaussian.net[-1].weight]
+        if kind == "nsf":
+            projections.append(head.flow.output.weight)
+        if all(
             torch.count_nonzero(projection).item() == 0
             and projection.grad is not None
             and torch.isfinite(projection.grad).all()
             and torch.count_nonzero(projection.grad).item() > 0
+            for projection in projections
         ):
             return "zero_initialized_output_first_step"
     raise FloatingPointError("Finetuned encoder has no nonzero gradient")

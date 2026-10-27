@@ -1,0 +1,42 @@
+{
+  "source_commit": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+  "probe_result": "experiments/xp/remediation-nsf-qmc-probe-result-20261026.json",
+  "jobs": [
+    {
+      "run_id": "remediation_nsf6_frozen_qmc256_v2",
+      "session_id": "bpw6joq8",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_frozen_qmc256_v2",
+      "submission_status": "accepted",
+      "manifest_status": "running",
+      "updates": 50,
+      "finite_gradient_updates": 50,
+      "error": null,
+      "source_binding": true
+    },
+    {
+      "run_id": "remediation_nsf6_ft_qmc256_v2",
+      "session_id": "yv16nrs1",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_qmc256_v2",
+      "submission_status": "accepted",
+      "manifest_unavailable": "HTTPError"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_recon003_qmc256_v2",
+      "session_id": "hx177dr5",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_recon003_qmc256_v2",
+      "submission_status": "accepted",
+      "manifest_unavailable": "HTTPError"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_qmc256_v2",
+      "session_id": "q6lyfrhv",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_parallax_qmc256_v2",
+      "submission_status": "accepted",
+      "manifest_unavailable": "HTTPError"
+    }
+  ]
+}

@@ -11959,6 +11959,142 @@
       "attempted_at": "2026-10-27T05:30:33.137532+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_frozen_qmc256_v2",
+      "name": "msa-si15-remediation-nsf6-frozen-qmc256-v2",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_frozen_qmc256_v2",
+      "plan": {
+        "run_id": "remediation_nsf6_frozen_qmc256_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3",
+          "remediation_nsf6_qmc_probe_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bpw6joq8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T13:09:16.235103+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_qmc256_v2",
+      "name": "msa-si15-remediation-nsf6-ft-qmc256-v2",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_qmc256_v2",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_qmc256_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3",
+          "remediation_nsf6_qmc_probe_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "yv16nrs1"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T13:13:49.697244+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_recon003_qmc256_v2",
+      "name": "msa-si15-remediation-nsf6-ft-recon003-qmc256-v2",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_recon003_qmc256_v2",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_recon003_qmc256_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3",
+          "remediation_nsf6_qmc_probe_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hx177dr5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T13:14:04.371251+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_qmc256_v2",
+      "name": "msa-si15-remediation-nsf6-ft-parallax-qmc256-v2",
+      "source_sha": "4b8d0b5b780366517baecf10e00165a9c9414b21",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_parallax_qmc256_v2",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_parallax_qmc256_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3",
+          "remediation_nsf6_qmc_probe_v1"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "q6lyfrhv"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T13:14:10.206646+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
