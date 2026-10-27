@@ -25,6 +25,10 @@ The three fine-tuned Gaussian/mixture jobs that stopped before their first updat
 
 They use the same output-root and collection recipe below. The first actual manifest was admitting; two manifests were not yet available at the initial check. Acceptance is not training completion. The four NSF integration failures are separate and remain unresolved.
 
+## Coupled NSF integration probe
+
+The distinct inference-only `remediation_nsf6_qmc_probe_v1` was accepted once as `e62pubx4`, pinned to `07fb40a39a0e2c891bb790c629b3137a1468dd3b` and the original prepared input, parent, seed and head. It tests 128, 256, 512 and 1,024 QMC particles on the same model-blind panel, with 8-row chunks and the original ESS/replica/refinement thresholds. It makes no optimizer step. The output directory is `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_qmc_probe_v1/`; inspect `manifest.json` and hash-bound `integration-probe-*` diagnostics. A completed probe is not automatically a valid training configuration: the training estimator must use the passing particle count and fit bounded GPU memory. The initial manifest was unavailable; acceptance alone is not an execution or numerical pass. Preserve the four original failed NSF runs.
+
 ## Actual accepted run IDs and sessions
 
 - `remediation_huber_frozen_v1` — `qrysdbbm`.

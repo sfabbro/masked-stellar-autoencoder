@@ -1,0 +1,8 @@
+{
+  "run_id": "remediation_nsf6_qmc_probe_v1",
+  "session_id": "e62pubx4",
+  "source_sha": "07fb40a39a0e2c891bb790c629b3137a1468dd3b",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_qmc_probe_v1",
+  "status": "accepted",
+  "manifest_unavailable": "HTTPError"
+}

@@ -11926,6 +11926,39 @@
       "attempted_at": "2026-10-27T05:20:47.635610+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_qmc_probe_v1",
+      "name": "msa-si15-remediation-nsf6-qmc-probe-v1",
+      "source_sha": "07fb40a39a0e2c891bb790c629b3137a1468dd3b",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_qmc_probe_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_qmc_probe_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "e62pubx4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T05:30:33.137532+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
