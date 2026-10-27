@@ -300,3 +300,28 @@ def test_nsf_startupfix_rejects_other_terminal_content_after_digest_validation(
     accepted.write_bytes((root / prior["accepted_record"]).read_bytes())
     with pytest.raises(ValueError, match="exact terminal zero-update"):
         policy.validate_nsf_startup_failure(arm, evidence_root=tmp_path)
+
+
+def test_copula_spline_policy_binds_new_library_and_preserved_gate_failure():
+    import copy
+
+    cfg = yaml.safe_load(policy.COPULA_CONFIG.read_text())
+    policy.validate_copula_config(cfg)
+    plan = yaml.safe_load(
+        Path("configs/remediation-copula6-launch-20261027.yaml").read_text()
+    )["jobs"][0]
+    output = (
+        "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/" + plan["run_id"]
+    )
+    env = policy.bind_remediation_policy(plan, {"MSA_EXPERIMENT_OUTPUT": output})
+    assert env["MSA_REMEDIATION_POLICY"] == str(policy.COPULA_CONFIG)
+    with pytest.raises(ValueError, match="output must be distinct"):
+        policy.bind_remediation_policy(plan, {"MSA_EXPERIMENT_OUTPUT": "/wrong"})
+    changed = copy.deepcopy(cfg)
+    changed["integration_gate"]["gap_p95_max"] = 10.0
+    with pytest.raises(ValueError, match="scientific settings"):
+        policy.validate_copula_config(changed)
+    changed = copy.deepcopy(cfg)
+    changed["library_revision"] = policy.LIBRARY
+    with pytest.raises(ValueError, match="binding"):
+        policy.validate_copula_config(changed)

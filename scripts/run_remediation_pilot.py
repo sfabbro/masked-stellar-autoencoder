@@ -72,7 +72,9 @@ def admission(cfg, arm):
         or preflight.get("run_id") != cfg["joint_preflight_run_id"]
     ):
         raise ValueError("Actual coupled six-target preflight has not passed")
-    if preflight.get("library_revision") != cfg["library_revision"]:
+    if preflight.get("library_revision") != cfg.get(
+        "legacy_preflight_library_revision", cfg["library_revision"]
+    ):
         raise ValueError("Preflight library differs")
     for kind in ("gaussian", "mdn", "nsf"):
         if preflight.get("checks", {}).get(kind, {}).get("passed") is not True:
@@ -85,7 +87,9 @@ def admission(cfg, arm):
         raise ValueError("Requested source input profile is not verified")
     if arm["reconstruction_weight"] and arm["encoder"] == "frozen":
         raise ValueError("Reconstruction cannot update a frozen encoder control")
-    if arm["kind"] not in ("huber", "gaussian", "mdn", "nsf") or arm["encoder"] not in (
+    if arm["kind"] not in ("huber", "gaussian", "mdn", "nsf", "nsf_copula") or arm[
+        "encoder"
+    ] not in (
         "frozen",
         "finetune",
     ):
@@ -392,6 +396,84 @@ def validate_nsf_recovery(cfg, arm):
     return probe
 
 
+def validate_copula_recovery(cfg, arm):
+    """Admit the alternative only for the preserved selected-gate failures."""
+    if (
+        arm.get("kind") != "nsf_copula"
+        or cfg.get("particles") != 256
+        or cfg.get("integration_gate_particles") != 256
+        or cfg.get("copula_micro_batch_size") != 16
+        or cfg.get("nsf_micro_batch_size") is not None
+        or cfg.get("integration_chunk_rows") != 8
+        or cfg.get("legacy_preflight_library_revision")
+        != "6bd8b93b35fe4fe216319870e72e94eb78429106"
+    ):
+        raise ValueError("Copula spline recovery policy differs")
+    path = cfg["prior_selected_gate_failure_receipt"]
+    if sha(path) != cfg["prior_selected_gate_failure_sha256"]:
+        raise ValueError("Prior NSF selected-gate failure receipt SHA differs")
+    previous = load_json(path)
+    jobs = previous.get("jobs", [])
+    if {job.get("session_id") for job in jobs} != {"bpw6joq8", "hx177dr5"} or any(
+        job.get("status") != "failed"
+        or job.get("completed_updates") != 1000
+        or not str(job.get("error", "")).startswith(
+            "Real sparse/noisy NSF integration gate failed:"
+        )
+        for job in jobs
+    ):
+        raise ValueError("Copula recovery requires both actual selected-gate failures")
+
+
+def copula_device_preflight(head, context, target, sigma, mask):
+    """Two copy-only head updates on actual FIT rows; restore RNG afterwards."""
+    import copy
+
+    import torch
+
+    cpu_rng = torch.get_rng_state()
+    cuda_rng = torch.cuda.get_rng_state(context.device) if context.is_cuda else None
+    try:
+        candidate = copy.deepcopy(head)
+        optimizer = torch.optim.Adam(candidate.parameters(), lr=0.001)
+        local = context.detach().clone().requires_grad_(True)
+        initial = candidate.criterion(local, target, sigma, mask)
+        initial.backward()
+        projection = candidate.flow.net[-1].weight
+        if (
+            projection.grad is None
+            or not torch.isfinite(projection.grad).all()
+            or not torch.count_nonzero(projection.grad).item()
+        ):
+            raise FloatingPointError(
+                "Copula preflight output projection has no finite gradient"
+            )
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+        local.grad = None
+        final = candidate.criterion(local, target, sigma, mask)
+        final.backward()
+        if (
+            local.grad is None
+            or not torch.isfinite(local.grad).all()
+            or not torch.count_nonzero(local.grad).item()
+        ):
+            raise FloatingPointError("Copula preflight context gradient did not start")
+        samples = candidate.sample(local.detach(), 8)
+        if samples.shape != (8, len(local), 6) or not torch.isfinite(samples).all():
+            raise FloatingPointError("Copula preflight whole-vector samples invalid")
+        return {
+            "passed": True,
+            "rows": len(local),
+            "copy_only": True,
+            "scope": "two head-only updates on actual FIT contexts; not a trained-head certificate",
+        }
+    finally:
+        torch.set_rng_state(cpu_rng)
+        if cuda_rng is not None:
+            torch.cuda.set_rng_state(cuda_rng, context.device)
+
+
 def heldout_corner_rows(ids, roles, common):
     """Reject missing or FIT corner identities before any model load/updates."""
     common = np.asarray(common, dtype="i8")
@@ -452,8 +534,12 @@ def enforce_encoder_gradient(encoder, head, kind, update, supervised_l2=None):
         raise FloatingPointError("Finetuned encoder has no supervised gradient")
     if nonzero:
         return "nonzero"
-    if update == 1 and kind in ("gaussian", "mdn", "nsf"):
-        projections = [head.gaussian.net[-1].weight]
+    if update == 1 and kind in ("gaussian", "mdn", "nsf", "nsf_copula"):
+        projections = (
+            [head.flow.net[-1].weight]
+            if kind == "nsf_copula"
+            else [head.gaussian.net[-1].weight]
+        )
         if kind == "nsf":
             projections.append(head.flow.output.weight)
         if all(
@@ -472,6 +558,14 @@ def build_head(kind, latent_dim, cfg):
 
     from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
 
+    if kind == "nsf_copula":
+        from masked_stellar_autoencoder.training.remediation_copula6 import (
+            CopulaSplineSixHead,
+        )
+
+        return CopulaSplineSixHead(
+            latent_dim, cfg["head_width"], cfg["particles"], cfg["seed"]
+        )
     if kind != "huber":
         return JointSixHead(
             kind,
@@ -530,6 +624,8 @@ def run(cfg, arm, output):
             probe = validate_nsf_recovery(cfg, arm)
             if probe.get("prepared_sha256") != source.get("prepared_sha256"):
                 raise ValueError("NSF probe and training source hashes differ")
+        if cfg.get("copula_micro_batch_size"):
+            validate_copula_recovery(cfg, arm)
         prepared = Path(source["prepared_path"])
         if sha(prepared) != source["prepared_sha256"]:
             raise ValueError("Actual remediation prepared SHA changed")
@@ -546,7 +642,7 @@ def run(cfg, arm, output):
             or "{}"
         )
         if direct.get("vcs_info", {}).get("commit_id") != cfg["library_revision"]:
-            raise ValueError("Installed torchregress6bd differs")
+            raise ValueError("Installed torchregress revision differs")
         import run_multilabel_screen as native
 
         from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
@@ -622,7 +718,7 @@ def run(cfg, arm, output):
             model = native.probe.load_model(model_cfg, disk, device)
             for parameter in model.parameters():
                 parameter.requires_grad_(arm["encoder"] == "finetune")
-            if cfg.get("nsf_micro_batch_size"):
+            if cfg.get("nsf_micro_batch_size") or cfg.get("copula_micro_batch_size"):
                 validate_microbatch_encoder(
                     model.encoder, finetune=arm["encoder"] == "finetune"
                 )
@@ -665,6 +761,24 @@ def run(cfg, arm, output):
                     with torch.no_grad():
                         return model.encoder(x)
                 return model.encoder(x)
+
+            if arm["kind"] == "nsf_copula":
+                model.eval()
+                preflight_rows = fixed_role_rows(ids, roles, mask, "fit", 2)
+                with torch.no_grad():
+                    preflight_context = latent(preflight_rows)
+                manifest["copula_device_preflight"] = copula_device_preflight(
+                    head,
+                    preflight_context,
+                    tensor(y[preflight_rows]),
+                    tensor(sigma[preflight_rows]),
+                    tensor(mask[preflight_rows], torch.bool),
+                )
+                manifest["covariance_scope"] = (
+                    "Whole-vector Gaussian-copula spline samples; restricted copula, "
+                    "not an unrestricted six-dimensional NSF or physical truth"
+                )
+                atomic(output / "manifest.json", manifest)
 
             def nsf_check(stage):
                 balanced = fixed_role_rows(
@@ -769,7 +883,7 @@ def run(cfg, arm, output):
                 )
                 atomic(output / "manifest.json", manifest)
                 return
-            if arm["kind"] == "nsf":
+            if arm["kind"] in ("nsf", "nsf_copula"):
                 nsf_check("initial")
             cache = None
             if arm["reconstruction_weight"]:
@@ -922,7 +1036,10 @@ def run(cfg, arm, output):
                     rng, pools, cfg["batch_size"], target_column=(update - 1) % 6
                 )
                 sequence.update(np.asarray(ids[rr], dtype="<i8").tobytes())
-                chunked = bool(cfg.get("nsf_micro_batch_size"))
+                chunked = bool(
+                    cfg.get("nsf_micro_batch_size")
+                    or cfg.get("copula_micro_batch_size")
+                )
                 if chunked:
                     supervised_loss, components = backward_supervised_chunks(
                         head,
@@ -931,7 +1048,9 @@ def run(cfg, arm, output):
                         sigma,
                         mask,
                         rr,
-                        chunk_rows=cfg["nsf_micro_batch_size"],
+                        chunk_rows=cfg.get(
+                            "nsf_micro_batch_size", cfg.get("copula_micro_batch_size")
+                        ),
                         tensor=tensor,
                     )
                     loss = supervised_loss
@@ -1093,7 +1212,7 @@ def run(cfg, arm, output):
             )
             model.load_state_dict(state["model_state_dict"], strict=True)
             head.load_state_dict(state["head_state_dict"], strict=True)
-            if arm["kind"] == "nsf":
+            if arm["kind"] in ("nsf", "nsf_copula"):
                 manifest["selected_nsf_integration"] = nsf_check("selected")
             tune_score, tune_per_label = evaluate(tune, output / "tune-predictions.npz")
             dev_score, dev_per_label = evaluate(

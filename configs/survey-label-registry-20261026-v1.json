@@ -1,0 +1,236 @@
+{
+  "schema": "msa-survey-label-registry-v1",
+  "version": "2026-10-26.1",
+  "audit_date": "2026-10-26",
+  "scope": "documented source contracts; no acquisition, native materialisation, training or jobs",
+  "default_targets": [
+    "teff",
+    "logg",
+    "fe_h"
+  ],
+  "target_definitions": {
+    "teff": "effective temperature in K",
+    "logg": "log10 surface gravity in cm/s^2",
+    "fe_h": "log10 iron-to-hydrogen abundance relative to the explicitly retained survey solar convention"
+  },
+  "activation_policy": {
+    "default": "disabled_until_adapter_and_source_receipts_pass",
+    "current_core_allowlist": [
+      "apogee_dr17_aspcap",
+      "galah_dr4_allstar_240705"
+    ],
+    "registry_does_not_expand_training": true,
+    "unknown_error": "missing, never known zero",
+    "generic_metallicity_alias_to_fe_h": false,
+    "generic_alpha_alias": false,
+    "repeat_policy": "retain provenance; resolve dependency or model joint covariance before multiple active likelihood terms",
+    "split_unit": "Gaia star plus linked family/cluster/dependency groups; inspected historical TEST is not fresh"
+  },
+  "evidence_limit": "Archived inventory is an earlier snapshot, not a live filesystem census. Absence here means ingestion not verified, not proof a remote file does not exist.",
+  "sources": [
+    {
+      "id": "apogee_dr17_aspcap",
+      "survey": "APOGEE",
+      "release": "DR17 synspec_rev1",
+      "pipeline": "ASPCAP",
+      "ingestion_status": "staged_and_core_native_observations",
+      "local_evidence": [
+        "experiments/xp/results-stellar-improvement/label_registry_v2/inventory.json",
+        "src/masked_stellar_autoencoder/training/remediation_source.py"
+      ],
+      "native_fields": {
+        "teff": "TEFF [K]",
+        "logg": "LOGG [dex cgs]",
+        "fe_h": "FE_H [dex Fe/H]",
+        "m_h_separate": "M_H [dex M/H]"
+      },
+      "quality_contract": "Preserve STARFLAG/ASPCAPFLAG, per-parameter PARAMFLAG, FE_H_FLAG and positive finite quoted errors; release-specific bit policy.",
+      "dependency_contract": "Released calibrated parameters; seismic gravity/temperature calibration and alternate reductions are dependencies, not independent observations.",
+      "official_documentation": [
+        "https://www.sdss4.org/dr17/irspec/aspcap/",
+        "https://www.sdss4.org/dr17/irspec/catalogs/",
+        "https://sdss.org/dr20/mwm/data/"
+      ],
+      "next_action": "Retain raw/calibrated alternatives and element fields; DR19 analysis is a distinct version, not silently substituted.",
+      "physical_truth_claim": false,
+      "newer_public_analysis": "SDSS DR20 carries APOGEE DR19 ASPCAP analysis/files unchanged. Our staged native source remains DR17; DR19/DR20 are not two independent analyses."
+    },
+    {
+      "id": "galah_dr4_allstar_240705",
+      "survey": "GALAH",
+      "release": "DR4 240705",
+      "pipeline": "allstar analysis",
+      "ingestion_status": "staged_and_core_native_observations",
+      "local_evidence": [
+        "experiments/xp/results-stellar-improvement/label_registry_v2/inventory.json",
+        "src/masked_stellar_autoencoder/training/remediation_source.py"
+      ],
+      "native_fields": {
+        "teff": "teff [K]",
+        "logg": "logg [dex cgs]",
+        "fe_h": "fe_h [dex Fe/H]",
+        "element_abundances": "X_fe [dex X/Fe]; explicit element required"
+      },
+      "quality_contract": "Current publisher best practice: flag_sp==0 and snr_px_ccd3>30; ignore erroneous DR4 flag_fe_h. Element abundances require flag_X_fe==0. Preserve old policy separately.",
+      "dependency_contract": "Gravity uses external astrometric/photometric constraints; age/mass are model products. allspec repeats share reductions; no independent-count multiplication.",
+      "official_documentation": [
+        "https://www.galah-survey.org/dr4/using_the_data/"
+      ],
+      "next_action": "Keep APOGEE and GALAH alternatives for overlapping Gaia IDs rather than precedence overwrite.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "gaia_dr3_gspspec",
+      "survey": "Gaia RVS",
+      "release": "DR3",
+      "pipeline": "GSP-Spec MatisseGauguin",
+      "ingestion_status": "candidate_not_native_ingestion_verified",
+      "local_evidence": [
+        "experiments/xp/results-stellar-improvement/label_registry_v2/inventory.json"
+      ],
+      "native_fields": {
+        "teff": "teff_gspspec [K]",
+        "logg": "logg_gspspec [dex cgs]",
+        "m_h_separate": "mh_gspspec [M/H]",
+        "fe_over_m_separate": "fem_gspspec [Fe I/M], NOT direct Fe/H",
+        "alpha_source_specific": "alphafe_gspspec [alpha/Fe]"
+      },
+      "quality_contract": "Parse flags_gspspec character positions, individual abundance flags/upper limits, uncertainties and published calibration applicability; do not substitute rv_template_* or GSP-Phot.",
+      "dependency_contract": "Released atmospheric values uncalibrated; any published correction and its reference surveys must be versioned. RVS spectroscopy distinct from XP, but calibrated products may share reference surveys.",
+      "official_documentation": [
+        "https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_astrophysical_parameter_tables/ssec_dm_astrophysical_parameters.html",
+        "https://doi.org/10.1051/0004-6361/202243750"
+      ],
+      "next_action": "Audit native schema and exact Gaia IDs before ingestion. A derived Fe/H=Fe/M+M/H needs explicit transformation, covariance and calibration; never rename M/H.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "gaia_eso_public_dr5_1",
+      "survey": "Gaia-ESO",
+      "release": "final public DR5.1; ESO catalogue 411 version 4, published 2023-07-02",
+      "pipeline": "homogenised UVES/GIRAFFE nodes",
+      "ingestion_status": "candidate_not_native_ingestion_verified",
+      "local_evidence": [],
+      "native_fields": {
+        "candidate_atmospheric": "Teff/logg/metallicity and element abundances; exact archive column mapping unresolved"
+      },
+      "quality_contract": "Freeze archive version, instrument/setup, recommended parameters, uncertainties, flags, homogenisation/node provenance and cluster membership before activation.",
+      "dependency_contract": "Homogenised node outputs and repeat instrument solutions share spectra/standards; cluster members must be group held out.",
+      "official_documentation": [
+        "https://www.eso.org/qi/catalog/show/411",
+        "https://www.eso.org/sci/publications/announcements/sciann17584.html",
+        "https://arxiv.org/abs/2304.07720"
+      ],
+      "next_action": "Pin final public DR5.1 archive file/digest and native Fe/H field/error mapping. Preserve instrument/node provenance and distinguish internal iDR6 nomenclature; no catalogue count promoted to eligible rows.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "rave_dr6",
+      "survey": "RAVE",
+      "release": "DR6",
+      "pipeline": "MADERA; BDASP; seismic-calibrated alternatives",
+      "ingestion_status": "legacy_derived_presence_only_native_ingestion_unverified",
+      "local_evidence": [
+        "experiments/xp/results-stellar-improvement/label_registry_v2/inventory.json"
+      ],
+      "native_fields": {
+        "spectroscopic": "Teff/logg/[m/H] indicator; native field mapping pending",
+        "posterior_separate": "BDASP parameters and m_h_bdasp; distinct astrometry-assisted product",
+        "iron_candidate_separate": "GAUGUIN Fe abundance product exists; exact column/error/flag mapping pending, never atmospheric m/H rename"
+      },
+      "quality_contract": "Preserve convergence, spectral morphology, S/N, parameter errors and release-specific flags; separate pipeline selections.",
+      "dependency_contract": "BDASP uses Gaia DR2 priors; seismic-calibrated giant subset shares seismic anchors. Legacy filenames containing rave do not certify raw catalogue flags or lineage.",
+      "official_documentation": [
+        "https://www.rave-survey.org/",
+        "https://arxiv.org/abs/2002.04512"
+      ],
+      "next_action": "Acquire nothing in this audit; verify native provenance before use. Atmospheric m/H is not interchangeable with Fe/H or universal total M/H.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "desi_dr1_mws_iron_v1",
+      "survey": "DESI",
+      "release": "DR1 MWS iron/v1.0",
+      "pipeline": "RVSpecFit RVTAB; FERRE SP alternatives",
+      "ingestion_status": "staged_projected_not_current_core_native_observations",
+      "local_evidence": [
+        "configs/stellar-catalog-sources.yaml",
+        "experiments/xp/results-stellar-improvement/desi_labels_v1/manifest.json",
+        "experiments/xp/results-stellar-improvement/alpha_desi_source_projection_v1/manifest.json"
+      ],
+      "native_fields": {
+        "rvtab": "TEFF [K], LOGG [dex cgs], FEH [Fe/H], ALPHAFE [alpha/Fe]",
+        "sp_separate": "FERRE/SP parameters and covariance; exact ordering must be retained"
+      },
+      "quality_contract": "Star/success/primary, S/N, positive finite error, association and pipeline validity cuts; preserve RVTAB-SP TARGETID alignment. Existing low-metallicity RVTAB alpha policy excludes FEH<=-2 for primary use.",
+      "dependency_contract": "Two pipelines use common DESI spectra and are correlated; duplicate coadds/programs share observations. Gaia association is not guaranteed by TARGETID.",
+      "official_documentation": [
+        "https://data.desi.lbl.gov/doc/releases/dr1/vac/mws/",
+        "https://desi-mws-dr1-datamodel.readthedocs.io/en/latest/mwsall.html"
+      ],
+      "next_action": "Bring sparse atmospheric observations into a new source version after quality/domain/overlap audit; retain existing staged counts as selected measurements, not new FIT counts.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "lamost_products",
+      "survey": "LAMOST",
+      "release": "staged Li2025 DR10 CaT; DR12 v2 candidate",
+      "pipeline": "Li CaT; LASP LRS; MRS/CNN distinct",
+      "ingestion_status": "limited_cat_staged_full_survey_not_ingested_verified",
+      "local_evidence": [
+        "configs/stellar-catalog-sources.yaml",
+        "experiments/xp/results-stellar-improvement/li2025_collection_v1/manifest.json"
+      ],
+      "native_fields": {
+        "staged": "Li2025 CaT Fe/H with method/error/quality; not LASP full atmospheric catalogue",
+        "candidate": "LASP Teff/logg/[Fe/H] and RV; MRS/CNN fields distinct"
+      },
+      "quality_contract": "Keep CaT errors, EW/magnitude/method flags and repeat identity. LASP needs S/N, subclass, error and parameter validity masks; CNN uncertainties cannot be invented.",
+      "dependency_contract": "Learned pipelines inherit training/reference scales; CaT Fe/H depends on calibration and luminosity proxy. Do not confuse older Li high-resolution sample with Li2025 CaT.",
+      "official_documentation": [
+        "https://www.lamost.org/dr12/v2.0/doc/release_note",
+        "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/53/ReadMe"
+      ],
+      "next_action": "Pin product/pipeline before mapping; DR12 public release is a candidate, not staged or trained data.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "mastar_dr17_parameters",
+      "survey": "MaStar",
+      "release": "SDSS DR17 parameter VAC v2 recommended; exact file revision to pin",
+      "pipeline": "multiple methods plus master median",
+      "ingestion_status": "candidate_not_native_ingestion_verified",
+      "local_evidence": [],
+      "native_fields": {
+        "candidate": "method-specific Teff/logg/[Fe/H], and master median; exact native column mapping pending"
+      },
+      "quality_contract": "Use goodstars/goodspec and per-method validity/errors. Preserve visit and star keys, uncertainty definitions and Gaia crossmatch ambiguity.",
+      "dependency_contract": "Four alternative method sets share spectra; three Fe/H sets calibrated to APOGEE. Master median and its constituents cannot be counted as independent labels.",
+      "official_documentation": [
+        "https://www.sdss4.org/dr17/mastar/mastar-stellar-parameters/",
+        "https://www.sdss4.org/dr17/mastar/mastar-catalogs/"
+      ],
+      "next_action": "Freeze VAC version; retain alternative posterior/method evidence. No assumption that library diversity gives a uniform or independent training sample.",
+      "physical_truth_claim": false
+    },
+    {
+      "id": "sdss_specobj_sspp",
+      "survey": "SDSS SpecObj",
+      "release": "DR17 SDSS/SEGUE optical; separate from newer BOSS/Astra",
+      "pipeline": "SpecObjAll identity + sppParams SSPP",
+      "ingestion_status": "candidate_not_native_ingestion_verified",
+      "local_evidence": [],
+      "native_fields": {
+        "identity": "specObjID / plate-MJD-fiber spectrum identity; NOT Gaia source_id",
+        "labels": "sppParams SSPP Teff/logg/[Fe/H]; exact adopted/error field mapping pending"
+      },
+      "quality_contract": "Select appropriate stellar SSPP domain, quality/SNR/flags and spectroscopic primary rules; verify specObjID join and Gaia association, retain repeats.",
+      "dependency_contract": "SpecObj is not a stellar atmospheric label pipeline. SSPP methods share spectra/reference scales. Duplicate visits must not cross split boundaries.",
+      "official_documentation": [
+        "https://www.sdss4.org/dr17/tutorials/segue_sqlcookbook/"
+      ],
+      "next_action": "Map explicit sppParams adopted/error columns and units; never manufacture atmospheric labels from spectral classification or redshift.",
+      "physical_truth_claim": false
+    }
+  ]
+}

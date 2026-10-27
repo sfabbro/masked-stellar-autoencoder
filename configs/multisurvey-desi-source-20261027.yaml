@@ -1,0 +1,7 @@
+run_id: multisurvey_desi_dr1_raw_source_v1
+raw_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits
+publisher_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/desi-publisher.sha256sum
+expected_sha: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
+chunk_rows: 65536
+snr_min: 10.0
+scratch_dir: /scratch
