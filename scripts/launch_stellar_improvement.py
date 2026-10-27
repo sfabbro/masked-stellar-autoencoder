@@ -574,6 +574,7 @@ def create_form_session(client, **fields):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--git-sha", required=True)
+    p.add_argument("--git-ref", default="codex/xp-reconstruction-experiments")
     p.add_argument(
         "--plan", type=Path, default=Path("configs/stellar-improvement-plan.yaml")
     )
@@ -699,7 +700,7 @@ def main():
         except (ValueError, KeyError):
             dependencies[name] = False
     payload = bootstrap(
-        "codex/xp-reconstruction-experiments",
+        args.git_ref,
         args.git_sha,
         {} if args.dry_run else launch_addresses(),
     )

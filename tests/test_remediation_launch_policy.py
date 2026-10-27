@@ -84,3 +84,40 @@ def test_post_cleanup_recovery_plan_is_distinct_and_matches_bound_configs():
                 == job["run_id"]
             )
             policy.bind_remediation_policy(job, {})
+
+
+def test_gradient_recovery_uses_distinct_run_ids_and_original_inputs():
+    root = Path(__file__).parents[1]
+    original = yaml.safe_load(
+        (root / "configs/remediation-pilots-20261026.yaml").read_text()
+    )
+    recovery = yaml.safe_load(
+        (
+            root / "configs/remediation-pilots-gradient-recovery-20261026.yaml"
+        ).read_text()
+    )
+    launch = yaml.safe_load(
+        (
+            root / "configs/remediation-pilot-gradient-recovery-launch-20261026.yaml"
+        ).read_text()
+    )
+    assert len(recovery["arms"]) == len(launch["jobs"]) == 3
+    assert {x["run_id"] for x in recovery["arms"]} == {
+        x["run_id"] for x in launch["jobs"]
+    }
+    assert not {x["run_id"] for x in recovery["arms"]} & {
+        x["run_id"] for x in original["arms"]
+    }
+    for key in (
+        "checkpoint_sha256",
+        "source_manifest",
+        "library_revision",
+        "seed",
+        "updates",
+    ):
+        assert recovery[key] == original[key]
+    for job in launch["jobs"]:
+        env = policy.bind_remediation_policy(job, {})
+        assert env["MSA_REMEDIATION_POLICY"].endswith(
+            "remediation-pilots-gradient-recovery-20261026.yaml"
+        )

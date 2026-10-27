@@ -21,6 +21,12 @@ PARENT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_hub
 def bind_remediation_policy(plan, env):
     task = plan["task"]
     config = CONFIGS[task]
+    if task == "remediation-pilot" and plan["run_id"] in {
+        "remediation_gaussian6_ft_gradientfix_v2",
+        "remediation_mdn6_ft_gradientfix_v2",
+        "remediation_gaussian6_ft_parallax_gradientfix_v2",
+    }:
+        config = Path("configs/remediation-pilots-gradient-recovery-20261026.yaml")
     cfg = yaml.safe_load(config.read_text())
     runs = (
         {a["run_id"] for a in cfg.get("arms", [])}

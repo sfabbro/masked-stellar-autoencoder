@@ -1444,3 +1444,9 @@ Actual NSF preflight tgcwpgsi is remediation_joint6_preflight_pass; completed Ga
 ## All fourteen remediation pilots accepted; frozen handoff before new architecture
 
 Single dispatcher completed all_pilots_accepted/exit0. All14 actual IDs accepted once at7b29799cee65ebf9e6a0a348ed0e6844b9139a41, including4coupled-six-targetNSFs. Exact run/session map, inputs and summary-retrieval instructions: experiments/xp/remediation-submitted-20261026.json and docs/reports/msa-remediation-launch-handoff-20261026.md. No recurring monitor. Do not resubmit accepted/ambiguous IDs, poll completed old fits or execute native checkpoints locally. User requests tagging launched code, then implementing docs/masked_stellar_autoencoder_torchregress_final_plan.md in MSA/torchregress; maintain this wave as a separate immutable baseline.
+
+## 2026-10-26 remediation pilot runtime and cleanup
+
+Bounded original manifests: seven of fourteen completed all 1,000 updates; three fine-tuned Gaussian/MDN arms stopped on first-step encoder-gradient check; all four coupled six-target NSF arms failed their real sparse/noisy integration gate at zero updates. These are terminal states, not scientific results. Exact run IDs and statuses: `experiments/xp/remediation-pilot-status-20261026.json`. Preserve original failures; never resubmit original IDs. Zero-initialized Gaussian/MDN final projection explains the first zero encoder gradient; a synthetic regression requires a nonzero head gradient at step one and a nonzero supervised encoder gradient at step two. NSF numerical admission remains unresolved and the existing thresholds remain unchanged.
+
+The four explicitly approved old expanded-evaluation batch-cache trees were removed, 28,341,292,914 bytes, with no archive. Prediction-array directory URI and aggregate size were unchanged; no full-content hash is claimed. Project usage concurrently fell further while the user also deleted files.

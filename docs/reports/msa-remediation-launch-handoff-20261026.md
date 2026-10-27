@@ -11,6 +11,10 @@ All **14 pilots accepted once**. This document and `experiments/xp/remediation-s
 - Order: Teff, logg, FeH, alpha, age, distance. FIT counts: 506331, 493548, 506315, 1197641, 115834, 117573; 1736618 unique FIT identities. Full-six coobservations: 277; pairwise support remains in the source manifest. No physical six-dimensional truth claim.
 - Each pilot has 1000 updates, fresh head/optimizer, common large parent, fixed source-balanced/label-balanced sampler and common TUNE selection. This is not 1000 epochs or 450M presentations. Source roles are development roles consuming previously inspected test objects.
 
+## Runtime check — 2026-10-26
+
+Original manifests show seven pilots completed 1,000 updates and seven stopped at zero updates. Three no-reconstruction fine-tuned Gaussian/MDN runs failed the initial encoder-gradient check; four coupled NSF runs failed the real sparse/noisy integration admission gate. This is an execution check, not a scientific ranking. Original manifests remain untouched. Exact statuses are recorded in `experiments/xp/remediation-pilot-status-20261026.json`; successful artifacts still require independent collection and verification. The observed NSF estimator gaps do not justify weakening the gate or treating the flow as independent scalar models.
+
 ## Actual accepted run IDs and sessions
 
 - `remediation_huber_frozen_v1` — `qrysdbbm`.

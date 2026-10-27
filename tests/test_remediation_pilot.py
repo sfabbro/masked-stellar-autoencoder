@@ -230,3 +230,58 @@ def test_independent_encoder_gradient_angle_without_native_model():
     )
     assert result["supervised_l2"] == 1 and result["reconstruction_unweighted_l2"] == 2
     assert result["cosine"] == 0
+
+
+@pytest.mark.parametrize("kind", ["gaussian", "mdn"])
+def test_zero_projection_warmup_must_reach_encoder_on_second_update(kind):
+    """A real joint head initially has zero context gradient; it must recover."""
+    import torch
+
+    torch.manual_seed(47)
+    encoder = torch.nn.Linear(3, 4).double()
+    head = pilot.build_head(
+        kind, 4, dict(head_width=8, particles=16, seed=11, mixture_components=3)
+    ).double()
+    optimizer = torch.optim.Adam([*encoder.parameters(), *head.parameters()], lr=1e-2)
+    x = torch.randn(8, 3, dtype=torch.float64)
+    y = torch.randn(8, 6, dtype=torch.float64)
+    mask = torch.ones_like(y, dtype=torch.bool)
+    sigma = torch.full_like(y, 0.1)
+    for update in (1, 2):
+        optimizer.zero_grad(set_to_none=True)
+        supervised = head.criterion(encoder(x), y, sigma, mask)
+        contract = pilot.encoder_gradient_contract(
+            supervised, supervised.new_zeros(()), encoder.parameters()
+        )
+        supervised.backward()
+        state = pilot.enforce_encoder_gradient(
+            encoder, head, kind, update, contract["supervised_l2"]
+        )
+        if update == 1:
+            assert state == "zero_initialized_output_first_step"
+            assert contract["supervised_l2"] == 0
+        else:
+            assert state == "nonzero" and contract["supervised_l2"] > 0
+        optimizer.step()
+
+
+def test_encoder_guard_rejects_disconnected_or_permanently_zero_encoder():
+    import torch
+
+    encoder = torch.nn.Linear(2, 2)
+    head = pilot.build_head(
+        "gaussian", 2, dict(head_width=4, particles=8, seed=11, mixture_components=2)
+    )
+    (
+        head.criterion(
+            torch.ones(2, 2),
+            torch.ones(2, 6),
+            torch.zeros(2, 6),
+            torch.ones(2, 6, dtype=torch.bool),
+        )
+    ).backward()
+    with pytest.raises(FloatingPointError, match="disconnected"):
+        pilot.enforce_encoder_gradient(encoder, head, "gaussian", 1, 0.0)
+    encoder.weight.grad = torch.ones_like(encoder.weight)
+    with pytest.raises(FloatingPointError, match="no supervised gradient"):
+        pilot.enforce_encoder_gradient(encoder, head, "gaussian", 2, 0.0)

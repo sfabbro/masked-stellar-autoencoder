@@ -1,0 +1,132 @@
+{
+  "checked_utc": "2026-10-26",
+  "source": "bounded original run manifests; no model replay",
+  "jobs": [
+    {
+      "run": "remediation_huber_frozen_v1",
+      "session": "qrysdbbm",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_huber_ft_v1",
+      "session": "ipbuzbqo",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_huber_ft_recon003_v1",
+      "session": "tnyfsly4",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_gaussian6_frozen_v1",
+      "session": "puc5wm6y",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_gaussian6_ft_v1",
+      "session": "tx9fe185",
+      "status": "failed",
+      "updates": 0,
+      "error": "Finetuned encoder has no nonzero gradient",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_gaussian6_ft_recon003_v1",
+      "session": "hs6sjt07",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_mdn6_frozen_v1",
+      "session": "qv0f7cod",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_mdn6_ft_v1",
+      "session": "c1vozo13",
+      "status": "failed",
+      "updates": 0,
+      "error": "Finetuned encoder has no nonzero gradient",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_mdn6_ft_recon003_v1",
+      "session": "ujligcsn",
+      "status": "remediation_pilot_complete",
+      "updates": 1000,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_nsf6_frozen_v1",
+      "session": "uracqg4f",
+      "status": "failed",
+      "updates": 0,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.5390510559082031, \"relative_ess_min\": 0.24287912249565125, \"replica_gap_p95\": 0.23137401044368744, \"refinement_gap_p95\": 0.10555378347635269}",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_nsf6_ft_v1",
+      "session": "gz5istkd",
+      "status": "failed",
+      "updates": 0,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.5390510559082031, \"relative_ess_min\": 0.24287912249565125, \"replica_gap_p95\": 0.23137401044368744, \"refinement_gap_p95\": 0.10555378347635269}",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_nsf6_ft_recon003_v1",
+      "session": "n3n20n5a",
+      "status": "failed",
+      "updates": 0,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.5390510559082031, \"relative_ess_min\": 0.24287912249565125, \"replica_gap_p95\": 0.23137401044368744, \"refinement_gap_p95\": 0.10555378347635269}",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_gaussian6_ft_parallax_v1",
+      "session": "me6fjv9e",
+      "status": "failed",
+      "updates": 0,
+      "error": "Finetuned encoder has no nonzero gradient",
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run": "remediation_nsf6_ft_parallax_v1",
+      "session": "juby59r8",
+      "status": "failed",
+      "updates": 0,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.5390510559082031, \"relative_ess_min\": 0.24287912249565125, \"replica_gap_p95\": 0.23137401044368744, \"refinement_gap_p95\": 0.10555378347635269}",
+      "run_binding": true,
+      "source_binding": true
+    }
+  ]
+}

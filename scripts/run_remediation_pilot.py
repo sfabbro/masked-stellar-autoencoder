@@ -263,6 +263,36 @@ def encoder_gradient_contract(supervised, reconstruction, parameters):
     )
 
 
+def enforce_encoder_gradient(encoder, head, kind, update, supervised_l2=None):
+    """Require supervised encoder gradients after a zero-projection first step.
+
+    A zero-initialized Gaussian/MDN output prevents context gradients on the
+    first update. The projection must receive a finite nonzero gradient, and
+    the next update must reach the encoder through the supervised objective.
+    """
+    import torch
+
+    params = tuple(p for p in encoder.parameters() if p.requires_grad)
+    grads = [p.grad for p in params if p.grad is not None]
+    if not grads:
+        raise FloatingPointError("Finetuned encoder is disconnected")
+    nonzero = any(torch.count_nonzero(grad).item() for grad in grads)
+    if update >= 2 and supervised_l2 is not None and supervised_l2 <= 0:
+        raise FloatingPointError("Finetuned encoder has no supervised gradient")
+    if nonzero:
+        return "nonzero"
+    if update == 1 and kind in ("gaussian", "mdn"):
+        projection = head.gaussian.net[-1].weight
+        if (
+            torch.count_nonzero(projection).item() == 0
+            and projection.grad is not None
+            and torch.isfinite(projection.grad).all()
+            and torch.count_nonzero(projection.grad).item() > 0
+        ):
+            return "zero_initialized_output_first_step"
+    raise FloatingPointError("Finetuned encoder has no nonzero gradient")
+
+
 def build_head(kind, latent_dim, cfg):
     import torch
 
@@ -697,14 +727,16 @@ def run(cfg, arm, output):
                     loss = loss + arm["reconstruction_weight"] * reco
                 if not torch.isfinite(loss):
                     raise FloatingPointError("Nonfinite pilot objective")
-                if update == 1 or update % cfg["tune_every"] == 0:
-                    manifest["encoder_gradient_contract"] = dict(
+                gradient_contract = None
+                if update in (1, 2) or update % cfg["tune_every"] == 0:
+                    gradient_contract = dict(
                         update=update,
                         reconstruction_weight=arm["reconstruction_weight"],
                         **encoder_gradient_contract(
                             supervised_loss, reco, model.encoder.parameters()
                         ),
                     )
+                    manifest["encoder_gradient_contract"] = gradient_contract
                 loss.backward()
                 gradients = [
                     p.grad
@@ -718,13 +750,24 @@ def run(cfg, arm, output):
                     p.grad is not None and p.grad.ne(0).any() for p in head.parameters()
                 ):
                     raise FloatingPointError("Fresh head has no nonzero gradient")
-                if arm["encoder"] == "finetune" and not any(
-                    p.grad is not None and p.grad.ne(0).any()
-                    for p in model.encoder.parameters()
-                ):
-                    raise FloatingPointError(
-                        "Finetuned encoder has no nonzero gradient"
+                if arm["encoder"] == "finetune":
+                    gradient_status = enforce_encoder_gradient(
+                        model.encoder,
+                        head,
+                        arm["kind"],
+                        update,
+                        None
+                        if gradient_contract is None
+                        else gradient_contract["supervised_l2"],
                     )
+                    if update <= 2:
+                        manifest.setdefault("encoder_gradient_startup", []).append(
+                            {
+                                "update": update,
+                                "status": gradient_status,
+                                **gradient_contract,
+                            }
+                        )
                 finite_gradients += 1
                 optimizer.step()
                 counts += mask[rr].sum(0)
