@@ -32,6 +32,13 @@ def bind_remediation_policy(plan, env):
         and plan["run_id"] == "remediation_nsf6_qmc_probe_v1"
     ):
         config = Path("configs/remediation-nsf-qmc-probe-20261026.yaml")
+    if task == "remediation-pilot" and plan["run_id"] in {
+        "remediation_nsf6_frozen_qmc256_v2",
+        "remediation_nsf6_ft_qmc256_v2",
+        "remediation_nsf6_ft_recon003_qmc256_v2",
+        "remediation_nsf6_ft_parallax_qmc256_v2",
+    }:
+        config = Path("configs/remediation-nsf-qmc256-recovery-20261026.yaml")
     cfg = yaml.safe_load(config.read_text())
     runs = (
         {a["run_id"] for a in cfg.get("arms", [])}

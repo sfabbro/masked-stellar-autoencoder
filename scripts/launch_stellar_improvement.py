@@ -658,6 +658,7 @@ def main():
                 "remediation_joint6_preflight_v1": "remediation_joint6_preflight_pass",
                 "remediation_joint6_preflight_v2": "remediation_joint6_preflight_pass",
                 "remediation_joint6_preflight_v3": "remediation_joint6_preflight_pass",
+                "remediation_nsf6_qmc_probe_v1": "remediation_nsf_qmc_probe_complete",
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",

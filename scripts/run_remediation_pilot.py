@@ -272,6 +272,126 @@ def validate_integration_probe(cfg, arm):
         raise ValueError("Integration probe policy differs")
 
 
+def validate_microbatch_encoder(encoder, *, finetune):
+    """Batch-statistics layers change meaning under microbatch accumulation."""
+    import torch
+
+    if finetune and any(
+        isinstance(module, torch.nn.modules.batchnorm._BatchNorm)
+        for module in encoder.modules()
+    ):
+        raise ValueError(
+            "Finetuned encoder with batch normalization cannot be microbatched"
+        )
+
+
+def backward_supervised_chunks(
+    head, latent, target, sigma, observed, rows, *, chunk_rows, tensor
+):
+    """Accumulate the same observed-coordinate-weighted objective in small graphs."""
+    import torch
+
+    if chunk_rows < 1 or len(rows) < 1:
+        raise ValueError("Positive chunk size and nonempty rows required")
+    total = int(observed[rows].sum())
+    if total <= 0:
+        raise ValueError("No observed targets in supervised batch")
+    value = None
+    sums = {}
+    for start in range(0, len(rows), chunk_rows):
+        rr = rows[start : start + chunk_rows]
+        count = int(observed[rr].sum())
+        if count == 0:
+            continue
+        weight = count / total
+        loss = head.criterion(
+            latent(rr),
+            tensor(target[rr]),
+            tensor(sigma[rr]),
+            tensor(observed[rr], torch.bool),
+        )
+        if not torch.isfinite(loss):
+            raise FloatingPointError("Nonfinite chunked supervised objective")
+        contribution = loss * weight
+        contribution.backward()
+        detached = contribution.detach()
+        value = detached if value is None else value + detached
+        for key, component in getattr(head, "last_loss_components", {}).items():
+            amount = (
+                float(component.detach())
+                if hasattr(component, "detach")
+                else float(component)
+            )
+            sums[key] = sums.get(key, 0.0) + weight * amount
+    if value is None:
+        raise ValueError("No supervised chunks contributed")
+    return value, sums
+
+
+def accumulated_encoder_gradient_contract(reconstruction, parameters):
+    """Compare already-accumulated supervised and unweighted reconstruction gradients."""
+    import torch
+
+    params = tuple(p for p in parameters if p.requires_grad)
+    if not params:
+        return {"scope": "frozen encoder"}
+    supervised = tuple(None if p.grad is None else p.grad.detach() for p in params)
+    reco = (
+        torch.autograd.grad(
+            reconstruction, params, retain_graph=True, allow_unused=True
+        )
+        if reconstruction.requires_grad
+        else tuple(None for _ in params)
+    )
+    aa = sum(float(g.double().square().sum()) for g in supervised if g is not None)
+    bb = sum(float(g.detach().double().square().sum()) for g in reco if g is not None)
+    ab = sum(
+        float(g.double().mul(h.detach().double()).sum())
+        for g, h in zip(supervised, reco, strict=True)
+        if g is not None and h is not None
+    )
+    return dict(
+        supervised_l2=aa**0.5,
+        reconstruction_unweighted_l2=bb**0.5,
+        cosine=ab / (aa * bb) ** 0.5 if aa > 0 and bb > 0 else None,
+    )
+
+
+def validate_nsf_recovery(cfg, arm):
+    if (
+        arm.get("kind") != "nsf"
+        or cfg.get("particles") != 256
+        or cfg.get("integration_gate_particles") != 256
+        or cfg.get("nsf_micro_batch_size") != 16
+        or cfg.get("integration_chunk_rows") != 8
+    ):
+        raise ValueError("NSF recovery particle or microbatch policy differs")
+    if (
+        sha(cfg["integration_probe_manifest"])
+        != cfg["integration_probe_manifest_sha256"]
+    ):
+        raise ValueError("NSF QMC probe manifest SHA differs")
+    probe = load_json(cfg["integration_probe_manifest"])
+    if (
+        probe.get("status") != "remediation_nsf_qmc_probe_complete"
+        or probe.get("run_id") != "remediation_nsf6_qmc_probe_v1"
+        or probe.get("source_commit") != cfg["integration_probe_source_commit"]
+        or probe.get("first_passing_particles") != 256
+        or probe.get("training_performed") is not False
+        or probe.get("library_revision") != cfg["library_revision"]
+        or probe.get("parent_sha256") != cfg["checkpoint_sha256"]
+    ):
+        raise ValueError("NSF recovery requires the actual matching passing QMC probe")
+    passing = [
+        x
+        for x in probe.get("integration_probe_outcomes", [])
+        if x.get("particles") == 256
+    ]
+    if len(passing) != 1 or not passing[0].get("passed"):
+        raise ValueError("NSF 256-particle gate did not pass")
+    return probe
+
+
 def heldout_corner_rows(ids, roles, common):
     """Reject missing or FIT corner identities before any model load/updates."""
     common = np.asarray(common, dtype="i8")
@@ -401,6 +521,10 @@ def run(cfg, arm, output):
     atomic(output / "manifest.json", manifest)
     try:
         source, audit, preflight = admission(cfg, arm)
+        if cfg.get("nsf_micro_batch_size"):
+            probe = validate_nsf_recovery(cfg, arm)
+            if probe.get("prepared_sha256") != source.get("prepared_sha256"):
+                raise ValueError("NSF probe and training source hashes differ")
         prepared = Path(source["prepared_path"])
         if sha(prepared) != source["prepared_sha256"]:
             raise ValueError("Actual remediation prepared SHA changed")
@@ -493,6 +617,10 @@ def run(cfg, arm, output):
             model = native.probe.load_model(model_cfg, disk, device)
             for parameter in model.parameters():
                 parameter.requires_grad_(arm["encoder"] == "finetune")
+            if cfg.get("nsf_micro_batch_size"):
+                validate_microbatch_encoder(
+                    model.encoder, finetune=arm["encoder"] == "finetune"
+                )
             head = build_head(
                 arm["kind"], model_cfg["model"]["layer_dims"][-1], cfg
             ).to(device)
@@ -557,12 +685,17 @@ def run(cfg, arm, output):
                         tensor(sigma[rows]),
                         tensor(mask[rows], torch.bool),
                     )
-                    if arm.get("integration_probe"):
+                    if arm.get("integration_probe") or cfg.get(
+                        "integration_chunk_rows"
+                    ):
                         diag = diagnostics_in_row_chunks(
                             head,
                             *inputs,
                             particles=cfg["integration_gate_particles"],
-                            chunk_rows=cfg["integration_probe_chunk_rows"],
+                            chunk_rows=cfg.get(
+                                "integration_chunk_rows",
+                                cfg.get("integration_probe_chunk_rows"),
+                            ),
                         )
                     else:
                         diag = head.diagnostics(
@@ -784,17 +917,35 @@ def run(cfg, arm, output):
                     rng, pools, cfg["batch_size"], target_column=(update - 1) % 6
                 )
                 sequence.update(np.asarray(ids[rr], dtype="<i8").tobytes())
-                loss = head.criterion(
-                    latent(rr),
-                    tensor(y[rr]),
-                    tensor(sigma[rr]),
-                    tensor(mask[rr], torch.bool),
-                )
-                supervised_loss = loss
-                components = {
-                    key: float(value.detach()) if hasattr(value, "detach") else value
-                    for key, value in getattr(head, "last_loss_components", {}).items()
-                }
+                chunked = bool(cfg.get("nsf_micro_batch_size"))
+                if chunked:
+                    supervised_loss, components = backward_supervised_chunks(
+                        head,
+                        latent,
+                        y,
+                        sigma,
+                        mask,
+                        rr,
+                        chunk_rows=cfg["nsf_micro_batch_size"],
+                        tensor=tensor,
+                    )
+                    loss = supervised_loss
+                else:
+                    loss = head.criterion(
+                        latent(rr),
+                        tensor(y[rr]),
+                        tensor(sigma[rr]),
+                        tensor(mask[rr], torch.bool),
+                    )
+                    supervised_loss = loss
+                    components = {
+                        key: float(value.detach())
+                        if hasattr(value, "detach")
+                        else value
+                        for key, value in getattr(
+                            head, "last_loss_components", {}
+                        ).items()
+                    }
                 reco = loss.new_zeros(())
                 if cache is not None:
                     start = ((update - 1) * cfg["reconstruction_batch"]) % len(cache)
@@ -828,12 +979,22 @@ def run(cfg, arm, output):
                     gradient_contract = dict(
                         update=update,
                         reconstruction_weight=arm["reconstruction_weight"],
-                        **encoder_gradient_contract(
-                            supervised_loss, reco, model.encoder.parameters()
+                        **(
+                            accumulated_encoder_gradient_contract(
+                                reco, model.encoder.parameters()
+                            )
+                            if chunked
+                            else encoder_gradient_contract(
+                                supervised_loss, reco, model.encoder.parameters()
+                            )
                         ),
                     )
                     manifest["encoder_gradient_contract"] = gradient_contract
-                loss.backward()
+                if chunked:
+                    if reco.requires_grad:
+                        (arm["reconstruction_weight"] * reco).backward()
+                else:
+                    loss.backward()
                 gradients = [
                     p.grad
                     for group in optimizer.param_groups

@@ -145,3 +145,30 @@ def test_nsf_probe_launch_uses_distinct_inference_only_config():
     assert env["MSA_REMEDIATION_POLICY"].endswith(
         "remediation-nsf-qmc-probe-20261026.yaml"
     )
+
+
+def test_nsf_qmc256_recoveries_bind_passing_probe_and_new_runs():
+    root = Path(__file__).parents[1]
+    original = yaml.safe_load(
+        (root / "configs/remediation-pilots-20261026.yaml").read_text()
+    )
+    cfg = yaml.safe_load(
+        (root / "configs/remediation-nsf-qmc256-recovery-20261026.yaml").read_text()
+    )
+    plan = yaml.safe_load(
+        (
+            root / "configs/remediation-nsf-qmc256-recovery-launch-20261026.yaml"
+        ).read_text()
+    )
+    assert cfg["particles"] == cfg["integration_gate_particles"] == 256
+    assert cfg["nsf_micro_batch_size"] == 16 and cfg["integration_chunk_rows"] == 8
+    assert cfg["integration_gate"] == original["integration_gate"]
+    assert len(cfg["arms"]) == len(plan["jobs"]) == 4
+    assert not {x["run_id"] for x in cfg["arms"]} & {
+        x["run_id"] for x in original["arms"]
+    }
+    for job in plan["jobs"]:
+        assert "remediation_nsf6_qmc_probe_v1" in job["depends_on"]
+        assert policy.bind_remediation_policy(job, {})[
+            "MSA_REMEDIATION_POLICY"
+        ].endswith("remediation-nsf-qmc256-recovery-20261026.yaml")

@@ -1,0 +1,85 @@
+{
+  "manifest_sha256": "461fd4f72e0f0eb2ac4dd797d29b9bc6d724c8b3909924a1c81a0bb621d76ae4",
+  "preserved_directory": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/qmc-probe-preservation",
+  "first_passing_particles": 256,
+  "outcomes": [
+    {
+      "particles": 128,
+      "passed": false,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.4904178977012634, \"relative_ess_min\": 0.18348753452301025, \"replica_gap_p95\": 0.10984872281551361, \"refinement_gap_p95\": 0.05028362199664116}"
+    },
+    {
+      "particles": 256,
+      "passed": true,
+      "metrics": {
+        "relative_ess_median": 0.5182787179946899,
+        "relative_ess_min": 0.2509278655052185,
+        "replica_gap_p95": 0.0742623582482338,
+        "refinement_gap_p95": 0.03434162214398384,
+        "rows": 128,
+        "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+        "particles": 256,
+        "stage": "probe-256"
+      }
+    },
+    {
+      "particles": 512,
+      "passed": true,
+      "metrics": {
+        "relative_ess_median": 0.4991825222969055,
+        "relative_ess_min": 0.2776670753955841,
+        "replica_gap_p95": 0.061009906232357025,
+        "refinement_gap_p95": 0.029822468757629395,
+        "rows": 128,
+        "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+        "particles": 512,
+        "stage": "probe-512"
+      }
+    },
+    {
+      "particles": 1024,
+      "passed": true,
+      "metrics": {
+        "relative_ess_median": 0.4874533712863922,
+        "relative_ess_min": 0.28957173228263855,
+        "replica_gap_p95": 0.026349496096372604,
+        "refinement_gap_p95": 0.01648530922830105,
+        "rows": 128,
+        "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+        "particles": 1024,
+        "stage": "probe-1024"
+      }
+    }
+  ],
+  "artifacts": {
+    "integration-probe-256.npz": {
+      "bytes": 10304,
+      "sha256": "6b190370770dc9bae9f9f78b9c88e01b18aabaaba760b0c736a21e4b882d736b"
+    },
+    "integration-probe-1024.json": {
+      "bytes": 330,
+      "sha256": "537a1ed1e022850f768edec7bdcb529df03be989b99d8981c99491ba082bb823"
+    },
+    "integration-probe-1024.npz": {
+      "bytes": 10259,
+      "sha256": "bea39520bab7ea9f131c37b5bbd4b6ef887f63d49b6d96dc409fb29db1f1b6fc"
+    },
+    "integration-probe-512.npz": {
+      "bytes": 10268,
+      "sha256": "18c5c54e6c1378eb5748d787591e871dfd66a46a03651def99a182cf121ee3e1"
+    },
+    "integration-probe-512.json": {
+      "bytes": 328,
+      "sha256": "2995a9cdcb6db2484726867634f652fc1f599a244bf54d3d0c3ff8f51cfc863d"
+    },
+    "integration-probe-128.npz": {
+      "bytes": 10299,
+      "sha256": "3301949994fd8c8b6dbab7d504395d6cf3e7cd44f7a6e082400185987d2996ba"
+    },
+    "integration-probe-256.json": {
+      "bytes": 325,
+      "sha256": "52b39da2430e64906ce240c3d3eaa54e69d064eaa47097b15ee42fec9c59e601"
+    }
+  },
+  "independent_saved_array_gate_check": "passed; recomputed median/min ESS and 95th percentile replica/refinement gaps"
+}

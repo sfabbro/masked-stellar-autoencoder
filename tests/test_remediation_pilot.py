@@ -337,3 +337,97 @@ def test_nsf_probe_requires_fixed_no_training_policy():
         pilot.validate_integration_probe(
             {**cfg, "integration_probe_particles": [64]}, arm
         )
+
+
+def test_nsf_chunked_backward_matches_full_joint_objective_and_gradients():
+    import copy
+
+    import torch
+
+    from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+
+    torch.manual_seed(401)
+    encoder = torch.nn.Linear(3, 3).double()
+    head = JointSixHead("nsf", latent_dim=3, width=8, particles=16).double()
+    encoder2, head2 = copy.deepcopy(encoder), copy.deepcopy(head)
+    x = torch.randn(5, 3, dtype=torch.double)
+    y = torch.randn(5, 6, dtype=torch.double)
+    sigma = torch.full_like(y, 0.15)
+    mask = torch.tensor(
+        [
+            [1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 0, 1],
+        ],
+        dtype=torch.bool,
+    )
+    full = head.criterion(encoder(x), y, sigma, mask)
+    full.backward()
+    rows = np.arange(len(x))
+    to_tensor = lambda value, dtype=torch.float64: torch.as_tensor(value, dtype=dtype)
+    chunked, _ = pilot.backward_supervised_chunks(
+        head2,
+        lambda rr: encoder2(x[rr]),
+        y.numpy(),
+        sigma.numpy(),
+        mask.numpy(),
+        rows,
+        chunk_rows=2,
+        tensor=to_tensor,
+    )
+    torch.testing.assert_close(full.detach(), chunked, atol=1e-12, rtol=1e-12)
+    for a, b in zip(
+        [*encoder.parameters(), *head.parameters()],
+        [*encoder2.parameters(), *head2.parameters()],
+        strict=True,
+    ):
+        if a.grad is None:
+            assert b.grad is None
+        else:
+            torch.testing.assert_close(a.grad, b.grad, atol=2e-10, rtol=2e-9)
+
+
+def test_nsf_recovery_requires_real_probe_receipt(tmp_path):
+    probe = {
+        "status": "remediation_nsf_qmc_probe_complete",
+        "run_id": "remediation_nsf6_qmc_probe_v1",
+        "source_commit": "a" * 40,
+        "first_passing_particles": 256,
+        "training_performed": False,
+        "library_revision": "b" * 40,
+        "parent_sha256": "c" * 64,
+        "integration_probe_outcomes": [{"particles": 256, "passed": True}],
+    }
+    path = tmp_path / "probe.json"
+    path.write_text(json.dumps(probe))
+    cfg = {
+        "particles": 256,
+        "integration_gate_particles": 256,
+        "nsf_micro_batch_size": 16,
+        "integration_chunk_rows": 8,
+        "integration_probe_manifest": str(path),
+        "integration_probe_manifest_sha256": pilot.sha(path),
+        "integration_probe_source_commit": "a" * 40,
+        "library_revision": "b" * 40,
+        "checkpoint_sha256": "c" * 64,
+    }
+    assert pilot.validate_nsf_recovery(cfg, {"kind": "nsf"}) == probe
+    with pytest.raises(ValueError, match="particle or microbatch"):
+        pilot.validate_nsf_recovery({**cfg, "particles": 64}, {"kind": "nsf"})
+    probe["integration_probe_outcomes"][0]["passed"] = False
+    path.write_text(json.dumps(probe))
+    cfg["integration_probe_manifest_sha256"] = pilot.sha(path)
+    with pytest.raises(ValueError, match="did not pass"):
+        pilot.validate_nsf_recovery(cfg, {"kind": "nsf"})
+
+
+def test_microbatch_finetuning_rejects_batch_normalization():
+    import torch
+
+    encoder = torch.nn.Sequential(torch.nn.Linear(4, 4), torch.nn.BatchNorm1d(4))
+    with pytest.raises(ValueError, match="batch normalization"):
+        pilot.validate_microbatch_encoder(encoder, finetune=True)
+    pilot.validate_microbatch_encoder(encoder, finetune=False)
+    pilot.validate_microbatch_encoder(torch.nn.LayerNorm(4), finetune=True)
