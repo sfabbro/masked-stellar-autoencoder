@@ -1,0 +1,18 @@
+{
+  "session_id": "rstbv2c0",
+  "run_id": "remediation_copula_nsf6_frozen_v1",
+  "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+  "library_revision": "906a1c17639dcbf308fdb835270701bbc04f91e0",
+  "initial_gate_sha256": "199f3a69fe3cc3939c945bb06bd237003bcf9d2a8ecdd0f8e50ac9511425efb2",
+  "initial_gate": {
+    "relative_ess_median": 0.9968311786651611,
+    "relative_ess_min": 0.49384763836860657,
+    "replica_gap_p95": 0.0011537432437762618,
+    "refinement_gap_p95": 0.0006760358810424805,
+    "rows": 128,
+    "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+    "particles": 256,
+    "stage": "initial"
+  },
+  "scope": "Actual initial gate only; selected-head gate and scientific results remain unverified"
+}

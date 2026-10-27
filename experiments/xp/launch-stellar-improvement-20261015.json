@@ -12224,6 +12224,72 @@
       "attempted_at": "2026-10-27T20:26:42.943798+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "msa-si15-remediation-copula-nsf6-ft-v1",
+      "source_sha": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_copula_nsf6_ft_v1",
+      "plan": {
+        "run_id": "remediation_copula_nsf6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "u17b6yfr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T20:29:38.390208+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_recon003_v1",
+      "name": "msa-si15-remediation-copula-nsf6-ft-recon003-v1",
+      "source_sha": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_copula_nsf6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_copula_nsf6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "pg0qvelr"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T20:29:41.298129+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
