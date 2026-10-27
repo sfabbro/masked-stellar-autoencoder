@@ -1,0 +1,35 @@
+{
+  "checked_utc": "2026-10-27T05:21:00Z",
+  "source_commit": "d95608991673454a9ac9a60fdd599dd0d7082505",
+  "original_failure_status": "experiments/xp/remediation-pilot-status-20261026.json",
+  "jobs": [
+    {
+      "run_id": "remediation_gaussian6_ft_gradientfix_v2",
+      "session_id": "u5ir9g7k",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_gradientfix_v2",
+      "submission_status": "accepted",
+      "manifest_status": "admitting",
+      "completed_updates": 0,
+      "error": null,
+      "run_binding": true,
+      "source_binding": true
+    },
+    {
+      "run_id": "remediation_mdn6_ft_gradientfix_v2",
+      "session_id": "k24zucq6",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_gradientfix_v2",
+      "submission_status": "accepted",
+      "manifest_unavailable": "HTTPError"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_parallax_gradientfix_v2",
+      "session_id": "bxrtggg5",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_parallax_gradientfix_v2",
+      "submission_status": "accepted",
+      "manifest_unavailable": "HTTPError"
+    }
+  ]
+}

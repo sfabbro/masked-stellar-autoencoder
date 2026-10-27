@@ -15,6 +15,16 @@ All **14 pilots accepted once**. This document and `experiments/xp/remediation-s
 
 Original manifests show seven pilots completed 1,000 updates and seven stopped at zero updates. Three no-reconstruction fine-tuned Gaussian/MDN runs failed the initial encoder-gradient check; four coupled NSF runs failed the real sparse/noisy integration admission gate. This is an execution check, not a scientific ranking. Original manifests remain untouched. Exact statuses are recorded in `experiments/xp/remediation-pilot-status-20261026.json`; successful artifacts still require independent collection and verification. The observed NSF estimator gaps do not justify weakening the gate or treating the flow as independent scalar models.
 
+## Gradient-fix recovery runs
+
+The three fine-tuned Gaussian/mixture jobs that stopped before their first update have distinct recovery runs at source commit `d95608991673454a9ac9a60fdd599dd0d7082505`, with the same input/parent/library, seed and 1,000-update budget. The corrected guard permits the known zero-initialization first step only when the output layer has a finite nonzero gradient and then requires a supervised encoder gradient on step two. Full CI: 1,098 passed, four skipped. The three jobs were accepted once:
+
+- `remediation_gaussian6_ft_gradientfix_v2`: `u5ir9g7k`.
+- `remediation_mdn6_ft_gradientfix_v2`: `k24zucq6`.
+- `remediation_gaussian6_ft_parallax_gradientfix_v2`: `bxrtggg5`.
+
+They use the same output-root and collection recipe below. The first actual manifest was admitting; two manifests were not yet available at the initial check. Acceptance is not training completion. The four NSF integration failures are separate and remain unresolved.
+
 ## Actual accepted run IDs and sessions
 
 - `remediation_huber_frozen_v1` — `qrysdbbm`.

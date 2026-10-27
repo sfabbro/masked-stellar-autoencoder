@@ -11827,6 +11827,105 @@
       "attempted_at": "2026-10-26T21:47:08.811043+00:00",
       "attempts": 1,
       "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_gradientfix_v2",
+      "name": "msa-si15-remediation-gaussian6-ft-gradientfix-v2",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_gradientfix_v2",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_gradientfix_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "u5ir9g7k"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T05:20:27.008345+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_ft_gradientfix_v2",
+      "name": "msa-si15-remediation-mdn6-ft-gradientfix-v2",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_gradientfix_v2",
+      "plan": {
+        "run_id": "remediation_mdn6_ft_gradientfix_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "k24zucq6"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T05:20:44.325838+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_parallax_gradientfix_v2",
+      "name": "msa-si15-remediation-gaussian6-ft-parallax-gradientfix-v2",
+      "source_sha": "d95608991673454a9ac9a60fdd599dd0d7082505",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_parallax_gradientfix_v2",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_parallax_gradientfix_v2",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bxrtggg5"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T05:20:47.635610+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
     }
   ]
 }
