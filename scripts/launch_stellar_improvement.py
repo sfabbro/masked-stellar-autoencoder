@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-desi-census":
+        from multisurvey_desi_census_launch_policy import bind_desi_census_policy
+
+        return bind_desi_census_policy(plan, env)
     if plan["task"] == "multisurvey-desi-source":
         from multisurvey_desi_launch_policy import bind_multisurvey_desi_policy
 
@@ -615,7 +619,7 @@ def main():
 
         if any(
             plan["task"].startswith("remediation-")
-            or plan["task"] == "multisurvey-desi-source"
+            or plan["task"] in {"multisurvey-desi-source", "multisurvey-desi-census"}
             for plan in plans
         ):
             from canfar.storage import filesystem
