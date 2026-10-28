@@ -1,0 +1,32 @@
+{
+  "checked": {
+    "batch_stars": 12,
+    "device": "cuda",
+    "likelihood_precision": "float64",
+    "model_weights_saved": false,
+    "reconstruction_decoder_gradient_l2": [
+      0.04099047773147574,
+      0.04542482490184185
+    ],
+    "reconstruction_masked_elements": 317,
+    "source_registry": [
+      "apogee",
+      "desi_dr1_rvs_raw",
+      "galah"
+    ],
+    "steps": 2,
+    "supervised_encoder_gradient_l2": [
+      51.937823589536904,
+      33.673393615763366
+    ],
+    "supervised_xp_masking": false
+  },
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "manifest_path": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/consensus-preflight-20261028/manifest.json",
+  "manifest_sha256": "5bd2735c3ae075b534a5c949ee2f2dd7d5d50f0ed8cfbcc6088e8c54508c7f86",
+  "run_id": "multisurvey_consensus_cuda_preflight_v1",
+  "scope": "Two-step numerical preflight; no scientific fit or validation of survey labels, their errors, scale, or joint physical calibration. Manifest hash is a local receipt, not a producer-signed digest.",
+  "session_id": "bt8mfivu",
+  "source_commit": "fb6521183519074c8f454e68012be6d5a31ac2be",
+  "status": "multisurvey_consensus_cuda_preflight_pass"
+}

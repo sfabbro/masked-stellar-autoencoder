@@ -386,6 +386,7 @@ def multisurvey_objective(
     reconstruction_weight: float = 0.0,
     expected_reconstruction_source_binding: str | None = None,
     calibration_regularization_weight: float = 0.0,
+    star_weights: Tensor | None = None,
     assume_diagonal_catalog_covariance: bool = False,
     require_fit_role: bool = True,
 ):
@@ -399,6 +400,9 @@ def multisurvey_objective(
     a common correction; hashing a declaration does not verify its contents or
     prove that the physical scale is identified. The optimizer/checkpoint
     code must persist source, split, normalization and anchor provenance.
+    Optional positive per-star weights change only the supervised NLL; the
+    caller must bind and verify their sampling design and the reconstruction
+    stream separately. Weighted batches cannot contain unlabeled stars.
     """
     import hashlib
     import json
@@ -470,7 +474,23 @@ def multisurvey_objective(
         condition_head=condition_head,
         assume_diagonal_catalog_covariance=assume_diagonal_catalog_covariance,
     )
-    supervised = MarginalizedMultiSourceGaussianNLLLoss()(mean, lower, packed)
+    if star_weights is not None:
+        if (
+            not isinstance(star_weights, Tensor)
+            or not star_weights.is_floating_point()
+            or star_weights.requires_grad
+        ):
+            raise ValueError("Star sampling weights must be fixed tensors")
+        if star_weights.shape != (len(mean),):
+            raise ValueError("Star sampling weights must align with the batch")
+        star_weights = star_weights.to(device=mean.device, dtype=mean.dtype)
+        if not torch.isfinite(star_weights).all() or (star_weights <= 0).any():
+            raise ValueError("Star sampling weights must be finite and positive")
+        if not packed.mask.any(dim=-1).all():
+            raise ValueError("Weighted batches require at least one label per star")
+    supervised = MarginalizedMultiSourceGaussianNLLLoss()(
+        mean, lower, packed, weights=star_weights
+    )
     reconstruction_loss = supervised.new_zeros(())
     if reconstruction_weight:
         if reconstruction is None:

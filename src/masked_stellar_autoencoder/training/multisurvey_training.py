@@ -169,6 +169,7 @@ class ConsensusTrainer:
         reconstruction_weight: float = 0.0,
         reconstruction_width: int | None = None,
         calibration_regularization_weight: float = 0.0,
+        sampling_contract_sha256: str | None = None,
     ):
         if not all(_is_sha256(x) for x in (parent_sha256, normalization_sha256)):
             raise ValueError("Parent and normalization SHA256 bindings are required")
@@ -183,6 +184,11 @@ class ConsensusTrainer:
             raise ValueError(
                 "This baseline requires explicit diagonal catalog-covariance consent"
             )
+        if sampling_contract_sha256 is not None and not _is_sha256(
+            sampling_contract_sha256
+        ):
+            raise ValueError("Sampling contract must be a SHA256 digest")
+        self.sampling_contract_sha256 = sampling_contract_sha256
         self.model, self.relative_head, self.optimizer = model, relative_head, optimizer
         self.gate = gate
         self.source_floor = torch.as_tensor(source_floor).detach().clone()
@@ -263,12 +269,22 @@ class ConsensusTrainer:
             "calibration_regularization_weight": calibration_regularization_weight,
             "scope": "survey consensus only; parent and normalization hashes are caller declarations; audit ancestry and physical anchors",
         }
+        if sampling_contract_sha256 is not None:
+            self.contract["sampling_contract_sha256"] = sampling_contract_sha256
+            self.contract["sampling_scope"] = (
+                "Caller verifies per-star weights and sampling state against the "
+                "pinned contract; reconstruction sampling is separate"
+            )
         self.contract_sha256 = hashlib.sha256(
             json.dumps(self.contract, sort_keys=True, separators=(",", ":")).encode()
         ).hexdigest()
 
     def _check_fixed_buffers(self) -> None:
         self.gate.dataset._check_source_binding()
+        if self.sampling_contract_sha256 != self.contract.get(
+            "sampling_contract_sha256"
+        ):
+            raise ValueError("Pinned sampling contract changed")
         if self.gate.repeat_policy != self.contract["repeat_policy"]:
             raise ValueError("Repeat resolution policy changed")
         if (
@@ -312,8 +328,16 @@ class ConsensusTrainer:
             raise ValueError("Optimizer parameter order changed")
 
     def step(
-        self, batch: dict, *, reconstruction_mask: torch.Tensor | None = None
+        self,
+        batch: dict,
+        *,
+        reconstruction_mask: torch.Tensor | None = None,
+        star_weights: torch.Tensor | None = None,
     ) -> dict:
+        if (star_weights is None) != (self.sampling_contract_sha256 is None):
+            raise ValueError(
+                "Star weights and a pinned sampling contract are both required"
+            )
         self._check_fixed_buffers()
         verified = self.gate.verify_batch(batch)
         device = next(self.model.parameters()).device
@@ -373,6 +397,7 @@ class ConsensusTrainer:
             if reconstruction
             else None,
             calibration_regularization_weight=self.regularization,
+            star_weights=star_weights,
             assume_diagonal_catalog_covariance=True,
         )
         if not torch.isfinite(result["total"]):

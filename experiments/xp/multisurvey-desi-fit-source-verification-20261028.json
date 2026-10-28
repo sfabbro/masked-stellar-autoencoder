@@ -1,0 +1,65 @@
+{
+  "audit_sha256": "2950e8a1db374d63dce3c0decbca945595f847418b09686f6214180172e3e588",
+  "checked": "Eligible-cohort size, six DESI logg histogram counts and, for each survey, all-pair plus four native-logg-bin counts and medians.",
+  "independent_method": "NumPy unique and intersect1d join, separate from the source audit searchsorted/chunked join",
+  "independent_results": {
+    "counts": [
+      380,
+      614,
+      22314,
+      90841,
+      951590,
+      47457
+    ],
+    "surveys": {
+      "apogee": {
+        "median_native_minus_desi": -0.6176025296687149,
+        "n": 1393,
+        "native_bins": {
+          "0_to_2": {
+            "median_native_minus_desi": -1.151252367884462,
+            "n": 203
+          },
+          "2_to_3": {
+            "median_native_minus_desi": -0.6987706076359528,
+            "n": 723
+          },
+          "3_to_4": {
+            "median_native_minus_desi": -0.4961704424786355,
+            "n": 276
+          },
+          "4_to_5": {
+            "median_native_minus_desi": -0.10578967525573724,
+            "n": 191
+          }
+        }
+      },
+      "galah": {
+        "median_native_minus_desi": -0.2821321441086475,
+        "n": 3151,
+        "native_bins": {
+          "0_to_2": {
+            "median_native_minus_desi": -1.2072443696780826,
+            "n": 56
+          },
+          "2_to_3": {
+            "median_native_minus_desi": -0.6402077198569964,
+            "n": 399
+          },
+          "3_to_4": {
+            "median_native_minus_desi": -0.32370100110688993,
+            "n": 652
+          },
+          "4_to_5": {
+            "median_native_minus_desi": -0.2368724805166611,
+            "n": 2043
+          }
+        }
+      }
+    },
+    "unique_full_table_subset": 1113196
+  },
+  "independent_script": "scripts/verify_desi_fit_sources_independent.py",
+  "scope": "Saved-array arithmetic and join agreement, not a re-read of the original remote FITS or selected overlay, astrophysical ground truth, or an independent holdout.",
+  "status": "pass"
+}

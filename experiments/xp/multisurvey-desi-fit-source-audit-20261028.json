@@ -1,0 +1,373 @@
+{
+  "census_npz_crc": "pass",
+  "comparison_definition": "Exact Gaia source ID, native observed and quality-passing logg; delta = native minus raw DESI in dex. Native labels are an older selected joint-native sidecar, not necessarily identical to every later remediation-source native record. FIT is not an independent test set.",
+  "input_caveat": "The earlier DESI raw-field table and census carry the same publisher FITS SHA provenance; exact selected-sidecar content and original remote FITS were not re-read here. HDF row numbers and native saved source associations were checked; this is not a new full raw-source verification.",
+  "inputs": {
+    "census": {
+      "bytes": 24393938,
+      "path": "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/remediation-wave-20261026/desi-cache-census-preservation-20261027/census/identities.npz",
+      "sha256": "df3250519acf3280a50ad6227a2be17c53cceaa3ed811fc5729ea39940e41a24"
+    },
+    "desi_raw_fields": {
+      "bytes": 959984817,
+      "path": "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/desi_labels_v1/desi-labels.h5",
+      "sha256": "e3f45f89220e5d403dfd06569e5c3ce4a1adc1ef8ab2bc1af8b701b9cf37693f"
+    },
+    "native_sidecar": {
+      "bytes": 119732554,
+      "path": "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/joint-native-preparation-v2/joint-native-labels.h5",
+      "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+    }
+  },
+  "paired_cohort": {
+    "saved_native_row_checks": {
+      "apogee": {
+        "exact_native_gaia_id": 1393,
+        "exact_native_raw_logg": 1393,
+        "original_row_found": 1393,
+        "paired_rows": 1393
+      },
+      "galah": {
+        "exact_native_gaia_id": 3151,
+        "exact_native_raw_logg": 3151,
+        "original_row_found": 3151,
+        "paired_rows": 3151
+      }
+    },
+    "strata": {
+      "apogee": {
+        "all": {
+          "fraction_over_3_quoted_independence_pair_sigma": 0.9073941134242641,
+          "mean_native_minus_desi_dex": -0.6183653379717711,
+          "median_desi_gaia_separation_arcsec": 0.0037554269725108046,
+          "median_native_minus_desi_dex": -0.6176025296687149,
+          "median_quoted_independence_pair_sigma_dex": 0.03152753867032718,
+          "n": 1393,
+          "p90_absolute_difference_dex": 1.1654818803892455,
+          "positive_finite_quoted_pair_errors": 1393,
+          "rmse_dex": 0.7443709411722942,
+          "robust_1p4826_MAD_dex": 0.38967330262462524
+        },
+        "desi_logg": {
+          "0_to_2": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.8333333333333334,
+            "mean_native_minus_desi_dex": -0.6252112785610411,
+            "median_desi_gaia_separation_arcsec": 0.0013562596648517156,
+            "median_native_minus_desi_dex": -0.6408688584568202,
+            "median_quoted_independence_pair_sigma_dex": 0.06038871134751363,
+            "n": 6,
+            "p90_absolute_difference_dex": 1.0908368981114185,
+            "positive_finite_quoted_pair_errors": 6,
+            "rmse_dex": 0.7978727574197727,
+            "robust_1p4826_MAD_dex": 0.15340350492409058
+          },
+          "2_to_3": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9670658682634731,
+            "mean_native_minus_desi_dex": -0.6434407664027071,
+            "median_desi_gaia_separation_arcsec": 0.003379077212664382,
+            "median_native_minus_desi_dex": -0.5159001302844439,
+            "median_quoted_independence_pair_sigma_dex": 0.039851588091256426,
+            "n": 334,
+            "p90_absolute_difference_dex": 1.2732901413684405,
+            "positive_finite_quoted_pair_errors": 334,
+            "rmse_dex": 0.7643341226732412,
+            "robust_1p4826_MAD_dex": 0.34354346456560925
+          },
+          "3_to_4": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9585427135678392,
+            "mean_native_minus_desi_dex": -0.7489388446590713,
+            "median_desi_gaia_separation_arcsec": 0.003414089078773601,
+            "median_native_minus_desi_dex": -0.719916948483426,
+            "median_quoted_independence_pair_sigma_dex": 0.029974189270832147,
+            "n": 796,
+            "p90_absolute_difference_dex": 1.1934886916700713,
+            "positive_finite_quoted_pair_errors": 796,
+            "rmse_dex": 0.8219570219804033,
+            "robust_1p4826_MAD_dex": 0.25426762675608755
+          },
+          "4_to_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.664,
+            "mean_native_minus_desi_dex": -0.19894690691476657,
+            "median_desi_gaia_separation_arcsec": 0.0069802136908358875,
+            "median_native_minus_desi_dex": -0.13515335842764564,
+            "median_quoted_independence_pair_sigma_dex": 0.0281915600743745,
+            "n": 250,
+            "p90_absolute_difference_dex": 0.5663102713291509,
+            "positive_finite_quoted_pair_errors": 250,
+            "rmse_dex": 0.31008238958313705,
+            "robust_1p4826_MAD_dex": 0.11725859506652378
+          },
+          "ge_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 1.0,
+            "mean_native_minus_desi_dex": -0.5456778863253022,
+            "median_desi_gaia_separation_arcsec": 0.010572054796754948,
+            "median_native_minus_desi_dex": -0.5701966709055157,
+            "median_quoted_independence_pair_sigma_dex": 0.025891570034185046,
+            "n": 4,
+            "p90_absolute_difference_dex": 0.57899667241494,
+            "positive_finite_quoted_pair_errors": 4,
+            "rmse_dex": 0.5478605805572162,
+            "robust_1p4826_MAD_dex": 0.011332934952713928
+          },
+          "lt_0": {
+            "fraction_over_3_quoted_independence_pair_sigma": 1.0,
+            "mean_native_minus_desi_dex": 1.7841088259356643,
+            "median_desi_gaia_separation_arcsec": 0.00041157711395691876,
+            "median_native_minus_desi_dex": 1.8521368453463298,
+            "median_quoted_independence_pair_sigma_dex": 0.021609583197620994,
+            "n": 3,
+            "p90_absolute_difference_dex": 2.0892098799072416,
+            "positive_finite_quoted_pair_errors": 3,
+            "rmse_dex": 1.8141566606812924,
+            "robust_1p4826_MAD_dex": 0.4393556013000095
+          }
+        },
+        "native_logg": {
+          "0_to_2": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9852216748768473,
+            "mean_native_minus_desi_dex": -1.0732495570001117,
+            "median_desi_gaia_separation_arcsec": 0.0025840490718550824,
+            "median_native_minus_desi_dex": -1.151252367884462,
+            "median_quoted_independence_pair_sigma_dex": 0.039752493260195636,
+            "n": 203,
+            "p90_absolute_difference_dex": 1.623563070512041,
+            "positive_finite_quoted_pair_errors": 203,
+            "rmse_dex": 1.2005531746005815,
+            "robust_1p4826_MAD_dex": 0.45719606127107887
+          },
+          "2_to_3": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9875518672199171,
+            "mean_native_minus_desi_dex": -0.6968471744753193,
+            "median_desi_gaia_separation_arcsec": 0.0033165368726229584,
+            "median_native_minus_desi_dex": -0.6987706076359528,
+            "median_quoted_independence_pair_sigma_dex": 0.03155470399034923,
+            "n": 723,
+            "p90_absolute_difference_dex": 1.0716117976689643,
+            "positive_finite_quoted_pair_errors": 723,
+            "rmse_dex": 0.7484945955825926,
+            "robust_1p4826_MAD_dex": 0.26953494353364393
+          },
+          "3_to_4": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.8731884057971014,
+            "mean_native_minus_desi_dex": -0.42728539840294216,
+            "median_desi_gaia_separation_arcsec": 0.004708234066021987,
+            "median_native_minus_desi_dex": -0.4961704424786355,
+            "median_quoted_independence_pair_sigma_dex": 0.02987743469596877,
+            "n": 276,
+            "p90_absolute_difference_dex": 0.720994509601609,
+            "positive_finite_quoted_pair_errors": 276,
+            "rmse_dex": 0.5002261016385825,
+            "robust_1p4826_MAD_dex": 0.27351491649671306
+          },
+          "4_to_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.5706806282722513,
+            "mean_native_minus_desi_dex": -0.11393706083134299,
+            "median_desi_gaia_separation_arcsec": 0.007964488895348383,
+            "median_native_minus_desi_dex": -0.10578967525573724,
+            "median_quoted_independence_pair_sigma_dex": 0.028488374854178822,
+            "n": 191,
+            "p90_absolute_difference_dex": 0.23901121856106755,
+            "positive_finite_quoted_pair_errors": 191,
+            "rmse_dex": 0.16398515849746567,
+            "robust_1p4826_MAD_dex": 0.10779953553750436
+          },
+          "ge_5": {
+            "n": 0
+          },
+          "lt_0": {
+            "n": 0
+          }
+        }
+      },
+      "galah": {
+        "all": {
+          "fraction_over_3_quoted_independence_pair_sigma": 0.4414471596318629,
+          "mean_native_minus_desi_dex": -0.3218629171358824,
+          "median_desi_gaia_separation_arcsec": 0.006349971005384127,
+          "median_native_minus_desi_dex": -0.2821321441086475,
+          "median_quoted_independence_pair_sigma_dex": 0.10485624759419795,
+          "n": 3151,
+          "p90_absolute_difference_dex": 0.6488841224024888,
+          "positive_finite_quoted_pair_errors": 3151,
+          "rmse_dex": 0.42324073006863366,
+          "robust_1p4826_MAD_dex": 0.21619613461980072
+        },
+        "desi_logg": {
+          "0_to_2": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.8333333333333334,
+            "mean_native_minus_desi_dex": -0.5124649557577082,
+            "median_desi_gaia_separation_arcsec": 0.0022430552352854663,
+            "median_native_minus_desi_dex": -0.6103114922280466,
+            "median_quoted_independence_pair_sigma_dex": 0.15442085638808656,
+            "n": 6,
+            "p90_absolute_difference_dex": 1.0194238136891078,
+            "positive_finite_quoted_pair_errors": 6,
+            "rmse_dex": 0.7618751279290743,
+            "robust_1p4826_MAD_dex": 0.36002373666204734
+          },
+          "2_to_3": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.5608108108108109,
+            "mean_native_minus_desi_dex": -0.4006929256161532,
+            "median_desi_gaia_separation_arcsec": 0.0036342123626532663,
+            "median_native_minus_desi_dex": -0.3535176015485888,
+            "median_quoted_independence_pair_sigma_dex": 0.11419310324585646,
+            "n": 148,
+            "p90_absolute_difference_dex": 1.0986098454231792,
+            "positive_finite_quoted_pair_errors": 148,
+            "rmse_dex": 0.6307496188482282,
+            "robust_1p4826_MAD_dex": 0.3748208650662149
+          },
+          "3_to_4": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.7034035656401945,
+            "mean_native_minus_desi_dex": -0.5125102585620906,
+            "median_desi_gaia_separation_arcsec": 0.003370237745369816,
+            "median_native_minus_desi_dex": -0.5363634127813084,
+            "median_quoted_independence_pair_sigma_dex": 0.10657379105203113,
+            "n": 617,
+            "p90_absolute_difference_dex": 0.98557388698667,
+            "positive_finite_quoted_pair_errors": 617,
+            "rmse_dex": 0.6411048093148337,
+            "robust_1p4826_MAD_dex": 0.3681368872152793
+          },
+          "4_to_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.3300798580301686,
+            "mean_native_minus_desi_dex": -0.25178371635372265,
+            "median_desi_gaia_separation_arcsec": 0.007655995648055353,
+            "median_native_minus_desi_dex": -0.238923541937472,
+            "median_quoted_independence_pair_sigma_dex": 0.10414642092321036,
+            "n": 2254,
+            "p90_absolute_difference_dex": 0.46057861123078686,
+            "positive_finite_quoted_pair_errors": 2254,
+            "rmse_dex": 0.3050545366211688,
+            "robust_1p4826_MAD_dex": 0.16072295205508016
+          },
+          "ge_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9920634920634921,
+            "mean_native_minus_desi_dex": -0.5402649442486334,
+            "median_desi_gaia_separation_arcsec": 0.010748760541500141,
+            "median_native_minus_desi_dex": -0.5046517674185536,
+            "median_quoted_independence_pair_sigma_dex": 0.10339096149847934,
+            "n": 126,
+            "p90_absolute_difference_dex": 0.735576824730225,
+            "positive_finite_quoted_pair_errors": 126,
+            "rmse_dex": 0.5544449810732149,
+            "robust_1p4826_MAD_dex": 0.08652047772036986
+          },
+          "lt_0": {
+            "n": 0
+          }
+        },
+        "native_logg": {
+          "0_to_2": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.9642857142857143,
+            "mean_native_minus_desi_dex": -1.1547631251504455,
+            "median_desi_gaia_separation_arcsec": 0.002468759893376998,
+            "median_native_minus_desi_dex": -1.2072443696780826,
+            "median_quoted_independence_pair_sigma_dex": 0.11723667207975219,
+            "n": 56,
+            "p90_absolute_difference_dex": 1.6232530448408622,
+            "positive_finite_quoted_pair_errors": 56,
+            "rmse_dex": 1.2330739951624,
+            "robust_1p4826_MAD_dex": 0.45809320111186336
+          },
+          "2_to_3": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.8220551378446115,
+            "mean_native_minus_desi_dex": -0.6087002214565975,
+            "median_desi_gaia_separation_arcsec": 0.003065160639236771,
+            "median_native_minus_desi_dex": -0.6402077198569964,
+            "median_quoted_independence_pair_sigma_dex": 0.10970371426474952,
+            "n": 399,
+            "p90_absolute_difference_dex": 1.0060482602012206,
+            "positive_finite_quoted_pair_errors": 399,
+            "rmse_dex": 0.6998765317515643,
+            "robust_1p4826_MAD_dex": 0.3048903690058014
+          },
+          "3_to_4": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.49079754601226994,
+            "mean_native_minus_desi_dex": -0.3024808330544347,
+            "median_desi_gaia_separation_arcsec": 0.004881228935297837,
+            "median_native_minus_desi_dex": -0.32370100110688993,
+            "median_quoted_independence_pair_sigma_dex": 0.10492148878197746,
+            "n": 652,
+            "p90_absolute_difference_dex": 0.5736758480600386,
+            "positive_finite_quoted_pair_errors": 652,
+            "rmse_dex": 0.3818986786256321,
+            "robust_1p4826_MAD_dex": 0.23188880634580528
+          },
+          "4_to_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.3372491434165443,
+            "mean_native_minus_desi_dex": -0.2493725113607998,
+            "median_desi_gaia_separation_arcsec": 0.008372413902840199,
+            "median_native_minus_desi_dex": -0.2368724805166611,
+            "median_quoted_independence_pair_sigma_dex": 0.10394143376029973,
+            "n": 2043,
+            "p90_absolute_difference_dex": 0.47120844406965057,
+            "positive_finite_quoted_pair_errors": 2043,
+            "rmse_dex": 0.3039683962956789,
+            "robust_1p4826_MAD_dex": 0.16660728014239543
+          },
+          "ge_5": {
+            "fraction_over_3_quoted_independence_pair_sigma": 0.0,
+            "mean_native_minus_desi_dex": 0.03361533604729239,
+            "median_desi_gaia_separation_arcsec": 0.007420370638307842,
+            "median_native_minus_desi_dex": 0.03361533604729239,
+            "median_quoted_independence_pair_sigma_dex": 0.15700798753870882,
+            "n": 1,
+            "p90_absolute_difference_dex": 0.03361533604729239,
+            "positive_finite_quoted_pair_errors": 1,
+            "rmse_dex": 0.03361533604729239,
+            "robust_1p4826_MAD_dex": 0.0
+          },
+          "lt_0": {
+            "n": 0
+          }
+        }
+      }
+    },
+    "total": 4544
+  },
+  "scientific_limitations": [
+    "The overlapping stars are selected and are not representative of all FIT stars or of the full Galaxy.",
+    "GALAH logg is parallax-conditioned. Survey labels, random errors, and sky matching are not independent physical truth.",
+    "Binning on either noisy label can bias a conditional comparison; both directions are reported.",
+    "Quoted pair-sigma summaries assume independent random errors and exclude cross-survey and model systematics; they cannot identify which survey is wrong or calibrate a unique error floor.",
+    "Uncertainty source, label-domain validity, atmospheric grids, pipelines, shared priors and cross-survey correlations require further validation."
+  ],
+  "scope": "Read-only audit of previously saved source arrays, not model inference, training, or a held-out performance test.",
+  "subset_definition": "Census quality_rows==1, base_role=='fit', base_primary_input, census observed[:,1], then exactly one occurrence of that ID among every row in saved DESI raw-field table. Thus the sole raw row is the sole quality-selected DESI row. This is not precisely the 1,192,466 additions: it may include old-label overlaps and excludes IDs with extra rejected raw records.",
+  "subset_distribution": {
+    "census_subset_ids": 1197172,
+    "exactly_one_row_in_entire_raw_field_table": 1113196,
+    "known_positive_finite_logg_random_errors": 1113165,
+    "logg_bins_dex": {
+      "0_to_2": 614,
+      "2_to_3": 22314,
+      "3_to_4": 90841,
+      "4_to_5": 951590,
+      "ge_5": 47457,
+      "lt_0": 380
+    },
+    "logg_percentiles_0_1_5_50_95_99_100_dex": [
+      -0.5000000277245633,
+      2.603790747192409,
+      3.5617141441088562,
+      4.619006794367164,
+      4.987329989418589,
+      5.1142494786028845,
+      6.500000237976122
+    ],
+    "more_than_one_row_in_entire_raw_field_table": 83976,
+    "no_row_in_entire_raw_field_table": 0,
+    "older_corrected_feh_validity_box": 964721,
+    "older_strict_feh_policy_eligible": 964720,
+    "positive_logg_error_percentiles_1_5_50_95_99_dex": [
+      0.0076076586087453985,
+      0.012106349488574664,
+      0.043726752811393786,
+      0.12131425353002398,
+      0.18102545692152372
+    ],
+    "source_row_identity_mismatches": 0,
+    "unknown_or_nonpositive_logg_random_errors": 31
+  }
+}

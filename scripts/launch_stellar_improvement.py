@@ -67,6 +67,12 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-fit-collation-census":
+        from multisurvey_fit_collation_launch_policy import (
+            bind_fit_collation_census_policy,
+        )
+
+        return bind_fit_collation_census_policy(plan, env)
     if plan["task"] == "multisurvey-consensus-preflight":
         from multisurvey_consensus_preflight_launch_policy import (
             bind_consensus_preflight_policy,
@@ -635,6 +641,7 @@ def main():
                 "multisurvey-desi-census",
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
+                "multisurvey-fit-collation-census",
             }
             for plan in plans
         ):
@@ -810,6 +817,7 @@ def main():
             "remediation-input-audit",
             "remediation-source",
             "multisurvey-desi-source",
+            "multisurvey-fit-collation-census",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

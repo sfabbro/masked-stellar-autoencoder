@@ -37,3 +37,11 @@ The canonical head can run in float64 while the pretrained encoder and reconstru
 ### CUDA consensus preflight
 
 A separate two-update CANFAR preflight is prepared against the verified DESI/APOGEE/GALAH overlay and the existing large-model checkpoint. It checks the actual FIT source bindings, per-survey presence, unmasked supervised input, separately masked reconstruction, finite supervised encoder gradients and reconstruction decoder gradients. The head and observation likelihood use float64; the pretrained encoder and decoder remain in their original precision. The illustrative error floors are explicitly `[100 K, 0.1 dex, 0.1 dex]` for each source and are not scientifically calibrated. This is a small numerical preflight with no saved model weights, not an epoch, an experiment result or evidence of physically valid cross-survey covariance.
+
+The accepted preflight subsequently passed on CUDA: two finite-gradient updates on 12 FIT stars, natural supervised XP and separately masked reconstruction, with no model weights saved. See the [completion receipt](../../experiments/xp/multisurvey-consensus-preflight-completion-20261028.json). The test does not certify throughput, survey scale, error floors, physical anchors or a trained model.
+
+### FIT union and source-stratified sampling
+
+The verified sparse reader operates on the union of registered sources and preserves per-target masks; it does not require survey intersections. A source-only census is prepared to measure the exact FIT availability after repeat resolution, including label loss from discarded repeats. The deterministic star sampler supports complete survey-presence strata and inverse-allocation weights for the eligible-star mean; its sampled IDs, stratum mapping, weights and RNG state are validated. The caller must bind these checks to the trainer and treat reconstruction sampling separately. These primitives do not yet constitute an end-to-end fit.
+
+The current overlay has APOGEE, GALAH and DESI, not Gaia GSP-Spec. A potential Gaia RVS file in the project allocation is being inspected; its contents, quality flags and overlap remain unverified. See the [FIT label audit](msa-desi-fit-source-audit-20261028.md) for the gravity-scale differences that make naive pooling unsafe.
