@@ -141,3 +141,55 @@ def test_field_order_and_global_metallicity_cannot_be_mislabeled(tmp_path):
         h["native_observations/a"].attrs["source_fields"] = ["logg", "teff", "fe_h"]
     with pytest.raises(ValueError, match="field order"):
         SparseSurveyDataset(p, registry(), role="fit")
+
+
+def test_digest_bound_source_changed_after_init_is_rejected(tmp_path):
+    import hashlib
+
+    path = tmp_path / "source.h5"
+    make_source(path)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    ds = SparseSurveyDataset(
+        path, registry(), role="fit", expected_source_sha256=digest
+    )
+    with h5py.File(path, "r+") as h:
+        h["input"][0, 0] = 42.0
+    with pytest.raises(ValueError, match="changed after SHA256 verification"):
+        ds[0]
+    ds.close()
+
+
+def test_digest_bound_source_changed_during_hash_is_rejected(tmp_path, monkeypatch):
+    import hashlib
+    import os
+
+    path = tmp_path / "source.h5"
+    make_source(path)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    original = hashlib.file_digest
+
+    def mutate_during_digest(stream, algorithm):
+        result = original(stream, algorithm)
+        stat = path.stat()
+        os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns + 1_000_000))
+        return result
+
+    monkeypatch.setattr(hashlib, "file_digest", mutate_during_digest)
+    with pytest.raises(ValueError, match="changed during SHA256 verification"):
+        SparseSurveyDataset(path, registry(), role="fit", expected_source_sha256=digest)
+
+
+def test_registry_is_isolated_and_mutation_is_detected(tmp_path):
+    path = tmp_path / "source.h5"
+    make_source(path)
+    supplied = registry()
+    ds = SparseSurveyDataset(path, supplied, role="fit")
+    supplied["a"]["targets"]["logg"]["field"] = "wrong"
+    returned = ds[0]
+    assert returned["observations"][0]["release"] == "r1"
+    returned["observations"][0]["target_definitions"]["logg"]["field"] = "wrong"
+    assert ds[0]["observations"][0]["target_definitions"]["logg"]["field"] == "logg"
+    ds.registry["a"]["targets"]["logg"]["field"] = "wrong"
+    with pytest.raises(ValueError, match="registry changed"):
+        ds[0]
+    ds.close()

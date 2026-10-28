@@ -8,6 +8,7 @@ explicit responsibilities of the supplied registry and caller.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -18,6 +19,11 @@ import h5py
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+
+
+def _source_stat(path: str) -> tuple[int, int, int, int, int]:
+    stat = os.stat(path)
+    return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
 
 
 def _has_linked_objects(group: h5py.Group, seen: set[int] | None = None) -> bool:
@@ -59,12 +65,24 @@ class SparseSurveyDataset(Dataset):
         self.path = str(path)
         if role not in {"fit", "tune", "cal", "devtest", "external", "excluded"}:
             raise ValueError("An explicit known star role is required")
-        self.registry = {str(k): dict(v) for k, v in registry.items()}
+        # Own an isolated canonical registry; caller mutation must not alter
+        # label semantics after its digest has been recorded.
+        self.registry = json.loads(
+            json.dumps(
+                {str(k): dict(v) for k, v in registry.items()},
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            )
+        )
         self.registry_sha256 = hashlib.sha256(
-            json.dumps(self.registry, sort_keys=True, separators=(",", ":")).encode()
+            json.dumps(
+                self.registry, sort_keys=True, separators=(",", ":"), allow_nan=False
+            ).encode()
         ).hexdigest()
         self.source_binding = os.path.realpath(self.path)
         self._verified_overlay_access = _verified_overlay_access
+        self._direct_source_stat = None
         from .multisurvey_overlay import OVERLAY_SCHEMA, _VerifiedOverlayAccess
 
         with h5py.File(self.path, "r") as source:
@@ -92,11 +110,15 @@ class SparseSurveyDataset(Dataset):
         elif expected_source_sha256 is not None:
             if len(expected_source_sha256) != 64:
                 raise ValueError("Expected source SHA must be a SHA256 digest")
+            before = _source_stat(self.path)
             with open(self.path, "rb") as stream:
                 actual_sha = hashlib.file_digest(stream, "sha256").hexdigest()
+            if before != _source_stat(self.path):
+                raise ValueError("Pinned source changed during SHA256 verification")
             if actual_sha != expected_source_sha256:
                 raise ValueError("Source SHA does not match its manifest")
             self.source_binding = actual_sha
+            self._direct_source_stat = before
         self.names = tuple(sorted(self.registry))
         if not self.names:
             raise ValueError("At least one source must be registered")
@@ -219,14 +241,35 @@ class SparseSurveyDataset(Dataset):
                 self.unmatched_counts[name] = int((~matched).sum())
                 rows = np.flatnonzero(matched)
                 order = np.argsort(pos[rows], kind="stable")
-                self._indices[name] = (pos[rows][order], rows[order])
+                star_index, row_index = pos[rows][order], rows[order]
+                star_index.setflags(write=False)
+                row_index.setflags(write=False)
+                self._indices[name] = (star_index, row_index)
+        self.ids.setflags(write=False)
+        self.star_rows.setflags(write=False)
+        self._check_source_binding()
+
+    def _check_source_binding(self) -> None:
+        registry_sha256 = hashlib.sha256(
+            json.dumps(
+                self.registry, sort_keys=True, separators=(",", ":"), allow_nan=False
+            ).encode()
+        ).hexdigest()
+        if registry_sha256 != self.registry_sha256:
+            raise ValueError("Pinned source registry changed after verification")
+        if self._verified_overlay_access is not None:
+            self._verified_overlay_access.check(self.path, self.registry_sha256)
+        elif (
+            self._direct_source_stat is not None
+            and _source_stat(self.path) != self._direct_source_stat
+        ):
+            raise ValueError("Pinned source changed after SHA256 verification")
 
     def __len__(self) -> int:
         return len(self.star_rows)
 
     def _handle(self) -> h5py.File:
-        if self._verified_overlay_access is not None:
-            self._verified_overlay_access.check(self.path, self.registry_sha256)
+        self._check_source_binding()
         pid = os.getpid()
         if self._file is not None and self._file_pid != pid:
             self._file.close()
@@ -291,7 +334,7 @@ class SparseSurveyDataset(Dataset):
                         "release": meta["release"],
                         "pipeline": meta["pipeline"],
                         "dependency_id": meta["dependency_id"],
-                        "target_definitions": meta["targets"],
+                        "target_definitions": copy.deepcopy(meta["targets"]),
                         "is_anchor": bool(meta.get("is_anchor", False)),
                     }
                 )
