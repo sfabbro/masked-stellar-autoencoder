@@ -136,7 +136,9 @@ def project_catalogue(table, source, selected_measurements, *, parameter_symbols
     if source == "galah":
         global_good = (raw["flag_sp"] == 0) & (raw["flag_sp_fit"] == 0)
         quality &= global_good[:, None]
-        quality[:, 2] &= raw["flag_fe_h"] == 0
+        # GALAH DR4 explicitly warns that flag_fe_h is erroneous. Preserve
+        # its raw value for provenance, but do not use it as an Fe/H cut.
+        # https://www.galah-survey.org/dr4/using_the_data/
     else:
         global_good = (raw["ASPCAPFLAG"] == 0) & (raw["STARFLAG"] == 0)
         quality &= global_good[:, None]

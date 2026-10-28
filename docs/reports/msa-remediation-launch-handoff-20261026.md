@@ -140,3 +140,10 @@ Two-update `multisurvey_consensus_cuda_preflight_v1` accepted once as `bt8mfivu`
 ### FIT union census
 
 Source-only `multisurvey_fit_collation_census_v1` was accepted once as `knc852cs` at MSA `630c409f30788a9f35ebf53952dfd6a9d5218521` and completed. The [submission](../../experiments/xp/multisurvey-fit-collation-census-submitted-20261028.json) and [completion](../../experiments/xp/multisurvey-fit-collation-census-completion-20261028.json) receipts identify all results. Summary and 14,070,353-byte star-array NPZ were preserved with producer SHA, NPZ CRC and independent mask/count checks. No model or training occurred. Do not resubmit or poll this completed census.
+
+
+### Gaia RVS source union and Fe I/M query
+
+The source-only `multisurvey_gaia_gspspec_overlay_v1` was accepted once as `qk4tmzk1` at `8b4d5a947066400a657fa281cc3051177f1157e6` (tag `msa-gaia-gspspec-union-20261028`). Its [submission receipt](../../experiments/xp/multisurvey-gaia-gspspec-overlay-submitted-20261028.json) records the output directory. Its session was observed Running but the first manifest returned 404; that does not prove source admission or authorize a retry. On actual completion retrieve the small manifest, summary and byte-checked FIT availability NPZ; verify the producer SHA and NPZ CRC before use. The sidecar and overlay are source data, not a trained abundance model.
+
+The [Gaia Fe I/M TAP query receipt](../../experiments/xp/gaia-gspspec-fem-query-submitted-20261028.json) records accepted UWS job `1793215530905`, its exact source query and a 10,000,000-row limit. Check `https://gaia.ari.uni-heidelberg.de/tap/async/1793215530905/phase`; only a completed phase permits retrieval from that job's result endpoint. Check the service's overflow status and output size, retain exact Gaia IDs and original fields, hash the result and join without inventing missing IDs or measurement covariance. Preserve errors and never repeat an ambiguous or already accepted submission.

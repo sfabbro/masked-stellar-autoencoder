@@ -114,12 +114,25 @@ def test_galah_preserves_rows_and_partial_missing_masks():
     table["flag_fe_h"][2] = 1
     r = project_catalogue(table, "galah", selected)
     np.testing.assert_array_equal(
-        r["observed"], [[False, True, True], [True, False, True], [True, True, False]]
+        r["observed"], [[False, True, True], [True, False, True], [True, True, True]]
     )
     assert np.isnan(r["value"][0, 0])
     assert r["uncertainty"][1, 1] == 0
     assert r["logg_parallax_conditioned"].all()
     assert r["raw"]["flag_fe_h"].tobytes() == table["flag_fe_h"].tobytes()
+
+
+def test_galah_fe_flag_is_retained_but_global_quality_still_applies():
+    table, selected = native_table()
+    table["flag_fe_h"][:] = [0, 1, 2]
+    table["flag_sp"][1] = 1
+    table["flag_sp_fit"][2] = 1
+    result = project_catalogue(table, "galah", selected)
+    np.testing.assert_array_equal(
+        result["observed"],
+        [[True, True, True], [False, False, False], [False, False, False]],
+    )
+    np.testing.assert_array_equal(result["raw"]["flag_fe_h"], [0, 1, 2])
 
 
 def test_source_rows_ids_feh_errors_must_agree():
