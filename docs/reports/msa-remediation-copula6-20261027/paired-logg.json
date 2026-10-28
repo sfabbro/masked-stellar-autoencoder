@@ -1,0 +1,186 @@
+{
+  "scope": "Same-star XP-present development comparison, known non-training in cached Andrae membership; not an untouched MSA test or physical truth.",
+  "unique_intersection": 2102,
+  "paired_stars": 1573,
+  "reference_source_counts": {
+    "apogee": 5,
+    "galah": 1568
+  },
+  "reference_scope": "Current pilot catalog logg, which may differ from earlier report references for the same star",
+  "andrae_scope": "Cached Andrae Teff/logg/MH estimates; membership not known outside cached subset",
+  "pilot_prediction_sha256": {
+    "remediation_copula_nsf6_frozen_v1": "bd489852bd257d8af6e47bdde08f116dcda3939f58e20abf14674a6263c333a0",
+    "remediation_copula_nsf6_ft_v1": "ec513ec25dcae043a2ceca4dcc98e0fcf25ebe0f3583c909fd2274868daea1b7"
+  },
+  "andrae_array_sha256": "4ade1351106a8ac8340ba1ed68dcbf9fe71def51a9ae9382031e6e4e80b17b52",
+  "rows": [
+    {
+      "bin": "all",
+      "model": "Frozen spline",
+      "n": 1573,
+      "mae_dex": 0.13921666020524773,
+      "bias_dex": 0.04380606173897855,
+      "rmse_dex": 0.19032737035229105
+    },
+    {
+      "bin": "all",
+      "model": "Fine-tuned spline",
+      "n": 1573,
+      "mae_dex": 0.13090987936727905,
+      "bias_dex": 0.014286589567932795,
+      "rmse_dex": 0.1843142006306452
+    },
+    {
+      "bin": "all",
+      "model": "Andrae",
+      "n": 1573,
+      "mae_dex": 0.07204272328981229,
+      "bias_dex": 0.001808549227111291,
+      "rmse_dex": 0.10437011038858365
+    },
+    {
+      "bin": "<1",
+      "model": "Frozen spline",
+      "n": 17,
+      "mae_dex": 0.30730802257280154,
+      "bias_dex": 0.2939154909625395,
+      "rmse_dex": 0.34182039109321566
+    },
+    {
+      "bin": "<1",
+      "model": "Fine-tuned spline",
+      "n": 17,
+      "mae_dex": 0.16474952464961112,
+      "bias_dex": 0.1279449324338398,
+      "rmse_dex": 0.1926755812342959
+    },
+    {
+      "bin": "<1",
+      "model": "Andrae",
+      "n": 17,
+      "mae_dex": 0.21169878395865943,
+      "bias_dex": 0.0890869521814234,
+      "rmse_dex": 0.28583003893559594
+    },
+    {
+      "bin": "1\u20132",
+      "model": "Frozen spline",
+      "n": 96,
+      "mae_dex": 0.2173527192825201,
+      "bias_dex": 0.1838610307507812,
+      "rmse_dex": 0.2577948963376085
+    },
+    {
+      "bin": "1\u20132",
+      "model": "Fine-tuned spline",
+      "n": 96,
+      "mae_dex": 0.1500131457303864,
+      "bias_dex": 0.06555069720871658,
+      "rmse_dex": 0.18440178513651811
+    },
+    {
+      "bin": "1\u20132",
+      "model": "Andrae",
+      "n": 96,
+      "mae_dex": 0.09850311493873598,
+      "bias_dex": 0.017858557442824056,
+      "rmse_dex": 0.1325407320738027
+    },
+    {
+      "bin": "2\u20133",
+      "model": "Frozen spline",
+      "n": 359,
+      "mae_dex": 0.15053790868408376,
+      "bias_dex": 0.02132723791603588,
+      "rmse_dex": 0.20276010240305925
+    },
+    {
+      "bin": "2\u20133",
+      "model": "Fine-tuned spline",
+      "n": 359,
+      "mae_dex": 0.1365876786751972,
+      "bias_dex": -0.020521652634948893,
+      "rmse_dex": 0.20894879751897935
+    },
+    {
+      "bin": "2\u20133",
+      "model": "Andrae",
+      "n": 359,
+      "mae_dex": 0.08429473208052866,
+      "bias_dex": -0.05788597726954724,
+      "rmse_dex": 0.11789941014784862
+    },
+    {
+      "bin": "3\u20134",
+      "model": "Frozen spline",
+      "n": 379,
+      "mae_dex": 0.1624788646159456,
+      "bias_dex": 0.08695242003398412,
+      "rmse_dex": 0.21651806768590687
+    },
+    {
+      "bin": "3\u20134",
+      "model": "Fine-tuned spline",
+      "n": 379,
+      "mae_dex": 0.17233297024851,
+      "bias_dex": 0.10207310059504553,
+      "rmse_dex": 0.22522561681205217
+    },
+    {
+      "bin": "3\u20134",
+      "model": "Andrae",
+      "n": 379,
+      "mae_dex": 0.07482304577588404,
+      "bias_dex": 0.008305658003271097,
+      "rmse_dex": 0.0997083184949221
+    },
+    {
+      "bin": "4\u20134.5",
+      "model": "Frozen spline",
+      "n": 632,
+      "mae_dex": 0.10861669860581084,
+      "bias_dex": 0.000560204844190773,
+      "rmse_dex": 0.1542704327785475
+    },
+    {
+      "bin": "4\u20134.5",
+      "model": "Fine-tuned spline",
+      "n": 632,
+      "mae_dex": 0.10765863630519261,
+      "bias_dex": -0.023642162421531682,
+      "rmse_dex": 0.14719787366725712
+    },
+    {
+      "bin": "4\u20134.5",
+      "model": "Andrae",
+      "n": 632,
+      "mae_dex": 0.06042790113521528,
+      "bias_dex": 0.032042866924141024,
+      "rmse_dex": 0.08900022923151434
+    },
+    {
+      "bin": "\u22654.5",
+      "model": "Frozen spline",
+      "n": 90,
+      "mae_dex": 0.09588174046770245,
+      "bias_dex": 0.05882464167455171,
+      "rmse_dex": 0.1078594629847713
+    },
+    {
+      "bin": "\u22654.5",
+      "model": "Fine-tuned spline",
+      "n": 90,
+      "mae_dex": 0.07033117580118496,
+      "bias_dex": -0.026352339691348398,
+      "rmse_dex": 0.10269599786459953
+    },
+    {
+      "bin": "\u22654.5",
+      "model": "Andrae",
+      "n": 90,
+      "mae_dex": 0.03842054100036623,
+      "bias_dex": -0.03335469118754071,
+      "rmse_dex": 0.05728521863414846
+    }
+  ]
+}

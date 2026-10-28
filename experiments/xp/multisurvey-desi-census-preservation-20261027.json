@@ -1,0 +1,12 @@
+{
+  "run_id": "multisurvey_desi_cache_census_v1",
+  "session_id": "x4loy4i2",
+  "source_commit": "0fcb4bf59c784b48581422ccce30b592dd27d9cb",
+  "manifest_sha256": "a6aa21d433a136de1cf59a94eaddf6de97755ee31abb9a2baa2e40eb43dad0e4",
+  "summary_sha256": "74e1c1c259cd0a48ec440e5bd2178bec925b23e50ceecffb493febfe697f93f1",
+  "identity_bytes": 24393938,
+  "identity_sha256": "df3250519acf3280a50ad6227a2be17c53cceaa3ed811fc5729ea39940e41a24",
+  "producer_sha_verified": true,
+  "npz_crc_verified": true,
+  "scope": "Preserved completed source-only census; no feature/model/checkpoint replay."
+}

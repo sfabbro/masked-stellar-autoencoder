@@ -1,0 +1,67 @@
+{
+  "source_sha256": "fe09ff1be95bb95884cbba9f008d02bc3e52e0debd143add5a5d28efad934ba3",
+  "base_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "identity_sha256": "df3250519acf3280a50ad6227a2be17c53cceaa3ed811fc5729ea39940e41a24",
+  "quality_rows": 3683136,
+  "unique_desi_ids": 3681789,
+  "roles": {
+    "fit": {
+      "stars": 1197647,
+      "primary_input": 1197647,
+      "cached_complete_xp": 816115,
+      "multiple_desi_rows": 475,
+      "known_supervised_ancestor": 2342
+    },
+    "tune": {
+      "stars": 171085,
+      "primary_input": 171085,
+      "cached_complete_xp": 116543,
+      "multiple_desi_rows": 81,
+      "known_supervised_ancestor": 0
+    },
+    "cal": {
+      "stars": 170669,
+      "primary_input": 170669,
+      "cached_complete_xp": 115911,
+      "multiple_desi_rows": 66,
+      "known_supervised_ancestor": 0
+    },
+    "devtest": {
+      "stars": 171796,
+      "primary_input": 171796,
+      "cached_complete_xp": 116689,
+      "multiple_desi_rows": 53,
+      "known_supervised_ancestor": 0
+    },
+    "excluded": {
+      "stars": 1953009,
+      "primary_input": 34341,
+      "cached_complete_xp": 23846,
+      "multiple_desi_rows": 667,
+      "known_supervised_ancestor": 0
+    },
+    "external": {
+      "stars": 5,
+      "primary_input": 5,
+      "cached_complete_xp": 5,
+      "multiple_desi_rows": 0,
+      "known_supervised_ancestor": 0
+    },
+    "not_in_base": {
+      "stars": 17578,
+      "primary_input": null,
+      "cached_complete_xp": 218,
+      "multiple_desi_rows": 4,
+      "known_supervised_ancestor": null
+    }
+  },
+  "logg_cardinality_bounds": {
+    "prior_fit_logg_stars": 493548,
+    "desi_fit_logg_candidates": 1197647,
+    "desi_fit_single_row_logg_candidates": 1197172,
+    "desi_fit_single_row_cached_xp_candidates": 815771,
+    "minimum_additional_single_row_candidates_from_cardinality": 703624,
+    "minimum_additional_single_row_cached_xp_from_cardinality": 322223
+  },
+  "scope": "Bounds are inferred from set sizes, not a direct prior-label overlap join; DESI values, uncertainties, cross-survey dependencies and scale are not yet certified as fit-ready. Nonmatches do not imply missing XP or absent features elsewhere."
+}
