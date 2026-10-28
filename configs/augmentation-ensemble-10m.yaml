@@ -1,0 +1,60 @@
+# Proposed bounded supervised-augmentation wave; root integrates into launch policy.
+# Per arm: 9M TRAIN +1M repeat =10M reconstruction-row presentations, NOT new stars.
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+checkpoint_sha256: 9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-6
+head_lr: 0.001
+warmup_updates: 500
+supervised_batches_per_update: 8
+contrast_batch: 256
+reconstruction_weight: 0.01
+# Independent stochastic replicas vary head/dropout/label/reconstruction-mask seeds.
+# Augmentation controls within each experiment_seed share label/reco streams.
+pairing_scope: within_experiment_seed
+arms:
+- run_id: prediction_e72_aug_control_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  supervised_augmentation: {noise_scale: 0.0, mask_probability: 0.0, mask_mode: coefficients, seed: 6202601}
+- run_id: prediction_e72_aug_control_s43_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 43
+  supervised_augmentation: {noise_scale: 0.0, mask_probability: 0.0, mask_mode: coefficients, seed: 6202601}
+- run_id: prediction_e72_aug_control_s44_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 44
+  supervised_augmentation: {noise_scale: 0.0, mask_probability: 0.0, mask_mode: coefficients, seed: 6202601}
+- run_id: prediction_e72_aug_noise05_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  supervised_augmentation: {noise_scale: 0.5, mask_probability: 0.0, mask_mode: coefficients, seed: 6202601}
+- run_id: prediction_e72_aug_coeffmask10_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  supervised_augmentation: {noise_scale: 0.0, mask_probability: 0.1, mask_mode: coefficients, seed: 6202601}
+- run_id: prediction_e72_aug_bandmask20_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  supervised_augmentation: {noise_scale: 0.0, mask_probability: 0.2, mask_mode: band, seed: 6202601}
+- run_id: prediction_e72_aug_noise05_bandmask20_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  supervised_augmentation: {noise_scale: 0.5, mask_probability: 0.2, mask_mode: band, seed: 6202601}
+ensemble:
+  members:
+  - prediction_e72_aug_control_s42_10m_v1
+  - prediction_e72_aug_control_s43_10m_v1
+  - prediction_e72_aug_control_s44_10m_v1
+  estimator: arithmetic_mean_of_dex_point_predictions
+  member_spread: population_standard_deviation_uncalibrated
+  reconstruction_presentations_total: 30000000

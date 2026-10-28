@@ -1,0 +1,14 @@
+tee: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v2.session.log: Disk quota exceeded
+OSError: [Errno 122] Disk quota exceeded
+Traceback (most recent call last):
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/scripts/run_remediation_joint_preflight.py", line 429, in <module>
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/scripts/run_remediation_joint_preflight.py", line 425, in main
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/scripts/run_remediation_joint_preflight.py", line 223, in run
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/scripts/run_remediation_joint_preflight.py", line 27, in atomic
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/experiments/xp/.pixi/envs/default/lib/python3.13/pathlib/_local.py", line 555, in write_text
+  File "/scratch/src/sfabbro/masked-stellar-autoencoder/experiments/xp/.pixi/envs/default/lib/python3.13/pathlib/_abc.py", line 651, in write_text
+OSError: [Errno 122] Disk quota exceeded
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<string>", line 75, in <module>
+  File "/usr/local/lib/python3.13/subprocess.py", line 578, in run

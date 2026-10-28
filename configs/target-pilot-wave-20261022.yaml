@@ -1,0 +1,23 @@
+input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-age-native-pilot-input-v3/pilot.npz
+manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-age-native-pilot-input-v3/manifest.json
+arms:
+- run_id: age_joint_validation_joint_s42_v1
+  objective: joint
+  seed: 42
+- run_id: age_joint_validation_joint_s43_v1
+  objective: joint
+  seed: 43
+- run_id: age_joint_validation_joint_s44_v1
+  objective: joint
+  seed: 44
+- run_id: age_joint_validation_composite_s42_v1
+  objective: composite
+  seed: 42
+- run_id: age_joint_validation_composite_s43_v1
+  objective: composite
+  seed: 43
+- run_id: age_joint_validation_composite_s44_v1
+  objective: composite
+  seed: 44
+input_sha256: 14d343db7f3a14c79f9615499bf44d7ab6995cef21359cc2b7738ad5e7bc4faf
+manifest_sha256: c63648eaf4e6de23e1fdaeb40e0c1f23fda3594538b4124c69817e4b4e9c27ee

@@ -1,0 +1,22 @@
+{
+  "raw_projection_measurements": {
+    "raw_rows": 6372607,
+    "eligible_rows": 3682449,
+    "eligible_feh_below_minus2": 123280
+  },
+  "pilot_role_counts": {
+    "fit": 2715,
+    "tune": 969,
+    "cal": 490,
+    "test": 433
+  },
+  "final_six_observed_alpha_by_role": {
+    "fit": 2279,
+    "tune": 828,
+    "cal": 490,
+    "test": 431
+  },
+  "pilot_source_sha": "eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5",
+  "pilot_sidecar_sha": "506fa09d4de88230ba2fee4ae2b23bbaa639c5bedd55b47b86c750c8df6f627a",
+  "universal_alpha_calibration_executed": false
+}

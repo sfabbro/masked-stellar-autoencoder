@@ -1,0 +1,64 @@
+jobs:
+- run_id: joint-native-preparation-v2-quality-v1
+  task: catalog
+  mode: joint-native-quality-verification
+  depends_on:
+  - joint-native-preparation-v2
+  env:
+    MSA_NATIVE_SIDECAR_DIRECTORY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2
+- run_id: multi_huber_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_labelnoise_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_maf_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_cinn_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_bpf_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_labelnoise_recon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_norecon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_labelnoise_norecon_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_recon_s43_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_gaussian_recon_s44_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_forward_xp_s42_v1
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_recon_s42_v2
+  task: multilabel-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1

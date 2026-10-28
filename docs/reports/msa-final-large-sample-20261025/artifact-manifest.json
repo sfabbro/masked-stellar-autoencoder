@@ -1,0 +1,697 @@
+[
+  {
+    "path": "all-distribution-metrics.csv",
+    "bytes": 3156198,
+    "sha256": "328c5fb6ec5d43a52e9573f404fa76b5f4568213c030aa927fc526690b1e5d07"
+  },
+  {
+    "path": "all-metrics.json.gz",
+    "bytes": 192765,
+    "sha256": "e35bbe38b763ae3946a37984e6811df5764b5be9a0ef2db02a8e540a1af102dc"
+  },
+  {
+    "path": "all-point-metrics.csv",
+    "bytes": 237388,
+    "sha256": "401e5502bc7205c1a9daa90ac9e9e89a9a12911b2657a0a00c3a5f5fee629902"
+  },
+  {
+    "path": "andrae-paired-metrics.csv",
+    "bytes": 55810,
+    "sha256": "9d2f6860013ffbbda1dbefcd22a54a3fc521d60a556b10f875c408e8232c2803"
+  },
+  {
+    "path": "index.html",
+    "bytes": 36619,
+    "sha256": "becce2121d87f3da15f042fdc2bbfe6a2ed8f6d538e0b57c7c0a69d835a9be1b"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-gaussian_noise.pdf",
+    "bytes": 119728,
+    "sha256": "ab06be796d3fc155934d286062254ca9a5140321d10b192fb1efab447bf21638"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-gaussian_noise.png",
+    "bytes": 304980,
+    "sha256": "295de5519f108d2c80ddc429a5bf76c993affe07692e0b32ed28118f6ea47676"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-nsf_noise.pdf",
+    "bytes": 101933,
+    "sha256": "b464f007e80e574c5f2758f5b4dd5a1ce817e015d3c70348b84a2096721c5a90"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-nsf_noise.png",
+    "bytes": 266389,
+    "sha256": "263c92ec20a5cc57dd9aa2a6da3f3dc9157f50a4af4f273202e47415d0e7a505"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-nsf_noise_mixed01.pdf",
+    "bytes": 107007,
+    "sha256": "313ea0f482508fa8398027743f9dd3a4bf2b97989f3f522f02e9b7c8704a431b"
+  },
+  {
+    "path": "plots/common-corner-2438481739732690176-nsf_noise_mixed01.png",
+    "bytes": 281867,
+    "sha256": "ee0dca03fc9ff2828fae074ed8a757de8cc3eb15fa1b21e3b3941872edfc430a"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-gaussian_noise.pdf",
+    "bytes": 110768,
+    "sha256": "84067b62f2f813316de1f226a09147b92281180e8609c8bfa5689afe82374b0c"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-gaussian_noise.png",
+    "bytes": 282690,
+    "sha256": "c029a196cfa4378f08963c01d3e17eb327055a1c03719a44fb25654267285a09"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-nsf_noise.pdf",
+    "bytes": 110464,
+    "sha256": "9c5be0283813b6c474f3d6552c53a738e0fe9ab7fefa67d151a9f0208b803050"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-nsf_noise.png",
+    "bytes": 269456,
+    "sha256": "c2bcc34f6a1ee9e6228e4a9b319ca6c4ac94554d8aefc6e259c2107150a12429"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-nsf_noise_mixed01.pdf",
+    "bytes": 110881,
+    "sha256": "a0c86a2dbbf1200914b11090dc68bc32120efd872f81821c0d15b88f25d43f90"
+  },
+  {
+    "path": "plots/common-corner-2609559667340662912-nsf_noise_mixed01.png",
+    "bytes": 270382,
+    "sha256": "541800295ee550c3fac5b6a6a60819c8e298f53b514db8ef10df41155f7fb152"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-gaussian_noise.pdf",
+    "bytes": 79789,
+    "sha256": "a7971185fb103bc4e62d3a50d4ce34b8b6b0a336ee48efdb7a45b60009c52a47"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-gaussian_noise.png",
+    "bytes": 214052,
+    "sha256": "ca4805e1a162bf393cb0f338805c815ba9a95480b585ae5070985d1cac3c0acc"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-nsf_noise.pdf",
+    "bytes": 71618,
+    "sha256": "afc36e4795a680414957d7250cff7f388fddaadf5bf45aa15033ab92b96ab92c"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-nsf_noise.png",
+    "bytes": 184711,
+    "sha256": "0d888f5615f0bd3dc94a2e4f9cdcc47325dc33a4f11675e0ae83a8ab80e2757a"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-nsf_noise_mixed01.pdf",
+    "bytes": 75614,
+    "sha256": "c294f94a03af7eab52cdf242f0c61b7d666becc847daf8b9d4a48b30f46ba2e9"
+  },
+  {
+    "path": "plots/common-corner-3616249836305383296-nsf_noise_mixed01.png",
+    "bytes": 185669,
+    "sha256": "1b4e96da24a63724e66d41e142b5faa5cbebe4e4ff690df9e85fb4979a38e69d"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-gaussian_noise.pdf",
+    "bytes": 120699,
+    "sha256": "4ef0143027880c552a3073694af07a84240abb33d1d9d0cd7de5629a3e6ba4c6"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-gaussian_noise.png",
+    "bytes": 303162,
+    "sha256": "e1e6d8bb10a3ea50f36d347c8109ebb88cdebd9124e7cc2817da6c72e8b4ef6c"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-nsf_noise.pdf",
+    "bytes": 89572,
+    "sha256": "9208799f988b83aa892a88dec84a0187055e4df1618d1fa1b9e662d3d660f638"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-nsf_noise.png",
+    "bytes": 220955,
+    "sha256": "84f6a3d7ee698b40abc64367a8106d95d0e5a1f4e221454375132b3a262e2a2a"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-nsf_noise_mixed01.pdf",
+    "bytes": 105444,
+    "sha256": "95a2b628c22043c13434bf90ea0924d629d94333226a2326f4c2f42357fe7099"
+  },
+  {
+    "path": "plots/common-corner-4077588074752670208-nsf_noise_mixed01.png",
+    "bytes": 263109,
+    "sha256": "fff7e346061c7325313d34f448b0be0282719463b5057ade958f1ec76d3e220c"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-gaussian_noise.pdf",
+    "bytes": 58143,
+    "sha256": "7ebc40f45fb5e7533e1a3b1be5fc485a09334684ad1c9aaa0063eb913470cd6c"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-gaussian_noise.png",
+    "bytes": 149078,
+    "sha256": "9d933261e05ac785949b367004a2e32cb5648111a5d2675ccd3adba5448d5319"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-nsf_noise.pdf",
+    "bytes": 68259,
+    "sha256": "f6b4e66d3764dc31dbbb9a522b77f9ce20a77dc30c2a5ad372bb679a64f3cae8"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-nsf_noise.png",
+    "bytes": 171456,
+    "sha256": "694109426b3b891bb386f7127d82830ff8d8dd12797915142ac3b442c9b29a57"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-nsf_noise_mixed01.pdf",
+    "bytes": 74771,
+    "sha256": "b1e6a918c14250eaf814ab74046df945686c08912d391655601074a4dfdde5ec"
+  },
+  {
+    "path": "plots/common-corner-4185355646116022528-nsf_noise_mixed01.png",
+    "bytes": 182568,
+    "sha256": "165da1f83f21216a150a0d5bf79f8288782f7d6e8ef09bbfe5bd25c39ba3945a"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-gaussian_noise.pdf",
+    "bytes": 71847,
+    "sha256": "3ed66a1c1c656d3f439110ba764bd963e528c450681021c96467420303c3cc1e"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-gaussian_noise.png",
+    "bytes": 191081,
+    "sha256": "89b478b6619c17cb96815258dec0092e321ed54c05f78a54d0d926c56a22ffb0"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-nsf_noise.pdf",
+    "bytes": 73669,
+    "sha256": "ff66666a80aef2da0c7bdda579451f4051f8bae280f6283f73ca67d2d70643e9"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-nsf_noise.png",
+    "bytes": 185864,
+    "sha256": "48dbfd380b76a6c67ad36456bc95ed410f892cc00f97182e0a3b904ee3b6f9d5"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-nsf_noise_mixed01.pdf",
+    "bytes": 73585,
+    "sha256": "6eb1b79c01d8498fee27304bd7a73fc41365aebd84d12e4864d2119b6cf062c6"
+  },
+  {
+    "path": "plots/common-corner-4696862405388526080-nsf_noise_mixed01.png",
+    "bytes": 179014,
+    "sha256": "8b883665c8fdcd0cb2b669949c11312852768a956adca091357ac34714d87850"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-gaussian_noise.pdf",
+    "bytes": 110447,
+    "sha256": "0ae6b2aa92f4635e747f34333415214c6487ed3bb44fbfbf95fd643897a21c4a"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-gaussian_noise.png",
+    "bytes": 279975,
+    "sha256": "4e20c85e43089b6fe7dcb51934a8ec52aea3b7a2195791609cdbffcc840fc907"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-nsf_noise.pdf",
+    "bytes": 104793,
+    "sha256": "3fb16e65e303ba200ccf863b77467d59579306f55eaf95912f47287785c45b66"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-nsf_noise.png",
+    "bytes": 255587,
+    "sha256": "69b4cef005e09e3cd71143dd88f3bccd06d83b8f7aebea3091e98fb4d9db929a"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-nsf_noise_mixed01.pdf",
+    "bytes": 106393,
+    "sha256": "a2ab6c2952447cefbca78900b9da3bf3eec061912c35f60408367e7080f58dea"
+  },
+  {
+    "path": "plots/common-corner-4926812820427520-nsf_noise_mixed01.png",
+    "bytes": 260062,
+    "sha256": "79bedd30a7fc60b8136a77e088008a5b5ca16d0d327f0133bf58623ace740a5b"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-gaussian_noise.pdf",
+    "bytes": 95342,
+    "sha256": "2adb50aa5bed93e87b196839b19102b3acc66959ae61e0a38525fcf39d9c7ce5"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-gaussian_noise.png",
+    "bytes": 254565,
+    "sha256": "ab9780dba8d27849df74b62572119371fe65e97dd1ce009c4a037e26d6fad114"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-nsf_noise.pdf",
+    "bytes": 86768,
+    "sha256": "adf0cafa6a0131f4c3ff6b3c293cdae09ff65ed06870a9b48be54c7bfc649953"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-nsf_noise.png",
+    "bytes": 213597,
+    "sha256": "ffd364b209fa8a4606eff44a597792a9bf91115ec9936efdbd5bdf92767c4492"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-nsf_noise_mixed01.pdf",
+    "bytes": 91768,
+    "sha256": "6e79d9a002a88a6dbc8711d270a8637c0232b8abfbf5f9c499bb1c308568449f"
+  },
+  {
+    "path": "plots/common-corner-615943806835727872-nsf_noise_mixed01.png",
+    "bytes": 223016,
+    "sha256": "8c99a685ba72a61cfb7b9596bc762eb97359aa2b86ec8d5e56e10604df451f6d"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-gaussian_noise.pdf",
+    "bytes": 69376,
+    "sha256": "e7529d5734726d504126248e9c5256078c03f9fa35f780b66f90d8651a0efdf4"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-gaussian_noise.png",
+    "bytes": 183351,
+    "sha256": "63929fedb7a3c36be09d063913e1d5cebcbd862a71fd1e395ba59b1d23e6fe07"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-nsf_noise.pdf",
+    "bytes": 72500,
+    "sha256": "33df056d1dcbc79f6312dd210769477f4796d1718cc1620136542c741a283329"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-nsf_noise.png",
+    "bytes": 180032,
+    "sha256": "0d1f06751d67914e39711c13eafffa45cc8b42e1d23c0aa3ad1ae23563e7e278"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-nsf_noise_mixed01.pdf",
+    "bytes": 75395,
+    "sha256": "9976b105eac8a87e303f527603cfd4a4b9cf57958ab0edd1fa3ec0c3b8a56848"
+  },
+  {
+    "path": "plots/common-corner-656977993104090624-nsf_noise_mixed01.png",
+    "bytes": 186070,
+    "sha256": "bc3ecec2ab5785f023f18f74f17e9240383719f32456f12da7b4fe5a7a0e6104"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-gaussian_noise.pdf",
+    "bytes": 77158,
+    "sha256": "02c2dff034124f04e02abbfd8c6ee824549d2e74a0a0d7e56ff4797f598c1abc"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-gaussian_noise.png",
+    "bytes": 206574,
+    "sha256": "4de45b5192ed2b096a1bd1fd7ae450c2ab436a8c5460a6f925f9a9024fff954e"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-nsf_noise.pdf",
+    "bytes": 78830,
+    "sha256": "c94595a292536df69260c49c421999e48d146cfd75928f2303825d706e37e677"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-nsf_noise.png",
+    "bytes": 201089,
+    "sha256": "2790d01197d6c869d36ba5e0d1aa9cac09a0272ebf1732be54cf9b91c257de3d"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-nsf_noise_mixed01.pdf",
+    "bytes": 78069,
+    "sha256": "657450ba101906bb08559fce15113d3cf111f8428acf3c8f16abf72225bff409"
+  },
+  {
+    "path": "plots/common-corner-78289217922968576-nsf_noise_mixed01.png",
+    "bytes": 194510,
+    "sha256": "0bd9ecc447b770a29dde326e2bdc17d4953ecb0fbf61ba923eb9f7d7033c54fe"
+  },
+  {
+    "path": "plots/gaussian_noise-andrae-paired-global.pdf",
+    "bytes": 614083,
+    "sha256": "490445a0221ff9a6fa680225359d316e722c1d568d72272d11a55eee1e10e4d3"
+  },
+  {
+    "path": "plots/gaussian_noise-andrae-paired-global.png",
+    "bytes": 1386126,
+    "sha256": "accb2e0592a466c63d708c2f57dc9c2030e7f5e0540f2cd9b1494f56cd6dc638"
+  },
+  {
+    "path": "plots/gaussian_noise-andrae-paired-metalpoor.pdf",
+    "bytes": 69916,
+    "sha256": "f6e42ed2c46fb6a2e3f0043367bb80771bb4e40a40bfb31dde00553aade08261"
+  },
+  {
+    "path": "plots/gaussian_noise-andrae-paired-metalpoor.png",
+    "bytes": 326034,
+    "sha256": "d7985302961d3d725dabef7558675d5f6993fe2d42fedd3808d584f51a23b928"
+  },
+  {
+    "path": "plots/gaussian_noise-external-age.pdf",
+    "bytes": 375741,
+    "sha256": "b4b8dce0232b6c33bdf0a30197fe5149b8a81013322dabd7c9dc7bd14159bb17"
+  },
+  {
+    "path": "plots/gaussian_noise-external-age.png",
+    "bytes": 157734,
+    "sha256": "7ce98e9ce112831fae1588089e939a27717f3767d150aad73ff29a10061fd1a3"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_intrinsic-global.pdf",
+    "bytes": 25984,
+    "sha256": "3a5afdbf8ba1ea9fd0f356a4ddce23ca79d7bcd5aff0e478f04654751265b234"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_intrinsic-global.png",
+    "bytes": 145174,
+    "sha256": "ecf8502f79a36e1134f1f5b4f9a387254ed87578564b607137be2cf943406fc3"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_intrinsic-metalpoor.pdf",
+    "bytes": 25199,
+    "sha256": "1737eec99d859c52138c70f0f1c41c560328aa4997736e5089f40f8f1574badd"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_intrinsic-metalpoor.png",
+    "bytes": 125979,
+    "sha256": "f016f450aa9ee41f0b87c22d4665a59bebede9e0c7a1603dc286fdd6c5e569b1"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_observed-global.pdf",
+    "bytes": 25908,
+    "sha256": "660fc5a88eec8bba2fe43cac7aa0755000164ca13e03317b96e27a319087aecb"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_observed-global.png",
+    "bytes": 144927,
+    "sha256": "8a0583444bb437bfeaab70c031d8c68eb88698fd042dd8324520ccc81c6615b5"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_observed-metalpoor.pdf",
+    "bytes": 25714,
+    "sha256": "30a889e0fd2467f28965342ac26a531f2c29c9982fb7f8a4773bbb0d4ce5d483"
+  },
+  {
+    "path": "plots/gaussian_noise-pit_observed-metalpoor.png",
+    "bytes": 134135,
+    "sha256": "8463a18db37cd2e3274f0a1f346b347c80742fa490e301c1ebf7c0dc9d81c6e0"
+  },
+  {
+    "path": "plots/gaussian_noise-predicted-vs-reference.pdf",
+    "bytes": 489425,
+    "sha256": "4b39c4ed13169a1578b64b359038ceb0cda60eac6ba6ac25ee7bfd7cc6bdec4f"
+  },
+  {
+    "path": "plots/gaussian_noise-predicted-vs-reference.png",
+    "bytes": 1364922,
+    "sha256": "40fec037ab19b0048ddd30416002b20ce7969d6be6917be0afd8d7ff07399993"
+  },
+  {
+    "path": "plots/gaussian_noise-residual-vs-feh-metalpoor.pdf",
+    "bytes": 75701,
+    "sha256": "afa8e89afb68f484b570f1f47ca63994a7a0cac3ed79744a3d505655d2b8db82"
+  },
+  {
+    "path": "plots/gaussian_noise-residual-vs-feh-metalpoor.png",
+    "bytes": 390873,
+    "sha256": "1abfb6a984d47892ad6617e6c2a911079044227a5d6c8a8244be68b2470e317e"
+  },
+  {
+    "path": "plots/gaussian_noise-residual-vs-reference-metalpoor.pdf",
+    "bytes": 74436,
+    "sha256": "6d45ad467c487ab2ae1c66c78222bf962e4cd1dc8a79347ecba1ca32329809a2"
+  },
+  {
+    "path": "plots/gaussian_noise-residual-vs-reference-metalpoor.png",
+    "bytes": 393722,
+    "sha256": "f7040a2a3f47b4aa300b7fc764cc8942fea46619e9f5c26a035a2d4ee4858ab1"
+  },
+  {
+    "path": "plots/nsf_noise-andrae-paired-global.pdf",
+    "bytes": 607392,
+    "sha256": "41be870944cc1fa9fe1868472210004e17afc69d9bfdba7d0817b0e3c79ca7d6"
+  },
+  {
+    "path": "plots/nsf_noise-andrae-paired-global.png",
+    "bytes": 1372040,
+    "sha256": "cb8c98057c48e40034a76a0e91b2a12f2873d05edca7022f5f8124eca8fbd710"
+  },
+  {
+    "path": "plots/nsf_noise-andrae-paired-metalpoor.pdf",
+    "bytes": 69968,
+    "sha256": "f92355ad743e53b0d51b2afaf10557d1e43f5d7052237fe48a4832f055ace239"
+  },
+  {
+    "path": "plots/nsf_noise-andrae-paired-metalpoor.png",
+    "bytes": 328785,
+    "sha256": "e391c01e5c1462dc41e93e3cf65a610e852bb1ac29a7b4f77c9276b2e2ce6f29"
+  },
+  {
+    "path": "plots/nsf_noise-external-age.pdf",
+    "bytes": 376332,
+    "sha256": "724c0a5d20c1f4dc6e12f1ffedcf5f6e16b5aa69976bb0e5101bce48b4a55b47"
+  },
+  {
+    "path": "plots/nsf_noise-external-age.png",
+    "bytes": 188600,
+    "sha256": "e3d5ade28853039d64c7dcb82c482d99506273721108297e246ee3f5fbdee7c7"
+  },
+  {
+    "path": "plots/nsf_noise-pit_intrinsic-global.pdf",
+    "bytes": 25928,
+    "sha256": "d2c1dfb788d0a1102bae80a0c7731d511921610de157f04b8a53e5dbe8f51bc0"
+  },
+  {
+    "path": "plots/nsf_noise-pit_intrinsic-global.png",
+    "bytes": 140542,
+    "sha256": "d3b728e4b2c7ff2362fd679b80792142deadbaf4e024e7ff50f8706d87527e86"
+  },
+  {
+    "path": "plots/nsf_noise-pit_intrinsic-metalpoor.pdf",
+    "bytes": 25233,
+    "sha256": "989d4209f3c5a7457f6a57aa9ecf45a26878b1194bbc6a6210b7de52a84bba6c"
+  },
+  {
+    "path": "plots/nsf_noise-pit_intrinsic-metalpoor.png",
+    "bytes": 121560,
+    "sha256": "3b9912c2786c1f818359860d2dd4a0ab28d0b3f805c7da1859ee303ae790fbe5"
+  },
+  {
+    "path": "plots/nsf_noise-pit_observed-global.pdf",
+    "bytes": 25825,
+    "sha256": "679c31e9d87591c3863e61ce83bde8946c116ab38cad1b3316dd5e8f9edbefac"
+  },
+  {
+    "path": "plots/nsf_noise-pit_observed-global.png",
+    "bytes": 139510,
+    "sha256": "c6b3eaf856d602ada698f2dea864e57db95023b5a5354a7a2f10803f40372319"
+  },
+  {
+    "path": "plots/nsf_noise-pit_observed-metalpoor.pdf",
+    "bytes": 25819,
+    "sha256": "84d0073ebc182ed804d87083b436e7ddf211b96694a89acb2330eb39827490c1"
+  },
+  {
+    "path": "plots/nsf_noise-pit_observed-metalpoor.png",
+    "bytes": 132686,
+    "sha256": "e30da589819164583ec073198fc03a0b44d2e97e5aad07dd6131ac7dc337b7e1"
+  },
+  {
+    "path": "plots/nsf_noise-predicted-vs-reference.pdf",
+    "bytes": 496342,
+    "sha256": "ad2af39bfc15cab2cb64c3c16e2e0fc4a599c646fb3a4182001d866dc621aa60"
+  },
+  {
+    "path": "plots/nsf_noise-predicted-vs-reference.png",
+    "bytes": 1360436,
+    "sha256": "877216cd402138a91b20674b6cfd07f0739acfa55f63db56271c8b8caf526ee9"
+  },
+  {
+    "path": "plots/nsf_noise-residual-vs-feh-metalpoor.pdf",
+    "bytes": 74942,
+    "sha256": "90f90d0734cc2d9c3bff4b1a76d20dbdeef05d91eec3a3f1d64d467bf8a40ba7"
+  },
+  {
+    "path": "plots/nsf_noise-residual-vs-feh-metalpoor.png",
+    "bytes": 394530,
+    "sha256": "01201384e1bd816effecdf28891d03c31102623966f6cebd2a7ad4b700d03715"
+  },
+  {
+    "path": "plots/nsf_noise-residual-vs-reference-metalpoor.pdf",
+    "bytes": 70940,
+    "sha256": "95581f24661c42f243ff1f243fc8686431c29bbc5d84ced03937e88626642f7f"
+  },
+  {
+    "path": "plots/nsf_noise-residual-vs-reference-metalpoor.png",
+    "bytes": 388883,
+    "sha256": "d2a0c4583dcb7d5a5002ef2bd8564788c0aa652fee5911c01ede055fa363f79b"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-andrae-paired-global.pdf",
+    "bytes": 606348,
+    "sha256": "8d481314bf5b125240ff4c07baea948d2c24c7c4efa1f7aae38477dd8f63b53e"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-andrae-paired-global.png",
+    "bytes": 1371106,
+    "sha256": "d1267cf15038149b1c86e67fba03396ff7f92b951c6fdf46f2e610d174f8a92b"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-andrae-paired-metalpoor.pdf",
+    "bytes": 70083,
+    "sha256": "6ce6441483c6d62d95c5d6ec47cefed01c88d984ca1f496537cbea0d99e50bd9"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-andrae-paired-metalpoor.png",
+    "bytes": 333013,
+    "sha256": "5bb7f877c5a97072471c6417a7c639adb9c90e0f256d0008251392119d3fa7ee"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-external-age.pdf",
+    "bytes": 377973,
+    "sha256": "33896ee6a1ee6f85cf4988d9d432565acf124f56878c5f860fa86741fcd43eb4"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-external-age.png",
+    "bytes": 185877,
+    "sha256": "3354112daacca9a487fbe2575ca2d85024f3245945550ef9939ea0fa23962697"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_intrinsic-global.pdf",
+    "bytes": 25822,
+    "sha256": "13c659ca3131030024e5c8908a1fde872c80b0559199344df7a4c558ad2167e8"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_intrinsic-global.png",
+    "bytes": 161940,
+    "sha256": "c1534688ef4028b2ecac00c49cd4951ca8e951f93f12cedb9a82750a73ef0108"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_intrinsic-metalpoor.pdf",
+    "bytes": 25224,
+    "sha256": "fc765bbab90575b1345d7cd55619bf2785a0a77cd3c746698a3f847fea162031"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_intrinsic-metalpoor.png",
+    "bytes": 124577,
+    "sha256": "6a449c9b964e3456428015972af74e87df3b3b1c46ce6b70bcedbcfe85490bb1"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_observed-global.pdf",
+    "bytes": 25945,
+    "sha256": "3ef9a5b790ac2be50a3da01b63e672141fc844b75ce0f70a08d551c79870036b"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_observed-global.png",
+    "bytes": 188019,
+    "sha256": "75effe239b0349debc1d10e79ca98bf2d461bc86124e6311f6f4cfa6052a9f17"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_observed-metalpoor.pdf",
+    "bytes": 25941,
+    "sha256": "bb8ce81a5ce857516db371a4b7d6220f167dffaf4466ddd293a0c73b81e71d52"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-pit_observed-metalpoor.png",
+    "bytes": 139701,
+    "sha256": "a927764d6c409438af52101b43142db09bec54e86dc8e0d1b9161c6901f15216"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-predicted-vs-reference.pdf",
+    "bytes": 497806,
+    "sha256": "aad1a8b35faa1a8104652d0c56c9b8b7940b131fcbcefb7c9275b8005befaa84"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-predicted-vs-reference.png",
+    "bytes": 1375776,
+    "sha256": "7c90bc31802e7ca3bab1b35ef88437a1b7d0e9851ebdaa9c8f7d74c64c33336d"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-residual-vs-feh-metalpoor.pdf",
+    "bytes": 75403,
+    "sha256": "7b0849d9d2f67c79f6a4ca149c03a6752322bcdf24cd29aed4ef76afac7495df"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-residual-vs-feh-metalpoor.png",
+    "bytes": 370097,
+    "sha256": "4c6a721e0162961a15490c5680f0fa02424948d1d849d18658fabb151f2ce53a"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-residual-vs-reference-metalpoor.pdf",
+    "bytes": 72103,
+    "sha256": "57543e0325f8cfb5f235bfb3e2b40524b5e574b74aedc04af8f73789952ec02e"
+  },
+  {
+    "path": "plots/nsf_noise_mixed01-residual-vs-reference-metalpoor.png",
+    "bytes": 396057,
+    "sha256": "1f87900b1f8d3ae01f2d16c60ae7f626a1be6be197dc3dd81ed713946464c532"
+  },
+  {
+    "path": "plots/quantile3-andrae-paired-global.pdf",
+    "bytes": 619110,
+    "sha256": "502171797dec98b56371a3a0e3df29b051e0b70d9d15ac431b6a2cee1ffcd65b"
+  },
+  {
+    "path": "plots/quantile3-andrae-paired-global.png",
+    "bytes": 1392538,
+    "sha256": "71c94c9430e617201b9f373c5d2b0bb7a70ede335b5eb23408ec13353b48a7a2"
+  },
+  {
+    "path": "plots/quantile3-andrae-paired-metalpoor.pdf",
+    "bytes": 73937,
+    "sha256": "57ff3e7d04b630fd2f2722c92159357e90ed9cbddc6a2fa1581f8a90418e9963"
+  },
+  {
+    "path": "plots/quantile3-andrae-paired-metalpoor.png",
+    "bytes": 330957,
+    "sha256": "d91dfc2291cb2099dc61ad386baa8871f6ab89886db34e2cc48f1e6a39956b3c"
+  },
+  {
+    "path": "plots/quantile3-external-age.pdf",
+    "bytes": 375302,
+    "sha256": "90913180d41edeeea5ff22bf177a142a313e465245829db40009c45346fbf3ee"
+  },
+  {
+    "path": "plots/quantile3-external-age.png",
+    "bytes": 156640,
+    "sha256": "6da65a483615e0351cacfb81c6d18c5c47a7cf406d24e2e42d2c268154ec0489"
+  },
+  {
+    "path": "plots/quantile3-predicted-vs-reference.pdf",
+    "bytes": 525793,
+    "sha256": "a8a3253338fe7cd7118d425faef9bb9267ad672224ca0266e82b0ceec768a52c"
+  },
+  {
+    "path": "plots/quantile3-predicted-vs-reference.png",
+    "bytes": 1380003,
+    "sha256": "7775b923cef9f194a8e62af30459b3bdef36f51a1ee8bd763d1ab9760598fa70"
+  },
+  {
+    "path": "plots/quantile3-residual-vs-feh-metalpoor.pdf",
+    "bytes": 75465,
+    "sha256": "8232f301f925792dea591883468cbea17b00b322de06e7cbc90b2cf3315dcb04"
+  },
+  {
+    "path": "plots/quantile3-residual-vs-feh-metalpoor.png",
+    "bytes": 384931,
+    "sha256": "90380e2965919006c8a9286f0a4b0c35e4de79277246ba0463a17227baef5aa1"
+  },
+  {
+    "path": "plots/quantile3-residual-vs-reference-metalpoor.pdf",
+    "bytes": 73941,
+    "sha256": "9e5683287838612f21a7b3cd4f0acd3cb3af0206e5ad9f4b3e2d600d2884d749"
+  },
+  {
+    "path": "plots/quantile3-residual-vs-reference-metalpoor.png",
+    "bytes": 384707,
+    "sha256": "641367ff13ef8a97ff392eca73b4588b74d53dbcc34df13273434d07f27f2459"
+  },
+  {
+    "path": "shutdown.json",
+    "bytes": 662,
+    "sha256": "a85faeb662e2fee2a960e37bb3592d3ea09fec3c621d5a83fdd62c2029552e51"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 24437,
+    "sha256": "a7719493243200377051c56331fcce755ba41f4090699eaf29029d47ab0721a5"
+  }
+]

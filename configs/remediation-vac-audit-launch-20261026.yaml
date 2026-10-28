@@ -1,0 +1,8 @@
+jobs:
+- run_id: remediation_inputs_v4
+  task: remediation-input-audit
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 0
+  image: images.canfar.net/astroai/terminal:latest

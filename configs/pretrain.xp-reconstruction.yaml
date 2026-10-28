@@ -1,0 +1,30 @@
+# Matched continuation experiments. All keep the present 0.5 XP / 0.2 other masks.
+# Mixed masks hide whole XP for 25% of stars and half XP for 50% of stars,
+# preserving the control's 50%-of-coefficients hidden target budget.
+experiments:
+  - run_id: unchanged_control
+    embedding: stable
+    loss: mae
+  - run_id: mixed_coefficients
+    embedding: stable
+    loss: mae
+    xp_mask_mode: coefficients
+  - run_id: mixed_blocks
+    embedding: stable
+    loss: mae
+    xp_mask_mode: block
+  - run_id: mixed_bp_rp
+    embedding: stable
+    loss: mae
+    xp_mask_mode: channel
+  - run_id: xp_mse_control
+    embedding: stable
+    loss: xp_mse
+    variance_floor: 0.1
+  - run_id: torchregress_noisy_xp
+    embedding: stable
+    loss: torchregress_noise
+    variance_floor: 0.1
+  - run_id: signal_weighted_xp
+    embedding: stable
+    loss: signal_weighted_mae

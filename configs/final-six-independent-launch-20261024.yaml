@@ -1,0 +1,361 @@
+jobs:
+- run_id: qa_final6_large_gaussian_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_base_s49_10m_v1
+  depends_on:
+  - final6_large_gaussian_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_spectral_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_spectral_s49_10m_v1
+  depends_on:
+  - final6_large_gaussian_spectral_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_ranking_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_ranking_s49_10m_v1
+  depends_on:
+  - final6_large_gaussian_ranking_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_triloss_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_triloss_s49_10m_v1
+  depends_on:
+  - final6_large_gaussian_triloss_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_cecdf_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_cecdf_s49_10m_v1
+  depends_on:
+  - final6_large_gaussian_cecdf_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_base_s50_10m_v1
+  depends_on:
+  - final6_large_gaussian_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_spectral_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_spectral_s50_10m_v1
+  depends_on:
+  - final6_large_gaussian_spectral_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_ranking_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_ranking_s50_10m_v1
+  depends_on:
+  - final6_large_gaussian_ranking_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_triloss_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_triloss_s50_10m_v1
+  depends_on:
+  - final6_large_gaussian_triloss_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_gaussian_cecdf_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_gaussian_cecdf_s50_10m_v1
+  depends_on:
+  - final6_large_gaussian_cecdf_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_base_s49_10m_v1
+  depends_on:
+  - final6_large_mdn_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_spectral_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_spectral_s49_10m_v1
+  depends_on:
+  - final6_large_mdn_spectral_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_ranking_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_ranking_s49_10m_v1
+  depends_on:
+  - final6_large_mdn_ranking_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_triloss_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_triloss_s49_10m_v1
+  depends_on:
+  - final6_large_mdn_triloss_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_base_s50_10m_v1
+  depends_on:
+  - final6_large_mdn_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_spectral_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_spectral_s50_10m_v1
+  depends_on:
+  - final6_large_mdn_spectral_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_ranking_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_ranking_s50_10m_v1
+  depends_on:
+  - final6_large_mdn_ranking_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_mdn_triloss_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_mdn_triloss_s50_10m_v1
+  depends_on:
+  - final6_large_mdn_triloss_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_base_s49_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_spectral_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_spectral_s49_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_spectral_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_mixed01_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_mixed01_s49_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_mixed01_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_triloss_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_triloss_s49_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_triloss_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_base_s50_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_spectral_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_spectral_s50_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_spectral_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_mixed01_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_mixed01_s50_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_mixed01_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_factorized_nsf_triloss_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_large_factorized_nsf_triloss_s50_10m_v1
+  depends_on:
+  - final6_large_factorized_nsf_triloss_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_gaussian_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_gaussian_base_s49_10m_v1
+  depends_on:
+  - final6_parent86_gaussian_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_gaussian_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_gaussian_base_s50_10m_v1
+  depends_on:
+  - final6_parent86_gaussian_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_mdn_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_mdn_base_s49_10m_v1
+  depends_on:
+  - final6_parent86_mdn_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_mdn_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_mdn_base_s50_10m_v1
+  depends_on:
+  - final6_parent86_mdn_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_factorized_nsf_base_s49_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_factorized_nsf_base_s49_10m_v1
+  depends_on:
+  - final6_parent86_factorized_nsf_base_s49_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_parent86_factorized_nsf_base_s50_10m_v1
+  task: final-six-independent
+  producer_run_id: final6_parent86_factorized_nsf_base_s50_10m_v1
+  depends_on:
+  - final6_parent86_factorized_nsf_base_s50_10m_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_gaussian_s49_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_gaussian_s49_v1
+  depends_on:
+  - final6_large_frozen_gaussian_s49_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_gaussian_s50_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_gaussian_s50_v1
+  depends_on:
+  - final6_large_frozen_gaussian_s50_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_mdn_s49_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_mdn_s49_v1
+  depends_on:
+  - final6_large_frozen_mdn_s49_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_mdn_s50_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_mdn_s50_v1
+  depends_on:
+  - final6_large_frozen_mdn_s50_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_factorized_nsf_s49_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_factorized_nsf_s49_v1
+  depends_on:
+  - final6_large_frozen_factorized_nsf_s49_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_factorized_nsf_s50_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_factorized_nsf_s50_v1
+  depends_on:
+  - final6_large_frozen_factorized_nsf_s50_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_factorized_nsf_mixed01_s49_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_factorized_nsf_mixed01_s49_v1
+  depends_on:
+  - final6_large_frozen_factorized_nsf_mixed01_s49_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: qa_final6_large_frozen_factorized_nsf_mixed01_s50_v1
+  task: final-six-independent
+  producer_run_id: final6_large_frozen_factorized_nsf_mixed01_s50_v1
+  depends_on:
+  - final6_large_frozen_factorized_nsf_mixed01_s50_v1
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0

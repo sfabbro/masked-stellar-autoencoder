@@ -1,0 +1,59 @@
+# Three-epoch readiness pilot; 10M sample = 9M train / 1M validation.
+# This is preparation, not a launch certificate.
+run_id: joint_native_10m_pilot_v1
+epochs: 3
+qa_every_epochs: 3
+checkpoint_every_steps: 50
+seed: 42
+parent: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_73.pth
+parent_sha256: fdbee7bafc505e2c030a1e568c0699030ce7b26d15aceeb0bf52eb377789d7c6
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+cohort_sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
+joint_labels: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v1/joint-native-labels.h5
+joint_labels_sha256: null
+readiness_report: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v1/launch-readiness.json
+output: /arc/projects/k-pop/msa_runs/joint-native-10m-pilot-v1
+scratch: /scratch/msa-joint-native-10m-pilot-v1
+qa_remote: vos:sfabbro/msa/joint_native_30e_v1/qa
+reconstruction_rows_per_epoch: 9000000
+validation_rows: 10000
+effective_batch: 32768
+micro_batch: 8192
+supervised_batch: 2048
+supervised_micro_batch: 256
+head_warmup_steps: 500
+encoder_lr: 1.25e-06
+head_lr: 0.001
+weight_decay: 0.0001
+gradient_clip: 1.0
+reconstruction_weight: 0.01
+spectral_weight: 0.1
+stellar_weight: 1.0
+parallax_weight: 0.0
+distance_enabled: false
+include_reddening: false
+include_positions: false
+include_proper_motions: false
+age_enabled: false
+alpha_enabled: false
+minimum_fit_labels_per_target: 1000
+qa_prediction_rows_per_target: 3000
+require_cuda: true
+minimum_gpu_memory_gib: 12
+max_wall_hours: 24
+resources:
+  cores: 8
+  ram_gib: 64
+  gpu: 1
+  note: Provisional; actual GPU preflight must certify batch memory and throughput.
+publication:
+  enabled: true
+  command_prefix:
+  - pixi
+  - run
+  - -e
+  - monitor
+  - --no-install
+  timeout_seconds: 60

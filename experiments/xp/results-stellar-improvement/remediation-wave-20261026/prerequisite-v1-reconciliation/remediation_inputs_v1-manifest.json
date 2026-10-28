@@ -1,0 +1,70 @@
+{
+  "status": "failed",
+  "run_id": "remediation_inputs_v1",
+  "training_performed": false,
+  "model_execution": false,
+  "script_sha256": "c9a3594d1e21e99b03372b91ce7b97b7a9f361385f6a3363f635b788cc9f8708",
+  "audit_code_commit": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+  "started_utc": "2026-10-26T16:20:04Z",
+  "source_receipts": {
+    "prepared": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5",
+      "bytes": 2885206135,
+      "mtime_ns": 1792922916345626216,
+      "sha256": "6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9"
+    },
+    "native": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5",
+      "bytes": 119732554,
+      "mtime_ns": 1792505487849820341,
+      "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+    },
+    "legacy": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+      "bytes": 663449752,
+      "mtime_ns": 1792160309404364031,
+      "sha256": "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120"
+    },
+    "frozen": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz",
+      "bytes": 208467450,
+      "mtime_ns": 1792853447061526141,
+      "sha256": "01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882"
+    }
+  },
+  "stars": [
+    {
+      "source_id": 4185355646116022528,
+      "prepared_row": 3253052,
+      "checks": [
+        "raw/scaler input exact",
+        "legacy cohort exact Gaia ID/110 raw XP values"
+      ],
+      "unresolved": [],
+      "feature_origin": "legacy_cohort",
+      "xp_status": "complete_xp",
+      "official_has_xp_known": true,
+      "official_has_xp_continuous": true,
+      "real_no_xp": false,
+      "photometry_release_code": 0,
+      "photometry_fallback_used": false,
+      "raw_reconstructed_from_normalized_cache": false,
+      "legacy_row": 270283,
+      "legacy_input_source": 2,
+      "legacy_original_row": 713379
+    }
+  ],
+  "unresolved": [],
+  "readiness": {
+    "phot_xp_input_pass": false,
+    "native_label_association_pass": false,
+    "astrometry_physical_likelihood_ready": false
+  },
+  "scope": "Exact selected source rows; no whole-cache content hash, physical truth or model certification",
+  "source_commit": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+  "error": {
+    "type": "AttributeError",
+    "message": "'FITS_record' object has no attribute 'dtype'"
+  },
+  "finished_utc": "2026-10-26T16:20:34Z"
+}

@@ -1,0 +1,11 @@
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+labels_fits: /arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits
+analyses:
+- run_id: probe_latest_standard55
+  mode: probes
+  checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_55.pth
+  checkpoint_sha256: a1b42b31903b03141b4122463e3245d1c0b98f3eb8cabadcde948f7c5cdc762f
+  checkpoint_role: later_standard_training
+  splits:
+  - identity
+  - sky

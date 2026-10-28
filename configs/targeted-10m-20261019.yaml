@@ -1,0 +1,144 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+checkpoint_sha256: 9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+warmup_updates: 500
+supervised_batches_per_update: 8
+contrast_batch: 256
+reconstruction_weight: 0.01
+arms:
+- run_id: target_e72_huber_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: target_e72_huber_s43_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 43
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: target_e72_mse_s43_10m_v1
+  head: residual
+  loss: mse
+  experiment_seed: 43
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: target_e72_ranksim_s43_10m_v1
+  head: residual
+  loss: mse_ranksim
+  experiment_seed: 43
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    gamma: 0.1
+- run_id: target_e72_huber_s44_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 44
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: target_e72_mse_s44_10m_v1
+  head: residual
+  loss: mse
+  experiment_seed: 44
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: target_e72_ranksim_s44_10m_v1
+  head: residual
+  loss: mse_ranksim
+  experiment_seed: 44
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    gamma: 0.1
+- run_id: target_e72_huber_ranksim_s42_10m_v1
+  head: residual
+  loss: huber_ranksim
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    gamma: 0.1
+- run_id: target_e72_xpnoise_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  supervised_augmentation:
+    noise_multiplier: 1.0
+    xp_mask_probability: 0.0
+- run_id: target_e72_xpmask_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  supervised_augmentation:
+    noise_multiplier: 0.0
+    xp_mask_probability: 0.15
+- run_id: target_e72_xpnoise_mask_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  supervised_augmentation:
+    noise_multiplier: 1.0
+    xp_mask_probability: 0.15
+- run_id: target_e72_reco003_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  policy_overrides:
+    reconstruction_weight: 0.03
+- run_id: target_e72_enc_lr_quarter_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  policy_overrides:
+    encoder_lr: 3.125e-07
+- run_id: target_e72_frozen_encoder_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  freeze_encoder: true
+- run_id: target_e72_parent85_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  policy_overrides:
+    checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_85.pth
+    checkpoint_sha256: cca5775e2f31613e7d4e9aa12c2d45a95b53a8dbc81fc6954246f8ddc08bf4f3
+- run_id: target_e72_parent86_s42_10m_v1
+  head: residual
+  loss: huber
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  policy_overrides:
+    checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+    checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+- run_id: target_e72_flow_affine_s42_10m_v1
+  head: conditional_maf
+  loss: conditional_flow_nll
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  conditional_flow: {kind: maf, bins: 8, transforms: 3, moment_order: 64}
+- run_id: target_e72_flow_nsf8_s42_10m_v1
+  head: conditional_nsf
+  loss: conditional_flow_nll
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  conditional_flow: {kind: nsf, bins: 8, transforms: 3, moment_order: 64}
+- run_id: target_e72_flow_nsf16_s42_10m_v1
+  head: conditional_nsf
+  loss: conditional_flow_nll
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  conditional_flow: {kind: nsf, bins: 16, transforms: 3, moment_order: 64}
+- run_id: target_e72_flow_nsf8_frozen_s42_10m_v1
+  head: conditional_nsf
+  loss: conditional_flow_nll
+  experiment_seed: 42
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  freeze_encoder: true
+  conditional_flow: {kind: nsf, bins: 8, transforms: 3, moment_order: 64}

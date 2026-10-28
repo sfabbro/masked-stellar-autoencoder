@@ -1,0 +1,10 @@
+{
+  "epoch": 72,
+  "checkpoint_sha256": "9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec",
+  "bytes": 409873692,
+  "completed_at_utc": "2026-10-16T20:03:07Z",
+  "local_path": "experiments/xp/results-stellar-improvement/prediction-comparison-e72/parent/checkpoint-72.pth",
+  "remote_path": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth",
+  "main_latest_metric": "epoch73 underway at2026-10-16T20:20:14Z",
+  "scaler_sha256": "5fd976729dfe5ccd7b4ec2ce080e679c49f1ca5244f779cad45e148fa4836037"
+}

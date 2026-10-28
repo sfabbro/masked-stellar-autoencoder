@@ -1,0 +1,2570 @@
+{
+  "status": "all_pilots_accepted",
+  "pilot_source": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+  "prerequisite_source": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+  "started": "2026-10-26T21:45:52.883460+00:00",
+  "submission_attempted": true,
+  "manifests": {
+    "remediation_inputs_v4": {
+      "status": "remediation_input_audit_complete",
+      "run_id": "remediation_inputs_v4",
+      "training_performed": false,
+      "model_execution": false,
+      "script_sha256": "543bbd2f2832504ccaa597487722c977e830e202a10ec51f769bee2e0cc057b6",
+      "audit_code_commit": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "started_utc": "2026-10-26T21:45:24Z",
+      "source_receipts": {
+        "prepared": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5",
+          "bytes": 2885206135,
+          "mtime_ns": 1792922916345626216,
+          "sha256": "6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9"
+        },
+        "native": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5",
+          "bytes": 119732554,
+          "mtime_ns": 1792505487849820341,
+          "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+        },
+        "legacy": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+          "bytes": 663449752,
+          "mtime_ns": 1792160309404364031,
+          "sha256": "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120"
+        },
+        "frozen": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz",
+          "bytes": 208467450,
+          "mtime_ns": 1792853447061526141,
+          "sha256": "01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882"
+        }
+      },
+      "stars": [
+        {
+          "source_id": 4185355646116022528,
+          "prepared_row": 3253052,
+          "checks": [
+            "raw/scaler input exact",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": true,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 270283,
+          "legacy_input_source": 2,
+          "legacy_original_row": 713379,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 270283,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 759222,
+            "value": [
+              4730.27734375,
+              2.277984619140625,
+              -3.227942943572998
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              76.42166900634766,
+              0.11001906543970108,
+              0.15038827061653137
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.018361667171120644,
+            "parallax_mas": 0.6946268081665039
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 4696862405388526080,
+          "prepared_row": 3809631,
+          "checks": [
+            "raw/scaler input exact",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": true,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 328602,
+          "legacy_input_source": 2,
+          "legacy_original_row": 36286,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 328602,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 37582,
+            "value": [
+              3975.21435546875,
+              0.8306902647018433,
+              -3.224889039993286
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              110.43136596679688,
+              0.15889540314674377,
+              0.13751864433288574
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.010723309591412544,
+            "parallax_mas": 0.025023208931088448
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 656977993104090624,
+          "prepared_row": 163592,
+          "checks": [
+            "raw/scaler input exact",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": true,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 31973,
+          "legacy_input_source": 2,
+          "legacy_original_row": 229903,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 31973,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 240565,
+            "value": [
+              4284.03515625,
+              1.5847760438919067,
+              -2.7457594871520996
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              84.84223175048828,
+              0.13830871880054474,
+              0.10707391053438187
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.016622206196188927,
+            "parallax_mas": 0.16308657824993134
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 4077588074752670208,
+          "prepared_row": 3230681,
+          "checks": [
+            "raw/scaler input exact",
+            "raw survey exact integer ID/row/observed labels",
+            "independent raw Gaia VAC exact ID/duplicate flags/flux/magnitude/withheld XP proof"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "gaia_vac_photometry",
+          "xp_status": "official_no_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": false,
+          "real_no_xp": true,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "xp_visible_count": 0,
+          "native": {
+            "row": 242095,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 726420,
+            "value": [
+              4458.7021484375,
+              1.8134715557098389,
+              -2.593245029449463
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              79.05026245117188,
+              0.09564956277608871,
+              0.08734479546546936
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": false,
+            "parallax_error_mas": null,
+            "parallax_mas": null
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true,
+          "gaia_vac": {
+            "source_rows": [
+              912571
+            ],
+            "canonical_row": 912571,
+            "raw_photometry": {
+              "W1": 9.642,
+              "W2": 9.718,
+              "G": 12.404387474060059,
+              "BP": 12.981552124023438,
+              "RP": 11.574540138244629
+            },
+            "official_has_xp_continuous": false,
+            "duplicate_consistency_checked": true
+          }
+        },
+        {
+          "source_id": 3616249836305383296,
+          "prepared_row": 2468222,
+          "checks": [
+            "raw/scaler input exact",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": true,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 202660,
+          "legacy_input_source": 2,
+          "legacy_original_row": 479080,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 202660,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 504049,
+            "value": [
+              4119.86962890625,
+              0.835330605506897,
+              -2.5266430377960205
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              74.55335235595703,
+              0.2921768128871918,
+              0.08839897066354752
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.014749845489859581,
+            "parallax_mas": 0.019049042835831642
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 2609559667340662912,
+          "prepared_row": 1867421,
+          "checks": [
+            "raw/scaler input exact",
+            "raw survey exact integer ID/row/observed labels",
+            "independent raw Gaia VAC exact ID/duplicate flags/flux/magnitude/withheld XP proof"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "gaia_vac_photometry",
+          "xp_status": "official_no_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": false,
+          "real_no_xp": true,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "xp_visible_count": 0,
+          "native": {
+            "row": 108722,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 894758,
+            "value": [
+              4437.1884765625,
+              1.444623589515686,
+              -2.5720839500427246
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              93.91180419921875,
+              0.1464925855398178,
+              0.12268433719873428
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": false,
+            "parallax_error_mas": null,
+            "parallax_mas": null
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true,
+          "gaia_vac": {
+            "source_rows": [
+              516765
+            ],
+            "canonical_row": 516765,
+            "raw_photometry": {
+              "W1": 10.853,
+              "W2": 10.85,
+              "G": 13.346858024597168,
+              "BP": 13.961992263793945,
+              "RP": 12.592609405517578
+            },
+            "official_has_xp_continuous": false,
+            "duplicate_consistency_checked": true
+          }
+        },
+        {
+          "source_id": 615943806835727872,
+          "prepared_row": 148787,
+          "checks": [
+            "raw/scaler input exact",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": true,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 29795,
+          "legacy_input_source": 2,
+          "legacy_original_row": 301492,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 29795,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 313159,
+            "value": [
+              6268.4091796875,
+              4.106898307800293,
+              -2.142794609069824
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              66.78931427001953,
+              0.09321300685405731,
+              0.10744490474462509
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.04443430155515671,
+            "parallax_mas": 13.497833251953125
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 2438481739732690176,
+          "prepared_row": 1734547,
+          "checks": [
+            "raw/scaler input exact",
+            "raw survey exact integer ID/row/observed labels",
+            "independent raw Gaia VAC exact ID/duplicate flags/flux/magnitude/withheld XP proof"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "gaia_vac_photometry",
+          "xp_status": "official_no_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": false,
+          "real_no_xp": true,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "xp_visible_count": 0,
+          "native": {
+            "row": 99543,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 906561,
+            "value": [
+              5170.9013671875,
+              2.377556562423706,
+              -2.029003620147705
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              74.82411193847656,
+              0.10677148401737213,
+              0.09521596133708954
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": false,
+            "parallax_error_mas": null,
+            "parallax_mas": null
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true,
+          "gaia_vac": {
+            "source_rows": [
+              767234
+            ],
+            "canonical_row": 767234,
+            "raw_photometry": {
+              "W1": 9.858,
+              "W2": 9.896,
+              "G": 11.69398021697998,
+              "BP": 12.07213020324707,
+              "RP": 11.132929801940918
+            },
+            "official_has_xp_continuous": false,
+            "duplicate_consistency_checked": true
+          }
+        },
+        {
+          "source_id": 78289217922968576,
+          "prepared_row": 16219,
+          "checks": [
+            "original benchmark override exact input/raw bytes",
+            "legacy cohort exact Gaia ID/110 raw XP values",
+            "legacy original ID/row \u2192 all110 XP exact",
+            "raw survey exact integer ID/row/observed labels"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "legacy_cohort",
+          "xp_status": "complete_xp",
+          "official_has_xp_known": false,
+          "official_has_xp_continuous": false,
+          "real_no_xp": false,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "legacy_row": 5307,
+          "legacy_input_source": 2,
+          "legacy_original_row": 882924,
+          "legacy_original_file": "/arc/projects/k-pop/catalogues/andrae2023/ftset_spec_ga_0602_realmags.fits",
+          "xp_visible_count": 110,
+          "native": {
+            "row": 5307,
+            "survey": "apogee",
+            "source_file": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+            "source_row": 45728,
+            "value": [
+              4608.49951171875,
+              1.184237003326416,
+              -2.0429000854492188
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              17.403831481933594,
+              0.07183722406625748,
+              0.01922897808253765
+            ],
+            "raw_quality_flags": {
+              "ASPCAPFLAG": 0,
+              "STARFLAG": 0,
+              "FE_H_FLAG": 0,
+              "PARAMFLAG": [
+                0,
+                33554432,
+                32,
+                0,
+                0,
+                32,
+                0,
+                0,
+                0
+              ]
+            },
+            "raw_column_units": {
+              "TEFF": null,
+              "LOGG": null,
+              "FE_H": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": true,
+            "parallax_error_mas": 0.01961166225373745,
+            "parallax_mas": 0.055459652096033096
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true
+        },
+        {
+          "source_id": 4926812820427520,
+          "prepared_row": 3249,
+          "checks": [
+            "raw/scaler input exact",
+            "raw survey exact integer ID/row/observed labels",
+            "independent raw Gaia VAC exact ID/duplicate flags/flux/magnitude/withheld XP proof"
+          ],
+          "unresolved": [
+            "Gaia astrometric quality and regime-specific parallax zero-point not certified; no correction invented"
+          ],
+          "feature_origin": "gaia_vac_photometry",
+          "xp_status": "official_no_xp",
+          "official_has_xp_known": true,
+          "official_has_xp_continuous": false,
+          "real_no_xp": true,
+          "photometry_release_code": 0,
+          "photometry_fallback_used": false,
+          "raw_reconstructed_from_normalized_cache": false,
+          "xp_visible_count": 0,
+          "native": {
+            "row": 218,
+            "survey": "galah",
+            "source_file": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+            "source_row": 38711,
+            "value": [
+              4496.74169921875,
+              1.2567996978759766,
+              -2.1753010749816895
+            ],
+            "observed": [
+              true,
+              true,
+              true
+            ],
+            "quality_pass": [
+              true,
+              true,
+              true
+            ],
+            "uncertainty": [
+              78.0118637084961,
+              0.15588471293449402,
+              0.09151849895715714
+            ],
+            "raw_quality_flags": {
+              "flag_sp": 0,
+              "flag_sp_fit": 0,
+              "flag_fe_h": 0
+            },
+            "raw_column_units": {
+              "teff": null,
+              "logg": null,
+              "fe_h": null
+            }
+          },
+          "astrometry": {
+            "distance_fit_eligible": false,
+            "observed": false,
+            "parallax_error_mas": null,
+            "parallax_mas": null
+          },
+          "astrometry_ready": false,
+          "phot_xp_input_pass": true,
+          "gaia_vac": {
+            "source_rows": [
+              840791
+            ],
+            "canonical_row": 840791,
+            "raw_photometry": {
+              "W1": 11.11,
+              "W2": 11.132,
+              "G": 13.607610702514648,
+              "BP": 14.207744598388672,
+              "RP": 12.864343643188477
+            },
+            "official_has_xp_continuous": false,
+            "duplicate_consistency_checked": true
+          }
+        }
+      ],
+      "unresolved": [],
+      "readiness": {
+        "phot_xp_input_pass": true,
+        "native_label_association_pass": true,
+        "astrometry_physical_likelihood_ready": false
+      },
+      "scope": "Prior hash-bound native/legacy/scaler checks reused; independent raw Gaia-VAC no-XP photometry proof added; no neural execution",
+      "source_commit": "2ce384c49e3569ef4fd9a273bad2bedf12687a49",
+      "feature_names": [
+        "W1",
+        "W2",
+        "G",
+        "BP",
+        "RP",
+        "bp_1",
+        "bp_2",
+        "bp_3",
+        "bp_4",
+        "bp_5",
+        "bp_6",
+        "bp_7",
+        "bp_8",
+        "bp_9",
+        "bp_10",
+        "bp_11",
+        "bp_12",
+        "bp_13",
+        "bp_14",
+        "bp_15",
+        "bp_16",
+        "bp_17",
+        "bp_18",
+        "bp_19",
+        "bp_20",
+        "bp_21",
+        "bp_22",
+        "bp_23",
+        "bp_24",
+        "bp_25",
+        "bp_26",
+        "bp_27",
+        "bp_28",
+        "bp_29",
+        "bp_30",
+        "bp_31",
+        "bp_32",
+        "bp_33",
+        "bp_34",
+        "bp_35",
+        "bp_36",
+        "bp_37",
+        "bp_38",
+        "bp_39",
+        "bp_40",
+        "bp_41",
+        "bp_42",
+        "bp_43",
+        "bp_44",
+        "bp_45",
+        "bp_46",
+        "bp_47",
+        "bp_48",
+        "bp_49",
+        "bp_50",
+        "bp_51",
+        "bp_52",
+        "bp_53",
+        "bp_54",
+        "bp_55",
+        "rp_1",
+        "rp_2",
+        "rp_3",
+        "rp_4",
+        "rp_5",
+        "rp_6",
+        "rp_7",
+        "rp_8",
+        "rp_9",
+        "rp_10",
+        "rp_11",
+        "rp_12",
+        "rp_13",
+        "rp_14",
+        "rp_15",
+        "rp_16",
+        "rp_17",
+        "rp_18",
+        "rp_19",
+        "rp_20",
+        "rp_21",
+        "rp_22",
+        "rp_23",
+        "rp_24",
+        "rp_25",
+        "rp_26",
+        "rp_27",
+        "rp_28",
+        "rp_29",
+        "rp_30",
+        "rp_31",
+        "rp_32",
+        "rp_33",
+        "rp_34",
+        "rp_35",
+        "rp_36",
+        "rp_37",
+        "rp_38",
+        "rp_39",
+        "rp_40",
+        "rp_41",
+        "rp_42",
+        "rp_43",
+        "rp_44",
+        "rp_45",
+        "rp_46",
+        "rp_47",
+        "rp_48",
+        "rp_49",
+        "rp_50",
+        "rp_51",
+        "rp_52",
+        "rp_53",
+        "rp_54",
+        "rp_55",
+        "U_SMSS",
+        "V_SMSS",
+        "G_SMSS",
+        "R_SMSS",
+        "I_SMSS",
+        "Z_SMSS",
+        "U_SDSS",
+        "G_SDSS",
+        "R_SDSS",
+        "I_SDSS",
+        "Z_SDSS",
+        "G_PS1",
+        "R_PS1",
+        "I_PS1",
+        "Z_PS1",
+        "Y_PS1",
+        "J",
+        "H",
+        "KS",
+        "PARALLAX",
+        "EBV",
+        "pmra",
+        "pmdec",
+        "RA",
+        "DEC"
+      ],
+      "normalization_sha256": "5fd976729dfe5ccd7b4ec2ce080e679c49f1ca5244f779cad45e148fa4836037",
+      "finished_utc": "2026-10-26T21:45:32Z",
+      "reuse_prior_audit": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v3/manifest.json",
+        "sha256": "dc1ff479c78c7c7c809793167655f274852748b416325d917dad6a39ec830772",
+        "code_commit": "d87d7c60d44ae7ea374886959a7bd082ac3e909a"
+      },
+      "gaia_vac_receipt": {
+        "path": "/arc/projects/k-pop/catalogues/galah_dr4_vac_wise_tmass_gaiadr3_240705.fits",
+        "bytes": 778199040,
+        "sha256": "35856e30f7d2019a4e4e56276d93ebe8d1738ebb71d1be49d799aa949bc38545",
+        "publisher_sha_known": false
+      },
+      "vac_selected_arrays_sha256": "b17b9fef2b21fef4587920a77afc34c84165cfc5b945c7f20ae5a934b4afa218"
+    },
+    "remediation_source_v3": {
+      "current_input": "native_astrometry",
+      "current_survey": "galah",
+      "development_test_scope": "Previously inspected test identities consumed as development; no fresh-unseen claim",
+      "domain_coverage": {
+        "fe_h": {
+          "devtest_counts": [
+            0,
+            115,
+            1450,
+            48030,
+            22460,
+            0
+          ],
+          "edges": [
+            -10,
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            3
+          ],
+          "fit_counts": [
+            1,
+            735,
+            10271,
+            338579,
+            156729,
+            0
+          ]
+        },
+        "logg": {
+          "devtest_counts": [
+            7,
+            1855,
+            8337,
+            21745,
+            12683,
+            25465,
+            2,
+            0
+          ],
+          "edges": [
+            -5,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            10
+          ],
+          "fit_counts": [
+            30,
+            12966,
+            58361,
+            153471,
+            90721,
+            177972,
+            27,
+            0
+          ]
+        }
+      },
+      "feature_names": [
+        "W1",
+        "W2",
+        "G",
+        "BP",
+        "RP",
+        "bp_1",
+        "bp_2",
+        "bp_3",
+        "bp_4",
+        "bp_5",
+        "bp_6",
+        "bp_7",
+        "bp_8",
+        "bp_9",
+        "bp_10",
+        "bp_11",
+        "bp_12",
+        "bp_13",
+        "bp_14",
+        "bp_15",
+        "bp_16",
+        "bp_17",
+        "bp_18",
+        "bp_19",
+        "bp_20",
+        "bp_21",
+        "bp_22",
+        "bp_23",
+        "bp_24",
+        "bp_25",
+        "bp_26",
+        "bp_27",
+        "bp_28",
+        "bp_29",
+        "bp_30",
+        "bp_31",
+        "bp_32",
+        "bp_33",
+        "bp_34",
+        "bp_35",
+        "bp_36",
+        "bp_37",
+        "bp_38",
+        "bp_39",
+        "bp_40",
+        "bp_41",
+        "bp_42",
+        "bp_43",
+        "bp_44",
+        "bp_45",
+        "bp_46",
+        "bp_47",
+        "bp_48",
+        "bp_49",
+        "bp_50",
+        "bp_51",
+        "bp_52",
+        "bp_53",
+        "bp_54",
+        "bp_55",
+        "rp_1",
+        "rp_2",
+        "rp_3",
+        "rp_4",
+        "rp_5",
+        "rp_6",
+        "rp_7",
+        "rp_8",
+        "rp_9",
+        "rp_10",
+        "rp_11",
+        "rp_12",
+        "rp_13",
+        "rp_14",
+        "rp_15",
+        "rp_16",
+        "rp_17",
+        "rp_18",
+        "rp_19",
+        "rp_20",
+        "rp_21",
+        "rp_22",
+        "rp_23",
+        "rp_24",
+        "rp_25",
+        "rp_26",
+        "rp_27",
+        "rp_28",
+        "rp_29",
+        "rp_30",
+        "rp_31",
+        "rp_32",
+        "rp_33",
+        "rp_34",
+        "rp_35",
+        "rp_36",
+        "rp_37",
+        "rp_38",
+        "rp_39",
+        "rp_40",
+        "rp_41",
+        "rp_42",
+        "rp_43",
+        "rp_44",
+        "rp_45",
+        "rp_46",
+        "rp_47",
+        "rp_48",
+        "rp_49",
+        "rp_50",
+        "rp_51",
+        "rp_52",
+        "rp_53",
+        "rp_54",
+        "rp_55",
+        "U_SMSS",
+        "V_SMSS",
+        "G_SMSS",
+        "R_SMSS",
+        "I_SMSS",
+        "Z_SMSS",
+        "U_SDSS",
+        "G_SDSS",
+        "R_SDSS",
+        "I_SDSS",
+        "Z_SDSS",
+        "G_PS1",
+        "R_PS1",
+        "I_PS1",
+        "Z_PS1",
+        "Y_PS1",
+        "J",
+        "H",
+        "KS",
+        "PARALLAX",
+        "EBV",
+        "pmra",
+        "pmdec",
+        "RA",
+        "DEC"
+      ],
+      "feature_profiles": {
+        "phot_xp": {
+          "ready": true
+        },
+        "phot_xp_measured_parallax": {
+          "availability_dataset": "measured_parallax/observed",
+          "feature_index": 134,
+          "measured_rows": 671318,
+          "override_dataset": "measured_parallax/input_value",
+          "ready": true,
+          "scope": "Raw signed measured mas normalized with parent scaler, formal errors available; no zero-point correction, inverse parallax or physical-distance likelihood"
+        }
+      },
+      "fit_observation_support": {
+        "all_six_coobserved_count": 277,
+        "fit_rows": 1736618,
+        "mask_pattern_bit_order": "teff=1,logg=2,fe_h=4,alpha=8,age=16,distance=32",
+        "mask_pattern_counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          10744,
+          0,
+          411935,
+          1191393,
+          0,
+          0,
+          1,
+          0,
+          47,
+          0,
+          4896,
+          8,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          859,
+          0,
+          0,
+          0,
+          0,
+          31,
+          0,
+          855,
+          21,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          37005,
+          0,
+          0,
+          15,
+          0,
+          1956,
+          0,
+          75548,
+          1001,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          277
+        ],
+        "pairwise_coobserved_counts": [
+          [
+            506331,
+            493548,
+            506315,
+            5226,
+            77820,
+            78687
+          ],
+          [
+            493548,
+            493548,
+            493532,
+            5175,
+            75860,
+            76696
+          ],
+          [
+            506315,
+            493532,
+            506315,
+            5225,
+            77805,
+            78672
+          ],
+          [
+            5226,
+            5175,
+            5225,
+            1197641,
+            1281,
+            1304
+          ],
+          [
+            77820,
+            75860,
+            77805,
+            1281,
+            115834,
+            115805
+          ],
+          [
+            78687,
+            76696,
+            78672,
+            1304,
+            115805,
+            117573
+          ]
+        ],
+        "scope": "Observed source-qualified catalogue-reference support, not identified physical covariance or joint truth",
+        "target_names": [
+          "teff",
+          "logg",
+          "fe_h",
+          "alpha",
+          "age",
+          "distance"
+        ]
+      },
+      "historical_supervised_heldout_count": 0,
+      "historical_supervised_id_count": 22033,
+      "identity_max": 6917528993281819008,
+      "identity_min": 4295806720,
+      "identity_sha256": "8d0b30bcb3369cff8241135be6ebe432edb5490eebf949edef4756a59c6af718",
+      "inputs": {
+        "ancestry": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1/ancestry-masks.npz",
+          "sha256": "e209f6383ec1bf1108c524b40b51663f6b05aaaead063e6a05a775b2b8166ad2"
+        },
+        "apogee": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+          "sha256": "d2f1500a9c8cc7280a0dc6a2b14fe01eddf9387f9aa83f64b21d80d5fdad4007"
+        },
+        "chunk_rows": 32768,
+        "diagnostic_holdout_ids": [
+          4185355646116022528,
+          4696862405388526080,
+          656977993104090624,
+          4077588074752670208,
+          3616249836305383296,
+          2609559667340662912,
+          615943806835727872,
+          2438481739732690176,
+          78289217922968576,
+          4926812820427520
+        ],
+        "distinct_recovery": "New output; per-input hash receipts and materialization phase progress; original partial output immutable",
+        "expanded": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5",
+          "sha256": "6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9"
+        },
+        "frozen": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz",
+          "sha256": "01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882"
+        },
+        "galah": {
+          "path": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+          "sha256": "97911d4436a42c77eb6d8c2116eecfb28fa927be83302aa66bbeb58d95889693"
+        },
+        "library_commit": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+        "minimum_fit_per_target": 1000,
+        "native_astrometry": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5",
+          "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+        },
+        "parent_references": {
+          "large_c544_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+          "parent86_sha256": "d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3"
+        },
+        "policy": {
+          "age_distance_intersection_required": false,
+          "alpha_primary": "inherited_signed_DESI_FeH_above_minus2_only",
+          "canonical_native_precedence": "galah_then_apogee",
+          "consumed_inspected_test_as_development": true,
+          "fresh_unseen_test_claim": false,
+          "galah_flag_fe_h_used": false,
+          "galah_quality": "flag_sp == 0 and finite(snr_px_ccd3) and snr_px_ccd3 > 30",
+          "known_supervised_exposure_heldout": false,
+          "native3_complete_case_required": false,
+          "no_acquisition": true,
+          "original_benchmark_train_gate": false,
+          "parallax": "raw_mas_and_formal_error_no_inverse_no_physical_likelihood",
+          "per_target_missingness": true,
+          "preserve_original_reference_masks_separately": true,
+          "publication_unknown_inputs": "diagnostic_only_excluded_from_primary_fit",
+          "reserved_references_external_only": true,
+          "row_caps": null,
+          "starhorse_age_distance": "separate_posterior_reference_targets_unknown_measurement_error"
+        },
+        "references": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/distance_feature_cohort_v1/distance-feature-cohort.h5",
+          "sha256": "fe377385e9a5a26a1d3f14ca15ea6c56904d73c34233fb9e17da1b944b76b1ad"
+        },
+        "run_id": "remediation_source_v3",
+        "storage_recovery": "User approved removal of four reviewed evaluation batch-cache trees; launch requires live ARC output reserve >=20GB; preserve v1/v2 outputs",
+        "supersedes_interrupted_attempt": "remediation_source_v1",
+        "supersedes_quota_failed_attempt": "remediation_source_v2",
+        "training_performed": false
+      },
+      "library_commit": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+      "modality_counts": {
+        "input_has_xp": 2489068,
+        "official_has_xp_continuous": 453810,
+        "official_has_xp_known": 488016,
+        "real_no_xp": 34206,
+        "real_xp_present": 2489068
+      },
+      "native_counts": {
+        "apogee": {
+          "eligible_per_target": [
+            211163,
+            211163,
+            210990
+          ],
+          "feature_matched_per_target": [
+            182077,
+            182077,
+            182052
+          ],
+          "raw_rows": 733901
+        },
+        "galah": {
+          "eligible_per_target": [
+            631922,
+            608124,
+            631917
+          ],
+          "feature_matched_per_target": [
+            557754,
+            538991,
+            557754
+          ],
+          "raw_rows": 917588
+        }
+      },
+      "physical_truth_claim": false,
+      "prepared_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+      "raw_native_quality_reselected": true,
+      "reserved_reference_id_count": 99583,
+      "role_counts": {
+        "cal": {
+          "identities": 247705,
+          "targets": {
+            "age": 12309,
+            "alpha": 170428,
+            "distance": 12520,
+            "fe_h": 72178,
+            "logg": 70367,
+            "teff": 72180
+          }
+        },
+        "devtest": {
+          "identities": 248489,
+          "targets": {
+            "age": 8233,
+            "alpha": 171348,
+            "distance": 8390,
+            "fe_h": 72055,
+            "logg": 70094,
+            "teff": 72060
+          }
+        },
+        "excluded": {
+          "identities": 1958726,
+          "targets": {
+            "age": 0,
+            "alpha": 0,
+            "distance": 0,
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          }
+        },
+        "external": {
+          "identities": 2291,
+          "targets": {
+            "age": 1059,
+            "alpha": 5,
+            "distance": 1085,
+            "fe_h": 1558,
+            "logg": 1513,
+            "teff": 1558
+          }
+        },
+        "fit": {
+          "identities": 1736618,
+          "targets": {
+            "age": 115834,
+            "alpha": 1197641,
+            "distance": 117573,
+            "fe_h": 506315,
+            "logg": 493548,
+            "teff": 506331
+          }
+        },
+        "tune": {
+          "identities": 248113,
+          "targets": {
+            "age": 16193,
+            "alpha": 171064,
+            "distance": 16438,
+            "fe_h": 71996,
+            "logg": 70106,
+            "teff": 71997
+          }
+        }
+      },
+      "rows": 4441942,
+      "run_id": "remediation_source_v3",
+      "source_commit": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+      "source_limitations": [
+        "GALAH gravity is Gaia-parallax conditioned; label and astrometric likelihood errors are not independent",
+        "Age/distance are independent sparse StarHorse posterior-reference masks, not physical truth or quoted measurement errors",
+        "DESI alpha source-qualified FeH>-2 masks inherited; no new abundance-scale homogenization",
+        "Known ancestry protected, full parent86 historical exposure is not certified",
+        "Raw native eligible rows without staged features are counted but not fabricated"
+      ],
+      "source_target_counts": {
+        "DESI_RVSpecFit_alpha_fe": {
+          "age": 0,
+          "alpha": 1710486,
+          "distance": 0,
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "StarHorse_apogee17_posterior_median": {
+          "age": 48547,
+          "alpha": 0,
+          "distance": 49667,
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "StarHorse_catalogue_posterior_median": {
+          "age": 6901,
+          "alpha": 0,
+          "distance": 6901,
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "StarHorse_galahdr3_posterior_median": {
+          "age": 98180,
+          "alpha": 0,
+          "distance": 99438,
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "apogee": {
+          "age": 0,
+          "alpha": 0,
+          "distance": 0,
+          "fe_h": 166348,
+          "logg": 166637,
+          "teff": 166372
+        },
+        "galah": {
+          "age": 0,
+          "alpha": 0,
+          "distance": 0,
+          "fe_h": 557754,
+          "logg": 538991,
+          "teff": 557754
+        }
+      },
+      "status": "remediation_source_complete",
+      "target_names": [
+        "teff",
+        "logg",
+        "fe_h",
+        "alpha",
+        "age",
+        "distance"
+      ],
+      "training_source_ready": true,
+      "verified_inputs": {
+        "ancestry": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1/ancestry-masks.npz",
+          "sha256": "e209f6383ec1bf1108c524b40b51663f6b05aaaead063e6a05a775b2b8166ad2"
+        },
+        "apogee": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+          "sha256": "d2f1500a9c8cc7280a0dc6a2b14fe01eddf9387f9aa83f64b21d80d5fdad4007"
+        },
+        "expanded": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5",
+          "sha256": "6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9"
+        },
+        "frozen": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz",
+          "sha256": "01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882"
+        },
+        "galah": {
+          "path": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+          "sha256": "97911d4436a42c77eb6d8c2116eecfb28fa927be83302aa66bbeb58d95889693"
+        },
+        "native_astrometry": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5",
+          "sha256": "3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b"
+        },
+        "references": {
+          "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/distance_feature_cohort_v1/distance-feature-cohort.h5",
+          "sha256": "fe377385e9a5a26a1d3f14ca15ea6c56904d73c34233fb9e17da1b944b76b1ad"
+        }
+      }
+    },
+    "remediation_joint6_preflight_v3": {
+      "run_id": "remediation_joint6_preflight_v3",
+      "source_commit": "d87d7c60d44ae7ea374886959a7bd082ac3e909a",
+      "library_revision": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+      "config_sha256": "c238b39149ea0cc36a29a99a6e752e0f33335660956a4cf7012ba526124ee2e1",
+      "head_module_sha256": "e800d6eb30aedd00b09376d48f31d6449f5bc12254552b86285c7edcae30531d",
+      "status": "remediation_joint6_preflight_pass",
+      "started": "2026-10-26T21:30:16.000097+00:00",
+      "scope": "Synthetic learned correlated six-dimensional heads only; no MSA/checkpoint/physical-truth certification",
+      "device": "NVIDIA H100 NVL MIG 1g.12gb",
+      "torch_version": "2.14.1+cu130",
+      "cuda_version": "13.0",
+      "torchregress_version": "0.3.0rc1",
+      "checks": {
+        "gaussian": {
+          "passed": true,
+          "updates": 750,
+          "initial_holdout_joint_nll": 9.10452651977539,
+          "final_holdout_joint_nll": 8.53046825940853,
+          "nll_improvement": 0.5740582603668614,
+          "independent_truth_sample_nll": 8.141909028413036,
+          "covariance": {
+            "passed": true,
+            "covariance": [
+              [
+                0.997937876324291,
+                0.6483278931414335,
+                0.003454175811297042,
+                0.006533924531282044,
+                0.008122524186722161,
+                0.296958144614219
+              ],
+              [
+                0.6483278931414335,
+                1.3959043207089368,
+                -0.44861286136361195,
+                0.022338262150952703,
+                0.010761001178023111,
+                0.21478129731633414
+              ],
+              [
+                0.003454175811297042,
+                -0.44861286136361195,
+                1.200153638889628,
+                0.018806657501722435,
+                0.020531859530703474,
+                -0.007275902007664681
+              ],
+              [
+                0.006533924531282044,
+                0.022338262150952703,
+                0.018806657501722435,
+                1.0487883500679005,
+                0.5636936540937959,
+                0.033476451789171274
+              ],
+              [
+                0.008122524186722161,
+                0.010761001178023111,
+                0.020531859530703474,
+                0.5636936540937959,
+                1.3007673835365825,
+                0.005552526354741335
+              ],
+              [
+                0.296958144614219,
+                0.21478129731633414,
+                -0.007275902007664681,
+                0.033476451789171274,
+                0.005552526354741335,
+                1.114216872292293
+              ]
+            ],
+            "truth_covariance": [
+              [
+                1.0,
+                0.65,
+                0.0,
+                0.0,
+                0.0,
+                0.3
+              ],
+              [
+                0.65,
+                1.4225,
+                -0.45,
+                0.0,
+                0.0,
+                0.195
+              ],
+              [
+                0.0,
+                -0.45,
+                1.2025000000000001,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.55,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.55,
+                1.3025,
+                0.0
+              ],
+              [
+                0.3,
+                0.195,
+                0.0,
+                0.0,
+                0.0,
+                1.09
+              ]
+            ],
+            "covariance_relative_frobenius": 0.03137619552795936,
+            "cross_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                0,
+                5
+              ]
+            ],
+            "cross_absolute_errors": [
+              0.0016721068585665577,
+              0.0013871386363880633,
+              0.01369365409379586,
+              0.0030418553857810005
+            ],
+            "cross_sign_matches": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "mean_absolute_error_max": 0.013813857528504066
+          },
+          "sparse_noisy": {
+            "passed": true,
+            "method": "exact Gaussian/MDN observed-subvector law",
+            "active_rows": 126
+          },
+          "target_dim": 6,
+          "training": "complete/noiseless synthetic vectors; partial/noisy likelihood admitted separately",
+          "precision": "float32_train_float64_diagnostics",
+          "numerical_parity_tolerance_unchanged": 5e-05,
+          "sample_sha256": "08bd7e39cf813034000496b5b60db5f1059172d22e2b541bd2afdac662b35a9e"
+        },
+        "mdn": {
+          "passed": true,
+          "updates": 750,
+          "initial_holdout_joint_nll": 9.071200370788574,
+          "final_holdout_joint_nll": 8.531209504368546,
+          "nll_improvement": 0.5399908664200286,
+          "independent_truth_sample_nll": 8.141909028413036,
+          "covariance": {
+            "passed": true,
+            "covariance": [
+              [
+                0.997337736921496,
+                0.649069751310414,
+                0.004210957065663598,
+                0.008012008283100879,
+                0.008998173679910257,
+                0.295010470746205
+              ],
+              [
+                0.649069751310414,
+                1.3989677486255496,
+                -0.445688646881513,
+                0.02735791195814948,
+                0.015696451096183787,
+                0.21713923116599715
+              ],
+              [
+                0.004210957065663598,
+                -0.445688646881513,
+                1.2034243685993435,
+                0.017052939428138385,
+                0.01702631990704185,
+                -0.010607620783131554
+              ],
+              [
+                0.008012008283100879,
+                0.02735791195814948,
+                0.017052939428138385,
+                1.0516866877287554,
+                0.5654951472100191,
+                0.03420396691304033
+              ],
+              [
+                0.008998173679910257,
+                0.015696451096183787,
+                0.01702631990704185,
+                0.5654951472100191,
+                1.2993679517076557,
+                0.004597211196149614
+              ],
+              [
+                0.295010470746205,
+                0.21713923116599715,
+                -0.010607620783131554,
+                0.03420396691304033,
+                0.004597211196149614,
+                1.1128823411581061
+              ]
+            ],
+            "truth_covariance": [
+              [
+                1.0,
+                0.65,
+                0.0,
+                0.0,
+                0.0,
+                0.3
+              ],
+              [
+                0.65,
+                1.4225,
+                -0.45,
+                0.0,
+                0.0,
+                0.195
+              ],
+              [
+                0.0,
+                -0.45,
+                1.2025000000000001,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.55,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.55,
+                1.3025,
+                0.0
+              ],
+              [
+                0.3,
+                0.195,
+                0.0,
+                0.0,
+                0.0,
+                1.09
+              ]
+            ],
+            "covariance_relative_frobenius": 0.033004682932852074,
+            "cross_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                0,
+                5
+              ]
+            ],
+            "cross_absolute_errors": [
+              0.0009302486895860218,
+              0.004311353118487016,
+              0.0154951472100191,
+              0.004989529253794978
+            ],
+            "cross_sign_matches": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "mean_absolute_error_max": 0.014810543206846114
+          },
+          "sparse_noisy": {
+            "passed": true,
+            "method": "exact Gaussian/MDN observed-subvector law",
+            "active_rows": 126
+          },
+          "target_dim": 6,
+          "training": "complete/noiseless synthetic vectors; partial/noisy likelihood admitted separately",
+          "precision": "float32_train_float64_diagnostics",
+          "numerical_parity_tolerance_unchanged": 5e-05,
+          "sample_sha256": "6cd28c904ff3cfee8554270495d357e3dac185ea672afd3128bed8545cb02c17"
+        },
+        "nsf": {
+          "passed": true,
+          "updates": 750,
+          "initial_holdout_joint_nll": 9.555408477783203,
+          "final_holdout_joint_nll": 8.554356484745554,
+          "nll_improvement": 1.001051993037649,
+          "independent_truth_sample_nll": 8.141909028413036,
+          "covariance": {
+            "passed": true,
+            "covariance": [
+              [
+                1.032185142094857,
+                0.6542828260411776,
+                0.013441062848682184,
+                0.019672156520569372,
+                0.025881626493690302,
+                0.31564380954036697
+              ],
+              [
+                0.6542828260411776,
+                1.3798002460614236,
+                -0.43413074627886766,
+                0.027125232151615906,
+                0.014726646764578417,
+                0.2412383095041121
+              ],
+              [
+                0.013441062848682184,
+                -0.43413074627886766,
+                1.1882034094507863,
+                0.00601908230518459,
+                0.02279501572620329,
+                -0.008543892777855857
+              ],
+              [
+                0.019672156520569372,
+                0.027125232151615906,
+                0.00601908230518459,
+                1.0617511109708566,
+                0.5689120987805439,
+                0.035521437603454234
+              ],
+              [
+                0.025881626493690302,
+                0.014726646764578417,
+                0.02279501572620329,
+                0.5689120987805439,
+                1.2978500400524766,
+                0.009753231265804177
+              ],
+              [
+                0.31564380954036697,
+                0.2412383095041121,
+                -0.008543892777855857,
+                0.035521437603454234,
+                0.009753231265804177,
+                1.108084091947889
+              ]
+            ],
+            "truth_covariance": [
+              [
+                1.0,
+                0.65,
+                0.0,
+                0.0,
+                0.0,
+                0.3
+              ],
+              [
+                0.65,
+                1.4225,
+                -0.45,
+                0.0,
+                0.0,
+                0.195
+              ],
+              [
+                0.0,
+                -0.45,
+                1.2025000000000001,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.55,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.55,
+                1.3025,
+                0.0
+              ],
+              [
+                0.3,
+                0.195,
+                0.0,
+                0.0,
+                0.0,
+                1.09
+              ]
+            ],
+            "covariance_relative_frobenius": 0.045429383898626295,
+            "cross_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                0,
+                5
+              ]
+            ],
+            "cross_absolute_errors": [
+              0.004282826041177579,
+              0.015869253721132348,
+              0.018912098780543896,
+              0.015643809540366982
+            ],
+            "cross_sign_matches": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "mean_absolute_error_max": 0.10251542023467795
+          },
+          "sparse_noisy": {
+            "finite": true,
+            "active_rows": 126,
+            "relative_ess_median": 0.9623881995762125,
+            "relative_ess_min": 0.855578668386106,
+            "independent_replica_gap_p95": 0.04117307562980688,
+            "refinement_gap_p95": 0.026295791112434852,
+            "passed": true
+          },
+          "target_dim": 6,
+          "training": "complete/noiseless synthetic vectors; partial/noisy likelihood admitted separately",
+          "precision": "float32_train_float64_diagnostics",
+          "numerical_parity_tolerance_unchanged": 5e-05,
+          "sample_sha256": "b5060fc6d72f006e371a8f983bac2ecb270c5ea6ab29973b7894817da79bbc62"
+        }
+      },
+      "reused_completed_checks": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v1",
+        "source_commit": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+        "families": [
+          "gaussian",
+          "mdn"
+        ],
+        "no_retraining": true
+      },
+      "current_family": "nsf",
+      "phase": "initializing",
+      "finished": "2026-10-26T21:31:04.212248+00:00",
+      "gates": {
+        "covariance_relative_frobenius_max": 0.3,
+        "cross_covariance_absolute_error_max": 0.2,
+        "mean_absolute_error_max": 0.15,
+        "nll_improvement_min": 0.1,
+        "relative_ess_median_min": 0.1,
+        "relative_ess_min": 0.01,
+        "replica_gap_p95_max": 0.1,
+        "refinement_gap_p95_max": 0.1
+      }
+    }
+  },
+  "unavailable": [],
+  "checked": "2026-10-26T21:45:56.234297+00:00",
+  "launcher_returncode": 0,
+  "receipts": [
+    {
+      "run_id": "remediation_huber_frozen_v1",
+      "name": "msa-si15-remediation-huber-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_frozen_v1",
+      "plan": {
+        "run_id": "remediation_huber_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qrysdbbm"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:03.599166+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_huber_ft_v1",
+      "name": "msa-si15-remediation-huber-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_v1",
+      "plan": {
+        "run_id": "remediation_huber_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ipbuzbqo"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:10.932932+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_huber_ft_recon003_v1",
+      "name": "msa-si15-remediation-huber-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_huber_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_huber_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tnyfsly4"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:29.544197+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_frozen_v1",
+      "name": "msa-si15-remediation-gaussian6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "puc5wm6y"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:33.408321+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "tx9fe185"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:37.097442+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_recon003_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "hs6sjt07"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:40.392021+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_frozen_v1",
+      "name": "msa-si15-remediation-mdn6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "qv0f7cod"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:43.793908+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_ft_v1",
+      "name": "msa-si15-remediation-mdn6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "c1vozo13"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:46.975395+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_mdn6_ft_recon003_v1",
+      "name": "msa-si15-remediation-mdn6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_mdn6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_mdn6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ujligcsn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:50.140196+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_frozen_v1",
+      "name": "msa-si15-remediation-nsf6-frozen-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "uracqg4f"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:53.198244+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_v1",
+      "name": "msa-si15-remediation-nsf6-ft-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gz5istkd"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:46:56.706571+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_recon003_v1",
+      "name": "msa-si15-remediation-nsf6-ft-recon003-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_recon003_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "n3n20n5a"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:00.329280+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_gaussian6_ft_parallax_v1",
+      "name": "msa-si15-remediation-gaussian6-ft-parallax-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_gaussian6_ft_parallax_v1",
+      "plan": {
+        "run_id": "remediation_gaussian6_ft_parallax_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "me6fjv9e"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:04.809512+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_v1",
+      "name": "msa-si15-remediation-nsf6-ft-parallax-v1",
+      "source_sha": "7b29799cee65ebf9e6a0a348ed0e6844b9139a41",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_parallax_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_ft_parallax_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "juby59r8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-26T21:47:08.811043+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

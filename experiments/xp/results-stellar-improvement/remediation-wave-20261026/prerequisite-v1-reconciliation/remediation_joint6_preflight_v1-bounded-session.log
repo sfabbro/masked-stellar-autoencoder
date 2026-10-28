@@ -1,0 +1,7 @@
+✔ Lock-file was already up-to-date
+✔ The default environment has been installed.
+NVIDIA H100 NVL MIG 1g.12gb
+=== GPU allocation (node/profile):
+GPU 0: NVIDIA H100 NVL (UUID: GPU-d76c3c38-071c-fd55-a61b-eeb83d992471)
+  MIG 1g.12gb     Device  0: (UUID: MIG-c996097f-8c66-52df-a36d-b1102028c7ce)
+NVIDIA H100 NVL, [Insufficient Permissions], [Insufficient Permissions], [N/A]

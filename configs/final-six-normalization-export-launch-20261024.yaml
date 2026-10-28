@@ -1,0 +1,7 @@
+jobs:
+- run_id: final6_distribution_normalization_v1
+  task: final-six-normalization-export
+  resources:
+    cores: 4
+    ram: 16
+    gpu: 0

@@ -1,0 +1,26 @@
+output_root: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+expected_rows: 4412982
+producer_source_sha: 2ce384c49e3569ef4fd9a273bad2bedf12687a49
+prepared_sha256: 6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+optimizer_steps: 0
+model_forward_rows: 0
+scope: Reporting recovery from complete saved arrays only; original failed reporting
+  manifests remain unchanged, no inference/training or whole-model science certificate.
+arms:
+- run_id: expanded_report_quantile3_s51_v1
+  producer_run_id: expanded_eval_quantile3_s51_v2
+  head_kind: quantile3
+  checkpoint_sha256: f1f08793a55498ed8f65aa8129be7651e5ee0053446bfd050a2204cd66a9a008
+- run_id: expanded_report_gaussian_noise_s51_v1
+  producer_run_id: expanded_eval_gaussian_noise_s51_v2
+  head_kind: gaussian
+  checkpoint_sha256: 5debd1d89bef62d1d8387f94045d3698fd8430ba1b055263a46f8fbd96359b5c
+- run_id: expanded_report_nsf_noise_s51_v1
+  producer_run_id: expanded_eval_nsf_noise_s51_v2
+  head_kind: factorized_nsf
+  checkpoint_sha256: 09f30e8e93bb6d279c5bd3b63b8220692df4b79d5c4bdca6262c416826c9870e
+- run_id: expanded_report_nsf_noise_mixed01_s51_v1
+  producer_run_id: expanded_eval_nsf_noise_mixed01_s51_v2
+  head_kind: factorized_nsf
+  checkpoint_sha256: 6ba37d4c65a445c23c36d1f869c8b6d29a633f0a74d0ab5bdfeaace8443cc84b

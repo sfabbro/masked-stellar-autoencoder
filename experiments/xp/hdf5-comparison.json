@@ -1,0 +1,60 @@
+{
+  "url": "https://sdsc-users.flatironinstitute.org/~gaia/dr3/hdf5/XpContinuousMeanSpectrum/XpContinuousMeanSpectrum_000000-003111.hdf5",
+  "timings": [
+    {
+      "method": "download_one_hdf5",
+      "seconds": 10.366995137184858,
+      "bytes": 1155025836
+    },
+    {
+      "method": "hdf5_arc_selected",
+      "seconds": 0.2504948526620865,
+      "repeat": 0,
+      "rows": 3749,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "hdf5_arc_bulk",
+      "seconds": 0.6190912667661905,
+      "repeat": 0,
+      "rows": 3749,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "hdf5_arc_selected",
+      "seconds": 0.21212497353553772,
+      "repeat": 1,
+      "rows": 3749,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "hdf5_arc_bulk",
+      "seconds": 0.6213928833603859,
+      "repeat": 1,
+      "rows": 3749,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "copy_hdf5_to_scratch",
+      "seconds": 1.011448660865426
+    },
+    {
+      "method": "hdf5_scratch_selected",
+      "seconds": 0.21762914769351482,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "csv_arc",
+      "seconds": 40.70463237911463,
+      "repeat": 0,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    },
+    {
+      "method": "csv_arc",
+      "seconds": 26.719290010631084,
+      "repeat": 1,
+      "sha256": "73b0696ce4d3c163de136ff31df485105752313547fd4ac7321cb1826fa7bf48"
+    }
+  ],
+  "status": "complete"
+}

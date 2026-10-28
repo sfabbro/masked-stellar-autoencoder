@@ -1,0 +1,15 @@
+{
+  "observed_utc": "2026-10-26T20:42:38.753108+00:00",
+  "accepted_source": "4849f477c5476cfd5bb21069c6e017a42a3107b5",
+  "sessions": {
+    "remediation_inputs_v1": "i2b1ww73",
+    "remediation_source_v1": "hz5b1rqb",
+    "remediation_joint6_preflight_v1": "i4hetw9r"
+  },
+  "input_audit": "Actual failed FITS_record dtype access; corrected distinct v2 with real FITS regression",
+  "source": "Session absent with nonterminal manifest and partial prepared.h5; cause unknown",
+  "joint": "Session absent with Gaussian/MDN checks passed, NSF unfinished; cause unknown",
+  "no_absence_as_failure_claim": true,
+  "recovery_authorization": "Human explicitly answered Yes, launch distinct recovery jobs; new outputs and retain original Gaussian/MDN evidence",
+  "scheduled_monitor_recreated": false
+}

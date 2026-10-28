@@ -1,0 +1,76 @@
+schema: desi-native-alpha-target-wave-v1
+source_projection:
+  existing_run_id: alpha_desi_source_projection_v1
+  directory: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1
+  requires_actual_status: native_source_projection_complete_not_training_certificate
+  original_source_sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
+feature_preparation:
+  run_id: alpha_desi_feature_preparation_v2
+  depends_on:
+  - alpha_desi_source_projection_v1
+  script: scripts/prepare_alpha_target_wave.py
+  projection_directory: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1
+  base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+  unit_evidence: configs/desi-alpha-source-policy-20261023.json
+  resources:
+    cores: 4
+    ram_gib: 32
+    gpus: 0
+    runtime_seconds: 7200
+  original_allrow_source_QA_required_before_features: true
+  source_coordinates: Signed native DESI RVSpecFit alpha/Fe in dex; no log/exp transformation.
+  primary_fit_tune: Raw native FeH greater than minus2; published warning below that
+    regime.
+  feature_policy: Frozen parent86 photometry+XP only; astrometry/EBV withheld.
+  split_policy: Exact Gaia-ID hash FIT/TUNE/CAL/TEST; canonical first source row;
+    benchmarkvalidation excluded FIT/TUNE; complete99574reference union excluded all
+    roles.
+  source_qa_repeated_for_each_head: false
+training_policy:
+  depends_on:
+  - alpha_desi_feature_preparation_v2
+  requires_actual_status: source_audited_alpha_features_complete
+  script: scripts/run_alpha_target_wave.py
+  prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/prepared.npz
+  preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/manifest.json
+  independent_source_audit: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/independent-source-audit.json
+  resources:
+    cores: 4
+    ram_gib: 32
+    gpus: 1
+    runtime_seconds: 7200
+  steps: 1000
+  batch_size: 256
+  seeds:
+  - 45
+  - 46
+  scoring_dtype: float64
+  encoder_updates: 0
+  reconstruction_presentations: 0
+  selection: First minimum TUNE joint NLL; FIT alone enters gradients; CAL/TEST untouched
+    until selected state restored.
+  density_estimand: Direct native DESI alpha measurement-label predictive density,
+    not deconvolved physical abundance.
+  quoted_errors_preserved: true
+  quoted_errors_used_in_training: false
+  metal_poor_test_labels_recommended: false
+runs:
+- run_id: alpha_desi_gaussian_s45_v1
+  kind: gaussian
+  seed: 45
+- run_id: alpha_desi_mdn_s45_v1
+  kind: mdn
+  seed: 45
+- run_id: alpha_desi_nsf_s45_v1
+  kind: nsf
+  seed: 45
+- run_id: alpha_desi_gaussian_s46_v1
+  kind: gaussian
+  seed: 46
+- run_id: alpha_desi_mdn_s46_v1
+  kind: mdn
+  seed: 46
+- run_id: alpha_desi_nsf_s46_v1
+  kind: nsf
+  seed: 46
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106

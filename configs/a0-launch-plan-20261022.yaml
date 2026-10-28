@@ -1,0 +1,12 @@
+jobs:
+- run_id: age_data_audit_v1
+  task: age-data-audit
+  resources:
+    cores: 8
+    ram: 32
+  env:
+    MSA_EXPERIMENT_CPU_ONLY: '1'
+    MSA_AGE_APOKASC3: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
+    MSA_AGE_COHORT: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_feature_cohort_v1/age-feature-cohort.h5
+    MSA_AGE_DATASET_VIEW: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/dataset_view_v2/dataset-view.h5
+    MSA_AGE_POSTERIOR: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5

@@ -1,0 +1,29 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "90a2fd873d44b48bb94296f19ff4efcd7ec70313",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013-spectral-r2",
+  "train_stars": 9000000,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "experiments_config": "configs/pretrain.xp-next.yaml",
+  "micro_batch_size": 512,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": [
+    {
+      "run_id": "spectral_auxiliary_mae",
+      "session_ids": [
+        "otyufn0f"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013-spectral-r2/spectral_auxiliary_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-next-e47-20261013-spectral-r2/spectral_auxiliary_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    }
+  ]
+}

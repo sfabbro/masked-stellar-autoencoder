@@ -1,0 +1,134 @@
+sources:
+- name: native_APOGEE_DR17
+  url: https://data.sdss.org/sas/dr17/apogee/spectro/aspcap/dr17/synspec_rev1/allStar-dr17-synspec_rev1.fits
+  download: true
+  filename: allStar-dr17-synspec_rev1.fits
+  max_bytes: 6000000000
+  role: native FE_H and FE_H_ERR with ASPCAPFLAG and STARFLAG; preserve M_H separately
+- name: DESI_DR1_MWS_iron
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/mwsall-pix-iron.fits
+  download: true
+  role: spectroscopic measurements; FeH temperature/gravity corrections must be recorded
+    before eligibility
+  uncertainty_policy: native per-star errors and flags required
+  filename: mwsall-pix-iron.fits
+  max_bytes: 14000000000
+  correction_documentation: https://data.desi.lbl.gov/doc/releases/dr1/vac/mws/
+  eligibility: pending published temperature/gravity FeH correction and Gaia DR3 crossmatch;
+    retain raw values/errors
+- name: Shi2026
+  url: https://zenodo.org/api/records/19176298/files/Gaia_XP_MP_star.fits/content
+  download: true
+  filename: shi2026-xp-metals.fits
+  max_bytes: 1100000000
+  role: XP-derived candidate selection, not independent XP labels
+- name: PIGS_spectroscopy
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/tabled2.dat.gz
+  download: true
+  filename: pigs-tabled2.dat.gz
+- name: PIGS_distances
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/tabled3.dat.gz
+  download: true
+  filename: pigs-tabled3.dat.gz
+  role: StarHorse derived distances; record Gaia/isochrone dependence
+- name: PIGS_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/MNRAS/530/3391/ReadMe
+  download: true
+  filename: pigs-ReadMe
+- name: Pristine_DR1_public_sample
+  url: https://cdsarc.cds.unistra.fr/ftp/J/A+A/692/A115/pristine_dr1.sam
+  download: true
+  filename: pristine-dr1-public-sample.dat
+  role: 1000-row official public sample, full catalogue acquisition pending
+- name: Pristine_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/A+A/692/A115/ReadMe
+  download: true
+  filename: pristine-ReadMe
+- name: Huang_Beers2025
+  url: https://nadc.china-vo.org/data/sports/
+  download: true
+  filename: sports-access-page.html
+  role: access metadata; scientific catalogue file URL unresolved, not yet acquired
+- name: LAMOST_DR10_Li2025
+  url: https://arxiv.org/html/2506.09705v1
+  download: true
+  filename: lamost-li2025-paper.html
+  role: catalogue provenance/schema; machine-readable table URL unresolved, not yet
+    acquired
+- name: DESI_SPDist
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws-spdist/
+  download: true
+  filename: desi-spdist-index.html
+  role: distance product discovery; stellar-label/photometry/parallax dependencies
+    must be recorded
+- name: DESI_DR1_checksum
+  url: https://data.desi.lbl.gov/public/dr1/vac/dr1/mws/iron/v1.0/dr1_vac_dr1_mws_iron_v1.0.sha256sum
+  download: true
+  filename: desi-publisher.sha256sum
+  role: publisher checksum; compare against downloaded combined product before scientific
+    ingestion
+- name: Pristine_DR1_full
+  url: https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=fits&QUERY=SELECT+%2A+FROM+%22J%2FA%2BA%2F692%2FA115%2Fpristine_dr1%22&MAXREC=7000000
+  download: true
+  filename: pristine-dr1-full.fits
+  max_bytes: 2500000000
+  expected_fits_rows: 6380652
+  role: Real Pristine DR1 CaHK photometry and photometric metallicity candidate catalogue;
+    not independent spectroscopic FeH truth
+  uncertainty_policy: Preserve e_CaHKmag0, metallicity percentiles, flags and all
+    original columns; no invented symmetric error
+- name: LAMOST_DR10_Li2025_catalogue
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/53/table2.dat.gz
+  download: true
+  filename: li2025-table2.dat.gz
+  max_bytes: 2000000
+  expected_sha256: 8eaf96716c4c118db4a1701b5f5a779b077f06de04c2c281c23c0d709ea9b421
+  role: Actual Li2025 LAMOST DR10 CaT metallicity catalogue;8440measurements/8378uniqueGaiaDR3stars,not
+    the older Li2022highresolution sample
+  uncertainty_policy: Preserve measured errors,q_EW1,mag/color method andduplicate
+    rows; randomerrors not asserted totalcalibratedaccuracy
+- name: LAMOST_DR10_Li2025_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/279/53/ReadMe
+  download: true
+  filename: li2025-ReadMe
+  expected_sha256: c140ce88e8ebbc900397d21038e46fb644e3529dfd5bfb231ab5a33d187f041c
+- name: APOKASC3_recommended
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/table4.dat.gz
+  download: true
+  filename: apokasc3-table4.dat.gz
+  max_bytes: 3000000
+  expected_sha256: af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d
+  role: Recommended APOKASC3 table;15808uniqueGaiaDR3IDs,asteroseismic constraints plus spectroscopy/models and Gaia-based radius calibration;not independent geometric truth
+  uncertainty_policy: Preserve CatTab,AgeCat,RGB/RC alternatives and signed asymmetric age offsets in Gyr;do not clip or invent symmetric errors
+- name: APOKASC3_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/ReadMe
+  download: true
+  filename: apokasc3-ReadMe
+  expected_sha256: 0b7bc6650872d8560813b55038f75e01801adb31653ad0690fd0e44380e5a56a
+- name: LEGACY_seismic_ReadMe
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/ReadMe
+  download: true
+  filename: legacy-ReadMe
+  expected_sha256: 6772f7ce41d987cf6ffb5f02a4ea3c4adfa170526ba994ff563f0c3cefe2c11a
+- name: LEGACY_seismic_targets
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/table3.dat
+  download: true
+  filename: legacy-table3.dat
+  expected_sha256: 09d00d8857ddc667c76170618365a5a7047bebed99353632f388198af372ced6
+  role: 66 Kepler main-sequence/subgiant seismic reference targets;KIC identifiers require audited Gaia mapping
+- name: LEGACY_seismic_models
+  url: https://cdsarc.cds.unistra.fr/ftp/J/ApJ/835/173/table4.dat
+  download: true
+  filename: legacy-table4.dat
+  expected_sha256: 2d247a9adc219578ff35d432cc76788abd6b282ea19b192aadec88daca17aa07
+  role: 396 model solutions for66stars fromsix correlated pipelines;no averaging into independent observations
+  uncertainty_policy: AgeGyr anddistancepc;both lower andupper uncertainties arepositive widths,not APOKASC-style signed offsets;retain allpipelines/modeldependence
+
+- name: Hipparcos2_corrected_reference
+  url: https://cdsarc.cds.unistra.fr/ftp/I/311/hip2.dat.gz
+  download: false
+  role: bounded distance-feature-cohort mode preserves corrected raw measured parallaxes
+- name: Gaia_DR3_Hipparcos2_reference_mapping
+  url: https://gea.esac.esa.int/tap-server/tap/sync
+  download: false
+  role: bounded official count, identity mapping and three disjoint astrometry queries

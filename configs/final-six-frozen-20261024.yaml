@@ -1,0 +1,14 @@
+source_config: configs/final-six-recipes-20261024.yaml
+warmup_updates: 250
+head_optimizer_updates: 306
+supervised_batches_per_update: 8
+scope: matched fresh heads on fixed final4.5B large encoder; same head Adam update budget as joint screen; zero reconstruction and encoder updates
+arms:
+- {run_id: final6_large_frozen_gaussian_s49_v1, kind: gaussian, seed: 49}
+- {run_id: final6_large_frozen_gaussian_s50_v1, kind: gaussian, seed: 50}
+- {run_id: final6_large_frozen_mdn_s49_v1, kind: mdn, seed: 49}
+- {run_id: final6_large_frozen_mdn_s50_v1, kind: mdn, seed: 50}
+- {run_id: final6_large_frozen_factorized_nsf_s49_v1, kind: factorized_nsf, seed: 49}
+- {run_id: final6_large_frozen_factorized_nsf_s50_v1, kind: factorized_nsf, seed: 50}
+- {run_id: final6_large_frozen_factorized_nsf_mixed01_s49_v1, kind: factorized_nsf, seed: 49, mixed_weight: 0.1}
+- {run_id: final6_large_frozen_factorized_nsf_mixed01_s50_v1, kind: factorized_nsf, seed: 50, mixed_weight: 0.1}

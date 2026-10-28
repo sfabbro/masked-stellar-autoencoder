@@ -1,0 +1,24 @@
+schema: sparse-six-target-source-policy-v1
+run_id: six_target_source_preparation_v1
+output: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v1
+minimum_observed_per_role_target: 16
+parent:
+  path: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+  sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+features:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
+references:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/distance_feature_cohort_v1/distance-feature-cohort.h5
+  sha256: fe377385e9a5a26a1d3f14ca15ea6c56904d73c34233fb9e17da1b944b76b1ad
+native:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_sls_full_r03_s45_10m_v1/paired-cohort.npz
+  sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+  source_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+  original_sidecar_sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
+alpha:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/prepared.npz
+  sha256: 359037802f93f70ce99fffc16d1568bb6eeada37f616fbe4e8b27dc55fcbcea8
+posterior:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+  sha256: f06c4b4c2761f620ec2e9d953a3e6d6c90313903cd5a7bb4864cbd45b133d30b

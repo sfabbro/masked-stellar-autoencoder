@@ -1,0 +1,22 @@
+{
+  "all99525_identifiers_exact": true,
+  "common_reference": 4166,
+  "units": "mas",
+  "all_parallaxes_and_formal_errors_finite": true,
+  "legacy_baseline_matches_official_gaia": true,
+  "maximum_abs_parallax_difference_mas": 0.0,
+  "retained_nonpositive_gaia_parallaxes": 4,
+  "zero_point_correction_applied": false,
+  "formal_errors_not_total_calibrated_accuracy": true,
+  "parallax_snr_selection": false,
+  "reference_id_sha256": "5ee2d9fa29f44c30f058bd0d81f3561ede202b0ceaab04c5a0551023883062f2",
+  "raw_feature_parallax_sha256": "53348c5b22736c22f394e82fce4fff825572653795ec42fdbdb1d1fa7d627329",
+  "raw_query_sha256": {
+    "gaia-parallax-chunk-2.xml": "f394dc1397cab2197243bf3d0e8ae984d78789bc560eb0f50249ebf570591029",
+    "gaia-parallax-chunk-1.xml": "a359482440ea8f4d2977a120ab273b76ead3c7f7ca08458504a6f628d544a096",
+    "gaia-parallax-chunk-0.xml": "6416f7256b7d588049ae69186d59741a2600a5c3508180f0c73d3117ef9645a5"
+  },
+  "role": "Official Gaia DR3 raw parallax baseline only; no zero-point or error-floor calibration. Source IDs and all 4166 raw original FITS parallaxes equal independent official measurements.",
+  "source": "gaiadr3.hipparcos2_best_neighbour JOIN gaiadr3.gaia_source",
+  "source_url": "https://gea.esac.esa.int/tap-server/tap/sync"
+}

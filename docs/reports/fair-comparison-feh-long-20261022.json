@@ -1,0 +1,59 @@
+{
+  "n_test": 97695,
+  "n_common_srivastava": 1773,
+  "tail_n": 0,
+  "ours": {
+    "all": {
+      "n": 1773,
+      "mae": 0.06292883910107551,
+      "medad": 0.045494151477432604,
+      "bias": -0.0030996433630220543,
+      "nmad": 0.0676225096046888,
+      "rmse": 0.09693779984268278
+    },
+    "tail": {
+      "n": 0,
+      "mae": null,
+      "medad": null,
+      "bias": null,
+      "nmad": null,
+      "rmse": null
+    }
+  },
+  "srivastava": {
+    "all": {
+      "n": 1773,
+      "mae": 0.06335097586270833,
+      "medad": 0.04705256223678589,
+      "bias": 0.0031700728431509036,
+      "nmad": 0.07019789089858532,
+      "rmse": 0.08963546481350974
+    },
+    "tail": {
+      "n": 0,
+      "mae": null,
+      "medad": null,
+      "bias": null,
+      "nmad": null,
+      "rmse": null
+    }
+  },
+  "gspphot": {
+    "all": {
+      "n": 1773,
+      "mae": 0.24994886752197293,
+      "medad": 0.2066645622253418,
+      "bias": -0.09850925439101171,
+      "nmad": 0.21546373907010988,
+      "rmse": 0.3238713984132299
+    },
+    "tail": {
+      "n": 0,
+      "mae": null,
+      "medad": null,
+      "bias": null,
+      "nmad": null,
+      "rmse": null
+    }
+  }
+}

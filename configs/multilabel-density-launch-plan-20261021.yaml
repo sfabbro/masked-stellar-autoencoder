@@ -1,0 +1,13 @@
+jobs:
+- run_id: multi_nsf_density_nll_s42_v1
+  task: multilabel-density-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_density_contrastive_s42_v1
+  task: multilabel-density-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1
+- run_id: multi_nsf_density_nllcontrastive_s42_v1
+  task: multilabel-density-screen
+  depends_on:
+  - joint-native-preparation-v2-quality-v1

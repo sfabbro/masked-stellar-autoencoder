@@ -1,0 +1,90 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "c7857acf9251a4d52781f2152fb6389adc01e4e6",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013",
+  "train_stars": 9000000,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "experiments_config": "configs/pretrain.xp-photometry.yaml",
+  "micro_batch_size": 512,
+  "photometry_preflight": false,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": [
+    {
+      "run_id": "unchanged_control",
+      "session_ids": [
+        "cseramws"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/unchanged_control",
+      "log": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/unchanged_control.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "recovered_after_response_timeout": true
+    },
+    {
+      "run_id": "spectral_auxiliary_mae",
+      "session_ids": [
+        "p44kz1ws"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/spectral_auxiliary_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "recovered_after_response_timeout": true
+    },
+    {
+      "run_id": "observed_photometry_mae",
+      "session_ids": [
+        "xga1bcgz"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/observed_photometry_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/observed_photometry_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted"
+    },
+    {
+      "run_id": "photometry_spectral_mae",
+      "session_ids": [
+        "svts00tf"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/photometry_spectral_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "recovered_after_response_timeout": true
+    },
+    {
+      "run_id": "anchored_decoder_consistency_mae",
+      "session_ids": [
+        "u07che6t"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/anchored_decoder_consistency_mae",
+      "log": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013/anchored_decoder_consistency_mae.session.log",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "recovered_after_response_timeout": true
+    }
+  ]
+}

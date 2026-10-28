@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "unique_natural_ids": 104385,
+  "unique_masked_ids": 99646,
+  "exact_join_pass": true,
+  "critical_bin_count": 5331,
+  "masked_mae_scalar": 0.7315005622741886,
+  "masked_mae_numpy": 0.7315005622741886,
+  "scope": "Saved-array scalar/NumPy agreement and exact integer-ID join; no native model replay or label-truth certificate"
+}

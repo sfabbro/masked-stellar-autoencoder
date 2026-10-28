@@ -1,0 +1,37 @@
+jobs:
+- run_id: w2_mvgaussian_s44
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_mdn8_s44
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_lowrank_s44
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_mdn4_s43
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_mdn4_s44
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_mvgaussian_noise_s43
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1

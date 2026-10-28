@@ -1,0 +1,21 @@
+# Matched continuations from epoch47; 9M training/1M validation, 20M presentations.
+experiments:
+  - run_id: unchanged_control
+    embedding: stable
+    loss: mae
+  - run_id: corrected_signal_weighted_mae
+    embedding: stable
+    loss: signal_weighted_mae
+  - run_id: spectral_auxiliary_mae
+    embedding: stable
+    loss: spectral_mae
+    spectral_weight: 0.1
+  - run_id: adam_reset_mae
+    embedding: stable
+    loss: mae
+    reset_optimizer: true
+  - run_id: adam_reset_lr2_mae
+    embedding: stable
+    loss: mae
+    reset_optimizer: true
+    lr_factor: 2.0

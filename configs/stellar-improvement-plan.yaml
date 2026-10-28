@@ -1,0 +1,677 @@
+jobs:
+- run_id: label_registry_v1
+  task: catalog
+  mode: registry
+- run_id: candidate_collection_v1
+  task: catalog
+  mode: collect
+- run_id: dataset_design_v1
+  task: catalog
+  mode: datasets
+- run_id: mae_b32768_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b32768_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b32768_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr05_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr1_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr2_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: candidate_collection_v2
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: PIGS_spectroscopy,PIGS_distances,PIGS_ReadMe,Pristine_DR1_public_sample,Pristine_ReadMe,Huang_Beers2025,LAMOST_DR10_Li2025,DESI_SPDist
+- run_id: apogee_native_fetch_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: native_APOGEE_DR17
+- run_id: desi_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: DESI_DR1_MWS_iron,DESI_DR1_checksum
+- run_id: shi_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: Shi2026
+- run_id: feh_frozen_huber
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_huber
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_mse
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_recon001
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_recon01
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_balanced
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_balanced_corrected
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_sft_curriculum
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_ttt5_head
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_ttt15_head
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: parallax_frozen_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: parallax_sft_nll
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: photo_value_no_wise
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_2mass
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_skymapper
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_sdss
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_ps1
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: photo_value_no_xp
+  task: stellar-labels
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+- run_id: age_frozen_nll
+  task: stellar-labels
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: age_sft_nll
+  task: stellar-labels
+  not_before_utc: '2026-10-16T00:47:49.771756+00:00'
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+- run_id: feh_clean_sft_nll
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_recon001
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_balanced
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_sky_nll
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: label_registry_v2
+  task: catalog
+  mode: registry
+  depends_on:
+  - apogee_native_fetch_v1
+  env:
+    MSA_NATIVE_LABEL_FILES: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
+- run_id: posterior_labels_v1
+  task: catalog
+  mode: posterior-labels
+- run_id: dataset_view_v1
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v1
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: dataset_view_v2
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v2
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: mae_b8192_lr4_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b8192_lr12_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr4_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: mae_b2048_lr12_s42
+  task: training
+  env:
+    MSA_EXPERIMENTS_CONFIG: configs/pretrain.xp-lr-batch-e57.yaml
+- run_id: dataset_view_v1_r2
+  task: catalog
+  mode: dataset-view
+  depends_on:
+  - label_registry_v1
+  replaces: dataset_view_v1
+  replacement_reason: 'Confirmed failed index: hash must retain train-then-validation
+    row order; sorting is solely for uniqueness checks. Benchmark itself is unchanged.'
+  env:
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v1/labels.h5
+- run_id: feh_clean_sft_huber
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_frozen_huber
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: feh_clean_balanced_corrected
+  task: stellar-labels
+  depends_on:
+  - label_registry_v2
+  require_native_registry: true
+  env:
+    MSA_LABEL_CONFIG: configs/stellar-label-experiments.yaml
+    MSA_LABEL_REGISTRY: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/labels.h5
+- run_id: desi_labels_v1
+  task: catalog
+  mode: desi-labels
+  depends_on:
+  - desi_collection_v1
+- run_id: pigs_labels_v1
+  task: catalog
+  mode: pigs-labels
+  depends_on:
+  - candidate_collection_v2
+- run_id: pristine_full_fetch_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: Pristine_DR1_full,Pristine_ReadMe
+- run_id: pristine_full_fetch_v1_r2
+  task: catalog
+  mode: pristine-async
+  replaces: pristine_full_fetch_v1
+  replacement_reason: 'Confirmed collection error: synchronous TAP connection closed
+    before data; validated asynchronous TOP2 FITS export. No overlap with failed download.'
+- run_id: survey_overlap_v1
+  task: catalog
+  mode: survey-overlap
+  depends_on:
+  - label_registry_v2
+  - desi_labels_v1
+  - pigs_labels_v1
+- run_id: pristine_quality_view_v1
+  task: catalog
+  mode: pristine-quality-view
+  depends_on:
+  - pristine_full_fetch_v1_r2
+  - dataset_view_v2
+  - label_registry_v2
+- run_id: li2025_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: LAMOST_DR10_Li2025_catalogue,LAMOST_DR10_Li2025_ReadMe
+- run_id: enriched_label_view_v1
+  task: catalog
+  mode: enriched-label-view
+  depends_on:
+  - label_registry_v2
+  - pigs_labels_v1
+  - li2025_collection_v1
+  - dataset_view_v2
+- run_id: pristine_value_frozen_v1
+  task: pristine-value
+  depends_on:
+  - pristine_quality_view_v1
+  - label_registry_v2
+- run_id: posterior_labels_v2
+  task: catalog
+  mode: posterior-labels
+  supersedes: posterior_labels_v1
+  reason: Preserve StarHorse AgeInOut warning omitted by the generic flag-name filter
+  depends_on:
+  - posterior_labels_v1
+- run_id: apokasc3_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: APOKASC3_recommended,APOKASC3_ReadMe
+- run_id: legacy_seismic_collection_v1
+  task: catalog
+  mode: collect
+  env:
+    MSA_CATALOG_SOURCES: LEGACY_seismic_ReadMe,LEGACY_seismic_targets,LEGACY_seismic_models
+- run_id: age_feature_cohort_v1
+  task: catalog
+  mode: age-feature-cohort
+  depends_on:
+  - posterior_labels_v2
+  - dataset_view_v2
+- run_id: native_age_strict_frozen_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
+- run_id: native_age_strict_sft_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
+- run_id: native_age_strict_recon_v1
+  task: native-age
+  depends_on:
+  - age_feature_cohort_v1
+- run_id: distance_feature_cohort_v1
+  task: catalog
+  mode: distance-feature-cohort
+  depends_on:
+  - posterior_labels_v2
+  - dataset_view_v2
+- run_id: distance_value_frozen_v1
+  task: distance-value
+  depends_on:
+  - distance_feature_cohort_v1
+- run_id: distance_value_frozen_v2
+  task: distance-value
+  supersedes: distance_value_frozen_v1
+  reason: Read original compound benchmark source_id field rather than grouped-index
+    path
+  depends_on:
+  - distance_feature_cohort_v1
+- run_id: distance_value_frozen_v3
+  task: distance-value
+  supersedes: distance_value_frozen_v2
+  reason: Use verified original nested records provenance and audited ID index as
+    completed age controls
+  depends_on:
+  - distance_feature_cohort_v1
+- run_id: enriched_feature_cohort_v1
+  task: catalog
+  mode: enriched-feature-cohort
+  depends_on:
+  - enriched_label_view_v1
+  - dataset_view_v2
+- run_id: enriched_feature_audit_v1
+  task: catalog
+  mode: enriched-feature-audit
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: enriched_value_frozen_v1
+  task: enriched-value
+  depends_on:
+  - enriched_feature_cohort_v1
+  - enriched_feature_audit_v1
+- run_id: prediction_e72_huber_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_gaussian_nll_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_gaussian_crps_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_huber_rnc_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_huber_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_batchensemble_huber_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_lds_huber_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_nll_labelerr_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_contrastive_flow_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_rc_shared_xp_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_rc_per_star_xp_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_simex_xp_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: joint-native-preparation-v1
+  task: catalog
+  mode: joint-native-preparation
+  depends_on:
+  - enriched_feature_cohort_v1
+  - distance_feature_cohort_v1
+- run_id: joint-native-preparation-v2
+  task: catalog
+  mode: joint-native-preparation
+  depends_on:
+  - enriched_feature_cohort_v1
+  - distance_feature_cohort_v1
+- run_id: prediction_e72_rc_shared_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_rc_per_star_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_simex_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_mse_mechanism_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_corrected_score_xp_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_classifier_nre_b_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_residual_group_dro_10m_v1
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_cohort_v1
+- run_id: prediction_e72_residual_mse_mechanism_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_corrected_score_xp_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_classifier_nre_b_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+- run_id: prediction_e72_residual_group_dro_10m_v2
+  task: prediction-comparison
+  depends_on:
+  - enriched_feature_audit_v1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '10000000'
+
+- run_id: frozen_e72_vir_screen_v1
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]
+- run_id: frozen_e72_cnf_screen_v1
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: frozen_e72_vir_screen_v2
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]
+- run_id: frozen_e72_cnf_screen_v2
+  task: frozen-head-screen
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: residual_huber_long_30e_v1
+  task: prediction-continuation
+  depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]
+
+- run_id: prediction_e72_mse_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: prediction_e72_bmc_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: prediction_e72_ranksim_imbalance_10m_v1
+  task: prediction-comparison
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: forward_eiv_xp_screen_v1
+  task: forward-eiv-screen
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_mse_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_ranksim_s43_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_mse_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_ranksim_s44_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_huber_ranksim_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpnoise_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpmask_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_xpnoise_mask_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_reco003_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_enc_lr_quarter_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_frozen_encoder_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_parent85_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_parent86_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_affine_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf8_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf16_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: target_e72_flow_nsf8_frozen_s42_10m_v1
+  task: targeted-prediction
+  depends_on: [enriched_feature_audit_v1]
+
+- run_id: test_time_reconstruction_screen_v1
+  task: test-time-screen
+  depends_on: [enriched_feature_audit_v1, prediction_e72_residual_huber_10m_v1]
+- run_id: residual_huber_e86_150m_30e_v1
+  task: large-huber
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1

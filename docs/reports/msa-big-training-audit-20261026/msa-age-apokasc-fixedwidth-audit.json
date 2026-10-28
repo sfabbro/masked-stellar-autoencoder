@@ -1,0 +1,22 @@
+{
+  "raw_rows": 15808,
+  "exact_fixed_width_vs_whitespace_ids_and_six_age_columns_pass": true,
+  "valid_ordered_bounds": 12301,
+  "above13p8": 514,
+  "above20": 240,
+  "above60": 2,
+  "max_age": 66.0861,
+  "cat_counts_valid": {
+    "Gold": 10028,
+    "Silver": 2269,
+    "SilverOl": 4
+  },
+  "cat_counts_above20": {
+    "Silver": 168,
+    "Gold": 71,
+    "SilverOl": 1
+  },
+  "gold_valid": 10028,
+  "gold_above13p8": 185,
+  "gold_above20": 71
+}

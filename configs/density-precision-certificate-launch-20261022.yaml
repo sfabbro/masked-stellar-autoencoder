@@ -1,0 +1,10 @@
+jobs:
+- run_id: density_fp64_precision_certificate_v1
+  task: density-precision-certificate
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+  env:
+    MSA_PRETRAIN_RESUME: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+    MSA_EXPERIMENT_PRESENTATIONS: '0'

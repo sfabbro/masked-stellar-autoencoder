@@ -1,0 +1,15 @@
+{
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "git_sha": "2f8165accf79c5cf813afe812375980a9b58a378",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-photometry-e47-20261013-preflight",
+  "train_stars": 9000000,
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "experiments_config": "configs/pretrain.xp-photometry.yaml",
+  "micro_batch_size": 512,
+  "photometry_preflight": true,
+  "validation_stars": 1000000,
+  "presentations": 20000000,
+  "seed": 42,
+  "jobs": []
+}

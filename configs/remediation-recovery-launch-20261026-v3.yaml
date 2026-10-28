@@ -1,0 +1,22 @@
+jobs:
+- run_id: remediation_inputs_v3
+  task: remediation-input-audit
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 0
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_source_v3
+  task: remediation-source
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 0
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_joint6_preflight_v3
+  task: remediation-joint-preflight
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

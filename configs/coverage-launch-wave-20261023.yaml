@@ -1,0 +1,313 @@
+jobs:
+- run_id: multi_sls_full_r03_s45_10m_v1
+  task: multilabel-sls
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: multi_sls_full_r03_s46_10m_v1
+  task: multilabel-sls
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: multi_sls_low_rank_r03_s45_10m_v1
+  task: multilabel-sls
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: multi_sls_low_rank_r03_s46_10m_v1
+  task: multilabel-sls
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_nll_clean_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed01_clean_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed10_clean_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_pure_clean_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_nll_labelnoise_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed01_labelnoise_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed10_labelnoise_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_pure_labelnoise_r03_s47_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_nll_clean_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed01_clean_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed10_clean_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_nll_labelnoise_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed01_labelnoise_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: noisecontrastive_nsf_mixed10_labelnoise_r03_s48_10m_v1
+  task: multilabel-noise-contrastive
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: forward_lbfgs_fp64_multistart_v2
+  task: forward-floweb
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: joint_floweb_map_fp64_s42_v1
+  task: forward-floweb
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: joint_floweb_map_fp64_s43_v1
+  task: forward-floweb
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: joint_floweb_posterior_fp64_s42_v1
+  task: forward-floweb
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: forward_gn_fp64_multistart_v2
+  task: forward-floweb
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+- run_id: posterior_age_distance_gaussian_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: gaussian
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: posterior_age_distance_mdn_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: mdn
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: posterior_age_distance_nsf_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: nsf
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: posterior_age_distance_gaussian_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: gaussian
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: posterior_age_distance_mdn_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: mdn
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: posterior_age_distance_nsf_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: nsf
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_gaussian_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: gaussian
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_mdn_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: mdn
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_nsf_s45_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: nsf
+    MSA_TARGET_SEED: '45'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_gaussian_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: gaussian
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_mdn_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: mdn
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: apokasc_age_nsf_s46_v1
+  task: target-predictions
+  env:
+    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_KIND: nsf
+    MSA_TARGET_SEED: '46'
+    MSA_TARGET_STEPS: '1000'
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: alpha_desi_source_projection_v1
+  task: target-source-evidence
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 0
+- run_id: mae_ttt_encoderdecoder_sgd20_mask20_v1
+  task: mae-ttt
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: mae_ttt_encoderdecoder_sgd3_mask20_v1
+  task: mae-ttt
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: mae_ttt_layernorm_sgd20_mask20_v1
+  task: mae-ttt
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1
+- run_id: mae_ttt_encoderdecoder_sgd20_mask75_v1
+  task: mae-ttt
+  resources:
+    cores: 4
+    ram: 32
+    gpu: 1

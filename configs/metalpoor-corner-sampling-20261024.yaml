@@ -1,0 +1,40 @@
+run_id: representative_metalpoor_predictive_corners_v1
+selection: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_corner_selection_v1/selection.npz
+selection_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_metalpoor_corner_selection_v1/manifest.json
+selection_sha256: b8e555730f06bf1e146fb948d102c8932f004e6adaff8a6aa0b5a3ef48d35f16
+selection_manifest_sha256: c77f4009a79a164f00cc2a9dab01084452a62dc2b9574b9c287dfeede0616644
+selection_evidence: configs/metalpoor-corner-model-selection-20261024.json
+selection_evidence_sha256: b89f6aa5cdb4d7162ad2a776faf66d8ecd8205a210e41f2d8c6a5efead104c38
+draws: 8192
+seed: 20261024
+models:
+- run_id: final6_large_gaussian_cecdf_s50_10m_v1
+  kind: gaussian
+  state_format: joint_full
+  manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_cecdf_s50_10m_v1/manifest.json
+  manifest_sha256: dfaf2c0b9c5254287bf7fb10ffb86f864fd33dfa464d8894d96c0144728302d6
+  checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_gaussian_cecdf_s50_10m_v1/checkpoint.pth
+  checkpoint_sha256: 3b5ec7318e030e71c19635d3daba34fdaf2939d83256e2bd084838e2a364aabd
+  expected_source_sha: ba3cefdf13939588a5039292d7fb62fa3828dd2a
+  independent_report: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_gaussian_cecdf_s50_10m_v1/report.json
+  independent_report_sha256: d4ca264a7e4dad1ce7ac7bc9c27d385e7f9c2e13361b60563fc14a7c61f5045b
+- run_id: final6_large_mdn_ranking_s50_10m_v1
+  kind: mdn
+  state_format: joint_full
+  manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_ranking_s50_10m_v1/manifest.json
+  manifest_sha256: 9a02c1a10010766d6884455eae21b92a0296d9267654246e2499c12c5bd9cb86
+  checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_mdn_ranking_s50_10m_v1/checkpoint.pth
+  checkpoint_sha256: 097215c321c1ea0bef9262e14e9d3933753495d958cc6bb58df3953d66d25aa2
+  expected_source_sha: ba3cefdf13939588a5039292d7fb62fa3828dd2a
+  independent_report: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_mdn_ranking_s50_10m_v1/report.json
+  independent_report_sha256: 3d6c0ed272229745d0bd79d73654a693d3879ef9ae64adf351c35e74f560ee84
+- run_id: final6_large_factorized_nsf_mixed01_s50_10m_v1
+  kind: factorized_nsf
+  state_format: joint_full
+  manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_mixed01_s50_10m_v1/manifest.json
+  manifest_sha256: cc81050829d9d1d4afe12d2789aef525a8b1839a671719fb219c99a7bcaf0150
+  checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final6_large_factorized_nsf_mixed01_s50_10m_v1/checkpoint.pth
+  checkpoint_sha256: 0a23c6916d8be4f3c427554ad94b47d2bcd7b60d3fa43a4eb572815c2d7e5ddb
+  expected_source_sha: ba3cefdf13939588a5039292d7fb62fa3828dd2a
+  independent_report: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/qa_final6_large_factorized_nsf_mixed01_s50_10m_v1/report.json
+  independent_report_sha256: 8f1c15551bc0fe2a77f034ae69504b24a5ce132857d5f4e77d0c7279ba9381f0

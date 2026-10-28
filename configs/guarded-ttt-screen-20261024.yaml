@@ -1,0 +1,43 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/checkpoint.pth
+paired: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/paired-cohort.npz
+predictions: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/predictions.npz
+checkpoint_sha256: f59b424e3e01ac697ce12f9f8bf19c3cee6234f01ca8e6daeba1205dec99c936
+paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
+predictions_sha256: 276b5cfac70b6894d263b95420f783c60b0fa09a0afdcebbc0b2e04f54b19b8f
+parent_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+checkpoint_source_sha: 1a0051ded24062c840bd2a502c73d65f46a4cc2b
+global_objects: 512
+calibration_objects: 1024
+metal_poor_policy: all XP-eligible TEST FeH<-2 as separate post-policy-freeze evaluation
+  stratum; deduplicate global union; no unweighted pooled population inference
+input_policy: same original photometry+XP-only checked paired inputs; no astrometry/EBV
+  prediction inputs
+baseline: source-bound saved original selected checkpoint predictions; no completed
+  baseline model replay
+objective: Decoder-frozen update-XP MSE plus latent anchor; fixed disjoint held-out-XP
+  score selects per-object step including clean step0. No target/error loss.
+paper_scope: New guarded tabular policy, not an image MAE reproduction; same completed
+  long selected99M checkpoint, no refit.
+arms:
+- run_id: guarded_ttt_encoder_sgd20_holdout_v1
+  scope: encoder_only
+  optimizer: sgd
+  steps: 20
+  lr: 1.0e-05
+  latent_anchor: 0.1
+  maximum_relative_latent_drift: 0.05
+- run_id: guarded_ttt_layernorm_sgd20_holdout_v1
+  scope: layernorm
+  optimizer: sgd
+  steps: 20
+  lr: 0.0001
+  latent_anchor: 0.1
+  maximum_relative_latent_drift: 0.05
+- run_id: guarded_ttt_layernorm_adam20_holdout_v1
+  scope: layernorm
+  optimizer: adam
+  steps: 20
+  lr: 1.0e-05
+  latent_anchor: 0.1
+  maximum_relative_latent_drift: 0.05

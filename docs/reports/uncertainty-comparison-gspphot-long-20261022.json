@@ -1,0 +1,95 @@
+{
+  "alpha": 0.3173,
+  "nominal_coverage": 0.6827,
+  "calibration_n": 2046,
+  "teff": {
+    "msa_conformal": {
+      "n": 67667,
+      "coverage": 0.6397948778577446,
+      "median_width": 117.22375045824083,
+      "mean_width": 161.14355257045972,
+      "coverage_poisson_se": 0.0018454694499565087
+    },
+    "gspphot": {
+      "n": 67667,
+      "coverage": 0.07696513810276796,
+      "median_width": 25.11376953125,
+      "mean_width": 46.97763915485253,
+      "coverage_poisson_se": 0.0010246312973526868
+    },
+    "msa_conformal_tail": {
+      "n": 56,
+      "coverage": 0.2857142857142857,
+      "median_width": 202.13265299752766,
+      "mean_width": 230.3761211157057,
+      "coverage_poisson_se": 0.0603681610520369
+    },
+    "gspphot_tail": {
+      "n": 56,
+      "coverage": 0.0,
+      "median_width": 26.3642578125,
+      "mean_width": 93.42961774553571,
+      "coverage_poisson_se": 0.0
+    }
+  },
+  "logg": {
+    "msa_conformal": {
+      "n": 67667,
+      "coverage": 0.6520903837912129,
+      "median_width": 0.2565251635018413,
+      "mean_width": 0.32427461223201975,
+      "coverage_poisson_se": 0.001831043462442257
+    },
+    "gspphot": {
+      "n": 67667,
+      "coverage": 0.10963985399086704,
+      "median_width": 0.02950000762939453,
+      "mean_width": 0.05753068090101913,
+      "coverage_poisson_se": 0.0012010984844663113
+    },
+    "msa_conformal_tail": {
+      "n": 56,
+      "coverage": 0.75,
+      "median_width": 0.4477245082565582,
+      "mean_width": 0.49183623668315424,
+      "coverage_poisson_se": 0.057863756235784464
+    },
+    "gspphot_tail": {
+      "n": 56,
+      "coverage": 0.017857142857142856,
+      "median_width": 0.03919994831085205,
+      "mean_width": 0.08661426018391338,
+      "coverage_poisson_se": 0.017696985874377052
+    }
+  },
+  "feh": {
+    "msa_conformal": {
+      "n": 67667,
+      "coverage": 0.662686390707435,
+      "median_width": 0.15346694557095142,
+      "mean_width": 0.1908081358128013,
+      "coverage_poisson_se": 0.0018175338016746124
+    },
+    "gspphot": {
+      "n": 67667,
+      "coverage": 0.036265831202801954,
+      "median_width": 0.018800005316734314,
+      "mean_width": 0.03451494671030442,
+      "coverage_poisson_se": 0.0007186856694220574
+    },
+    "msa_conformal_tail": {
+      "n": 56,
+      "coverage": 0.5714285714285714,
+      "median_width": 0.6821920551769693,
+      "mean_width": 0.7622545382068125,
+      "coverage_poisson_se": 0.06613000712661082
+    },
+    "gspphot_tail": {
+      "n": 56,
+      "coverage": 0.0,
+      "median_width": 0.004049986600875771,
+      "mean_width": 0.03971071501395531,
+      "coverage_poisson_se": 0.0
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"status":"client_validation_failed","accepted_session_ids":[],"reason":"CANFAR CreateRequest rejects gpu=0; CPU requests require gpu=None. No API creation occurred.","source_commit":"2f8165accf79c5cf813afe812375980a9b58a378"}

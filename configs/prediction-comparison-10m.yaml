@@ -1,0 +1,175 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+checkpoint_sha256: 9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+warmup_updates: 500
+supervised_batches_per_update: 8
+contrast_batch: 256
+reconstruction_weight: 0.01
+arms:
+- run_id: prediction_e72_huber_10m_v1
+  head: mlp
+  loss: huber
+- run_id: prediction_e72_gaussian_nll_10m_v1
+  head: mlp
+  loss: gaussian_nll
+- run_id: prediction_e72_gaussian_crps_10m_v1
+  head: mlp
+  loss: gaussian_crps
+- run_id: prediction_e72_huber_rnc_10m_v1
+  head: mlp
+  loss: huber
+  rnc_weight: 0.1
+- run_id: prediction_e72_residual_huber_10m_v1
+  head: residual
+  loss: huber
+- run_id: prediction_e72_batchensemble_huber_10m_v1
+  head: batchensemble
+  loss: huber
+- run_id: prediction_e72_residual_lds_huber_10m_v1
+  head: residual
+  loss: lds_huber
+  lds:
+    kernel: gaussian
+    kernel_width_bins: 2
+    n_bins: 100
+    reweight_factor: 1.0
+    base_loss: huber
+    fit_targets: standardized_native_fit_feh
+- run_id: prediction_e72_residual_nll_labelerr_10m_v1
+  head: residual
+  loss: gaussian_nll_label_error
+- run_id: prediction_e72_contrastive_flow_10m_v1
+  head: contrastive_flow
+  loss: contrastive_flow
+  contrastive_flow:
+    n_features: 8
+    context_dim: 1
+    flow_type: nsf
+    n_transforms: 3
+    hidden_features:
+    - 64
+    - 64
+    temperature: 1.0
+    margin: 0.0
+    negative_shifts:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+    - 32
+    - 64
+    - 128
+    grid_points: 201
+    grid_margin_standardized: 0.5
+- run_id: prediction_e72_rc_shared_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_shared
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+- run_id: prediction_e72_rc_per_star_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_per_star
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+- run_id: prediction_e72_simex_xp_10m_v1
+  head: residual
+  loss: huber
+  input_correction:
+    method: simex
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    simex_n_simulations: 4
+    simex_extrapolation_order: 2
+- run_id: prediction_e72_rc_shared_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_shared
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+  replaces_run_id: prediction_e72_rc_shared_xp_10m_v1
+- run_id: prediction_e72_rc_per_star_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: rc_per_star
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+  replaces_run_id: prediction_e72_rc_per_star_xp_10m_v1
+- run_id: prediction_e72_simex_xp_10m_v2
+  head: residual
+  loss: huber
+  input_correction:
+    method: simex
+    features: xp_coefficients
+    noise: fit_rms_standardized_diagonal
+    simex_n_simulations: 4
+    simex_extrapolation_order: 2
+    xp_error_units: raw_xp_sigma_divided_by_g_flux_then_parent_scale
+    error_convention: raw_xp
+    simex_extrapolant: affine_rational
+  replaces_run_id: prediction_e72_simex_xp_10m_v1
+- run_id: prediction_e72_residual_mse_mechanism_10m_v1
+  head: residual
+  loss: mse
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_corrected_score_xp_10m_v1
+  head: residual
+  loss: corrected_score
+  error_convention: raw_xp
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_classifier_nre_b_10m_v1
+  head: neural_ratio
+  loss: neural_ratio
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_group_dro_10m_v1
+  head: residual
+  loss: group_dro_huber
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_mse_mechanism_10m_v2
+  head: residual
+  loss: mse
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_corrected_score_xp_10m_v2
+  head: residual
+  loss: corrected_score
+  error_convention: raw_xp
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_classifier_nre_b_10m_v2
+  head: neural_ratio
+  loss: neural_ratio
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_residual_group_dro_10m_v2
+  head: residual
+  loss: group_dro_huber
+  library_revision: 66d52feacb2a7139bca9a294541aec7c09def83e
+- run_id: prediction_e72_mse_imbalance_10m_v1
+  head: residual
+  loss: mse
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+- run_id: prediction_e72_bmc_imbalance_10m_v1
+  head: residual
+  loss: bmc
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    sigma_standardized: 0.5
+- run_id: prediction_e72_ranksim_imbalance_10m_v1
+  head: residual
+  loss: mse_ranksim
+  library_revision: 2a99f4ca5b1508b430937a3b9b71fbece99186f6
+  imbalance:
+    gamma: 0.1

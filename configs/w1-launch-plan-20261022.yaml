@@ -1,0 +1,49 @@
+jobs:
+- run_id: w1_quantile_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_expectile_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_mvgaussian_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_lowrank_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_mdn4_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_mdn8_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_mvgaussian_norecon_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w1_mdn4_norecon_s42
+  task: multilabel-w1
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1

@@ -1,0 +1,8 @@
+{
+  "epoch": 55,
+  "rows_seen_total": 10604082776,
+  "scaler_sha256": "5fd976729dfe5ccd7b4ec2ce080e679c49f1ca5244f779cad45e148fa4836037",
+  "checkpoint_sha256": "a1b42b31903b03141b4122463e3245d1c0b98f3eb8cabadcde948f7c5cdc762f",
+  "checkpoint_path": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_55.pth",
+  "size_bytes": 409873756
+}

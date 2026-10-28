@@ -1,0 +1,78 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
+cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+sidecar: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+native_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+head_warmup_updates: 500
+supervised_batches_per_update: 8
+minimum_role_rows: 128
+point_samples: 256
+noise_mc_samples: 32
+ttt_objects: 512
+ttt_calibration_objects: 256
+ttt_steps: 3
+forward_epochs: 40
+forward_iterations: 30
+run_id: multilabel_sls_wave_20261023
+target_names:
+- teff
+- logg
+- fe_h
+flow_memory_preflight: false
+density_conformal: false
+evaluation_policy:
+  primary: SLS raw90 and calibrated90/95 joint membership/native log volume
+  point: geometric frontier center, not conditional mean
+  density: unavailable; do not compute NLL/CRPS from a fabricated PDF
+  schedule: 50 criterion-call SLS warmup + same500head and306encoder updates
+  targets: native measured Teff/logg/FeH; no quoted-error integration
+  point_samples: shared runner buffer unused by SLS frontier-center estimator
+budget:
+  independent_jobs: 4
+  nominal_presentations_per_job: 10000000
+  total_nominal_presentations: 40000000
+  no_new_catalogues: true
+deferred_targets:
+  alpha: not in current quality-bound native3 runner
+  age: separate named-scale prepared-embedding joint-age pilot
+  distance: separate signed-parallax prepared-embedding pilot
+arms:
+- run_id: multi_sls_full_r03_s45_10m_v1
+  kind: sls
+  frontier_mode: full
+  seed: 45
+  reconstruction_weight: 0.03
+  ttt: false
+- run_id: multi_sls_full_r03_s46_10m_v1
+  kind: sls
+  frontier_mode: full
+  seed: 46
+  reconstruction_weight: 0.03
+  ttt: false
+- run_id: multi_sls_low_rank_r03_s45_10m_v1
+  kind: sls
+  frontier_mode: low_rank
+  seed: 45
+  reconstruction_weight: 0.03
+  ttt: false
+- run_id: multi_sls_low_rank_r03_s46_10m_v1
+  kind: sls
+  frontier_mode: low_rank
+  seed: 46
+  reconstruction_weight: 0.03
+  ttt: false
+contrastive_negative_policy:
+  source: FIT minibatch only, sampled without replacement
+  derangement: roll context by one within batch
+  negatives_per_positive: 1
+  duplicate_source_ids: reject
+  temperature: 1.0
+  margin: 0.0
+  joint_loss_divisor: 3

@@ -1,0 +1,46 @@
+[
+  {
+    "run_id": "unchanged_control",
+    "id": "kwpg3uco",
+    "state": [
+      {
+        "status": "Running",
+        "name": "msa-xp-unchanged-control",
+        "startTime": "2026-10-13T20:51:32Z"
+      }
+    ]
+  },
+  {
+    "run_id": "corrected_signal_weighted_mae",
+    "id": "mqjxw6mv",
+    "state": [
+      {
+        "status": "Running",
+        "name": "msa-xp-corrected-signal-weighted-mae",
+        "startTime": "2026-10-13T20:51:37Z"
+      }
+    ]
+  },
+  {
+    "run_id": "adam_reset_mae",
+    "id": "k25473g4",
+    "state": [
+      {
+        "status": "Running",
+        "name": "msa-xp-adam-reset-mae",
+        "startTime": "2026-10-13T20:51:51Z"
+      }
+    ]
+  },
+  {
+    "run_id": "adam_reset_lr2_mae",
+    "id": "x734qthl",
+    "state": [
+      {
+        "status": "Running",
+        "name": "msa-xp-adam-reset-lr2-mae",
+        "startTime": "2026-10-13T20:52Z"
+      }
+    ]
+  }
+]

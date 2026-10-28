@@ -1,0 +1,204 @@
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/prepared.npz
+preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/manifest.json
+preparation_source_sha: 8edbf713579013477d5a284120bec8443167d70f
+preparation_policy: configs/six-target-preparation-20261024-v3.yaml
+benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
+reconstruction_presentations: 10000000
+effective_batch: 32768
+micro_batch: 1024
+supervised_batches_per_update: 8
+encoder_lr: 1.25e-06
+head_lr: 0.001
+reconstruction_weight: 0.03
+warmup_updates: 250
+auxiliary_weight: 0.1
+scope: matched sparse six-target 10M screens from actual4.5B large model, plus six
+  matched parent86 controls; choose2-3recipes before long150M continuations; no dense-label
+  imputation or identified6Dcopula
+arms:
+- run_id: final6_large_gaussian_base_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.0
+- run_id: final6_large_gaussian_spectral_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.1
+- run_id: final6_large_gaussian_ranking_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.1
+  ranking_weight: 0.1
+- run_id: final6_large_gaussian_triloss_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_large_gaussian_cecdf_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.1
+  auxiliary: cecdf
+- run_id: final6_large_gaussian_base_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.0
+- run_id: final6_large_gaussian_spectral_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.1
+- run_id: final6_large_gaussian_ranking_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.1
+  ranking_weight: 0.1
+- run_id: final6_large_gaussian_triloss_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_large_gaussian_cecdf_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.1
+  auxiliary: cecdf
+- run_id: final6_large_mdn_base_s49_10m_v1
+  kind: mdn
+  seed: 49
+  spectral_weight: 0.0
+- run_id: final6_large_mdn_spectral_s49_10m_v1
+  kind: mdn
+  seed: 49
+  spectral_weight: 0.1
+- run_id: final6_large_mdn_ranking_s49_10m_v1
+  kind: mdn
+  seed: 49
+  spectral_weight: 0.1
+  ranking_weight: 0.1
+- run_id: final6_large_mdn_triloss_s49_10m_v1
+  kind: mdn
+  seed: 49
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_large_mdn_base_s50_10m_v1
+  kind: mdn
+  seed: 50
+  spectral_weight: 0.0
+- run_id: final6_large_mdn_spectral_s50_10m_v1
+  kind: mdn
+  seed: 50
+  spectral_weight: 0.1
+- run_id: final6_large_mdn_ranking_s50_10m_v1
+  kind: mdn
+  seed: 50
+  spectral_weight: 0.1
+  ranking_weight: 0.1
+- run_id: final6_large_mdn_triloss_s50_10m_v1
+  kind: mdn
+  seed: 50
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_large_factorized_nsf_base_s49_10m_v1
+  kind: factorized_nsf
+  seed: 49
+  spectral_weight: 0.0
+- run_id: final6_large_factorized_nsf_spectral_s49_10m_v1
+  kind: factorized_nsf
+  seed: 49
+  spectral_weight: 0.1
+- run_id: final6_large_factorized_nsf_mixed01_s49_10m_v1
+  kind: factorized_nsf
+  seed: 49
+  spectral_weight: 0.1
+  mixed_weight: 0.1
+- run_id: final6_large_factorized_nsf_triloss_s49_10m_v1
+  kind: factorized_nsf
+  seed: 49
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_large_factorized_nsf_base_s50_10m_v1
+  kind: factorized_nsf
+  seed: 50
+  spectral_weight: 0.0
+- run_id: final6_large_factorized_nsf_spectral_s50_10m_v1
+  kind: factorized_nsf
+  seed: 50
+  spectral_weight: 0.1
+- run_id: final6_large_factorized_nsf_mixed01_s50_10m_v1
+  kind: factorized_nsf
+  seed: 50
+  spectral_weight: 0.1
+  mixed_weight: 0.1
+- run_id: final6_large_factorized_nsf_triloss_s50_10m_v1
+  kind: factorized_nsf
+  seed: 50
+  spectral_weight: 0.1
+  auxiliary: triloss
+- run_id: final6_parent86_gaussian_base_s49_10m_v1
+  kind: gaussian
+  seed: 49
+  spectral_weight: 0.0
+  parent86_control: true
+- run_id: final6_parent86_gaussian_base_s50_10m_v1
+  kind: gaussian
+  seed: 50
+  spectral_weight: 0.0
+  parent86_control: true
+- run_id: final6_parent86_mdn_base_s49_10m_v1
+  kind: mdn
+  seed: 49
+  spectral_weight: 0.0
+  parent86_control: true
+- run_id: final6_parent86_mdn_base_s50_10m_v1
+  kind: mdn
+  seed: 50
+  spectral_weight: 0.0
+  parent86_control: true
+- run_id: final6_parent86_factorized_nsf_base_s49_10m_v1
+  kind: factorized_nsf
+  seed: 49
+  spectral_weight: 0.0
+  parent86_control: true
+- run_id: final6_parent86_factorized_nsf_base_s50_10m_v1
+  kind: factorized_nsf
+  seed: 50
+  spectral_weight: 0.0
+  parent86_control: true
+reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+large_checkpoint_source_sha: e525ae75c3eaf162c9a72fbde6b386cce9374eb0
+prepared_sha256: 960830fd84ab43c8723183cc72feef8342cc67dd300b0ffaa3d3eaace8244535
+preparation_manifest_sha256: 52e7c3036edad92d47006b3b72a214ccd58eaf4a61115b0662c5bd521b2591f9
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+source_role_counts:
+  fit:
+  - 19236
+  - 19236
+  - 19236
+  - 2279
+  - 2827
+  - 2827
+  tune:
+  - 2116
+  - 2116
+  - 2116
+  - 828
+  - 1002
+  - 1002
+  cal:
+  - 2046
+  - 2046
+  - 2046
+  - 490
+  - 1024
+  - 1024
+  test:
+  - 96621
+  - 96621
+  - 96621
+  - 431
+  - 2048
+  - 2048

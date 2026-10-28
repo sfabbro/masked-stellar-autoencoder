@@ -1,0 +1,57 @@
+run_id: full_label_evaluation_preparation_v2
+training_performed: false
+frozen:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz
+  sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
+native:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+  sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
+  source_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+alpha:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1/desi-alpha-native.h5
+  sha256: 506fa09d4de88230ba2fee4ae2b23bbaa639c5bedd55b47b86c750c8df6f627a
+  raw_sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
+  source_audit:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/independent-source-audit.json
+    sha256: c712307ee4e7df718d315b6aab3c595656e68f11eb2d76cfa1b5e6e2dfecfc02
+posterior:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5
+  sha256: 0d24f9a748b9664d6ae6888cb38ec0ca50fe91b1d685cd8f377fa09378e2ae36
+external_apokasc3:
+  enabled: true
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
+  sha256: af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d
+feh_ancestry:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1/ancestry-masks.npz
+  sha256: e209f6383ec1bf1108c524b40b51663f6b05aaaead063e6a05a775b2b8166ad2
+feature_lookup:
+  legacy_sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
+  legacy_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  cache_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+  original_path: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
+  chunk_rows: 65536
+  gaia_vac:
+    path: /arc/projects/k-pop/catalogues/galah_dr4_vac_wise_tmass_gaiadr3_240705.fits
+    bytes: 778199040
+    rows: 917588
+policy:
+  no_new_training: true
+  no_row_caps: true
+  full_source_label_join_before_features: true
+  exclude_current_fit_tune_cal_ids: true
+  exclude_known_ancestor_feh_ids_except_unchanged_original_benchmark: true
+  original_ancestor_exposed_stars_in_expanded_clean_scores: false
+  original_benchmark_reference_arrays_preserved_separately: true
+  preserve_original_benchmark_inputs_and_reference_masks: true
+  desi_metalpoor_alpha: diagnostic_only_not_primary
+  apokasc3: external_panel_not_starhorse_truth
+  source_precedence: independently_verified_native3_then_DESIalpha_then_StarHorse_APOGEE17_before_GALAHDR3
+  no_new_catalogue_acquisition: true
+desi_photometry:
+  enabled: true
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits
+  sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
+  unresolved_release: diagnostic_only
+andrae:
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/andrae175m.npz
+  sha256: 49b145b4daf90d475a0a41db7b41d971e824f2761e5218db9635766a8e2a5a78

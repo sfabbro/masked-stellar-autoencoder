@@ -1,0 +1,13 @@
+jobs:
+- run_id: w2_nsf_clean_norecon_s42_v2
+  task: multilabel-w2
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1
+- run_id: w2_nsf_noise_norecon_s42_v2
+  task: multilabel-w2
+  resources:
+    cores: 8
+    ram: 64
+    gpu: 1

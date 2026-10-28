@@ -1,0 +1,5 @@
+jobs:
+- run_id: full_label_source_contract_audit_v1
+  task: expanded-source-contract-audit
+  depends_on: [five_job_broad_test_preparation_v1]
+  resources: {cores: 8, ram: 128, gpu: 0}

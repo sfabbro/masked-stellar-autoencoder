@@ -1,0 +1,21 @@
+checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_72.pth
+checkpoint_sha256: 9de961ce92f0e69838aed174fce6c47179639e23816baf61a45e63d614ff66ec
+benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
+reconstruction_presentations: 270000000
+effective_batch: 32768
+micro_batch: 16384
+encoder_lr: 1.25e-06
+head_lr: 0.001
+warmup_updates: 0
+supervised_batches_per_update: 8
+contrast_batch: 256
+reconstruction_weight: 0.01
+arms:
+- run_id: residual_huber_long_30e_v1
+  head: residual
+  loss: huber
+checkpoint_interval_presentations: 9000000
+continuation_seed: 1042
+continuation_previous_updates: 306
+continuation_checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_huber_10m_v1/checkpoint.pth
+continuation_sha256: 558a317ec8d2101d9caae7fe4a29db5a67ba6124dac27daaaf3ce14b624453ac

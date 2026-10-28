@@ -1,0 +1,7 @@
+{
+  "stage": "correlations",
+  "csv": "/arc/projects/k-pop/spectra/gaia/dr3/xp_continuous_mean_spectrum/XpContinuousMeanSpectrum_057732-057872.csv.gz",
+  "matched_rows": 533039,
+  "missing_rows": 9466961,
+  "output_bytes": 23539979926
+}

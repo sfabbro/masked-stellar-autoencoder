@@ -1,0 +1,499 @@
+{
+  "git_sha": "f2306d03fe26e7b52530434cc403c742b3401789",
+  "git_ref": "codex/xp-reconstruction-experiments",
+  "output_root": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014",
+  "checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_47.pth",
+  "benchmark": "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5",
+  "specification_sha256": "2d90ff90d55ba434df0e23f67a4988f9fb674fb5dd080c66b05ad48fabe4cf28",
+  "jobs": [
+    {
+      "run_id": "control_s42",
+      "name": "msa-xpf14-control-s42",
+      "settings": {
+        "run_id": "control_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "mae",
+        "task": "training"
+      },
+      "session_ids": [
+        "hxcojgfa"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:51:28.058900+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "control_s43",
+      "name": "msa-xpf14-control-s43",
+      "settings": {
+        "run_id": "control_s43",
+        "seed": 43,
+        "embedding": "stable",
+        "loss": "mae",
+        "task": "training"
+      },
+      "session_ids": [
+        "uhhpisyo"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:51:33.338629+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "control_s44",
+      "name": "msa-xpf14-control-s44",
+      "settings": {
+        "run_id": "control_s44",
+        "seed": 44,
+        "embedding": "stable",
+        "loss": "mae",
+        "task": "training"
+      },
+      "session_ids": [
+        "a50rdpwj"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/control_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:51:45.171104+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_s42",
+      "name": "msa-xpf14-spectral-s42",
+      "settings": {
+        "run_id": "spectral_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "task": "training"
+      },
+      "session_ids": [
+        "i5ls8nry"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:51:57.573068+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_s43",
+      "name": "msa-xpf14-spectral-s43",
+      "settings": {
+        "run_id": "spectral_s43",
+        "seed": 43,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "task": "training"
+      },
+      "session_ids": [
+        "gxfkx1yw"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:00.502828+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_s44",
+      "name": "msa-xpf14-spectral-s44",
+      "settings": {
+        "run_id": "spectral_s44",
+        "seed": 44,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "task": "training"
+      },
+      "session_ids": [
+        "xcrnvdqr"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:04.475493+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "photometry_spectral_s42",
+      "name": "msa-xpf14-photometry-spectral-s42",
+      "settings": {
+        "run_id": "photometry_spectral_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "photometry_spectral_mae",
+        "spectral_weight": 0.1,
+        "photometry_weight": 0.01,
+        "task": "training"
+      },
+      "session_ids": [
+        "k7tmwq71"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:07.410834+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "photometry_spectral_s43",
+      "name": "msa-xpf14-photometry-spectral-s43",
+      "settings": {
+        "run_id": "photometry_spectral_s43",
+        "seed": 43,
+        "embedding": "stable",
+        "loss": "photometry_spectral_mae",
+        "spectral_weight": 0.1,
+        "photometry_weight": 0.01,
+        "task": "training"
+      },
+      "session_ids": [
+        "rgly0amw"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s43",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:10.705119+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "photometry_spectral_s44",
+      "name": "msa-xpf14-photometry-spectral-s44",
+      "settings": {
+        "run_id": "photometry_spectral_s44",
+        "seed": 44,
+        "embedding": "stable",
+        "loss": "photometry_spectral_mae",
+        "spectral_weight": 0.1,
+        "photometry_weight": 0.01,
+        "task": "training"
+      },
+      "session_ids": [
+        "b0voa8eo"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/photometry_spectral_s44",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:13.811876+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_weight003_s42",
+      "name": "msa-xpf14-spectral-weight003-s42",
+      "settings": {
+        "run_id": "spectral_weight003_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.03,
+        "task": "training"
+      },
+      "session_ids": [
+        "fcluv83n"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight003_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:16.848951+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_weight030_s42",
+      "name": "msa-xpf14-spectral-weight030-s42",
+      "settings": {
+        "run_id": "spectral_weight030_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.3,
+        "task": "training"
+      },
+      "session_ids": [
+        "ijpzvfvl"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_weight030_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:20.317868+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_lr05_s42",
+      "name": "msa-xpf14-spectral-lr05-s42",
+      "settings": {
+        "run_id": "spectral_lr05_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "lr_factor": 0.5,
+        "task": "training"
+      },
+      "session_ids": [
+        "oqxlgwdm"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr05_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:23.944334+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_lr125_s42",
+      "name": "msa-xpf14-spectral-lr125-s42",
+      "settings": {
+        "run_id": "spectral_lr125_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "lr_factor": 1.25,
+        "task": "training"
+      },
+      "session_ids": [
+        "zxzkpnvw"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_lr125_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:27.152941+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_reset_warmup_s42",
+      "name": "msa-xpf14-spectral-reset-warmup-s42",
+      "settings": {
+        "run_id": "spectral_reset_warmup_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "reset_optimizer": true,
+        "warmup_steps": 32,
+        "task": "training"
+      },
+      "session_ids": [
+        "g4ddckgb"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_reset_warmup_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:30.327305+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_dropout0_s42",
+      "name": "msa-xpf14-spectral-dropout0-s42",
+      "settings": {
+        "run_id": "spectral_dropout0_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "dropout": 0.0,
+        "task": "training"
+      },
+      "session_ids": [
+        "ggpwkvma"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout0_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:33.204912+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_dropout005_s42",
+      "name": "msa-xpf14-spectral-dropout005-s42",
+      "settings": {
+        "run_id": "spectral_dropout005_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "dropout": 0.05,
+        "task": "training"
+      },
+      "session_ids": [
+        "uj8tfdpb"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_dropout005_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:36.477878+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_decoder_dropout0_s42",
+      "name": "msa-xpf14-spectral-decoder-dropout0-s42",
+      "settings": {
+        "run_id": "spectral_decoder_dropout0_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "decoder_dropout": 0.0,
+        "task": "training"
+      },
+      "session_ids": [
+        "bn5a9vh8"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_decoder_dropout0_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:40.303592+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "multiscale_spectral_s42",
+      "name": "msa-xpf14-multiscale-spectral-s42",
+      "settings": {
+        "run_id": "multiscale_spectral_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "multiscale_spectral_mae",
+        "spectral_weight": 0.1,
+        "spectral_smoothing_nm": 40.0,
+        "task": "training"
+      },
+      "session_ids": [
+        "nuto44qs"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/multiscale_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:43.489135+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "full_decoder_spectral_s42",
+      "name": "msa-xpf14-full-decoder-spectral-s42",
+      "settings": {
+        "run_id": "full_decoder_spectral_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "full_decoder_spectral_mae",
+        "spectral_weight": 0.1,
+        "task": "training"
+      },
+      "session_ids": [
+        "ra9o4fea"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/full_decoder_spectral_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:46.734978+00:00",
+      "attempts": 1
+    },
+    {
+      "run_id": "spectral_latent_views_s42",
+      "name": "msa-xpf14-spectral-latent-views-s42",
+      "settings": {
+        "run_id": "spectral_latent_views_s42",
+        "seed": 42,
+        "embedding": "stable",
+        "loss": "spectral_mae",
+        "spectral_weight": 0.1,
+        "latent_weight": 0.01,
+        "task": "training"
+      },
+      "session_ids": [
+        "yih2z9ep"
+      ],
+      "output": "/arc/projects/k-pop/msa_runs/xp-followup-e47-20261014/spectral_latent_views_s42",
+      "resources": {
+        "cpu": 4,
+        "memory_gib": 64,
+        "gpu": 1
+      },
+      "status": "submitted",
+      "attempted_at": "2026-10-14T18:52:49.496152+00:00",
+      "attempts": 1
+    }
+  ]
+}

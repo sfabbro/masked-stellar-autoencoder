@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Downloaded scientific arrays/checkpoints and generated monitoring state.
+# Keep local artifacts; commit their producers and provenance ledgers.
+experiments/xp/results/
+experiments/xp/results-*/
+experiments/xp/training-qa-cache/
+experiments/xp/science-review-*/
+experiments/xp/monitor/*.json
+monitor/main-status/
+
+experiments/xp/monitor/arc-results-audit.txt

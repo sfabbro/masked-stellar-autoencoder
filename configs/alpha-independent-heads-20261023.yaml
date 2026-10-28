@@ -1,0 +1,37 @@
+run_id: alpha_frozen_heads_independent_v1
+base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/prepared.npz
+input_sha256: 359037802f93f70ce99fffc16d1568bb6eeada37f616fbe4e8b27dc55fcbcea8
+library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+scope: head numerics and calibration only; frozen encoder derivation not replayed
+models:
+- run_id: alpha_desi_gaussian_s45_v1
+  kind: gaussian
+  seed: 45
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: ed2660df6d76b58793c0476561c5913ec184bee8097a087517eb8038c226fe1e
+- run_id: alpha_desi_gaussian_s46_v1
+  kind: gaussian
+  seed: 46
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: 208be2e6d800d8689e48ba6a0578642d78751b70fd86d69c386aab53b1404336
+- run_id: alpha_desi_mdn_s45_v1
+  kind: mdn
+  seed: 45
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: 443a6cb5039cbc101ecb438fd3867cf5ac30d57d86ec37e334b931b7e83e0632
+- run_id: alpha_desi_mdn_s46_v1
+  kind: mdn
+  seed: 46
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: 9d1cb12a4a42a1069e1248442ff0058a3a4dc76e679f6327fa6944b9a2f4af51
+- run_id: alpha_desi_nsf_s45_v1
+  kind: nsf
+  seed: 45
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: c8619501224f70e6a9e8c38d496037834618676065f895c85065283cd75b9a93
+- run_id: alpha_desi_nsf_s46_v1
+  kind: nsf
+  seed: 46
+  source_commit: 8d4d8faee98e0b282706ec70a3b56c914554e80c
+  checkpoint_sha256: ac9c016dc761048ac365d07c62c8eb4f51e47335ff859162d33270600bd45175
