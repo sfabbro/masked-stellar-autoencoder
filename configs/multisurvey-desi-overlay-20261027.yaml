@@ -1,0 +1,8 @@
+run_id: multisurvey_desi_unique_overlay_v1
+sidecar_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/manifest.json
+sidecar_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5
+sidecar_sha: fe09ff1be95bb95884cbba9f008d02bc3e52e0debd143add5a5d28efad934ba3
+base_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
+base_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5
+base_sha: 112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c
+parent_registry: configs/multisurvey-parent-registry-20261027.json
