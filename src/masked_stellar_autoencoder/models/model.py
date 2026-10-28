@@ -1644,6 +1644,7 @@ class TabResnetWrapper(BaseEstimator):
             "cache_seed": getattr(
                 getattr(self, "data_store", None), "cache_seed", None
             ),
+            "optimizer_batch_size": getattr(self, "_pretrain_batch_size", None),
             "micro_batch_size": getattr(self, "_pretrain_micro_batch_size", None),
         }
 
@@ -1680,7 +1681,12 @@ class TabResnetWrapper(BaseEstimator):
                 key
                 for key, current_value in current_signature.items()
                 if key in signature
-                and key not in {"loader_mode", "loader_policy"}
+                and key
+                not in {
+                    "loader_mode",
+                    "loader_policy",
+                    "micro_batch_size",
+                }
                 and not (
                     expanded_training_rows
                     and key in {"train_rows_per_epoch", "train_rows_by_key"}
@@ -1702,6 +1708,15 @@ class TabResnetWrapper(BaseEstimator):
                     "Resuming with expanded training data coverage: "
                     f"{sum(map(int, saved_rows_by_key.values()))} -> "
                     f"{sum(map(int, current_rows_by_key.values()))} rows per epoch"
+                )
+            if signature.get("micro_batch_size") != current_signature.get(
+                "micro_batch_size"
+            ):
+                print(
+                    "Resuming with changed microbatch size: "
+                    f"{signature.get('micro_batch_size')} -> "
+                    f"{current_signature.get('micro_batch_size')} rows; "
+                    "optimizer batch size is unchanged"
                 )
             if signature.get("loader_policy") not in {
                 None,

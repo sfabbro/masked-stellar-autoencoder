@@ -68,8 +68,8 @@ model:
   cosine_latent: false
 
 training:
-  xp_masking_ratio: 0.9
-  m_masking_ratio: 0.6
+  xp_masking_ratio: 0.5
+  m_masking_ratio: 0.2
   mask_mixture_xp_full_frac: 0.0
   lr: 0.00001
   weight_decay: 0.00001
@@ -79,7 +79,7 @@ training:
   heteroscedastic: false
   pert_ebv_scale: 1.0
   mini_batch_size: 32768
-  micro_batch_size: 8192
+  micro_batch_size: 16384
   # For unweighted MAE without feature perturbation, cache only the 140 input
   # features: all current training rows fit in about 117 GB. Validation streams
   # from /arc. If a future dataset exceeds the cap, the loader samples per shard.
@@ -106,6 +106,6 @@ saving:
   residual_stats_file: '$MSA_PRETRAIN_OUTPUT_DIR/residual_stats.jsonl'
   residual_latest_file: '$MSA_PRETRAIN_OUTPUT_DIR/residual_latest.json'
   progress_file: '$MSA_PRETRAIN_OUTPUT_DIR/progress.jsonl'
-  checkpoint_interval: 2
+  checkpoint_interval: 1
   arc_checkpoint_dir: '$MSA_PRETRAIN_CHECKPOINT_DIR'
-  arc_sync_interval: 5
+  arc_sync_interval: 1
