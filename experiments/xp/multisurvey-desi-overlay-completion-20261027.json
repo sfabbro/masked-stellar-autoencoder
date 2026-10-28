@@ -1,0 +1,85 @@
+{
+  "scope": "Completed source-only overlay, selected sidecar kept on ARC; producer-computed source hashes, no local full sidecar rehash or scientific validation.",
+  "receipt": {
+    "run_id": "multisurvey_desi_unique_overlay_v1",
+    "session_id": "hmneo9l0",
+    "source_commit": "cf40e37c87d4e724b84fd1dffcac6d9e1363560d",
+    "manifest_sha256": "8c15e891e7d2fee41ced24febd31e71833445a0bb220127fa4f4d17bd9a03754",
+    "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+    "overlay_sha256": "60c097676bab21fe03f04afc0b26a608ee1ea0e7ea93a1577725dccb97a7a32a",
+    "selected_sidecar_sha256": "7a1a40bf07b32cbc1348f75ce64eedc7c7a707c5d7247a06280c835ec6fadef9",
+    "selected_sidecar_local_full_hash_verified": false,
+    "scope": "Small manifest and overlay HDF5 preserved and producer SHA verified; selected sidecar remains on ARC and has not been downloaded or independently rehashed locally."
+  },
+  "result": {
+    "counts": {
+      "roles": {
+        "cal": {
+          "base_stars": 247705,
+          "desi_logg_not_previously_observed": 170106,
+          "overlap_desi_and_previous_logg": 563,
+          "previous_logg": 70367,
+          "primary_input_desi_logg": 170669
+        },
+        "devtest": {
+          "base_stars": 248489,
+          "desi_logg_not_previously_observed": 171110,
+          "overlap_desi_and_previous_logg": 686,
+          "previous_logg": 70094,
+          "primary_input_desi_logg": 171796
+        },
+        "excluded": {
+          "base_stars": 1958726,
+          "desi_logg_not_previously_observed": 34341,
+          "overlap_desi_and_previous_logg": 0,
+          "previous_logg": 0,
+          "primary_input_desi_logg": 34341
+        },
+        "external": {
+          "base_stars": 2291,
+          "desi_logg_not_previously_observed": 3,
+          "overlap_desi_and_previous_logg": 2,
+          "previous_logg": 1513,
+          "primary_input_desi_logg": 5
+        },
+        "fit": {
+          "base_stars": 1736618,
+          "desi_logg_not_previously_observed": 1192466,
+          "overlap_desi_and_previous_logg": 5181,
+          "previous_logg": 493548,
+          "primary_input_desi_logg": 1197647
+        },
+        "tune": {
+          "base_stars": 248113,
+          "desi_logg_not_previously_observed": 170649,
+          "overlap_desi_and_previous_logg": 436,
+          "previous_logg": 70106,
+          "primary_input_desi_logg": 171085
+        }
+      },
+      "scope": "Exact source-role/mask overlap only; labels, errors, source dependencies and physical scale still require scientific validation. Original FIT/held-out roles unchanged.",
+      "selected_desi_ids": 3681789,
+      "selected_desi_not_in_base": 17578
+    },
+    "overlay_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
+    "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+    "overlay_sha256": "60c097676bab21fe03f04afc0b26a608ee1ea0e7ea93a1577725dccb97a7a32a",
+    "selected": {
+      "discarded_from_view": 1347,
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/desi-selected.h5",
+      "raw_rows": 3683136,
+      "selected_rows": 3681789,
+      "sha256": "7a1a40bf07b32cbc1348f75ce64eedc7c7a707c5d7247a06280c835ec6fadef9"
+    }
+  },
+  "local_link_metadata_verification": {
+    "status": "pass",
+    "verified_links": 58,
+    "sources": [
+      "apogee",
+      "desi_dr1_rvs_raw",
+      "galah"
+    ],
+    "scope": "HDF5 links and registry metadata only; linked attachments not locally rehashed"
+  }
+}

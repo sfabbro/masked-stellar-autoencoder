@@ -408,3 +408,25 @@ def test_batch_registry_mismatch_is_rejected():
             torch.ones(3, 3),
             assume_diagonal_catalog_covariance=True,
         )
+
+
+def test_float64_head_preserves_encoder_gradients_with_float32_encoder():
+    class MAE(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.encoder = nn.Linear(2, 4)
+
+    model = CanonicalAtmosphereModel(
+        MAE(),
+        CanonicalGaussianHead(
+            4,
+            torch.tensor([5000.0, 2.0, -1.0]),
+            torch.tensor([1000.0, 1.0, 1.0]),
+            width=8,
+        ).double(),
+    )
+    mean, lower = model(torch.tensor([[0.1, -0.2]], dtype=torch.float32))
+    assert mean.dtype == lower.dtype == torch.float64
+    (mean.square().sum() + lower.square().sum()).backward()
+    assert model.mae.encoder.weight.grad.dtype == torch.float32
+    assert torch.count_nonzero(model.mae.encoder.weight.grad)

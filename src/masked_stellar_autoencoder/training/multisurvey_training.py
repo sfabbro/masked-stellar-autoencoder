@@ -47,7 +47,14 @@ def _fixed_buffers_sha256(module) -> str:
 class FitIdentityGate:
     """Bind a FIT-only dataset and compare each batch to its source records."""
 
-    def __init__(self, dataset, *, source_binding: str, fit_ids_sha256: str):
+    def __init__(
+        self,
+        dataset,
+        *,
+        source_binding: str,
+        fit_ids_sha256: str,
+        repeat_policy: str = "reject",
+    ):
         if not isinstance(dataset, SparseSurveyDataset):
             raise ValueError("A verified sparse survey reader is required")
         if (
@@ -55,7 +62,10 @@ class FitIdentityGate:
             or dataset.source_binding != source_binding
         ):
             raise ValueError("FIT source digest binding differs")
+        if repeat_policy not in {"reject", "lowest_source_row"}:
+            raise ValueError("Unknown repeat resolution policy")
         self.dataset = dataset
+        self.repeat_policy = repeat_policy
         self.ids = np.asarray(dataset.ids[dataset.star_rows], dtype="<i8")
         if len(self.ids) == 0 or np.any(np.diff(self.ids) <= 0):
             raise ValueError(
@@ -98,7 +108,9 @@ class FitIdentityGate:
         pos = np.searchsorted(self.ids, raw)
         if np.any(pos >= len(self.ids)) or not np.array_equal(self.ids[pos], raw):
             raise ValueError("Batch contains identities outside the pinned FIT split")
-        expected = collate_multisurvey([self.dataset[int(i)] for i in pos])
+        expected = collate_multisurvey(
+            [self.dataset[int(i)] for i in pos], repeat_policy=self.repeat_policy
+        )
         tensor_keys = (
             "source_id",
             "input",
@@ -129,6 +141,8 @@ class FitIdentityGate:
             "registry_sha256",
             "source_binding",
             "provenance",
+            "repeat_policy",
+            "repeat_resolution",
             "target_names",
         ):
             if batch.get(key) != expected[key]:
@@ -221,6 +235,7 @@ class ConsensusTrainer:
             "registry_sha256": gate.dataset.registry_sha256,
             "source_registry": list(gate.dataset.names),
             "fit_ids_sha256": gate.fit_ids_sha256,
+            "repeat_policy": gate.repeat_policy,
             "parent_sha256": parent_sha256,
             "normalization_sha256": normalization_sha256,
             "torchregress_revision": library_revision,
@@ -254,6 +269,8 @@ class ConsensusTrainer:
 
     def _check_fixed_buffers(self) -> None:
         self.gate.dataset._check_source_binding()
+        if self.gate.repeat_policy != self.contract["repeat_policy"]:
+            raise ValueError("Repeat resolution policy changed")
         if (
             _static_head_config(self.model, self.relative_head)
             != self.contract["static_head_config"]

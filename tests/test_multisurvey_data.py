@@ -193,3 +193,36 @@ def test_registry_is_isolated_and_mutation_is_detected(tmp_path):
     with pytest.raises(ValueError, match="registry changed"):
         ds[0]
     ds.close()
+
+
+def test_repeat_resolution_requires_opt_in_and_preserves_source_rows(tmp_path):
+    path = tmp_path / "source.h5"
+    make_source(path, duplicate=True)
+    ds = SparseSurveyDataset(path, registry(), role="fit")
+    star = ds[0]
+    with pytest.raises(ValueError, match="dependent or repeated"):
+        collate_multisurvey([star])
+    batch = collate_multisurvey([star], repeat_policy="lowest_source_row")
+    assert batch["source_row"].tolist() == [[10]]
+    assert batch["repeat_resolution"] == [
+        {
+            "source_id": 11,
+            "source": "a",
+            "dependency_id": "a",
+            "kept_source_row": 10,
+            "dropped_source_rows": [11],
+        }
+    ]
+    assert len(ds[0]["observations"]) == 2
+    ds.close()
+
+
+def test_same_dependency_across_different_surveys_is_never_dropped(tmp_path):
+    path = tmp_path / "source.h5"
+    make_source(path)
+    bad = registry()
+    bad["b"]["dependency_id"] = "a"
+    ds = SparseSurveyDataset(path, bad, role="fit")
+    with pytest.raises(ValueError, match="dependent or repeated"):
+        collate_multisurvey([ds[1]], repeat_policy="lowest_source_row")
+    ds.close()

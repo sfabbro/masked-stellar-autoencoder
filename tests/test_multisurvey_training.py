@@ -234,3 +234,36 @@ def test_resume_rejects_a_different_noise_floor_contract(tmp_path):
     with pytest.raises(ValueError, match="training contract differs"):
         changed.load(path, expected_sha256=digest)
     dataset.close()
+
+
+def test_fit_gate_binds_repeat_policy_and_rechecks_selected_rows(tmp_path):
+    path = tmp_path / "source.h5"
+    fixture.make_source(path, duplicate=True)
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    dataset = SparseSurveyDataset(
+        path, fixture.registry(), role="fit", expected_source_sha256=sha
+    )
+    ids_sha = hashlib.sha256(
+        np.asarray(dataset.ids[dataset.star_rows], dtype="<i8").tobytes()
+    ).hexdigest()
+    gate = FitIdentityGate(
+        dataset,
+        source_binding=sha,
+        fit_ids_sha256=ids_sha,
+        repeat_policy="lowest_source_row",
+    )
+    batch = collate_multisurvey([dataset[0]], repeat_policy="lowest_source_row")
+    assert gate.verify_batch(batch)["source_row"].tolist() == [[10]]
+    forged = dict(batch)
+    forged["repeat_resolution"] = []
+    with pytest.raises(ValueError, match="repeat_resolution"):
+        gate.verify_batch(forged)
+    dataset.close()
+
+
+def test_repeat_policy_cannot_change_after_trainer_creation(tmp_path):
+    trainer, dataset = setup_trainer(tmp_path)
+    trainer.gate.repeat_policy = "lowest_source_row"
+    with pytest.raises(ValueError, match="policy changed"):
+        trainer.save(tmp_path / "bad.pth", sampler_state={})
+    dataset.close()

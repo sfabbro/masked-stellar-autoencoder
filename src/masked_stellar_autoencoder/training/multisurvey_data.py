@@ -352,13 +352,55 @@ class SparseSurveyDataset(Dataset):
         }
 
 
-def collate_multisurvey(stars: list[dict[str, Any]]) -> dict[str, Any]:
-    """Pad records while keeping provenance and rejecting unresolved dependence.
+def _resolve_repeated_observations(star: dict[str, Any], policy: str):
+    records = star["observations"]
+    groups = {}
+    for index, record in enumerate(records):
+        if np.any(record["observed"]):
+            groups.setdefault(record["dependency_id"], []).append(index)
+    drop, resolved = set(), []
+    for dependency, indices in groups.items():
+        if len(indices) < 2:
+            continue
+        if policy == "reject" or len({records[i]["source"] for i in indices}) != 1:
+            raise ValueError(
+                f"Unresolved dependent or repeated measurements for source_id {star['source_id']}"
+            )
+        rows = [int(records[i]["source_row"]) for i in indices]
+        if len(set(rows)) != len(rows):
+            raise ValueError("Repeated measurements have duplicate source rows")
+        kept = min(indices, key=lambda i: int(records[i]["source_row"]))
+        removed = [i for i in indices if i != kept]
+        drop.update(removed)
+        resolved.append(
+            {
+                "source_id": int(star["source_id"]),
+                "source": records[kept]["source"],
+                "dependency_id": dependency,
+                "kept_source_row": int(records[kept]["source_row"]),
+                "dropped_source_rows": sorted(
+                    int(records[i]["source_row"]) for i in removed
+                ),
+            }
+        )
+    return [
+        record for index, record in enumerate(records) if index not in drop
+    ], resolved
 
-    Repeated dependency IDs for a star are not assumed independent. Supply an
-    explicit joint error model or resolve the dependence upstream before using
-    this baseline collator; the underlying dataset never discards the records.
+
+def collate_multisurvey(
+    stars: list[dict[str, Any]], *, repeat_policy: str = "reject"
+) -> dict[str, Any]:
+    """Pad observations; repeated source rows are rejected unless opted in.
+
+    ``lowest_source_row`` selects one row per repeated *same source* without
+    examining values. It records dropped row identities and retains original
+    records in the underlying dataset. Different sources sharing a dependency
+    remain rejected. This is a declared selection baseline, not an independent
+    error model or evidence that the selected spectrum is representative.
     """
+    if repeat_policy not in {"reject", "lowest_source_row"}:
+        raise ValueError("Unknown repeat resolution policy")
     if not stars:
         raise ValueError("Cannot collate an empty batch")
     for key in ("source_registry", "registry_sha256", "source_binding", "role"):
@@ -367,8 +409,9 @@ def collate_multisurvey(stars: list[dict[str, Any]]) -> dict[str, Any]:
     ids = [int(star["source_id"]) for star in stars]
     if len(ids) != len(set(ids)):
         raise ValueError("A batch must contain at most one row per source_id")
+    resolved = [_resolve_repeated_observations(star, repeat_policy) for star in stars]
     b = len(stars)
-    m = max(len(star["observations"]) for star in stars)
+    m = max(len(records) for records, _ in resolved)
     value = torch.full((b, m, 3), float("nan"), dtype=torch.float64)
     error = torch.full_like(value, float("nan"))
     mask = torch.zeros((b, m, 3), dtype=torch.bool)
@@ -377,16 +420,9 @@ def collate_multisurvey(stars: list[dict[str, Any]]) -> dict[str, Any]:
     source_row = torch.full((b, m), -1, dtype=torch.long)
     is_anchor = torch.zeros((b, m), dtype=torch.bool)
     records = []
-    for i, star in enumerate(stars):
-        deps = [
-            r["dependency_id"] for r in star["observations"] if np.any(r["observed"])
-        ]
-        if len(deps) != len(set(deps)):
-            raise ValueError(
-                f"Unresolved dependent or repeated measurements for source_id {ids[i]}"
-            )
+    for i, (selected, _) in enumerate(resolved):
         provenance = []
-        for j, record in enumerate(star["observations"]):
+        for j, record in enumerate(selected):
             value[i, j] = torch.as_tensor(record["value"])
             error[i, j] = torch.as_tensor(record["error"])
             mask[i, j] = torch.as_tensor(record["observed"])
@@ -425,5 +461,7 @@ def collate_multisurvey(stars: list[dict[str, Any]]) -> dict[str, Any]:
         "source_row": source_row,
         "is_anchor": is_anchor,
         "provenance": records,
+        "repeat_policy": repeat_policy,
+        "repeat_resolution": [entry for _, entries in resolved for entry in entries],
         "target_names": ("teff", "logg", "fe_h"),
     }

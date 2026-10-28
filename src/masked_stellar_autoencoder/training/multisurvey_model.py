@@ -99,7 +99,12 @@ class CanonicalAtmosphereModel(nn.Module):
 
     def forward(self, natural_input: Tensor) -> tuple[Tensor, Tensor]:
         """Use the provided natural-input mask; this method adds no XP masking."""
-        return self.head(self.mae.encoder(natural_input))
+        latent = self.mae.encoder(natural_input)
+        # Physical Teff and dex covariances can be badly conditioned in fp32.
+        # Allow the observation head and marginal likelihood to use fp64 while
+        # keeping the pretrained encoder and reconstruction path in fp32.
+        head_dtype = next(self.head.parameters()).dtype
+        return self.head(latent.to(dtype=head_dtype))
 
     def reconstruct(self, masked_input: Tensor):
         """Call the unchanged original MAE reconstruction path."""
