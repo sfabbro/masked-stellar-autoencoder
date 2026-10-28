@@ -1,0 +1,82 @@
+{
+  "scope": "Saved-array arithmetic and plotted samples only; not model replay, physical-copula certification, an untouched test, or scientific selection.",
+  "gate_checks": [
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "passed": true,
+      "metrics": {
+        "relative_ess_median": 0.9636300206184387,
+        "relative_ess_min": 0.012757291086018085,
+        "replica_gap_p95": 0.08981678634881973,
+        "refinement_gap_p95": 0.0463043674826622
+      },
+      "max_replica_gap": 0.6871552467346191,
+      "max_refinement_gap": 0.35078907012939453,
+      "max_replica_gap_source_id": 2580161853150296192,
+      "source_ids_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a"
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "passed": true,
+      "metrics": {
+        "relative_ess_median": 0.9692054986953735,
+        "relative_ess_min": 0.015241766348481178,
+        "replica_gap_p95": 0.057295989245176315,
+        "refinement_gap_p95": 0.05753125995397568
+      },
+      "max_replica_gap": 1.6950488090515137,
+      "max_refinement_gap": 1.0081582069396973,
+      "max_replica_gap_source_id": 6637698340509774336,
+      "source_ids_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a"
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_recon003_v1",
+      "passed": false,
+      "metrics": {
+        "relative_ess_median": 0.9699381589889526,
+        "relative_ess_min": 0.01409872341901064,
+        "replica_gap_p95": 0.11899125576019287,
+        "refinement_gap_p95": 0.1021021381020546
+      },
+      "max_replica_gap": 0.9237251281738281,
+      "max_refinement_gap": 0.39345216751098633,
+      "max_replica_gap_source_id": 6637698340509774336,
+      "source_ids_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_qmc256_startupfix_v3",
+      "passed": false,
+      "metrics": {
+        "relative_ess_median": 0.006855970714241266,
+        "relative_ess_min": 0.00390625,
+        "replica_gap_p95": 14.863373756408691,
+        "refinement_gap_p95": 11.379944801330566
+      },
+      "max_replica_gap": 16.862751007080078,
+      "max_refinement_gap": 14.116077423095703,
+      "max_replica_gap_source_id": 1375770761843122944,
+      "source_ids_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a"
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_qmc256_startupfix_v3",
+      "passed": false,
+      "metrics": {
+        "relative_ess_median": 0.005102124065160751,
+        "relative_ess_min": 0.00390625,
+        "replica_gap_p95": 16.12156105041504,
+        "refinement_gap_p95": 12.471334457397461
+      },
+      "max_replica_gap": 19.59517478942871,
+      "max_refinement_gap": 16.151142120361328,
+      "max_replica_gap_source_id": 1323766954225380480,
+      "source_ids_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a"
+    }
+  ],
+  "corner_arrays": "two models x 10 stars x 8192 original full-vector draws, coordinate conversion and covariance recomputed",
+  "corner_plots": [
+    "corner-4926812820427520.png",
+    "corner-615943806835727872.png",
+    "corner-4185355646116022528.png"
+  ],
+  "corner_missing_truth": "All ten plotted-source candidates lack alpha, age and distance reference values."
+}

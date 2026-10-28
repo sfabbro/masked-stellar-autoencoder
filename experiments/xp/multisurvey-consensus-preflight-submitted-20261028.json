@@ -1,0 +1,34 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_consensus_cuda_preflight_v1",
+      "name": "msa-si15-multisurvey-consensus-cuda-preflight-v1",
+      "source_sha": "fb6521183519074c8f454e68012be6d5a31ac2be",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_consensus_cuda_preflight_v1",
+      "plan": {
+        "run_id": "multisurvey_consensus_cuda_preflight_v1",
+        "task": "multisurvey-consensus-preflight",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "bt8mfivu"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-28T14:06:19.868008+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

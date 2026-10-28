@@ -1,0 +1,187 @@
+{
+  "independent_numpy_counts": "pass",
+  "local_directory": "experiments/xp/results-stellar-improvement/remediation-wave-20261026/fit-collation-census-preservation-20261028",
+  "manifest_sha256": "ec21bfd16519de7102e08f85721a3d71e9705a7179651eaa735d2e4970ff72e9",
+  "npz_crc": "pass",
+  "run_id": "multisurvey_fit_collation_census_v1",
+  "scope": "Source masks and ID arithmetic only; not source calibration, physical truth, a new model or independent held-out performance.",
+  "session_id": "knc852cs",
+  "source_commit": "630c409f30788a9f35ebf53952dfd6a9d5218521",
+  "star_arrays_bytes": 14070353,
+  "star_arrays_sha256": "900f29911fc76aec3de5eadc9e76467ff13ee397043a5ba8e80f6459d757f256",
+  "status": "pass",
+  "summary": {
+    "all_repeat_union_targets_any_source": {
+      "fe_h": 1698731,
+      "logg": 1686014,
+      "teff": 1698746
+    },
+    "eligible_fit_stars": 1736618,
+    "explicit_xp_status_counts": {
+      "explicit_no_xp": 23856,
+      "explicit_xp_present": 1712762,
+      "other_or_unknown": 0
+    },
+    "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+    "input_xp_modes": {
+      "input_xp_not_staged_or_missing": {
+        "selected_targets": {
+          "fe_h": 23192,
+          "logg": 22490,
+          "teff": 23192
+        },
+        "source_combinations": {
+          "apogee": 140,
+          "apogee+desi_dr1_rvs_raw": 2,
+          "apogee+desi_dr1_rvs_raw+galah": 17,
+          "apogee+galah": 919,
+          "desi_dr1_rvs_raw": 616,
+          "desi_dr1_rvs_raw+galah": 808,
+          "galah": 20690,
+          "none": 664
+        },
+        "stars": 23856
+      },
+      "input_xp_present": {
+        "selected_targets": {
+          "fe_h": 1675538,
+          "logg": 1663524,
+          "teff": 1675554
+        },
+        "source_combinations": {
+          "apogee": 114236,
+          "apogee+desi_dr1_rvs_raw": 1387,
+          "apogee+desi_dr1_rvs_raw+galah": 37,
+          "apogee+galah": 9900,
+          "desi_dr1_rvs_raw": 1191799,
+          "desi_dr1_rvs_raw+galah": 2981,
+          "galah": 355214,
+          "none": 37208
+        },
+        "stars": 1712762
+      }
+    },
+    "per_source": {
+      "apogee": {
+        "active_repeated_stars": 5582,
+        "all_repeat_union_targets": {
+          "fe_h": 126622,
+          "logg": 126638,
+          "teff": 126638
+        },
+        "selected_known_error_targets": {
+          "fe_h": 126621,
+          "logg": 126638,
+          "teff": 126638
+        },
+        "selected_targets": {
+          "fe_h": 126621,
+          "logg": 126638,
+          "teff": 126638
+        },
+        "selected_unknown_error_targets": {
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "stars_any_selected_target": 126638,
+        "targets_lost_by_selection": {
+          "fe_h": 1,
+          "logg": 0,
+          "teff": 0
+        }
+      },
+      "desi_dr1_rvs_raw": {
+        "active_repeated_stars": 0,
+        "all_repeat_union_targets": {
+          "fe_h": 1197647,
+          "logg": 1197647,
+          "teff": 1197647
+        },
+        "selected_known_error_targets": {
+          "fe_h": 1197645,
+          "logg": 1197608,
+          "teff": 1196898
+        },
+        "selected_targets": {
+          "fe_h": 1197647,
+          "logg": 1197647,
+          "teff": 1197647
+        },
+        "selected_unknown_error_targets": {
+          "fe_h": 2,
+          "logg": 39,
+          "teff": 749
+        },
+        "stars_any_selected_target": 1197647,
+        "targets_lost_by_selection": {
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        }
+      },
+      "galah": {
+        "active_repeated_stars": 0,
+        "all_repeat_union_targets": {
+          "fe_h": 390566,
+          "logg": 377598,
+          "teff": 390566
+        },
+        "selected_known_error_targets": {
+          "fe_h": 390566,
+          "logg": 377598,
+          "teff": 390566
+        },
+        "selected_targets": {
+          "fe_h": 390566,
+          "logg": 377598,
+          "teff": 390566
+        },
+        "selected_unknown_error_targets": {
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        },
+        "stars_any_selected_target": 390566,
+        "targets_lost_by_selection": {
+          "fe_h": 0,
+          "logg": 0,
+          "teff": 0
+        }
+      }
+    },
+    "registry_sha256": "2463eb459b186a142790f4fb7c81fb7cb8c6cefafd9a95c35ab6665b6ff2793d",
+    "schema": "multisurvey-fit-collation-census-v1",
+    "scope": "FIT and primary-input-eligible source reference availability only; not a quality, independence, physical-scale or model certificate",
+    "selected_targets_any_source": {
+      "fe_h": 1698730,
+      "logg": 1686014,
+      "teff": 1698746
+    },
+    "selection": "lowest original source row among active same-source repeats",
+    "source_binding": "60c097676bab21fe03f04afc0b26a608ee1ea0e7ea93a1577725dccb97a7a32a:09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+    "source_combinations": {
+      "apogee": 114376,
+      "apogee+desi_dr1_rvs_raw": 1389,
+      "apogee+desi_dr1_rvs_raw+galah": 54,
+      "apogee+galah": 10819,
+      "desi_dr1_rvs_raw": 1192415,
+      "desi_dr1_rvs_raw+galah": 3789,
+      "galah": 375904,
+      "none": 37872
+    },
+    "sources": [
+      "apogee",
+      "desi_dr1_rvs_raw",
+      "galah"
+    ],
+    "stars_any_selected_target": 1698746,
+    "targets_lost_all_sources": {
+      "fe_h": 1,
+      "logg": 0,
+      "teff": 0
+    },
+    "xp_scope": "Input XP absence is not evidence of official no XP; unknown official status stays unknown"
+  },
+  "summary_sha256": "9904befe0b707f7b303f56fb1ef76f0e07a97a3304ddea57e4083a251b40d62a"
+}

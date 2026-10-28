@@ -1,0 +1,24 @@
+{
+  "apogee": {
+    "release": "APOGEE DR17 synspec_rev1",
+    "pipeline": "ASPCAP calibrated parameters; original source quality selection",
+    "dependency_id": "apogee-dr17-aspcap",
+    "targets": {
+      "teff": {"quantity": "teff", "unit": "K", "field": "TEFF"},
+      "logg": {"quantity": "logg", "unit": "dex(cm/s2)", "field": "LOGG"},
+      "fe_h": {"quantity": "fe_h", "unit": "dex", "field": "FE_H"}
+    },
+    "scope": "Raw source provenance; cross-survey calibration dependencies are not certified independent"
+  },
+  "galah": {
+    "release": "GALAH DR4 allstar 240705",
+    "pipeline": "GALAH allstar parameters; original source quality selection",
+    "dependency_id": "galah-dr4-allstar",
+    "targets": {
+      "teff": {"quantity": "teff", "unit": "K", "field": "teff"},
+      "logg": {"quantity": "logg", "unit": "dex(cm/s2)", "field": "logg"},
+      "fe_h": {"quantity": "fe_h", "unit": "dex", "field": "fe_h"}
+    },
+    "scope": "Gravity has astrometric/photometric dependencies; cross-survey calibration independence is not certified"
+  }
+}

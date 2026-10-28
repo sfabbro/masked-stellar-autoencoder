@@ -1,0 +1,33 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_desi_unique_overlay_v1",
+      "name": "msa-si15-multisurvey-desi-unique-overlay-v1",
+      "source_sha": "cf40e37c87d4e724b84fd1dffcac6d9e1363560d",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1",
+      "plan": {
+        "run_id": "multisurvey_desi_unique_overlay_v1",
+        "task": "multisurvey-desi-overlay",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "hmneo9l0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-28T01:33:02.744527+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

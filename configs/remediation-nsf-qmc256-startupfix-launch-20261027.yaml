@@ -1,0 +1,25 @@
+jobs:
+- run_id: remediation_nsf6_ft_qmc256_startupfix_v3
+  task: remediation-pilot
+  depends_on:
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  - remediation_nsf6_qmc_probe_v1
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_nsf6_ft_parallax_qmc256_startupfix_v3
+  task: remediation-pilot
+  depends_on:
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  - remediation_nsf6_qmc_probe_v1
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

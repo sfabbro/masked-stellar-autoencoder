@@ -1,0 +1,34 @@
+jobs:
+- run_id: remediation_gaussian6_ft_gradientfix_v2
+  task: remediation-pilot
+  depends_on:
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_mdn6_ft_gradientfix_v2
+  task: remediation-pilot
+  depends_on:
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_gaussian6_ft_parallax_gradientfix_v2
+  task: remediation-pilot
+  depends_on:
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

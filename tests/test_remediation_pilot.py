@@ -230,3 +230,267 @@ def test_independent_encoder_gradient_angle_without_native_model():
     )
     assert result["supervised_l2"] == 1 and result["reconstruction_unweighted_l2"] == 2
     assert result["cosine"] == 0
+
+
+@pytest.mark.parametrize("kind", ["gaussian", "mdn", "nsf"])
+def test_zero_projection_warmup_must_reach_encoder_on_second_update(kind):
+    """A real joint head initially has zero context gradient; it must recover."""
+    import torch
+
+    torch.manual_seed(47)
+    encoder = torch.nn.Linear(3, 4).double()
+    head = pilot.build_head(
+        kind, 4, dict(head_width=8, particles=16, seed=11, mixture_components=3)
+    ).double()
+    optimizer = torch.optim.Adam([*encoder.parameters(), *head.parameters()], lr=1e-2)
+    x = torch.randn(8, 3, dtype=torch.float64)
+    y = torch.randn(8, 6, dtype=torch.float64)
+    mask = torch.ones_like(y, dtype=torch.bool)
+    sigma = torch.full_like(y, 0.1)
+    for update in (1, 2):
+        optimizer.zero_grad(set_to_none=True)
+        supervised = head.criterion(encoder(x), y, sigma, mask)
+        contract = pilot.encoder_gradient_contract(
+            supervised, supervised.new_zeros(()), encoder.parameters()
+        )
+        supervised.backward()
+        state = pilot.enforce_encoder_gradient(
+            encoder, head, kind, update, contract["supervised_l2"]
+        )
+        if update == 1:
+            assert state == "zero_initialized_output_first_step"
+            assert contract["supervised_l2"] == 0
+        else:
+            assert state == "nonzero" and contract["supervised_l2"] > 0
+        optimizer.step()
+
+
+def test_encoder_guard_rejects_disconnected_or_permanently_zero_encoder():
+    import torch
+
+    encoder = torch.nn.Linear(2, 2)
+    head = pilot.build_head(
+        "gaussian", 2, dict(head_width=4, particles=8, seed=11, mixture_components=2)
+    )
+    (
+        head.criterion(
+            torch.ones(2, 2),
+            torch.ones(2, 6),
+            torch.zeros(2, 6),
+            torch.ones(2, 6, dtype=torch.bool),
+        )
+    ).backward()
+    with pytest.raises(FloatingPointError, match="disconnected"):
+        pilot.enforce_encoder_gradient(encoder, head, "gaussian", 1, 0.0)
+    encoder.weight.grad = torch.ones_like(encoder.weight)
+    with pytest.raises(FloatingPointError, match="no supervised gradient"):
+        pilot.enforce_encoder_gradient(encoder, head, "gaussian", 2, 0.0)
+
+
+def test_qmc_diagnostic_row_chunks_preserve_same_joint_flow_estimate():
+    import torch
+
+    from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+
+    torch.manual_seed(32)
+    head = JointSixHead("nsf", latent_dim=3, width=8, particles=16).double()
+    context = torch.randn(5, 3, dtype=torch.double)
+    y = torch.randn(5, 6, dtype=torch.double)
+    sigma = torch.full_like(y, 0.1)
+    mask = torch.tensor(
+        [
+            [1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 0, 1],
+        ],
+        dtype=torch.bool,
+    )
+    with torch.no_grad():
+        full = head.diagnostics(context, y, sigma, mask, particles=16)
+        chunked = pilot.diagnostics_in_row_chunks(
+            head, context, y, sigma, mask, particles=16, chunk_rows=2
+        )
+    for key in full:
+        if isinstance(full[key], torch.Tensor):
+            torch.testing.assert_close(full[key], chunked[key], rtol=1e-11, atol=1e-11)
+        else:
+            assert full[key] == chunked[key]
+
+
+def test_nsf_probe_requires_fixed_no_training_policy():
+    cfg = {
+        "integration_probe_particles": [128, 256, 512, 1024],
+        "integration_probe_chunk_rows": 8,
+    }
+    arm = {
+        "kind": "nsf",
+        "encoder": "frozen",
+        "reconstruction_weight": 0.0,
+        "integration_probe": True,
+    }
+    pilot.validate_integration_probe(cfg, arm)
+    with pytest.raises(ValueError, match="policy"):
+        pilot.validate_integration_probe(cfg, {**arm, "encoder": "finetune"})
+    with pytest.raises(ValueError, match="policy"):
+        pilot.validate_integration_probe(
+            {**cfg, "integration_probe_particles": [64]}, arm
+        )
+
+
+def test_nsf_chunked_backward_matches_full_joint_objective_and_gradients():
+    import copy
+
+    import torch
+
+    from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
+
+    torch.manual_seed(401)
+    encoder = torch.nn.Linear(3, 3).double()
+    head = JointSixHead("nsf", latent_dim=3, width=8, particles=16).double()
+    encoder2, head2 = copy.deepcopy(encoder), copy.deepcopy(head)
+    x = torch.randn(5, 3, dtype=torch.double)
+    y = torch.randn(5, 6, dtype=torch.double)
+    sigma = torch.full_like(y, 0.15)
+    mask = torch.tensor(
+        [
+            [1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 0, 1],
+        ],
+        dtype=torch.bool,
+    )
+    full = head.criterion(encoder(x), y, sigma, mask)
+    full.backward()
+    rows = np.arange(len(x))
+    to_tensor = lambda value, dtype=torch.float64: torch.as_tensor(value, dtype=dtype)
+    chunked, _ = pilot.backward_supervised_chunks(
+        head2,
+        lambda rr: encoder2(x[rr]),
+        y.numpy(),
+        sigma.numpy(),
+        mask.numpy(),
+        rows,
+        chunk_rows=2,
+        tensor=to_tensor,
+    )
+    torch.testing.assert_close(full.detach(), chunked, atol=1e-12, rtol=1e-12)
+    for a, b in zip(
+        [*encoder.parameters(), *head.parameters()],
+        [*encoder2.parameters(), *head2.parameters()],
+        strict=True,
+    ):
+        if a.grad is None:
+            assert b.grad is None
+        else:
+            torch.testing.assert_close(a.grad, b.grad, atol=2e-10, rtol=2e-9)
+
+
+def test_nsf_recovery_requires_real_probe_receipt(tmp_path):
+    probe = {
+        "status": "remediation_nsf_qmc_probe_complete",
+        "run_id": "remediation_nsf6_qmc_probe_v1",
+        "source_commit": "a" * 40,
+        "first_passing_particles": 256,
+        "training_performed": False,
+        "library_revision": "b" * 40,
+        "parent_sha256": "c" * 64,
+        "integration_probe_outcomes": [{"particles": 256, "passed": True}],
+    }
+    path = tmp_path / "probe.json"
+    path.write_text(json.dumps(probe))
+    cfg = {
+        "particles": 256,
+        "integration_gate_particles": 256,
+        "nsf_micro_batch_size": 16,
+        "integration_chunk_rows": 8,
+        "integration_probe_manifest": str(path),
+        "integration_probe_manifest_sha256": pilot.sha(path),
+        "integration_probe_source_commit": "a" * 40,
+        "library_revision": "b" * 40,
+        "checkpoint_sha256": "c" * 64,
+    }
+    assert pilot.validate_nsf_recovery(cfg, {"kind": "nsf"}) == probe
+    with pytest.raises(ValueError, match="particle or microbatch"):
+        pilot.validate_nsf_recovery({**cfg, "particles": 64}, {"kind": "nsf"})
+    probe["integration_probe_outcomes"][0]["passed"] = False
+    path.write_text(json.dumps(probe))
+    cfg["integration_probe_manifest_sha256"] = pilot.sha(path)
+    with pytest.raises(ValueError, match="did not pass"):
+        pilot.validate_nsf_recovery(cfg, {"kind": "nsf"})
+
+
+def test_microbatch_finetuning_rejects_batch_normalization():
+    import torch
+
+    encoder = torch.nn.Sequential(torch.nn.Linear(4, 4), torch.nn.BatchNorm1d(4))
+    with pytest.raises(ValueError, match="batch normalization"):
+        pilot.validate_microbatch_encoder(encoder, finetune=True)
+    pilot.validate_microbatch_encoder(encoder, finetune=False)
+    pilot.validate_microbatch_encoder(torch.nn.LayerNorm(4), finetune=True)
+
+
+def test_nsf_microbatch_zero_projection_startup_then_supervised_encoder_gradient():
+    """The admitted QMC256 chunked path needs one output-only optimizer step."""
+    import torch
+
+    torch.manual_seed(47)
+    encoder = torch.nn.Linear(3, 4).double()
+    head = pilot.build_head(
+        "nsf", 4, dict(head_width=8, particles=256, seed=11, mixture_components=3)
+    ).double()
+    optimizer = torch.optim.Adam([*encoder.parameters(), *head.parameters()], lr=1e-2)
+    x = torch.randn(8, 3, dtype=torch.double)
+    y = torch.randn(8, 6, dtype=torch.double).numpy()
+    sigma = np.full_like(y, 0.1)
+    mask = np.array(
+        [
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1],
+        ],
+        dtype=bool,
+    )
+    for update in (1, 2):
+        optimizer.zero_grad(set_to_none=True)
+        pilot.backward_supervised_chunks(
+            head,
+            lambda rr: encoder(x[rr]),
+            y,
+            sigma,
+            mask,
+            np.arange(len(x)),
+            chunk_rows=2,
+            tensor=lambda value, dtype=torch.float64: torch.as_tensor(
+                value, dtype=dtype
+            ),
+        )
+        contract = pilot.accumulated_encoder_gradient_contract(
+            x.new_zeros(()), encoder.parameters()
+        )
+        status = pilot.enforce_encoder_gradient(
+            encoder, head, "nsf", update, contract["supervised_l2"]
+        )
+        if update == 1:
+            assert status == "zero_initialized_output_first_step"
+            assert contract["supervised_l2"] == 0
+            # Neither a proposal-only signal nor reconstruction is an excuse
+            # for a disconnected flow output: require both projection signals.
+            flow_gradient = head.flow.output.weight.grad.clone()
+            head.flow.output.weight.grad = None
+            with pytest.raises(FloatingPointError, match="no nonzero gradient"):
+                pilot.enforce_encoder_gradient(encoder, head, "nsf", 1, 0.0)
+            head.flow.output.weight.grad = flow_gradient
+            with pytest.raises(FloatingPointError, match="no supervised gradient"):
+                pilot.enforce_encoder_gradient(encoder, head, "nsf", 2, 0.0)
+        else:
+            assert status == "nonzero" and contract["supervised_l2"] > 0
+        optimizer.step()

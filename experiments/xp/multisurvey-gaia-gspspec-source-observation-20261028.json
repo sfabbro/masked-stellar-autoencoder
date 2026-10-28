@@ -1,0 +1,67 @@
+{
+  "all_flags_first12_digits": 5591594,
+  "bytes": 542396160,
+  "gaia_file_path": "/arc/projects/k-pop/catalogues/gaia_rvs_lite_flags.fits.gz",
+  "gaia_file_semantics": "Raw uncompressed FITS bytes despite filename; source_id, GSP-Spec Teff/logg/MH/alpha and percentile bounds plus flags. No Fe/M column.",
+  "known_desi_fit_primary_overlap": {
+    "gaia_ids": 25521,
+    "proposed_logg": 24965,
+    "proposed_teff": 24634,
+    "scope": "Intersection with DESI census FIT identities only, not all Gaia FIT stars."
+  },
+  "logg_percentiles": [
+    -0.9900000095367432,
+    0.5,
+    2.4800000190734863,
+    5.039999961853027,
+    6.480000019073486
+  ],
+  "positive_ids": 5591594,
+  "proposed_tier_both": 5322188,
+  "proposed_tier_logg": 5427249,
+  "proposed_tier_teff": 5361727,
+  "provisional_abundance_counts": {
+    "raw_alpha": 4957718,
+    "raw_mh": 5546177,
+    "selected_alpha": 4644257,
+    "selected_mh": 5173427
+  },
+  "quality_tier": "Provisional: target-specific broadening and RV flags <=1; noise <=3; extrapolation <=2; negative flux <=1; NaN flux/emission/null-flux-error flags zero; broad 2500--10000 K and -1--6.5 dex sanity checks. Alpha additionally requires KMgiantPar=0 and all atmospheric broadening/RV flags <=1. Raw values are retained. These choices are exploratory, not a validated survey calibration.",
+  "raw_finite_logg": 5589105,
+  "raw_finite_positive_teff": 5591594,
+  "rows": 5591594,
+  "sample_archive_check": {
+    "rows": [
+      {
+        "flags": "00200131000009999999999999999999999999999",
+        "logg_dex": 5.71,
+        "source_id": 5385365076191721728,
+        "teff_k": 909.0
+      },
+      {
+        "flags": "00101131000009999999999999999999999999999",
+        "logg_dex": 5.3,
+        "source_id": 6718533232795171712,
+        "teff_k": 1305.0
+      },
+      {
+        "flags": "00200152000009999999999999999999999999999",
+        "logg_dex": 3.61,
+        "source_id": 542250586174281984,
+        "teff_k": 2515.0
+      }
+    ],
+    "scope": "Three first FITS rows matched the public Gaia DR3 TAP values and full quality flags; this does not certify every catalogue row or original publisher provenance."
+  },
+  "scope": "Source-only exploratory tier, not final label validity, independent truth, full FIT union, model performance or recommended science cut.",
+  "sha256": "e165c6f1fc4375389f24db86ff093e0c5d6e7c5da7a49b5564998a625f55dd83",
+  "teff_outside_2500_to_10000": 3,
+  "teff_percentiles": [
+    2554.0,
+    3740.0,
+    4831.0,
+    7539.0,
+    9733.0
+  ],
+  "unique_ids": 5591594
+}

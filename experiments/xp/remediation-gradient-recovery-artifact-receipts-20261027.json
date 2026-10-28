@@ -1,0 +1,110 @@
+{
+  "scope": "Small artifacts only; selected checkpoints remain in ARC",
+  "artifacts": [
+    {
+      "session_id": "u5ir9g7k",
+      "name": "development-predictions.npz",
+      "bytes": 746691,
+      "sha256": "4246bd542071a472aea794c1ae4bd8b8810ac881e8218dc12a3456bd6fa4fbc3",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "u5ir9g7k",
+      "name": "tune-predictions.npz",
+      "bytes": 50369,
+      "sha256": "cd39986590b4a714998cad496455d74af0e766b4d7bbaaff8a6419892d8f4980",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "u5ir9g7k",
+      "name": "metrics.jsonl",
+      "bytes": 2654,
+      "sha256": "4466941e49bf7439be3298b18150f530eed73c1dc1f5259c207a14b4b0bf8753",
+      "npz_crc_verified": false
+    },
+    {
+      "session_id": "u5ir9g7k",
+      "name": "normalization.npz",
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "u5ir9g7k",
+      "name": "whole-vector-corners.npz",
+      "bytes": 5623849,
+      "sha256": "b7457c816ee187742b751ec831c5f180ed20d7542a5274d892ff024250d2565e",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "k24zucq6",
+      "name": "development-predictions.npz",
+      "bytes": 746255,
+      "sha256": "dea59466c9887b2675c222023a9b9b6c41c19c60638e83f13e0d5c6f5244de24",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "k24zucq6",
+      "name": "tune-predictions.npz",
+      "bytes": 50296,
+      "sha256": "259d17c9201aef10d2a7b19e3be9f0c1c12cbe4141680058fef8163a176f41bb",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "k24zucq6",
+      "name": "metrics.jsonl",
+      "bytes": 2668,
+      "sha256": "3d64d7fb9f78c7a5c7f6381082d681ec2e97b0e3def987b25c4bd51bfdd934ca",
+      "npz_crc_verified": false
+    },
+    {
+      "session_id": "k24zucq6",
+      "name": "normalization.npz",
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "k24zucq6",
+      "name": "whole-vector-corners.npz",
+      "bytes": 5624432,
+      "sha256": "d4fe4c35fd67aea377317d302ba33b89958c8a701280ca35d71ac77afa5c5ba4",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "bxrtggg5",
+      "name": "development-predictions.npz",
+      "bytes": 746958,
+      "sha256": "52a91087aa225bab180d7f23827101f491a5516ae5a12489e98e67fc11f6b964",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "bxrtggg5",
+      "name": "tune-predictions.npz",
+      "bytes": 50402,
+      "sha256": "45e3cabffdd70529ba39f1cbe148a384f90f6eb7b02b388aa6db1f1e450474f0",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "bxrtggg5",
+      "name": "metrics.jsonl",
+      "bytes": 2670,
+      "sha256": "d75e9bbb2d9d54d61c58e20b32c3b748a473034e8181edb878b292a12863a43a",
+      "npz_crc_verified": false
+    },
+    {
+      "session_id": "bxrtggg5",
+      "name": "normalization.npz",
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2",
+      "npz_crc_verified": true
+    },
+    {
+      "session_id": "bxrtggg5",
+      "name": "whole-vector-corners.npz",
+      "bytes": 5624342,
+      "sha256": "d2837badb13e4340cfad90d4e46c42b335fd5d50ced5876eda46a53b969f0318",
+      "npz_crc_verified": true
+    }
+  ]
+}

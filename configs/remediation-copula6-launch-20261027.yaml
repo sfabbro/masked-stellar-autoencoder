@@ -1,0 +1,22 @@
+jobs:
+- run_id: remediation_copula_nsf6_frozen_v1
+  task: remediation-pilot
+  depends_on: &id001
+  - remediation_inputs_v4
+  - remediation_source_v3
+  - remediation_joint6_preflight_v3
+  resources: &id002
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_copula_nsf6_ft_v1
+  task: remediation-pilot
+  depends_on: *id001
+  resources: *id002
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_copula_nsf6_ft_recon003_v1
+  task: remediation-pilot
+  depends_on: *id001
+  resources: *id002
+  image: images.canfar.net/astroai/terminal:latest

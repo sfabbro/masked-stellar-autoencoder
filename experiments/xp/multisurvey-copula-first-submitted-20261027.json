@@ -1,0 +1,68 @@
+{
+  "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+  "library_revision": "906a1c17639dcbf308fdb835270701bbc04f91e0",
+  "jobs": [
+    {
+      "run_id": "multisurvey_desi_dr1_raw_source_v1",
+      "name": "msa-si15-multisurvey-desi-dr1-raw-source-v1",
+      "source_sha": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1",
+      "plan": {
+        "run_id": "multisurvey_desi_dr1_raw_source_v1",
+        "task": "multisurvey-desi-source",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "ywde0t2t"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T20:26:37.421461+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "msa-si15-remediation-copula-nsf6-frozen-v1",
+      "source_sha": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_copula_nsf6_frozen_v1",
+      "plan": {
+        "run_id": "remediation_copula_nsf6_frozen_v1",
+        "task": "remediation-pilot",
+        "depends_on": [
+          "remediation_inputs_v4",
+          "remediation_source_v3",
+          "remediation_joint6_preflight_v3"
+        ],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "rstbv2c0"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-27T20:26:42.943798+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ],
+  "scope": "Accepted only; source preparation and actual device/selected numerical checks remain unverified"
+}

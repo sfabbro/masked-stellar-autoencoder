@@ -67,6 +67,34 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-gaia-gspspec-overlay":
+        from multisurvey_gaia_overlay_launch_policy import bind_gaia_overlay_policy
+
+        return bind_gaia_overlay_policy(plan, env)
+    if plan["task"] == "multisurvey-fit-collation-census":
+        from multisurvey_fit_collation_launch_policy import (
+            bind_fit_collation_census_policy,
+        )
+
+        return bind_fit_collation_census_policy(plan, env)
+    if plan["task"] == "multisurvey-consensus-preflight":
+        from multisurvey_consensus_preflight_launch_policy import (
+            bind_consensus_preflight_policy,
+        )
+
+        return bind_consensus_preflight_policy(plan, env)
+    if plan["task"] == "multisurvey-desi-overlay":
+        from multisurvey_desi_overlay_launch_policy import bind_desi_overlay_policy
+
+        return bind_desi_overlay_policy(plan, env)
+    if plan["task"] == "multisurvey-desi-census":
+        from multisurvey_desi_census_launch_policy import bind_desi_census_policy
+
+        return bind_desi_census_policy(plan, env)
+    if plan["task"] == "multisurvey-desi-source":
+        from multisurvey_desi_launch_policy import bind_multisurvey_desi_policy
+
+        return bind_multisurvey_desi_policy(plan, env)
     if plan["task"] in {
         "remediation-input-audit",
         "remediation-source",
@@ -574,6 +602,7 @@ def create_form_session(client, **fields):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--git-sha", required=True)
+    p.add_argument("--git-ref", default="codex/xp-reconstruction-experiments")
     p.add_argument(
         "--plan", type=Path, default=Path("configs/stellar-improvement-plan.yaml")
     )
@@ -608,7 +637,19 @@ def main():
     if not args.dry_run:
         from canfar.sessions import Session
 
-        if any(plan["task"].startswith("remediation-") for plan in plans):
+        if any(
+            plan["task"].startswith("remediation-")
+            or plan["task"]
+            in {
+                "multisurvey-desi-source",
+                "multisurvey-desi-census",
+                "multisurvey-desi-overlay",
+                "multisurvey-consensus-preflight",
+                "multisurvey-fit-collation-census",
+                "multisurvey-gaia-gspspec-overlay",
+            }
+            for plan in plans
+        ):
             from canfar.storage import filesystem
             from remediation_launch_policy import assert_project_storage_budget
 
@@ -657,6 +698,7 @@ def main():
                 "remediation_joint6_preflight_v1": "remediation_joint6_preflight_pass",
                 "remediation_joint6_preflight_v2": "remediation_joint6_preflight_pass",
                 "remediation_joint6_preflight_v3": "remediation_joint6_preflight_pass",
+                "remediation_nsf6_qmc_probe_v1": "remediation_nsf_qmc_probe_complete",
                 "alpha_desi_source_projection_v1": "native_source_projection_complete_not_training_certificate",
                 "alpha_desi_feature_preparation_v1": "source_audited_alpha_features_complete",
                 "alpha_desi_feature_preparation_v2": "source_audited_alpha_features_complete",
@@ -699,7 +741,7 @@ def main():
         except (ValueError, KeyError):
             dependencies[name] = False
     payload = bootstrap(
-        "codex/xp-reconstruction-experiments",
+        args.git_ref,
         args.git_sha,
         {} if args.dry_run else launch_addresses(),
     )
@@ -779,6 +821,9 @@ def main():
             "expanded-report-recovery",
             "remediation-input-audit",
             "remediation-source",
+            "multisurvey-desi-source",
+            "multisurvey-fit-collation-census",
+            "multisurvey-gaia-gspspec-overlay",
             "final-six-ancestry",
             "final-six-normalization-export",
             "metalpoor-corner-selection",

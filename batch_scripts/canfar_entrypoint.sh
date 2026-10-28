@@ -174,6 +174,30 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/prepare_remediation_source.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-gaia-gspspec-overlay ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_gaia_overlay.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-fit-collation-census ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_fit_collation_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-consensus-preflight ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_consensus_preflight.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-desi-overlay ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_desi_overlay.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-desi-census ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_desi_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-desi-source ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_desi_source.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-joint-preflight ]]; then
       "${pixi_run[@]}" python -u scripts/run_remediation_joint_preflight.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"

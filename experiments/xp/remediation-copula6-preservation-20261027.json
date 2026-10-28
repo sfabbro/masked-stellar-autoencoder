@@ -1,0 +1,281 @@
+{
+  "scope": "Small completed artifacts and failed selected-gate diagnostics. Selected checkpoints and DESI sidecar remain on ARC. Failed diagnostic hashes are local receipts, not producer certificates.",
+  "jobs": [
+    {
+      "run_id": "multisurvey_desi_dr1_raw_source_v1",
+      "session_id": "ywde0t2t",
+      "status": "multisurvey_desi_source_complete",
+      "manifest_sha256": "00053edaffd24b5968ba19393648ad46e57513b5b916c02e791887f4953b53df",
+      "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "library_revision": null,
+      "completed_updates": null,
+      "selected_update": null,
+      "selected_nsf_integration": null,
+      "error": null,
+      "result": {
+        "observed_counts": [
+          3683136,
+          3683136,
+          3683136
+        ],
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5",
+        "quality_rows": 3683136,
+        "raw_sha256": "eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5",
+        "sha256": "fe09ff1be95bb95884cbba9f008d02bc3e52e0debd143add5a5d28efad934ba3"
+      }
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "session_id": "rstbv2c0",
+      "status": "remediation_pilot_complete",
+      "manifest_sha256": "676db50b3be3116a27c8619091fbf3034ef4141f37f167dd626ed94e63fbf5e5",
+      "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "library_revision": "906a1c17639dcbf308fdb835270701bbc04f91e0",
+      "completed_updates": 1000,
+      "selected_update": 900,
+      "selected_nsf_integration": {
+        "relative_ess_median": 0.9636300206184387,
+        "relative_ess_min": 0.012757291086018085,
+        "replica_gap_p95": 0.08981678634881973,
+        "refinement_gap_p95": 0.0463043674826622,
+        "rows": 128,
+        "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+        "particles": 256,
+        "stage": "selected"
+      },
+      "error": null,
+      "result": null
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "session_id": "u17b6yfr",
+      "status": "remediation_pilot_complete",
+      "manifest_sha256": "fbe7d9bf468d110e5d18a9160fcaf001258c841e264bd9f28e865fabbd746cb6",
+      "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "library_revision": "906a1c17639dcbf308fdb835270701bbc04f91e0",
+      "completed_updates": 1000,
+      "selected_update": 700,
+      "selected_nsf_integration": {
+        "relative_ess_median": 0.9692054986953735,
+        "relative_ess_min": 0.015241766348481178,
+        "replica_gap_p95": 0.057295989245176315,
+        "refinement_gap_p95": 0.05753125995397568,
+        "rows": 128,
+        "source_id_sha256": "e763b0cc8b0e90a594adedf33f06c1cdd62cd2685da31cc1571f35afdb53cb8a",
+        "particles": 256,
+        "stage": "selected"
+      },
+      "error": null,
+      "result": null
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_recon003_v1",
+      "session_id": "pg0qvelr",
+      "status": "failed",
+      "manifest_sha256": "24c2f54b006f67438e94365be419eed28bb8ca09fa08dfcaca52ffdf8a453005",
+      "source_commit": "06d5438f8a2ac045940c0d5182b14bb2b7627032",
+      "library_revision": "906a1c17639dcbf308fdb835270701bbc04f91e0",
+      "completed_updates": 1000,
+      "selected_update": 800,
+      "selected_nsf_integration": null,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.9699381589889526, \"relative_ess_min\": 0.01409872341901064, \"replica_gap_p95\": 0.11899125576019287, \"refinement_gap_p95\": 0.1021021381020546}",
+      "result": null
+    },
+    {
+      "run_id": "remediation_nsf6_ft_qmc256_startupfix_v3",
+      "session_id": "zzt96g5j",
+      "status": "failed",
+      "manifest_sha256": "3b49893aff55fb78a763a81409cfada6bf057884fb0bb53d33dfb7294cae8e60",
+      "source_commit": "7ee3b57425daba406fa0b9a69c518e90a90b2412",
+      "library_revision": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+      "completed_updates": 1000,
+      "selected_update": 900,
+      "selected_nsf_integration": null,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.006855970714241266, \"relative_ess_min\": 0.00390625, \"replica_gap_p95\": 14.863373756408691, \"refinement_gap_p95\": 11.379944801330566}",
+      "result": null
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_qmc256_startupfix_v3",
+      "session_id": "k557za1j",
+      "status": "failed",
+      "manifest_sha256": "a196bdfab77b09d32556c0ec61e6cdb7779dac3afd068cf3c205014a08d819f5",
+      "source_commit": "7ee3b57425daba406fa0b9a69c518e90a90b2412",
+      "library_revision": "6bd8b93b35fe4fe216319870e72e94eb78429106",
+      "completed_updates": 1000,
+      "selected_update": 900,
+      "selected_nsf_integration": null,
+      "error": "Real sparse/noisy NSF integration gate failed: {\"relative_ess_median\": 0.005102124065160751, \"relative_ess_min\": 0.00390625, \"replica_gap_p95\": 16.12156105041504, \"refinement_gap_p95\": 12.471334457397461}",
+      "result": null
+    }
+  ],
+  "artifacts": [
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "integration-selected.json",
+      "bytes": 326,
+      "sha256": "942cdf6c6e43de0466c6b8c24dedb2c76a70301afb893f0dfce6ad91955e03c7",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "development-predictions.npz",
+      "bytes": 746918,
+      "sha256": "bd489852bd257d8af6e47bdde08f116dcda3939f58e20abf14674a6263c333a0",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "integration-initial.json",
+      "bytes": 329,
+      "sha256": "199f3a69fe3cc3939c945bb06bd237003bcf9d2a8ecdd0f8e50ac9511425efb2",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "tune-predictions.npz",
+      "bytes": 50409,
+      "sha256": "3594a65e7ba88187cecc4e60e1b33e01cab9523581df07c61e12e3b31909d6b5",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "metrics.jsonl",
+      "bytes": 2661,
+      "sha256": "d9be3226510582512efa9ed29834be6dc78c642c0fa2b492ad1e991764404494",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "normalization.npz",
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "integration-initial.npz",
+      "bytes": 9232,
+      "sha256": "41e48eb782485cb5c40500757eb1e7eb45c1ca455eee6d660290fc496730aada",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "integration-selected.npz",
+      "bytes": 9445,
+      "sha256": "8029b80f9183e6aebd2b8d1e1c7753cbac87e9d1a9457f517cdea5a53a1eda86",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_frozen_v1",
+      "name": "whole-vector-corners.npz",
+      "bytes": 5619450,
+      "sha256": "aaa708aa24a859e9a819939498ed50335072cd5f1ff5a8a016be2498942bc068",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "integration-selected.json",
+      "bytes": 328,
+      "sha256": "60484dceb5c81b546056484590402175bf63b8ba9a90969c2a364668da278927",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "development-predictions.npz",
+      "bytes": 746599,
+      "sha256": "ec513ec25dcae043a2ceca4dcc98e0fcf25ebe0f3583c909fd2274868daea1b7",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "integration-initial.json",
+      "bytes": 329,
+      "sha256": "199f3a69fe3cc3939c945bb06bd237003bcf9d2a8ecdd0f8e50ac9511425efb2",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "tune-predictions.npz",
+      "bytes": 50357,
+      "sha256": "2e18ca539e265fc4c5d79e6341ea7baed6cfbc6a285f52291f8b374388ba77b1",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "metrics.jsonl",
+      "bytes": 2664,
+      "sha256": "de7653c56204520de05d722f3e56b5e16a87c02711a5afe43392d7f0ad0e25e2",
+      "producer_sha_verified": true,
+      "npz_crc_verified": false
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "normalization.npz",
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "integration-initial.npz",
+      "bytes": 9232,
+      "sha256": "41e48eb782485cb5c40500757eb1e7eb45c1ca455eee6d660290fc496730aada",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "integration-selected.npz",
+      "bytes": 9422,
+      "sha256": "f289edcb63b8a8d2363fd5105575bf893d60ea74b27452bc6ebfcc5f4fe42308",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_v1",
+      "name": "whole-vector-corners.npz",
+      "bytes": 5618528,
+      "sha256": "ccda333a14bb1a59cc295ee2f64a48e95bf657965c33dcf39b58afa657b2b6da",
+      "producer_sha_verified": true,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_copula_nsf6_ft_recon003_v1",
+      "name": "integration-selected.npz",
+      "bytes": 9431,
+      "sha256": "10dbf4bc8323b42b849f053d6b4eac32be45883ee16396f8981d7ef619318799",
+      "producer_sha_verified": false,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_nsf6_ft_qmc256_startupfix_v3",
+      "name": "integration-selected.npz",
+      "bytes": 10497,
+      "sha256": "c73f519c6d10274d12559dbba509de5821e12e2bb87f62b733323a9c559da978",
+      "producer_sha_verified": false,
+      "npz_crc_verified": true
+    },
+    {
+      "run_id": "remediation_nsf6_ft_parallax_qmc256_startupfix_v3",
+      "name": "integration-selected.npz",
+      "bytes": 10473,
+      "sha256": "80feeabbdb13daa58674eae7b173fa5b5ea5d5a2d45e49d82fffc4e8931cf07a",
+      "producer_sha_verified": false,
+      "npz_crc_verified": true
+    }
+  ]
+}

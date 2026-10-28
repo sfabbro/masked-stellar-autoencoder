@@ -72,7 +72,9 @@ def admission(cfg, arm):
         or preflight.get("run_id") != cfg["joint_preflight_run_id"]
     ):
         raise ValueError("Actual coupled six-target preflight has not passed")
-    if preflight.get("library_revision") != cfg["library_revision"]:
+    if preflight.get("library_revision") != cfg.get(
+        "legacy_preflight_library_revision", cfg["library_revision"]
+    ):
         raise ValueError("Preflight library differs")
     for kind in ("gaussian", "mdn", "nsf"):
         if preflight.get("checks", {}).get(kind, {}).get("passed") is not True:
@@ -85,7 +87,9 @@ def admission(cfg, arm):
         raise ValueError("Requested source input profile is not verified")
     if arm["reconstruction_weight"] and arm["encoder"] == "frozen":
         raise ValueError("Reconstruction cannot update a frozen encoder control")
-    if arm["kind"] not in ("huber", "gaussian", "mdn", "nsf") or arm["encoder"] not in (
+    if arm["kind"] not in ("huber", "gaussian", "mdn", "nsf", "nsf_copula") or arm[
+        "encoder"
+    ] not in (
         "frozen",
         "finetune",
     ):
@@ -223,6 +227,253 @@ def integration_gate(diag, thresholds):
     return metrics
 
 
+def diagnostics_in_row_chunks(
+    head, context, target, sigma, mask, *, particles, chunk_rows
+):
+    """Evaluate the same fixed-QMC diagnostics in bounded independent row chunks."""
+    import torch
+
+    if (
+        chunk_rows < 1
+        or len(context) < 1
+        or any(len(x) != len(context) for x in (target, sigma, mask))
+    ):
+        raise ValueError("Aligned nonempty inputs and positive chunk size are required")
+    chunks = [
+        head.diagnostics(
+            context[i : i + chunk_rows],
+            target[i : i + chunk_rows],
+            sigma[i : i + chunk_rows],
+            mask[i : i + chunk_rows],
+            particles=particles,
+        )
+        for i in range(0, len(context), chunk_rows)
+    ]
+    if any(set(chunk) != set(chunks[0]) for chunk in chunks):
+        raise ValueError("Chunked diagnostics have inconsistent fields")
+    result = {}
+    for key in chunks[0]:
+        values = [chunk[key] for chunk in chunks]
+        if isinstance(values[0], torch.Tensor):
+            result[key] = torch.cat(values, dim=0)
+        else:
+            if any(value != values[0] for value in values[1:]):
+                raise ValueError("Chunked diagnostic metadata differs")
+            result[key] = values[0]
+    return result
+
+
+def validate_integration_probe(cfg, arm):
+    """Restrict the inference-only probe to a finite, explicitly versioned design."""
+    if (
+        arm.get("kind") != "nsf"
+        or arm.get("encoder") != "frozen"
+        or arm.get("reconstruction_weight") != 0
+        or not arm.get("integration_probe")
+        or cfg.get("integration_probe_particles") != [128, 256, 512, 1024]
+        or cfg.get("integration_probe_chunk_rows") != 8
+    ):
+        raise ValueError("Integration probe policy differs")
+
+
+def validate_microbatch_encoder(encoder, *, finetune):
+    """Batch-statistics layers change meaning under microbatch accumulation."""
+    import torch
+
+    if finetune and any(
+        isinstance(module, torch.nn.modules.batchnorm._BatchNorm)
+        for module in encoder.modules()
+    ):
+        raise ValueError(
+            "Finetuned encoder with batch normalization cannot be microbatched"
+        )
+
+
+def backward_supervised_chunks(
+    head, latent, target, sigma, observed, rows, *, chunk_rows, tensor
+):
+    """Accumulate the same observed-coordinate-weighted objective in small graphs."""
+    import torch
+
+    if chunk_rows < 1 or len(rows) < 1:
+        raise ValueError("Positive chunk size and nonempty rows required")
+    total = int(observed[rows].sum())
+    if total <= 0:
+        raise ValueError("No observed targets in supervised batch")
+    value = None
+    sums = {}
+    for start in range(0, len(rows), chunk_rows):
+        rr = rows[start : start + chunk_rows]
+        count = int(observed[rr].sum())
+        if count == 0:
+            continue
+        weight = count / total
+        loss = head.criterion(
+            latent(rr),
+            tensor(target[rr]),
+            tensor(sigma[rr]),
+            tensor(observed[rr], torch.bool),
+        )
+        if not torch.isfinite(loss):
+            raise FloatingPointError("Nonfinite chunked supervised objective")
+        contribution = loss * weight
+        contribution.backward()
+        detached = contribution.detach()
+        value = detached if value is None else value + detached
+        for key, component in getattr(head, "last_loss_components", {}).items():
+            amount = (
+                float(component.detach())
+                if hasattr(component, "detach")
+                else float(component)
+            )
+            sums[key] = sums.get(key, 0.0) + weight * amount
+    if value is None:
+        raise ValueError("No supervised chunks contributed")
+    return value, sums
+
+
+def accumulated_encoder_gradient_contract(reconstruction, parameters):
+    """Compare already-accumulated supervised and unweighted reconstruction gradients."""
+    import torch
+
+    params = tuple(p for p in parameters if p.requires_grad)
+    if not params:
+        return {"scope": "frozen encoder"}
+    supervised = tuple(None if p.grad is None else p.grad.detach() for p in params)
+    reco = (
+        torch.autograd.grad(
+            reconstruction, params, retain_graph=True, allow_unused=True
+        )
+        if reconstruction.requires_grad
+        else tuple(None for _ in params)
+    )
+    aa = sum(float(g.double().square().sum()) for g in supervised if g is not None)
+    bb = sum(float(g.detach().double().square().sum()) for g in reco if g is not None)
+    ab = sum(
+        float(g.double().mul(h.detach().double()).sum())
+        for g, h in zip(supervised, reco, strict=True)
+        if g is not None and h is not None
+    )
+    return dict(
+        supervised_l2=aa**0.5,
+        reconstruction_unweighted_l2=bb**0.5,
+        cosine=ab / (aa * bb) ** 0.5 if aa > 0 and bb > 0 else None,
+    )
+
+
+def validate_nsf_recovery(cfg, arm):
+    if (
+        arm.get("kind") != "nsf"
+        or cfg.get("particles") != 256
+        or cfg.get("integration_gate_particles") != 256
+        or cfg.get("nsf_micro_batch_size") != 16
+        or cfg.get("integration_chunk_rows") != 8
+    ):
+        raise ValueError("NSF recovery particle or microbatch policy differs")
+    if (
+        sha(cfg["integration_probe_manifest"])
+        != cfg["integration_probe_manifest_sha256"]
+    ):
+        raise ValueError("NSF QMC probe manifest SHA differs")
+    probe = load_json(cfg["integration_probe_manifest"])
+    if (
+        probe.get("status") != "remediation_nsf_qmc_probe_complete"
+        or probe.get("run_id") != "remediation_nsf6_qmc_probe_v1"
+        or probe.get("source_commit") != cfg["integration_probe_source_commit"]
+        or probe.get("first_passing_particles") != 256
+        or probe.get("training_performed") is not False
+        or probe.get("library_revision") != cfg["library_revision"]
+        or probe.get("parent_sha256") != cfg["checkpoint_sha256"]
+    ):
+        raise ValueError("NSF recovery requires the actual matching passing QMC probe")
+    passing = [
+        x
+        for x in probe.get("integration_probe_outcomes", [])
+        if x.get("particles") == 256
+    ]
+    if len(passing) != 1 or not passing[0].get("passed"):
+        raise ValueError("NSF 256-particle gate did not pass")
+    return probe
+
+
+def validate_copula_recovery(cfg, arm):
+    """Admit the alternative only for the preserved selected-gate failures."""
+    if (
+        arm.get("kind") != "nsf_copula"
+        or cfg.get("particles") != 256
+        or cfg.get("integration_gate_particles") != 256
+        or cfg.get("copula_micro_batch_size") != 16
+        or cfg.get("nsf_micro_batch_size") is not None
+        or cfg.get("integration_chunk_rows") != 8
+        or cfg.get("legacy_preflight_library_revision")
+        != "6bd8b93b35fe4fe216319870e72e94eb78429106"
+    ):
+        raise ValueError("Copula spline recovery policy differs")
+    path = cfg["prior_selected_gate_failure_receipt"]
+    if sha(path) != cfg["prior_selected_gate_failure_sha256"]:
+        raise ValueError("Prior NSF selected-gate failure receipt SHA differs")
+    previous = load_json(path)
+    jobs = previous.get("jobs", [])
+    if {job.get("session_id") for job in jobs} != {"bpw6joq8", "hx177dr5"} or any(
+        job.get("status") != "failed"
+        or job.get("completed_updates") != 1000
+        or not str(job.get("error", "")).startswith(
+            "Real sparse/noisy NSF integration gate failed:"
+        )
+        for job in jobs
+    ):
+        raise ValueError("Copula recovery requires both actual selected-gate failures")
+
+
+def copula_device_preflight(head, context, target, sigma, mask):
+    """Two copy-only head updates on actual FIT rows; restore RNG afterwards."""
+    import copy
+
+    import torch
+
+    cpu_rng = torch.get_rng_state()
+    cuda_rng = torch.cuda.get_rng_state(context.device) if context.is_cuda else None
+    try:
+        candidate = copy.deepcopy(head)
+        optimizer = torch.optim.Adam(candidate.parameters(), lr=0.001)
+        local = context.detach().clone().requires_grad_(True)
+        initial = candidate.criterion(local, target, sigma, mask)
+        initial.backward()
+        projection = candidate.flow.net[-1].weight
+        if (
+            projection.grad is None
+            or not torch.isfinite(projection.grad).all()
+            or not torch.count_nonzero(projection.grad).item()
+        ):
+            raise FloatingPointError(
+                "Copula preflight output projection has no finite gradient"
+            )
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+        local.grad = None
+        final = candidate.criterion(local, target, sigma, mask)
+        final.backward()
+        if (
+            local.grad is None
+            or not torch.isfinite(local.grad).all()
+            or not torch.count_nonzero(local.grad).item()
+        ):
+            raise FloatingPointError("Copula preflight context gradient did not start")
+        samples = candidate.sample(local.detach(), 8)
+        if samples.shape != (8, len(local), 6) or not torch.isfinite(samples).all():
+            raise FloatingPointError("Copula preflight whole-vector samples invalid")
+        return {
+            "passed": True,
+            "rows": len(local),
+            "copy_only": True,
+            "scope": "two head-only updates on actual FIT contexts; not a trained-head certificate",
+        }
+    finally:
+        torch.set_rng_state(cpu_rng)
+        if cuda_rng is not None:
+            torch.cuda.set_rng_state(cuda_rng, context.device)
+
+
 def heldout_corner_rows(ids, roles, common):
     """Reject missing or FIT corner identities before any model load/updates."""
     common = np.asarray(common, dtype="i8")
@@ -263,11 +514,58 @@ def encoder_gradient_contract(supervised, reconstruction, parameters):
     )
 
 
+def enforce_encoder_gradient(encoder, head, kind, update, supervised_l2=None):
+    """Require supervised encoder gradients after a zero-projection first step.
+
+    Zero-initialized output projections prevent context gradients on the first
+    update: Gaussian/MDN have one projection; NSF has both the Gaussian proposal
+    and the flow context output. Every blocking projection must still receive a
+    finite nonzero gradient. The next update must reach the encoder through the
+    supervised objective; reconstruction cannot substitute for that proof.
+    """
+    import torch
+
+    params = tuple(p for p in encoder.parameters() if p.requires_grad)
+    grads = [p.grad for p in params if p.grad is not None]
+    if not grads:
+        raise FloatingPointError("Finetuned encoder is disconnected")
+    nonzero = any(torch.count_nonzero(grad).item() for grad in grads)
+    if update >= 2 and supervised_l2 is not None and supervised_l2 <= 0:
+        raise FloatingPointError("Finetuned encoder has no supervised gradient")
+    if nonzero:
+        return "nonzero"
+    if update == 1 and kind in ("gaussian", "mdn", "nsf", "nsf_copula"):
+        projections = (
+            [head.flow.net[-1].weight]
+            if kind == "nsf_copula"
+            else [head.gaussian.net[-1].weight]
+        )
+        if kind == "nsf":
+            projections.append(head.flow.output.weight)
+        if all(
+            torch.count_nonzero(projection).item() == 0
+            and projection.grad is not None
+            and torch.isfinite(projection.grad).all()
+            and torch.count_nonzero(projection.grad).item() > 0
+            for projection in projections
+        ):
+            return "zero_initialized_output_first_step"
+    raise FloatingPointError("Finetuned encoder has no nonzero gradient")
+
+
 def build_head(kind, latent_dim, cfg):
     import torch
 
     from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
 
+    if kind == "nsf_copula":
+        from masked_stellar_autoencoder.training.remediation_copula6 import (
+            CopulaSplineSixHead,
+        )
+
+        return CopulaSplineSixHead(
+            latent_dim, cfg["head_width"], cfg["particles"], cfg["seed"]
+        )
     if kind != "huber":
         return JointSixHead(
             kind,
@@ -322,6 +620,12 @@ def run(cfg, arm, output):
     atomic(output / "manifest.json", manifest)
     try:
         source, audit, preflight = admission(cfg, arm)
+        if cfg.get("nsf_micro_batch_size"):
+            probe = validate_nsf_recovery(cfg, arm)
+            if probe.get("prepared_sha256") != source.get("prepared_sha256"):
+                raise ValueError("NSF probe and training source hashes differ")
+        if cfg.get("copula_micro_batch_size"):
+            validate_copula_recovery(cfg, arm)
         prepared = Path(source["prepared_path"])
         if sha(prepared) != source["prepared_sha256"]:
             raise ValueError("Actual remediation prepared SHA changed")
@@ -338,7 +642,7 @@ def run(cfg, arm, output):
             or "{}"
         )
         if direct.get("vcs_info", {}).get("commit_id") != cfg["library_revision"]:
-            raise ValueError("Installed torchregress6bd differs")
+            raise ValueError("Installed torchregress revision differs")
         import run_multilabel_screen as native
 
         from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
@@ -414,6 +718,10 @@ def run(cfg, arm, output):
             model = native.probe.load_model(model_cfg, disk, device)
             for parameter in model.parameters():
                 parameter.requires_grad_(arm["encoder"] == "finetune")
+            if cfg.get("nsf_micro_batch_size") or cfg.get("copula_micro_batch_size"):
+                validate_microbatch_encoder(
+                    model.encoder, finetune=arm["encoder"] == "finetune"
+                )
             head = build_head(
                 arm["kind"], model_cfg["model"]["layer_dims"][-1], cfg
             ).to(device)
@@ -454,6 +762,24 @@ def run(cfg, arm, output):
                         return model.encoder(x)
                 return model.encoder(x)
 
+            if arm["kind"] == "nsf_copula":
+                model.eval()
+                preflight_rows = fixed_role_rows(ids, roles, mask, "fit", 2)
+                with torch.no_grad():
+                    preflight_context = latent(preflight_rows)
+                manifest["copula_device_preflight"] = copula_device_preflight(
+                    head,
+                    preflight_context,
+                    tensor(y[preflight_rows]),
+                    tensor(sigma[preflight_rows]),
+                    tensor(mask[preflight_rows], torch.bool),
+                )
+                manifest["covariance_scope"] = (
+                    "Whole-vector Gaussian-copula spline samples; restricted copula, "
+                    "not an unrestricted six-dimensional NSF or physical truth"
+                )
+                atomic(output / "manifest.json", manifest)
+
             def nsf_check(stage):
                 balanced = fixed_role_rows(
                     ids, roles, mask, "tune", max(1, cfg["integration_gate_rows"] // 6)
@@ -472,13 +798,28 @@ def run(cfg, arm, output):
                 model.eval()
                 head.eval()
                 with torch.no_grad():
-                    diag = head.diagnostics(
+                    inputs = (
                         latent(rows),
                         tensor(y[rows]),
                         tensor(sigma[rows]),
                         tensor(mask[rows], torch.bool),
-                        particles=cfg["integration_gate_particles"],
                     )
+                    if arm.get("integration_probe") or cfg.get(
+                        "integration_chunk_rows"
+                    ):
+                        diag = diagnostics_in_row_chunks(
+                            head,
+                            *inputs,
+                            particles=cfg["integration_gate_particles"],
+                            chunk_rows=cfg.get(
+                                "integration_chunk_rows",
+                                cfg.get("integration_probe_chunk_rows"),
+                            ),
+                        )
+                    else:
+                        diag = head.diagnostics(
+                            *inputs, particles=cfg["integration_gate_particles"]
+                        )
                 diagnostic_arrays = {
                     name: value.detach().cpu().numpy()
                     for name, value in diag.items()
@@ -505,7 +846,44 @@ def run(cfg, arm, output):
                 atomic(output / ("integration-" + stage + ".json"), proof)
                 return proof
 
-            if arm["kind"] == "nsf":
+            if arm.get("integration_probe"):
+                validate_integration_probe(cfg, arm)
+                outcomes = []
+                for count in cfg["integration_probe_particles"]:
+                    cfg["integration_gate_particles"] = count
+                    try:
+                        proof = nsf_check(f"probe-{count}")
+                        outcomes.append(
+                            {"particles": count, "passed": True, "metrics": proof}
+                        )
+                    except ValueError as exc:
+                        if not str(exc).startswith(
+                            "Real sparse/noisy NSF integration gate failed:"
+                        ):
+                            raise
+                        outcomes.append(
+                            {"particles": count, "passed": False, "error": str(exc)}
+                        )
+                    manifest["integration_probe_outcomes"] = outcomes
+                    atomic(output / "manifest.json", manifest)
+                passed = [item["particles"] for item in outcomes if item["passed"]]
+                manifest.update(
+                    status="remediation_nsf_qmc_probe_complete"
+                    if passed
+                    else "remediation_nsf_qmc_probe_failed",
+                    training_performed=False,
+                    completed_updates=0,
+                    first_passing_particles=min(passed) if passed else None,
+                    scope="Inference-only fixed-panel estimator diagnostics; no optimizer step, no exact-marginal claim",
+                    artifacts={
+                        path.name: {"bytes": path.stat().st_size, "sha256": sha(path)}
+                        for path in output.glob("integration-probe-*")
+                        if path.is_file()
+                    },
+                )
+                atomic(output / "manifest.json", manifest)
+                return
+            if arm["kind"] in ("nsf", "nsf_copula"):
                 nsf_check("initial")
             cache = None
             if arm["reconstruction_weight"]:
@@ -658,17 +1036,40 @@ def run(cfg, arm, output):
                     rng, pools, cfg["batch_size"], target_column=(update - 1) % 6
                 )
                 sequence.update(np.asarray(ids[rr], dtype="<i8").tobytes())
-                loss = head.criterion(
-                    latent(rr),
-                    tensor(y[rr]),
-                    tensor(sigma[rr]),
-                    tensor(mask[rr], torch.bool),
+                chunked = bool(
+                    cfg.get("nsf_micro_batch_size")
+                    or cfg.get("copula_micro_batch_size")
                 )
-                supervised_loss = loss
-                components = {
-                    key: float(value.detach()) if hasattr(value, "detach") else value
-                    for key, value in getattr(head, "last_loss_components", {}).items()
-                }
+                if chunked:
+                    supervised_loss, components = backward_supervised_chunks(
+                        head,
+                        latent,
+                        y,
+                        sigma,
+                        mask,
+                        rr,
+                        chunk_rows=cfg.get(
+                            "nsf_micro_batch_size", cfg.get("copula_micro_batch_size")
+                        ),
+                        tensor=tensor,
+                    )
+                    loss = supervised_loss
+                else:
+                    loss = head.criterion(
+                        latent(rr),
+                        tensor(y[rr]),
+                        tensor(sigma[rr]),
+                        tensor(mask[rr], torch.bool),
+                    )
+                    supervised_loss = loss
+                    components = {
+                        key: float(value.detach())
+                        if hasattr(value, "detach")
+                        else value
+                        for key, value in getattr(
+                            head, "last_loss_components", {}
+                        ).items()
+                    }
                 reco = loss.new_zeros(())
                 if cache is not None:
                     start = ((update - 1) * cfg["reconstruction_batch"]) % len(cache)
@@ -697,15 +1098,27 @@ def run(cfg, arm, output):
                     loss = loss + arm["reconstruction_weight"] * reco
                 if not torch.isfinite(loss):
                     raise FloatingPointError("Nonfinite pilot objective")
-                if update == 1 or update % cfg["tune_every"] == 0:
-                    manifest["encoder_gradient_contract"] = dict(
+                gradient_contract = None
+                if update in (1, 2) or update % cfg["tune_every"] == 0:
+                    gradient_contract = dict(
                         update=update,
                         reconstruction_weight=arm["reconstruction_weight"],
-                        **encoder_gradient_contract(
-                            supervised_loss, reco, model.encoder.parameters()
+                        **(
+                            accumulated_encoder_gradient_contract(
+                                reco, model.encoder.parameters()
+                            )
+                            if chunked
+                            else encoder_gradient_contract(
+                                supervised_loss, reco, model.encoder.parameters()
+                            )
                         ),
                     )
-                loss.backward()
+                    manifest["encoder_gradient_contract"] = gradient_contract
+                if chunked:
+                    if reco.requires_grad:
+                        (arm["reconstruction_weight"] * reco).backward()
+                else:
+                    loss.backward()
                 gradients = [
                     p.grad
                     for group in optimizer.param_groups
@@ -718,13 +1131,24 @@ def run(cfg, arm, output):
                     p.grad is not None and p.grad.ne(0).any() for p in head.parameters()
                 ):
                     raise FloatingPointError("Fresh head has no nonzero gradient")
-                if arm["encoder"] == "finetune" and not any(
-                    p.grad is not None and p.grad.ne(0).any()
-                    for p in model.encoder.parameters()
-                ):
-                    raise FloatingPointError(
-                        "Finetuned encoder has no nonzero gradient"
+                if arm["encoder"] == "finetune":
+                    gradient_status = enforce_encoder_gradient(
+                        model.encoder,
+                        head,
+                        arm["kind"],
+                        update,
+                        None
+                        if gradient_contract is None
+                        else gradient_contract["supervised_l2"],
                     )
+                    if update <= 2:
+                        manifest.setdefault("encoder_gradient_startup", []).append(
+                            {
+                                "update": update,
+                                "status": gradient_status,
+                                **gradient_contract,
+                            }
+                        )
                 finite_gradients += 1
                 optimizer.step()
                 counts += mask[rr].sum(0)
@@ -788,7 +1212,7 @@ def run(cfg, arm, output):
             )
             model.load_state_dict(state["model_state_dict"], strict=True)
             head.load_state_dict(state["head_state_dict"], strict=True)
-            if arm["kind"] == "nsf":
+            if arm["kind"] in ("nsf", "nsf_copula"):
                 manifest["selected_nsf_integration"] = nsf_check("selected")
             tune_score, tune_per_label = evaluate(tune, output / "tune-predictions.npz")
             dev_score, dev_per_label = evaluate(

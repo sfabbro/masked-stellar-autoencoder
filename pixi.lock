@@ -171,7 +171,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/multidict-6.7.1-py313h3dea7bd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/nlohmann_json-3.12.0-h54a6638_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.3-py313hb5f73ae_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.4-py313hb5f73ae_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.4-heb1ab33_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openldap-2.6.13-hbde042b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.4-h781a0a9_0.conda
@@ -352,8 +352,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
-      - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.0%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -531,7 +531,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/multidict-6.7.1-py313h3dea7bd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/nlohmann_json-3.12.0-h54a6638_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.3-py313hb5f73ae_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.4-py313hb5f73ae_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.4-heb1ab33_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openldap-2.6.13-hbde042b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.4-h781a0a9_0.conda
@@ -712,8 +712,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
-      - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -846,6 +846,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-26.3-pyhc364b38_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/parso-0.8.7-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/partd-1.4.2-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pathspec-1.1.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pexpect-4.9.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/platformdirs-4.12.0-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhf9edf01_1.conda
@@ -868,6 +869,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytz-2026.4-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/requests-2.34.2-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2026.9.0-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/scikit-build-core-1.1.1-pyhcb39dcd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-81.0.0-pyh332efcf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sortedcontainers-2.4.0-pyhd8ed1ab_1.conda
@@ -993,7 +995,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libssh2-1.11.1-hbf2880b_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libthrift-0.22.0-h1fb9c8a_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtiff-4.7.2-hf67920b_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.13.0-cpu_generic_hf893bd3_2.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.14.1-cpu_generic_h8539c7d_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libutf8proc-2.11.3-h2431656_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libuv-1.52.1-h1a92334_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libwebp-base-1.6.0-h202fb40_1.conda
@@ -1011,8 +1013,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/multidict-6.7.1-py313haf6918d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.6-he64c551_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/nlohmann_json-3.12.0-h784d473_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.5.3-py313h24c19cf_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.12-omp_h95bb4b2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.5.4-py313h24c19cf_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.14-omp_hf8bcd58_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openjpeg-2.5.4-h4d1e80c_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.6.4-h55eecbc_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/optree-0.20.0-py313h5c89e09_1.conda
@@ -1032,7 +1034,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyerfa-2.0.1.5-py310hbb12772_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-3.13.15-hb59dee6_103_cp313.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-xxhash-3.7.0-py313h277b090_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.13.0-cpu_generic_py313_hc574c4b_2.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.14.1-cpu_generic_py313_hf1850e0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyyaml-6.0.3-py313h65a2061_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyzmq-27.2.0-py312hdfb5542_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/qhull-2020.2-h420ef59_5.conda
@@ -1059,7 +1061,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -1232,7 +1234,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/multidict-6.7.1-py313h3dea7bd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/nlohmann_json-3.12.0-h54a6638_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.3-py313hb5f73ae_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.4-py313hb5f73ae_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.4-heb1ab33_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openldap-2.6.13-hbde042b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.4-h781a0a9_0.conda
@@ -1413,8 +1415,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
-      - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.0%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -1592,7 +1594,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/multidict-6.7.1-py313h3dea7bd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.6-hdb14827_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/nlohmann_json-3.12.0-h54a6638_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.3-py313hb5f73ae_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.4-py313hb5f73ae_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.4-heb1ab33_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openldap-2.6.13-hbde042b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.4-h781a0a9_0.conda
@@ -1773,8 +1775,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
-      - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -1907,6 +1909,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/packaging-26.3-pyhc364b38_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/parso-0.8.7-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/partd-1.4.2-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pathspec-1.1.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pexpect-4.9.0-pyhd8ed1ab_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/platformdirs-4.12.0-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhf9edf01_1.conda
@@ -1929,6 +1932,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytz-2026.4-pyh5ded981_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/requests-2.34.2-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2026.9.0-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/scikit-build-core-1.1.1-pyhcb39dcd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-81.0.0-pyh332efcf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sortedcontainers-2.4.0-pyhd8ed1ab_1.conda
@@ -2054,7 +2058,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libssh2-1.11.1-hbf2880b_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libthrift-0.22.0-h1fb9c8a_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtiff-4.7.2-hf67920b_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.13.0-cpu_generic_hf893bd3_2.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.14.1-cpu_generic_h8539c7d_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libutf8proc-2.11.3-h2431656_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libuv-1.52.1-h1a92334_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libwebp-base-1.6.0-h202fb40_1.conda
@@ -2072,8 +2076,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/multidict-6.7.1-py313haf6918d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ncurses-6.6-he64c551_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/nlohmann_json-3.12.0-h784d473_2.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.5.3-py313h24c19cf_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.12-omp_h95bb4b2_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.5.4-py313h24c19cf_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.14-omp_hf8bcd58_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openjpeg-2.5.4-h4d1e80c_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openssl-3.6.4-h55eecbc_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/optree-0.20.0-py313h5c89e09_1.conda
@@ -2093,7 +2097,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyerfa-2.0.1.5-py310hbb12772_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-3.13.15-hb59dee6_103_cp313.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-xxhash-3.7.0-py313h277b090_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.13.0-cpu_generic_py313_hc574c4b_2.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.14.1-cpu_generic_py313_hf1850e0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyyaml-6.0.3-py313h65a2061_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyzmq-27.2.0-py312hdfb5542_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/qhull-2020.2-h420ef59_5.conda
@@ -2120,7 +2124,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -5147,6 +5151,29 @@ packages:
     - numpy >=1.25,<3
   size: 9327632
   timestamp: 1788731990928
+- conda: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.5.4-py313hb5f73ae_0.conda
+  sha256: e8ffae51383b57192b018bdeeb95c84ec617aa1428656825b1d4a326b81410dd
+  md5: 1ddee4b1dc2f784b4137a43789be3816
+  depends:
+  - python
+  - libstdcxx >=15
+  - libgcc >=15
+  - __glibc >=2.17,<3.0.a0
+  - libcblas >=3.9.0,<4.0a0
+  - libblas >=3.9.0,<4.0a0
+  - liblapack >=3.9.0,<4.0a0
+  - python_abi 3.13.* *_cp313
+  constrains:
+  - numpy-base <0a0
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/numpy?source=compressed-mapping
+  run_exports:
+    weak:
+    - numpy >=1.25,<3
+  size: 9339599
+  timestamp: 1791675323834
 - conda: https://conda.anaconda.org/conda-forge/linux-64/openjpeg-2.5.4-heb1ab33_2.conda
   sha256: 131688a88bea8da92fe418c4558c5073435e2848911bc4c836c3a9dd5994b4aa
   md5: a3f3ac7a68d01c198e276dbb99e62032
@@ -7522,6 +7549,18 @@ packages:
   run_exports: {}
   size: 20884
   timestamp: 1715026639309
+- conda: https://conda.anaconda.org/conda-forge/noarch/pathspec-1.1.1-pyhd8ed1ab_0.conda
+  sha256: 6eaee417d33f298db79bc7185ab1208604c0e6cf51dade34cd513c6f9db9c6f3
+  md5: 11adc78451c998c0fd162584abfa3559
+  depends:
+  - python >=3.10
+  license: MPL-2.0
+  license_family: MOZILLA
+  purls:
+  - pkg:pypi/pathspec?source=hash-mapping
+  run_exports: {}
+  size: 56559
+  timestamp: 1777271601895
 - conda: https://conda.anaconda.org/conda-forge/noarch/pexpect-4.9.0-pyhd8ed1ab_1.conda
   sha256: 202af1de83b585d36445dc1fda94266697341994d1a3328fabde4989e1b3d07a
   md5: d0d408b1f18883a944376da5cf8101ea
@@ -7828,6 +7867,24 @@ packages:
   run_exports: {}
   size: 36751
   timestamp: 1790260858546
+- conda: https://conda.anaconda.org/conda-forge/noarch/scikit-build-core-1.1.1-pyhcb39dcd_0.conda
+  sha256: bb3edbe12bdaf6f3283d6567ae180225afb89e85d80f75cc77f5e44dc09d9b8c
+  md5: 43b4de2a8d4a9c164697d6a44ebfb94c
+  depends:
+  - python >=3.9
+  - exceptiongroup >=1.0
+  - packaging >=23.2
+  - pathspec >=0.12.0
+  - tomli >=1.2.2
+  - typing_extensions >=4
+  - python
+  license: Apache-2.0
+  license_family: APACHE
+  purls:
+  - pkg:pypi/scikit-build-core?source=compressed-mapping
+  run_exports: {}
+  size: 365250
+  timestamp: 1790997173721
 - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-81.0.0-pyh332efcf_0.conda
   sha256: 6ecf738d5590bf228f09c4ecd1ea91d811f8e0bd9acdef341bc4d6c36beb13a3
   md5: d629a398d7bf872f9ed7b27ab959de15
@@ -9804,9 +9861,9 @@ packages:
     - libtiff >=4.7.2,<4.8.0a0
   size: 380645
   timestamp: 1787756067271
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.13.0-cpu_generic_hf893bd3_2.conda
-  sha256: 6f644ec2d951d59865aa842cd6081df065c2c61939f61b96ff6cfdddba7cef0c
-  md5: 2c90ca159b2cd70e9defc68f244d1285
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/libtorch-2.14.1-cpu_generic_h8539c7d_1.conda
+  sha256: e01f6408d79feb5729d8e9606dd6beb2c97eabe42dfeb8eaf8cb091a702e5b4b
+  md5: 6507dc7e96de16a82285166d4db6cbaa
   depends:
   - __osx >=12.0
   - fmt >=12.1.0,<12.2.0a0
@@ -9814,29 +9871,29 @@ packages:
   - libabseil >=20260526.0,<20260527.0a0
   - libblas >=3.9.0,<4.0a0
   - libcblas >=3.9.0,<4.0a0
-  - libcxx >=19
+  - libcxx >=21
   - liblapack >=3.9.0,<4.0a0
   - libprotobuf >=7.35.1,<7.35.2.0a0
   - libuv >=1.52.1,<2.0a0
   - libzlib >=1.3.2,<2.0a0
-  - llvm-openmp >=19.1.7
-  - onednn >=3.12,<4.0a0
+  - llvm-openmp >=21.1.8
+  - onednn >=3.14,<4.0a0
   - pybind11-abi 11
   - sleef >=3.9.0,<4.0a0
   constrains:
   - libopenblas * openmp_*
   - openblas * openmp_*
-  - pytorch 2.13.0 cpu_generic_*_2
-  - pytorch-cpu 2.13.0
+  - pytorch 2.14.1 cpu_generic_*_1
+  - pytorch-cpu 2.14.1
   - pytorch-gpu <0.0a0
   license: BSD-3-Clause
   license_family: BSD
   purls: []
   run_exports:
     weak:
-    - libtorch >=2.13.0,<2.14.0a0
-  size: 33905275
-  timestamp: 1786373050531
+    - libtorch >=2.14.1,<2.15.0a0
+  size: 35708487
+  timestamp: 1793076285674
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/libutf8proc-2.11.3-h2431656_0.conda
   sha256: ae1a82e62cd4e3c18e005ae7ff4358ed72b2bfbfe990d5a6a5587f81e9a100dc
   md5: 2255add2f6ae77d0a96624a5cbde6d45
@@ -10126,21 +10183,43 @@ packages:
     - numpy >=1.25,<3
   size: 7205662
   timestamp: 1788731998341
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.12-omp_h95bb4b2_0.conda
-  sha256: dc6d6eeea55ccf0c5b34b73f5fa966ae8f8fbeb27632225bb4836d14185b397d
-  md5: ab54feaf0b7ff7f981615a8e012b191c
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.5.4-py313h24c19cf_0.conda
+  sha256: f971a672568cf797cdca18f5644b4c08e88a7b5acf84bebb5b929c93e43971d6
+  md5: 96efd3f5436f47a2ed3d1ade1b05c323
   depends:
-  - llvm-openmp >=19.1.7
-  - libcxx >=19
+  - python
   - __osx >=11.0
+  - libcxx >=21
+  - libcblas >=3.9.0,<4.0a0
+  - liblapack >=3.9.0,<4.0a0
+  - python_abi 3.13.* *_cp313
+  - libblas >=3.9.0,<4.0a0
+  constrains:
+  - numpy-base <0a0
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/numpy?source=compressed-mapping
+  run_exports:
+    weak:
+    - numpy >=1.25,<3
+  size: 7216969
+  timestamp: 1791675324621
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/onednn-3.14-omp_hf8bcd58_0.conda
+  sha256: 5380c7a8be4dec6cb5fc69276f7e1cc5fd388cfc53b922ee2e5d732f1835738c
+  md5: dff832d5b1bcc2743655cf935c355372
+  depends:
+  - __osx >=11.0
+  - llvm-openmp >=21.1.8
+  - libcxx >=21
   license: Apache-2.0
   license_family: APACHE
   purls: []
   run_exports:
     weak:
-    - onednn >=3.12,<4.0a0
-  size: 5754719
-  timestamp: 1779566196336
+    - onednn >=3.14,<4.0a0
+  size: 6959158
+  timestamp: 1792776768907
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/openjpeg-2.5.4-h4d1e80c_2.conda
   sha256: e71bd04b5d0e39f39a3c039d021d3b76cd65bee3032e7f859ab7082f0ace8be5
   md5: 487d92910109a711fdb77631bf1aabf0
@@ -10513,40 +10592,41 @@ packages:
   run_exports: {}
   size: 23122
   timestamp: 1788583162168
-- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.13.0-cpu_generic_py313_hc574c4b_2.conda
-  sha256: 7b766ddc291fd3e28a7127b215cc6a36b0938e3c53449598d3afe8b06b930866
-  md5: 1bb056377de0cfab2673993ee315d8e3
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/pytorch-2.14.1-cpu_generic_py313_hf1850e0_1.conda
+  sha256: 41503c363a444800dff9e844793654a7d286e112bad614a39354f24f0e2e703c
+  md5: bdbe5251d095b3f0640459f38740fe54
   depends:
   - __osx >=12.0
   - filelock
   - fmt >=12.1.0,<12.2.0a0
-  - fsspec
+  - fsspec >=0.8.5
   - jinja2
   - libabseil * cxx17*
   - libabseil >=20260526.0,<20260527.0a0
   - libcblas >=3.9.0,<4.0a0
-  - libcxx >=19
+  - libcxx >=21
   - liblapack >=3.9.0,<4.0a0
   - libprotobuf >=7.35.1,<7.35.2.0a0
-  - libtorch 2.13.0 cpu_generic_hf893bd3_2
+  - libtorch 2.14.1 cpu_generic_h8539c7d_1
   - libuv >=1.52.1,<2.0a0
   - libzlib >=1.3.2,<2.0a0
-  - llvm-openmp >=19.1.7
-  - networkx
+  - llvm-openmp >=21.1.8
+  - networkx >=2.5.1
   - nomkl
   - numpy >=1.25,<3
-  - onednn >=3.12,<4.0a0
+  - onednn >=3.14,<4.0a0
   - optree >=0.13.0
   - pybind11
   - pybind11-abi 11
   - python >=3.13,<3.14.0a0
   - python_abi 3.13.* *_cp313
-  - setuptools <82
+  - scikit-build-core
+  - setuptools >=77.0.3
   - sleef >=3.9.0,<4.0a0
   - sympy >=1.13.3
-  - typing_extensions >=4.10.0
+  - typing_extensions >=4.13.0
   constrains:
-  - pytorch-cpu 2.13.0
+  - pytorch-cpu 2.14.1
   - pytorch-gpu <0.0a0
   license: BSD-3-Clause
   license_family: BSD
@@ -10554,10 +10634,10 @@ packages:
   - pkg:pypi/torch?source=hash-mapping
   run_exports:
     weak:
-    - pytorch >=2.13.0,<2.14.0a0
-    - libtorch >=2.13.0,<2.14.0a0
-  size: 26216136
-  timestamp: 1786374149151
+    - pytorch >=2.14.1,<2.15.0a0
+    - libtorch >=2.14.1,<2.15.0a0
+  size: 27594309
+  timestamp: 1793076822389
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/pyyaml-6.0.3-py313h65a2061_1.conda
   sha256: 950725516f67c9691d81bb8dde8419581c5332c5da3da10c9ba8cbb1698b825d
   md5: 5d0c8b92128c93027632ca8f8dc1190f
@@ -10953,23 +11033,23 @@ packages:
 - pypi: ./
   name: masked-stellar-autoencoder
   requires_dist:
-  - torch
+  - torch>=2.14.1
   - torchmetrics
   - rtdl-num-embeddings>=0.0.12
-  - numpy>=1.25.0
+  - numpy>=2.5.4
   - astropy>=6.0.0
   - astroquery>=0.4.9
   - dustmaps>=1.0
   - natsort>=8.4
   - pandas>=2.1.0
   - scikit-learn>=1.3.0
-  - scipy>=1.11.0
+  - scipy>=1.18.1
   - h5py>=3.10.0
   - matplotlib>=3.8.0
   - tqdm>=4.66.0
   - pyyaml>=6.0.1
   - wandb>=0.16.0
-  - torchregress @ git+https://github.com/sfabbro/torchregress.git@6bd8b93b35fe4fe216319870e72e94eb78429106
+  - torchregress @ git+https://github.com/sfabbro/torchregress.git@82ca1996cc4f3ca0be3e730d38a99db482a79378
   requires_python: '>=3.12'
 - pypi: git+https://github.com/opencadc/canfar.git?rev=0d96a72761cc6dc7063d6cd97049ae3743133efa#0d96a72761cc6dc7063d6cd97049ae3743133efa
   name: canfar
@@ -10989,27 +11069,27 @@ packages:
   - fss-cli @ git+https://github.com/shinybrar/vostools@main#subdirectory=libs/fss-cli
   - cryptography>=45.0.1
   requires_python: '>=3.10'
-- pypi: git+https://github.com/sfabbro/torchregress.git?rev=6bd8b93b35fe4fe216319870e72e94eb78429106#6bd8b93b35fe4fe216319870e72e94eb78429106
+- pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
   name: torchregress
-  version: 0.3.0rc1
+  version: 0.3.0b1
   requires_dist:
-  - torch>=2.13
-  - numpy>=2.5
+  - torch>=2.14.1
+  - numpy>=2.5.4
   - torchmetrics>=1.9
-  - scipy>=1.18
-  - pytest>=9.1 ; extra == 'test'
+  - scipy>=1.18.1
+  - pytest>=9.1.1 ; extra == 'test'
   - pytest-cov>=7.1 ; extra == 'test'
-  - polars>=1.43 ; extra == 'test'
+  - polars>=2.1 ; extra == 'test'
   - pyarrow>=25.0 ; extra == 'test'
   - pyyaml>=6.0.3 ; extra == 'test'
-  - scikit-learn>=1.9 ; extra == 'test'
-  - pandas>=3.0 ; extra == 'test'
+  - scikit-learn>=1.9.1 ; extra == 'test'
+  - pandas>=3.1 ; extra == 'test'
   - scoringrules>=0.11 ; extra == 'test'
   - properscoring>=0.1 ; extra == 'test'
-  - statsmodels>=0.14 ; extra == 'test'
-  - hypothesis>=6.100 ; extra == 'test'
-  - zensical>=0.0.52 ; extra == 'docs'
-  - matplotlib>=3.11 ; extra == 'viz'
+  - statsmodels>=0.15 ; extra == 'test'
+  - hypothesis>=6.170.11 ; extra == 'test'
+  - zensical>=0.0.73 ; extra == 'docs'
+  - matplotlib>=3.11.2 ; extra == 'viz'
   - zuko>=1.6 ; extra == 'flows'
   - torchregress[test,docs,viz,flows] ; extra == 'all'
   requires_python: '>=3.12,<3.16'
@@ -11028,10 +11108,10 @@ packages:
   - fsspec>=2026.6.0
   - httpx>=0.27
   requires_python: '>=3.10'
-- pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.0%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
+- pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
   name: torch
-  version: 2.14.0+cpu
-  sha256: 160e1bc46aeded3111d2801f8ae10dc9a1b946843a7e126b4dbf5e19c5706e95
+  version: 2.14.1+cpu
+  sha256: 331fa474e26e428e2e6af1143b2fdab19cee492d7d21897b8899ce1c14755662
   index: https://download.pytorch.org/whl/cpu
   requires_dist:
   - filelock
@@ -11045,10 +11125,10 @@ packages:
   - opt-einsum>=3.3 ; extra == 'opt-einsum'
   - pyyaml ; extra == 'pyyaml'
   requires_python: '>=3.10'
-- pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.0%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
+- pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
   name: torch
-  version: 2.14.0+cu130
-  sha256: 745010695e0458d6f28accb697b5371b6fd245aa8696530165f972cd126bbd8d
+  version: 2.14.1+cu130
+  sha256: 3a78ea0a4d6605c1e351b33ab8aabe44ddb815239cec00cc6f85555d26c0a5a5
   index: https://download.pytorch.org/whl/cu130
   requires_dist:
   - filelock
