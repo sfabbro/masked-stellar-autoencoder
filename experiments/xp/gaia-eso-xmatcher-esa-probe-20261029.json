@@ -1,0 +1,19 @@
+{
+  "status": "three_row_candidate_and_assumed_epoch_probe_complete",
+  "source_sha256": "9932d63fc89278425ace2ee9f44507990d0efc7ece0750028c27c28eaf0992e4",
+  "xmatcher_commit": "804b38b4221a20bc9610c8ab18b7167309bce3d5",
+  "gaia_provider": "gaia_esa / gaiadr3.gaia_source",
+  "gaia_cone_center_degrees": [97.4, -31.25],
+  "gaia_cone_radius_degrees": 0.1,
+  "candidate_search_radius_arcsec": 10.0,
+  "local_matching_radius_arcsec": 1.0,
+  "source_rows": [0, 1, 2],
+  "candidate_pairs_within_search_radius": 8,
+  "finite_motion_unique_gaia_candidates": 8,
+  "assumed_source_epochs_julian_year": [2000, 2010, 2016],
+  "per_epoch_match_counts": [3, 3, 3],
+  "source_candidates_stable_across_assumptions": 3,
+  "independent_esa_source_id_verified_exactly": "2893942955389545600",
+  "evidence_directory": "experiments/xp/evidence-gaia-eso-epoch-probe-20261029",
+  "limitations": "Candidate fetch is a bounded field and radius, no global completeness claim; source epochs are illustrative assumptions, not established truth; only one Gaia ID independently checked; no training identity promotion."
+}
