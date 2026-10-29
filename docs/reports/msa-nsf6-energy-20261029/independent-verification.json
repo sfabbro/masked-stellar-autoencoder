@@ -1,0 +1,104 @@
+[
+  {
+    "run_id": "remediation_nsf6_energy_frozen_eval_recovery_v1",
+    "counts": [
+      2726,
+      2645,
+      2726,
+      2102,
+      2048,
+      2087
+    ],
+    "native_mae": [
+      78.89207753981574,
+      0.1452726867364992,
+      0.08382336953371247,
+      0.07058591473987147,
+      1.0733737615477799,
+      0.09575337274148978
+    ],
+    "normalized_mae": [
+      0.11196455369315819,
+      0.13649314256665512,
+      0.25950365879483184,
+      0.474500426200245,
+      0.35017501090451203,
+      0.3023351197217548
+    ],
+    "native_sample_shape": [
+      8192,
+      10,
+      6
+    ],
+    "nonzero_covariance_entries": 300,
+    "scope": "Previously used development sample; native-coordinate covariance is numerical, not physical validation. Age and distance labels are catalogue posterior summaries."
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_eval_recovery_v1",
+    "counts": [
+      2726,
+      2645,
+      2726,
+      2102,
+      2048,
+      2087
+    ],
+    "native_mae": [
+      91.22034094373518,
+      0.14177707694186437,
+      0.08080030977709977,
+      0.06759310951630373,
+      1.0869257783282524,
+      0.0930545609132704
+    ],
+    "normalized_mae": [
+      0.12946096845210406,
+      0.13320878969362043,
+      0.250144752418718,
+      0.45438186062876207,
+      0.35459618998852194,
+      0.29381379484483333
+    ],
+    "native_sample_shape": [
+      8192,
+      10,
+      6
+    ],
+    "nonzero_covariance_entries": 300,
+    "scope": "Previously used development sample; native-coordinate covariance is numerical, not physical validation. Age and distance labels are catalogue posterior summaries."
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_recon003_eval_recovery_v1",
+    "counts": [
+      2726,
+      2645,
+      2726,
+      2102,
+      2048,
+      2087
+    ],
+    "native_mae": [
+      79.00540386301088,
+      0.1521083588954187,
+      0.08057776098451111,
+      0.06936606819565215,
+      1.0472063608487447,
+      0.09317871647945841
+    ],
+    "normalized_mae": [
+      0.11212538772863946,
+      0.142915701379921,
+      0.24945577718116324,
+      0.4663002391336884,
+      0.3416382177077841,
+      0.2942058080647636
+    ],
+    "native_sample_shape": [
+      8192,
+      10,
+      6
+    ],
+    "nonzero_covariance_entries": 300,
+    "scope": "Previously used development sample; native-coordinate covariance is numerical, not physical validation. Age and distance labels are catalogue posterior summaries."
+  }
+]

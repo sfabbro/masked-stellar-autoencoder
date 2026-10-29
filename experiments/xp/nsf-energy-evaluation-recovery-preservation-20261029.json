@@ -1,0 +1,110 @@
+[
+  {
+    "run_id": "remediation_nsf6_energy_frozen_eval_recovery_v1",
+    "status": "nsf_energy_evaluation_recovery_complete",
+    "selected_update": 900,
+    "development_score": 0.2724953186468597,
+    "development_per_label": [
+      0.11196455369315814,
+      0.13649314256665465,
+      0.2595036587948317,
+      0.47450042620024613,
+      0.3501750109045125,
+      0.30233511972175525
+    ],
+    "files": [
+      {
+        "name": "development-predictions.npz",
+        "bytes": 747125,
+        "sha256": "b338c4ace3edc980e6dbf91834f8bde9ceae520d296592f92cd76146a8d9ffdb"
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50388,
+        "sha256": "93d84c273151f99dd70fff9f40209ab5cf05a449ca37e8122de61b9848a93291"
+      },
+      {
+        "name": "normalization.npz",
+        "bytes": 1696,
+        "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+      },
+      {
+        "name": "whole-vector-corners.npz",
+        "bytes": 5626307,
+        "sha256": "b14f8bef9b22fe079e1a97c62e063b865613ddbaa8331553c0a2123a32dda7e7"
+      }
+    ]
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_eval_recovery_v1",
+    "status": "nsf_energy_evaluation_recovery_complete",
+    "selected_update": 1000,
+    "development_score": 0.26926772600442683,
+    "development_per_label": [
+      0.12946096845210414,
+      0.1332087896936205,
+      0.2501447524187175,
+      0.45438186062876257,
+      0.3545961899885223,
+      0.29381379484483383
+    ],
+    "files": [
+      {
+        "name": "development-predictions.npz",
+        "bytes": 746598,
+        "sha256": "25ea9a5234225d5fe2ebe475e97a0e39f9df549b64ca26736a5c5247fe1afddc"
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50372,
+        "sha256": "d9e82f78879260b5d63975aa989e7a17736d59ff9239f2d5a9bbf5957bdb9a21"
+      },
+      {
+        "name": "normalization.npz",
+        "bytes": 1696,
+        "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+      },
+      {
+        "name": "whole-vector-corners.npz",
+        "bytes": 5623943,
+        "sha256": "f0d2c7f0be9297a5e9ae1a8bace63962dad075c42f93ff5cff7e4485887d1031"
+      }
+    ]
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_recon003_eval_recovery_v1",
+    "status": "nsf_energy_evaluation_recovery_complete",
+    "selected_update": 900,
+    "development_score": 0.26777352186599324,
+    "development_per_label": [
+      0.11212538772863943,
+      0.14291570137992038,
+      0.2494557771811635,
+      0.46630023913368884,
+      0.34163821770778385,
+      0.29420580806476343
+    ],
+    "files": [
+      {
+        "name": "development-predictions.npz",
+        "bytes": 746894,
+        "sha256": "00c422d7acb1c24fc4ca0daac4ac36e27dc7c55a9ec320189ae798dda481029f"
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50348,
+        "sha256": "db6bcad3a004065b81c56fa000abda8e72b2f1344e16015b7103969396a7f4fb"
+      },
+      {
+        "name": "normalization.npz",
+        "bytes": 1696,
+        "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+      },
+      {
+        "name": "whole-vector-corners.npz",
+        "bytes": 5630001,
+        "sha256": "e3c5f8432659fddd92bc3cd757be103b630fd802f6a696cc04172341d61fdb6a"
+      }
+    ]
+  }
+]

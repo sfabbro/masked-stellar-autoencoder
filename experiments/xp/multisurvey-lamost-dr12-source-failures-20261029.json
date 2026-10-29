@@ -1,0 +1,20 @@
+[
+  {
+    "run_id": "multisurvey_lamost_dr12_lrs_source_v1",
+    "session_id": "bgnzhuv5",
+    "status": "failed",
+    "error_type": "URLError",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+    "source_commit": "b6f13f6f028a2b59ad4375c1d023048802dbde62",
+    "scope": "CANFAR worker outbound publisher access denied; original failed outputs preserved."
+  },
+  {
+    "run_id": "multisurvey_lamost_dr12_mrs_source_v1",
+    "session_id": "h010np0w",
+    "status": "failed",
+    "error_type": "URLError",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+    "source_commit": "b6f13f6f028a2b59ad4375c1d023048802dbde62",
+    "scope": "CANFAR worker outbound publisher access denied; original failed outputs preserved."
+  }
+]
