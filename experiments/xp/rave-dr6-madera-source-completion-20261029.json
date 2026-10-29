@@ -1,0 +1,42 @@
+{
+  "status": "madera_source_complete",
+  "output": "/private/tmp/msa-rave-dr6-madera-edr3-20261029.h5",
+  "output_bytes": 19520689,
+  "output_sha256": "9c812f1365e0cf8986e519d45cc7faf75910d003574c927e66b2e1694f5a38f7",
+  "madera_sha256": "c2337bf843e02c40245b58010ad700dae698d429959a0a2c7da5fac3f78488a4",
+  "crossmatch_sha256": "05b81d2a1f56ee3d4be3da21c70481b983fd779843fbd8973671d9ce16d912b8",
+  "counts": {
+    "madera_rows": 518387,
+    "crossmatch_rows": 517357,
+    "identity_candidate_observations": 517357,
+    "identity_candidate_stars": 450978,
+    "ambiguous_observation_key_rows": 0,
+    "missing_observation_key_rows": 1030,
+    "per_measurement": {
+      "teff_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      },
+      "teff_cal_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      },
+      "logg_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      },
+      "logg_cal_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      },
+      "m_h_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      },
+      "m_h_cal_madera": {
+        "finite_non_sentinel_rows": 517821,
+        "identity_candidate_rows": 516796
+      }
+    }
+  }
+}

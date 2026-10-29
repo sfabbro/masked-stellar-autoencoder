@@ -1,0 +1,32 @@
+{
+  "status": "gauguin_source_complete",
+  "output": "/private/tmp/msa-rave-dr6-gauguin-edr3-20261029.h5",
+  "output_bytes": 32228477,
+  "output_sha256": "6a9b5155dbcae547965256e22a5f0e4b9bbc30f1c14823519b5603bef7beed1d",
+  "gauguin_sha256": "27af23c02c2fb332568598155c4bfbfd88cd2dc062ac82aa6626da0a69d37be9",
+  "crossmatch_sha256": "05b81d2a1f56ee3d4be3da21c70481b983fd779843fbd8973671d9ce16d912b8",
+  "counts": {
+    "gauguin_rows": 453490,
+    "identity_candidate_observations": 453035,
+    "identity_candidate_stars": 398885,
+    "ambiguous_observation_key_rows": 0,
+    "per_measurement": {
+      "fe_h": {
+        "finite_rows": 328317,
+        "identity_candidate_rows": 328018
+      },
+      "alpha_fe": {
+        "finite_rows": 430142,
+        "identity_candidate_rows": 429731
+      },
+      "al_h": {
+        "finite_rows": 315036,
+        "identity_candidate_rows": 314742
+      },
+      "ni_h": {
+        "finite_rows": 66778,
+        "identity_candidate_rows": 66739
+      }
+    }
+  }
+}

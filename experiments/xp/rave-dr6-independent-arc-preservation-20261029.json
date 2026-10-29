@@ -1,0 +1,48 @@
+{
+  "status": "private_preservation_complete",
+  "destination": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1",
+  "files": [
+    {
+      "name": "rave_dr6_madera_edr3_independent_20261029.h5",
+      "bytes": 19520689,
+      "sha256": "9c812f1365e0cf8986e519d45cc7faf75910d003574c927e66b2e1694f5a38f7",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "rave_dr6_gauguin_madera_edr3_independent_20261029.h5",
+      "bytes": 32228477,
+      "sha256": "6a9b5155dbcae547965256e22a5f0e4b9bbc30f1c14823519b5603bef7beed1d",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "rave_dr6_gaugmad_cds_20261029.dat.gz",
+      "bytes": 23484025,
+      "sha256": "27af23c02c2fb332568598155c4bfbfd88cd2dc062ac82aa6626da0a69d37be9",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "rave_dr6_cds_readme_20261029.txt",
+      "bytes": 68489,
+      "sha256": "7abfa3b8fa0af2bca1ae89a044baed8360ea3bcc8902e4c5b4341e0583dfcdf1",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "rave_dr6_madera_edr3_independent_20261029.json",
+      "bytes": 1394,
+      "sha256": "624ba130b3aabb1433c66a2154881bacffd521793bd46a065a2c57e86b8676b5",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "rave_dr6_gauguin_madera_edr3_independent_20261029.json",
+      "bytes": 1001,
+      "sha256": "81c6253ac38bca4443af5a669f7e05136168ec7cdba97c3629a657f2b362ae6e",
+      "status": "private_sha_verified",
+      "public": false
+    }
+  ]
+}

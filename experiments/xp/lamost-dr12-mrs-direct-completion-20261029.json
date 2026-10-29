@@ -1,0 +1,60 @@
+{
+  "archive_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_mrs_source_direct_v2/dr12_mrs_stellar.fits.gz",
+  "archive_sha256": "e10551be296cddcacf0ceb9c9b2827884d10e550b14850adb01348435be12369",
+  "expected_source_bytes": 725541580,
+  "model_loaded": false,
+  "product": "mrs",
+  "release": "LAMOST DR12 v2.0",
+  "result": {
+    "cache_absence_not_no_xp": true,
+    "cache_associations_verified": 128,
+    "cache_invalid_ids": 0,
+    "cache_source_id_sha256": "b75dd40db0bb904f60f71248fcfd8413c1d20b954102c4d46b54280e806fe2fd",
+    "complete_xp_in_cache": 889924,
+    "matched_base": 113331,
+    "matched_cache": 889924,
+    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_mrs_source_direct_v2/source.h5",
+    "output_bytes": 255244595,
+    "output_sha256": "293201d803cb569c79ce2c76f51b912e6dc8a69c27296450154a18946d60c8f6",
+    "outside_base_ancestry_unknown": 1386253,
+    "product": "mrs",
+    "raw_label_counts_by_measurement": {
+      "cnn": {
+        "al_fe": 645802,
+        "alpha_m_cnn": 2484931,
+        "c_fe": 2484931,
+        "ca_fe": 2484931,
+        "cr_fe": 645802,
+        "cu_fe": 645802,
+        "feh_cnn": 2645064,
+        "logg_cnn": 2645064,
+        "m_h_cnn": 2461727,
+        "mg_fe": 2484931,
+        "n_fe": 2484931,
+        "ni_fe": 2484931,
+        "o_fe": 645802,
+        "s_fe": 645802,
+        "si_fe": 2484931,
+        "teff_cnn": 2645064,
+        "ti_fe": 645802
+      },
+      "lasp": {
+        "alpha_m_lasp": 1736750,
+        "feh_lasp": 3222602,
+        "logg_lasp": 3222602,
+        "teff_lasp": 3222602
+      }
+    },
+    "rows_with_valid_gaia_ids": 3203771,
+    "source_rows": 3224901,
+    "unique_gaia_ids": 1499584
+  },
+  "run_id": "multisurvey_lamost_dr12_mrs_source_direct_v2",
+  "scope": "All raw records retained. Exact Gaia ID joins only; outside-base ancestry and absent-cache XP remain unknown. LASP/CNN share spectra and are not independent.",
+  "source_commit": "ec104432bd8664bcde00b7f1f1bfa4adc7ae7d8f",
+  "source_only": true,
+  "source_url": "https://www.lamost.org/dr12/v2.0/medcas/catdl?name=dr12_v2.0_MRS_stellar.fits.gz",
+  "status": "lamost_dr12_source_complete",
+  "training_performed": false,
+  "transport": "direct_https_no_proxy"
+}
