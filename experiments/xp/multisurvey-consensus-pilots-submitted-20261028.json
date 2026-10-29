@@ -1,0 +1,63 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_consensus_frozen_recon003_pilot_v1",
+      "name": "msa-si15-multisurvey-consensus-frozen-recon003-pilot-v1",
+      "source_sha": "880cd78ef05fc23a8785a58231fc3a1c0ae52b96",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_consensus_frozen_recon003_pilot_v1",
+      "plan": {
+        "run_id": "multisurvey_consensus_frozen_recon003_pilot_v1",
+        "task": "multisurvey-consensus-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "e8s4lom7"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:51:22.055713+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multisurvey_consensus_ft_recon003_pilot_v1",
+      "name": "msa-si15-multisurvey-consensus-ft-recon003-pilot-v1",
+      "source_sha": "880cd78ef05fc23a8785a58231fc3a1c0ae52b96",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_consensus_ft_recon003_pilot_v1",
+      "plan": {
+        "run_id": "multisurvey_consensus_ft_recon003_pilot_v1",
+        "task": "multisurvey-consensus-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "dktni0fn"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:51:28.674057+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

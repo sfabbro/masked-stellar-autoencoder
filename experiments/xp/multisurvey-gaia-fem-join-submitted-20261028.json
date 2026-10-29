@@ -1,0 +1,33 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_gaia_gspspec_fem_join_v1",
+      "name": "msa-si15-multisurvey-gaia-gspspec-fem-join-v1",
+      "source_sha": "880cd78ef05fc23a8785a58231fc3a1c0ae52b96",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_fem_join_v1",
+      "plan": {
+        "run_id": "multisurvey_gaia_gspspec_fem_join_v1",
+        "task": "multisurvey-gaia-gspspec-fem-join",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "yqxwhp92"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:51:22.705208+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

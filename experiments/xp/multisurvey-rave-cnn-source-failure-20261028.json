@@ -1,0 +1,10 @@
+{
+  "run_id": "multisurvey_rave_cnn_edr3_source_v1",
+  "session_id": "mnr1s9k5",
+  "source_commit": "f70aedca512925481f29a5022bf0184084282374",
+  "status": "failed",
+  "error_type": "PermissionError",
+  "error": "[Errno 13] Permission denied: '/arc/projects/k-pop/catalogues/rave_dr6_x_gaiaedr3.fits'",
+  "evidence": "Actual worker manifest and session logs; no successful source output.",
+  "recovery": "Distinct source/output version only after verifying an accessible SHA-identical copy."
+}
