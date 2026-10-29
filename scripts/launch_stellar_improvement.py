@@ -67,6 +67,14 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "remediation-energy-pilot":
+        from remediation_energy6_launch_policy import bind_energy_pilot_policy
+
+        return bind_energy_pilot_policy(plan, env)
+    if plan["task"] == "multisurvey-rave-cnn-edr3-source":
+        from multisurvey_rave_cnn_launch_policy import bind_rave_cnn_policy
+
+        return bind_rave_cnn_policy(plan, env)
     if plan["task"] == "multisurvey-gaia-gspspec-cache-census":
         from multisurvey_gaia_cache_census_launch_policy import (
             bind_gaia_cache_census_policy,
@@ -652,6 +660,7 @@ def main():
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
                 "multisurvey-fit-collation-census",
+                "multisurvey-rave-cnn-edr3-source",
                 "multisurvey-gaia-gspspec-cache-census",
                 "multisurvey-gaia-gspspec-overlay",
             }
@@ -830,6 +839,7 @@ def main():
             "remediation-source",
             "multisurvey-desi-source",
             "multisurvey-fit-collation-census",
+            "multisurvey-rave-cnn-edr3-source",
             "multisurvey-gaia-gspspec-cache-census",
             "multisurvey-gaia-gspspec-overlay",
             "final-six-ancestry",

@@ -174,6 +174,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/prepare_remediation_source.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-rave-cnn-edr3-source ]]; then
+      "${pixi_run[@]}" python -u scripts/run_rave_cnn_source.py --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-gaia-gspspec-cache-census ]]; then
       "${pixi_run[@]}" python -u scripts/run_multisurvey_gaia_cache_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit "$?"
@@ -204,6 +208,10 @@ case "$stage" in
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-joint-preflight ]]; then
       "${pixi_run[@]}" python -u scripts/run_remediation_joint_preflight.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-energy-pilot ]]; then
+      "${pixi_run[@]}" python -u scripts/run_remediation_energy_pilot.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-pilot ]]; then
