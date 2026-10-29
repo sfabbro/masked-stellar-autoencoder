@@ -83,3 +83,42 @@ def test_failure_and_policy_are_fail_closed(tmp_path):
         policy.bind_lamost_dr12_policy(
             {**plan, "env": {"ANY": "x"}}, {"MSA_EXPERIMENT_OUTPUT": policy.ROOT + run}
         )
+
+
+def test_direct_recovery_selects_no_proxy_and_distinct_output(tmp_path, monkeypatch):
+    seen = {}
+
+    def fake_download(url, path, size, *, direct):
+        seen.update(url=url, size=size, direct=direct)
+        path.write_bytes(b"source")
+        return "f" * 64
+
+    def execute(**kw):
+        return {
+            "product": "lrs",
+            "source_rows": m.PRODUCTS["lrs"]["rows"],
+            "output": str(kw["output"].resolve()),
+        }
+
+    monkeypatch.setattr(m, "download", fake_download)
+    run = "multisurvey_lamost_dr12_lrs_source_direct_v2"
+    result = m.run(run, tmp_path / "new", "a" * 40, execute=execute)
+    assert seen["direct"] is True
+    assert result["transport"] == "direct_https_no_proxy"
+    assert not result["training_performed"]
+    plan = {
+        "run_id": run,
+        "task": policy.TASK,
+        "resources": {"cores": 8, "ram": 128, "gpu": 0},
+        "image": "images.canfar.net/astroai/terminal:latest",
+        "depends_on": [],
+    }
+    policy.bind_lamost_dr12_policy(plan, {"MSA_EXPERIMENT_OUTPUT": policy.ROOT + run})
+    with pytest.raises(ValueError):
+        policy.bind_lamost_dr12_policy(
+            plan,
+            {
+                "MSA_EXPERIMENT_OUTPUT": policy.ROOT
+                + "multisurvey_lamost_dr12_lrs_source_v1"
+            },
+        )

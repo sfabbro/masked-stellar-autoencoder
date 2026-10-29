@@ -104,8 +104,13 @@ def native_values(table, names):
     return values, available
 
 
-def download(url, target, expected_bytes):
-    with urllib.request.urlopen(
+def download(url, target, expected_bytes, *, direct=False):
+    opener = (
+        urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        if direct
+        else urllib.request.build_opener()
+    )
+    with opener.open(
         urllib.request.Request(url, headers={"User-Agent": "msa-dr12-source/1.0"}),
         timeout=90,
     ) as src:

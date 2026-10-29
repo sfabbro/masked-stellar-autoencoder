@@ -1,0 +1,36 @@
+{
+  "run_id": "multisurvey_lamost_dr12_network_probe_v1",
+  "source_commit": "4cd72cbef6a6b05c33e1fad42ae4f1c381cb699f",
+  "source_only": true,
+  "training_performed": false,
+  "model_loaded": false,
+  "status": "lamost_network_probe_complete",
+  "tests": {
+    "https_default_proxy": {
+      "status": "error",
+      "error_type": "URLError",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    },
+    "https_no_proxy": {
+      "status": "response",
+      "http_status": 206,
+      "content_type": "image/fits",
+      "content_range": "bytes 0-4095/1221786815",
+      "bytes_read": 4096,
+      "gzip_magic": true
+    },
+    "http_default_proxy": {
+      "status": "error",
+      "error_type": "HTTPError",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    "http_no_proxy": {
+      "status": "response",
+      "http_status": 206,
+      "content_type": "image/fits",
+      "content_range": "bytes 0-4095/1221786815",
+      "bytes_read": 4096,
+      "gzip_magic": true
+    }
+  }
+}

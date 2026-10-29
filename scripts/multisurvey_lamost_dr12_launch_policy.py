@@ -5,6 +5,8 @@ TASK = "multisurvey-lamost-dr12-source"
 RUNS = {
     "multisurvey_lamost_dr12_lrs_source_v1",
     "multisurvey_lamost_dr12_mrs_source_v1",
+    "multisurvey_lamost_dr12_lrs_source_direct_v2",
+    "multisurvey_lamost_dr12_mrs_source_direct_v2",
 }
 
 

@@ -18,6 +18,8 @@ ORIGINAL = "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-05272
 RUNS = {
     "multisurvey_lamost_dr12_lrs_source_v1": "lrs",
     "multisurvey_lamost_dr12_mrs_source_v1": "mrs",
+    "multisurvey_lamost_dr12_lrs_source_direct_v2": "lrs",
+    "multisurvey_lamost_dr12_mrs_source_direct_v2": "mrs",
 }
 
 
@@ -29,7 +31,7 @@ def save(path, obj):
     os.replace(temp, path)
 
 
-def run(run_id, output, source_commit, *, fetch=download, execute=produce):
+def run(run_id, output, source_commit, *, fetch=None, execute=produce):
     if (
         run_id not in RUNS
         or len(source_commit) != 40
@@ -37,6 +39,9 @@ def run(run_id, output, source_commit, *, fetch=download, execute=produce):
     ):
         raise ValueError("Exact run and immutable source required")
     product = RUNS[run_id]
+    direct = run_id.endswith("_direct_v2")
+    if fetch is None:
+        fetch = lambda url, target, size: download(url, target, size, direct=direct)
     spec = PRODUCTS[product]
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -47,6 +52,7 @@ def run(run_id, output, source_commit, *, fetch=download, execute=produce):
         "product": product,
         "source_url": spec["url"],
         "expected_source_bytes": spec["bytes"],
+        "transport": "direct_https_no_proxy" if direct else "default_proxy",
         "source_only": True,
         "model_loaded": False,
         "training_performed": False,
