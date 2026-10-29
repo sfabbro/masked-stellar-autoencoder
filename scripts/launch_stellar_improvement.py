@@ -71,6 +71,12 @@ def bind_prediction_policy(
         from remediation_energy6_launch_policy import bind_energy_pilot_policy
 
         return bind_energy_pilot_policy(plan, env)
+    if plan["task"] == "multisurvey-rave-cnn-edr3-source-recovery":
+        from multisurvey_rave_cnn_recovery_launch_policy import (
+            bind_rave_cnn_recovery_policy,
+        )
+
+        return bind_rave_cnn_recovery_policy(plan, env)
     if plan["task"] == "multisurvey-rave-cnn-edr3-source":
         from multisurvey_rave_cnn_launch_policy import bind_rave_cnn_policy
 
@@ -671,6 +677,7 @@ def main():
                 "multisurvey-consensus-preflight",
                 "multisurvey-consensus-pilot",
                 "multisurvey-fit-collation-census",
+                "multisurvey-rave-cnn-edr3-source-recovery",
                 "multisurvey-rave-cnn-edr3-source",
                 "multisurvey-gaia-gspspec-fem-join",
                 "multisurvey-gaia-gspspec-cache-census",
@@ -851,6 +858,7 @@ def main():
             "remediation-source",
             "multisurvey-desi-source",
             "multisurvey-fit-collation-census",
+            "multisurvey-rave-cnn-edr3-source-recovery",
             "multisurvey-rave-cnn-edr3-source",
             "multisurvey-gaia-gspspec-fem-join",
             "multisurvey-gaia-gspspec-cache-census",

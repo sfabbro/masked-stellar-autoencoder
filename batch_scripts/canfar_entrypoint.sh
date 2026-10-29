@@ -174,6 +174,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/prepare_remediation_source.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-rave-cnn-edr3-source-recovery ]]; then
+      "${pixi_run[@]}" python -u scripts/run_rave_cnn_source_recovery.py --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-rave-cnn-edr3-source ]]; then
       "${pixi_run[@]}" python -u scripts/run_rave_cnn_source.py --output "$experiment_output"
       exit "$?"

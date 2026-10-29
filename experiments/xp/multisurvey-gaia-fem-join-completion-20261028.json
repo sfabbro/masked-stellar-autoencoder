@@ -1,0 +1,23 @@
+{
+  "run_id": "multisurvey_gaia_gspspec_fem_join_v1",
+  "session_id": "yqxwhp92",
+  "status": "gaia_fem_source_join_complete",
+  "source_commit": "880cd78ef05fc23a8785a58231fc3a1c0ae52b96",
+  "preserved_manifest_sha256": "bdf1a332fd41a4e0fb16eb28eb15e015858afd2b01254a08e0a26dd571269b89",
+  "result": {
+    "counts": {
+      "archive_rows": 1774698,
+      "matched_detection_candidates": 1756562,
+      "matched_rows": 1774698,
+      "raw_derived_available": 1774698,
+      "sidecar_rows": 5591594,
+      "unmatched_rows": 0
+    },
+    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_fem_join_v1/gaia-fem-joined.h5",
+    "output_bytes": 227175680,
+    "output_sha256": "7c05c24b96eea731c4d44b6082710dcb351a2f67713159272a425d317a6321f1",
+    "scope": "Exact-ID source join only; not independent labels, calibrated uncertainty, assigned roles, feature eligibility or model training."
+  },
+  "verification_scope": "Manifest locally hashed; full remote output independently streamed and its 227175680 bytes and SHA256 match the producer. No role assignment or model training.",
+  "independent_output_sha256": "7c05c24b96eea731c4d44b6082710dcb351a2f67713159272a425d317a6321f1"
+}

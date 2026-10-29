@@ -1,0 +1,9 @@
+jobs:
+  - run_id: multisurvey_rave_cnn_edr3_source_recovery_v2
+    task: multisurvey-rave-cnn-edr3-source-recovery
+    depends_on: []
+    resources:
+      cores: 8
+      ram: 128
+      gpu: 0
+    image: images.canfar.net/astroai/terminal:latest
