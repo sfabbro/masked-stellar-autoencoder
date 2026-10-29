@@ -1,0 +1,26 @@
+training_config: configs/remediation-nsf6-energy-20261028.yaml
+training_config_sha256: 059f996a9c91e8faacd73f0cc8983814632e31ce9f4e930f42ab0def5509e3f0
+recoveries:
+- run_id: remediation_nsf6_energy_frozen_eval_recovery_v1
+  original_run: remediation_nsf6_energy_frozen_v1
+  checkpoint_sha256: 0412e67c1757330d7d74dcc30344667eb0c9b7fcff6e40e2b92618cba9277c72
+  manifest_sha256: a2428e297fa52c598d856e0a2c74be299c159676a79f5fbc6843ecaa38c0f98c
+  selected_update: 900
+  batch_size: 4
+  draw_chunk: 128
+- run_id: remediation_nsf6_energy_ft_eval_recovery_v1
+  original_run: remediation_nsf6_energy_ft_v1
+  checkpoint_sha256: 6e090e7a364379d78d98a9463d4356954b8ff02f0585ceac0b6eb3e828270920
+  manifest_sha256: 276b4a508bc9bb5c70882f5104241b45434cc6238eeeed7623bf9397cb844bc7
+  selected_update: 1000
+  batch_size: 4
+  draw_chunk: 128
+- run_id: remediation_nsf6_energy_ft_recon003_eval_recovery_v1
+  original_run: remediation_nsf6_energy_ft_recon003_v1
+  checkpoint_sha256: ad901e0f22392da332c384a143270b9707436f836164571aacdac7597ab0ffb6
+  manifest_sha256: 663b4aaa4ad478a82dc1fd674047f3b13d962952612cd954c422a3077296fec1
+  selected_update: 900
+  batch_size: 4
+  draw_chunk: 128
+scope: Evaluation-only from selected checkpoint; no optimizer, no training; actual
+  joint samples; historical NLL gates unchanged.

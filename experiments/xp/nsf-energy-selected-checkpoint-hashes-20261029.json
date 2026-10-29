@@ -1,0 +1,17 @@
+[
+  {
+    "run_id": "remediation_nsf6_energy_frozen_v1",
+    "bytes": 138310399,
+    "sha256": "0412e67c1757330d7d74dcc30344667eb0c9b7fcff6e40e2b92618cba9277c72"
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_v1",
+    "bytes": 388299043,
+    "sha256": "6e090e7a364379d78d98a9463d4356954b8ff02f0585ceac0b6eb3e828270920"
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_recon003_v1",
+    "bytes": 411503197,
+    "sha256": "ad901e0f22392da332c384a143270b9707436f836164571aacdac7597ab0ffb6"
+  }
+]

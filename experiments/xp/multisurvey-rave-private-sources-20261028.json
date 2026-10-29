@@ -1,0 +1,35 @@
+{
+  "schema": "rave-private-recovery-copy-v2",
+  "status": "private_copy_verified",
+  "prior_session": "mnr1s9k5",
+  "prior_public_copy": "removed_and_removal_verified",
+  "destination": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1",
+  "public_probe_status": 403,
+  "files": [
+    {
+      "name": "rave_dr6_cnn.fits",
+      "bytes": 64854720,
+      "sha256": "8a0232e77e4fa06db6b039509227a95e11b2aeb5014f5653e65dbdbda832d495",
+      "status": "private_sha_verified",
+      "public": false,
+      "owner": "sfabbro",
+      "write_groups": [
+        "k-pop"
+      ],
+      "remote_sha256": "8a0232e77e4fa06db6b039509227a95e11b2aeb5014f5653e65dbdbda832d495"
+    },
+    {
+      "name": "rave_dr6_x_gaiaedr3.fits",
+      "bytes": 289759680,
+      "sha256": "05b81d2a1f56ee3d4be3da21c70481b983fd779843fbd8973671d9ce16d912b8",
+      "status": "private_sha_verified",
+      "public": false,
+      "owner": "sfabbro",
+      "write_groups": [
+        "k-pop"
+      ],
+      "remote_sha256": "05b81d2a1f56ee3d4be3da21c70481b983fd779843fbd8973671d9ce16d912b8"
+    }
+  ],
+  "scope": "Private ACL inheritance verified with harmless probe; source-only copies, worker POSIX access not yet observed."
+}

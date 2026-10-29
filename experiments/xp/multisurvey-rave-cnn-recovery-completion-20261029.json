@@ -1,0 +1,82 @@
+{
+  "session_id": "vaj9qmra",
+  "run_id": "multisurvey_rave_cnn_edr3_source_recovery_v2",
+  "source_commit": "7fe815aa25ac2e6928e4db30dc83c18cd10ad899",
+  "status": "rave_source_complete",
+  "manifest_sha256": "6634aa0477cbbeaa2ff005a1dd2b7c86a3846684e032b136c7047601fea77b6f",
+  "result": {
+    "counts": {
+      "cnn_dr2_known_rows": 426574,
+      "cnn_duplicate_observation_rows": 0,
+      "cnn_rows": 426574,
+      "crossmatch_ambiguous_rows": 0,
+      "crossmatch_edr3_known_rows": 517357,
+      "crossmatch_none_or_blank_rows": 456,
+      "crossmatch_rows": 517357,
+      "crossmatch_single_rows": 426118,
+      "identity_candidate_distinct_stars": 381895,
+      "identity_candidate_rows": 426118,
+      "mapped_rows_with_repeated_star_observations": 75091,
+      "per_target": {
+        "al_fe": {
+          "boundary_flag_in_domain": 425754,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 425308,
+          "raw_value_available": 426574
+        },
+        "alpha_m": {
+          "boundary_flag_in_domain": 425268,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 424827,
+          "raw_value_available": 426574
+        },
+        "fe_h": {
+          "boundary_flag_in_domain": 425268,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 424823,
+          "raw_value_available": 426574
+        },
+        "logg": {
+          "boundary_flag_in_domain": 425346,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 424946,
+          "raw_value_available": 426574
+        },
+        "m_h": {
+          "boundary_flag_in_domain": 425284,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 424840,
+          "raw_value_available": 426574
+        },
+        "mg_fe": {
+          "boundary_flag_in_domain": 425086,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 424646,
+          "raw_value_available": 426574
+        },
+        "ni_fe": {
+          "boundary_flag_in_domain": 425916,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 425466,
+          "raw_value_available": 426574
+        },
+        "si_fe": {
+          "boundary_flag_in_domain": 425852,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 425401,
+          "raw_value_available": 426574
+        },
+        "teff": {
+          "boundary_flag_in_domain": 422725,
+          "positive_finite_error_known": 426574,
+          "provisional_target_candidate": 422290,
+          "raw_value_available": 426442
+        }
+      }
+    },
+    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_rave_cnn_edr3_source_recovery_v2/rave-cnn-edr3.h5",
+    "output_bytes": 482841903,
+    "output_sha256": "1e315a93bb01c30f30d5b746e66fd38b938a9928f71461832de66f0831fe536a"
+  },
+  "scope": "Producer source table; output SHA not independently rehashed, no role assignment or model training."
+}

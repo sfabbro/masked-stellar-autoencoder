@@ -157,9 +157,10 @@ A full source, target-availability and feature union is still needed.
    DR5.1 via separate, source-only adapters, preserving every raw record,
    per-field quality and native error status. Verify full source digests, exact
    release origin, duplicate handling, and Gaia-ID match/null semantics.
-2. Add DR8 LRS/MRS as explicitly versioned fallback while seeking DR12 v2
-   through permitted public/user-authenticated access; record failures and do
-   not infer that an unlisted file or unmatched source lacks available labels.
+2. Prioritize DR12 v2 LRS/MRS. The user requires at least DR11; do not use
+   the staged DR8 as a fallback. Preserve each release and pipeline identity,
+   exact Gaia DR3 identifiers, source-specific metallicity and alpha quantities,
+   repeat spectra, provenance and minimally filtered raw rows.
 3. Add DR20 BOSS and MaStar v2 after identifying their actual public product
    and DR3 crossmatch. Keep multiple pipelines on the same spectra linked as
    dependent; retain valid partial stars instead of imposing intersection cuts.

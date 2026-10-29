@@ -222,6 +222,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_remediation_joint_preflight.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-energy-evaluation-recovery ]]; then
+      "${pixi_run[@]}" python -u scripts/run_remediation_energy_evaluation_recovery.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == remediation-energy-pilot ]]; then
       "${pixi_run[@]}" python -u scripts/run_remediation_energy_pilot.py --config "$MSA_REMEDIATION_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"

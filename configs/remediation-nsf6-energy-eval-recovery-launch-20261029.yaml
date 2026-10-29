@@ -1,0 +1,25 @@
+jobs:
+- run_id: remediation_nsf6_energy_frozen_eval_recovery_v1
+  task: remediation-energy-evaluation-recovery
+  depends_on: []
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_nsf6_energy_ft_eval_recovery_v1
+  task: remediation-energy-evaluation-recovery
+  depends_on: []
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: remediation_nsf6_energy_ft_recon003_eval_recovery_v1
+  task: remediation-energy-evaluation-recovery
+  depends_on: []
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

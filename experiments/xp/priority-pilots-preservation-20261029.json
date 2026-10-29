@@ -1,0 +1,149 @@
+[
+  {
+    "run_id": "remediation_nsf6_energy_frozen_v1",
+    "status": "failed",
+    "error_type": "OutOfMemoryError",
+    "completed_updates": 1000,
+    "selected_update": 900,
+    "files": [
+      {
+        "name": "manifest.json",
+        "bytes": 7502,
+        "sha256": "a2428e297fa52c598d856e0a2c74be299c159676a79f5fbc6843ecaa38c0f98c",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50393,
+        "sha256": "99046f97660375ff627acfd2a097f5a1260e19ecdd960f8b39c3c9cb1b5c9faa",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "metrics.jsonl",
+        "bytes": 2659,
+        "sha256": "3084aa06b78313e90ec359f28b1ecce84a850083288b94ff389be03b96df1acb",
+        "producer_hash_verified": false
+      }
+    ]
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_v1",
+    "status": "failed",
+    "error_type": "OutOfMemoryError",
+    "completed_updates": 1000,
+    "selected_update": 1000,
+    "files": [
+      {
+        "name": "manifest.json",
+        "bytes": 8046,
+        "sha256": "276b4a508bc9bb5c70882f5104241b45434cc6238eeeed7623bf9397cb844bc7",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50372,
+        "sha256": "d5b53bdf96bbcad62836df6b418f17498966e1a0f320a05c91a97611674e183e",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "metrics.jsonl",
+        "bytes": 2658,
+        "sha256": "0998d06024ebeb851f447b542bc87c50c3c49c05f0fb6e3f3f7100032d68dafc",
+        "producer_hash_verified": false
+      }
+    ]
+  },
+  {
+    "run_id": "remediation_nsf6_energy_ft_recon003_v1",
+    "status": "failed",
+    "error_type": "OutOfMemoryError",
+    "completed_updates": 1000,
+    "selected_update": 900,
+    "files": [
+      {
+        "name": "manifest.json",
+        "bytes": 8265,
+        "sha256": "663b4aaa4ad478a82dc1fd674047f3b13d962952612cd954c422a3077296fec1",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "tune-predictions.npz",
+        "bytes": 50396,
+        "sha256": "f6f10e56999b15a7ce9ab3e3fec8bd5c88e4000b505bd4fcdc7d6bfd3a0ec8ee",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "metrics.jsonl",
+        "bytes": 2800,
+        "sha256": "82110714bdf5bd6eb86d681343913a296652b74107b11c79d9772a2d32b37998",
+        "producer_hash_verified": false
+      }
+    ]
+  },
+  {
+    "run_id": "multisurvey_consensus_frozen_recon003_pilot_v1",
+    "status": "multisurvey_consensus_pilot_complete",
+    "error_type": null,
+    "completed_updates": null,
+    "selected_update": null,
+    "files": [
+      {
+        "name": "manifest.json",
+        "bytes": 19352,
+        "sha256": "f53806d773a4e6fbe53ad858c251bbd993938426809220f36f66f72060b0276a",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "progress.json",
+        "bytes": 15092,
+        "sha256": "0a2895e6d44424301a3b1f4922860f241349cfb81bc853bcfd83669733df1be3",
+        "producer_hash_verified": true
+      },
+      {
+        "name": "tune-selected.npz",
+        "bytes": 146295,
+        "sha256": "265c3c04377cd50fde2110c7f410fab478e8c14ff4c250cfd852ca53692c53dc",
+        "producer_hash_verified": true
+      },
+      {
+        "name": "devtest-selected.npz",
+        "bytes": 145056,
+        "sha256": "aa3394d116d7303beeab90039a0f38bf8ee8edf05b5f58a49f19776bb41691c5",
+        "producer_hash_verified": true
+      }
+    ]
+  },
+  {
+    "run_id": "multisurvey_consensus_ft_recon003_pilot_v1",
+    "status": "multisurvey_consensus_pilot_complete",
+    "error_type": null,
+    "completed_updates": null,
+    "selected_update": null,
+    "files": [
+      {
+        "name": "manifest.json",
+        "bytes": 19333,
+        "sha256": "4b03d1c015f127be4b22d53792ec0c4938225ec1014bd4138e2e3abf30a08795",
+        "producer_hash_verified": false
+      },
+      {
+        "name": "progress.json",
+        "bytes": 15089,
+        "sha256": "3ad23dc8b9906368c2394de676964a169d56603e89c8afe83f4f4a716d360e98",
+        "producer_hash_verified": true
+      },
+      {
+        "name": "tune-selected.npz",
+        "bytes": 146277,
+        "sha256": "94f85898843d6ef84866939abd10eae3f900fe1e302897db96d75bf8feae7ab1",
+        "producer_hash_verified": true
+      },
+      {
+        "name": "devtest-selected.npz",
+        "bytes": 145003,
+        "sha256": "a908799fedb8b4002c6ff97c75d560effc6600705bef411cfcbc9369016d4f68",
+        "producer_hash_verified": true
+      }
+    ]
+  }
+]
