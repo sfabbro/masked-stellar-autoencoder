@@ -1,0 +1,20 @@
+{
+  "status": "private_preservation_complete",
+  "destination": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1",
+  "files": [
+    {
+      "name": "independent_spectroscopic_quality_v1_20261029.h5",
+      "bytes": 1337069,
+      "sha256": "1cf7022082e9a623552a44edbf2cc95f6e0f6129d3ada16aa5debf4f885ba79e",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "independent_spectroscopic_quality_v1_20261029.json",
+      "bytes": 4542,
+      "sha256": "ce6303e38ef2f2b40e0cc618a0e0e9e448dcbf888514bb7620ce613910213ad2",
+      "status": "private_sha_verified",
+      "public": false
+    }
+  ]
+}

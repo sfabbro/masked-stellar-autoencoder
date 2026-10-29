@@ -1,0 +1,139 @@
+{
+  "status": "quality_masks_complete",
+  "output": "/private/tmp/msa-spectroscopic-quality-v1-final-20261029.h5",
+  "output_sha256": "1cf7022082e9a623552a44edbf2cc95f6e0f6129d3ada16aa5debf4f885ba79e",
+  "input_sha256": [
+    "9932d63fc89278425ace2ee9f44507990d0efc7ece0750028c27c28eaf0992e4",
+    "9c812f1365e0cf8986e519d45cc7faf75910d003574c927e66b2e1694f5a38f7",
+    "6a9b5155dbcae547965256e22a5f0e4b9bbc30f1c14823519b5603bef7beed1d"
+  ],
+  "counts": {
+    "gaia_eso": {
+      "TEFF": {
+        "available": 97499,
+        "available_with_identity": null,
+        "error_known": 97499,
+        "error_known_with_identity": null,
+        "quality_loose": 96144,
+        "quality_loose_with_identity": null,
+        "quality_strict": 51688,
+        "quality_strict_with_identity": null
+      },
+      "LOGG": {
+        "available": 89799,
+        "available_with_identity": null,
+        "error_known": 89799,
+        "error_known_with_identity": null,
+        "quality_loose": 89493,
+        "quality_loose_with_identity": null,
+        "quality_strict": 51606,
+        "quality_strict_with_identity": null
+      },
+      "FEH": {
+        "available": 94247,
+        "available_with_identity": null,
+        "error_known": 94247,
+        "error_known_with_identity": null,
+        "quality_loose": 93423,
+        "quality_loose_with_identity": null,
+        "quality_strict": 50945,
+        "quality_strict_with_identity": null
+      },
+      "MG1": {
+        "available": 54223,
+        "available_with_identity": null,
+        "error_known": 54223,
+        "error_known_with_identity": null,
+        "quality_loose": 54176,
+        "quality_loose_with_identity": null,
+        "quality_strict": 45603,
+        "quality_strict_with_identity": null
+      },
+      "SI1": {
+        "available": 34556,
+        "available_with_identity": null,
+        "error_known": 34556,
+        "error_known_with_identity": null,
+        "quality_loose": 34489,
+        "quality_loose_with_identity": null,
+        "quality_strict": 26164,
+        "quality_strict_with_identity": null
+      },
+      "CA1": {
+        "available": 49355,
+        "available_with_identity": null,
+        "error_known": 49355,
+        "error_known_with_identity": null,
+        "quality_loose": 49288,
+        "quality_loose_with_identity": null,
+        "quality_strict": 40235,
+        "quality_strict_with_identity": null
+      },
+      "TI1": {
+        "available": 39147,
+        "available_with_identity": null,
+        "error_known": 39147,
+        "error_known_with_identity": null,
+        "quality_loose": 39083,
+        "quality_loose_with_identity": null,
+        "quality_strict": 29147,
+        "quality_strict_with_identity": null
+      }
+    },
+    "rave_madera": {
+      "teff_cal_madera": {
+        "available": 517821,
+        "available_with_identity": 516796,
+        "error_known": 517821,
+        "error_known_with_identity": 516796,
+        "quality_loose": 500182,
+        "quality_loose_with_identity": 499161,
+        "quality_strict": 459439,
+        "quality_strict_with_identity": 458822
+      },
+      "logg_cal_madera": {
+        "available": 517821,
+        "available_with_identity": 516796,
+        "error_known": 517821,
+        "error_known_with_identity": 516796,
+        "quality_loose": 500182,
+        "quality_loose_with_identity": 499161,
+        "quality_strict": 459439,
+        "quality_strict_with_identity": 458822
+      },
+      "m_h_cal_madera": {
+        "available": 517821,
+        "available_with_identity": 516796,
+        "error_known": 517821,
+        "error_known_with_identity": 516796,
+        "quality_loose": 500182,
+        "quality_loose_with_identity": 499161,
+        "quality_strict": 459439,
+        "quality_strict_with_identity": 458822
+      }
+    },
+    "rave_gauguin": {
+      "fe_h": {
+        "available": 328315,
+        "available_with_identity": 328016,
+        "error_known": 328317,
+        "error_known_with_identity": 328018,
+        "quality_loose": 317006,
+        "quality_loose_with_identity": 316708,
+        "quality_strict": 308945,
+        "quality_strict_with_identity": 308681
+      },
+      "alpha_fe": {
+        "available": 430142,
+        "available_with_identity": 429731,
+        "error_known": 430142,
+        "error_known_with_identity": 429731,
+        "quality_loose": 414991,
+        "quality_loose_with_identity": 414584,
+        "quality_strict": 395774,
+        "quality_strict_with_identity": 395415
+      }
+    }
+  },
+  "gaia_eso_identity": "not_yet_crossmatched"
+}
