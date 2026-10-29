@@ -152,3 +152,8 @@ Gaia Fe I/M UWS query `1793215530905` completed. The raw 165 MB CSV and sorted e
 The Gaia Fe I/M raw CSV, sorted NPZ and small UWS evidence were subsequently saved to `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_gspspec_fem_archive_20261028/` and all five files passed remote SHA256 readback. The [ARC preservation receipt](../../experiments/xp/gaia-gspspec-fem-arc-preservation-20261028.json) binds each file and byte count. A future source join must still validate exact IDs, masks and dependencies; an upload is not training.
 
 The [requested-survey inventory](msa-requested-survey-union-inventory-20261028.md) lists additional staged but unjoined catalogues, identifies Gaia ID and FITS-null hazards, and distinguishes DR19/DR20 duplicated APOGEE products.
+
+
+### Gaia RVS cache-wide census
+
+Source-only `multisurvey_gaia_gspspec_cache_census_v1` was accepted once as `sdamrmrr` at MSA `f55170c4f3a36b11624776dd5a5d2fb509008c66`, tag `msa-gaia-cache-census-20261028`. The [submission receipt](../../experiments/xp/multisurvey-gaia-cache-census-submitted-20261028.json) records the output path. On actual completion preserve `manifest.json`, `census/summary.json` and the size-checked `census/identities.npz`, verify producer SHA and NPZ CRC, and independently check counts and identity masks. A missing manifest or cache match is not a failure or proof a star has no Gaia XP; outside-base ancestry remains unknown. Do not resubmit an accepted or ambiguous ID.
