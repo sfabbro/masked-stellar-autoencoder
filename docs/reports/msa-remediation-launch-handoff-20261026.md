@@ -140,3 +140,15 @@ Two-update `multisurvey_consensus_cuda_preflight_v1` accepted once as `bt8mfivu`
 ### FIT union census
 
 Source-only `multisurvey_fit_collation_census_v1` was accepted once as `knc852cs` at MSA `630c409f30788a9f35ebf53952dfd6a9d5218521` and completed. The [submission](../../experiments/xp/multisurvey-fit-collation-census-submitted-20261028.json) and [completion](../../experiments/xp/multisurvey-fit-collation-census-completion-20261028.json) receipts identify all results. Summary and 14,070,353-byte star-array NPZ were preserved with producer SHA, NPZ CRC and independent mask/count checks. No model or training occurred. Do not resubmit or poll this completed census.
+
+
+### Gaia RVS union and Fe I/M
+
+Source-only `multisurvey_gaia_gspspec_overlay_v1` completed as `qk4tmzk1` at MSA `8b4d5a947066400a657fa281cc3051177f1157e6`, tag `msa-gaia-gspspec-union-20261028`. The [submission](../../experiments/xp/multisurvey-gaia-gspspec-overlay-submitted-20261028.json) and [completion](../../experiments/xp/multisurvey-gaia-gspspec-overlay-completion-20261028.json) receipts bind the output paths, selected FIT masks and producer hashes. The small manifest, summary and FIT NPZ were preserved with SHA/CRC and independent ID/count checks; no model or training was run. Gaia's source-specific M/H and alpha are retained, but the three-target trainer does not use them yet. Do not resubmit or repoll this completed job.
+
+Gaia Fe I/M UWS query `1793215530905` completed. The raw 165 MB CSV and sorted exact-ID NPZ are preserved under `experiments/xp/results-stellar-improvement/remediation-wave-20261026/gaia-fem-preservation-20261028/`; the [completion receipt](../../experiments/xp/gaia-gspspec-fem-query-completion-20261028.json) records hashes and 1,774,698 rows. The independent archive count query `1793233992976` agreed exactly. No covariance or independent Fe/H label was fabricated; the derived native Fe I/H is not yet integrated into training. ARC preservation is recorded separately and must complete and pass readback SHA before a CANFAR source join may rely on it.
+
+
+The Gaia Fe I/M raw CSV, sorted NPZ and small UWS evidence were subsequently saved to `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_gspspec_fem_archive_20261028/` and all five files passed remote SHA256 readback. The [ARC preservation receipt](../../experiments/xp/gaia-gspspec-fem-arc-preservation-20261028.json) binds each file and byte count. A future source join must still validate exact IDs, masks and dependencies; an upload is not training.
+
+The [requested-survey inventory](msa-requested-survey-union-inventory-20261028.md) lists additional staged but unjoined catalogues, identifies Gaia ID and FITS-null hazards, and distinguishes DR19/DR20 duplicated APOGEE products.

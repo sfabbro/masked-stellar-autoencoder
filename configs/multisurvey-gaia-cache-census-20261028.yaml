@@ -1,0 +1,11 @@
+run_id: multisurvey_gaia_gspspec_cache_census_v1
+source_path: /arc/projects/k-pop/catalogues/gaia_rvs_lite_flags.fits.gz
+source_sha: e165c6f1fc4375389f24db86ff093e0c5d6e7c5da7a49b5564998a625f55dd83
+expected_source_rows: 5591594
+base_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
+base_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5
+base_sha: 112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c
+cache_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+original_path: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
+expected_cache_rows: 150000000
+chunk_rows: 65536

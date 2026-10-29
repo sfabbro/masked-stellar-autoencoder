@@ -1,0 +1,29 @@
+{
+  "derived_coordinate": "Gaia native [Fe I/H] = [M/H] + [Fe I/M] on the same published reference convention; unknown measurement covariance remains unknown",
+  "existing_fit_matches": 82634,
+  "existing_fit_matches_with_gaia_selected_logg": 82536,
+  "existing_fit_matches_with_native_mh_and_fem": 82634,
+  "independent_archive_count": {
+    "count": 1774698,
+    "job_id": "1793233992976",
+    "job_xml_sha256": "333d45536454b244cf416758df2dc453b6391b55fff0dd7ef40c11890bc3fca0",
+    "matches_csv_rows": true,
+    "query_sha256": "37702bea84ccb7f576e846548f21c0c9f11f6d64677959c7bb6f01d8d4400ee8",
+    "result_sha256": "542c1654c3330bc013f0d5e36da0e61b298291ba793be45a42196dec17ddb3b0",
+    "scope": "Independent count of the same archive table and predicate; does not certify scientific quality or independent crossmatch provenance."
+  },
+  "job_id": "1793215530905",
+  "schema": "gaia-gspspec-fem-result-verification-v1",
+  "scope": "Raw exact-ID catalogue matches, not filtered physical-quality labels, full feature availability, independent measurements or trained targets. A separate archive count agrees with the downloaded CSV row count.",
+  "sorted_arrays_bytes": 32198657,
+  "sorted_arrays_crc": "pass",
+  "sorted_arrays_path": "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/remediation-wave-20261026/gaia-fem-preservation-20261028/gaia-fem-sorted.npz",
+  "sorted_arrays_sha256": "e15ff9d995bdf53989102200cf7743f9aae10c33603d6fe85b816c445b7af030",
+  "source_csv_bytes": 165472185,
+  "source_csv_sha256": "e1eabcf8ea4fe8311783e3a18575216725f6f04da0c3ffb4e92255fe8f6d7ded",
+  "source_rows": 1774698,
+  "status": "raw_result_verified",
+  "under_requested_maxrec": true,
+  "unique_positive_exact_source_ids": 1774698,
+  "valid_native_mh_and_fem": 1774698
+}

@@ -1,0 +1,9 @@
+jobs:
+  - run_id: multisurvey_gaia_gspspec_cache_census_v1
+    task: multisurvey-gaia-gspspec-cache-census
+    depends_on: []
+    resources:
+      cores: 8
+      ram: 128
+      gpu: 0
+    image: images.canfar.net/astroai/terminal:latest

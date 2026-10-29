@@ -1,0 +1,44 @@
+{
+  "schema": "gaia-gspspec-fem-arc-preservation-v1",
+  "status": "arc_preservation_complete",
+  "destination": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_gspspec_fem_archive_20261028",
+  "files": [
+    {
+      "name": "result.csv",
+      "local_sha256": "e1eabcf8ea4fe8311783e3a18575216725f6f04da0c3ffb4e92255fe8f6d7ded",
+      "bytes": 165472185,
+      "status": "verified",
+      "remote_sha256": "e1eabcf8ea4fe8311783e3a18575216725f6f04da0c3ffb4e92255fe8f6d7ded"
+    },
+    {
+      "name": "gaia-fem-sorted.npz",
+      "local_sha256": "e15ff9d995bdf53989102200cf7743f9aae10c33603d6fe85b816c445b7af030",
+      "bytes": 32198657,
+      "status": "verified",
+      "remote_sha256": "e15ff9d995bdf53989102200cf7743f9aae10c33603d6fe85b816c445b7af030"
+    },
+    {
+      "name": "job.xml",
+      "local_sha256": "70ead3b2cb5eefc606df7ced216d11d49c666832c47ff587039352213bd419b0",
+      "bytes": 1491,
+      "status": "verified",
+      "remote_sha256": "70ead3b2cb5eefc606df7ced216d11d49c666832c47ff587039352213bd419b0"
+    },
+    {
+      "name": "independent-count-job.xml",
+      "local_sha256": "333d45536454b244cf416758df2dc453b6391b55fff0dd7ef40c11890bc3fca0",
+      "bytes": 1358,
+      "status": "verified",
+      "remote_sha256": "333d45536454b244cf416758df2dc453b6391b55fff0dd7ef40c11890bc3fca0"
+    },
+    {
+      "name": "independent-count.csv",
+      "local_sha256": "542c1654c3330bc013f0d5e36da0e61b298291ba793be45a42196dec17ddb3b0",
+      "bytes": 10,
+      "status": "verified",
+      "remote_sha256": "542c1654c3330bc013f0d5e36da0e61b298291ba793be45a42196dec17ddb3b0"
+    }
+  ],
+  "attempts": 1,
+  "scope": "Source-only preserved Gaia catalogue; not model input until a separately verified exact-ID join."
+}

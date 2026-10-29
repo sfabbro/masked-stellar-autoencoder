@@ -1,0 +1,2260 @@
+[
+  {
+    "name": "ges_dr5.1.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": null,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "PHASE3CATALOG",
+        "naxis1": 2528,
+        "naxis2": 114916,
+        "tfields": 350,
+        "relevant_columns": [
+          {
+            "name": "OBJECT",
+            "format": "16A",
+            "unit": "",
+            "null": null
+          },
+          {
+            "name": "RAVAIL_SETUP",
+            "format": "70A",
+            "unit": "",
+            "null": null
+          },
+          {
+            "name": "RA",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "DECLINATION",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "SNR",
+            "format": "E",
+            "unit": "",
+            "null": null
+          },
+          {
+            "name": "TEFF",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "E_TEFF",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "NN_TEFF",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "ENN_TEFF",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "NNE_TEFF",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "LOGG",
+            "format": "E",
+            "unit": "log(cm/s**2)",
+            "null": null
+          },
+          {
+            "name": "E_LOGG",
+            "format": "E",
+            "unit": "log(cm/s**2)",
+            "null": null
+          },
+          {
+            "name": "NN_LOGG",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "ENN_LOGG",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "NNE_LOGG",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "FEH",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_FEH",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "NN_FEH",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "ENN_FEH",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "NNE_FEH",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "VRAD",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "E_VRAD",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "ORIGIN_VRAD",
+            "format": "48A",
+            "unit": "",
+            "null": null
+          },
+          {
+            "name": "VRAD_OFFSET",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "VRAD_FLAG",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "NF_VRAD_FLAG",
+            "format": "I",
+            "unit": "",
+            "null": -1
+          },
+          {
+            "name": "SFLAGS",
+            "format": "39A",
+            "unit": "",
+            "null": null
+          },
+          {
+            "name": "MG1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_MG1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "MG2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_MG2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "SI1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_SI1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "SI2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_SI2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "CA1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_CA1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "CA2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_CA2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "TI1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_TI1",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "TI2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "E_TI2",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "rave_dr6_madera.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": 2880,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "rave_user_anonymous.rave_dr6_madera",
+        "naxis1": 88,
+        "naxis2": 518387,
+        "tfields": 13,
+        "relevant_columns": [
+          {
+            "name": "rave_obs_id",
+            "format": "32A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "teff_madera",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_cal_madera",
+            "format": "D",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_error_madera",
+            "format": "D",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "logg_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg_cal_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg_error_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_cal_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_error_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "chisq_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snr_madera",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "algo_conv_madera",
+            "format": "J",
+            "unit": null,
+            "null": 2147483647
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "rave_dr6_x_gaiaedr3.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": 2880,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "rave_user_anonymous.2024-10-03-06-51-48-077339",
+        "naxis1": 560,
+        "naxis2": 517357,
+        "tfields": 102,
+        "relevant_columns": [
+          {
+            "name": "rave_obs_id",
+            "format": "32A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null,
+            "null": 9223372036854775807
+          },
+          {
+            "name": "random_index",
+            "format": "K",
+            "unit": null,
+            "null": 9223372036854775807
+          },
+          {
+            "name": "ra",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "ra_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "dec",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax",
+            "format": "D",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax_over_error",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra",
+            "format": "D",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmra_error",
+            "format": "E",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmdec",
+            "format": "D",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmdec_error",
+            "format": "E",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "ra_dec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_parallax_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_parallax_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "astrometric_params_solved",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "astrometric_primary_flag",
+            "format": "L",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmdec_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "astrometric_matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "new_matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "matched_transits_removed",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "ipd_frac_multi_peak",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "ipd_frac_odd_win",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_bp_n_contaminated_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_bp_n_blended_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_rp_n_contaminated_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_rp_n_blended_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "dr2_radial_velocity",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "dr2_radial_velocity_error",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_nb_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "dr2_rv_template_teff",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_template_logg",
+            "format": "E",
+            "unit": "log(\"g\")",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_template_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "rave_dr6_cnn.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": 2880,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "rave_user_anonymous.rave_dr6_cnn",
+        "naxis1": 152,
+        "naxis2": 426574,
+        "tfields": 30,
+        "relevant_columns": [
+          {
+            "name": "rave_obs_id",
+            "format": "32A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null,
+            "null": 9223372036854775807
+          },
+          {
+            "name": "snr_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "teff_cnn",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_error_cnn",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "si_fe_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "si_fe_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "si_fe_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "al_fe_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mg_fe_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mg_fe_error_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mg_fe_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ni_fe_flag_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "rave_dr6_gaia_bdasp.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": 11577,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "Joined",
+        "naxis1": 684,
+        "naxis2": 493959,
+        "tfields": 122,
+        "relevant_columns": [
+          {
+            "name": "rave_obs_id_1",
+            "format": "32A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null,
+            "null": 9223372036854775807
+          },
+          {
+            "name": "random_index",
+            "format": "K",
+            "unit": null,
+            "null": 9223372036854775807
+          },
+          {
+            "name": "ra",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "ra_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "dec",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax",
+            "format": "D",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax_error",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax_over_error",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra",
+            "format": "D",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmra_error",
+            "format": "E",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmdec",
+            "format": "D",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "pmdec_error",
+            "format": "E",
+            "unit": "mas/yr",
+            "null": null
+          },
+          {
+            "name": "ra_dec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_parallax_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_parallax_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pmra_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra_pmdec_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "astrometric_params_solved",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "astrometric_primary_flag",
+            "format": "L",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmdec_pseudocolour_corr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "astrometric_matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "new_matched_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "matched_transits_removed",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "ipd_frac_multi_peak",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "ipd_frac_odd_win",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_bp_n_contaminated_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_bp_n_blended_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_rp_n_contaminated_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "phot_rp_n_blended_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "dr2_radial_velocity",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "dr2_radial_velocity_error",
+            "format": "E",
+            "unit": "km/s",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_nb_transits",
+            "format": "I",
+            "unit": null,
+            "null": 32767
+          },
+          {
+            "name": "dr2_rv_template_teff",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_template_logg",
+            "format": "E",
+            "unit": "log(\"g\")",
+            "null": null
+          },
+          {
+            "name": "dr2_rv_template_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "rave_obs_id_2",
+            "format": "32A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "teff_bdasp",
+            "format": "D",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_error_bdasp",
+            "format": "D",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "logg_bdasp",
+            "format": "E",
+            "unit": "log(cm/s**2)",
+            "null": null
+          },
+          {
+            "name": "logg_error_bdasp",
+            "format": "E",
+            "unit": "log(cm/s**2)",
+            "null": null
+          },
+          {
+            "name": "m_h_bdasp",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_error_bdasp",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "parallax_bdasp",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          },
+          {
+            "name": "parallax_error_bdasp",
+            "format": "E",
+            "unit": "mas",
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "astraMWMLite-0.6.0.fits.gz",
+    "range_supported": false,
+    "compressed": true,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": null,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "",
+        "naxis1": 1740,
+        "naxis2": 1365769,
+        "tfields": 332,
+        "relevant_columns": [
+          {
+            "name": "gaia_dr2_source_id",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_dr3_source_id",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss5_target_flags",
+            "format": "57B",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee_target1_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee_target2_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee2_target1_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee2_target2_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee2_target3_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee_member_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "sdss4_apogee_extra_target_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "dec",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pmra",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_pmra",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_e_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w1_frac",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w2_frac",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w1uflags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w2uflags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w1aflags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "w2aflags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_e_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_e_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_e_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_teff_confidence",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_logg_confidence",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_fe_h_confidence",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zgr_quality_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "bailer_jones_flags",
+            "format": "5A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ebv_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "u_jkc_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "b_jkc_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "v_jkc_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "r_jkc_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "i_jkc_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "u_sdss_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "g_sdss_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "r_sdss_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "i_sdss_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "z_sdss_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "y_ps1_mag_flag",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "id",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "v_astra",
+            "format": "5A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gri_gaia_transform_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "zwarning_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "spectrum_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "std_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "median_e_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_e_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_e_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcsao_e_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_e_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_e_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_e_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "doppler_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "xcorr_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "boss_net_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "boss_net_e_v_rad",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_teff",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_logg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "m_h_atm",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_m_h_atm",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_atm",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_alpha_m_atm",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "al_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "c_12_13_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ca_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ce_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "c_1_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "c_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "co_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "cr_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "cu_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "e_fe_h",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "fe_h_rchi2",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "k_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mg_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mn_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "na_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "nd_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ni_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "n_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "o_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "p_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "si_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "s_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ti_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ti_2_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "v_h_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "spectral_type",
+            "format": "1A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "pipeline_flags",
+            "format": "K",
+            "unit": null,
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "lamost-param/dr8_v2_LRS_stellar.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": null,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "",
+        "naxis1": 494,
+        "naxis2": 6684413,
+        "tfields": 47,
+        "relevant_columns": [
+          {
+            "name": "obsid",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_obs",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec_obs",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "snru",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snrg",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snrr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snri",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "snrz",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_source_id",
+            "format": "25A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_g_mean_mag",
+            "format": "E",
+            "unit": "mag",
+            "null": null
+          },
+          {
+            "name": "ra",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "teff",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_err",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "logg",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "logg_err",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "feh",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "feh_err",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_err",
+            "format": "E",
+            "unit": null,
+            "null": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "lamost-param/dr8_v2_MRS_stellar.fits",
+    "range_supported": false,
+    "compressed": false,
+    "prefix_bytes_limit": 524288,
+    "headers": [
+      {
+        "hdu": 0,
+        "extname": "",
+        "naxis1": null,
+        "naxis2": null,
+        "tfields": null,
+        "relevant_columns": []
+      },
+      {
+        "hdu": 1,
+        "extname": "",
+        "naxis1": 590,
+        "naxis2": 1230307,
+        "tfields": 78,
+        "relevant_columns": [
+          {
+            "name": "mobsid",
+            "format": "20A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "obsid",
+            "format": "J",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra_obs",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec_obs",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "snr",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_source_id",
+            "format": "25A",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_g_mean_mag",
+            "format": "E",
+            "unit": "mag",
+            "null": null
+          },
+          {
+            "name": "gaia_bp_mean_mag",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "gaia_rp_mean_mag",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "ra",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "dec",
+            "format": "D",
+            "unit": "deg",
+            "null": null
+          },
+          {
+            "name": "teff_lasp",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "teff_lasp_err",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "logg_lasp",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "logg_lasp_err",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "feh_lasp",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "feh_lasp_err",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "rv_b_flag",
+            "format": "I",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "rv_r_flag",
+            "format": "I",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "rv_br_flag",
+            "format": "I",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "teff_cnn",
+            "format": "E",
+            "unit": "K",
+            "null": null
+          },
+          {
+            "name": "logg_cnn",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "feh_cnn",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "mg_fe",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "si_fe",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "ca_fe",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "ti_fe",
+            "format": "E",
+            "unit": "dex",
+            "null": null
+          },
+          {
+            "name": "alpha_m_lasp",
+            "format": "E",
+            "unit": null,
+            "null": null
+          },
+          {
+            "name": "alpha_m_lasp_err",
+            "format": "E",
+            "unit": null,
+            "null": null
+          }
+        ]
+      }
+    ]
+  }
+]

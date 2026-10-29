@@ -1,0 +1,321 @@
+{
+  "run_id": "multisurvey_gaia_gspspec_overlay_v1",
+  "session_id": "qk4tmzk1",
+  "source_commit": "8b4d5a947066400a657fa281cc3051177f1157e6",
+  "scope": "Source-only existing-base union. Producer hash and NPZ CRC plus independent mask/ID counts; not validated scientific truth, all Gaia feature matches, or a trained model.",
+  "manifest_sha256_local": "77b8dbc76e5b3b3a4ef2bb5fce0e4f35b0210231d11c7848c08202658a619559",
+  "summary_sha256": "296b30a14ae2bc373525018af0105aa031b8cc3b6a96fbe5d8e231015525ac99",
+  "fit_arrays_sha256": "454a91a1cbd4d5456fa5b6ecb083ef7aeffa2ca27bf557a02621499719565f29",
+  "fit_arrays_bytes": 16068219,
+  "fit_arrays_crc": "pass",
+  "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+  "selected_targets_any_source": {
+    "teff": 1714074,
+    "logg": 1706396,
+    "fe_h": 1698730
+  },
+  "summary": {
+    "fit_union": {
+      "all_repeat_union_targets_any_source": {
+        "fe_h": 1698731,
+        "logg": 1706396,
+        "teff": 1714074
+      },
+      "eligible_fit_stars": 1736618,
+      "explicit_xp_status_counts": {
+        "explicit_no_xp": 23856,
+        "explicit_xp_present": 1712762,
+        "other_or_unknown": 0
+      },
+      "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+      "input_xp_modes": {
+        "input_xp_not_staged_or_missing": {
+          "selected_targets": {
+            "fe_h": 23192,
+            "logg": 22708,
+            "teff": 23251
+          },
+          "source_combinations": {
+            "apogee": 74,
+            "apogee+desi_dr1_rvs_raw": 2,
+            "apogee+desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 7,
+            "apogee+desi_dr1_rvs_raw+galah": 10,
+            "apogee+gaia_dr3_gspspec": 66,
+            "apogee+gaia_dr3_gspspec+galah": 510,
+            "apogee+galah": 409,
+            "desi_dr1_rvs_raw": 581,
+            "desi_dr1_rvs_raw+gaia_dr3_gspspec": 35,
+            "desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 104,
+            "desi_dr1_rvs_raw+galah": 704,
+            "gaia_dr3_gspspec": 90,
+            "gaia_dr3_gspspec+galah": 6666,
+            "galah": 14024,
+            "none": 574
+          },
+          "stars": 23856
+        },
+        "input_xp_present": {
+          "selected_targets": {
+            "fe_h": 1675538,
+            "logg": 1683688,
+            "teff": 1690823
+          },
+          "source_combinations": {
+            "apogee": 63577,
+            "apogee+desi_dr1_rvs_raw": 605,
+            "apogee+desi_dr1_rvs_raw+gaia_dr3_gspspec": 782,
+            "apogee+desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 22,
+            "apogee+desi_dr1_rvs_raw+galah": 15,
+            "apogee+gaia_dr3_gspspec": 50659,
+            "apogee+gaia_dr3_gspspec+galah": 7770,
+            "apogee+galah": 2130,
+            "desi_dr1_rvs_raw": 1168423,
+            "desi_dr1_rvs_raw+gaia_dr3_gspspec": 23376,
+            "desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 746,
+            "desi_dr1_rvs_raw+galah": 2235,
+            "gaia_dr3_gspspec": 16530,
+            "gaia_dr3_gspspec+galah": 157909,
+            "galah": 197305,
+            "none": 20678
+          },
+          "stars": 1712762
+        }
+      },
+      "per_source": {
+        "apogee": {
+          "active_repeated_stars": 5582,
+          "all_repeat_union_targets": {
+            "fe_h": 126622,
+            "logg": 126638,
+            "teff": 126638
+          },
+          "selected_known_error_targets": {
+            "fe_h": 126621,
+            "logg": 126638,
+            "teff": 126638
+          },
+          "selected_targets": {
+            "fe_h": 126621,
+            "logg": 126638,
+            "teff": 126638
+          },
+          "selected_unknown_error_targets": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          },
+          "stars_any_selected_target": 126638,
+          "targets_lost_by_selection": {
+            "fe_h": 1,
+            "logg": 0,
+            "teff": 0
+          }
+        },
+        "desi_dr1_rvs_raw": {
+          "active_repeated_stars": 0,
+          "all_repeat_union_targets": {
+            "fe_h": 1197647,
+            "logg": 1197647,
+            "teff": 1197647
+          },
+          "selected_known_error_targets": {
+            "fe_h": 1197645,
+            "logg": 1197608,
+            "teff": 1196898
+          },
+          "selected_targets": {
+            "fe_h": 1197647,
+            "logg": 1197647,
+            "teff": 1197647
+          },
+          "selected_unknown_error_targets": {
+            "fe_h": 2,
+            "logg": 39,
+            "teff": 749
+          },
+          "stars_any_selected_target": 1197647,
+          "targets_lost_by_selection": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          }
+        },
+        "gaia_dr3_gspspec": {
+          "active_repeated_stars": 0,
+          "all_repeat_union_targets": {
+            "fe_h": 0,
+            "logg": 264447,
+            "teff": 262141
+          },
+          "selected_known_error_targets": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          },
+          "selected_targets": {
+            "fe_h": 0,
+            "logg": 264447,
+            "teff": 262141
+          },
+          "selected_unknown_error_targets": {
+            "fe_h": 0,
+            "logg": 264447,
+            "teff": 262141
+          },
+          "stars_any_selected_target": 265272,
+          "targets_lost_by_selection": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          }
+        },
+        "galah": {
+          "active_repeated_stars": 0,
+          "all_repeat_union_targets": {
+            "fe_h": 390566,
+            "logg": 377598,
+            "teff": 390566
+          },
+          "selected_known_error_targets": {
+            "fe_h": 390566,
+            "logg": 377598,
+            "teff": 390566
+          },
+          "selected_targets": {
+            "fe_h": 390566,
+            "logg": 377598,
+            "teff": 390566
+          },
+          "selected_unknown_error_targets": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          },
+          "stars_any_selected_target": 390566,
+          "targets_lost_by_selection": {
+            "fe_h": 0,
+            "logg": 0,
+            "teff": 0
+          }
+        }
+      },
+      "registry_sha256": "f37c129e56d2421537bba93f005285784c58cf2cfaf4370505b5401878969fa9",
+      "schema": "multisurvey-fit-collation-census-v1",
+      "scope": "FIT and primary-input-eligible source reference availability only; not a quality, independence, physical-scale or model certificate",
+      "selected_targets_any_source": {
+        "fe_h": 1698730,
+        "logg": 1706396,
+        "teff": 1714074
+      },
+      "selection": "lowest original source row among active same-source repeats",
+      "source_binding": "a47bcbc3f91382786b38b93e8afcccc910b80cfacf653ceffe9f1cefd10a91ab:f0156b1a79d4e73ade5d63c980b61d5ed86b9684514ead1af8d1047050c1593b",
+      "source_combinations": {
+        "apogee": 63651,
+        "apogee+desi_dr1_rvs_raw": 607,
+        "apogee+desi_dr1_rvs_raw+gaia_dr3_gspspec": 782,
+        "apogee+desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 29,
+        "apogee+desi_dr1_rvs_raw+galah": 25,
+        "apogee+gaia_dr3_gspspec": 50725,
+        "apogee+gaia_dr3_gspspec+galah": 8280,
+        "apogee+galah": 2539,
+        "desi_dr1_rvs_raw": 1169004,
+        "desi_dr1_rvs_raw+gaia_dr3_gspspec": 23411,
+        "desi_dr1_rvs_raw+gaia_dr3_gspspec+galah": 850,
+        "desi_dr1_rvs_raw+galah": 2939,
+        "gaia_dr3_gspspec": 16620,
+        "gaia_dr3_gspspec+galah": 164575,
+        "galah": 211329,
+        "none": 21252
+      },
+      "sources": [
+        "apogee",
+        "desi_dr1_rvs_raw",
+        "gaia_dr3_gspspec",
+        "galah"
+      ],
+      "stars_any_selected_target": 1715366,
+      "targets_lost_all_sources": {
+        "fe_h": 1,
+        "logg": 0,
+        "teff": 0
+      },
+      "xp_scope": "Input XP absence is not evidence of official no XP; unknown official status stays unknown"
+    },
+    "gaia_by_existing_role": {
+      "gaia_source_rows": 5591594,
+      "matched_base_ids": 391981,
+      "outside_base_ids": 5199613,
+      "roles": {
+        "cal": {
+          "alpha_source_specific": 35680,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 38444,
+          "logg": 37841,
+          "mh_source_specific": 36716,
+          "teff": 37528
+        },
+        "devtest": {
+          "alpha_source_specific": 35553,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 38313,
+          "logg": 37732,
+          "mh_source_specific": 36591,
+          "teff": 37402
+        },
+        "excluded": {
+          "alpha_source_specific": 3965,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 4161,
+          "logg": 4103,
+          "mh_source_specific": 4073,
+          "teff": 4108
+        },
+        "external": {
+          "alpha_source_specific": 1774,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 1990,
+          "logg": 1905,
+          "mh_source_specific": 1785,
+          "teff": 1846
+        },
+        "fit": {
+          "alpha_source_specific": 249026,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 268483,
+          "logg": 264447,
+          "mh_source_specific": 256497,
+          "teff": 262141
+        },
+        "tune": {
+          "alpha_source_specific": 35443,
+          "fe_h_direct": 0,
+          "gaia_id_matches_with_primary_input": 38275,
+          "logg": 37676,
+          "mh_source_specific": 36548,
+          "teff": 37307
+        }
+      },
+      "scope": "Per-source reference availability by existing role, not a validated physical scale; outside-base roles and feature availability remain unknown."
+    },
+    "gaia_quality_policy": "Provisional per-target source flag tier and broad sanity limits; source-specific M/H and alpha retained, direct Fe/H missing until Fe I/M is joined.",
+    "gaia_source": {
+      "raw_alpha": 4957718,
+      "raw_logg": 5589105,
+      "raw_mh": 5546177,
+      "raw_teff": 5591594,
+      "rows": 5591594,
+      "selected_alpha": 4644257,
+      "selected_both": 5322188,
+      "selected_fe_h": 0,
+      "selected_logg": 5427249,
+      "selected_mh": 5173427,
+      "selected_teff": 5361727
+    },
+    "scope": "Gaia RVS source materialization and existing-base FIT census only; not a trained model, full feature union or physical-scale certificate"
+  },
+  "files": [
+    "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/remediation-wave-20261026/gaia-overlay-preservation-20261028/manifest.json",
+    "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/remediation-wave-20261026/gaia-overlay-preservation-20261028/summary.json",
+    "/Users/fabbros/src/sfabbro/masked-stellar-autoencoder/experiments/xp/results-stellar-improvement/remediation-wave-20261026/gaia-overlay-preservation-20261028/fit-star-availability.npz"
+  ]
+}

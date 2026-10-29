@@ -1,0 +1,16 @@
+{
+  "attempts": 1,
+  "executionduration_seconds": 14400,
+  "http_status": 303,
+  "job_id": "1793215530905",
+  "job_url": "https://gaia.ari.uni-heidelberg.de/tap/async/1793215530905",
+  "maxrec": 10000000,
+  "query": "SELECT source_id, mh_gspspec, fem_gspspec, fem_gspspec_lower, fem_gspspec_upper, fem_gspspec_nlines, fem_gspspec_linescatter, flags_gspspec FROM gaiadr3.astrophysical_parameters WHERE fem_gspspec IS NOT NULL",
+  "query_sha256": "de3333566df3016bcbf1eb8f3ca096f98cf0eba17cca4596ed647729c6600a76",
+  "schema": "gaia-gspspec-fem-tap-submission-v1",
+  "scope": "All non-null Gaia GSP-Spec Fe I/M source rows; no model, no label calibration, no FIT or feature claim",
+  "service": "https://gaia.ari.uni-heidelberg.de/tap/async",
+  "source_sha": "8b4d5a947066400a657fa281cc3051177f1157e6",
+  "status": "submitted",
+  "submitted_at_utc": "2026-10-28T19:25:28.798964+00:00"
+}

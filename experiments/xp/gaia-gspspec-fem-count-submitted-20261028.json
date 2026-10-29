@@ -1,0 +1,13 @@
+{
+  "schema": "gaia-gspspec-fem-count-v1",
+  "status": "submitted",
+  "service": "https://gaia.ari.uni-heidelberg.de/tap/async",
+  "query": "SELECT COUNT(*) AS n FROM gaiadr3.astrophysical_parameters WHERE fem_gspspec IS NOT NULL",
+  "query_sha256": "37702bea84ccb7f576e846548f21c0c9f11f6d64677959c7bb6f01d8d4400ee8",
+  "attempts": 1,
+  "submitted_at_utc": "2026-10-29T00:33:12.001694+00:00",
+  "scope": "Independent archive row count for completeness; no source labels or model.",
+  "job_url": "https://gaia.ari.uni-heidelberg.de/tap/async/1793233992976",
+  "job_id": "1793233992976",
+  "http_status": 303
+}
