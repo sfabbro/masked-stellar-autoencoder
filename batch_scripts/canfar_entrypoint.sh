@@ -178,6 +178,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_rave_cnn_source.py --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-gaia-gspspec-fem-join ]]; then
+      "${pixi_run[@]}" python -u scripts/run_gaia_fem_source_join.py --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-gaia-gspspec-cache-census ]]; then
       "${pixi_run[@]}" python -u scripts/run_multisurvey_gaia_cache_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit "$?"
@@ -188,6 +192,10 @@ case "$stage" in
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-fit-collation-census ]]; then
       "${pixi_run[@]}" python -u scripts/run_multisurvey_fit_collation_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-consensus-pilot ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_consensus_pilot.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit "$?"
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-consensus-preflight ]]; then

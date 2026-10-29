@@ -1,0 +1,117 @@
+{
+  "run_id": "multisurvey_gaia_gspspec_cache_census_v1",
+  "session_id": "sdamrmrr",
+  "source_commit": "f55170c4f3a36b11624776dd5a5d2fb509008c66",
+  "status": "complete",
+  "local_files": [
+    {
+      "name": "manifest.json",
+      "bytes": 7571,
+      "sha256": "39e0d9a79efe1e3e57613967375690899fc705c51918eb2ea80ec9ca94803aff"
+    },
+    {
+      "name": "census/summary.json",
+      "bytes": 6410,
+      "sha256": "6a57c7cdf5acafe879cd592ee54ac931665a59aeeb277ff798f2fe32fc925f24"
+    },
+    {
+      "name": "census/identities.npz",
+      "bytes": 62457309,
+      "sha256": "eb7911705e149bf3189541ac23fe2a936d296d971754585e124eaa34e24790e8"
+    }
+  ],
+  "independent_checks": "Sorted distinct Gaia IDs and complete XP/base masks and all four selected target counts independently recomputed with NumPy; NPZ CRC passed.",
+  "counts": {
+    "all_source_rows": {
+      "raw": {
+        "alphafe_gspspec": 4957718,
+        "logg": 5589105,
+        "mh_gspspec": 5546177,
+        "teff": 5591594
+      },
+      "selected": {
+        "alphafe_gspspec": 4644257,
+        "logg": 5427249,
+        "mh_gspspec": 5173427,
+        "teff": 5361727
+      },
+      "stars": 5591594
+    },
+    "complete_xp_in_cache": {
+      "raw": {
+        "alphafe_gspspec": 3226840,
+        "logg": 3643174,
+        "mh_gspspec": 3614989,
+        "teff": 3644833
+      },
+      "selected": {
+        "alphafe_gspspec": 3027440,
+        "logg": 3539114,
+        "mh_gspspec": 3376978,
+        "teff": 3497893
+      },
+      "stars": 3644833
+    },
+    "complete_xp_in_cache_outside_base": {
+      "raw": {
+        "alphafe_gspspec": 2972517,
+        "logg": 3380581,
+        "mh_gspspec": 3353093,
+        "teff": 3382206
+      },
+      "selected": {
+        "alphafe_gspspec": 2783628,
+        "logg": 3280450,
+        "mh_gspspec": 3125977,
+        "teff": 3241493
+      },
+      "stars": 3382206
+    },
+    "matched_base": {
+      "raw": {
+        "alphafe_gspspec": 379454,
+        "logg": 391931,
+        "mh_gspspec": 390863,
+        "teff": 391981
+      },
+      "selected": {
+        "alphafe_gspspec": 363539,
+        "logg": 385961,
+        "mh_gspspec": 374330,
+        "teff": 382564
+      },
+      "stars": 391981
+    },
+    "matched_cache": {
+      "raw": {
+        "alphafe_gspspec": 3226840,
+        "logg": 3643174,
+        "mh_gspspec": 3614989,
+        "teff": 3644833
+      },
+      "selected": {
+        "alphafe_gspspec": 3027440,
+        "logg": 3539114,
+        "mh_gspspec": 3376978,
+        "teff": 3497893
+      },
+      "stars": 3644833
+    },
+    "outside_base": {
+      "raw": {
+        "alphafe_gspspec": 4578264,
+        "logg": 5197174,
+        "mh_gspspec": 5155314,
+        "teff": 5199613
+      },
+      "selected": {
+        "alphafe_gspspec": 4280718,
+        "logg": 5041288,
+        "mh_gspspec": 4799097,
+        "teff": 4979163
+      },
+      "stars": 5199613
+    }
+  },
+  "scope": "Source/cache overlap, not assigned FIT roles or certified unseen ancestry outside old base."
+}

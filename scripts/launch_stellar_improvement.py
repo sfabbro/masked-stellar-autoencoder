@@ -75,6 +75,10 @@ def bind_prediction_policy(
         from multisurvey_rave_cnn_launch_policy import bind_rave_cnn_policy
 
         return bind_rave_cnn_policy(plan, env)
+    if plan["task"] == "multisurvey-gaia-gspspec-fem-join":
+        from multisurvey_gaia_fem_join_launch_policy import bind_gaia_fem_join_policy
+
+        return bind_gaia_fem_join_policy(plan, env)
     if plan["task"] == "multisurvey-gaia-gspspec-cache-census":
         from multisurvey_gaia_cache_census_launch_policy import (
             bind_gaia_cache_census_policy,
@@ -91,6 +95,12 @@ def bind_prediction_policy(
         )
 
         return bind_fit_collation_census_policy(plan, env)
+    if plan["task"] == "multisurvey-consensus-pilot":
+        from multisurvey_consensus_pilot_launch_policy import (
+            bind_consensus_pilot_policy,
+        )
+
+        return bind_consensus_pilot_policy(plan, env)
     if plan["task"] == "multisurvey-consensus-preflight":
         from multisurvey_consensus_preflight_launch_policy import (
             bind_consensus_preflight_policy,
@@ -659,8 +669,10 @@ def main():
                 "multisurvey-desi-census",
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
+                "multisurvey-consensus-pilot",
                 "multisurvey-fit-collation-census",
                 "multisurvey-rave-cnn-edr3-source",
+                "multisurvey-gaia-gspspec-fem-join",
                 "multisurvey-gaia-gspspec-cache-census",
                 "multisurvey-gaia-gspspec-overlay",
             }
@@ -840,6 +852,7 @@ def main():
             "multisurvey-desi-source",
             "multisurvey-fit-collation-census",
             "multisurvey-rave-cnn-edr3-source",
+            "multisurvey-gaia-gspspec-fem-join",
             "multisurvey-gaia-gspspec-cache-census",
             "multisurvey-gaia-gspspec-overlay",
             "final-six-ancestry",

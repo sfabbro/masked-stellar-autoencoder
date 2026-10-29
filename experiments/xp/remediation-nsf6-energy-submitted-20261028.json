@@ -1,0 +1,92 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "remediation_nsf6_energy_frozen_v1",
+      "name": "msa-si15-remediation-nsf6-energy-frozen-v1",
+      "source_sha": "f70aedca512925481f29a5022bf0184084282374",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_frozen_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_frozen_v1",
+        "task": "remediation-energy-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "wonk3ke3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:47:31.552522+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_energy_ft_v1",
+      "name": "msa-si15-remediation-nsf6-energy-ft-v1",
+      "source_sha": "f70aedca512925481f29a5022bf0184084282374",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_ft_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_ft_v1",
+        "task": "remediation-energy-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "c2bngclz"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:47:41.860624+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_energy_ft_recon003_v1",
+      "name": "msa-si15-remediation-nsf6-energy-ft-recon003-v1",
+      "source_sha": "f70aedca512925481f29a5022bf0184084282374",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_ft_recon003_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_ft_recon003_v1",
+        "task": "remediation-energy-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ymzvx2oy"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T05:47:47.203947+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

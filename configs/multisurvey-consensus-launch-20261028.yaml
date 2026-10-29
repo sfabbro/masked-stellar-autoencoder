@@ -1,0 +1,17 @@
+jobs:
+- run_id: multisurvey_consensus_frozen_recon003_pilot_v1
+  task: multisurvey-consensus-pilot
+  depends_on: []
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: multisurvey_consensus_ft_recon003_pilot_v1
+  task: multisurvey-consensus-pilot
+  depends_on: []
+  resources:
+    cores: 4
+    ram: 64
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest
