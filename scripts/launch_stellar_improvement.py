@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-lamost-dr12-source":
+        from multisurvey_lamost_dr12_launch_policy import bind_lamost_dr12_policy
+
+        return bind_lamost_dr12_policy(plan, env)
     if plan["task"] == "remediation-energy-evaluation-recovery":
         from remediation_energy_evaluation_launch_policy import (
             bind_energy_evaluation_policy,
@@ -683,6 +687,7 @@ def main():
                 "multisurvey-consensus-preflight",
                 "multisurvey-consensus-pilot",
                 "multisurvey-fit-collation-census",
+                "multisurvey-lamost-dr12-source",
                 "multisurvey-rave-cnn-edr3-source-recovery",
                 "multisurvey-rave-cnn-edr3-source",
                 "multisurvey-gaia-gspspec-fem-join",
@@ -864,6 +869,7 @@ def main():
             "remediation-source",
             "multisurvey-desi-source",
             "multisurvey-fit-collation-census",
+            "multisurvey-lamost-dr12-source",
             "multisurvey-rave-cnn-edr3-source-recovery",
             "multisurvey-rave-cnn-edr3-source",
             "multisurvey-gaia-gspspec-fem-join",

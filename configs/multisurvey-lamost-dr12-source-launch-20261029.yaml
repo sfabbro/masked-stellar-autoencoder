@@ -1,0 +1,11 @@
+jobs:
+- run_id: multisurvey_lamost_dr12_lrs_source_v1
+  task: multisurvey-lamost-dr12-source
+  depends_on: []
+  resources: {cores: 8, ram: 128, gpu: 0}
+  image: images.canfar.net/astroai/terminal:latest
+- run_id: multisurvey_lamost_dr12_mrs_source_v1
+  task: multisurvey-lamost-dr12-source
+  depends_on: []
+  resources: {cores: 8, ram: 128, gpu: 0}
+  image: images.canfar.net/astroai/terminal:latest

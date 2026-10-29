@@ -1,0 +1,92 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "remediation_nsf6_energy_frozen_eval_recovery_v1",
+      "name": "msa-si15-remediation-nsf6-energy-frozen-eval-recovery-v1",
+      "source_sha": "e422d75f4f9b21fff1d3a046fce5b0ac123dd7f2",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_frozen_eval_recovery_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_frozen_eval_recovery_v1",
+        "task": "remediation-energy-evaluation-recovery",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "gpdgfxdc"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T14:15:34.006539+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_energy_ft_eval_recovery_v1",
+      "name": "msa-si15-remediation-nsf6-energy-ft-eval-recovery-v1",
+      "source_sha": "e422d75f4f9b21fff1d3a046fce5b0ac123dd7f2",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_ft_eval_recovery_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_ft_eval_recovery_v1",
+        "task": "remediation-energy-evaluation-recovery",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "jndk5r3j"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T14:15:45.099862+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "remediation_nsf6_energy_ft_recon003_eval_recovery_v1",
+      "name": "msa-si15-remediation-nsf6-energy-ft-recon003-eval-recovery-v1",
+      "source_sha": "e422d75f4f9b21fff1d3a046fce5b0ac123dd7f2",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_energy_ft_recon003_eval_recovery_v1",
+      "plan": {
+        "run_id": "remediation_nsf6_energy_ft_recon003_eval_recovery_v1",
+        "task": "remediation-energy-evaluation-recovery",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ow9dcxd8"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T14:15:54.902479+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}
