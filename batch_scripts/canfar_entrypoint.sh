@@ -174,6 +174,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/prepare_remediation_source.py --config "$MSA_REMEDIATION_POLICY" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-lamost-dr12-network-probe ]]; then
+      "${pixi_run[@]}" python -u scripts/run_lamost_dr12_network_probe.py --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-lamost-dr12-source ]]; then
       "${pixi_run[@]}" python -u scripts/run_lamost_dr12_source.py --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit "$?"
