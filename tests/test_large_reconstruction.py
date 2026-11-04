@@ -1,5 +1,7 @@
 """Actual tiny HDF5 staging, cache reuse, provenance and fail-closed policy."""
 
+from types import SimpleNamespace
+
 import h5py
 import numpy as np
 import pytest
@@ -49,7 +51,19 @@ def fixture(tmp_path):
     )
 
 
-def test_actual_staging_identity_counts_normalization_and_reuse(tmp_path):
+@pytest.fixture
+def sufficient_staging_space(monkeypatch):
+    # These fixtures write only a few hundred bytes. Test the production 1 GiB
+    # reserve separately instead of requiring that space on the test machine.
+    monkeypatch.setattr(
+        "masked_stellar_autoencoder.training.large_reconstruction.shutil.disk_usage",
+        lambda _: SimpleNamespace(total=4 * 1024**3, used=1024**3, free=3 * 1024**3),
+    )
+
+
+def test_actual_staging_identity_counts_normalization_and_reuse(
+    tmp_path, sufficient_staging_space
+):
     args = fixture(tmp_path)
     cache, counts, manifest = prepare_original_reconstruction(*args)
     assert cache.shape == (12, 2) and not cache.flags.writeable
@@ -79,7 +93,9 @@ def test_source_count_change_and_partial_epoch_refused(tmp_path):
         prepare_original_reconstruction(*args)
 
 
-def test_validation_id_overlap_refused_before_cache_publication(tmp_path):
+def test_validation_id_overlap_refused_before_cache_publication(
+    tmp_path, sufficient_staging_space
+):
     args = fixture(tmp_path)
     with h5py.File(args[0]["reconstruction_original"], "r+") as handle:
         values = handle["valid"][:]
@@ -91,3 +107,15 @@ def test_validation_id_overlap_refused_before_cache_publication(tmp_path):
         prepare_original_reconstruction(*args)
     assert not (tmp_path / "cache").exists()
     assert (tmp_path / "cache.building").exists()
+
+
+def test_low_disk_reserve_refused_before_any_staging(tmp_path, monkeypatch):
+    args = fixture(tmp_path)
+    monkeypatch.setattr(
+        "masked_stellar_autoencoder.training.large_reconstruction.shutil.disk_usage",
+        lambda _: SimpleNamespace(total=1024, used=1024, free=0),
+    )
+    with pytest.raises(ValueError, match="Insufficient cache disk space"):
+        prepare_original_reconstruction(*args)
+    assert not (tmp_path / "cache").exists()
+    assert not (tmp_path / "cache.building").exists()

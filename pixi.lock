@@ -352,7 +352,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -712,7 +712,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -1061,7 +1061,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -1415,7 +1415,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -1775,7 +1775,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/widgetsnbextension-4.0.16-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://download-r2.pytorch.org/whl/cu130/torch-2.14.1%2Bcu130-cp313-cp313-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
@@ -2124,7 +2124,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-h31dac16_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hf451053_7.conda
       - pypi: ./
-      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+      - pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
       - pypi: https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/02/36/ecc85bc96c273dc8a11273ed4782272975e6338d4a3e9228621175edf0e3/jaraco_functools-4.6.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/0a/09/04ff6e8beaa6cd60a960f925d837c2afa3fffba7860042ab1b52a8358297/pyvo-1.9.1-py3-none-any.whl
@@ -6686,7 +6686,8 @@ packages:
   - cached_property >=2.0.1,<2.0.2.0a0
   license: BSD-3-Clause
   license_family: BSD
-  purls: []
+  purls:
+  - pkg:pypi/cached-property?source=compressed-mapping
   run_exports: {}
   size: 3720
   timestamp: 1787678456483
@@ -6819,7 +6820,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/dask?source=compressed-mapping
+  - pkg:pypi/dask?source=hash-mapping
   run_exports: {}
   size: 1071072
   timestamp: 1787845029550
@@ -7159,7 +7160,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/ipython?source=compressed-mapping
+  - pkg:pypi/ipython?source=hash-mapping
   run_exports: {}
   size: 730678
   timestamp: 1788260388285
@@ -7275,7 +7276,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/jupyter-client?source=hash-mapping
+  - pkg:pypi/jupyter-client?source=compressed-mapping
   run_exports: {}
   size: 118962
   timestamp: 1787929615607
@@ -7309,7 +7310,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/jupyterlab-widgets?source=hash-mapping
+  - pkg:pypi/jupyterlab-widgets?source=compressed-mapping
   run_exports: {}
   size: 219589
   timestamp: 1787045328396
@@ -7705,7 +7706,7 @@ packages:
   license: MIT
   license_family: MIT
   purls:
-  - pkg:pypi/pydantic?source=compressed-mapping
+  - pkg:pypi/pydantic?source=hash-mapping
   run_exports: {}
   size: 346633
   timestamp: 1787941273167
@@ -10199,7 +10200,7 @@ packages:
   license: BSD-3-Clause
   license_family: BSD
   purls:
-  - pkg:pypi/numpy?source=compressed-mapping
+  - pkg:pypi/numpy?source=hash-mapping
   run_exports:
     weak:
     - numpy >=1.25,<3
@@ -11049,7 +11050,7 @@ packages:
   - tqdm>=4.66.0
   - pyyaml>=6.0.1
   - wandb>=0.16.0
-  - torchregress @ git+https://github.com/sfabbro/torchregress.git@82ca1996cc4f3ca0be3e730d38a99db482a79378
+  - torchregress @ git+https://github.com/sfabbro/torchregress.git@2777b0de88121768434725ef227893cd35595d2a
   requires_python: '>=3.12'
 - pypi: git+https://github.com/opencadc/canfar.git?rev=0d96a72761cc6dc7063d6cd97049ae3743133efa#0d96a72761cc6dc7063d6cd97049ae3743133efa
   name: canfar
@@ -11069,9 +11070,9 @@ packages:
   - fss-cli @ git+https://github.com/shinybrar/vostools@main#subdirectory=libs/fss-cli
   - cryptography>=45.0.1
   requires_python: '>=3.10'
-- pypi: git+https://github.com/sfabbro/torchregress.git?rev=82ca1996cc4f3ca0be3e730d38a99db482a79378#82ca1996cc4f3ca0be3e730d38a99db482a79378
+- pypi: git+https://github.com/sfabbro/torchregress.git?rev=2777b0de88121768434725ef227893cd35595d2a#2777b0de88121768434725ef227893cd35595d2a
   name: torchregress
-  version: 0.3.0b1
+  version: 0.3.0
   requires_dist:
   - torch>=2.14.1
   - numpy>=2.5.4

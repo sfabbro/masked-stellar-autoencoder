@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-flexible-suite":
+        from multisurvey_flexible_launch_policy import bind_flexible_policy
+
+        return bind_flexible_policy(plan, env)
     if plan["task"] == "multisurvey-distribution-pilot":
         from multisurvey_distribution_launch_policy import bind_distribution_policy
 
@@ -650,6 +654,7 @@ def main():
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
                 "multisurvey-distribution-pilot",
+                "multisurvey-flexible-suite",
                 "multisurvey-fit-collation-census",
                 "multisurvey-gaia-gspspec-overlay",
             }
