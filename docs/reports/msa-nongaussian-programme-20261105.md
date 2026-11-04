@@ -1,7 +1,8 @@
 # Non-Gaussian multi-survey programme — 5 November 2026
 
-Status: prepared, not yet a model result. This continues the user's request to
-go beyond a single Gaussian and deliver a morning report after actual runs.
+Status: the first four-head screen is complete; the higher-particle screen is
+running. This continues the user's request to go beyond a single Gaussian and
+deliver a morning report after actual runs.
 
 Four matched heads predict a complete **joint** (Teff, logg, Fe/H) vector:
 an autoregressive rational-quadratic neural spline flow, a Gaussian-copula
@@ -106,3 +107,21 @@ ensemble CRPS and an independent, doubled-particle likelihood check on all
 scored stars for flow heads. Full local suite before this follow-up: 1,314
 passed, 4 skipped; focused tests also check fresh-instance reload and unbiased
 ensemble CRPS against its independent pairwise definition.
+
+Defensive integration audit: a second evaluation-only stage will rescore the
+saved higher-particle snapshots under a 50:50 mixture of the original reference
+and the FIT-trained Gaussian control. Both references are conditioned exactly
+on all available measurements before QMC sampling. The estimator retains the
+mixture evidence and the full mixture density in its importance ratio. This
+changes integration efficiency, not the trained prediction density. No weights
+are clipped and no gate is relaxed. Tests recover the exact reference-mixture
+likelihood, including correlated noise and missing/empty observations, and show
+an ESS improvement over 100-fold on a shifted narrow synthetic density. The
+complete suite now passes 1,317 tests with four skips.
+
+Only TUNE may choose the checkpoint and primary family. A SHA-bound selection
+manifest fixes that primary choice before CAL is opened. CAL then evaluates all
+qualified families with 4,096 particles and an independent 8,192-particle
+all-star score check for flows. It does not fit a recalibration, alter weights,
+or reselect a head. These roles are held out from this head fitting, not a
+certificate of independence from every historical ancestor.

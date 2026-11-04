@@ -290,8 +290,23 @@ def subset(data, indices, device):
     return {k: v[indices].to(device) for k, v in data.items()}
 
 
+def attach_defensive_proposal(data, gaussian, device):
+    """Freeze feature-only Gaussian-control parameters in residual coordinates."""
+    import torch
+
+    means, lowers = [], []
+    with torch.no_grad():
+        for start in range(0, len(data["context"]), 128):
+            mean, lower = gaussian(data["context"][start : start + 128].to(device))
+            means.append(mean.cpu())
+            lowers.append(lower.cpu())
+    data["proposal_mean"] = torch.cat(means)
+    data["proposal_lower"] = torch.cat(lowers)
+
+
 def log_prob(head, kind, batch, *, particles, seed):
     from masked_stellar_autoencoder.training.multisurvey_flow import (
+        defensive_importance_log_prob,
         gaussian_observation_log_prob,
         importance_log_prob,
         normal_nodes,
@@ -302,6 +317,18 @@ def log_prob(head, kind, batch, *, particles, seed):
         return gaussian_observation_log_prob(mean, lower, batch), None
     if kind == "mixture":
         return head.observation_log_prob(batch["context"], batch), None
+    if "proposal_mean" in batch:
+        nodes = normal_nodes(
+            particles, len(batch["context"]), 4, seed=seed, like=batch["context"]
+        )
+        return defensive_importance_log_prob(
+            head,
+            batch["context"],
+            batch["proposal_mean"],
+            batch["proposal_lower"],
+            batch,
+            nodes,
+        )
     nodes = normal_nodes(
         particles, len(batch["context"]), 3, seed=seed, like=batch["context"]
     )

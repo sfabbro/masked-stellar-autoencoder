@@ -106,6 +106,37 @@ def test_four_joint_heads_train_reload_and_predict_without_native_weights(tmp_pa
             "c" * 40,
             device="cpu",
         )
+        from masked_stellar_autoencoder.training.multisurvey_flow import (
+            GaussianResidualHead,
+            NSFResidualHead,
+        )
+
+        data, _ = module.tensor_data(path, roles=("tune",))
+        control = GaussianResidualHead(4).double()
+        control.load_state_dict(
+            torch.load(tmp_path / "gaussian-selected.pth", weights_only=True)["head"]
+        )
+        control.eval().requires_grad_(False)
+        module.attach_defensive_proposal(data["tune"], control, torch.device("cpu"))
+        saved = torch.load(tmp_path / "nsf-selected.pth", weights_only=True)
+        flow = NSFResidualHead(4, **saved["head_config"]).double()
+        flow.load_state_dict(saved["head"])
+        flow.eval().requires_grad_(False)
+        gate = module.integration_gate(
+            flow, "nsf", data["tune"], torch.device("cpu"), particles=64, seed=91
+        )
+        assert gate["pass_gate"], gate
+        score = module.evaluate(
+            flow,
+            "nsf",
+            data["tune"],
+            torch.device("cpu"),
+            particles=128,
+            seed=92,
+            include_scores=True,
+        )
+        assert len(score["per_star_nll"]) == 16
+        assert score["nll"] == np.mean(score["per_star_nll"])
     finally:
         torch.set_num_threads(previous)
     assert set(states) == {"gaussian", "mixture", "copula", "nsf"}
@@ -178,3 +209,26 @@ def test_refinement_reuses_original_cache_and_changes_only_integration_budget():
         > original["evaluation_particles"]
     )
     assert env["MSA_XP_EXPERIMENTS"] == "0"
+
+
+def test_defensive_rescore_is_evaluation_only_on_pinned_completed_training():
+    import pytest
+
+    scripts = Path(__file__).parents[1] / "scripts"
+    spec = importlib.util.spec_from_file_location(
+        "flexible_policy", scripts / "multisurvey_flexible_launch_policy.py"
+    )
+    policy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(policy)
+    plan = yaml.safe_load(
+        Path("configs/multisurvey-flexible-rescore-launch-20261105.yaml").read_text()
+    )["jobs"][0]
+    env = {"MSA_EXPERIMENT_OUTPUT": policy.ROOT + plan["run_id"]}
+    result = policy.bind_flexible_rescore_policy(plan, dict(env))
+    assert (
+        result["MSA_XP_EXPERIMENTS"] == "0"
+        and result["MSA_EXPERIMENT_PRESENTATIONS"] == "0"
+    )
+    plan["resources"]["gpu"] = 2
+    with pytest.raises(ValueError, match="rescoring contract"):
+        policy.bind_flexible_rescore_policy(plan, dict(env))

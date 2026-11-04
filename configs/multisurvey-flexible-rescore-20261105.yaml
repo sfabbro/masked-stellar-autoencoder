@@ -1,0 +1,45 @@
+run_id: multisurvey_flexible_rescore_20261105_v1
+suite:
+  run_id: multisurvey_flexible_refinement_20261105_v2
+  density_reference: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth
+  density_reference_sha256: efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d
+  seed: 20261105
+  fit_stars: 65536
+  tune_stars: 2048
+  updates: 1000
+  batch_size: 64
+  micro_batch: 8
+  head_lr: 0.0003
+  particles: 1024
+  evaluation_particles: 4096
+  draws: 2048
+  snapshots:
+  - 100
+  - 300
+  - 600
+  - 1000
+  parent:
+    run_id: multisurvey_flexible_parent_20261105
+    overlay_producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json
+    overlay_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json
+    overlay_manifest_sha256: 09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff
+    base_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5
+    checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+    checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+    reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+    reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    model_config: configs/pretrain.canfar.yaml
+    library_revision: 2777b0de88121768434725ef227893cd35595d2a
+    seed: 20261105
+  gate_particles: 4096
+  save_all_snapshots: true
+  frozen_cache:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/frozen-contexts.h5
+    sha256: 99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed
+    producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/manifest.json
+    source_commit: 451cf0dc036b8cacde5fb7fddcd9d86db5817b00
+training_source_commit: 6f1b3c790b921878e857e79b3d09b4baf3cdebbb
+fit_cache_sha256: 99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed
+producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/manifest.json
+producer_manifest_sha256: 606f0f7f555dfc244625e43eef3905c0bfed320f92e9185790ceadbb7d774aa6
+particles: 4096

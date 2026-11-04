@@ -1,0 +1,30 @@
+{
+  "collected_utc": "2026-11-04T22:16:05.633141+00:00",
+  "files": [
+    {
+      "name": "sampling.json",
+      "bytes": 241,
+      "sha256": "0309bc573a3aae4ddfa9cd6d4771b09472b129c4aa5ab2b07bd3cfc4fd546476"
+    },
+    {
+      "name": "training.jsonl",
+      "bytes": 377908,
+      "sha256": "af3fe1a982aa9ac75ef47554e180a5b815a3ded7c55bda19d06c7b740fffd132"
+    },
+    {
+      "name": "gaussian-tune.npz",
+      "bytes": 2680354,
+      "sha256": "ab15af85fddd06f2a56f09ea6bac13a88cb6d1390a0bf68e0c32f3dedbe63ab1",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    },
+    {
+      "name": "mixture-tune.npz",
+      "bytes": 2677537,
+      "sha256": "8e9aab2fd2cb8e749f05dc4c37420e651028eb6eb3f7441ca63b6241e29f8172",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    }
+  ],
+  "scope": "Small metadata and prediction arrays only; no neural checkpoint downloaded"
+}

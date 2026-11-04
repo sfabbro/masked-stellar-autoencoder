@@ -25,6 +25,7 @@ NAMES = dict(
 )
 LABELS = ("Teff [K]", "logg [dex]", "[Fe/H] [dex]")
 SOURCES = ("APOGEE", "DESI", "GALAH")
+COLORS = dict(gaussian="#4c78a8", mixture="#f58518", copula="#54a24b", nsf="#e45756")
 
 
 def metrics(data, selected):
@@ -95,7 +96,8 @@ def report(root, output):
         shutil.copyfile(root / "collection.json", output / "collection.json")
     data, rows, ranking, shapes = {}, [], [], {}
     for kind, state in states.items():
-        check_gate(state["initial_gate"])
+        if "initial_gate" in state:
+            check_gate(state["initial_gate"])
         for snap in state.get("snapshots", []):
             check_gate(snap["gate"])
         if "selected_gate" in state:
@@ -218,7 +220,7 @@ def report(root, output):
             ),
             scope="Ten stored illustrations; sample shape diagnostics, not physical covariance or a population normality test",
         )
-    paired = {}
+    paired, group_scores = {}, []
     if data:
         reference = next(iter(data.values()))
         for item in data.values():
@@ -245,15 +247,49 @@ def report(root, output):
                     delta[indices].mean(1), [0.025, 0.975]
                 ).tolist(),
             )
+        base = data["gaussian"]
+        present = np.stack(
+            [(base["mask"] & (base["source_index"] == s)).any(1) for s in range(3)],
+            axis=1,
+        )
+        groups = [
+            ("+".join(np.asarray(SOURCES)[pattern]), (present == pattern).all(1))
+            for pattern in np.unique(present, axis=0)
+            if pattern.any()
+        ]
+        groups += [
+            ("all_110_XP_inputs", base["xp_available_count"] == 110),
+            ("no_staged_XP_inputs", base["xp_available_count"] == 0),
+        ]
+        for label, keep in groups:
+            keep = keep & active
+            if not keep.any():
+                continue
+            for kind, item in data.items():
+                group_scores.append(
+                    dict(
+                        head=kind,
+                        subset=label,
+                        stars=int(keep.sum()),
+                        nll=float(item["per_star_nll"][keep].mean()),
+                        difference_vs_gaussian=float(
+                            (
+                                item["per_star_nll"][keep] - base["per_star_nll"][keep]
+                            ).mean()
+                        ),
+                    )
+                )
     ranking.sort(key=lambda x: x["nll"])
     summary = dict(
         run_id=manifest["run_id"],
         producer_status=manifest["status"],
         ranking=ranking,
         paired_vs_gaussian=paired,
+        group_scores=group_scores,
         metrics=rows,
         sample_shapes=shapes,
         evaluation_role=role,
+        preselected_head=manifest["config"].get("primary_head"),
         scope=f"Previously assigned {role.upper()}; "
         + (
             "fixed TUNE-selected heads, no CAL fitting or selection; "
@@ -290,12 +326,13 @@ def report(root, output):
                     density=True,
                     histtype="step",
                     label=NAMES[kind],
+                    color=COLORS[kind],
                 )
                 levels = np.linspace(0.1, 0.98, 23)
                 coverage = [
                     ((pit >= (1 - p) / 2) & (pit <= (1 + p) / 2)).mean() for p in levels
                 ]
-                axes[1, d].plot(levels, coverage, label=NAMES[kind])
+                axes[1, d].plot(levels, coverage, label=NAMES[kind], color=COLORS[kind])
             axes[0, d].axhline(1, color="gray", ls="--")
             axes[0, d].set(title=label, xlabel="Observed-label PIT", ylabel="Density")
             axes[1, d].plot([0, 1], [0, 1], color="gray", ls="--")
@@ -340,6 +377,7 @@ def report(root, output):
                                 density=True,
                                 histtype="step",
                                 label=NAMES[kind],
+                                color=COLORS[kind],
                             )
                         else:
                             ax.scatter(
@@ -348,6 +386,7 @@ def report(root, output):
                                 s=1,
                                 alpha=0.12,
                                 label=NAMES[kind],
+                                color=COLORS[kind],
                             )
                     ax.set_xlim(combined[:, col].min(), combined[:, col].max())
                     if row != col:
@@ -356,7 +395,14 @@ def report(root, output):
                         ax.set_xlabel(LABELS[col])
                     if col == 0 and row:
                         ax.set_ylabel(LABELS[row])
-            axes[0, 0].legend(fontsize=7)
+            handles, labels = axes[0, 0].get_legend_handles_labels()
+            fig.legend(
+                handles,
+                labels,
+                loc="upper right",
+                bbox_to_anchor=(0.96, 0.87),
+                fontsize=9,
+            )
             fig.suptitle(
                 f"Gaia {int(source_id)} — stored joint predictive samples\nFixed illustration; relative survey scale, not independent physical truth"
             )
@@ -374,6 +420,13 @@ def report(root, output):
     for row in ranking:
         text += f"| {row['name']} | {row['nll']:.5f} | {row['selected_step']} | {row['parameters']} |\n"
     text += f"\nLower NLL is better on this {role.upper()} panel. Gaussian/mixture likelihoods are analytic; flow scores use checked importance integration. These values are not comparable directly to the earlier 1024-star panel.\n\n"
+    if summary["preselected_head"]:
+        text += f"Primary candidate fixed before opening CAL: **{NAMES[summary['preselected_head']]}**. CAL comparisons below are diagnostics, not a new selection step.\n\n"
+    text += "| Head | Source/input subset | Stars | NLL difference vs Gaussian |\n|---|---|---:|---:|\n"
+    for row in group_scores:
+        if row["head"] != "gaussian":
+            text += f"| {NAMES[row['head']]} | {row['subset']} | {row['stars']} | {row['difference_vs_gaussian']:.5f} |\n"
+    text += "\nSource-pattern groups are disjoint stars; XP groups are a separate diagnostic. Global selection remains dominated by the available source mixture.\n\n"
     for kind, state in states.items():
         if state["status"] != "complete" or state.get("error"):
             text += f"- {NAMES[kind]}: {state['status']}; {state.get('error', 'no eligible selected state')}.\n"

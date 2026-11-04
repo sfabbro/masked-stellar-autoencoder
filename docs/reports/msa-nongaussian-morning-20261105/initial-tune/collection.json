@@ -1,0 +1,37 @@
+{
+  "collected_utc": "2026-11-04T22:01:08.953205+00:00",
+  "files": [
+    {
+      "name": "sampling.json",
+      "bytes": 241,
+      "sha256": "0309bc573a3aae4ddfa9cd6d4771b09472b129c4aa5ab2b07bd3cfc4fd546476"
+    },
+    {
+      "name": "training.jsonl",
+      "bytes": 377891,
+      "sha256": "02daca8122c92428326b646ec54012f07a78b699ccf03ef0deda373b5fe02604"
+    },
+    {
+      "name": "copula-tune.npz",
+      "bytes": 2560649,
+      "sha256": "37f7a1fe7ebeac8b16bb1db27de2c0946ebdb55f8f88dff4c964bd7b182284c6",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    },
+    {
+      "name": "gaussian-tune.npz",
+      "bytes": 2560912,
+      "sha256": "0e0af5f76257cbb25adead0de2e9f10793c7a50a66bc3e4f1aef02b51576274e",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    },
+    {
+      "name": "mixture-tune.npz",
+      "bytes": 2558052,
+      "sha256": "967a936a2b544c7821c6c44d5844ce97424a303fb916c3ae67cdd9fb83470563",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    }
+  ],
+  "scope": "Small metadata and prediction arrays only; no neural checkpoint downloaded"
+}

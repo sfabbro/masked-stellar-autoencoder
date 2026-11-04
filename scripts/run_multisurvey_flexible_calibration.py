@@ -11,6 +11,7 @@ from pathlib import Path
 import yaml
 from run_multisurvey_consensus_preflight import atomic, sha
 from run_multisurvey_flexible import (
+    attach_defensive_proposal,
     build_cache,
     evaluate,
     integration_gate,
@@ -48,6 +49,17 @@ def run(config, output, commit):
     )
     atomic(output / "manifest.json", manifest)
     try:
+        if sha(config["selection_manifest"]) != config["selection_manifest_sha256"]:
+            raise ValueError("Fixed TUNE selection manifest changed")
+        selection = json.loads(Path(config["selection_manifest"]).read_text())
+        if selection["status"] != "multisurvey_flexible_suite_complete":
+            raise ValueError("TUNE selection is not complete")
+        expected_primary = min(
+            (k for k, v in selection["heads"].items() if v["status"] == "complete"),
+            key=lambda k: selection["heads"][k]["evaluation"]["nll"],
+        )
+        if config["primary_head"] != expected_primary:
+            raise ValueError("Primary candidate must be fixed from TUNE before CAL")
         models = {}
         normalization = None
         constructors = dict(
@@ -57,6 +69,13 @@ def run(config, output, commit):
             nsf=NSFResidualHead,
         )
         for kind, item in config["heads"].items():
+            selected = selection["heads"][kind]
+            if (
+                selected["status"] != "complete"
+                or selected["checkpoint_path"] != item["path"]
+                or selected["checkpoint_sha256"] != item["sha256"]
+            ):
+                raise ValueError("CAL heads differ from immutable TUNE selection")
             if sha(item["path"]) != item["sha256"]:
                 raise ValueError("Selected density-head SHA differs")
             saved = torch.load(item["path"], map_location="cpu", weights_only=True)
@@ -94,6 +113,11 @@ def run(config, output, commit):
             context_normalization=normalization,
         )
         data, _ = tensor_data(manifest["cache"]["cache_path"], roles=("cal",))
+        if config["integration_proposal"] != "defensive_mixture":
+            raise ValueError("Unexpected CAL integration proposal")
+        attach_defensive_proposal(
+            data["cal"], models["gaussian"][0], torch.device("cuda")
+        )
         manifest["status"] = "evaluating_cal"
         atomic(output / "manifest.json", manifest)
         states = {}

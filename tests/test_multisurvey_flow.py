@@ -196,3 +196,66 @@ def test_fresh_instance_reload_preserves_joint_density(kind):
     second = kind(4, width=8).double()
     second.load_state_dict(first.state_dict(), strict=True)
     torch.testing.assert_close(second.log_prob(x, y), expected, atol=1e-12, rtol=1e-12)
+
+
+def test_defensive_mixture_integral_is_exact_when_head_equals_reference():
+    from masked_stellar_autoencoder.training.multisurvey_flow import (
+        defensive_importance_log_prob,
+    )
+
+    lower_ref, packed = example()
+    obs = whiten_observations(lower_ref, packed)
+    head = MixtureResidualHead(4, dims=2, width=8, components=2).double()
+    second_mean = torch.tensor([1.2, -0.7], dtype=torch.float64).expand(3, -1)
+    second_lower = torch.tensor([[0.5, 0.0], [0.1, 0.6]], dtype=torch.float64).expand(
+        3, -1, -1
+    )
+    with torch.no_grad():
+        raw = head.net[-1].bias.reshape(2, -1)
+        raw[:, :3] = 0
+        raw[1, 1:3] = second_mean[0]
+        raw[:, 3:] = 0
+        raw[0, 3:][head.row == head.column] = math.log(math.expm1(1 - 1e-4))
+        raw[1, 3:] = torch.tensor(
+            [math.log(math.expm1(0.5 - 1e-4)), 0.1, math.log(math.expm1(0.6 - 1e-4))],
+            dtype=torch.float64,
+        )
+    x = torch.zeros(3, 4, dtype=torch.float64)
+    nodes = normal_nodes(256, 3, 3, seed=71, like=x)
+    actual, ess = defensive_importance_log_prob(
+        head, x, second_mean, second_lower, obs, nodes
+    )
+    expected = head.observation_log_prob(x, obs)
+    torch.testing.assert_close(actual, expected, atol=1e-11, rtol=1e-11)
+    torch.testing.assert_close(ess, torch.ones_like(ess), atol=1e-12, rtol=1e-12)
+
+
+def test_defensive_proposal_rescues_shifted_narrow_density_without_changing_it():
+    from masked_stellar_autoencoder.training.multisurvey_flow import (
+        defensive_importance_log_prob,
+    )
+
+    obs = dict(
+        design=torch.tensor([[[0.5]]], dtype=torch.float64),
+        residual=torch.tensor([[2.0]], dtype=torch.float64),
+        count=torch.ones(1, dtype=torch.long),
+        noise_logdet=torch.tensor([math.log(2)], dtype=torch.float64),
+    )
+    head = GaussianResidualHead(2, dims=1, width=4).double()
+    with torch.no_grad():
+        head.gaussian.net[-1].bias[:] = torch.tensor(
+            [4.0, math.log(math.expm1(0.1 - head.gaussian.min_normalized_scale))],
+            dtype=torch.float64,
+        )
+    x = torch.zeros(1, 2, dtype=torch.float64)
+    mean, lower = (t.detach() for t in head(x))
+    pm, pl, lp0 = reference_posterior(obs)
+    _, old_ess = importance_log_prob(
+        head, x, pm, pl, lp0, obs["count"], normal_nodes(4096, 1, 1, seed=91, like=x)
+    )
+    actual, new_ess = defensive_importance_log_prob(
+        head, x, mean, lower, obs, normal_nodes(4096, 1, 2, seed=92, like=x)
+    )
+    expected = gaussian_observation_log_prob(mean, lower, obs)
+    torch.testing.assert_close(actual, expected, atol=0.003, rtol=0.003)
+    assert new_ess.min() > 0.5 and new_ess.min() > 100 * old_ess.max()

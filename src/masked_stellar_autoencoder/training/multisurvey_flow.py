@@ -95,6 +95,57 @@ def reference_posterior(observation):
     return mean, lower, log_prob
 
 
+def gaussian_reference_posterior(mean, lower, observation):
+    """Condition an arbitrary Gaussian reference under the same affine noise."""
+    shifted = dict(observation)
+    shifted["design"] = observation["design"] @ lower
+    shifted["residual"] = observation["residual"] - (
+        observation["design"] @ mean[..., None]
+    ).squeeze(-1)
+    local_mean, local_lower, lp = reference_posterior(shifted)
+    return mean + (lower @ local_mean[..., None]).squeeze(-1), lower @ local_lower, lp
+
+
+def defensive_importance_log_prob(head, context, mean, lower, observation, nodes):
+    """Exact identity with a defensive 50:50 reference mixture, finite QMC.
+
+    The reference is 0.5*phi + 0.5*N(mean,lower*lower.T), and is analytically
+    conditioned on all source observations. One extra Sobol coordinate samples
+    its posterior component. Predictions still come only from head(context).
+    This routine is for evaluation: proposal parameters must be detached.
+    """
+    if mean.requires_grad or lower.requires_grad:
+        raise ValueError("Evaluation proposal must be detached")
+    dims = mean.shape[-1]
+    if nodes.shape[-1] != dims + 1:
+        raise ValueError("Defensive mixture requires one component coordinate")
+    first_mean, first_lower, first_lp = reference_posterior(observation)
+    second_mean, second_lower, second_lp = gaussian_reference_posterior(
+        mean, lower, observation
+    )
+    log_evidence = torch.logaddexp(first_lp, second_lp) - math.log(2)
+    first_probability = (first_lp - torch.logaddexp(first_lp, second_lp)).exp()
+    use_first = torch.special.ndtr(nodes[..., -1]) < first_probability[None]
+    eps = nodes[..., :dims]
+    first = first_mean[None] + torch.einsum("bij,kbj->kbi", first_lower, eps)
+    second = second_mean[None] + torch.einsum("bij,kbj->kbi", second_lower, eps)
+    samples = torch.where(use_first[..., None], first, second)
+    lp_first = -0.5 * (samples.square().sum(-1) + dims * math.log(2 * math.pi))
+    lp_second = torch.distributions.MultivariateNormal(mean, scale_tril=lower).log_prob(
+        samples
+    )
+    log_reference = torch.logaddexp(lp_first, lp_second) - math.log(2)
+    log_weights = head.log_prob(context, samples) - log_reference
+    lp = log_evidence + torch.logsumexp(log_weights, 0) - math.log(len(nodes))
+    relative_ess = (
+        2 * torch.logsumexp(log_weights, 0)
+        - torch.logsumexp(2 * log_weights, 0)
+        - math.log(len(nodes))
+    ).exp()
+    lp = torch.where(observation["count"] > 0, lp, 0.0)
+    return lp, relative_ess
+
+
 def normal_nodes(count, batch, dims, *, seed, like):
     """Independent scrambled Sobol coordinates per star; [K,B,D]."""
     if count < 8 or count & (count - 1):
