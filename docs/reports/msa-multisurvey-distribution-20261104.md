@@ -1,5 +1,33 @@
 # Multi-survey distribution pilot — 4 November 2026
 
+Both pilots completed 1000 updates and passed producer full-checkpoint reload.
+The [results, distributions and calibration plots](msa-multisurvey-distribution-20261104/index.md)
+compare 1024 identical TUNE stars after exposure to 62,827 identical unique FIT
+identities. Fine-tuning improves joint observation NLL from 5.6981 to 5.4843;
+the paired difference is -0.2138 (star-bootstrap 95% interval -0.2582 to -0.1687).
+Prefer the fine-tuned Gaussian as the current **baseline**, not a winner over
+all distribution families or a calibrated physical catalogue.
+
+Nominal 90% observed intervals vary by survey/target: fine-tuned DESI Fe/H is
+88.3%, GALAH Fe/H 98.0%, APOGEE Teff 100% (n=79). For the 29 source references
+with Fe/H<-1.5, fine-tuned MAE is 0.520 dex and mean 90% interval width is
+2.148 dex. The seven >=8000 K references have 2786 K MAE and mean observed
+90% interval width 10,315 K. These small panels expose failures and excessive
+width; they do not certify population tail accuracy. Attractive joint samples
+do not resolve these source-scale, error-model and extrapolation limitations.
+
+The next usable baseline checkpoint is
+`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth`,
+SHA256 `efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d`.
+The frozen checkpoint and all source pins are in the results summary. All four
+prediction NPZ hashes match producer receipts; CRC, exact integer-ID pairing,
+unique FIT exposure, independent PIT and saved joint-draw moment checks passed.
+See [verification and completion evidence](msa-multisurvey-distribution-20261104/verification.json).
+Both task-owned CANFAR sessions are completed; local collectors/watchers have
+ended and no recurring automation was created. ARC transfer-negotiation errors
+were recovered through direct reads of remaining small files, with no model
+rerun. Results were assembled on 5 November in Australia/Perth.
+
 The first bounded fit uses the current three-survey atmospheric likelihood:
 one full-covariance Gaussian over Teff, logg and Fe/H, conditioned on the MSA
 latent, with source-specific relative spline maps and native measurement errors.
@@ -15,6 +43,8 @@ initialization, source union and sampled identities. Reconstruction is off to
 isolate supervised adaptation. This is a short pilot, not a complete pass over
 the 1.7M-star FIT union. The sampler is uniform over source-associated FIT stars;
 some associated rows can have no retained target and contribute zero likelihood.
+The three-target Gaussian heads are freshly initialized: initial TUNE scores
+describe an untrained new head, not the parent's inherited Fe/H predictor.
 
 The immutable existing FIT/TUNE roles are preserved. A deterministic 1024-star
 TUNE panel is scored before and after training; CAL, devtest and external roles
@@ -37,6 +67,8 @@ likelihood uses first-order linearization. Its canonical scale is a relative
 gauge without independent physical anchors. Neither good PITs under these
 floors nor attractive corners would establish physical calibration. Alpha,
 age, distance and Gaia RVS are outside this three-target pilot.
+The quicklook does not establish calibration by XP availability, metal-poor
+tail, spatial holdout or genuinely independent physical references.
 
 Launch and completion receipts will distinguish prepared, accepted, running,
 failed and completed states. No scheduled automation or retry dispatcher is
@@ -61,3 +93,12 @@ and obtained H100 NVL MIG 1g.12gb devices. Their first manifests report running;
 this does not yet establish optimizer progress or successful fitting. Live quota
 at submission was 33 TB with 13.157 TB available. Exact launch receipts are in
 `experiments/xp/multisurvey-distribution-submitted-20261104.json`.
+
+The current local torchregress release is 0.3.0 (`2777b0de88121768434725ef227893cd35595d2a`,
+4 November). It batches the multi-source likelihood and missing-pattern copula
+calculations. The accepted pilots retain their immutable older library pin.
+A scoped float64 synthetic comparison against the current likelihood passed
+for missing/empty labels and full correlated noise: maximum value difference
+7.11e-15 and gradient difference 3.55e-15. This is mathematical parity on that
+panel, not an actual-pilot speed benchmark or validation of the entire release.
+Receipt: `experiments/xp/torchregress-030-multisurvey-parity-20261104.json`.

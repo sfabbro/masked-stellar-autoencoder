@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import matplotlib
@@ -43,13 +44,23 @@ def summarize(data, selected):
 
 def report(root, output):
     output.mkdir(parents=True, exist_ok=True)
-    arms, manifests, rows = {}, {}, []
+    arms, manifests, rows, seen_ids = {}, {}, [], {}
     for arm in ("frozen", "finetune"):
         run = f"multisurvey_gaussian_{arm}_20261104_v1"
         manifest = json.loads((root / (run + "-manifest.json")).read_text())
-        if manifest["status"] != "multisurvey_distribution_pilot_complete":
+        if (
+            manifest["status"] != "multisurvey_distribution_pilot_complete"
+            or manifest["result"].get("checkpoint_reload") != "pass"
+            or manifest["result"].get("updates") != 1000
+        ):
             raise ValueError("Only completed pilots can enter the report")
         manifests[arm] = manifest
+        shutil.copyfile(
+            root / (run + "-manifest.json"), output / (arm + "-manifest.json")
+        )
+        seen_ids[arm] = np.load(
+            root / run / "fit-seen-source-ids.npy", allow_pickle=False
+        )
         for stage in ("initial", "final"):
             path = root / run / (stage + "-tune.npz")
             if (
@@ -111,6 +122,46 @@ def report(root, output):
         "corner_source_id",
     ):
         np.testing.assert_array_equal(arms["frozen"][key], arms["finetune"][key])
+    np.testing.assert_array_equal(seen_ids["frozen"], seen_ids["finetune"])
+    for arm, data in arms.items():
+        active_ids = data["source_id"][
+            np.isin(data["source_id"], data["record_source_id"])
+        ]
+        if len(active_ids) != len(data["per_star_nll"]):
+            raise ValueError(
+                "Per-star likelihoods do not align with observed identities"
+            )
+        np.testing.assert_allclose(
+            data["per_star_nll"].mean(),
+            manifests[arm]["result"]["final"]["mean_joint_observation_nll"],
+            rtol=0,
+            atol=1e-12,
+        )
+    differences = arms["finetune"]["per_star_nll"] - arms["frozen"]["per_star_nll"]
+    rng = np.random.default_rng(20261104)
+    bootstrapped = differences[
+        rng.integers(0, len(differences), size=(2000, len(differences)))
+    ].mean(1)
+    paired_nll = dict(
+        mean=float(differences.mean()),
+        paired_star_bootstrap_95=np.quantile(bootstrapped, [0.025, 0.975]).tolist(),
+        stars=len(differences),
+        scope="Fine-tuned minus frozen on this existing TUNE panel; uncertainty over stars only, not training seeds, source systematics or new populations",
+    )
+    tails = {}
+    for arm, data in arms.items():
+        tails[arm] = {}
+        for name, keep in (
+            (
+                "native_teff_ge_8000K",
+                (data["record_target_index"] == 0) & (data["reference"] >= 8000),
+            ),
+            (
+                "native_feh_lt_minus1p5",
+                (data["record_target_index"] == 2) & (data["reference"] < -1.5),
+            ),
+        ):
+            tails[arm][name] = summarize(data, keep) if keep.any() else {"count": 0}
     with (output / "metrics.csv").open("w") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -142,6 +193,73 @@ def report(root, output):
     fig.suptitle("Matched TUNE stars — survey observations, illustrative error floors")
     fig.tight_layout()
     fig.savefig(output / "calibration.png", dpi=160)
+    plt.close(fig)
+    fig, axes = plt.subplots(3, 3, figsize=(12, 9))
+    for s, source in enumerate(SOURCES):
+        for d, label in enumerate(LABELS):
+            ax = axes[s, d]
+            for arm, data in arms.items():
+                keep = (data["record_source_index"] == s) & (
+                    data["record_target_index"] == d
+                )
+                if keep.any():
+                    ax.hist(
+                        data["observed_pit"][keep],
+                        bins=np.linspace(0, 1, 11),
+                        density=True,
+                        histtype="step",
+                        label=arm,
+                    )
+                count = int(keep.sum())
+            ax.axhline(1, color="gray", ls="--")
+            ax.set_title(f"{source}: {label}, n={count}")
+            ax.set(xlabel="Observed-label PIT", ylabel="Density")
+    axes[0, 0].legend()
+    fig.suptitle("Survey-specific TUNE diagnostics — illustrative error floors")
+    fig.tight_layout()
+    fig.savefig(output / "survey-pit.png", dpi=160)
+    plt.close(fig)
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+    for row, (arm, data) in enumerate(arms.items()):
+        for d, label in enumerate(LABELS):
+            ax = axes[row, d]
+            for s, source in enumerate(SOURCES):
+                keep = (data["record_source_index"] == s) & (
+                    data["record_target_index"] == d
+                )
+                ax.scatter(
+                    data["reference"][keep],
+                    data["observed_mean"][keep],
+                    s=8,
+                    alpha=0.4,
+                    label=source,
+                )
+            values = np.concatenate(
+                [
+                    np.concatenate(
+                        [
+                            item["reference"][item["record_target_index"] == d],
+                            item["observed_mean"][item["record_target_index"] == d],
+                        ]
+                    )
+                    for item in arms.values()
+                ]
+            )
+            limits = (values.min(), values.max())
+            ax.plot(limits, limits, color="gray", ls="--")
+            ax.set(
+                xlim=limits,
+                ylim=limits,
+                xlabel=f"Native source {label}",
+                ylabel=f"Mapped prediction {label}",
+                title=arm,
+            )
+    axes[0, 0].legend(fontsize=8)
+    fig.suptitle(
+        "Source-space predictions — all stored TUNE references, no axis clipping"
+    )
+    fig.tight_layout()
+    fig.savefig(output / "predictions.png", dpi=160)
     plt.close(fig)
     corners = []
     for i, source_id in enumerate(arms["frozen"]["corner_source_id"][:3]):
@@ -193,6 +311,7 @@ def report(root, output):
             paired_references="pass",
             independent_pit="pass",
             saved_joint_draw_moments="pass",
+            identical_unique_fit_exposure="pass",
         ),
         joint_nll={
             arm: {
@@ -202,6 +321,18 @@ def report(root, output):
             for arm, m in manifests.items()
         },
         metrics=rows,
+        paired_final_nll_difference=paired_nll,
+        tail_quicklook=tails,
+        checkpoints={
+            arm: dict(
+                path="/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+                + m["run_id"]
+                + "/final.pth",
+                sha256=m["result"]["checkpoint_sha256"],
+                reload=m["result"]["checkpoint_reload"],
+            )
+            for arm, m in manifests.items()
+        },
     )
     (output / "summary.json").write_text(
         json.dumps(summary, indent=2, allow_nan=False) + "\n"
@@ -215,10 +346,17 @@ def report(root, output):
     for arm, scores in summary["joint_nll"].items():
         text += f"| {arm} | {scores['initial']:.4f} | {scores['final']:.4f} |\n"
     text += "\nLower NLL is better on this fixed panel. This pilot does not select between Gaussian and flow heads.\n\n"
+    text += "Initial scores use freshly initialized three-target heads, not the inherited Fe/H head. Joint Gaussian samples are unimodal and do not resolve arbitrary multimodal stellar degeneracies.\n\n"
+    low, high = paired_nll["paired_star_bootstrap_95"]
+    text += f"Paired final NLL difference (fine-tuned minus frozen): {paired_nll['mean']:.4f}; star-bootstrap 95% interval [{low:.4f}, {high:.4f}]. This interval excludes training-seed and survey-systematic uncertainty.\n\n"
+    text += "The full-range prediction panels retain large hot-star and low-metallicity residuals. Small source-reference tail counts and descriptive scores are preserved in `summary.json` (`tail_quicklook`); they do not establish tail calibration.\n\n"
     text += "![Observed-label calibration](calibration.png)\n\n"
+    text += "![PIT by survey](survey-pit.png)\n\n"
+    text += "![Native source prediction comparison](predictions.png)\n\n"
     for name in corners:
         text += f"![Joint samples]({name})\n\n"
     text += "[Per-survey accuracy, CRPS, coverage and width](metrics.csv) · [Summary and checks](summary.json).\n"
+    text += "\n[Original frozen-run manifest](frozen-manifest.json) · [Original fine-tuned-run manifest](finetune-manifest.json). Checkpoint paths and SHA256 hashes are in the summary.\n"
     (output / "index.md").write_text(text)
     return summary
 

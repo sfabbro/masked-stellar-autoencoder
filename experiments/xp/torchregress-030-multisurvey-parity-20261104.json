@@ -1,0 +1,8 @@
+{
+  "scope": "Synthetic float64 full correlated noise, missing-label and empty-observation parity; no stellar checkpoint execution or throughput measurement",
+  "old_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "current_revision": "2777b0de88121768434725ef227893cd35595d2a",
+  "score_max_absolute_difference": 7.105427357601002e-15,
+  "gradient_max_absolute_difference": 3.552713678800501e-15,
+  "status": "pass"
+}

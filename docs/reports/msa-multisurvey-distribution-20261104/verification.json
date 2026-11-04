@@ -1,0 +1,56 @@
+{
+  "collected_utc": "2026-11-04T16:37:10.587082+00:00",
+  "scope": "Local downloaded-array/JSON/ID arithmetic and producer checkpoint-reload receipts; no independent neural replay or physical-label certificate",
+  "files": [
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_frozen_20261104_v1/initial-tune.npz",
+      "bytes": 2072912,
+      "sha256": "4c0d81ebdd0f3ded02ce08e519324e4d256c828abd3c8a82f047389c570b8dee"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_frozen_20261104_v1/final-tune.npz",
+      "bytes": 2051018,
+      "sha256": "c99853f2a7200a804afe61b03417c47f0069235e0b0cde90f75656b79c3103e1"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_frozen_20261104_v1/training.jsonl",
+      "bytes": 147611,
+      "sha256": "b34c75f795e81240776295f92e19d9064b3b7cb72795413509263c82fff989f7"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_frozen_20261104_v1/fit-seen-source-ids.npy",
+      "bytes": 502744,
+      "sha256": "1fa6a0b509fd9594549a316631b028713e61add81dd34427315cd49f71023e7f"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_finetune_20261104_v1/initial-tune.npz",
+      "bytes": 2072912,
+      "sha256": "4c0d81ebdd0f3ded02ce08e519324e4d256c828abd3c8a82f047389c570b8dee"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_finetune_20261104_v1/final-tune.npz",
+      "bytes": 2048396,
+      "sha256": "8b160d16d28683abc0b7e4578786baad7024257ef17bd65a0a6757abd2e0511d"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_finetune_20261104_v1/training.jsonl",
+      "bytes": 147609,
+      "sha256": "394dc3e05642b97ddd01dba49fe6390ab0277c4610d07b0b8fde5781bc86ca32"
+    },
+    {
+      "path": "experiments/xp/results-stellar-improvement/multisurvey-distribution-20261104/multisurvey_gaussian_finetune_20261104_v1/fit-seen-source-ids.npy",
+      "bytes": 502744,
+      "sha256": "1fa6a0b509fd9594549a316631b028713e61add81dd34427315cd49f71023e7f"
+    }
+  ],
+  "npz_crc": "pass",
+  "training_log_rows_per_arm": 1000,
+  "finite_logged_losses": "pass",
+  "report_links": "pass",
+  "native_session_status_observed": {
+    "cauxrwil": "Completed",
+    "chgpndj3": "Completed"
+  },
+  "task_owned_local_watchers": "terminated; bounded collectors finished",
+  "recurring_automation_created": false
+}
