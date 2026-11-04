@@ -232,3 +232,24 @@ def test_defensive_rescore_is_evaluation_only_on_pinned_completed_training():
     plan["resources"]["gpu"] = 2
     with pytest.raises(ValueError, match="rescoring contract"):
         policy.bind_flexible_rescore_policy(plan, dict(env))
+
+
+def test_calibration_plan_keeps_preselected_heads_and_performs_no_training():
+    scripts = Path(__file__).parents[1] / "scripts"
+    spec = importlib.util.spec_from_file_location(
+        "flexible_policy", scripts / "multisurvey_flexible_launch_policy.py"
+    )
+    policy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(policy)
+    plan = yaml.safe_load(
+        Path(
+            "configs/multisurvey-flexible-calibration-launch-20261105.yaml"
+        ).read_text()
+    )["jobs"][0]
+    env = policy.bind_flexible_calibration_policy(
+        plan, {"MSA_EXPERIMENT_OUTPUT": policy.ROOT + plan["run_id"]}
+    )
+    config = yaml.safe_load(Path(env["MSA_MULTISURVEY_POLICY"]).read_text())
+    assert config["primary_head"] == "mixture"
+    assert set(config["heads"]) == {"gaussian", "mixture", "copula", "nsf"}
+    assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0" and config["cal_stars"] == 2048
