@@ -57,8 +57,8 @@ never converted into scientific wins. Selection uses only existing TUNE roles.
 Outputs include SHA-bound head checkpoints and their context transforms,
 joint samples, marginal intervals, native-source PIT and noisy-label predictions,
 likelihoods, training logs, source/exposure hashes and numeric-gate evidence.
-The main environment now pins torchregress 0.3.0 at `2777b0de…d2a`; the archived
-XP environment remains unchanged. The project GPU environment is sufficient
+Both environment locks now pin torchregress 0.3.0 at `2777b0de…d2a`; historical
+runs retain their original source commits and locks. The project GPU environment is sufficient
 for this task, which needs no GaiaXPy spectral-flux projection. No dependencies
 are installed into a home `.local` directory.
 
@@ -79,6 +79,9 @@ tests now supply synthetic sufficient disk space, with a separate explicit
 low-space rejection test; the production space guard is unchanged. A local
 duplicate environment solve ran out of space, so only that incomplete generated
 environment was removed and the already installed project environment reused.
+The XP lock reuses the canonical library metadata from the freshly solved main
+lock, leaves its platform packages unchanged, and passed Pixi's offline
+`--check --no-install` validation. No fresh local XP installation is claimed.
 
 After the first screen, eligible finalists may receive a second-seed or
 tail-focused matched follow-up and a separate calibration-role evaluation.
