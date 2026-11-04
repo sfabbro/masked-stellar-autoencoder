@@ -1,0 +1,20 @@
+{
+  "collected_utc": "2026-11-04T22:26:18.041131+00:00",
+  "files": [
+    {
+      "name": "gaussian-cal.npz",
+      "bytes": 2654997,
+      "sha256": "1b4b48330804214c7ea4a77f076f5fb33d79728a937aad036ba3ab6a350e8034",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    },
+    {
+      "name": "mixture-cal.npz",
+      "bytes": 2651659,
+      "sha256": "1fa56a90bcdc1b6cd0b891c403dbd22b1e7d52dd09fc2df83a5a449641c64756",
+      "producer_sha256": "pass",
+      "npz_crc": "pass"
+    }
+  ],
+  "scope": "Small metadata and prediction arrays only; no neural checkpoint downloaded"
+}

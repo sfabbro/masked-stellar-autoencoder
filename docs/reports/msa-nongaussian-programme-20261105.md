@@ -1,8 +1,9 @@
 # Non-Gaussian multi-survey programme — 5 November 2026
 
-Status: the first four-head screen is complete; the higher-particle screen is
-running. This continues the user's request to go beyond a single Gaussian and
-deliver a morning report after actual runs.
+Status: complete. The four-component joint mixture wins the matched TUNE and
+separate CAL comparisons. Both flow CAL numerical gates failed. See the
+[morning report](msa-nongaussian-morning-20261105.md) for scores, checkpoints,
+plots, failures and the remaining tail-calibration limits.
 
 Four matched heads predict a complete **joint** (Teff, logg, Fe/H) vector:
 an autoregressive rational-quadratic neural spline flow, a Gaussian-copula
@@ -125,3 +126,8 @@ qualified families with 4,096 particles and an independent 8,192-particle
 all-star score check for flows. It does not fit a recalibration, alter weights,
 or reselect a head. These roles are held out from this head fitting, not a
 certificate of independence from every historical ancestor.
+
+Final verification: 1,319 tests passed, four skipped. The two completed screens,
+defensive audit and fixed-head CAL evaluation are all Completed on CANFAR.
+The mixture remains an experimental density head; no physical calibration
+certificate is claimed.

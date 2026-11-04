@@ -1,0 +1,13 @@
+{
+  "fit_presentations": 64000,
+  "fit_unique": 64000,
+  "tune_unique": 2048,
+  "cal_unique": 2048,
+  "fit_tune_overlap": 0,
+  "fit_cal_overlap": 0,
+  "tune_cal_overlap": 0,
+  "fit_stream_sha256": "28d3e24961579b38461d5e19e469392930d4f4575c01724881d101bc7a6ee90e",
+  "tune_ids_sha256": "85813001f1060e06894dd26d545a3387c50ca011f261d46b5b922d0b6774943d",
+  "cal_ids_sha256": "04234b2ecf9832f084b392eee454e3ac82b4e313364dab5312cf5ebc05a6548f",
+  "scope": "Independent exact-ID check of actual head-training presentations against these two evaluation panels; ancestor exposure is not certified"
+}

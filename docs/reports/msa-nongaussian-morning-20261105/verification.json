@@ -1,0 +1,88 @@
+{
+  "checked_utc": "2026-11-04T22:30:55.653083+00:00",
+  "full_suite": {
+    "command": "pixi run --frozen pytest -q --basetemp=/private/tmp/msa-flexible-full-tests",
+    "passed": 1319,
+    "skipped": 4
+  },
+  "report_checks": [
+    "producer prediction SHA256",
+    "NPZ CRC",
+    "exact int64 source-ID pairing",
+    "raw numerical-gate reductions and panel hashes",
+    "NLL reductions",
+    "actual FIT/TUNE/CAL ID disjointness"
+  ],
+  "sessions": [
+    {
+      "id": "ewnyszuz",
+      "status": "Completed"
+    },
+    {
+      "id": "dmthiu6c",
+      "status": "Failed before training"
+    },
+    {
+      "id": "ic836lpi",
+      "status": "Completed"
+    },
+    {
+      "id": "bz7bkvwf",
+      "status": "Completed"
+    },
+    {
+      "id": "wqq4kzhw",
+      "status": "Completed"
+    }
+  ],
+  "source_commit": "bac51a61b17f049f35971e401816ea2c13935f6a",
+  "main_lock_sha256": "26fbcdbc560192e29e9cdf41f8bc9c2287487103633424c6221d9646ec8879ad",
+  "xp_lock_sha256": "4ac1c7a2561b7fc292d0d61041cb11b25b82b26aa0cfc9ddf3245188b9d11ab7",
+  "scope": "Native checkpoints executed only on CANFAR CUDA. Local head execution used synthetic tests; local analysis used saved prediction arrays. Full tests used previously restored archived survey-registry evidence.",
+  "training_update_audit": {
+    "multisurvey_flexible_suite_20261105_v1": {
+      "gaussian": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "mixture": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "copula": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "nsf": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      }
+    },
+    "multisurvey_flexible_refinement_20261105_v2": {
+      "gaussian": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "mixture": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "copula": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      },
+      "nsf": {
+        "successful_updates": 1000,
+        "last_step": 1000,
+        "finite_nll_and_gradient_norm": true
+      }
+    }
+  }
+}

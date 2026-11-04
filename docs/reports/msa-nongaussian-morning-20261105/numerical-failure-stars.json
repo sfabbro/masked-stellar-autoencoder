@@ -1,0 +1,94 @@
+[
+  {
+    "head": "copula",
+    "reason": "minimum_ess",
+    "source_id": 3895822142504190080,
+    "relative_ess": 0.0002635963899022717,
+    "refinement_gap": 2.806622053263652,
+    "source_index": [
+      1,
+      1,
+      1
+    ],
+    "native_values": [
+      4593.051741582112,
+      4.910822830648597,
+      -1.9836883554419353
+    ],
+    "gaussian_observed_median": [
+      5227.291152905686,
+      4.930487770004762,
+      -0.7357818858568707
+    ],
+    "xp_available_count": 110
+  },
+  {
+    "head": "copula",
+    "reason": "largest_refinement_gap",
+    "source_id": 3895822142504190080,
+    "relative_ess": 0.0002635963899022717,
+    "refinement_gap": 2.806622053263652,
+    "source_index": [
+      1,
+      1,
+      1
+    ],
+    "native_values": [
+      4593.051741582112,
+      4.910822830648597,
+      -1.9836883554419353
+    ],
+    "gaussian_observed_median": [
+      5227.291152905686,
+      4.930487770004762,
+      -0.7357818858568707
+    ],
+    "xp_available_count": 110
+  },
+  {
+    "head": "nsf",
+    "reason": "minimum_ess",
+    "source_id": 3895822142504190080,
+    "relative_ess": 0.00044147074532345856,
+    "refinement_gap": 1.3084063051432437,
+    "source_index": [
+      1,
+      1,
+      1
+    ],
+    "native_values": [
+      4593.051741582112,
+      4.910822830648597,
+      -1.9836883554419353
+    ],
+    "gaussian_observed_median": [
+      5227.291152905686,
+      4.930487770004762,
+      -0.7357818858568707
+    ],
+    "xp_available_count": 110
+  },
+  {
+    "head": "nsf",
+    "reason": "largest_refinement_gap",
+    "source_id": 3895822142504190080,
+    "relative_ess": 0.00044147074532345856,
+    "refinement_gap": 1.3084063051432437,
+    "source_index": [
+      1,
+      1,
+      1
+    ],
+    "native_values": [
+      4593.051741582112,
+      4.910822830648597,
+      -1.9836883554419353
+    ],
+    "gaussian_observed_median": [
+      5227.291152905686,
+      4.930487770004762,
+      -0.7357818858568707
+    ],
+    "xp_available_count": 110
+  }
+]
