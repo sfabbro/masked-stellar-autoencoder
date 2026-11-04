@@ -15,7 +15,7 @@ def bind_flexible_refinement_policy(plan, env):
     original = yaml.safe_load(CONFIG.read_text())
     expected = dict(
         original,
-        run_id="multisurvey_flexible_refinement_20261105_v1",
+        run_id="multisurvey_flexible_refinement_20261105_v2",
         particles=1024,
         gate_particles=4096,
         evaluation_particles=4096,

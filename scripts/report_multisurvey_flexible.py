@@ -212,6 +212,10 @@ def report(root, output):
         shapes[kind] = dict(
             marginal_skew=skew(samples, axis=1, bias=False).tolist(),
             marginal_excess_kurtosis=kurtosis(samples, axis=1, bias=False).tolist(),
+            nonpositive_teff_fraction=(samples[:, :, 0] <= 0).mean(1).tolist(),
+            canonical_teff_low_nonpositive_count=int(
+                (item["canonical_low"][:, 0] <= 0).sum()
+            ),
             scope="Ten stored illustrations; sample shape diagnostics, not physical covariance or a population normality test",
         )
     paired = {}
@@ -310,7 +314,9 @@ def report(root, output):
             (r["head"] for r in ranking if r["head"] != "gaussian"), ranking[0]["head"]
         )
         selected = {
-            k: data[k] for k in dict.fromkeys(["gaussian", candidate]) if k in data
+            k: data[k]
+            for k in dict.fromkeys(["gaussian", candidate, "copula", "nsf"])
+            if k in data
         }
         for i, source_id in enumerate(
             next(iter(selected.values()))["corner_source_id"][:3]
