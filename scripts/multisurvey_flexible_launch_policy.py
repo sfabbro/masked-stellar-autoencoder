@@ -5,7 +5,44 @@ from pathlib import Path
 import yaml
 
 CONFIG = Path("configs/multisurvey-flexible-20261105.yaml")
+CAL_CONFIG = Path("configs/multisurvey-flexible-calibration-20261105.yaml")
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+
+
+def bind_flexible_refinement_policy(plan, env):
+    path = Path("configs/multisurvey-flexible-refinement-20261105.yaml")
+    config = yaml.safe_load(path.read_text())
+    original = yaml.safe_load(CONFIG.read_text())
+    expected = dict(
+        original,
+        run_id="multisurvey_flexible_refinement_20261105_v1",
+        particles=1024,
+        gate_particles=4096,
+        evaluation_particles=4096,
+        save_all_snapshots=True,
+        frozen_cache=dict(
+            path=ROOT + original["run_id"] + "/frozen-contexts.h5",
+            sha256="99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed",
+            producer_manifest=ROOT + original["run_id"] + "/manifest.json",
+            source_commit="451cf0dc036b8cacde5fb7fddcd9d86db5817b00",
+        ),
+    )
+    if (
+        config != expected
+        or plan["run_id"] != config["run_id"]
+        or plan["task"] != "multisurvey-flexible-refinement"
+        or plan.get("resources") != {"cores": 4, "ram": 64, "gpu": 1}
+        or plan.get("image") != "images.canfar.net/astroai/terminal:latest"
+        or plan.get("env")
+        or plan.get("depends_on", [])
+        or env.get("MSA_EXPERIMENT_OUTPUT") != ROOT + config["run_id"]
+    ):
+        raise ValueError("Higher-particle frozen-cache refinement contract differs")
+    env["MSA_XP_EXPERIMENTS"] = "0"
+    env["MSA_MULTISURVEY_POLICY"] = str(path)
+    env["MSA_PRETRAIN_RESUME"] = original["parent"]["checkpoint"]
+    env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
+    return env
 
 
 def bind_flexible_policy(plan, env):
@@ -39,5 +76,45 @@ def bind_flexible_policy(plan, env):
     env["MSA_XP_EXPERIMENTS"] = "0"
     env["MSA_MULTISURVEY_POLICY"] = str(CONFIG)
     env["MSA_PRETRAIN_RESUME"] = config["parent"]["checkpoint"]
+    env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
+    return env
+
+
+def bind_flexible_calibration_policy(plan, env):
+    config = yaml.safe_load(CAL_CONFIG.read_text())
+    original = yaml.safe_load(CONFIG.read_text())
+    if (
+        config["suite"] != original
+        or plan["run_id"] != config["run_id"]
+        or plan["task"] != "multisurvey-flexible-calibration"
+        or config["cal_stars"] != 2048
+        or config["evaluation_particles"] != 4096
+        or config["training_source_commit"]
+        != "451cf0dc036b8cacde5fb7fddcd9d86db5817b00"
+        or not {"gaussian"}
+        < set(config["heads"])
+        <= {"gaussian", "mixture", "copula", "nsf"}
+    ):
+        raise ValueError("Fixed-head CAL evaluation contract differs")
+    for kind, head in config["heads"].items():
+        if head["path"] != ROOT + original["run_id"] + "/" + kind + "-selected.pth":
+            raise ValueError("CAL must evaluate original TUNE-selected checkpoints")
+    for digest in [
+        config["fit_cache_sha256"],
+        *(h["sha256"] for h in config["heads"].values()),
+    ]:
+        if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise ValueError("CAL requires exact checkpoint and cache hashes")
+    if (
+        plan.get("resources") != {"cores": 4, "ram": 64, "gpu": 1}
+        or plan.get("image") != "images.canfar.net/astroai/terminal:latest"
+        or plan.get("env")
+        or plan.get("depends_on", [])
+        or env.get("MSA_EXPERIMENT_OUTPUT") != ROOT + config["run_id"]
+    ):
+        raise ValueError("CAL resource or output contract differs")
+    env["MSA_XP_EXPERIMENTS"] = "0"
+    env["MSA_MULTISURVEY_POLICY"] = str(CAL_CONFIG)
+    env["MSA_PRETRAIN_RESUME"] = original["parent"]["checkpoint"]
     env["MSA_EXPERIMENT_PRESENTATIONS"] = "0"
     return env

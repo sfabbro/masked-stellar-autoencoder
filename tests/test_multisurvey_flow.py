@@ -161,3 +161,38 @@ def test_measurement_unit_change_preserves_posterior_and_density_jacobian():
     torch.testing.assert_close(changed[1], reference[1], atol=1e-11, rtol=1e-11)
     expected = reference[2] - (packed.mask * scale.log()).sum(-1)
     torch.testing.assert_close(changed[2], expected, atol=1e-11, rtol=1e-11)
+
+
+def test_ensemble_crps_matches_independent_pairwise_definition():
+    from masked_stellar_autoencoder.training.multisurvey_flow import ensemble_crps
+
+    samples = torch.tensor(
+        [[-2.0, 1.0], [-0.5, 2.0], [0.5, 4.0], [3.0, 5.0]], dtype=torch.float64
+    )
+    truth = torch.tensor([0.25, 3.0], dtype=torch.float64)
+    pairs = (samples[:, None] - samples[None, :]).abs().sum((0, 1))
+    expected = (samples - truth).abs().mean(0) - pairs / (2 * 4 * 3)
+    torch.testing.assert_close(ensemble_crps(samples, truth), expected)
+    torch.testing.assert_close(
+        ensemble_crps(1000 * samples + 4, 1000 * truth + 4), 1000 * expected
+    )
+
+
+@pytest.mark.parametrize(
+    "kind",
+    [GaussianResidualHead, MixtureResidualHead, CopulaResidualHead, NSFResidualHead],
+)
+def test_fresh_instance_reload_preserves_joint_density(kind):
+    torch.manual_seed(71)
+    first = kind(4, width=8).double()
+    x = torch.randn(3, 4, dtype=torch.float64)
+    y = torch.randn(16, 3, 3, dtype=torch.float64)
+    optimizer = torch.optim.Adam(first.parameters(), lr=0.001)
+    optimizer.zero_grad()
+    (-first.log_prob(x, y).mean()).backward()
+    optimizer.step()
+    expected = first.log_prob(x, y).detach()
+    torch.manual_seed(999)
+    second = kind(4, width=8).double()
+    second.load_state_dict(first.state_dict(), strict=True)
+    torch.testing.assert_close(second.log_prob(x, y), expected, atol=1e-12, rtol=1e-12)

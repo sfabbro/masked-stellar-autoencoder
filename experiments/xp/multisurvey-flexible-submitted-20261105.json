@@ -1,0 +1,38 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_flexible_suite_20261105_v1",
+      "name": "msa-si15-multisurvey-flexible-suite-20261105-v1",
+      "source_sha": "451cf0dc036b8cacde5fb7fddcd9d86db5817b00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1",
+      "plan": {
+        "run_id": "multisurvey_flexible_suite_20261105_v1",
+        "task": "multisurvey-flexible-suite",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "ewnyszuz"
+      ],
+      "status": "accepted_reconciled",
+      "attempted_at": "2026-11-04T21:30:13.862763+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "error": "The read operation timed out",
+      "error_type": "ReadTimeout",
+      "reconciled_at": "2026-11-04T21:33:27.822108+00:00",
+      "reconciliation_evidence": "Exact unique session name observed Running via CANFAR Session.fetch; original read-timeout retained"
+    }
+  ]
+}

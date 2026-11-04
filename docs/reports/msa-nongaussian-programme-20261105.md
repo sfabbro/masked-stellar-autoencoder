@@ -88,3 +88,21 @@ tail-focused matched follow-up and a separate calibration-role evaluation.
 The morning report must distinguish actual completed results, failures,
 numerical eligibility and remaining scientific limits. No recurring automation
 or unbounded grid is part of this programme.
+
+Overnight refinement decision: the first 100/300-update checks exposed flow
+integration error at 256 particles. The copula passed at 100 but missed the
+replica-gap gate at 300; the unrestricted NSF missed both early gates. The
+follow-up retains the exact original cache (`99f9e869…c5ed`), FIT stream,
+initialization seed, architecture, optimizer and 1,000-update budget, but uses
+1,024 training particles and 4,096 for checkpoint gates/scoring. Acceptance
+thresholds stay fixed. Every candidate snapshot is now saved, including those
+that fail a numerical gate. No encoder or survey-map fitting is repeated.
+This is a numerical refinement experiment, not an independent training seed.
+
+Evaluation-only CAL support copies the selected head's FIT normalization and
+strict-loads a fresh instance under its original architecture. It fits no
+parameters and does not reselect checkpoints. CAL diagnostics include native
+ensemble CRPS and an independent, doubled-particle likelihood check on all
+scored stars for flow heads. Full local suite before this follow-up: 1,314
+passed, 4 skipped; focused tests also check fresh-instance reload and unbiased
+ensemble CRPS against its independent pairwise definition.

@@ -89,6 +89,8 @@ def test_four_joint_heads_train_reload_and_predict_without_native_weights(tmp_pa
         snapshots=[1, 2],
         draws=32,
         corner_draws=32,
+        gate_particles=64,
+        save_all_snapshots=True,
     )
     module = runner_module()
     previous = torch.get_num_threads()
@@ -109,12 +111,15 @@ def test_four_joint_heads_train_reload_and_predict_without_native_weights(tmp_pa
     assert set(states) == {"gaussian", "mixture", "copula", "nsf"}
     assert all(value["status"] == "complete" for value in states.values()), states
     for kind in states:
+        assert (tmp_path / f"{kind}-step-0001.pth").is_file()
+        assert (tmp_path / f"{kind}-step-0002.pth").is_file()
         with np.load(
             tmp_path / (kind + "-tune.npz"), allow_pickle=False
         ) as predictions:
             assert predictions["joint_draws"].shape == (10, 32, 3)
             assert predictions["source_id"].dtype == np.int64
             assert np.isfinite(predictions["per_star_nll"]).all()
+            assert np.isfinite(predictions["observed_crps"]).all()
             assert (
                 (predictions["observed_pit"] >= 0) & (predictions["observed_pit"] <= 1)
             ).all()
@@ -145,3 +150,31 @@ def test_new_experiment_keeps_source_pins_and_uses_project_gpu_lock():
         for k, v in prior.items()
         if k not in {"run_id", "seed", "library_revision"}
     )
+
+
+def test_refinement_reuses_original_cache_and_changes_only_integration_budget():
+    scripts = Path(__file__).parents[1] / "scripts"
+    spec = importlib.util.spec_from_file_location(
+        "flexible_policy", scripts / "multisurvey_flexible_launch_policy.py"
+    )
+    policy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(policy)
+    plan = yaml.safe_load(
+        Path("configs/multisurvey-flexible-refinement-launch-20261105.yaml").read_text()
+    )["jobs"][0]
+    env = policy.bind_flexible_refinement_policy(
+        plan, {"MSA_EXPERIMENT_OUTPUT": policy.ROOT + plan["run_id"]}
+    )
+    config = yaml.safe_load(Path(env["MSA_MULTISURVEY_POLICY"]).read_text())
+    original = yaml.safe_load(policy.CONFIG.read_text())
+    assert all(
+        config[k] == original[k]
+        for k in original
+        if k not in {"run_id", "particles", "evaluation_particles"}
+    )
+    assert (
+        config["gate_particles"]
+        >= config["evaluation_particles"]
+        > original["evaluation_particles"]
+    )
+    assert env["MSA_XP_EXPERIMENTS"] == "0"

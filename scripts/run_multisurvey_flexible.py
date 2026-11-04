@@ -13,7 +13,7 @@ import yaml
 from run_multisurvey_consensus_preflight import atomic, native_preflight, sha
 
 
-def build_cache(config, output, commit):
+def build_cache(config, output, commit, *, role_plan=None, context_normalization=None):
     import h5py
     import numpy as np
     import torch
@@ -69,10 +69,12 @@ def build_cache(config, output, commit):
         )
         with h5py.File(path, "x") as cache:
             cache.attrs["metadata"] = json.dumps(metadata, sort_keys=True)
-            for role, maximum in (
-                ("fit", config["fit_stars"]),
-                ("tune", config["tune_stars"]),
-            ):
+            plan = (
+                role_plan
+                if role_plan is not None
+                else (("fit", config["fit_stars"]), ("tune", config["tune_stars"]))
+            )
+            for role, maximum in plan:
                 dataset = (
                     fit_dataset
                     if role == "fit"
@@ -215,13 +217,27 @@ def build_cache(config, output, commit):
                     dataset._check_source_binding()
                 finally:
                     dataset.close()
-            if np.intersect1d(
-                cache["fit/source_id"][:], cache["tune/source_id"][:]
-            ).size:
+            if (
+                "fit" in cache
+                and "tune" in cache
+                and np.intersect1d(
+                    cache["fit/source_id"][:], cache["tune/source_id"][:]
+                ).size
+            ):
                 raise ValueError("FIT/TUNE identity overlap")
-            context = cache["fit/context"][:].astype("f8")
-            center, scale = context.mean(0), context.std(0)
-            scale = np.where(scale > 1e-8, scale, 1.0)
+            if context_normalization is None:
+                context = cache["fit/context"][:].astype("f8")
+                center, scale = context.mean(0), context.std(0)
+                scale = np.where(scale > 1e-8, scale, 1.0)
+            else:
+                center = np.asarray(context_normalization["center"], dtype="f8")
+                scale = np.asarray(context_normalization["scale"], dtype="f8")
+                if (
+                    not np.isfinite(center).all()
+                    or not np.isfinite(scale).all()
+                    or (scale <= 0).any()
+                ):
+                    raise ValueError("Invalid copied FIT context normalization")
             cache.create_dataset("context_center", data=center)
             cache.create_dataset("context_scale", data=scale)
         return dict(
@@ -243,7 +259,7 @@ def build_cache(config, output, commit):
     return receipt
 
 
-def tensor_data(path):
+def tensor_data(path, *, roles=("fit", "tune")):
     import h5py
     import numpy as np
     import torch
@@ -253,7 +269,7 @@ def tensor_data(path):
         metadata["context_center"] = cache["context_center"][:].tolist()
         metadata["context_scale"] = cache["context_scale"][:].tolist()
         data = {}
-        for role in ("fit", "tune"):
+        for role in roles:
             data[role] = {
                 name: torch.from_numpy(cache[role][name][:]) for name in cache[role]
             }
@@ -403,9 +419,12 @@ def evaluate(
     output=None,
     draws=1024,
     corner_draws=8192,
+    include_scores=False,
 ):
     import numpy as np
     import torch
+
+    from masked_stellar_autoencoder.training.multisurvey_flow import ensemble_crps
 
     head.eval()
     scores, saved = [], {}
@@ -438,6 +457,7 @@ def evaluate(
                 source_index=batch["source_index"],
                 xp_available_count=batch["xp_available_count"],
                 observed_pit=pit,
+                observed_crps=ensemble_crps(noisy, batch["native_value"]),
                 observed_median=noisy.median(0).values,
                 observed_low=torch.quantile(noisy, 0.05, dim=0),
                 observed_high=torch.quantile(noisy, 0.95, dim=0),
@@ -462,12 +482,15 @@ def evaluate(
             corner_source_id=corner_ids,
             joint_draws=joint_draws,
         )
-    return dict(
+    result = dict(
         nll=float(np.mean(scores)),
         scored_stars=len(scores),
         prediction_sha256=sha(output) if output is not None else None,
         observation_cdf_draws=draws if output is not None else None,
     )
+    if include_scores:
+        result["per_star_nll"] = scores
+    return result
 
 
 def train(config, output, cache_receipt, commit, *, device=None):
@@ -530,7 +553,7 @@ def train(config, output, cache_receipt, commit, *, device=None):
             kind,
             data["tune"],
             device,
-            particles=config["particles"],
+            particles=config.get("gate_particles", config["particles"]),
             seed=config["seed"],
         )
         states[kind] = dict(
@@ -618,12 +641,27 @@ def train(config, output, cache_receipt, commit, *, device=None):
                     if states[kind]["status"] != "running":
                         continue
                     head.eval()
+                    payload = dict(
+                        head=head.state_dict(),
+                        optimizer=optimizers[kind].state_dict(),
+                        kind=kind,
+                        step=step,
+                        cache_sha256=cache_receipt["cache_sha256"],
+                        reference_sha256=config["density_reference_sha256"],
+                        source_commit=commit,
+                        context_dim=data["fit"]["context"].shape[1],
+                        context_center=metadata["context_center"],
+                        context_scale=metadata["context_scale"],
+                        head_config=states[kind]["head_config"],
+                    )
+                    if config.get("save_all_snapshots", False):
+                        torch.save(payload, output / f"{kind}-step-{step:04d}.pth")
                     gate = integration_gate(
                         head,
                         kind,
                         data["tune"],
                         device,
-                        particles=config["particles"],
+                        particles=config.get("gate_particles", config["particles"]),
                         seed=config["seed"] + 100000,
                     )
                     score = (
@@ -646,22 +684,7 @@ def train(config, output, cache_receipt, commit, *, device=None):
                     ):
                         states[kind].update(best_nll=score["nll"], best_step=step)
                         temporary = output / (kind + "-selected.partial")
-                        torch.save(
-                            dict(
-                                head=head.state_dict(),
-                                optimizer=optimizers[kind].state_dict(),
-                                kind=kind,
-                                step=step,
-                                cache_sha256=cache_receipt["cache_sha256"],
-                                reference_sha256=config["density_reference_sha256"],
-                                source_commit=commit,
-                                context_dim=data["fit"]["context"].shape[1],
-                                context_center=metadata["context_center"],
-                                context_scale=metadata["context_scale"],
-                                head_config=states[kind]["head_config"],
-                            ),
-                            temporary,
-                        )
+                        torch.save(payload, temporary)
                         temporary.replace(output / (kind + "-selected.pth"))
                     print(
                         json.dumps(

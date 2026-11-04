@@ -15,6 +15,18 @@ from torch import nn
 from torch.nn import functional as F
 
 
+def ensemble_crps(samples, observed):
+    """Unbiased univariate ensemble CRPS, preserving every native target unit."""
+    k = len(samples)
+    if k < 2 or samples.shape[1:] != observed.shape:
+        raise ValueError("At least two aligned predictive samples required")
+    ordered = samples.sort(dim=0).values
+    rank = torch.arange(1, k + 1, device=samples.device, dtype=samples.dtype)
+    rank = rank.reshape(k, *((1,) * (samples.ndim - 1)))
+    pair = ((2 * rank - k - 1) * ordered).sum(0) / (k * (k - 1))
+    return (samples - observed).abs().mean(0) - pair
+
+
 def whiten_observations(reference_lower, packed):
     """Whiten measured residuals/noise and physical latent coordinates.
 

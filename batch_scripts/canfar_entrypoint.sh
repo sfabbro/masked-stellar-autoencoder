@@ -186,6 +186,14 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_multisurvey_distribution_pilot.py --config "$MSA_MULTISURVEY_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
       exit 0
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-flexible-refinement ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_flexible_refinement.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-flexible-calibration ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_flexible_calibration.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
+      exit "$?"
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-flexible-suite ]]; then
       "${pixi_run[@]}" python -u scripts/run_multisurvey_flexible.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit 0
