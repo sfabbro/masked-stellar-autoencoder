@@ -107,3 +107,18 @@ def test_launcher_requires_gpu_and_distinct_output():
             module.bind_distribution_policy(
                 dict(plan, resources={"cores": 4, "ram": 64, "gpu": 0}), env
             )
+
+
+def test_saved_array_crps_and_interval_width_have_known_normal_limit():
+    module = load_script("report_multisurvey_distribution")
+    data = {
+        "observed_mean": np.array([0.0]),
+        "reference": np.array([0.0]),
+        "observed_variance": np.array([1.0]),
+        "observed_pit": np.array([0.5]),
+    }
+    result = module.summarize(data, np.array([True]))
+    # Closed-form E|X| - E|X-X'|/2 at y=0 for independent unit normals.
+    assert result["crps"] == pytest.approx((2**0.5 - 1) / np.pi**0.5)
+    assert result["width90"] == pytest.approx(3.2897072539029444)
+    assert result["coverage90"] == 1
