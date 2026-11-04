@@ -42,14 +42,16 @@ Launch and completion receipts will distinguish prepared, accepted, running,
 failed and completed states. No scheduled automation or retry dispatcher is
 part of this experiment.
 
-Local verification: the full locked-environment suite recorded 1290 passed,
-4 skipped and two failures. The loopback-socket test then passed with the
-required sandbox permission. The remaining pre-existing registry test expects
-seven ignored archival JSON paths absent from this checkout. No missing evidence
-was fabricated or registry contract weakened. The 27 focused distribution,
-trainer, preflight, model and pipeline checks and three new saved-array/runner/
-launcher checks passed; repository lint, formatting of new Python files, shell
-syntax and the two-arm launcher dry-run passed. This is not a fully green suite.
+Local verification: the first full locked-environment suite recorded 1290
+passed, 4 skipped and two failures: sandbox loopback restrictions and missing
+historical registry evidence. Four original ARC JSON files restored the seven
+missing registry references, with bounded collection, JSON parsing and local
+hash receipts in `experiments/xp/survey-registry-evidence-restoration-20261104.json`.
+No evidence was fabricated and no test contract weakened. With local loopback
+access, the final full suite passed **1293 tests, 4 skipped**, including the new
+closed-form CRPS check. These ignored metadata files remain local, so a fresh
+checkout still needs its referenced evidence. Repository lint, formatting of
+new Python files, shell syntax and the two-arm launcher dry-run passed.
 
 Both distinct runs were accepted once at immutable MSA
 `0517c90880f97358bb9e352580300ca3ef7f286c`, published to the origin fork on

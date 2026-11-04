@@ -1,0 +1,33 @@
+{
+  "scope": "Historical JSON restoration from ARC; locally computed hashes, no producer certificate or changed science data",
+  "files": [
+    {
+      "local_path": "experiments/xp/results-stellar-improvement/alpha_desi_source_projection_v1/manifest.json",
+      "remote_path": "projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1/manifest.json",
+      "bytes": 3507,
+      "sha256": "b58058597adf9bc9d5a25a1ecd4fb7f409d410e02946c9d3d9eee78e3f7b0c8b",
+      "status": "restored"
+    },
+    {
+      "local_path": "experiments/xp/results-stellar-improvement/desi_labels_v1/manifest.json",
+      "remote_path": "projects/k-pop/msa_runs/stellar-improvement-20261015/desi_labels_v1/manifest.json",
+      "bytes": 1215,
+      "sha256": "a54c90fc2488bd2b083828664eb678bfbd555d2af47c2589d59d2cef0d2870c3",
+      "status": "restored"
+    },
+    {
+      "local_path": "experiments/xp/results-stellar-improvement/label_registry_v2/inventory.json",
+      "remote_path": "projects/k-pop/msa_runs/stellar-improvement-20261015/label_registry_v2/inventory.json",
+      "bytes": 141378,
+      "sha256": "b99895a50100973bb76da76f2f60e0deee747d350f6b964013b4d228277a1e93",
+      "status": "restored"
+    },
+    {
+      "local_path": "experiments/xp/results-stellar-improvement/li2025_collection_v1/manifest.json",
+      "remote_path": "projects/k-pop/msa_runs/stellar-improvement-20261015/li2025_collection_v1/manifest.json",
+      "bytes": 2051,
+      "sha256": "bcc3e3dba9bf97e2ab815996c9d0cbf84c2e67b353b03df9f927717cc86acd16",
+      "status": "restored"
+    }
+  ]
+}
