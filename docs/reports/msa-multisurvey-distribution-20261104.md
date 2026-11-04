@@ -50,3 +50,12 @@ was fabricated or registry contract weakened. The 27 focused distribution,
 trainer, preflight, model and pipeline checks and three new saved-array/runner/
 launcher checks passed; repository lint, formatting of new Python files, shell
 syntax and the two-arm launcher dry-run passed. This is not a fully green suite.
+
+Both distinct runs were accepted once at immutable MSA
+`0517c90880f97358bb9e352580300ca3ef7f286c`, published to the origin fork on
+`codex/multisurvey-distribution-20261104`. Frozen session `cauxrwil` and fine-tuned
+session `chgpndj3` both reached actual Running, installed the locked environment
+and obtained H100 NVL MIG 1g.12gb devices. Their first manifests report running;
+this does not yet establish optimizer progress or successful fitting. Live quota
+at submission was 33 TB with 13.157 TB available. Exact launch receipts are in
+`experiments/xp/multisurvey-distribution-submitted-20261104.json`.
