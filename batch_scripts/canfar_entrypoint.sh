@@ -182,6 +182,10 @@ case "$stage" in
       "${pixi_run[@]}" python -u scripts/run_multisurvey_fit_collation_census.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit "$?"
     fi
+    if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-distribution-pilot ]]; then
+      "${pixi_run[@]}" python -u scripts/run_multisurvey_distribution_pilot.py --config "$MSA_MULTISURVEY_POLICY" --run-id "$MSA_EXPERIMENT_RUNS" --output "$experiment_output"
+      exit 0
+    fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == multisurvey-consensus-preflight ]]; then
       "${pixi_run[@]}" python -u scripts/run_multisurvey_consensus_preflight.py --config "$MSA_MULTISURVEY_POLICY" --output "$experiment_output"
       exit "$?"

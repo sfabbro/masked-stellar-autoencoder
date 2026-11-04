@@ -24,7 +24,7 @@ def atomic(path, value):
     tmp.replace(path)
 
 
-def native_preflight(config, overlay_manifest, source_commit):
+def native_preflight(config, overlay_manifest, source_commit, *, continuation=None):
     if (
         not Path("/arc/projects/k-pop").is_dir()
         or os.environ.get("MSA_EXPERIMENT_CPU_ONLY") == "1"
@@ -144,7 +144,8 @@ def native_preflight(config, overlay_manifest, source_commit):
         floors = torch.tensor(
             [[100.0, 0.1, 0.1]] * len(dataset.names), dtype=torch.float64, device=device
         )
-        result = run_two_steps(
+        execute = run_two_steps if continuation is None else continuation
+        result = execute(
             model,
             relative,
             dataset,
@@ -166,7 +167,7 @@ def native_preflight(config, overlay_manifest, source_commit):
         library_revision=config["library_revision"],
         device=str(device),
         head_precision="float64",
-        model_weights_saved=False,
+        model_weights_saved=continuation is not None,
     )
     return result
 

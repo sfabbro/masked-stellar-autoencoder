@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-distribution-pilot":
+        from multisurvey_distribution_launch_policy import bind_distribution_policy
+
+        return bind_distribution_policy(plan, env)
     if plan["task"] == "multisurvey-gaia-gspspec-overlay":
         from multisurvey_gaia_overlay_launch_policy import bind_gaia_overlay_policy
 
@@ -645,6 +649,7 @@ def main():
                 "multisurvey-desi-census",
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
+                "multisurvey-distribution-pilot",
                 "multisurvey-fit-collation-census",
                 "multisurvey-gaia-gspspec-overlay",
             }

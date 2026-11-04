@@ -1,0 +1,11 @@
+jobs:
+  - run_id: multisurvey_gaussian_frozen_20261104_v1
+    task: multisurvey-distribution-pilot
+    depends_on: []
+    resources: {cores: 4, ram: 64, gpu: 1}
+    image: images.canfar.net/astroai/terminal:latest
+  - run_id: multisurvey_gaussian_finetune_20261104_v1
+    task: multisurvey-distribution-pilot
+    depends_on: []
+    resources: {cores: 4, ram: 64, gpu: 1}
+    image: images.canfar.net/astroai/terminal:latest
