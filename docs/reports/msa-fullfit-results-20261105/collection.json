@@ -51,14 +51,14 @@
       "sha256": "81d401bc36adea989a35b99bc47f5fa95748eb9ddf78117d847977c39431df64"
     },
     {
+      "name": "native-session.txt",
+      "bytes": 28106,
+      "sha256": "6e4cec18aa8968487aacb61be148927ef198b763c07eaaf16fdf50fcc673aab0"
+    },
+    {
       "name": "selected-checkpoint.json",
       "bytes": 294,
       "sha256": "4ffbc27089ff9415d184f89c787dd40983efb254e91c8b6dfc53dd98741e71b7"
-    },
-    {
-      "name": "session.log",
-      "bytes": 28106,
-      "sha256": "6e4cec18aa8968487aacb61be148927ef198b763c07eaaf16fdf50fcc673aab0"
     }
   ],
   "scope": "Locally preserved native small artifacts and local saved-prediction diagnostics; catalogue and checkpoint hashes are producer hashes except independently verified devtest file"

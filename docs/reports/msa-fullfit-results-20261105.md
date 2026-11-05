@@ -144,5 +144,5 @@ validation work. No test-based checkpoint reselection was performed.
 
 - [Completed native manifest](msa-fullfit-results-20261105/manifest.json)
 - [Epoch scores and selected checkpoint receipts](msa-fullfit-results-20261105/epoch-scores.json)
-- [Native log](msa-fullfit-results-20261105/session.log)
+- [Native log](msa-fullfit-results-20261105/native-session.txt)
 - [Training design](msa-fullfit-programme-20261105.md)
