@@ -1,0 +1,9 @@
+jobs:
+- run_id: multisurvey_joint_fullfit_20261105_v1
+  task: multisurvey-joint-fullfit
+  depends_on: []
+  resources:
+    cores: 8
+    ram: 128
+    gpu: 1
+  image: images.canfar.net/astroai/terminal:latest

@@ -67,6 +67,10 @@ def bind_prediction_policy(
     plan, env, config_path=Path("configs/prediction-comparison-10m.yaml")
 ):
     """Resolve the actual prediction parent/budget, never the legacy default."""
+    if plan["task"] == "multisurvey-joint-fullfit":
+        from multisurvey_joint_launch_policy import bind_joint_policy
+
+        return bind_joint_policy(plan, env)
     if plan["task"] == "multisurvey-flexible-rescore":
         from multisurvey_flexible_launch_policy import bind_flexible_rescore_policy
 
@@ -670,6 +674,7 @@ def main():
                 "multisurvey-flexible-calibration",
                 "multisurvey-flexible-refinement",
                 "multisurvey-flexible-rescore",
+                "multisurvey-joint-fullfit",
                 "multisurvey-fit-collation-census",
                 "multisurvey-gaia-gspspec-overlay",
             }
