@@ -1,0 +1,34 @@
+{
+  "devtest_stars": 248489,
+  "actual_fit_first_pass_stars": 1736618,
+  "fit_devtest_overlap": 0,
+  "devtest_prediction_sha256": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9",
+  "source_ids_sha256": "5573f54cb33ba60c19a28c079de953f5a063a1f39bf94f96f28c8409cd3fc772",
+  "complete_file_sha": "pass",
+  "finite_parameters": "pass",
+  "normalized_mixture_weights": "pass",
+  "positive_component_cholesky": "pass",
+  "analytic_mean_and_covariance": "pass",
+  "covariance_correlation_psd": "pass",
+  "native_observed_labels_finite": "pass",
+  "nonpositive_mean_teff": 0,
+  "max_absolute_mean_reduction_error": 0.0,
+  "native_scalar_counts": {
+    "APOGEE": [
+      17904,
+      17904,
+      17898
+    ],
+    "DESI": [
+      171796,
+      171796,
+      171796
+    ],
+    "GALAH": [
+      55710,
+      53717,
+      55710
+    ]
+  },
+  "scope": "Independent local audit of saved prediction parameters, no native checkpoint execution; full FIT catalogue SHA remains producer-computed. One complete FIT identity stream independently checked against source census."
+}

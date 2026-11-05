@@ -1,0 +1,8 @@
+{
+  "cursor": 0,
+  "epoch": 3,
+  "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+  "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+  "step": 5088,
+  "tune_nll": 4.768034821292797
+}

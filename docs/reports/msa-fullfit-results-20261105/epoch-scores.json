@@ -1,0 +1,41 @@
+[
+  {
+    "phase": "epoch_complete",
+    "epoch": 1,
+    "tune_nll": 4.896801263549474,
+    "selected": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00001696.pth",
+      "sha256": "9bd4db82fe0912661338b37de5f7842f567ed19e1dfe5cdc9e24bfdfeadab238",
+      "step": 1696,
+      "epoch": 1,
+      "cursor": 0,
+      "tune_nll": 4.896801263549474
+    }
+  },
+  {
+    "phase": "epoch_complete",
+    "epoch": 2,
+    "tune_nll": 4.809442850941521,
+    "selected": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00003392.pth",
+      "sha256": "9f56e9a12ec415d9d28fded8dc83ebe802721a9ea8ae3a1e9f994af129acef0a",
+      "step": 3392,
+      "epoch": 2,
+      "cursor": 0,
+      "tune_nll": 4.809442850941521
+    }
+  },
+  {
+    "phase": "epoch_complete",
+    "epoch": 3,
+    "tune_nll": 4.768034821292797,
+    "selected": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+      "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+      "step": 5088,
+      "epoch": 3,
+      "cursor": 0,
+      "tune_nll": 4.768034821292797
+    }
+  }
+]

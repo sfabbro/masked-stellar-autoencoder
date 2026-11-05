@@ -1,0 +1,141 @@
+{
+  "config": {
+    "batch_size": 1024,
+    "checkpoint_interval": 2000,
+    "decoder_lr": 1e-05,
+    "encoder_lr": 1.25e-06,
+    "epochs": 3,
+    "export_roles": [
+      "fit",
+      "tune",
+      "cal",
+      "devtest",
+      "external",
+      "excluded"
+    ],
+    "head_lr": 0.0003,
+    "inference_batch": 1024,
+    "micro_batch": 128,
+    "mixture_checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth",
+    "mixture_sha256": "448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184",
+    "parent": {
+      "base_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
+      "checkpoint_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+      "library_revision": "2777b0de88121768434725ef227893cd35595d2a",
+      "model_config": "configs/pretrain.canfar.yaml",
+      "overlay_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
+      "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+      "overlay_producer_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json",
+      "reference_checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+      "reference_checkpoint_sha256": "d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3",
+      "run_id": "multisurvey_flexible_parent_20261105",
+      "seed": 20261105
+    },
+    "photometry_mask_fraction": 0.2,
+    "reconstruction_weight": 0.03,
+    "reference_checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth",
+    "reference_sha256": "efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d",
+    "run_id": "multisurvey_joint_fullfit_20261105_v1",
+    "seed": 20261105,
+    "survey_lr": 0.0001,
+    "survey_regularization": 0.0001,
+    "tune_stars": 16384,
+    "xp_mask_fraction": 0.5
+  },
+  "epochs": 3,
+  "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+  "fit_stars": 1736618,
+  "reference_contract_sha256": "a321b04b22c992bacbcf6b9bfdcda457c19c8053767241951a58bfccb183bc9e",
+  "result": {
+    "device": "cuda",
+    "epochs": 3,
+    "exports": {
+      "cal": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-cal.h5",
+        "sha256": "57ed79ae77aec0b832fa328b6baad9cb72c738ad2d37b3fadf7cd50b9745f630",
+        "source_ids_sha256": "faa3061a9d002e5924ff0ffff4eedf10c351e389294a442cdc810a2e5c74a56a",
+        "stars": 247705
+      },
+      "devtest": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-devtest.h5",
+        "sha256": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9",
+        "source_ids_sha256": "5573f54cb33ba60c19a28c079de953f5a063a1f39bf94f96f28c8409cd3fc772",
+        "stars": 248489
+      },
+      "excluded": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-excluded.h5",
+        "sha256": "5c06e73fc8c8cb81f0d0fc4c185bc066273ecc069dc3eabdeddfec781a2a3662",
+        "source_ids_sha256": "11d3b58cb59b160dcc40fce30496a4497435395fb0bff6d50d9b7938f961ae3c",
+        "stars": 40058
+      },
+      "external": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-external.h5",
+        "sha256": "aca9420f31ec08fc1a3d8a10cece8989e532f371d877f2c0150e16df4ff89335",
+        "source_ids_sha256": "5cd71d374590a8a4207b3f50c6109bf547ef4ab853d68b5643b35b8db951a87b",
+        "stars": 2291
+      },
+      "fit": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-fit.h5",
+        "sha256": "ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff",
+        "source_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+        "stars": 1736618
+      },
+      "tune": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/predictions-tune.h5",
+        "sha256": "98ce312df18022146c588d9b94c68bd5e2ea6319376a9eeed26494d356ac0ec5",
+        "source_ids_sha256": "bcae256af2b64abf2d36b14afeae377caa0a26171166e4c3840b2d8565c23854",
+        "stars": 248113
+      }
+    },
+    "fit_stars": 1736618,
+    "head_precision": "float64",
+    "library_revision": "2777b0de88121768434725ef227893cd35595d2a",
+    "model_weights_saved": true,
+    "normalization": {
+      "center": [
+        5167.052611106721,
+        3.2020125674811806,
+        -0.17646449743408812
+      ],
+      "scale": [
+        704.61654994867,
+        1.0643222363025064,
+        0.32301421075525066
+      ],
+      "scope": "old FIT labels only; numerical preflight scaling, not physical calibration"
+    },
+    "normalization_sha256": "5aa22dead132810d80723eb11a723f2f405b7626676f0ca5caf6b538e04bdfdd",
+    "reconstruction_weight": 0.03,
+    "selected": {
+      "cursor": 0,
+      "epoch": 3,
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+      "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+      "step": 5088,
+      "tune_nll": 4.768034821292797
+    },
+    "source_commit": "eef5e16e1ef4391c516774fe98c384f00e2c8ebc",
+    "source_floor_native": [
+      100.0,
+      0.1,
+      0.1
+    ],
+    "source_floor_scope": "Explicit illustrative floor per source [K,dex,dex]; not a validated uncertainty model",
+    "supervised_xp_masking": false,
+    "updates": 5088
+  },
+  "run_id": "multisurvey_joint_fullfit_20261105_v1",
+  "scope": "Full primary-eligible FIT passes, shared non-Gaussian stellar mixture and zero-sum relative survey maps; natural supervised and separately masked reconstruction forwards; devtest opened only after TUNE selection",
+  "selected": {
+    "cursor": 0,
+    "epoch": 3,
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+    "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+    "step": 5088,
+    "tune_nll": 4.768034821292797
+  },
+  "source_commit": "eef5e16e1ef4391c516774fe98c384f00e2c8ebc",
+  "status": "multisurvey_joint_complete",
+  "tune_stars": 16384
+}

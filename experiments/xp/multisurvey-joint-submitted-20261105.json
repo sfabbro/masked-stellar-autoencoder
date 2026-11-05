@@ -25,10 +25,21 @@
       "session_ids": [
         "anpmklw8"
       ],
-      "status": "accepted",
+      "status": "producer_complete",
       "attempted_at": "2026-11-05T01:59:55.634404+00:00",
       "attempts": 1,
-      "submission_transport": "form_body"
+      "submission_transport": "form_body",
+      "producer_status": "multisurvey_joint_complete",
+      "selected_checkpoint": {
+        "cursor": 0,
+        "epoch": 3,
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+        "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+        "step": 5088,
+        "tune_nll": 4.768034821292797
+      },
+      "completion_observed_utc": "2026-11-05T09:41:45.024706+00:00",
+      "session_api_observation": "Session info returned HTTP 404 after native completion; completed manifest and all outputs preserved"
     }
   ]
 }

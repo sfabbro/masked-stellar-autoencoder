@@ -1,5 +1,7 @@
 # Full-FIT common-reference training — 5 November 2026
 
+Status: complete. See the [full-data results and FIT/devtest Kiel diagrams](msa-fullfit-results-20261105.md).
+
 Authorized continuation of the pilot: train the common stellar distribution,
 shared encoder, masked reconstruction decoder and three relative survey heads
 jointly on every primary-input-eligible FIT star. There is no FIT sample cap.
@@ -46,3 +48,12 @@ mixture and relative survey maps on the first two updates. Progress records
 report reconstruction loss, label likelihood, masked counts, source exposure
 and gradient norms. There is no Gaussian fallback and no new stellar inference
 on the local laptop. Pixi/GPU environments and code are pinned at submission.
+
+The accepted session is `anpmklw8`, source `eef5e16e1ef4391c516774fe98c384f00e2c8ebc`.
+Actual FIT identity digest matches the independently preserved source census:
+1,736,618 stars, of which 1,698,746 have retained stellar measurements and
+37,872 contribute reconstruction only. There are 5,131,568 retained scalar
+survey measurements per complete pass (15,394,704 presentations over three
+passes); these are grouped by star in the likelihood, not treated as independent
+physical stars. Native first-update checks confirmed nonzero encoder, decoder,
+mixture and survey gradients. Full local suite: 1,323 passed, four skipped.
