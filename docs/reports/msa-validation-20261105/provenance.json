@@ -1,0 +1,51 @@
+{
+  "frozen_checkpoint_sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+  "base_commit": "407c6af",
+  "training_or_recalibration": false,
+  "sources": [
+    {
+      "name": "Vasiliev & Baumgardt 2021 astrometric memberships, version 2",
+      "url": "https://zenodo.org/records/4891252/files/clusters.zip?download=1",
+      "sha256": "9eafa2e10afc031790cfe36ed8545aa6336cc87c317fab167e9cea9dacbd0748",
+      "md5": "3a07093be9a1fcbfb0e3c545ca175c99",
+      "clusters": 170
+    },
+    {
+      "name": "RAVE DR6 MADERA",
+      "url": "https://www.rave-survey.org/files/csv/ravedr6_dr6_madera.csv.gz",
+      "rows": 518387,
+      "sha256": "53e11b82aea7302a614bd9872a3622f51340efa68b75f0f3bf115035a501b0a6"
+    },
+    {
+      "name": "RAVE DR6 GAUGUIN on MADERA",
+      "url": "https://www.rave-survey.org/files/csv/ravedr6_dr6_gauguin_madera.csv.gz",
+      "rows": 453490,
+      "sha256": "bb903b093ca397c9b2c7f4f80820153236a1df6712ed150175db853eb9431255"
+    },
+    {
+      "name": "RAVE live Gaia EDR3 crossmatch",
+      "url": "https://www.rave-survey.org/tap/sync",
+      "query": "SELECT TOP 600000 rave_obs_id,source_id,dist FROM ravedr6.dr6_x_gaiaedr3",
+      "rows": 517357,
+      "documentation_rows": 517340,
+      "sha256": "cbee8d02b099a2398f8100b60a4f40e7421c8793c8e087d9f42cd705a95ba418"
+    }
+  ],
+  "incomplete_checks": [
+    {
+      "name": "Gaia DR3 GSP-Spec",
+      "status": "No valid complete local reference file. A 600-second transfer stopped at 317252572/542396160 bytes; server rejected resume; restarted transfer reset at about 74 MiB. No partial rows admitted."
+    },
+    {
+      "name": "Gaia-ESO DR5.1",
+      "status": "114916-row reference catalogue retrieved; no direct Gaia IDs. CDS 3-arcsec candidate crossmatch failed to connect, including the alternate documented hostname. No positional joins admitted.",
+      "sha256": "e7d71bc175c9f44ec1ba7f4e37010ebcb441d3509c2616b6d45b06586da6bd02",
+      "url": "https://archive.eso.org/tap_cat/sync",
+      "query": "SELECT OBJECT,RA,DECLINATION,TEFF,E_TEFF,LOGG,E_LOGG,FEH,E_FEH,SNR,GES_FLD,GES_TYPE,SFLAGS FROM GES_DR5_1_V1"
+    },
+    {
+      "name": "APOKASC3",
+      "status": "Registered CDS catalogue/ReadMe connection timed out; no new seismic score claimed."
+    }
+  ]
+}

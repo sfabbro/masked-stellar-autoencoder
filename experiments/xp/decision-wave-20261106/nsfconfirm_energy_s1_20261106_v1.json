@@ -1,0 +1,29 @@
+{
+  "run_id": "nsfconfirm_energy_s1_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsfconfirm_energy_s1_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/nsfconfirm_energy_s1_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/wait_nsf_confirmation_preflight.py && python -u scripts/run_nsf_confirmation.py --config configs/nsfconfirm_energy_s1_20261106_v1.yaml --run-id nsfconfirm_energy_s1_20261106_v1 --output \"$experiment_output\"",
+  "utc": "2026-11-06T16:09:40.127470+00:00",
+  "status": "superseded_failed_startup",
+  "session_ids": [
+    "xw78olnq"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_nsf_confirmation.py": "0a4ef3208f9640dde817ed29f284a6efa4a33094056d2ad73022746be8d839db",
+    "scripts/wait_nsf_confirmation_preflight.py": "6f08d1929fefac5a2d0c2b8f41a9df3371500ff0e189fc5be27f96627ed6e605",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd",
+    "configs/nsfconfirm_energy_s1_20261106_v1.yaml": "3e9f8def4d918d5c291d5f6aa9cafacffa0e4e244c9ca4c9ff7002e05e4cb798"
+  },
+  "payload_sha256": "cd7f41c2be00cb35bb99bc90ed2a6d8df69dbd040d19fcc906c691823b72fc54",
+  "superseded_by": "experiments/xp/decision-wave-20261106/nsfconfirm_energy_s1_20261106_v1-attempt-2.json",
+  "failure": "Chained second Python command escaped Pixi; authenticated ARC check confirmed no output"
+}

@@ -1,0 +1,10 @@
+{
+  "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "src/masked_stellar_autoencoder/training/hdf5_io.py": "70e65d13d3c2d19130e8667a1c873cd66ed631bf373b0ac405e0a994eb71fcc4",
+  "src/masked_stellar_autoencoder/training/evaluation_feature_lookup.py": "71341809256fda4b3c8005aa10c06dc987fa0c3793cb3afc75a0534c0910fdae",
+  "config.json": "0a9dea69f6aa1aa93f95f9771600f839752a43ca016bab7ceb9a0c0d5fc71b76",
+  "build_expanded_survey_features.py": "66693b4c71c29d848e32ddcafce6e5230159d84555bcfff9738310cf468fd245",
+  "benchmark-ids.json": "5f21640d33d3313e8584e6439706b522dbdaf5964c3d2ad671d130da87df87bd",
+  "pixi.toml": "3be9c5d8f5a075dc6392fbbd1f23f77f237fe30b89e8f84295203927674bcaa5"
+}

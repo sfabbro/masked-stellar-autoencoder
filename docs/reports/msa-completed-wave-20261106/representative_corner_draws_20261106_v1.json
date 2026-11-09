@@ -1,0 +1,93 @@
+{
+  "status": "complete",
+  "pending": [],
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "6e02879c04c5d445d54f6ad3f52554c03cc4bedbecedb55e25933508c59c7a2d"
+    },
+    "decision6_gaussian_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "7b91ff212ee310206551081d233bdde5d43ed8e3e2b31ea939225aac2d3af9ac",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "5fa8e6b0137b40646ad108b5abd959605b417deaddd2b0fdb4c1ac50f7257197"
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "d5110bf5362ce697cf508c646042350106b4abbb6b4c5206d12148a184286b6b"
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "2b87eda7fb672659d05e11db2923e272d76ae5b45c597da9c76c006248fd2fdd",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "7f8534418f64fbc4e827e4842d1632c3d066dbccf476d065bf173d98fb140e5d"
+    },
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "72a18206516ed6970ab0812c99df7e9206b75e6a0908c49e4960efebbe10f12c",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "17c661c2ad5b5e3c97cb085dd54997d5f4813d279e99154aa4752ea52a53fbd6"
+    },
+    "decision6_nsf_energy_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "4d27eadbd46f27dec6a4fdf39cb30be537da79041b731071d548d44084b6cf7f"
+    },
+    "decision6_nsf_energy_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "4311d7f0527e8de79571253ed962e8d9f7121476ac48e2309e584ffb3e49366e",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "0d6d6cd0dab277300c59bf3f00217944e7e81d6f43b0c87288301211436651d1"
+    },
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "a088af4c74c5681f5fde106ce573510b0e16463ef895cdab18c2eb39ab55a208",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "1dac59fb692fcc12573a8c354cb6b9117e071681c95d78900634bd492bb21642"
+    }
+  },
+  "stars": 1024,
+  "selected_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+  "random_stars": 1024,
+  "stress_stars": 0,
+  "training_performed": false,
+  "optimizer_created": false,
+  "scope": "Model-blind random development panel, plus separately flagged predeclared stress stars. Genuine coupled six-vector draws; not all-Gaia frequency estimation or certified physical dependence."
+}

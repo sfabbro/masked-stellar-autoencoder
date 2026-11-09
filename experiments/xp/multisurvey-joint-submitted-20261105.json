@@ -1,0 +1,45 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_joint_fullfit_20261105_v1",
+      "name": "msa-si15-multisurvey-joint-fullfit-20261105-v1",
+      "source_sha": "eef5e16e1ef4391c516774fe98c384f00e2c8ebc",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1",
+      "plan": {
+        "run_id": "multisurvey_joint_fullfit_20261105_v1",
+        "task": "multisurvey-joint-fullfit",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128,
+        "gpu": 1
+      },
+      "session_ids": [
+        "anpmklw8"
+      ],
+      "status": "producer_complete",
+      "attempted_at": "2026-11-05T01:59:55.634404+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body",
+      "producer_status": "multisurvey_joint_complete",
+      "selected_checkpoint": {
+        "cursor": 0,
+        "epoch": 3,
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth",
+        "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+        "step": 5088,
+        "tune_nll": 4.768034821292797
+      },
+      "completion_observed_utc": "2026-11-05T09:41:45.024706+00:00",
+      "session_api_observation": "Session info returned HTTP 404 after native completion; completed manifest and all outputs preserved"
+    }
+  ]
+}

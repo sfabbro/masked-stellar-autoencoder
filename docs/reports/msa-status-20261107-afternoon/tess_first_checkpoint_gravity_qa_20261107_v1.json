@@ -1,0 +1,226 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "models": {
+    "large_first_checkpoint": {
+      "checkpoint_sha256": "5333dfe148194f44e3adcc02cb9e7ee975b277d0fdc88b2c7fdc899e385f6a39",
+      "training_update": 2000,
+      "slices": {
+        "all": {
+          "n": 12017,
+          "median_bias": -0.036894836915932316,
+          "mae": 0.09803479282430787,
+          "nmad": 0.1009206516357724,
+          "reference_coverage90": 0.8544561870683198,
+          "median_width90": 0.36030895390475814
+        },
+        "parallax_missing": {
+          "n": 0
+        },
+        "parallax_snr_negative": {
+          "n": 0
+        },
+        "parallax_snr_0_5": {
+          "n": 2,
+          "median_bias": -0.02444009542667569,
+          "mae": 0.12055860284433084,
+          "nmad": 0.17874018457700488,
+          "reference_coverage90": 1.0,
+          "median_width90": 0.36675336607623943
+        },
+        "parallax_snr_5_20": {
+          "n": 156,
+          "median_bias": -0.04742184509508096,
+          "mae": 0.16056799035385694,
+          "nmad": 0.14242809306543835,
+          "reference_coverage90": 0.7307692307692307,
+          "median_width90": 0.40580132624643084
+        },
+        "parallax_snr_ge20": {
+          "n": 11859,
+          "median_bias": -0.036775735978809454,
+          "mae": 0.09720839713878215,
+          "nmad": 0.10067666206271268,
+          "reference_coverage90": 0.8559743654608314,
+          "median_width90": 0.3600058113725786
+        },
+        "ruwe_lt1p4": {
+          "n": 10820,
+          "median_bias": -0.034982740300752324,
+          "mae": 0.09518518386150543,
+          "nmad": 0.09854227944248813,
+          "reference_coverage90": 0.861090573012939,
+          "median_width90": 0.3592710344348409
+        },
+        "ruwe_ge1p4": {
+          "n": 1197,
+          "median_bias": -0.06155510009221832,
+          "mae": 0.12379316289742602,
+          "nmad": 0.1256966923068934,
+          "reference_coverage90": 0.7852965747702589,
+          "median_width90": 0.36786634105674354
+        },
+        "mass_flag_0": {
+          "n": 181,
+          "median_bias": -0.3061401757623736,
+          "mae": 0.3770971931998484,
+          "nmad": 0.29067077468381863,
+          "reference_coverage90": 0.2430939226519337,
+          "median_width90": 0.45530036445213984
+        },
+        "mass_flag_1": {
+          "n": 11836,
+          "median_bias": -0.035869640082637044,
+          "mae": 0.09376727892873735,
+          "nmad": 0.09892748342313369,
+          "reference_coverage90": 0.8646502196688071,
+          "median_width90": 0.35982879055928874
+        },
+        "gravity_0_2": {
+          "n": 237,
+          "median_bias": -0.10960206875637168,
+          "mae": 0.14045566459621525,
+          "nmad": 0.10938327691017707,
+          "reference_coverage90": 0.7679324894514767,
+          "median_width90": 0.39509458481112736
+        },
+        "gravity_2_2.5": {
+          "n": 8898,
+          "median_bias": -0.021823935615921775,
+          "mae": 0.08600717792754843,
+          "nmad": 0.08843221866967052,
+          "reference_coverage90": 0.886154191953248,
+          "median_width90": 0.3593771596013915
+        },
+        "gravity_2.5_3": {
+          "n": 2815,
+          "median_bias": -0.09146791457877379,
+          "mae": 0.13105528899153004,
+          "nmad": 0.12083176811191285,
+          "reference_coverage90": 0.7573712255772647,
+          "median_width90": 0.35725206634606055
+        },
+        "gravity_3_5": {
+          "n": 67,
+          "median_bias": -0.056915334870204504,
+          "mae": 0.1579642559689818,
+          "nmad": 0.14662305261101108,
+          "reference_coverage90": 0.8059701492537313,
+          "median_width90": 0.4188551490441328
+        }
+      }
+    },
+    "earlier_pooled_nsf": {
+      "checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "training_update": 8000,
+      "slices": {
+        "all": {
+          "n": 12017,
+          "median_bias": 0.053821805131953226,
+          "mae": 0.08690014181897161,
+          "nmad": 0.07346376032294787,
+          "reference_coverage90": 0.8686860281268204,
+          "median_width90": 0.3132757836745954
+        },
+        "parallax_missing": {
+          "n": 0
+        },
+        "parallax_snr_negative": {
+          "n": 0
+        },
+        "parallax_snr_0_5": {
+          "n": 2,
+          "median_bias": 0.05513639688289462,
+          "mae": 0.1016617846833201,
+          "nmad": 0.15072376197149037,
+          "reference_coverage90": 0.5,
+          "median_width90": 0.2686083854063941
+        },
+        "parallax_snr_5_20": {
+          "n": 156,
+          "median_bias": 0.05259229185575043,
+          "mae": 0.16749385374395998,
+          "nmad": 0.11082305439745904,
+          "reference_coverage90": 0.7307692307692307,
+          "median_width90": 0.3589407729537246
+        },
+        "parallax_snr_ge20": {
+          "n": 11859,
+          "median_bias": 0.0538517733703574,
+          "mae": 0.08583747697825765,
+          "nmad": 0.073179303630954,
+          "reference_coverage90": 0.8708154144531579,
+          "median_width90": 0.31249909605345305
+        },
+        "ruwe_lt1p4": {
+          "n": 10820,
+          "median_bias": 0.05476537682823435,
+          "mae": 0.08538068739077956,
+          "nmad": 0.07157879277844631,
+          "reference_coverage90": 0.8705175600739371,
+          "median_width90": 0.3107240354318306
+        },
+        "ruwe_ge1p4": {
+          "n": 1197,
+          "median_bias": 0.04558051561318477,
+          "mae": 0.10063489279059913,
+          "nmad": 0.09238411402867318,
+          "reference_coverage90": 0.849624060150376,
+          "median_width90": 0.3294753366189207
+        },
+        "mass_flag_0": {
+          "n": 181,
+          "median_bias": -0.08429238085505819,
+          "mae": 0.34466345227608386,
+          "nmad": 0.4529231930478018,
+          "reference_coverage90": 0.32044198895027626,
+          "median_width90": 0.3602232295094123
+        },
+        "mass_flag_1": {
+          "n": 11836,
+          "median_bias": 0.054229467211474036,
+          "mae": 0.082958340602958,
+          "nmad": 0.07232735744378913,
+          "reference_coverage90": 0.8768164920581277,
+          "median_width90": 0.31203952088681297
+        },
+        "gravity_0_2": {
+          "n": 237,
+          "median_bias": 0.07151942538231082,
+          "mae": 0.11844950819709209,
+          "nmad": 0.09405661175885521,
+          "reference_coverage90": 0.8607594936708861,
+          "median_width90": 0.3993171447228119
+        },
+        "gravity_2_2.5": {
+          "n": 8898,
+          "median_bias": 0.06706191059325461,
+          "mae": 0.0907711228066684,
+          "nmad": 0.06505076558626197,
+          "reference_coverage90": 0.8431108114182962,
+          "median_width90": 0.3078437047443807
+        },
+        "gravity_2.5_3": {
+          "n": 2815,
+          "median_bias": 0.0019262614760013896,
+          "mae": 0.07109067189122946,
+          "nmad": 0.06783416751137139,
+          "reference_coverage90": 0.9392539964476021,
+          "median_width90": 0.3205381522353834
+        },
+        "gravity_3_5": {
+          "n": 67,
+          "median_bias": -0.00108458722823368,
+          "mae": 0.1254444580346988,
+          "nmad": 0.08698741830882695,
+          "reference_coverage90": 0.9253731343283582,
+          "median_width90": 0.45813558439134416
+        }
+      }
+    }
+  },
+  "reference_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "dev_stars": 12017,
+  "scope": "Primary QA uses only current-stage DEV stars; neither TESS reference nor quality flag used to fit/select this run. Conservative local positional QA candidates, not authoritative identifier promotion. Historical parent/teacher exposure and shared photometric Teff remain unknown. Raw intervals convolve per-star nu-max/Teff statistical errors; solar and scaling systematics are separate, not independent errors. The Gaia-dependent mass flag is only a secondary slice. K2 gravity excluded pending pipeline conventions. First checkpoint is preliminary, not final."
+}

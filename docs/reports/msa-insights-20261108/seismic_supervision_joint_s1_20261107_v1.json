@@ -1,0 +1,264 @@
+{
+  "status": "seismic_experiments_complete",
+  "seed": 202611071,
+  "mode": "joint",
+  "preflight": false,
+  "training_performed": true,
+  "arms": {
+    "off": {
+      "status": "complete",
+      "arm": {
+        "name": "off",
+        "kind": "identity",
+        "weight": 0.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.439329147338867,
+        "head": 0.9973706603050232,
+        "maps": 0.3232426047325134,
+        "seismic": 0.0
+      },
+      "last_objective": 0.32584283920004964,
+      "last_reconstruction_mae": 0.7430291175842285,
+      "elapsed_seconds": 3735.597836630419,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "f2d2e27a932034ec209bc75e0ac0b07d0bc514b0769b4802b1d42b6d5cc4e709",
+      "checkpoint_sha256": "4fff61455db4b4cddddb6cf0bf77743ca7ace84dbabbe80a4af59562f73af0c5"
+    },
+    "identity": {
+      "status": "complete",
+      "arm": {
+        "name": "identity",
+        "kind": "identity",
+        "weight": 1.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.42686653137207,
+        "head": 1.0079082250595093,
+        "maps": 0.3232426047325134,
+        "seismic": 0.0
+      },
+      "last_objective": 0.334856292931363,
+      "last_reconstruction_mae": 0.7426682114601135,
+      "elapsed_seconds": 3620.470839448273,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "a33e25802508618a8fe0d6287810e441d5d917614b8aa68ff6d9564cf506833a",
+      "checkpoint_sha256": "a4cee0654d538be2137d9bf87022054eb1bb70f8dd8354300c6facbb65fb8630"
+    },
+    "affine": {
+      "status": "complete",
+      "arm": {
+        "name": "affine",
+        "kind": "affine",
+        "weight": 1.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.42686653137207,
+        "head": 1.0079082250595093,
+        "maps": 0.3232426047325134,
+        "seismic": 0.0032001021318137646
+      },
+      "last_objective": 0.33492899034172297,
+      "last_reconstruction_mae": 0.7426709532737732,
+      "elapsed_seconds": 3573.499073183164,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.008628797717392445,
+        -0.013036536984145641,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "e5fcb0ece431f2d403363055d510b0e4f0c9311ed55fdbfb69f85f661578ec47",
+      "checkpoint_sha256": "5607486adfa138756a10097fe98da9a96d39d1e02db791364d3f40cd0bed4750"
+    },
+    "identity_floor": {
+      "status": "complete",
+      "arm": {
+        "name": "identity_floor",
+        "kind": "identity",
+        "weight": 1.0,
+        "extra_dex": 0.02
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.40437126159668,
+        "head": 1.0060962438583374,
+        "maps": 0.3232426047325134,
+        "seismic": 0.0
+      },
+      "last_objective": 0.33471369417384267,
+      "last_reconstruction_mae": 0.7428059577941895,
+      "elapsed_seconds": 3576.62780758366,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "b5b8eab4443f04aa1c562c5793cb9c093c0ca5b9a45aebd557f69c2d7eae2cb1",
+      "checkpoint_sha256": "e1bd8991a8123a3e0689d9e26b4fe3df8d3e22104783f09e60f54c0ce57dea59"
+    },
+    "affine_floor": {
+      "status": "complete",
+      "arm": {
+        "name": "affine_floor",
+        "kind": "affine",
+        "weight": 1.0,
+        "extra_dex": 0.02
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.40437126159668,
+        "head": 1.0060962438583374,
+        "maps": 0.3232426047325134,
+        "seismic": 0.002969185123220086
+      },
+      "last_objective": 0.3348988543730229,
+      "last_reconstruction_mae": 0.7428447008132935,
+      "elapsed_seconds": 3746.920857762918,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.008624658919870853,
+        -0.013086908496916294,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "22619d80876cdf52ef8b9f80619cfc8b4c019b92052c7b7799eca7efe5b87115",
+      "checkpoint_sha256": "3b7d88697891edebaa00f1863890ceeba0785a14e5bf2c1fb6e83c5d257bb607"
+    },
+    "identity_lowweight": {
+      "status": "complete",
+      "arm": {
+        "name": "identity_lowweight",
+        "kind": "identity",
+        "weight": 0.1,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.43781852722168,
+        "head": 0.9982808828353882,
+        "maps": 0.3232426047325134,
+        "seismic": 0.0
+      },
+      "last_objective": 0.32738520685234107,
+      "last_reconstruction_mae": 0.743038535118103,
+      "elapsed_seconds": 3891.97783578746,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "d59cd7fdc7bd7072fa48dde693ea13ce5503e13f3c6b799e73f183a2944ebf82",
+      "checkpoint_sha256": "f54db598f80de61ff6981fc92a3ffe6f5416c7fb7938d2bd0877fe637af12950"
+    },
+    "context": {
+      "status": "complete",
+      "arm": {
+        "name": "context",
+        "kind": "context",
+        "weight": 1.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.03,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 8.42686653137207,
+        "head": 1.0079082250595093,
+        "maps": 0.3232426047325134,
+        "seismic": 0.003384746378287673
+      },
+      "last_objective": 0.33435782929882407,
+      "last_reconstruction_mae": 0.7427009344100952,
+      "elapsed_seconds": 3889.1510612349957,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "767f39e43a19cbcdada9ddf3c8fce55c379618653af84e549da7e21bacc62fe3",
+      "seismic_coefficients": [
+        0.007916371338069439,
+        -0.01253571081906557,
+        -0.0073580555617809296,
+        0.01994975656270981
+      ],
+      "readout_sha256": "e1cf09a338a74f6238560d95747f09f7751b4068381b00cef7983908319bbd28",
+      "checkpoint_sha256": "b0eb16a7220b00ef8ca2075231ba9675055df7ac8bbe4cde176d9101468db33b"
+    }
+  },
+  "scope": "Matched fixed-budget neutral-start supervision controls. All runs use APOGEE as the logg coordinate convention, not an unbiased physical truth. No arm is a pure replica of the production seismic-reference run. CAL not opened. Existing catalogue calibrations/ancestor exposure may remain. Source-level calibration parameters are MAP estimates, not posterior systematic uncertainty.",
+  "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+  "neutral_parent_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+  "initialization": "Earlier pooled NSF before explicit APOKASC supervision; all source maps start identity",
+  "gravity_reference": "APOGEE identity in all arms; seismic identity/map is a separate observation-channel hypothesis",
+  "fit_seismic_stars": 5321,
+  "source_registry": [
+    "apogee",
+    "desi",
+    "galah",
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "lamost_dr12v2_lrs_lasp",
+    "rave_dr6_madera_gauguin",
+    "gaia_dr3_gspspec",
+    "sdss_dr20_bossnet_081",
+    "lamost_dr12v2_mrs_lasp",
+    "APOKASC3_loggSeis"
+  ],
+  "training_records_per_step": 320,
+  "seismic_records_per_step": 32,
+  "panel_stars": 21477,
+  "tess_dev_stars": 12017,
+  "common_panel_sha256": "1040ad9360a04cd21a86ce5e0a1f5345642a7b5e9edb7318e35a70103b924522",
+  "seismic_reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf",
+  "tess_reference_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "panel_sha256": "04723c5c4b68a6d37689995a6a302dc8c90068d109990c67c2988c1590ebe0ee",
+  "baseline_readout_sha256": "4eccb193f12dfb33f4e808227a88f6d45779fda8eabab730a8c83c0d5ee9ee47",
+  "completed_arm_count": 7,
+  "completed_updates_per_arm": 1500
+}

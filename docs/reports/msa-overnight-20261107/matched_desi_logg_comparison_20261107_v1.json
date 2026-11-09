@@ -1,0 +1,111 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "batch_identity_sha256": "b5edda4a199de75ad3827d3887528bb0aff5dacf384c67d92fe69ff364a1ae74",
+  "terminal_update": 4200,
+  "results": {
+    "tune": {
+      "stars": 512,
+      "on": {
+        "mae": 0.05532831470175571,
+        "bias": -0.003137648234125173,
+        "coverage90": 0.912109375
+      },
+      "off": {
+        "mae": 0.05607053197949945,
+        "bias": -0.011435824814932789,
+        "coverage90": 0.91796875
+      },
+      "off_minus_on_mae": {
+        "mean": 0.0007422172777437367,
+        "ci95": [
+          -0.0006927815782155263,
+          0.002034372677804543
+        ]
+      },
+      "off_minus_on_crps": {
+        "mean": 0.0004178919612802595,
+        "ci95": [
+          -0.00046592520706152446,
+          0.0012018394635469596
+        ]
+      },
+      "off_minus_on_coverage90": {
+        "mean": 0.005859375,
+        "ci95": [
+          -0.009765625,
+          0.021484375
+        ]
+      }
+    },
+    "cal": {
+      "stars": 512,
+      "on": {
+        "mae": 0.05558829275549027,
+        "bias": -0.0020507981090388838,
+        "coverage90": 0.8984375
+      },
+      "off": {
+        "mae": 0.056358551073540486,
+        "bias": -0.010577180620338548,
+        "coverage90": 0.890625
+      },
+      "off_minus_on_mae": {
+        "mean": 0.000770258318050214,
+        "ci95": [
+          -0.00042356175041665187,
+          0.001991908084165661
+        ]
+      },
+      "off_minus_on_crps": {
+        "mean": 0.00020894914033338637,
+        "ci95": [
+          -0.00043439399065462933,
+          0.0008482153307612653
+        ]
+      },
+      "off_minus_on_coverage90": {
+        "mean": -0.0078125,
+        "ci95": [
+          -0.0234375,
+          0.005859375
+        ]
+      }
+    },
+    "devtest": {
+      "stars": 512,
+      "on": {
+        "mae": 0.06009266981134432,
+        "bias": 0.0004196673403538643,
+        "coverage90": 0.9140625
+      },
+      "off": {
+        "mae": 0.06058013111472838,
+        "bias": -0.007371526324268713,
+        "coverage90": 0.900390625
+      },
+      "off_minus_on_mae": {
+        "mean": 0.00048746130338406203,
+        "ci95": [
+          -0.0007368624529150376,
+          0.0016767946420459866
+        ]
+      },
+      "off_minus_on_crps": {
+        "mean": 0.0001709835618358737,
+        "ci95": [
+          -0.000605146245783806,
+          0.000959721251236663
+        ]
+      },
+      "off_minus_on_coverage90": {
+        "mean": -0.013671875,
+        "ci95": [
+          -0.025390625,
+          -0.001953125
+        ]
+      }
+    }
+  },
+  "scope": "One matched seed, frozen old encoder, historical old parallax availability, identical shared-edge TUNE metric. Star bootstrap only; no training-seed uncertainty. This isolates the effect of DESI logg supervision in this recipe, not whether DESI catalogue labels are intrinsically wrong. Negative off-minus-on MAE favors dropping gravity labels. Neither split nor model selection is changed by this report."
+}

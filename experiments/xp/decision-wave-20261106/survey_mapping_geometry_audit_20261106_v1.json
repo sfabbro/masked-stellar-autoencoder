@@ -1,0 +1,23 @@
+{
+  "run_id": "survey_mapping_geometry_audit_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/survey_mapping_geometry_audit_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/survey_mapping_geometry_audit_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/audit_survey_mapping_geometry.py --calibration-source experiments/xp/mapping-audit-20261106/pinned_multisource.py --output \"$experiment_output\"",
+  "utc": "2026-11-06T05:50:10.916710+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "xhw1gkfm"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/audit_survey_mapping_geometry.py": "1c22002bfbafb76a821b0169c5928adda51aeb1e599b390caaf90d69514a6a62",
+    "experiments/xp/mapping-audit-20261106/pinned_multisource.py": "3c01ea7d1765ea52d9a501bb6e572fb8ed1e6a44b6b8871485d3aabbd369fe28"
+  },
+  "payload_sha256": "4d707c24eaaf85dc117fbdf85d10bb0b224ae0be2a3a5c0e191ccc8b56981773"
+}

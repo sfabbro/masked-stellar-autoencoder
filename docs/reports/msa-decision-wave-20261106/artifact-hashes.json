@@ -1,0 +1,23 @@
+{
+  "andrae-qa.json": "00a445e317deb9665b9fd6a4693930d7643aad58acdd507f684c7529a6286295",
+  "decision6_gaussian_parallax_20261106_v1-snapshot.json": "252701a7f96409306ecfbf51513236ebc899175608050b32eb771646b35bcd3c",
+  "decision6_gaussian_photxp_20261106_v1-snapshot.json": "ec84a4f8b2e98e1831477548d241de6493fcbb4fa45e7691cc0c11f5118b5ad2",
+  "decision6_mdn_parallax_20261106_v1-snapshot.json": "07bdd1ca6023d815ab3a7340eea76c6b859be0f951d34ce0d60e6ff3eb37e764",
+  "decision6_mdn_photxp_20261106_v1-snapshot.json": "a7b5915665e517a83dea64904f4f4286170771fb26fc2b3a855d40de81107dcd",
+  "decision6_nsf_energy_lr3e4_parallax_20261106_v1-snapshot.json": "acfd2f963c04560bb8614ca9c59d141771852733805e6a8480e1e12f842e9f8d",
+  "decision6_nsf_energy_lr3e4_photxp_20261106_v1-snapshot.json": "d44c017db7adc7257dac84654fa05ed950278f7efe8731d0050f0f05022cd0a5",
+  "decision6_nsf_energy_parallax_20261106_v1-snapshot.json": "02c14a9ea1a0730e60ce84badf2093813a0553b3e7779be51bb638941ec12772",
+  "decision6_nsf_energy_photxp_20261106_v1-snapshot.json": "c89e41ca71bdf3a8a3e33f3fb739b6aba502f556c7a313798a3e7c40d2679139",
+  "decision6_pdf_qa_worker_20261106_v1-latest.json": "2b341f775250ac7d3853938151a69f0b1d1529a977c9a75122fa8c3d0bf748fa",
+  "decision6_pdf_qa_worker_20261106_v1-snapshot.json": "99d4687cdb8e8ffcf758756b7bcd22fa3c40e512e36bd5f6336067ac1c2ba978",
+  "decision_dr20_legacy_source_audit_20261106_v1-snapshot.json": "d748613de729d4d7ac147dc72f587b97faf0f85bb6e70c36f207d62fa163348e",
+  "decision_dr20_mrs_label_admission_20261106_v1-snapshot.json": "6fe75364ccced8acf44865a55c6ea19a65b4bff1d0f3647449982a9fd0212ad3",
+  "decision_expanded_parallax_audit_20261106_v1-snapshot.json": "8735ca498eb4f977cae1ace5c219753842bc1dbf1460de719b2730def33363c6",
+  "decision_frozen_new_survey_maps_20261106_v1-snapshot.json": "971054ba8eb85934c1a856a6ca4880d02e75cc26a9a9694a36cbf734720f801b",
+  "decision_source_census_20261106_v1-snapshot.json": "ff634c6066a32197f0feaa64cc112cfe032490f44786266b6130eb9116496ad2",
+  "decision_wave_array_qa_report_20261106_v1-snapshot.json": "e435de1c1744c9f602773634fce52fece9c56a69370475033dc36f4987c72d13",
+  "decision_xp_catalogue_qa_20261106_v1-latest.json": "6f40193973ea8c2a3a0c39aead1e45939d7c32f507e409bc3afd418669b64253",
+  "decision_xp_catalogue_qa_20261106_v1-snapshot.json": "55ac13ab31dfb949a23729b231be6020022a74dffb22d3f329be3a13a4823954",
+  "gaia_net-qa.json": "3a06f6ca747d47469b53db7fea0cb5e4ca4e24481e75c04c05468ded640f4d58",
+  "launch-ledger.json": "2b6b0c4d2fbc5e062bc50a84aa48d3b5c23d32294683d0166d0e3367b20faf37"
+}

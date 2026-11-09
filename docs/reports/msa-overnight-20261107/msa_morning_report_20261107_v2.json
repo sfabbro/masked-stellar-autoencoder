@@ -1,0 +1,8 @@
+{
+  "status": "morning_report_live",
+  "updated_utc": "2026-11-06T23:18:02.124193+00:00",
+  "large_training_status": "waiting_for_decision",
+  "training_performed": false,
+  "completed_updates": 0,
+  "report": "morning-report.md"
+}

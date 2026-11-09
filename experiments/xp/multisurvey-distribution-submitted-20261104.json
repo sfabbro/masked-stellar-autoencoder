@@ -1,0 +1,63 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_gaussian_frozen_20261104_v1",
+      "name": "msa-si15-multisurvey-gaussian-frozen-20261104-v1",
+      "source_sha": "0517c90880f97358bb9e352580300ca3ef7f286c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_frozen_20261104_v1",
+      "plan": {
+        "run_id": "multisurvey_gaussian_frozen_20261104_v1",
+        "task": "multisurvey-distribution-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "cauxrwil"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-11-04T14:37:18.185739+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multisurvey_gaussian_finetune_20261104_v1",
+      "name": "msa-si15-multisurvey-gaussian-finetune-20261104-v1",
+      "source_sha": "0517c90880f97358bb9e352580300ca3ef7f286c",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1",
+      "plan": {
+        "run_id": "multisurvey_gaussian_finetune_20261104_v1",
+        "task": "multisurvey-distribution-pilot",
+        "depends_on": [],
+        "resources": {
+          "cores": 4,
+          "ram": 64,
+          "gpu": 1
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 4,
+        "ram": 64,
+        "gpu": 1
+      },
+      "session_ids": [
+        "chgpndj3"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-11-04T14:37:27.639645+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

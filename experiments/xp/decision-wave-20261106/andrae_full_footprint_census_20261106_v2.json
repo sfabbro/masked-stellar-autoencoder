@@ -1,0 +1,21 @@
+{
+  "run_id": "andrae_full_footprint_census_20261106_v2",
+  "utc": "2026-11-06T05:22:49.652153+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/andrae_full_footprint_census_20261106_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/andrae_full_footprint_census_20261106_v2",
+  "status": "accepted",
+  "session_ids": [
+    "qohdziqz"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 64,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['scripts/run_andrae_full_footprint_census.py','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/andrae_full_footprint_census_20261106_v2'];runpy.run_path('scripts/run_andrae_full_footprint_census.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_andrae_full_footprint_census.py": "3b66b3402415058ce28075da90c53ec7c220ebf2e0208efbebf7979f9d2625ce",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "42f95535fde8586f85f97529fe6897d043345bc32889e35f661eec90324c1645"
+}

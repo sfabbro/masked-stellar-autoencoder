@@ -1,0 +1,58 @@
+{
+  "primary_head": "mixture",
+  "status": "experimental_joint_density",
+  "heads": {
+    "mixture": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth",
+      "sha256": "448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184",
+      "selected_step": 1000,
+      "parameters": 38056
+    },
+    "copula": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/copula-selected.pth",
+      "sha256": "92069527ecaab6c13d24ae71ac88aee5597fdb1318c2b44115d8e11a878daf15",
+      "selected_step": 600,
+      "parameters": 52246
+    },
+    "gaussian": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/gaussian-selected.pth",
+      "sha256": "0cd6d9f84c9b8ff4eddf97194c6690622e3f7d940593ab44207b744cb57caaf5",
+      "selected_step": 1000,
+      "parameters": 34057
+    },
+    "nsf": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/nsf-selected.pth",
+      "sha256": "fb834829ba3c5fc45ebeee486f9882cb9f2d2286338993250deca0e2af70ffa6",
+      "selected_step": 300,
+      "parameters": 203943
+    }
+  },
+  "reference_checkpoint": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth",
+    "sha256": "efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d"
+  },
+  "training_source_commit": "6f1b3c790b921878e857e79b3d09b4baf3cdebbb",
+  "selection_source_commit": "b20ecf99e2fab75dd6a1380b764b757f6296e3c0",
+  "evaluation_source_commit": "bac51a61b17f049f35971e401816ea2c13935f6a",
+  "library_revision": "2777b0de88121768434725ef227893cd35595d2a",
+  "fit_cache_sha256": "99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed",
+  "context_transform": "Copy context_center/context_scale from the selected head; instantiate its saved head_config; strict-load head weights",
+  "prediction": "Features -> frozen reference encoder; standardized context -> residual head sample u; theta=reference_mean + reference_lower @ u. No label-conditioned proposal samples enter catalogue predictions.",
+  "scope": "Mixture wins matched TUNE and separate CAL joint noisy-label NLL. Both flow CAL numerical gates failed. Source floors/affine survey scale remain provisional; this is the native training path, separate from the catalogue pipeline CLI.",
+  "parent_contract": {
+    "base_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+    "checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
+    "checkpoint_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+    "library_revision": "2777b0de88121768434725ef227893cd35595d2a",
+    "model_config": "configs/pretrain.canfar.yaml",
+    "overlay_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
+    "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+    "overlay_producer_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json",
+    "reference_checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+    "reference_checkpoint_sha256": "d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3",
+    "run_id": "multisurvey_flexible_parent_20261105",
+    "seed": 20261105
+  },
+  "intrinsic_log_density": "head.log_prob(context, solve_triangular(reference_lower, theta-reference_mean)) - sum(log(diag(reference_lower)))",
+  "input_contract": "Existing normalized native MSA feature schema and SHA-bound scalers, verified by native_preflight; raw catalogue columns are not a substitute."
+}

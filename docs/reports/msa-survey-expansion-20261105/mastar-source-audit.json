@@ -1,0 +1,120 @@
+{
+  "source_url": "https://data.sdss.org/sas/dr17/manga/spectro/mastar/v3_1_1/v1_7_7/vac/parameters/v2/mastar-goodstars-v3_1_1-v1_7_7-params-v2.fits",
+  "bytes": 7888320,
+  "sha256": "a55bebc33b9b003eb45cd8e542098a12c06749a3a00fb27e77547d754d665cde",
+  "publisher_sha1": "969aa44afaba9f9500b8c7e1bd6c21200df69fe1",
+  "publisher_checksum_verified": true,
+  "rows": 24290,
+  "unique_manga_ids": 24290,
+  "columns": [
+    "DRPVER",
+    "MPROCVER",
+    "MANGAID",
+    "MINMJD",
+    "MAXMJD",
+    "NVISITS",
+    "NPLATES",
+    "NGOODVISITS",
+    "RA",
+    "DEC",
+    "EPOCH",
+    "MNGTARG2",
+    "TEFF_MED",
+    "LOGG_MED",
+    "FEH_MED",
+    "FEH_CAL_MED",
+    "ALPHA_MED",
+    "ZH_MED",
+    "ZH_CAL_MED",
+    "TEFF_MED_ERR",
+    "LOGG_MED_ERR",
+    "FEH_MED_ERR",
+    "FEH_CAL_MED_ERR",
+    "ALPHA_MED_ERR",
+    "ZH_MED_ERR",
+    "ZH_CAL_MED_ERR",
+    "NGROUPS",
+    "INPUT_GROUPS",
+    "INPUT_GROUPS_NAME",
+    "NALPHAGROUPS",
+    "INPUT_ALPHA_GROUPS",
+    "INPUT_ALPHA_GROUPS_NAME",
+    "TEFF_JI",
+    "LOGG_JI",
+    "FEH_JI",
+    "ALPHA_JI",
+    "VMICRO_JI",
+    "TEFF_ERR_JI",
+    "LOGG_ERR_JI",
+    "FEH_ERR_JI",
+    "ALPHA_ERR_JI",
+    "VMICRO_ERR_JI",
+    "VALID_JI",
+    "TEFF_DL",
+    "LOGG_DL",
+    "FEH_DL",
+    "ALPHA_DL",
+    "TEFF_ERR_DL",
+    "LOGG_ERR_DL",
+    "FEH_ERR_DL",
+    "ALPHA_ERR_DL",
+    "AV_DL",
+    "AV_ERR_DL",
+    "AV_VALID_DL",
+    "VALID_DL",
+    "TEFF_LH",
+    "LOGG_LH",
+    "FEH_LH",
+    "ALPHA_LH",
+    "TEFF_ERR_LH",
+    "LOGG_ERR_LH",
+    "FEH_ERR_LH",
+    "ALPHA_ERR_LH",
+    "VALID_LH",
+    "TEFF_YC",
+    "LOGG_YC",
+    "FEH_YC",
+    "ALPHA_YC",
+    "TEFF_ERR_YC",
+    "LOGG_ERR_YC",
+    "FEH_ERR_YC",
+    "ALPHA_ERR_YC",
+    "VALID_YC"
+  ],
+  "gaia_id_fields": [],
+  "methods": {
+    "JI": {
+      "valid_stars": 22398,
+      "finite_values_positive_errors_per_target": [
+        22398,
+        22398,
+        22398
+      ]
+    },
+    "DL": {
+      "valid_stars": 23876,
+      "finite_values_positive_errors_per_target": [
+        23876,
+        23876,
+        23876
+      ]
+    },
+    "LH": {
+      "valid_stars": 21523,
+      "finite_values_positive_errors_per_target": [
+        21523,
+        21523,
+        21523
+      ]
+    },
+    "YC": {
+      "valid_stars": 21961,
+      "finite_values_positive_errors_per_target": [
+        21941,
+        21894,
+        21952
+      ]
+    }
+  },
+  "training_enabled": false
+}

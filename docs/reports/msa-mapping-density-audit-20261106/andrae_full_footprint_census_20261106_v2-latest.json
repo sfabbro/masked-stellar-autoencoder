@@ -1,0 +1,700 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "reference_truth_claim": false,
+  "andrae_unique_stars": 174922161,
+  "raw_rows_scanned": 218131884,
+  "raw_shards": {
+    "sslset0_part0": {
+      "index": 0,
+      "rows": 2000000,
+      "andrae_matches": 1929659
+    },
+    "sslset0_part1": {
+      "index": 1,
+      "rows": 2000000,
+      "andrae_matches": 1875663
+    },
+    "sslset0_part2": {
+      "index": 2,
+      "rows": 2000000,
+      "andrae_matches": 1833938
+    },
+    "sslset0_part3": {
+      "index": 3,
+      "rows": 661449,
+      "andrae_matches": 640157
+    },
+    "sslset10_part0": {
+      "index": 4,
+      "rows": 2000000,
+      "andrae_matches": 1904177
+    },
+    "sslset10_part1": {
+      "index": 5,
+      "rows": 2000000,
+      "andrae_matches": 1852546
+    },
+    "sslset10_part2": {
+      "index": 6,
+      "rows": 2000000,
+      "andrae_matches": 1895436
+    },
+    "sslset10_part3": {
+      "index": 7,
+      "rows": 155280,
+      "andrae_matches": 147330
+    },
+    "sslset11_part0": {
+      "index": 8,
+      "rows": 2000000,
+      "andrae_matches": 1938236
+    },
+    "sslset11_part1": {
+      "index": 9,
+      "rows": 2000000,
+      "andrae_matches": 1896492
+    },
+    "sslset11_part2": {
+      "index": 10,
+      "rows": 2000000,
+      "andrae_matches": 1896245
+    },
+    "sslset11_part3": {
+      "index": 11,
+      "rows": 665301,
+      "andrae_matches": 627919
+    },
+    "sslset12_part0": {
+      "index": 12,
+      "rows": 2000000,
+      "andrae_matches": 1934485
+    },
+    "sslset12_part1": {
+      "index": 13,
+      "rows": 2000000,
+      "andrae_matches": 1690586
+    },
+    "sslset12_part2": {
+      "index": 14,
+      "rows": 694652,
+      "andrae_matches": 384709
+    },
+    "sslset13_part0": {
+      "index": 15,
+      "rows": 2000000,
+      "andrae_matches": 734735
+    },
+    "sslset13_part1": {
+      "index": 16,
+      "rows": 1939647,
+      "andrae_matches": 780498
+    },
+    "sslset14_part0": {
+      "index": 17,
+      "rows": 2000000,
+      "andrae_matches": 847303
+    },
+    "sslset14_part1": {
+      "index": 18,
+      "rows": 1265233,
+      "andrae_matches": 498164
+    },
+    "sslset15_part0": {
+      "index": 19,
+      "rows": 2000000,
+      "andrae_matches": 426962
+    },
+    "sslset15_part1": {
+      "index": 20,
+      "rows": 2000000,
+      "andrae_matches": 437641
+    },
+    "sslset15_part2": {
+      "index": 21,
+      "rows": 101645,
+      "andrae_matches": 36810
+    },
+    "sslset16_part0": {
+      "index": 22,
+      "rows": 2000000,
+      "andrae_matches": 713257
+    },
+    "sslset16_part1": {
+      "index": 23,
+      "rows": 811061,
+      "andrae_matches": 563142
+    },
+    "sslset17_part0": {
+      "index": 24,
+      "rows": 2000000,
+      "andrae_matches": 1325728
+    },
+    "sslset17_part1": {
+      "index": 25,
+      "rows": 440672,
+      "andrae_matches": 199744
+    },
+    "sslset18_part0": {
+      "index": 26,
+      "rows": 2000000,
+      "andrae_matches": 1090228
+    },
+    "sslset18_part1": {
+      "index": 27,
+      "rows": 312549,
+      "andrae_matches": 165820
+    },
+    "sslset19_part0": {
+      "index": 28,
+      "rows": 2000000,
+      "andrae_matches": 1341307
+    },
+    "sslset19_part1": {
+      "index": 29,
+      "rows": 705704,
+      "andrae_matches": 409671
+    },
+    "sslset1_part0": {
+      "index": 30,
+      "rows": 2000000,
+      "andrae_matches": 1892297
+    },
+    "sslset1_part1": {
+      "index": 31,
+      "rows": 2000000,
+      "andrae_matches": 1830644
+    },
+    "sslset1_part2": {
+      "index": 32,
+      "rows": 2000000,
+      "andrae_matches": 1848613
+    },
+    "sslset1_part3": {
+      "index": 33,
+      "rows": 265295,
+      "andrae_matches": 242364
+    },
+    "sslset20_part0": {
+      "index": 34,
+      "rows": 2000000,
+      "andrae_matches": 1568049
+    },
+    "sslset20_part1": {
+      "index": 35,
+      "rows": 578259,
+      "andrae_matches": 453012
+    },
+    "sslset21_part0": {
+      "index": 36,
+      "rows": 2000000,
+      "andrae_matches": 1248121
+    },
+    "sslset21_part1": {
+      "index": 37,
+      "rows": 502562,
+      "andrae_matches": 466224
+    },
+    "sslset22_part0": {
+      "index": 38,
+      "rows": 2000000,
+      "andrae_matches": 1702390
+    },
+    "sslset22_part1": {
+      "index": 39,
+      "rows": 851558,
+      "andrae_matches": 786816
+    },
+    "sslset23_part0": {
+      "index": 40,
+      "rows": 2000000,
+      "andrae_matches": 1541454
+    },
+    "sslset23_part1": {
+      "index": 41,
+      "rows": 703166,
+      "andrae_matches": 397093
+    },
+    "sslset24_part0": {
+      "index": 42,
+      "rows": 2000000,
+      "andrae_matches": 1521964
+    },
+    "sslset24_part1": {
+      "index": 43,
+      "rows": 141366,
+      "andrae_matches": 112048
+    },
+    "sslset25_part0": {
+      "index": 44,
+      "rows": 2000000,
+      "andrae_matches": 1521185
+    },
+    "sslset25_part1": {
+      "index": 45,
+      "rows": 985794,
+      "andrae_matches": 657192
+    },
+    "sslset26_part0": {
+      "index": 46,
+      "rows": 2000000,
+      "andrae_matches": 1774282
+    },
+    "sslset26_part1": {
+      "index": 47,
+      "rows": 2000000,
+      "andrae_matches": 1851391
+    },
+    "sslset26_part2": {
+      "index": 48,
+      "rows": 498555,
+      "andrae_matches": 457260
+    },
+    "sslset27_part0": {
+      "index": 49,
+      "rows": 2000000,
+      "andrae_matches": 1725283
+    },
+    "sslset27_part1": {
+      "index": 50,
+      "rows": 1992788,
+      "andrae_matches": 1822942
+    },
+    "sslset28_part0": {
+      "index": 51,
+      "rows": 2000000,
+      "andrae_matches": 1879647
+    },
+    "sslset28_part1": {
+      "index": 52,
+      "rows": 1045343,
+      "andrae_matches": 831229
+    },
+    "sslset29_part0": {
+      "index": 53,
+      "rows": 2000000,
+      "andrae_matches": 1962062
+    },
+    "sslset29_part1": {
+      "index": 54,
+      "rows": 2000000,
+      "andrae_matches": 1908706
+    },
+    "sslset29_part2": {
+      "index": 55,
+      "rows": 1823441,
+      "andrae_matches": 1404602
+    },
+    "sslset2_part0": {
+      "index": 56,
+      "rows": 2000000,
+      "andrae_matches": 1904552
+    },
+    "sslset2_part1": {
+      "index": 57,
+      "rows": 2000000,
+      "andrae_matches": 1961509
+    },
+    "sslset2_part2": {
+      "index": 58,
+      "rows": 2000000,
+      "andrae_matches": 1943638
+    },
+    "sslset2_part3": {
+      "index": 59,
+      "rows": 1209180,
+      "andrae_matches": 1186326
+    },
+    "sslset30_part0": {
+      "index": 60,
+      "rows": 2000000,
+      "andrae_matches": 1467229
+    },
+    "sslset30_part1": {
+      "index": 61,
+      "rows": 2000000,
+      "andrae_matches": 1794940
+    },
+    "sslset30_part2": {
+      "index": 62,
+      "rows": 1059473,
+      "andrae_matches": 826261
+    },
+    "sslset31_part0": {
+      "index": 63,
+      "rows": 2000000,
+      "andrae_matches": 1485133
+    },
+    "sslset31_part1": {
+      "index": 64,
+      "rows": 2000000,
+      "andrae_matches": 1304658
+    },
+    "sslset31_part2": {
+      "index": 65,
+      "rows": 520673,
+      "andrae_matches": 421453
+    },
+    "sslset32_part0": {
+      "index": 66,
+      "rows": 2000000,
+      "andrae_matches": 1651303
+    },
+    "sslset32_part1": {
+      "index": 67,
+      "rows": 2000000,
+      "andrae_matches": 1759442
+    },
+    "sslset32_part2": {
+      "index": 68,
+      "rows": 1743139,
+      "andrae_matches": 1638933
+    },
+    "sslset33_part0": {
+      "index": 69,
+      "rows": 2000000,
+      "andrae_matches": 1858590
+    },
+    "sslset33_part1": {
+      "index": 70,
+      "rows": 2000000,
+      "andrae_matches": 1793471
+    },
+    "sslset33_part2": {
+      "index": 71,
+      "rows": 1966608,
+      "andrae_matches": 1776412
+    },
+    "sslset34_part0": {
+      "index": 72,
+      "rows": 2000000,
+      "andrae_matches": 1805705
+    },
+    "sslset34_part1": {
+      "index": 73,
+      "rows": 2000000,
+      "andrae_matches": 1862996
+    },
+    "sslset34_part2": {
+      "index": 74,
+      "rows": 2000000,
+      "andrae_matches": 1832657
+    },
+    "sslset34_part3": {
+      "index": 75,
+      "rows": 1092796,
+      "andrae_matches": 1051318
+    },
+    "sslset35_part0": {
+      "index": 76,
+      "rows": 2000000,
+      "andrae_matches": 1804149
+    },
+    "sslset35_part1": {
+      "index": 77,
+      "rows": 2000000,
+      "andrae_matches": 1609451
+    },
+    "sslset35_part2": {
+      "index": 78,
+      "rows": 766390,
+      "andrae_matches": 574754
+    },
+    "sslset36_part0": {
+      "index": 79,
+      "rows": 2000000,
+      "andrae_matches": 1357908
+    },
+    "sslset36_part1": {
+      "index": 80,
+      "rows": 1547188,
+      "andrae_matches": 1086312
+    },
+    "sslset37_part0": {
+      "index": 81,
+      "rows": 2000000,
+      "andrae_matches": 1214388
+    },
+    "sslset37_part1": {
+      "index": 82,
+      "rows": 1493415,
+      "andrae_matches": 627630
+    },
+    "sslset38_part0": {
+      "index": 83,
+      "rows": 2000000,
+      "andrae_matches": 1201184
+    },
+    "sslset38_part1": {
+      "index": 84,
+      "rows": 1257074,
+      "andrae_matches": 540136
+    },
+    "sslset39_part0": {
+      "index": 85,
+      "rows": 2000000,
+      "andrae_matches": 1396258
+    },
+    "sslset39_part1": {
+      "index": 86,
+      "rows": 1650464,
+      "andrae_matches": 1437667
+    },
+    "sslset3_part0": {
+      "index": 87,
+      "rows": 2000000,
+      "andrae_matches": 1957662
+    },
+    "sslset3_part1": {
+      "index": 88,
+      "rows": 2000000,
+      "andrae_matches": 1932307
+    },
+    "sslset3_part2": {
+      "index": 89,
+      "rows": 2000000,
+      "andrae_matches": 1782977
+    },
+    "sslset3_part3": {
+      "index": 90,
+      "rows": 462586,
+      "andrae_matches": 347533
+    },
+    "sslset40_part0": {
+      "index": 91,
+      "rows": 2000000,
+      "andrae_matches": 1562460
+    },
+    "sslset40_part1": {
+      "index": 92,
+      "rows": 1825879,
+      "andrae_matches": 886338
+    },
+    "sslset41_part0": {
+      "index": 93,
+      "rows": 2000000,
+      "andrae_matches": 865418
+    },
+    "sslset41_part1": {
+      "index": 94,
+      "rows": 1527857,
+      "andrae_matches": 1092595
+    },
+    "sslset42_part0": {
+      "index": 95,
+      "rows": 2000000,
+      "andrae_matches": 1306502
+    },
+    "sslset42_part1": {
+      "index": 96,
+      "rows": 1254511,
+      "andrae_matches": 583315
+    },
+    "sslset43_part0": {
+      "index": 97,
+      "rows": 2000000,
+      "andrae_matches": 1006185
+    },
+    "sslset43_part1": {
+      "index": 98,
+      "rows": 968370,
+      "andrae_matches": 481799
+    },
+    "sslset44_part0": {
+      "index": 99,
+      "rows": 2000000,
+      "andrae_matches": 1645249
+    },
+    "sslset44_part1": {
+      "index": 100,
+      "rows": 1346923,
+      "andrae_matches": 1209791
+    },
+    "sslset45_part0": {
+      "index": 101,
+      "rows": 2000000,
+      "andrae_matches": 1511850
+    },
+    "sslset45_part1": {
+      "index": 102,
+      "rows": 681223,
+      "andrae_matches": 627901
+    },
+    "sslset46_part0": {
+      "index": 103,
+      "rows": 2000000,
+      "andrae_matches": 1314061
+    },
+    "sslset46_part1": {
+      "index": 104,
+      "rows": 1782467,
+      "andrae_matches": 1520526
+    },
+    "sslset47_part0": {
+      "index": 105,
+      "rows": 2000000,
+      "andrae_matches": 1862846
+    },
+    "sslset47_part1": {
+      "index": 106,
+      "rows": 2000000,
+      "andrae_matches": 1918405
+    },
+    "sslset47_part2": {
+      "index": 107,
+      "rows": 1195459,
+      "andrae_matches": 1162106
+    },
+    "sslset48_part0": {
+      "index": 108,
+      "rows": 2000000,
+      "andrae_matches": 1943048
+    },
+    "sslset48_part1": {
+      "index": 109,
+      "rows": 2000000,
+      "andrae_matches": 1941449
+    },
+    "sslset48_part2": {
+      "index": 110,
+      "rows": 2000000,
+      "andrae_matches": 1891144
+    },
+    "sslset48_part3": {
+      "index": 111,
+      "rows": 108220,
+      "andrae_matches": 95519
+    },
+    "sslset49_part0": {
+      "index": 112,
+      "rows": 2000000,
+      "andrae_matches": 1691124
+    },
+    "sslset49_part1": {
+      "index": 113,
+      "rows": 2000000,
+      "andrae_matches": 1800263
+    },
+    "sslset49_part2": {
+      "index": 114,
+      "rows": 2000000,
+      "andrae_matches": 1941022
+    },
+    "sslset49_part3": {
+      "index": 115,
+      "rows": 359699,
+      "andrae_matches": 348643
+    },
+    "sslset4_part0": {
+      "index": 116,
+      "rows": 2000000,
+      "andrae_matches": 1585426
+    },
+    "sslset4_part1": {
+      "index": 117,
+      "rows": 2000000,
+      "andrae_matches": 1787126
+    },
+    "sslset4_part2": {
+      "index": 118,
+      "rows": 410915,
+      "andrae_matches": 357049
+    },
+    "sslset5_part0": {
+      "index": 119,
+      "rows": 2000000,
+      "andrae_matches": 1908555
+    },
+    "sslset5_part1": {
+      "index": 120,
+      "rows": 2000000,
+      "andrae_matches": 1773165
+    },
+    "sslset5_part2": {
+      "index": 121,
+      "rows": 2000000,
+      "andrae_matches": 1780786
+    },
+    "sslset5_part3": {
+      "index": 122,
+      "rows": 553521,
+      "andrae_matches": 463580
+    },
+    "sslset6_part0": {
+      "index": 123,
+      "rows": 2000000,
+      "andrae_matches": 1515984
+    },
+    "sslset6_part1": {
+      "index": 124,
+      "rows": 1491161,
+      "andrae_matches": 916291
+    },
+    "sslset7_part0": {
+      "index": 125,
+      "rows": 2000000,
+      "andrae_matches": 1680605
+    },
+    "sslset7_part1": {
+      "index": 126,
+      "rows": 2000000,
+      "andrae_matches": 1508087
+    },
+    "sslset7_part2": {
+      "index": 127,
+      "rows": 655161,
+      "andrae_matches": 586677
+    },
+    "sslset8_part0": {
+      "index": 128,
+      "rows": 2000000,
+      "andrae_matches": 1880879
+    },
+    "sslset8_part1": {
+      "index": 129,
+      "rows": 2000000,
+      "andrae_matches": 1694008
+    },
+    "sslset8_part2": {
+      "index": 130,
+      "rows": 1574068,
+      "andrae_matches": 1424628
+    },
+    "sslset9_part0": {
+      "index": 131,
+      "rows": 2000000,
+      "andrae_matches": 1904372
+    },
+    "sslset9_part1": {
+      "index": 132,
+      "rows": 2000000,
+      "andrae_matches": 1964201
+    },
+    "sslset9_part2": {
+      "index": 133,
+      "rows": 2000000,
+      "andrae_matches": 1918663
+    },
+    "sslset9_part3": {
+      "index": 134,
+      "rows": 486144,
+      "andrae_matches": 440220
+    }
+  },
+  "raw_rows_total": 218131884,
+  "raw_matches_so_far": 174922161,
+  "raw_identity": {
+    "path": "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5",
+    "bytes": 474657279648,
+    "mtime_ns": 1748880347632755420
+  },
+  "raw_input_overlap": 174922161,
+  "absent_from_raw_input": 0,
+  "cache_overlap": 120181886,
+  "cache_rows": 150000000,
+  "raw_present_outside_cache": 54740275,
+  "cache_present_absent_raw": 0,
+  "scope": "Full released Andrae catalogue census; catalogue-wide MSA prediction still requires inference; spectroscopy/seismology accuracy only on their exact matched subset",
+  "index_sha256": "4173700c2b3fd81f7e4e32c321c4d43c90fd52b3d3886544d55b4037959a4694"
+}

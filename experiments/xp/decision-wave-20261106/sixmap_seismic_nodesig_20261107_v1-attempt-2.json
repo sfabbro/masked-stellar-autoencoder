@@ -1,0 +1,31 @@
+{
+  "run_id": "sixmap_seismic_nodesig_20261107_v1",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/sixmap_seismic_nodesig_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/sixmap_seismic_nodesig_20261107_v1-attempt-2",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_after_preflight.py --preflight-script scripts/wait_six_map_preflight.py --script scripts/run_six_survey_map_ablation.py --config configs/six-target-survey-map-wave-20261107.yaml --run-id sixmap_seismic_nodesig_20261107_v1 --output \"$experiment_output\"",
+  "utc": "2026-11-06T20:46:54.057710+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "ym81kx1h"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_six_survey_map_ablation.py": "f06aa92437dbcff03d6e762f8fb569d3c7233ab3f5d0a5663e085e425e1e24c5",
+    "scripts/wait_six_map_preflight.py": "8fbe923bfda9261f8933f50e287704efafd0234f47ea82f4cce0a79928a930b2",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "configs/six-target-survey-map-wave-20261107.yaml": "394dd43990a8f6b1bc288f22765224724248045cab56af899a5cdb1ebae2d301",
+    "scripts/run_after_preflight.py": "b33e5f5834762d05ac72322dd638d192691024c605acc80bfd05eef3365e455d"
+  },
+  "payload_sha256": "c181aed072bd9f6af3e1f750da1b0b39a5c482d53557018b4aeaaf0ec3bf96c7"
+}

@@ -1,0 +1,854 @@
+{
+  "run_id": "multisurvey_flexible_calibration_20261105_v1",
+  "producer_status": "multisurvey_flexible_suite_complete",
+  "ranking": [
+    {
+      "head": "mixture",
+      "name": "Full-covariance mixture",
+      "nll": 5.322099448298479,
+      "selected_step": 1000,
+      "parameters": 38056,
+      "training_error": null,
+      "score_refinement": {},
+      "checkpoint_sha256": "448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184",
+      "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth"
+    },
+    {
+      "head": "gaussian",
+      "name": "Gaussian control",
+      "nll": 5.3991837744211555,
+      "selected_step": 1000,
+      "parameters": 34057,
+      "training_error": null,
+      "score_refinement": {},
+      "checkpoint_sha256": "0cd6d9f84c9b8ff4eddf97194c6690622e3f7d940593ab44207b744cb57caaf5",
+      "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/gaussian-selected.pth"
+    }
+  ],
+  "paired_vs_gaussian": {
+    "gaussian": {
+      "nll_difference": 0.0,
+      "star_bootstrap95": [
+        0.0,
+        0.0
+      ]
+    },
+    "mixture": {
+      "nll_difference": -0.07708432612267735,
+      "star_bootstrap95": [
+        -0.09989309345395399,
+        -0.05599685792013854
+      ]
+    }
+  },
+  "group_scores": [
+    {
+      "head": "gaussian",
+      "subset": "GALAH",
+      "stars": 450,
+      "nll": 4.760133487991569,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "GALAH",
+      "stars": 450,
+      "nll": 4.7359058039286115,
+      "difference_vs_gaussian": -0.024227684062957378
+    },
+    {
+      "head": "gaussian",
+      "subset": "DESI",
+      "stars": 1432,
+      "nll": 5.531453719425087,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "DESI",
+      "stars": 1432,
+      "nll": 5.448587826842309,
+      "difference_vs_gaussian": -0.08286589258277662
+    },
+    {
+      "head": "gaussian",
+      "subset": "DESI+GALAH",
+      "stars": 3,
+      "nll": 16.801193077647053,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "DESI+GALAH",
+      "stars": 3,
+      "nll": 14.418558458809523,
+      "difference_vs_gaussian": -2.3826346188375287
+    },
+    {
+      "head": "gaussian",
+      "subset": "APOGEE",
+      "stars": 145,
+      "nll": 5.076134286547018,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "APOGEE",
+      "stars": 145,
+      "nll": 4.958492858070923,
+      "difference_vs_gaussian": -0.11764142847609503
+    },
+    {
+      "head": "gaussian",
+      "subset": "APOGEE+GALAH",
+      "stars": 13,
+      "nll": 9.629376877043402,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "APOGEE+GALAH",
+      "stars": 13,
+      "nll": 9.328999817955362,
+      "difference_vs_gaussian": -0.3003770590880404
+    },
+    {
+      "head": "gaussian",
+      "subset": "APOGEE+DESI",
+      "stars": 5,
+      "nll": 16.560324803555055,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "APOGEE+DESI",
+      "stars": 5,
+      "nll": 16.52203057581798,
+      "difference_vs_gaussian": -0.03829422773707538
+    },
+    {
+      "head": "gaussian",
+      "subset": "all_110_XP_inputs",
+      "stars": 2024,
+      "nll": 5.3617329314586035,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "all_110_XP_inputs",
+      "stars": 2024,
+      "nll": 5.288465845507266,
+      "difference_vs_gaussian": -0.0732670859513365
+    },
+    {
+      "head": "gaussian",
+      "subset": "no_staged_XP_inputs",
+      "stars": 24,
+      "nll": 8.557538197596473,
+      "difference_vs_gaussian": 0.0
+    },
+    {
+      "head": "mixture",
+      "subset": "no_staged_XP_inputs",
+      "stars": 24,
+      "nll": 8.158533283690717,
+      "difference_vs_gaussian": -0.39900491390575477
+    }
+  ],
+  "metrics": [
+    {
+      "head": "gaussian",
+      "source": "APOGEE",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 163,
+      "mae": 91.08634554894442,
+      "bias": 15.897014405330303,
+      "coverage90": 0.9754601226993865,
+      "width90": 495.0459288927715,
+      "interval_score90": 589.4066358513586,
+      "crps": 67.57067011731904
+    },
+    {
+      "head": "gaussian",
+      "source": "APOGEE",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 163,
+      "mae": 0.22282146622385024,
+      "bias": 0.05265776419957106,
+      "coverage90": 0.9202453987730062,
+      "width90": 0.9527455155428434,
+      "interval_score90": 1.3128689259086217,
+      "crps": 0.16083409416718303
+    },
+    {
+      "head": "gaussian",
+      "source": "APOGEE",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 163,
+      "mae": 0.11346184222193799,
+      "bias": 0.01753022529522344,
+      "coverage90": 0.9815950920245399,
+      "width90": 0.5732655233484942,
+      "interval_score90": 0.6285179549353074,
+      "crps": 0.08108370266968727
+    },
+    {
+      "head": "gaussian",
+      "source": "DESI",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 89.15426964084209,
+      "bias": -4.346124857335581,
+      "coverage90": 0.9555555555555556,
+      "width90": 459.49284038470694,
+      "interval_score90": 515.0236569967551,
+      "crps": 64.8521747051125
+    },
+    {
+      "head": "gaussian",
+      "source": "DESI",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 0.18287629095998068,
+      "bias": -0.006127628685912989,
+      "coverage90": 0.9076388888888889,
+      "width90": 0.8089896806463849,
+      "interval_score90": 1.0710232566408309,
+      "crps": 0.1322997669367399
+    },
+    {
+      "head": "gaussian",
+      "source": "DESI",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 0.15793559060072218,
+      "bias": -0.004018044074551893,
+      "coverage90": 0.9090277777777778,
+      "width90": 0.6771560829457015,
+      "interval_score90": 0.8766040305248107,
+      "crps": 0.11302096369265026
+    },
+    {
+      "head": "gaussian",
+      "source": "GALAH",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 466,
+      "mae": 71.27554541507368,
+      "bias": -0.4334574933507644,
+      "coverage90": 0.9914163090128756,
+      "width90": 460.9017488335834,
+      "interval_score90": 470.3539962116949,
+      "crps": 54.56852296862175
+    },
+    {
+      "head": "gaussian",
+      "source": "GALAH",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 456,
+      "mae": 0.14294247124581255,
+      "bias": -0.007390529334235864,
+      "coverage90": 0.9539473684210527,
+      "width90": 0.6908948342257338,
+      "interval_score90": 0.8562872102368104,
+      "crps": 0.10380864712834917
+    },
+    {
+      "head": "gaussian",
+      "source": "GALAH",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 466,
+      "mae": 0.08353626055405793,
+      "bias": -0.007775894981915717,
+      "coverage90": 0.9699570815450643,
+      "width90": 0.4733209726578644,
+      "interval_score90": 0.5590505927917214,
+      "crps": 0.06366813575054728
+    },
+    {
+      "head": "gaussian",
+      "source": "pooled source records",
+      "target": "hot_native_teff_ge_8000K",
+      "subset": "tail",
+      "count": 10,
+      "mae": 853.553881772786,
+      "bias": -430.7624615397971,
+      "coverage90": 1.0,
+      "width90": 5177.852238112246,
+      "interval_score90": 5177.852238112246,
+      "crps": 639.0822096107817
+    },
+    {
+      "head": "gaussian",
+      "source": "pooled source records",
+      "target": "native_feh_lt_minus1p5",
+      "subset": "tail",
+      "count": 62,
+      "mae": 0.37883161784729624,
+      "bias": 0.36098720742562124,
+      "coverage90": 0.7903225806451613,
+      "width90": 1.1529083356342054,
+      "interval_score90": 2.2582871932263284,
+      "crps": 0.27390198788187703
+    },
+    {
+      "head": "gaussian",
+      "source": "all_110_XP_inputs",
+      "target": "Teff [K]",
+      "subset": "input availability",
+      "count": 2041,
+      "mae": 84.02219760244564,
+      "bias": -3.145798380523288,
+      "coverage90": 0.9647231749142577,
+      "width90": 457.65891491474355,
+      "interval_score90": 506.53197637177396,
+      "crps": 61.8387477681705
+    },
+    {
+      "head": "gaussian",
+      "source": "all_110_XP_inputs",
+      "target": "logg [dex]",
+      "subset": "input availability",
+      "count": 2031,
+      "mae": 0.17346096139789277,
+      "bias": -0.0017914521362976331,
+      "coverage90": 0.9192516001969473,
+      "width90": 0.787134080959334,
+      "interval_score90": 1.0090826004842737,
+      "crps": 0.1254479892820161
+    },
+    {
+      "head": "gaussian",
+      "source": "all_110_XP_inputs",
+      "target": "[Fe/H] [dex]",
+      "subset": "input availability",
+      "count": 2041,
+      "mae": 0.13624117871053787,
+      "bias": -0.003974352984077735,
+      "coverage90": 0.9304262616364527,
+      "width90": 0.6194997285302176,
+      "interval_score90": 0.7733262359877134,
+      "crps": 0.09818702607617441
+    },
+    {
+      "head": "gaussian",
+      "source": "no_staged_XP_inputs",
+      "target": "Teff [K]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 176.94005229011876,
+      "bias": 91.12060200900639,
+      "coverage90": 1.0,
+      "width90": 823.5909349627815,
+      "interval_score90": 823.5909349627815,
+      "crps": 129.18565403667077
+    },
+    {
+      "head": "gaussian",
+      "source": "no_staged_XP_inputs",
+      "target": "logg [dex]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 0.4480111523510768,
+      "bias": 0.0009924346151541999,
+      "coverage90": 0.8928571428571429,
+      "width90": 1.3079066122430316,
+      "interval_score90": 3.474690384654565,
+      "crps": 0.33141066417531506
+    },
+    {
+      "head": "gaussian",
+      "source": "no_staged_XP_inputs",
+      "target": "[Fe/H] [dex]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 0.24218508632853647,
+      "bias": 0.055697522667736574,
+      "coverage90": 0.7857142857142857,
+      "width90": 0.8827023955716207,
+      "interval_score90": 1.6756056857214818,
+      "crps": 0.18701651038780318
+    },
+    {
+      "head": "mixture",
+      "source": "APOGEE",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 163,
+      "mae": 91.99975290376138,
+      "bias": 19.787945113332565,
+      "coverage90": 0.9693251533742331,
+      "width90": 487.8108508820131,
+      "interval_score90": 591.9335108413483,
+      "crps": 67.57977593089205
+    },
+    {
+      "head": "mixture",
+      "source": "APOGEE",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 163,
+      "mae": 0.223474060786088,
+      "bias": 0.062294600849288596,
+      "coverage90": 0.9079754601226994,
+      "width90": 0.9083214933262787,
+      "interval_score90": 1.3651536233876853,
+      "crps": 0.16103630709439176
+    },
+    {
+      "head": "mixture",
+      "source": "APOGEE",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 163,
+      "mae": 0.11199926928590832,
+      "bias": 0.025907723372519183,
+      "coverage90": 0.9815950920245399,
+      "width90": 0.5745672866561867,
+      "interval_score90": 0.623704156150426,
+      "crps": 0.08050255964899693
+    },
+    {
+      "head": "mixture",
+      "source": "DESI",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 89.7691220758488,
+      "bias": 2.1833667697693295,
+      "coverage90": 0.9472222222222222,
+      "width90": 453.1245760632994,
+      "interval_score90": 514.4402510178345,
+      "crps": 64.71643084854918
+    },
+    {
+      "head": "mixture",
+      "source": "DESI",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 0.17950218995924913,
+      "bias": 0.024659664650517603,
+      "coverage90": 0.9055555555555556,
+      "width90": 0.7822028196343009,
+      "interval_score90": 1.0392104842124832,
+      "crps": 0.129824870227015
+    },
+    {
+      "head": "mixture",
+      "source": "DESI",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 1440,
+      "mae": 0.15613201162809454,
+      "bias": 0.005055035447415535,
+      "coverage90": 0.9069444444444444,
+      "width90": 0.6773082521275205,
+      "interval_score90": 0.8749641251096547,
+      "crps": 0.1122276338278018
+    },
+    {
+      "head": "mixture",
+      "source": "GALAH",
+      "target": "Teff [K]",
+      "subset": "all",
+      "count": 466,
+      "mae": 70.68397636170735,
+      "bias": 0.5945128506599936,
+      "coverage90": 0.9849785407725322,
+      "width90": 457.9287789736057,
+      "interval_score90": 470.6835746899133,
+      "crps": 54.313721430059616
+    },
+    {
+      "head": "mixture",
+      "source": "GALAH",
+      "target": "logg [dex]",
+      "subset": "all",
+      "count": 456,
+      "mae": 0.14103861052047253,
+      "bias": -0.00697222116555183,
+      "coverage90": 0.9473684210526315,
+      "width90": 0.6771458197541378,
+      "interval_score90": 0.8526729292039855,
+      "crps": 0.10248864260344774
+    },
+    {
+      "head": "mixture",
+      "source": "GALAH",
+      "target": "[Fe/H] [dex]",
+      "subset": "all",
+      "count": 466,
+      "mae": 0.08390633052176474,
+      "bias": -0.005768350723520297,
+      "coverage90": 0.9678111587982833,
+      "width90": 0.47351516486962647,
+      "interval_score90": 0.5542873145257167,
+      "crps": 0.06347092844724822
+    },
+    {
+      "head": "mixture",
+      "source": "pooled source records",
+      "target": "hot_native_teff_ge_8000K",
+      "subset": "tail",
+      "count": 10,
+      "mae": 889.4686888707049,
+      "bias": -109.32263986607795,
+      "coverage90": 1.0,
+      "width90": 5397.487941697176,
+      "interval_score90": 5397.487941697176,
+      "crps": 623.0203491164328
+    },
+    {
+      "head": "mixture",
+      "source": "pooled source records",
+      "target": "native_feh_lt_minus1p5",
+      "subset": "tail",
+      "count": 62,
+      "mae": 0.38421589555182284,
+      "bias": 0.3681848749963116,
+      "coverage90": 0.8225806451612904,
+      "width90": 1.2052861593685926,
+      "interval_score90": 2.1388045294776297,
+      "crps": 0.27561928723057966
+    },
+    {
+      "head": "mixture",
+      "source": "all_110_XP_inputs",
+      "target": "Teff [K]",
+      "subset": "input availability",
+      "count": 2041,
+      "mae": 84.38306092616735,
+      "bias": 2.02183676815017,
+      "coverage90": 0.9583537481626654,
+      "width90": 452.40972435825057,
+      "interval_score90": 506.43911011124874,
+      "crps": 61.66767718552892
+    },
+    {
+      "head": "mixture",
+      "source": "all_110_XP_inputs",
+      "target": "logg [dex]",
+      "subset": "input availability",
+      "count": 2031,
+      "mae": 0.17068695830829794,
+      "bias": 0.02134072933261005,
+      "coverage90": 0.9153126538650911,
+      "width90": 0.7618211243637852,
+      "interval_score90": 0.988097948850004,
+      "crps": 0.12335919952202054
+    },
+    {
+      "head": "mixture",
+      "source": "all_110_XP_inputs",
+      "target": "[Fe/H] [dex]",
+      "subset": "input availability",
+      "count": 2041,
+      "mae": 0.13492288705977398,
+      "bias": 0.0035513552922862178,
+      "coverage90": 0.9284664380205782,
+      "width90": 0.619350008802783,
+      "interval_score90": 0.7715589980140812,
+      "crps": 0.09753775503068629
+    },
+    {
+      "head": "mixture",
+      "source": "no_staged_XP_inputs",
+      "target": "Teff [K]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 177.7286123851226,
+      "bias": 89.99847666264645,
+      "coverage90": 0.8928571428571429,
+      "width90": 787.1114932653663,
+      "interval_score90": 820.551635759367,
+      "crps": 130.48674819248126
+    },
+    {
+      "head": "mixture",
+      "source": "no_staged_XP_inputs",
+      "target": "logg [dex]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 0.4484935543797678,
+      "bias": -0.03065775324440227,
+      "coverage90": 0.8928571428571429,
+      "width90": 1.283866211093423,
+      "interval_score90": 3.606252124315275,
+      "crps": 0.33532207075842513
+    },
+    {
+      "head": "mixture",
+      "source": "no_staged_XP_inputs",
+      "target": "[Fe/H] [dex]",
+      "subset": "input availability",
+      "count": 28,
+      "mae": 0.24316839900724505,
+      "bias": 0.055922941617227565,
+      "coverage90": 0.7857142857142857,
+      "width90": 0.9122517732626382,
+      "interval_score90": 1.6127889725952262,
+      "crps": 0.18687873477171518
+    }
+  ],
+  "sample_shapes": {
+    "gaussian": {
+      "marginal_skew": [
+        [
+          0.03686050491312233,
+          0.00899113582584011,
+          0.02570716549478297
+        ],
+        [
+          -0.04266146717164624,
+          -0.01839153387935839,
+          -0.02510806710110057
+        ],
+        [
+          0.024624624803647778,
+          -0.013703251450691813,
+          0.023769641809380546
+        ],
+        [
+          -0.0103326517189735,
+          -0.010959088921482014,
+          0.011531420650850641
+        ],
+        [
+          0.004124087819524067,
+          0.0023685766086796586,
+          0.016448543639769105
+        ],
+        [
+          0.0021597966263928845,
+          0.010196808742007672,
+          0.0022766975894608758
+        ],
+        [
+          0.009542255698855265,
+          -0.05469096906749127,
+          -0.014871507681575986
+        ],
+        [
+          0.018733877752128116,
+          0.02530027990092015,
+          0.020620773599905818
+        ],
+        [
+          0.023252844938797455,
+          -0.024878958024014908,
+          0.030795905966853714
+        ],
+        [
+          -0.006603795879767835,
+          0.016466696997000208,
+          -0.0208600717135041
+        ]
+      ],
+      "marginal_excess_kurtosis": [
+        [
+          0.07641897422733424,
+          0.04226131960566715,
+          0.010489586632058234
+        ],
+        [
+          0.0025936968041029296,
+          0.08723753379293431,
+          0.022089978686715916
+        ],
+        [
+          0.04447445173766118,
+          -0.033643412537637474,
+          0.04477986627094843
+        ],
+        [
+          0.09217001757548715,
+          0.06248456603798713,
+          -0.07347858844419264
+        ],
+        [
+          -0.05530871570559004,
+          -0.0138417266984181,
+          -0.05627468121828416
+        ],
+        [
+          0.08760064129385636,
+          0.053550268352998476,
+          0.06143186033748327
+        ],
+        [
+          -0.017216842551185163,
+          -0.012747659448909765,
+          -0.11946949571748267
+        ],
+        [
+          -0.0389319185605741,
+          -0.04180199009604779,
+          -0.03813861089250237
+        ],
+        [
+          -0.043127121132887414,
+          -0.0710037358860065,
+          -0.05219228724858693
+        ],
+        [
+          -0.0003437293348373949,
+          -0.06299624146141358,
+          0.024026061340102878
+        ]
+      ],
+      "nonpositive_teff_fraction": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "canonical_teff_low_nonpositive_count": 0,
+      "scope": "Ten stored illustrations; sample shape diagnostics, not physical covariance or a population normality test"
+    },
+    "mixture": {
+      "marginal_skew": [
+        [
+          1.7487195028234268,
+          0.9648350242728092,
+          0.979214344421245
+        ],
+        [
+          -0.33317174399028354,
+          -0.7292477021682038,
+          -1.3074311722326593
+        ],
+        [
+          -0.47837015694365853,
+          -0.743894478391202,
+          -0.9961653778564111
+        ],
+        [
+          -0.5065476989328004,
+          -0.37848703449091814,
+          -0.9686586421847873
+        ],
+        [
+          0.003406733466235638,
+          -0.1327592045159998,
+          -0.6494581699966441
+        ],
+        [
+          1.164078406258768,
+          0.4390284460678545,
+          0.4755085435558699
+        ],
+        [
+          -0.022565342112556425,
+          -0.17033495646941943,
+          -0.6718597423737369
+        ],
+        [
+          0.8732146183462529,
+          0.7139748906861062,
+          0.5952471286631805
+        ],
+        [
+          -0.9698132504352741,
+          -1.5603142962344487,
+          -0.9657912029177029
+        ],
+        [
+          -0.39350596931822396,
+          -0.5827641384512766,
+          -0.7315085038589095
+        ]
+      ],
+      "marginal_excess_kurtosis": [
+        [
+          10.525424559079644,
+          8.390193827303367,
+          22.290757743750312
+        ],
+        [
+          3.7757697577479234,
+          2.470600362825209,
+          6.834786778521501
+        ],
+        [
+          2.075866278597915,
+          2.2820933802697088,
+          5.293664403602584
+        ],
+        [
+          1.0916528102702099,
+          0.8147416141778923,
+          3.5123124596619384
+        ],
+        [
+          2.7095426836307777,
+          2.2650770558137765,
+          3.9658438081199385
+        ],
+        [
+          5.576270144450113,
+          1.5383278792626047,
+          2.9278073493834285
+        ],
+        [
+          1.769968196338116,
+          2.286766807826181,
+          2.5886380588668088
+        ],
+        [
+          3.184039960161927,
+          1.971309952112934,
+          2.446563483965056
+        ],
+        [
+          2.492707030991779,
+          4.057975405905704,
+          1.8608616048303555
+        ],
+        [
+          0.7646474699632986,
+          0.9834928852498472,
+          1.978720852272449
+        ]
+      ],
+      "nonpositive_teff_fraction": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "canonical_teff_low_nonpositive_count": 0,
+      "scope": "Ten stored illustrations; sample shape diagnostics, not physical covariance or a population normality test"
+    }
+  },
+  "evaluation_role": "cal",
+  "preselected_head": "mixture",
+  "scope": "Previously assigned CAL; fixed TUNE-selected heads, no CAL fitting or selection; finite-QMC observation integrals for flows, Monte Carlo predictive quantiles/PIT, illustrative source floors and fixed affine survey map; not a physical-calibration certificate",
+  "checks": {
+    "prediction_sha256": "pass",
+    "npz_crc": "pass",
+    "exact_id_pairing": "pass",
+    "gate_statistics": "pass",
+    "score_reductions": "pass"
+  }
+}

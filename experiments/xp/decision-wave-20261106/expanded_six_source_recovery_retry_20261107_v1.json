@@ -1,0 +1,22 @@
+{
+  "run_id": "expanded_six_source_recovery_retry_20261107_v1",
+  "utc": "2026-11-07T01:32:54.195317+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_recovery_retry_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_six_source_recovery_retry_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "q7yic5c1"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/recover_esa_parallax_gaps.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v4',\"--restart-recovery\"];runpy.run_path('scripts/recover_esa_parallax_gaps.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/recover_esa_parallax_gaps.py": "d21cdbd2dd0a51b05eec7e9e6c242db53dbac451e4ca14b91b9587b9334ed3bc",
+    "scripts/repair_expanded_parallax.py": "186baaa31bafbf0f8000d891340e1e924920676e47c9b6f7920045ad078b417b",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "969612252933c2863b82fdeb9e1232fec93db4b17646248ed268279bd6c71672"
+}

@@ -1,0 +1,25 @@
+{
+  "run_id": "decision_seismic_pdf_qa_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_seismic_pdf_qa_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_seismic_pdf_qa_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_decision_seismic_pdf_worker.py --config configs/decision-six-wave-20261106.yaml --output \"$experiment_output\"",
+  "utc": "2026-11-06T05:30:43.091281+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "w31qbg8q"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "scripts/run_decision_seismic_pdf_worker.py": "1e88beb05dcc33e6b0608ff883fa294fe84456dcb144a5dd7fbbbb6dceb59387",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3"
+  },
+  "payload_sha256": "1d0d7d69396c0129537f27d27d2ea05f5614c810ac2a93a9316ad87cdb575f54"
+}

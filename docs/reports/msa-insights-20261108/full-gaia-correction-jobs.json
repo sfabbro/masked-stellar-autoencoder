@@ -1,0 +1,45 @@
+[
+  {
+    "run_id": "full_gaia_gaia_stage_20261108_v2",
+    "session_ids": [
+      "v1kyrpx1"
+    ],
+    "status": "running",
+    "candidate_stars": 13592882,
+    "source_errors": []
+  },
+  {
+    "run_id": "full_gaia_photometry_stage_20261108_v1",
+    "session_ids": [
+      "fxc6kwlb"
+    ],
+    "status": "running",
+    "candidate_stars": 13592882,
+    "current_shard": "sslset10_part0",
+    "current_shard_matched_rows": 59365,
+    "source_errors": []
+  },
+  {
+    "run_id": "full_gaia_alpha_stage_20261108_v1",
+    "session_ids": [
+      "lbhf0ucu"
+    ],
+    "status": "running",
+    "source_errors": []
+  },
+  {
+    "run_id": "full_gaia_ages_stage_20261108_v1",
+    "session_ids": [
+      "fvll9eut"
+    ],
+    "status": "source_stage_complete",
+    "source_errors": []
+  },
+  {
+    "run_id": "full_gaia_contract_pilot_20261108_v1",
+    "session_ids": [
+      "hshxs209"
+    ],
+    "status": "manifest_pending"
+  }
+]

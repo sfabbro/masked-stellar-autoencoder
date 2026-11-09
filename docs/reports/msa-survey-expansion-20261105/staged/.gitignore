@@ -1,0 +1,3 @@
+# Large generated candidates are persisted on CANFAR and hash-pinned in manifests.
+rave-candidate.h5
+rave-candidate.rows.csv

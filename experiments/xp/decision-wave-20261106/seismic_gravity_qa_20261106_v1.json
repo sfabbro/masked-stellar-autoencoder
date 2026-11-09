@@ -1,0 +1,24 @@
+{
+  "run_id": "seismic_gravity_qa_20261106_v1",
+  "utc": "2026-11-06T05:22:59.742514+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_gravity_qa_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/seismic_gravity_qa_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "sz8tlqlt"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.path[:0]=['scripts','src'];sys.argv=['scripts/run_seismic_gravity_qa.py','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_gravity_qa_20261106_v1','--bindings','configs/decision-xp-bindings-20261106.json'];runpy.run_path('scripts/run_seismic_gravity_qa.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_seismic_gravity_qa.py": "0ed7d0452314d1a368291193fad3ed48a788392ce8a628e10083668f7c16a11a",
+    "scripts/build_age_anchor_labels.py": "af82f5500215195e0311d65596e8e689de695eecfd8ee593e89a23475ae5c8e5",
+    "src/masked_stellar_autoencoder/training/export_mixture_diagnostics.py": "e52015183322dfd659705ffe68eaa44c79bb20e8d3274c87ecc5b1e89ad6edff",
+    "configs/decision-xp-bindings-20261106.json": "b8590fa64a8b39e7f909639167e192ad065521621b8bc41f495ba0075777e9af",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "2bc83e75ea3f9620f81d56e4fb269814aafca10d71807593143c1776dc0e04fd"
+}

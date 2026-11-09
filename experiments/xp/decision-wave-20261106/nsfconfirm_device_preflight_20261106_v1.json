@@ -1,0 +1,26 @@
+{
+  "run_id": "nsfconfirm_device_preflight_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsfconfirm_device_preflight_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/nsfconfirm_device_preflight_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_nsf_confirmation.py --config configs/nsfconfirm_device_preflight_20261106_v1.yaml --run-id nsfconfirm_device_preflight_20261106_v1 --output \"$experiment_output\"",
+  "utc": "2026-11-06T15:58:02.481401+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "h1jh35k8"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {
+    "configs/nsfconfirm_device_preflight_20261106_v1.yaml": "5a604edf5c2d66c86dcb4a128092d7ca837480e96ab4eec2717607e4705bd2ad",
+    "scripts/run_nsf_confirmation.py": "0a4ef3208f9640dde817ed29f284a6efa4a33094056d2ad73022746be8d839db",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd"
+  },
+  "payload_sha256": "ab0f45425ec1db960ec88fd33de7249ace8a5647a56e3d2110ba59e89dbcd676"
+}

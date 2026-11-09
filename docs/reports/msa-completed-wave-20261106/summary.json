@@ -1,0 +1,178 @@
+{
+  "status": "complete_saved_array_summary",
+  "runs": [
+    {
+      "run_id": "decision6_gaussian_photxp_20261106_v1",
+      "tune_score": 0.22790547279852413,
+      "energy": 0.2919719354509604,
+      "seismic_logg_mae": 0.09632729540162413,
+      "seismic_coverage90": 0.8978201634877384,
+      "seismic_crps": 0.0685396995544457,
+      "random_logg_mode_fraction": 0.0,
+      "crps": {
+        "teff": 47.47207177181007,
+        "logg": 0.08650755918791028,
+        "fe_h": 0.05439312364587183,
+        "alpha": 0.04478530512012684,
+        "age": 0.7326169952609852,
+        "distance": 0.06035587666880594
+      }
+    },
+    {
+      "run_id": "decision6_mdn_photxp_20261106_v1",
+      "tune_score": 0.2308500414527833,
+      "energy": 0.29049858005346574,
+      "seismic_logg_mae": 0.09988463998421782,
+      "seismic_coverage90": 0.9577656675749319,
+      "seismic_crps": 0.07218530269967396,
+      "random_logg_mode_fraction": 0.2021484375,
+      "crps": {
+        "teff": 48.15154693971955,
+        "logg": 0.08861277142197205,
+        "fe_h": 0.05517349641107079,
+        "alpha": 0.04467520981544167,
+        "age": 0.711639461054402,
+        "distance": 0.059140802149998395
+      }
+    },
+    {
+      "run_id": "decision6_gaussian_parallax_20261106_v1",
+      "tune_score": 0.20022191772035702,
+      "energy": 0.2822887062640115,
+      "seismic_logg_mae": 0.07676413237712706,
+      "seismic_coverage90": 0.9032697547683923,
+      "seismic_crps": 0.05520503142275672,
+      "random_logg_mode_fraction": 0.0,
+      "crps": {
+        "teff": 50.61307498227078,
+        "logg": 0.057179506976127344,
+        "fe_h": 0.05370222865255485,
+        "alpha": 0.0448223376073181,
+        "age": 0.7043892574142798,
+        "distance": 0.052700896437677495
+      }
+    },
+    {
+      "run_id": "decision6_mdn_parallax_20261106_v1",
+      "tune_score": 0.20325348751743513,
+      "energy": 0.28050544235027086,
+      "seismic_logg_mae": 0.07308599010361162,
+      "seismic_coverage90": 0.9019073569482289,
+      "seismic_crps": 0.05130601207149504,
+      "random_logg_mode_fraction": 0.0068359375,
+      "crps": {
+        "teff": 46.39912977926819,
+        "logg": 0.056052806814760846,
+        "fe_h": 0.05189296483004714,
+        "alpha": 0.04482510490183765,
+        "age": 0.6848921360778374,
+        "distance": 0.058268220746797356
+      }
+    },
+    {
+      "run_id": "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+      "tune_score": 0.20022416688956848,
+      "energy": 0.27934501904612935,
+      "seismic_logg_mae": 0.10143567451381107,
+      "seismic_coverage90": 0.6171662125340599,
+      "seismic_crps": 0.07686298101340606,
+      "random_logg_mode_fraction": 0.0,
+      "crps": {
+        "teff": 53.26436974127644,
+        "logg": 0.06922618625953939,
+        "fe_h": 0.052152533930922805,
+        "alpha": 0.044716115884967565,
+        "age": 0.6740097489159349,
+        "distance": 0.05269566044599475
+      }
+    },
+    {
+      "run_id": "decision6_nsf_energy_parallax_20261106_v1",
+      "tune_score": 0.19900584635913454,
+      "energy": 0.2765952591061931,
+      "seismic_logg_mae": 0.06977146711397514,
+      "seismic_coverage90": 0.8242506811989101,
+      "seismic_crps": 0.05137953139534076,
+      "random_logg_mode_fraction": 0.0283203125,
+      "crps": {
+        "teff": 48.86076299146238,
+        "logg": 0.05835061941337244,
+        "fe_h": 0.052249796987726985,
+        "alpha": 0.045034901755654895,
+        "age": 0.6735377277018847,
+        "distance": 0.052823612540753635
+      }
+    },
+    {
+      "run_id": "decision6_nsf_energy_photxp_20261106_v1",
+      "tune_score": 0.2276890868547915,
+      "energy": 0.28880145295427195,
+      "seismic_logg_mae": 0.09325560295067536,
+      "seismic_coverage90": 0.8365122615803815,
+      "seismic_crps": 0.06756384540476632,
+      "random_logg_mode_fraction": 0.0087890625,
+      "crps": {
+        "teff": 50.73314520063358,
+        "logg": 0.08742891223964797,
+        "fe_h": 0.0534201242386638,
+        "alpha": 0.044080145140048106,
+        "age": 0.7234666521094903,
+        "distance": 0.05961822727109606
+      }
+    },
+    {
+      "run_id": "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+      "tune_score": 0.2275980292722504,
+      "energy": 0.28569955075078257,
+      "seismic_logg_mae": 0.0967085296594473,
+      "seismic_coverage90": 0.8841961852861036,
+      "seismic_crps": 0.06836974770311409,
+      "random_logg_mode_fraction": 0.0,
+      "crps": {
+        "teff": 48.274843374382,
+        "logg": 0.0886799394049286,
+        "fe_h": 0.05319697843336286,
+        "alpha": 0.044184077148356656,
+        "age": 0.7072753096164395,
+        "distance": 0.05840116936512263
+      }
+    }
+  ],
+  "paired_seismic_comparisons": {
+    "nsf_minus_mdn": {
+      "mae": {
+        "mean_difference": -0.0033145229896364885,
+        "paired_star_bootstrap_95": [
+          -0.0069965352557082175,
+          0.00039858186136938387
+        ]
+      },
+      "crps": {
+        "mean_difference": 7.351932384572916e-05,
+        "paired_star_bootstrap_95": [
+          -0.0023763756286869758,
+          0.002508224537129364
+        ]
+      }
+    },
+    "nsf_minus_gaussian": {
+      "mae": {
+        "mean_difference": -0.0069926652631519355,
+        "paired_star_bootstrap_95": [
+          -0.010504251600271313,
+          -0.0034560497189334806
+        ]
+      },
+      "crps": {
+        "mean_difference": -0.003825500027415959,
+        "paired_star_bootstrap_95": [
+          -0.006123155220040921,
+          -0.001506777489154458
+        ]
+      }
+    }
+  },
+  "bootstrap_scope": "Conditional on fitted checkpoints and this development panel; not retraining/seed uncertainty, no independent physical-accuracy guarantee",
+  "model_loaded": false,
+  "training_performed": false
+}

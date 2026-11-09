@@ -1,0 +1,65 @@
+{
+  "files": [
+    {
+      "name": "epoch-scores.json",
+      "bytes": 1290,
+      "sha256": "7d8d0a7ff8e26d55a59e27328b12b419ccbbeacbf101b1e7e0de0af3fb63052a"
+    },
+    {
+      "name": "exports.json",
+      "bytes": 2077,
+      "sha256": "9398fa6cd0256b06972257666796c6c6320ef06331962b54a49b5ef0a3820efa"
+    },
+    {
+      "name": "independent-audit.json",
+      "bytes": 1077,
+      "sha256": "9aff913778730b512d158a9b726a725a3c67a515d465c5afd9ff8bcbe7e332c1"
+    },
+    {
+      "name": "kiel-common-devtest.png",
+      "bytes": 455362,
+      "sha256": "c57b6dfd0b3613063533935ee1626471420940aedfc69b0e0b7d6e6ab071fba9"
+    },
+    {
+      "name": "kiel-common-fit.png",
+      "bytes": 548040,
+      "sha256": "616074a7fe25f2e1af0d1999a147363229c3d7d7e60f4427e2bd4bffc851e726"
+    },
+    {
+      "name": "kiel-devtest-distribution.png",
+      "bytes": 1012034,
+      "sha256": "2b9caa34a52b531867abf3b6794e06b83d8b8caa5623bd013fb467d2530488ba"
+    },
+    {
+      "name": "kiel-devtest.png",
+      "bytes": 916412,
+      "sha256": "6ac39decb91df07e81c6b874abf25092a6bd5fbbd922457ed0a80ec9144a582d"
+    },
+    {
+      "name": "kiel-fit.png",
+      "bytes": 1081601,
+      "sha256": "433bea149324e869b15a1d47c16173053ca60002f1e69ee8f1313aba6585f95c"
+    },
+    {
+      "name": "last-checkpoint.json",
+      "bytes": 294,
+      "sha256": "4ffbc27089ff9415d184f89c787dd40983efb254e91c8b6dfc53dd98741e71b7"
+    },
+    {
+      "name": "manifest.json",
+      "bytes": 6871,
+      "sha256": "81d401bc36adea989a35b99bc47f5fa95748eb9ddf78117d847977c39431df64"
+    },
+    {
+      "name": "native-session.txt",
+      "bytes": 28106,
+      "sha256": "6e4cec18aa8968487aacb61be148927ef198b763c07eaaf16fdf50fcc673aab0"
+    },
+    {
+      "name": "selected-checkpoint.json",
+      "bytes": 294,
+      "sha256": "4ffbc27089ff9415d184f89c787dd40983efb254e91c8b6dfc53dd98741e71b7"
+    }
+  ],
+  "scope": "Locally preserved native small artifacts and local saved-prediction diagnostics; catalogue and checkpoint hashes are producer hashes except independently verified devtest file"
+}

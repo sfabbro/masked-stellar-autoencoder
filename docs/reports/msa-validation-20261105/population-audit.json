@@ -1,0 +1,45 @@
+{
+  "effective_components_quantiles": [
+    1.0269260310548265,
+    1.5219994627110718,
+    2.8093712717383
+  ],
+  "fraction_2_or_more_weights_over_005": 0.6039140565578356,
+  "between_component_variance_fraction_median": [
+    0.2479687130241467,
+    0.43023039127569734,
+    0.23543508612008415
+  ],
+  "bounds": {
+    "Teff": {
+      "limits": [
+        2500,
+        10000
+      ],
+      "mean_mass_outside": 0.0020646585579766424,
+      "stars_mass_over_001": 973,
+      "max_mass": 0.9752107866366929,
+      "means_outside": 533
+    },
+    "logg": {
+      "limits": [
+        -1,
+        6.5
+      ],
+      "mean_mass_outside": 0.0009918229574128292,
+      "stars_mass_over_001": 614,
+      "max_mass": 0.913539760241732,
+      "means_outside": 102
+    },
+    "FeH": {
+      "limits": [
+        -5,
+        1
+      ],
+      "mean_mass_outside": 4.375176548927612e-05,
+      "stars_mass_over_001": 242,
+      "max_mass": 0.10518838977659517,
+      "means_outside": 0
+    }
+  }
+}

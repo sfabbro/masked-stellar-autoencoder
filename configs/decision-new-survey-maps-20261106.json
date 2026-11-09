@@ -1,0 +1,26 @@
+{
+  "prediction_sha256": {
+    "fit": "ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff",
+    "tune": "98ce312df18022146c588d9b94c68bd5e2ea6319376a9eeed26494d356ac0ec5",
+    "cal": "57ed79ae77aec0b832fa328b6baad9cb72c738ad2d37b3fadf7cd50b9745f630",
+    "devtest": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9",
+    "external": "aca9420f31ec08fc1a3d8a10cece8989e532f371d877f2c0150e16df4ff89335"
+  },
+  "sources": [
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23",
+      "name": "lamost_dr12v2_lrs_lasp"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "sha256": "d18c0d65ee08ed74e7a64b9515e1bead1550aa131c659eccb8136066351fa78a",
+      "name": "rave_dr6_madera_gauguin"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+      "sha256": "3427de9f51b116bcc59817b015b3dc2965ae8de8cf86baeb696b2a127937ac49",
+      "name": "gaia_dr3_gspspec"
+    }
+  ]
+}

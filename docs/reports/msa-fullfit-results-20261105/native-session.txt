@@ -1,0 +1,143 @@
+✔ Lock-file was already up-to-date
+✔ The gpu environment has been installed.
+NVIDIA H100 NVL MIG 1g.12gb
+=== GPU allocation (node/profile):
+GPU 0: NVIDIA H100 NVL (UUID: GPU-42a11d86-8097-4a7e-48fe-3358eeed85c7)
+  MIG 1g.12gb     Device  0: (UUID: MIG-aa340995-0b4a-52b2-b003-c32c468011f2)
+NVIDIA H100 NVL, [Insufficient Permissions], [Insufficient Permissions], [N/A]
+{"phase": "caching_fit", "stars": 1736618}
+{"step": 1, "epoch": 1, "epoch_stars": 1024, "batch_stars": 1024, "labeled_stars": 1006, "masked_elements": 56578, "nll": 5.225998758507761, "reconstruction": 0.5975535890786282, "regularization": 4.648834844949746, "gradient_norms": {"encoder": 21.86569952126548, "decoder": 0.02661347884694135, "mixture": 0.534900168402626, "survey": 0.2668521040569202}, "elapsed_seconds": 3.144782464951277}
+{"step": 2, "epoch": 1, "epoch_stars": 2048, "batch_stars": 1024, "labeled_stars": 984, "masked_elements": 56991, "nll": 5.368165690615352, "reconstruction": 0.5608195417505615, "regularization": 4.649641561545513, "gradient_norms": {"encoder": 47.61107031544997, "decoder": 0.019613583229085366, "mixture": 0.6575906798320101, "survey": 0.38946304187333225}, "elapsed_seconds": 4.112997807562351}
+{"step": 100, "epoch": 1, "epoch_stars": 102400, "batch_stars": 1024, "labeled_stars": 993, "masked_elements": 56920, "nll": 5.171474064889203, "reconstruction": 0.49109476911125266, "regularization": 4.734668898131373, "gradient_norms": {"encoder": 20.359745419519275, "decoder": 0.002656140918502234, "mixture": 0.7924215775419037, "survey": 0.33602309134187786}, "elapsed_seconds": 107.77810476720333}
+{"step": 200, "epoch": 1, "epoch_stars": 204800, "batch_stars": 1024, "labeled_stars": 1005, "masked_elements": 56678, "nll": 5.14565684046687, "reconstruction": 0.4781220183467902, "regularization": 4.820436772399621, "gradient_norms": {"encoder": 16.314866310107472, "decoder": 0.0032726002161903816, "mixture": 0.996929382075497, "survey": 0.3442020680822697}, "elapsed_seconds": 220.0634676143527}
+{"step": 300, "epoch": 1, "epoch_stars": 307200, "batch_stars": 1024, "labeled_stars": 1004, "masked_elements": 56765, "nll": 5.209793881984038, "reconstruction": 0.4900247405008588, "regularization": 4.905362151037375, "gradient_norms": {"encoder": 14.312983682454288, "decoder": 0.002770590803054723, "mixture": 0.9070724534999877, "survey": 0.34622562277352564}, "elapsed_seconds": 332.32479963079095}
+{"step": 400, "epoch": 1, "epoch_stars": 409600, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56545, "nll": 5.173257674267266, "reconstruction": 0.47993889856806526, "regularization": 4.985462615832976, "gradient_norms": {"encoder": 23.985454751681758, "decoder": 0.0025983797040305396, "mixture": 0.946213420078443, "survey": 0.26799049001614045}, "elapsed_seconds": 445.19597116857767}
+{"step": 500, "epoch": 1, "epoch_stars": 512000, "batch_stars": 1024, "labeled_stars": 1002, "masked_elements": 56534, "nll": 5.150743756504621, "reconstruction": 0.4765208655894572, "regularization": 5.042719475311874, "gradient_norms": {"encoder": 21.617001088226353, "decoder": 0.0037372951400122113, "mixture": 0.8296383824731552, "survey": 0.28452390457542037}, "elapsed_seconds": 557.5631131064147}
+{"step": 600, "epoch": 1, "epoch_stars": 614400, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56703, "nll": 5.108265979713393, "reconstruction": 0.4809412124634058, "regularization": 5.118843661831458, "gradient_norms": {"encoder": 10.05797813237461, "decoder": 0.0025932285145843998, "mixture": 1.156012011761691, "survey": 0.20803112413663874}, "elapsed_seconds": 669.7306799385697}
+{"step": 700, "epoch": 1, "epoch_stars": 716800, "batch_stars": 1024, "labeled_stars": 995, "masked_elements": 56480, "nll": 5.126071367236718, "reconstruction": 0.4926447665725146, "regularization": 5.2108972742810495, "gradient_norms": {"encoder": 21.46661465819166, "decoder": 0.0025595391437618796, "mixture": 1.2100395687258707, "survey": 0.45379888883074415}, "elapsed_seconds": 782.9273297637701}
+{"step": 800, "epoch": 1, "epoch_stars": 819200, "batch_stars": 1024, "labeled_stars": 992, "masked_elements": 56475, "nll": 5.065410834131617, "reconstruction": 0.5040881655668991, "regularization": 5.289972823937248, "gradient_norms": {"encoder": 23.744669903218345, "decoder": 0.0026575865191197116, "mixture": 1.3531160826326407, "survey": 0.32529607886416395}, "elapsed_seconds": 896.1755949575454}
+{"step": 900, "epoch": 1, "epoch_stars": 921600, "batch_stars": 1024, "labeled_stars": 1008, "masked_elements": 56183, "nll": 5.127160753017066, "reconstruction": 0.5103066209487856, "regularization": 5.347159945806108, "gradient_norms": {"encoder": 8.331415146177502, "decoder": 0.002605626075691284, "mixture": 1.0977855146030537, "survey": 0.2268000314261815}, "elapsed_seconds": 1009.1749365758151}
+{"step": 1000, "epoch": 1, "epoch_stars": 1024000, "batch_stars": 1024, "labeled_stars": 1003, "masked_elements": 56444, "nll": 5.048878660862428, "reconstruction": 0.5144735848183044, "regularization": 5.409612507830188, "gradient_norms": {"encoder": 14.955948547704008, "decoder": 0.002603384174912801, "mixture": 1.1868521045174711, "survey": 0.29780407819329485}, "elapsed_seconds": 1120.7633293382823}
+{"step": 1100, "epoch": 1, "epoch_stars": 1126400, "batch_stars": 1024, "labeled_stars": 995, "masked_elements": 55884, "nll": 4.9595800650462465, "reconstruction": 0.46537705073931046, "regularization": 5.456233644016171, "gradient_norms": {"encoder": 15.135675348502376, "decoder": 0.003635606500909512, "mixture": 1.0501994807843482, "survey": 0.41215223338819235}, "elapsed_seconds": 1233.2990054786205}
+{"step": 1200, "epoch": 1, "epoch_stars": 1228800, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56771, "nll": 5.006040851273911, "reconstruction": 0.4847576708949111, "regularization": 5.530920446664037, "gradient_norms": {"encoder": 24.318654401169532, "decoder": 0.002826264270891822, "mixture": 1.6291056581574272, "survey": 0.41015880669608296}, "elapsed_seconds": 1345.0434798691422}
+{"step": 1300, "epoch": 1, "epoch_stars": 1331200, "batch_stars": 1024, "labeled_stars": 999, "masked_elements": 56396, "nll": 5.056555858541532, "reconstruction": 0.48296906584686855, "regularization": 5.579924260730378, "gradient_norms": {"encoder": 17.3658872464532, "decoder": 0.0043727774627994685, "mixture": 1.7662927339361594, "survey": 0.4893223050466136}, "elapsed_seconds": 1456.0842509306967}
+{"step": 1400, "epoch": 1, "epoch_stars": 1433600, "batch_stars": 1024, "labeled_stars": 1000, "masked_elements": 56380, "nll": 4.911326401623232, "reconstruction": 0.46352886783184416, "regularization": 5.642052213237907, "gradient_norms": {"encoder": 20.10870928866921, "decoder": 0.0026030970845681467, "mixture": 1.1025920134516753, "survey": 0.2409009898693824}, "elapsed_seconds": 1565.7433448862284}
+{"step": 1500, "epoch": 1, "epoch_stars": 1536000, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56733, "nll": 5.065120828436995, "reconstruction": 0.5244079259563438, "regularization": 5.712008957646808, "gradient_norms": {"encoder": 14.799341952542157, "decoder": 0.002938175966014807, "mixture": 1.3984362358889018, "survey": 0.37046919920162313}, "elapsed_seconds": 1676.5127896517515}
+{"step": 1600, "epoch": 1, "epoch_stars": 1638400, "batch_stars": 1024, "labeled_stars": 998, "masked_elements": 56479, "nll": 4.978393184668014, "reconstruction": 0.5005956263542091, "regularization": 5.769492169150112, "gradient_norms": {"encoder": 13.544471061327712, "decoder": 0.002487451632754524, "mixture": 1.3655271915166902, "survey": 0.2550872834709694}, "elapsed_seconds": 1787.0761988069862}
+{"phase": "epoch_complete", "epoch": 1, "tune_nll": 4.896801263549474, "selected": {"path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00001696.pth", "sha256": "9bd4db82fe0912661338b37de5f7842f567ed19e1dfe5cdc9e24bfdfeadab238", "step": 1696, "epoch": 1, "cursor": 0, "tune_nll": 4.896801263549474}}
+{"step": 1700, "epoch": 2, "epoch_stars": 4096, "batch_stars": 1024, "labeled_stars": 996, "masked_elements": 56719, "nll": 4.996035984095626, "reconstruction": 0.4933100501485393, "regularization": 5.830169906397146, "gradient_norms": {"encoder": 8.199552561753189, "decoder": 0.0027199397998654102, "mixture": 1.4377763415593339, "survey": 0.18050676957597875}, "elapsed_seconds": 1904.013480309397}
+{"step": 1800, "epoch": 2, "epoch_stars": 106496, "batch_stars": 1024, "labeled_stars": 1009, "masked_elements": 56118, "nll": 4.920171957430798, "reconstruction": 0.467041341911519, "regularization": 5.88601508564492, "gradient_norms": {"encoder": 15.292525691783906, "decoder": 0.0027196788994362027, "mixture": 1.2096174600372054, "survey": 0.21182822501083606}, "elapsed_seconds": 2013.3382254317403}
+{"step": 1900, "epoch": 2, "epoch_stars": 208896, "batch_stars": 1024, "labeled_stars": 999, "masked_elements": 56292, "nll": 4.935009032595603, "reconstruction": 0.48076830497811635, "regularization": 5.9318135363765645, "gradient_norms": {"encoder": 12.99244863315552, "decoder": 0.002970434897891453, "mixture": 1.3375400148829673, "survey": 0.2558870156658209}, "elapsed_seconds": 2126.2198569066823}
+{"step": 2000, "epoch": 2, "epoch_stars": 311296, "batch_stars": 1024, "labeled_stars": 1009, "masked_elements": 56765, "nll": 5.050156983180465, "reconstruction": 0.5113898988359354, "regularization": 5.989052350762218, "gradient_norms": {"encoder": 10.961585403969458, "decoder": 0.0028527768974538088, "mixture": 1.1986676340335423, "survey": 0.2285022250847922}, "elapsed_seconds": 2237.4547387324274}
+{"step": 2100, "epoch": 2, "epoch_stars": 413696, "batch_stars": 1024, "labeled_stars": 1000, "masked_elements": 56553, "nll": 4.984329620459205, "reconstruction": 0.5073146781282603, "regularization": 6.021129536652371, "gradient_norms": {"encoder": 9.668923261027386, "decoder": 0.0029434776503777216, "mixture": 1.3715379833251697, "survey": 0.2936925390646969}, "elapsed_seconds": 2350.909748867154}
+{"step": 2200, "epoch": 2, "epoch_stars": 516096, "batch_stars": 1024, "labeled_stars": 1003, "masked_elements": 56864, "nll": 4.860914960463784, "reconstruction": 0.48094175099387354, "regularization": 6.070678023447065, "gradient_norms": {"encoder": 10.226927464623895, "decoder": 0.003208833743327609, "mixture": 1.201405058374029, "survey": 0.3069394243182838}, "elapsed_seconds": 2462.5655325241387}
+{"step": 2300, "epoch": 2, "epoch_stars": 618496, "batch_stars": 1024, "labeled_stars": 1000, "masked_elements": 56543, "nll": 4.9281116072273745, "reconstruction": 0.4951167039078666, "regularization": 6.114955859670116, "gradient_norms": {"encoder": 18.156524691147986, "decoder": 0.003197184017121763, "mixture": 1.5814784076837296, "survey": 0.2244691365868912}, "elapsed_seconds": 2574.6453650351614}
+{"step": 2400, "epoch": 2, "epoch_stars": 720896, "batch_stars": 1024, "labeled_stars": 998, "masked_elements": 56483, "nll": 4.931681907930161, "reconstruction": 0.4801465818877472, "regularization": 6.177767885575479, "gradient_norms": {"encoder": 18.433775621092778, "decoder": 0.0029793943282624773, "mixture": 1.7112545756134734, "survey": 0.30719328244904015}, "elapsed_seconds": 2687.9057956766337}
+{"step": 2500, "epoch": 2, "epoch_stars": 823296, "batch_stars": 1024, "labeled_stars": 1000, "masked_elements": 56600, "nll": 4.973313980610419, "reconstruction": 0.49699937800215327, "regularization": 6.2257231093745, "gradient_norms": {"encoder": 13.053921172234029, "decoder": 0.0034387344644933016, "mixture": 1.6717528076152297, "survey": 0.3835699948954077}, "elapsed_seconds": 2799.9145016260445}
+{"step": 2600, "epoch": 2, "epoch_stars": 925696, "batch_stars": 1024, "labeled_stars": 1004, "masked_elements": 56268, "nll": 4.974006958710661, "reconstruction": 0.4666907631224675, "regularization": 6.259961279141396, "gradient_norms": {"encoder": 29.839462152191096, "decoder": 0.0024273502534923742, "mixture": 1.9981632715504862, "survey": 0.31056665366372227}, "elapsed_seconds": 2911.853774642572}
+{"step": 2700, "epoch": 2, "epoch_stars": 1028096, "batch_stars": 1024, "labeled_stars": 1002, "masked_elements": 55981, "nll": 4.910444986366866, "reconstruction": 0.4761889863441391, "regularization": 6.308891712121396, "gradient_norms": {"encoder": 7.768099686609334, "decoder": 0.004536409647319005, "mixture": 1.3177073990476964, "survey": 0.27487821743486246}, "elapsed_seconds": 3023.2010358162224}
+{"step": 2800, "epoch": 2, "epoch_stars": 1130496, "batch_stars": 1024, "labeled_stars": 997, "masked_elements": 56716, "nll": 4.870449301093621, "reconstruction": 0.4774279861778422, "regularization": 6.359704677085674, "gradient_norms": {"encoder": 24.639621678888634, "decoder": 0.0026712589293852815, "mixture": 1.7906735183058868, "survey": 0.43828277809895266}, "elapsed_seconds": 3135.5286788698286}
+{"step": 2900, "epoch": 2, "epoch_stars": 1232896, "batch_stars": 1024, "labeled_stars": 1000, "masked_elements": 56865, "nll": 4.946446119824014, "reconstruction": 0.4698703163124835, "regularization": 6.418659516736323, "gradient_norms": {"encoder": 12.478328461580514, "decoder": 0.0043536822111782305, "mixture": 1.6752422140582914, "survey": 0.24302563292905027}, "elapsed_seconds": 3247.825855838135}
+{"step": 3000, "epoch": 2, "epoch_stars": 1335296, "batch_stars": 1024, "labeled_stars": 1003, "masked_elements": 56473, "nll": 4.87487110269042, "reconstruction": 0.4714439597033649, "regularization": 6.463567639936868, "gradient_norms": {"encoder": 10.724756569713442, "decoder": 0.003342984441692083, "mixture": 1.6240622275032237, "survey": 0.3709450390288562}, "elapsed_seconds": 3360.2294420041144}
+{"step": 3100, "epoch": 2, "epoch_stars": 1437696, "batch_stars": 1024, "labeled_stars": 995, "masked_elements": 56317, "nll": 4.886135579716145, "reconstruction": 0.4844633409566605, "regularization": 6.5014626629486925, "gradient_norms": {"encoder": 14.434819295859851, "decoder": 0.0031115136414517556, "mixture": 1.7684035768909432, "survey": 0.2772814334557319}, "elapsed_seconds": 3472.2678172346205}
+{"step": 3200, "epoch": 2, "epoch_stars": 1540096, "batch_stars": 1024, "labeled_stars": 1002, "masked_elements": 56661, "nll": 4.861823665351512, "reconstruction": 0.4902002019480441, "regularization": 6.549782999776957, "gradient_norms": {"encoder": 23.873872544870505, "decoder": 0.0027066176060025716, "mixture": 1.734523528986491, "survey": 0.300101105563312}, "elapsed_seconds": 3584.6921698134392}
+{"step": 3300, "epoch": 2, "epoch_stars": 1642496, "batch_stars": 1024, "labeled_stars": 1006, "masked_elements": 56700, "nll": 4.920453173104943, "reconstruction": 0.4833528904183201, "regularization": 6.600426975391146, "gradient_norms": {"encoder": 19.893068285096525, "decoder": 0.003966337884904412, "mixture": 1.3401789000888575, "survey": 0.18618911844951277}, "elapsed_seconds": 3697.769923945889}
+{"phase": "epoch_complete", "epoch": 2, "tune_nll": 4.809442850941521, "selected": {"path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00003392.pth", "sha256": "9f56e9a12ec415d9d28fded8dc83ebe802721a9ea8ae3a1e9f994af129acef0a", "step": 3392, "epoch": 2, "cursor": 0, "tune_nll": 4.809442850941521}}
+{"step": 3400, "epoch": 3, "epoch_stars": 8192, "batch_stars": 1024, "labeled_stars": 1003, "masked_elements": 56692, "nll": 4.814055414123635, "reconstruction": 0.47492182866271915, "regularization": 6.6341543748934955, "gradient_norms": {"encoder": 17.446906345476016, "decoder": 0.0025422084871239226, "mixture": 1.1691918239740162, "survey": 0.2731987034865678}, "elapsed_seconds": 3811.3860138580203}
+{"step": 3500, "epoch": 3, "epoch_stars": 110592, "batch_stars": 1024, "labeled_stars": 1002, "masked_elements": 56464, "nll": 4.876957205167877, "reconstruction": 0.48914669012003226, "regularization": 6.6788972249075345, "gradient_norms": {"encoder": 19.13196179666477, "decoder": 0.003073577619254314, "mixture": 1.4007490484728395, "survey": 0.23617381308361993}, "elapsed_seconds": 3922.431041698903}
+{"step": 3600, "epoch": 3, "epoch_stars": 212992, "batch_stars": 1024, "labeled_stars": 1005, "masked_elements": 56665, "nll": 4.909781158871266, "reconstruction": 0.48479847293302747, "regularization": 6.719354377559705, "gradient_norms": {"encoder": 33.0097827890803, "decoder": 0.0035317854730772644, "mixture": 1.4705009348592097, "survey": 0.26999678004803623}, "elapsed_seconds": 4034.2924161441624}
+{"step": 3700, "epoch": 3, "epoch_stars": 315392, "batch_stars": 1024, "labeled_stars": 1006, "masked_elements": 57042, "nll": 4.858409105310383, "reconstruction": 0.48894584219467674, "regularization": 6.765933693844357, "gradient_norms": {"encoder": 21.164512633075805, "decoder": 0.0030487293514021023, "mixture": 1.476122407755658, "survey": 0.19612141457442508}, "elapsed_seconds": 4145.388302655891}
+{"step": 3800, "epoch": 3, "epoch_stars": 417792, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56571, "nll": 4.91376424044906, "reconstruction": 0.5052132402271592, "regularization": 6.804055599050736, "gradient_norms": {"encoder": 15.568783824278697, "decoder": 0.0033443461226554338, "mixture": 1.616117036884769, "survey": 0.2651236088165224}, "elapsed_seconds": 4257.157696094364}
+{"step": 3900, "epoch": 3, "epoch_stars": 520192, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56161, "nll": 4.84288490640894, "reconstruction": 0.4639547435678785, "regularization": 6.8513312001895414, "gradient_norms": {"encoder": 18.545819845790117, "decoder": 0.003931303155206617, "mixture": 1.5382653047158175, "survey": 0.4004889282194069}, "elapsed_seconds": 4368.302273679525}
+{"step": 4000, "epoch": 3, "epoch_stars": 622592, "batch_stars": 1024, "labeled_stars": 1009, "masked_elements": 56432, "nll": 4.8068724412140105, "reconstruction": 0.4858739132038892, "regularization": 6.9008139224003004, "gradient_norms": {"encoder": 16.14721264398709, "decoder": 0.002701483781534201, "mixture": 1.743679299397865, "survey": 0.3264956088982437}, "elapsed_seconds": 4480.117336571217}
+{"step": 4100, "epoch": 3, "epoch_stars": 724992, "batch_stars": 1024, "labeled_stars": 1004, "masked_elements": 56469, "nll": 4.837928385462025, "reconstruction": 0.4818184604052666, "regularization": 6.947856057688761, "gradient_norms": {"encoder": 19.821165452645666, "decoder": 0.004146574800996216, "mixture": 1.5282061391469126, "survey": 0.19100390919406063}, "elapsed_seconds": 4593.763758387417}
+{"step": 4200, "epoch": 3, "epoch_stars": 827392, "batch_stars": 1024, "labeled_stars": 994, "masked_elements": 56838, "nll": 4.891773523741781, "reconstruction": 0.5005191478274877, "regularization": 6.991156260064641, "gradient_norms": {"encoder": 15.555455493943532, "decoder": 0.0029464903428712305, "mixture": 1.5495179193750666, "survey": 0.32286381075608384}, "elapsed_seconds": 4703.606851262972}
+{"step": 4300, "epoch": 3, "epoch_stars": 929792, "batch_stars": 1024, "labeled_stars": 996, "masked_elements": 56556, "nll": 4.874532259591225, "reconstruction": 0.4729315967318344, "regularization": 7.0385218405510255, "gradient_norms": {"encoder": 28.912541484673635, "decoder": 0.0030819548269767467, "mixture": 1.7383093869110995, "survey": 0.2695707065191236}, "elapsed_seconds": 4816.8769007939845}
+{"step": 4400, "epoch": 3, "epoch_stars": 1032192, "batch_stars": 1024, "labeled_stars": 1006, "masked_elements": 56446, "nll": 4.748444471243117, "reconstruction": 0.477798942552672, "regularization": 7.093760837312698, "gradient_norms": {"encoder": 12.065580219690538, "decoder": 0.0031886082710330995, "mixture": 1.2206138461961986, "survey": 0.2541540022328066}, "elapsed_seconds": 4928.941279781982}
+{"step": 4500, "epoch": 3, "epoch_stars": 1134592, "batch_stars": 1024, "labeled_stars": 1011, "masked_elements": 56462, "nll": 4.916396517363018, "reconstruction": 0.48606050515722965, "regularization": 7.127074438192934, "gradient_norms": {"encoder": 12.235686156002078, "decoder": 0.003139363687999996, "mixture": 1.3272217411514273, "survey": 0.20249709932444196}, "elapsed_seconds": 5038.6233535297215}
+{"step": 4600, "epoch": 3, "epoch_stars": 1236992, "batch_stars": 1024, "labeled_stars": 995, "masked_elements": 56360, "nll": 4.824407045705779, "reconstruction": 0.48944308820390126, "regularization": 7.1508098746984645, "gradient_norms": {"encoder": 33.59430723386238, "decoder": 0.002713645434201605, "mixture": 1.4054541950394375, "survey": 0.3261808404596777}, "elapsed_seconds": 5147.175013015047}
+{"step": 4700, "epoch": 3, "epoch_stars": 1339392, "batch_stars": 1024, "labeled_stars": 998, "masked_elements": 56560, "nll": 4.872472738147676, "reconstruction": 0.4713513667040532, "regularization": 7.195025811540041, "gradient_norms": {"encoder": 7.196462330211293, "decoder": 0.003126705104245667, "mixture": 1.166797916512973, "survey": 0.2985998235289877}, "elapsed_seconds": 5258.812383590266}
+{"step": 4800, "epoch": 3, "epoch_stars": 1441792, "batch_stars": 1024, "labeled_stars": 997, "masked_elements": 56704, "nll": 4.768579892981852, "reconstruction": 0.4639091276422849, "regularization": 7.247739663678741, "gradient_norms": {"encoder": 25.98972908275708, "decoder": 0.0030442145465651733, "mixture": 1.8782365776720409, "survey": 0.36394925039595044}, "elapsed_seconds": 5369.311196858063}
+{"step": 4900, "epoch": 3, "epoch_stars": 1544192, "batch_stars": 1024, "labeled_stars": 1004, "masked_elements": 56909, "nll": 4.802428928925594, "reconstruction": 0.488436020973451, "regularization": 7.287279737254758, "gradient_norms": {"encoder": 11.098464150408653, "decoder": 0.0031027004001767753, "mixture": 1.705585344746577, "survey": 0.2360096135586785}, "elapsed_seconds": 5480.8486149106175}
+{"step": 5000, "epoch": 3, "epoch_stars": 1646592, "batch_stars": 1024, "labeled_stars": 1001, "masked_elements": 56102, "nll": 4.794428391443706, "reconstruction": 0.4763645050950724, "regularization": 7.3469710863822115, "gradient_norms": {"encoder": 21.630564167953803, "decoder": 0.0028810149710608015, "mixture": 1.9383263286773627, "survey": 0.3267957154073986}, "elapsed_seconds": 5592.81593455188}
+{"phase": "epoch_complete", "epoch": 3, "tune_nll": 4.768034821292797, "selected": {"path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/checkpoint-00005088.pth", "sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7", "step": 5088, "epoch": 3, "cursor": 0, "tune_nll": 4.768034821292797}}
+{"phase": "export", "role": "fit", "rows": 1024, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 33792, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 66560, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 99328, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 132096, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 164864, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 197632, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 230400, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 263168, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 295936, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 328704, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 361472, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 394240, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 427008, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 459776, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 492544, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 525312, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 558080, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 590848, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 623616, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 656384, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 689152, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 721920, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 754688, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 787456, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 820224, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 852992, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 885760, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 918528, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 951296, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 984064, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1016832, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1049600, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1082368, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1115136, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1147904, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1180672, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1213440, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1246208, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1278976, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1311744, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1344512, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1377280, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1410048, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1442816, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1475584, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1508352, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1541120, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1573888, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1606656, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1639424, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1672192, "total": 1736618}
+{"phase": "export", "role": "fit", "rows": 1704960, "total": 1736618}
+{"phase": "export", "role": "tune", "rows": 1024, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 33792, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 66560, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 99328, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 132096, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 164864, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 197632, "total": 248113}
+{"phase": "export", "role": "tune", "rows": 230400, "total": 248113}
+{"phase": "export", "role": "cal", "rows": 1024, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 33792, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 66560, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 99328, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 132096, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 164864, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 197632, "total": 247705}
+{"phase": "export", "role": "cal", "rows": 230400, "total": 247705}
+{"phase": "export", "role": "devtest", "rows": 1024, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 33792, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 66560, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 99328, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 132096, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 164864, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 197632, "total": 248489}
+{"phase": "export", "role": "devtest", "rows": 230400, "total": 248489}
+{"phase": "export", "role": "external", "rows": 1024, "total": 2291}
+{"phase": "export", "role": "excluded", "rows": 1024, "total": 40058}
+{"phase": "export", "role": "excluded", "rows": 33792, "total": 40058}

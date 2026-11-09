@@ -1,0 +1,37 @@
+{
+  "status": "additional_native_source_candidates_complete",
+  "training_performed": false,
+  "role_assignment_performed": false,
+  "sources": {
+    "sdss_dr20_bossnet_081": {
+      "status": "source_candidate_complete",
+      "raw_rows": 1803883,
+      "selected_unique_stars": 929032,
+      "observed_per_target": [
+        869512,
+        929032,
+        928985
+      ],
+      "benchmark_reserved": 2,
+      "receipt": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+        "sha256": "5bcc3ed712581e837ec554fb407bd9f30564e4c65666d6950028e9f25c4f06d6"
+      }
+    },
+    "lamost_dr12v2_mrs_lasp": {
+      "status": "source_candidate_complete",
+      "raw_rows": 3224901,
+      "selected_unique_stars": 821991,
+      "observed_per_target": [
+        818574,
+        820545,
+        821991
+      ],
+      "benchmark_reserved": 0,
+      "receipt": {
+        "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+        "sha256": "ef157bdbfe612dc7a59ee1df664c465a55cab9eb3c2edba5e23958d89c6ba923"
+      }
+    }
+  }
+}

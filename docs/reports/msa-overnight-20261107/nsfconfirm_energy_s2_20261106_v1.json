@@ -1,0 +1,328 @@
+{
+  "status": "remediation_pilot_complete",
+  "run_id": "nsfconfirm_energy_s2_20261106_v1",
+  "arm": {
+    "run_id": "nsfconfirm_energy_s2_20261106_v1",
+    "kind": "nsf_energy",
+    "encoder": "finetune",
+    "reconstruction_weight": 0.03,
+    "input_profile": "phot_xp_measured_parallax",
+    "confirmation": {
+      "energy_weight": 1.0,
+      "crps_weight": 0.0,
+      "unknown_floor": 0.1,
+      "native_error_correlation": 0.0,
+      "native_student_t": false,
+      "seed": 20261107
+    }
+  },
+  "training_performed": true,
+  "completed_updates": 6000,
+  "declared_updates": 6000,
+  "full_epoch_claim": false,
+  "script_sha256": "0a4ef3208f9640dde817ed29f284a6efa4a33094056d2ad73022746be8d839db",
+  "config_sha256": "8477b89e3c417c30df43f34a4b565a77ec0f4c619ea06ef97dd29e4ef286df2e",
+  "started_utc": "2026-11-06T19:31:52Z",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "source_manifest_sha256": "9462c283cbe5e855d6db7bd142db03978a483c5493710065f38e8d8c15be5cdf",
+  "input_audit_sha256": "680262c55c71cf5e4c41e72ac00885e9914af9d06859d5520d0a42bac099ba99",
+  "joint_preflight_sha256": "091e1554c105556a2a70f66c0ecb48d165c15478a53b41dfd3171bee54e33864",
+  "parent_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "fit_per_target": [
+    506331,
+    493548,
+    506315,
+    1197641,
+    115834,
+    117573
+  ],
+  "tune_panel_rows": 1483,
+  "devtest_panel_rows": 6147,
+  "sampler": "round-robin target; uniform nonempty source strata, logg additionally uniform gravity bins <1/1-2/2-3/3-4/4-4.5/>=4.5; every FIT identity eligible",
+  "unknown_error_scope": "Independent Gaussian illustrative positive normalized floors, not measured uncertainties",
+  "selection": "first minimum TUNE macro standardized marginal sample CRPS, quoted-error convolution where known; unknown-error reference values are scored as retained point teachers; same panel across objective/floor controls",
+  "natural_xp_at_inference": true,
+  "pit_scope": "512 whole-vector empirical marginal intrinsic PIT; observed PIT only when quoted target error is known, not an exact CDF; baseline unavailable",
+  "covariance_scope": "Actual whole-vector conditional sample covariance; no manufactured correlations and no physical six-dimensional truth claim",
+  "supervised_xp_dropout": 0.0,
+  "energy_device_preflight": {
+    "copy_only": true,
+    "updates": 2,
+    "steps": [
+      {
+        "step": 1,
+        "score": 1.0724916458129883,
+        "flow_gradient_l2": 1.0416291848831205,
+        "context_gradient_l2": 0.0
+      },
+      {
+        "step": 2,
+        "score": 1.0501216650009155,
+        "flow_gradient_l2": 0.9894003170263926,
+        "context_gradient_l2": 0.00040257328042041755
+      }
+    ],
+    "scope": "Numerical sample-score preflight only; no encoder/reconstruction/physical calibration certificate"
+  },
+  "objective_scope": "Six-target joint NSF sample energy score, not marginal NLL; stratified star sample, not population weighted",
+  "reconstruction_cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+  "sampler_strata": [
+    {
+      "target": "teff",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115765
+    },
+    {
+      "target": "teff",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 0,
+      "eligible_rows": 8031
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 1,
+      "eligible_rows": 30203
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 2,
+      "eligible_rows": 59784
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 3,
+      "eligible_rows": 11079
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 4,
+      "eligible_rows": 6624
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 5,
+      "eligible_rows": 229
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 0,
+      "eligible_rows": 4965
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 1,
+      "eligible_rows": 28158
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 2,
+      "eligible_rows": 93687
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 3,
+      "eligible_rows": 79642
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 4,
+      "eligible_rows": 143346
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 5,
+      "eligible_rows": 27800
+    },
+    {
+      "target": "fe_h",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115749
+    },
+    {
+      "target": "fe_h",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "alpha",
+      "source": "DESI_RVSpecFit_alpha_fe",
+      "gravity_bin": -2,
+      "eligible_rows": 1197641
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35012
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 77995
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35824
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 78922
+    }
+  ],
+  "encoder_gradient_contract": {
+    "update": 6000,
+    "reconstruction_weight": 0.03,
+    "supervised_l2": 8.962170752592087,
+    "reconstruction_unweighted_l2": 1.2464904226125495,
+    "cosine": -0.015933140237464987
+  },
+  "encoder_gradient_startup": [
+    {
+      "update": 1,
+      "status": "zero_initialized_flow_projection_first_step",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.0,
+      "reconstruction_unweighted_l2": 12.236174194844512,
+      "cosine": null
+    },
+    {
+      "update": 2,
+      "status": "supervised_nonzero",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.05584769273332241,
+      "reconstruction_unweighted_l2": 7.227162313625533,
+      "cosine": 0.3812383793449357
+    }
+  ],
+  "per_target_presentations": [
+    1273397,
+    1254246,
+    1273170,
+    305363,
+    677031,
+    681538
+  ],
+  "per_target_unique_identities": [
+    389358,
+    381804,
+    389342,
+    259583,
+    112317,
+    113820
+  ],
+  "supervised_loss_components": {
+    "masked_energy_score": 0.2847488695943812,
+    "marginal_crps": 0.12666099565265904,
+    "known_same_source_native_fraction": 0.6620209096616154
+  },
+  "supervised_objective": 0.2847488820552826,
+  "encoder_dropout_seed": null,
+  "per_target_source_presentations": {
+    "teff:apogee": 484228,
+    "teff:galah": 789169,
+    "logg:apogee": 485105,
+    "logg:galah": 769141,
+    "fe_h:apogee": 484001,
+    "fe_h:galah": 789169,
+    "alpha:DESI_RVSpecFit_alpha_fe": 305363,
+    "age:StarHorse_apogee17_posterior_median": 233323,
+    "age:StarHorse_catalogue_posterior_median": 192690,
+    "age:StarHorse_galahdr3_posterior_median": 251018,
+    "distance:StarHorse_apogee17_posterior_median": 236630,
+    "distance:StarHorse_catalogue_posterior_median": 192690,
+    "distance:StarHorse_galahdr3_posterior_median": 252218
+  },
+  "finite_gradient_updates": 6000,
+  "last_loss": 0.3078378736972809,
+  "last_reconstruction_mae": 0.7696332335472107,
+  "selected_update": 6000,
+  "best_tune_score": 0.14550381579014224,
+  "selected_checkpoint_sha256": "116142c807736b1bcb87882e6cd3f469b4e7e3fcd559a8c202d512a637486ad4",
+  "sample_sequence_sha256": "6ea55bd91a849cb0331849275bd153c6428ac6c8aeb321d6f5f76eeeadea16a3",
+  "tune_score": 0.14550381579014224,
+  "tune_per_label": [
+    0.0975364216218198,
+    0.07542355895315271,
+    0.2126633255220449,
+    0.4023571070194091,
+    0.2790316311069801,
+    0.18170312746565256
+  ],
+  "development_score": 0.16196431697869473,
+  "development_per_label": [
+    0.10139711840128447,
+    0.08198336594262741,
+    0.22565475701100468,
+    0.4182226338632792,
+    0.3094330082230548,
+    0.23276959351408472
+  ],
+  "development_scope": "Fixed hashed pilot panel from previously consumed development roles; not an untouched test or promotion",
+  "reconstruction_presentations": 1536000,
+  "corner_scope": "Whole coupled six-target vectors; posterior-reference age/distance scales are not physical truth",
+  "artifacts": {
+    "development-predictions.npz": {
+      "bytes": 746187,
+      "sha256": "d7e7ff7e8ac5a0a6ecd4c048ebeb1f13f104b9d556613c304a65458068662eb2"
+    },
+    "selected-checkpoint.pth": {
+      "bytes": 411503453,
+      "sha256": "116142c807736b1bcb87882e6cd3f469b4e7e3fcd559a8c202d512a637486ad4"
+    },
+    "tune-predictions.npz": {
+      "bytes": 190707,
+      "sha256": "08be4bb86337861747602d42ce80556edb241cfb62ce9e0d35052e7180c752cf"
+    },
+    "metrics.jsonl": {
+      "bytes": 1730,
+      "sha256": "5e33d218c9131e59060ebc4b67112a69d197e43efb811bec7f1ab58f34137750"
+    },
+    "normalization.npz": {
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+    },
+    "whole-vector-corners.npz": {
+      "bytes": 1409062,
+      "sha256": "7ffaa919648882b413e8a08bf012d457383400e2f6e3a13417f281a242810d31"
+    }
+  }
+}

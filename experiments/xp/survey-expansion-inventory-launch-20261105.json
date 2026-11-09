@@ -1,0 +1,16 @@
+{
+  "name": "msa-survey-expansion-inventory-20261105-v1",
+  "script_sha256": "42611d8201cc303032bf2f2a6a1d740fbeeee668c33e7ae76b9c437b3c3f7d33",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/survey_expansion_inventory_20261105_v1",
+  "utc": "2026-11-05T14:11:23.124232+00:00",
+  "session_ids": [
+    "ecsjetm3"
+  ],
+  "status": "completed",
+  "training_performed": false,
+  "resources": {
+    "cores": 4,
+    "ram": 16
+  },
+  "completion_evidence": "docs/reports/msa-survey-expansion-20261105/native-inventory.json"
+}

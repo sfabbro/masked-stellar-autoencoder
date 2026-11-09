@@ -1,0 +1,40 @@
+run_id: multisurvey_joint_fullfit_20261105_v1
+parent:
+  run_id: multisurvey_flexible_parent_20261105
+  overlay_producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json
+  overlay_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json
+  overlay_manifest_sha256: 09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff
+  base_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5
+  checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+  checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+  reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+  reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+  model_config: configs/pretrain.canfar.yaml
+  library_revision: 2777b0de88121768434725ef227893cd35595d2a
+  seed: 20261105
+reference_checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth
+reference_sha256: efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d
+mixture_checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth
+mixture_sha256: 448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184
+seed: 20261105
+epochs: 3
+batch_size: 1024
+micro_batch: 128
+inference_batch: 1024
+tune_stars: 16384
+encoder_lr: 1.25e-06
+decoder_lr: 1.0e-05
+head_lr: 0.0003
+survey_lr: 0.0001
+reconstruction_weight: 0.03
+survey_regularization: 0.0001
+xp_mask_fraction: 0.5
+photometry_mask_fraction: 0.2
+checkpoint_interval: 2000
+export_roles:
+- fit
+- tune
+- cal
+- devtest
+- external
+- excluded

@@ -1,0 +1,25 @@
+{
+  "run_id": "decision6_pdf_qa_worker_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_pdf_qa_worker_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_pdf_qa_worker_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_decision_pdf_worker.py --config configs/decision-six-wave-20261106.yaml --output \"$experiment_output\"",
+  "utc": "2026-11-05T23:44:59.820243+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "uh9gy7on"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "scripts/run_decision_pdf_worker.py": "d9a7ca68d4874a1e3519aca95424c82fe1b9b548b93049c70cb8f05ae0b0244a",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3"
+  },
+  "payload_sha256": "dbea9cd563734ed5ab35ecb96390c24d9a45c9edc65d49d6604f0ca8c0ec634d"
+}

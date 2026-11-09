@@ -1,0 +1,23 @@
+{
+  "run_id": "decision_ges_local_full_input_xmatch_20261106_v1",
+  "utc": "2026-11-06T01:09:38.340445+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_local_full_input_xmatch_20261106_v1",
+  "status": "failed_before_script",
+  "session_ids": [
+    "tq7zmfa3"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['local-match','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v1'];runpy.run_path('local_match.py',run_name='__main__')",
+  "source_sha256": {
+    "local_match.py": "bee86c00f7351a64d28b1d94df999fa53b59bf95ae5a26a5457270f441a9d7c9",
+    "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+  },
+  "payload_sha256": "b1b50c57d150508437d5fef085c2406d1391830487cf86ef142006e36711e462",
+  "failure_reason": "Pixi conda/PyPI mapping hostname absent from worker DNS proxy allowlist; no matching or data upload",
+  "session_status": "Failed"
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "native_label_covariance_audit_20261107_v1",
+  "utc": "2026-11-06T16:04:16.990790+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_label_covariance_audit_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/native_label_covariance_audit_20261107_v1",
+  "status": "cancelled_before_execution",
+  "session_ids": [
+    "evqh3zuq"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/audit_native_label_covariance.py','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_label_covariance_audit_20261107_v1'];runpy.run_path('scripts/audit_native_label_covariance.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/audit_native_label_covariance.py": "d2d2cb0eb9b02d9ef8b824c15fa8aeff9243dff3453cf6d361bd583c3e1d409b",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "8ada7bd05edb854ce0130a7277f4f7d44019959d1fac831c85928bdb9c28c4b2",
+  "superseded_by": "native_label_covariance_audit_20261107_v2",
+  "reason": "Use mixed high/low ID bits for cross-fitting; Gaia structured low-bit parity is invalid"
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "decision_seismic_array_qa_20261106_v1",
+  "utc": "2026-11-06T05:28:20.987003+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_seismic_array_qa_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_seismic_array_qa_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "q5feyeos"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['scripts/run_decision_seismic_array_qa.py','--config','configs/decision-six-wave-20261106.yaml','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_seismic_array_qa_20261106_v1'];runpy.run_path('scripts/run_decision_seismic_array_qa.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_decision_seismic_array_qa.py": "3effc5de559512a69f11c083691831b717724d7f04ada81c7fabceb0fb288775",
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+    "pixi.toml": "252140f949edee4e42cfdd2d38d8d0bbe11d9fae2ee6464b80aa305f420f666a"
+  },
+  "payload_sha256": "58c8b8711a627b20d5b8c085dd8712634eae099fdbd312e511bd4582d1065476"
+}

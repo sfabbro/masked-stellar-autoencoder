@@ -1,0 +1,41 @@
+{
+  "archive_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
+  "archive_sha256": "6b7d367535b34605a117f59d1e6bb1b35ebb77fb4ece6efe6da4609bd6dfb210",
+  "expected_source_bytes": 1221786815,
+  "model_loaded": false,
+  "product": "lrs",
+  "release": "LAMOST DR12 v2.0",
+  "result": {
+    "cache_absence_not_no_xp": true,
+    "cache_associations_verified": 128,
+    "cache_invalid_ids": 0,
+    "cache_source_id_sha256": "b75dd40db0bb904f60f71248fcfd8413c1d20b954102c4d46b54280e806fe2fd",
+    "complete_xp_in_cache": 3334358,
+    "matched_base": 402291,
+    "matched_cache": 3334358,
+    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/source.h5",
+    "output_bytes": 296580091,
+    "output_sha256": "889c90553e71a681ddee05f97fc6dcffb7933a338253e3e57912460be8d58fb9",
+    "outside_base_ancestry_unknown": 5427411,
+    "product": "lrs",
+    "raw_label_counts_by_measurement": {
+      "lasp": {
+        "alpha_m": 4787027,
+        "feh": 8376135,
+        "logg": 8376135,
+        "teff": 8376135
+      }
+    },
+    "rows_with_valid_gaia_ids": 8226110,
+    "source_rows": 8376135,
+    "unique_gaia_ids": 5829702
+  },
+  "run_id": "multisurvey_lamost_dr12_lrs_source_direct_v2",
+  "scope": "All raw records retained. Exact Gaia ID joins only; outside-base ancestry and absent-cache XP remain unknown. LASP/CNN share spectra and are not independent.",
+  "source_commit": "ec104432bd8664bcde00b7f1f1bfa4adc7ae7d8f",
+  "source_only": true,
+  "source_url": "https://www.lamost.org/dr12/v2.0/catdl?name=dr12_v2.0_LRS_stellar.fits.gz",
+  "status": "lamost_dr12_source_complete",
+  "training_performed": false,
+  "transport": "direct_https_no_proxy"
+}

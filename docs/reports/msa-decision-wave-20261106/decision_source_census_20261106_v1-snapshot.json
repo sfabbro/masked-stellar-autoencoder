@@ -1,0 +1,735 @@
+{
+  "status": "source_census_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "role_assignment_performed": false,
+  "targets": [
+    "teff",
+    "logg",
+    "fe_h",
+    "alpha",
+    "age",
+    "distance"
+  ],
+  "sources": {
+    "lamost_dr12_lrs": {
+      "candidate_stars": 3265101,
+      "in_old_base": 210757,
+      "outside_base_with_recovered_features": 1771491,
+      "per_target": [
+        3237842,
+        3264956,
+        3265098
+      ],
+      "role_counts": {
+        "fit": 132140,
+        "tune": 18683,
+        "cal": 18869,
+        "devtest": 19148,
+        "external": 132,
+        "excluded": 4581
+      }
+    },
+    "gaia_gspspec": {
+      "candidate_stars": 5591594,
+      "in_old_base": 391981,
+      "outside_base_with_recovered_features": 3313173,
+      "per_target": [
+        5361727,
+        5427249,
+        0
+      ],
+      "role_counts": {
+        "fit": 268483,
+        "tune": 38275,
+        "cal": 38444,
+        "devtest": 38313,
+        "external": 1990,
+        "excluded": 4161
+      }
+    }
+  },
+  "base_roles": {
+    "cal": {
+      "stars": 247705,
+      "per_target": [
+        72180,
+        70367,
+        72178,
+        170428,
+        12309,
+        12520
+      ],
+      "coobserved": [
+        [
+          72180,
+          70367,
+          72178,
+          324,
+          6854,
+          6940
+        ],
+        [
+          70367,
+          70367,
+          70365,
+          323,
+          6661,
+          6745
+        ],
+        [
+          72178,
+          70365,
+          72178,
+          324,
+          6852,
+          6938
+        ],
+        [
+          324,
+          323,
+          324,
+          170428,
+          190,
+          191
+        ],
+        [
+          6854,
+          6661,
+          6852,
+          190,
+          12309,
+          12304
+        ],
+        [
+          6940,
+          6745,
+          6938,
+          191,
+          12304,
+          12520
+        ]
+      ],
+      "complete_six": 31,
+      "no_labels": 0
+    },
+    "devtest": {
+      "stars": 248489,
+      "per_target": [
+        72060,
+        70094,
+        72055,
+        171348,
+        8233,
+        8390
+      ],
+      "coobserved": [
+        [
+          72060,
+          70094,
+          72055,
+          242,
+          2869,
+          2904
+        ],
+        [
+          70094,
+          70094,
+          70089,
+          238,
+          2789,
+          2824
+        ],
+        [
+          72055,
+          70089,
+          72055,
+          239,
+          2867,
+          2902
+        ],
+        [
+          242,
+          238,
+          239,
+          171348,
+          189,
+          192
+        ],
+        [
+          2869,
+          2789,
+          2867,
+          189,
+          8233,
+          8232
+        ],
+        [
+          2904,
+          2824,
+          2902,
+          192,
+          8232,
+          8390
+        ]
+      ],
+      "complete_six": 28,
+      "no_labels": 0
+    },
+    "excluded": {
+      "stars": 40058,
+      "per_target": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "coobserved": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "complete_six": 0,
+      "no_labels": 40058
+    },
+    "external": {
+      "stars": 2291,
+      "per_target": [
+        1558,
+        1513,
+        1558,
+        5,
+        1059,
+        1085
+      ],
+      "coobserved": [
+        [
+          1558,
+          1513,
+          1558,
+          2,
+          349,
+          355
+        ],
+        [
+          1513,
+          1513,
+          1513,
+          2,
+          342,
+          349
+        ],
+        [
+          1558,
+          1513,
+          1558,
+          2,
+          349,
+          355
+        ],
+        [
+          2,
+          2,
+          2,
+          5,
+          0,
+          0
+        ],
+        [
+          349,
+          342,
+          349,
+          0,
+          1059,
+          1056
+        ],
+        [
+          355,
+          349,
+          355,
+          0,
+          1056,
+          1085
+        ]
+      ],
+      "complete_six": 0,
+      "no_labels": 0
+    },
+    "fit": {
+      "stars": 1736618,
+      "per_target": [
+        506331,
+        493548,
+        506315,
+        1197641,
+        115834,
+        117573
+      ],
+      "coobserved": [
+        [
+          506331,
+          493548,
+          506315,
+          5226,
+          77820,
+          78687
+        ],
+        [
+          493548,
+          493548,
+          493532,
+          5175,
+          75860,
+          76696
+        ],
+        [
+          506315,
+          493532,
+          506315,
+          5225,
+          77805,
+          78672
+        ],
+        [
+          5226,
+          5175,
+          5225,
+          1197641,
+          1281,
+          1304
+        ],
+        [
+          77820,
+          75860,
+          77805,
+          1281,
+          115834,
+          115805
+        ],
+        [
+          78687,
+          76696,
+          78672,
+          1304,
+          115805,
+          117573
+        ]
+      ],
+      "complete_six": 277,
+      "no_labels": 0
+    },
+    "tune": {
+      "stars": 248113,
+      "per_target": [
+        71997,
+        70106,
+        71996,
+        171064,
+        16193,
+        16438
+      ],
+      "coobserved": [
+        [
+          71997,
+          70106,
+          71996,
+          423,
+          10700,
+          10827
+        ],
+        [
+          70106,
+          70106,
+          70105,
+          415,
+          10382,
+          10504
+        ],
+        [
+          71996,
+          70105,
+          71996,
+          423,
+          10699,
+          10826
+        ],
+        [
+          423,
+          415,
+          423,
+          171064,
+          176,
+          177
+        ],
+        [
+          10700,
+          10382,
+          10699,
+          176,
+          16193,
+          16187
+        ],
+        [
+          10827,
+          10504,
+          10826,
+          177,
+          16187,
+          16438
+        ]
+      ],
+      "complete_six": 39,
+      "no_labels": 0
+    }
+  },
+  "base_extra_fields": [
+    "known_supervised_ancestor_exposed",
+    "measured_parallax",
+    "reserved_reference",
+    "reserved_reference_source_id"
+  ],
+  "measured_parallax_schema": {
+    "input_value": [
+      4441942
+    ],
+    "observed": [
+      4441942
+    ],
+    "parallax_error_mas": [
+      4441942
+    ],
+    "parallax_mas": [
+      4441942
+    ]
+  },
+  "base_feature_names": [
+    "W1",
+    "W2",
+    "G",
+    "BP",
+    "RP",
+    "bp_1",
+    "bp_2",
+    "bp_3",
+    "bp_4",
+    "bp_5",
+    "bp_6",
+    "bp_7",
+    "bp_8",
+    "bp_9",
+    "bp_10",
+    "bp_11",
+    "bp_12",
+    "bp_13",
+    "bp_14",
+    "bp_15",
+    "bp_16",
+    "bp_17",
+    "bp_18",
+    "bp_19",
+    "bp_20",
+    "bp_21",
+    "bp_22",
+    "bp_23",
+    "bp_24",
+    "bp_25",
+    "bp_26",
+    "bp_27",
+    "bp_28",
+    "bp_29",
+    "bp_30",
+    "bp_31",
+    "bp_32",
+    "bp_33",
+    "bp_34",
+    "bp_35",
+    "bp_36",
+    "bp_37",
+    "bp_38",
+    "bp_39",
+    "bp_40",
+    "bp_41",
+    "bp_42",
+    "bp_43",
+    "bp_44",
+    "bp_45",
+    "bp_46",
+    "bp_47",
+    "bp_48",
+    "bp_49",
+    "bp_50",
+    "bp_51",
+    "bp_52",
+    "bp_53",
+    "bp_54",
+    "bp_55",
+    "rp_1",
+    "rp_2",
+    "rp_3",
+    "rp_4",
+    "rp_5",
+    "rp_6",
+    "rp_7",
+    "rp_8",
+    "rp_9",
+    "rp_10",
+    "rp_11",
+    "rp_12",
+    "rp_13",
+    "rp_14",
+    "rp_15",
+    "rp_16",
+    "rp_17",
+    "rp_18",
+    "rp_19",
+    "rp_20",
+    "rp_21",
+    "rp_22",
+    "rp_23",
+    "rp_24",
+    "rp_25",
+    "rp_26",
+    "rp_27",
+    "rp_28",
+    "rp_29",
+    "rp_30",
+    "rp_31",
+    "rp_32",
+    "rp_33",
+    "rp_34",
+    "rp_35",
+    "rp_36",
+    "rp_37",
+    "rp_38",
+    "rp_39",
+    "rp_40",
+    "rp_41",
+    "rp_42",
+    "rp_43",
+    "rp_44",
+    "rp_45",
+    "rp_46",
+    "rp_47",
+    "rp_48",
+    "rp_49",
+    "rp_50",
+    "rp_51",
+    "rp_52",
+    "rp_53",
+    "rp_54",
+    "rp_55",
+    "U_SMSS",
+    "V_SMSS",
+    "G_SMSS",
+    "R_SMSS",
+    "I_SMSS",
+    "Z_SMSS",
+    "U_SDSS",
+    "G_SDSS",
+    "R_SDSS",
+    "I_SDSS",
+    "Z_SDSS",
+    "G_PS1",
+    "R_PS1",
+    "I_PS1",
+    "Z_PS1",
+    "Y_PS1",
+    "J",
+    "H",
+    "KS",
+    "PARALLAX",
+    "EBV",
+    "pmra",
+    "pmdec",
+    "RA",
+    "DEC"
+  ],
+  "expanded_features": {
+    "stars": 7591872,
+    "recoverable": 4756867,
+    "sha256": "d4d8ea8e972625cb040c0fdcf4cc60675c03823b43826cef4b57d6d725e14f23",
+    "parallax_columns": [
+      134
+    ],
+    "visible_measured_parallax": 0,
+    "scope": "Recovered table masks non-XP/non-five-band fields; measured parallax must be separately admitted for a parallax-assisted final arm"
+  },
+  "mrs_schema": {
+    "observations/cnn/error": {
+      "shape": [
+        3224901,
+        17
+      ],
+      "dtype": "float64"
+    },
+    "observations/cnn/error_known": {
+      "shape": [
+        3224901,
+        17
+      ],
+      "dtype": "bool"
+    },
+    "observations/cnn/raw_observed": {
+      "shape": [
+        3224901,
+        17
+      ],
+      "dtype": "bool"
+    },
+    "observations/cnn/value": {
+      "shape": [
+        3224901,
+        17
+      ],
+      "dtype": "float64"
+    },
+    "observations/lasp/error": {
+      "shape": [
+        3224901,
+        4
+      ],
+      "dtype": "float64"
+    },
+    "observations/lasp/error_known": {
+      "shape": [
+        3224901,
+        4
+      ],
+      "dtype": "bool"
+    },
+    "observations/lasp/raw_observed": {
+      "shape": [
+        3224901,
+        4
+      ],
+      "dtype": "bool"
+    },
+    "observations/lasp/value": {
+      "shape": [
+        3224901,
+        4
+      ],
+      "dtype": "float64"
+    },
+    "observations/obsid": {
+      "shape": [
+        3224901
+      ],
+      "dtype": "int64"
+    },
+    "observations/source_id": {
+      "shape": [
+        3224901
+      ],
+      "dtype": "int64"
+    },
+    "observations/source_row": {
+      "shape": [
+        3224901
+      ],
+      "dtype": "int64"
+    },
+    "stars/ancestor_listed_state": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int8"
+    },
+    "stars/base_matched": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "bool"
+    },
+    "stars/base_role": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "|S16"
+    },
+    "stars/cache_row": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int64"
+    },
+    "stars/cache_xp_state": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int8"
+    },
+    "stars/primary_state": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int8"
+    },
+    "stars/reserved_state": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int8"
+    },
+    "stars/source_id": {
+      "shape": [
+        1499584
+      ],
+      "dtype": "int64"
+    }
+  },
+  "inference_release_requirements": [
+    "Gaia-ID partition manifest with attempted/succeeded/missing-input/failed/OOD counts; no all-Gaia completeness claim from the 150M cache",
+    "six joint-vector PDF representation plus units/transforms/quality flags; marginal uncertainties alone are not a joint PDF",
+    "age/distance teacher provenance and chemical alpha conventions retained",
+    "benchmark/cluster/link-group exclusions and prior supervised exposure bound before final FIT",
+    "measured-parallax recovery and its errors admitted separately for expanded stars"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "full_gaia_contract_pilot_20261108_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_contract_pilot_20261108_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_full_gaia_contract_pilot.py --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1 --updates 600",
+  "utc": "2026-11-09T02:05:07.803671+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "hshxs209"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_full_gaia_contract_pilot.py": "40342fff6ed21f1ff48a6d6d2a96f6893c11a87c58577f5261f4eefda9e4e9ac",
+    "src/masked_stellar_autoencoder/training/full_gaia_inputs.py": "b3f332bdae2c8252a1df92564f9784ec4572c4514b84a3eb34c788b87f3922a6",
+    "src/masked_stellar_autoencoder/training/consensus_survey_map.py": "dbb55da1d875cca001371bc6b8de13f566451103c649bed045c64b647db56879",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/remediation_joint6.py": "e800d6eb30aedd00b09376d48f31d6449f5bc12254552b86285c7edcae30531d",
+    "src/masked_stellar_autoencoder/training/multilabel_experiments.py": "8bebb761edd02134596198c8f823ec00dd5db9698f022d7db6d15f75216a47bf",
+    "configs/full-gaia-observation-columns-20261108.json": "50a8d0b734f97ae96fd6a97cb038fa84ff892144a28757ef57fba4be5e593fb4",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74"
+  },
+  "payload_sha256": "b9fc2b30ef401abafecd678c62aeb22935fc0f4d1b1ee98f187ff50048722e3a"
+}

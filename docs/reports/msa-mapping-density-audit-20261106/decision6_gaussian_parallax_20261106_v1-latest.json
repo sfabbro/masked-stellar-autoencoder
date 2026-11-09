@@ -1,0 +1,300 @@
+{
+  "status": "remediation_pilot_complete",
+  "run_id": "decision6_gaussian_parallax_20261106_v1",
+  "arm": {
+    "run_id": "decision6_gaussian_parallax_20261106_v1",
+    "kind": "gaussian",
+    "encoder": "finetune",
+    "reconstruction_weight": 0.03,
+    "input_profile": "phot_xp_measured_parallax"
+  },
+  "training_performed": true,
+  "completed_updates": 10000,
+  "declared_updates": 10000,
+  "full_epoch_claim": false,
+  "script_sha256": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+  "config_sha256": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+  "started_utc": "2026-11-05T23:33:56Z",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "source_manifest_sha256": "9462c283cbe5e855d6db7bd142db03978a483c5493710065f38e8d8c15be5cdf",
+  "input_audit_sha256": "680262c55c71cf5e4c41e72ac00885e9914af9d06859d5520d0a42bac099ba99",
+  "joint_preflight_sha256": "091e1554c105556a2a70f66c0ecb48d165c15478a53b41dfd3171bee54e33864",
+  "parent_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "fit_per_target": [
+    506331,
+    493548,
+    506315,
+    1197641,
+    115834,
+    117573
+  ],
+  "tune_panel_rows": 740,
+  "devtest_panel_rows": 24607,
+  "sampler": "round-robin target; uniform nonempty source strata, logg additionally uniform gravity bins <1/1-2/2-3/3-4/4-4.5/>=4.5; every FIT identity eligible",
+  "unknown_error_scope": "Unknown quoted errors are point-teacher targets; sigma=0 is a computational convention, not a known zero error",
+  "selection": "first minimum macro-six native conditional-median absolute error / FIT native standard deviation; common model-blind fixed TUNE identity panel",
+  "natural_xp_at_inference": true,
+  "pit_scope": "512 whole-vector empirical marginal intrinsic PIT; observed PIT only when quoted target error is known, not an exact CDF; baseline unavailable",
+  "covariance_scope": "Actual whole-vector conditional sample covariance; no manufactured correlations and no physical six-dimensional truth claim",
+  "supervised_xp_dropout": 0.0,
+  "reconstruction_cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+  "sampler_strata": [
+    {
+      "target": "teff",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115765
+    },
+    {
+      "target": "teff",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 0,
+      "eligible_rows": 8031
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 1,
+      "eligible_rows": 30203
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 2,
+      "eligible_rows": 59784
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 3,
+      "eligible_rows": 11079
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 4,
+      "eligible_rows": 6624
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 5,
+      "eligible_rows": 229
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 0,
+      "eligible_rows": 4965
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 1,
+      "eligible_rows": 28158
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 2,
+      "eligible_rows": 93687
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 3,
+      "eligible_rows": 79642
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 4,
+      "eligible_rows": 143346
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 5,
+      "eligible_rows": 27800
+    },
+    {
+      "target": "fe_h",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115749
+    },
+    {
+      "target": "fe_h",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "alpha",
+      "source": "DESI_RVSpecFit_alpha_fe",
+      "gravity_bin": -2,
+      "eligible_rows": 1197641
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35012
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 77995
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35824
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 78922
+    }
+  ],
+  "encoder_gradient_contract": {
+    "update": 10000,
+    "reconstruction_weight": 0.03,
+    "supervised_l2": 24.10228035399104,
+    "reconstruction_unweighted_l2": 2.1906823709619885,
+    "cosine": 0.30143606569213577
+  },
+  "encoder_gradient_startup": [
+    {
+      "update": 1,
+      "status": "nonzero",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.0,
+      "reconstruction_unweighted_l2": 11.891915427027483,
+      "cosine": null
+    },
+    {
+      "update": 2,
+      "status": "nonzero",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.3930425417288258,
+      "reconstruction_unweighted_l2": 9.50705767988626,
+      "cosine": -0.30309648949333784
+    }
+  ],
+  "per_target_presentations": [
+    2123145,
+    2091265,
+    2122761,
+    509423,
+    1127755,
+    1135288
+  ],
+  "per_target_unique_identities": [
+    449158,
+    439519,
+    449142,
+    399812,
+    115338,
+    116986
+  ],
+  "supervised_loss_components": {
+    "observed_nll": 0.8430089950561523,
+    "proposal_nll": 0.0,
+    "proposal_weight": 0.0
+  },
+  "supervised_objective": 0.8430089950561523,
+  "encoder_dropout_seed": 20271106,
+  "per_target_source_presentations": {
+    "teff:apogee": 808694,
+    "teff:galah": 1314451,
+    "logg:apogee": 810156,
+    "logg:galah": 1281109,
+    "fe_h:apogee": 808310,
+    "fe_h:galah": 1314451,
+    "age:StarHorse_apogee17_posterior_median": 389290,
+    "age:StarHorse_galahdr3_posterior_median": 417613,
+    "distance:StarHorse_apogee17_posterior_median": 394677,
+    "distance:StarHorse_galahdr3_posterior_median": 419759,
+    "alpha:DESI_RVSpecFit_alpha_fe": 509423,
+    "age:StarHorse_catalogue_posterior_median": 320852,
+    "distance:StarHorse_catalogue_posterior_median": 320852
+  },
+  "finite_gradient_updates": 10000,
+  "last_loss": 0.8669221997261047,
+  "last_reconstruction_mae": 0.7971059679985046,
+  "selected_update": 9000,
+  "best_tune_score": 0.20022191772035702,
+  "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+  "sample_sequence_sha256": "dfdaf9043def6eea24feed77f20f4456c18a78bc338c0da686323cdb70d17aaa",
+  "tune_score": 0.20022191772035702,
+  "tune_per_label": [
+    0.08863352263521505,
+    0.061369666241861236,
+    0.1954599533141441,
+    0.39630289989068557,
+    0.27561575637310703,
+    0.18394970786712933
+  ],
+  "development_score": 0.22697418394560706,
+  "development_per_label": [
+    0.09975421635370574,
+    0.07697339938670873,
+    0.22765424445874496,
+    0.4231446668240199,
+    0.3136794464876947,
+    0.22063913016276845
+  ],
+  "development_scope": "Fixed hashed pilot panel from previously consumed development roles; not an untouched test or promotion",
+  "reconstruction_presentations": 2560000,
+  "corner_scope": "Whole coupled six-target vectors; posterior-reference age/distance scales are not physical truth",
+  "artifacts": {
+    "development-predictions.npz": {
+      "bytes": 2942474,
+      "sha256": "3668126a044a8cf993c4e6e9c360e74417d4dacafc633613ae12780820b146d6"
+    },
+    "selected-checkpoint.pth": {
+      "bytes": 410287321,
+      "sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc"
+    },
+    "tune-predictions.npz": {
+      "bytes": 97527,
+      "sha256": "a30810c610292f2667553fbcdf78f14c2e880b292a91a0c0092591c22e518f69"
+    },
+    "metrics.jsonl": {
+      "bytes": 2838,
+      "sha256": "6b8b0b3feaeabdd6e5a79cae1e016438a204305139b55d770ec0cf874bdc10b9"
+    },
+    "normalization.npz": {
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+    },
+    "whole-vector-corners.npz": {
+      "bytes": 5625077,
+      "sha256": "b00b2e901d92c2b6104631e69c5240cfdac487f98884bd2b2adaef4569179265"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "status": "seismic_experiments_complete",
+  "seed": 202611071,
+  "mode": "frozen",
+  "preflight": false,
+  "training_performed": true,
+  "arms": {
+    "off": {
+      "status": "complete",
+      "arm": {
+        "name": "off",
+        "kind": "identity",
+        "weight": 0.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.0,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 0.0,
+        "head": 1.0157465934753418,
+        "maps": 0.3266960680484772,
+        "seismic": 0.0
+      },
+      "last_objective": 0.32748583471402526,
+      "last_reconstruction_mae": 0.0,
+      "elapsed_seconds": 3531.102532433346,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "852a6545f8e782eb98d35de9984d471addb0df411002d4058ae81b7ce44b2812",
+      "checkpoint_sha256": "67fe06f373fb41e53d31cf0a4d33da3e9d1f7bf6113708d70e2e9110ca1ce580"
+    },
+    "identity": {
+      "status": "complete",
+      "arm": {
+        "name": "identity",
+        "kind": "identity",
+        "weight": 1.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.0,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 0.0,
+        "head": 1.0250135660171509,
+        "maps": 0.3266960680484772,
+        "seismic": 0.0
+      },
+      "last_objective": 0.33620402216911316,
+      "last_reconstruction_mae": 0.0,
+      "elapsed_seconds": 3558.3636778332293,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seismic_coefficients": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "b1aa9d3e50d7228d13900580f8a56029ca8d0ad2821c2a3ca606433ca7b5855d",
+      "checkpoint_sha256": "55266f0d64dafec756046cfa1c076bb82da500e8a3231d31b3a42c3929a0af0f"
+    },
+    "affine": {
+      "status": "complete",
+      "arm": {
+        "name": "affine",
+        "kind": "affine",
+        "weight": 1.0,
+        "extra_dex": 0.0
+      },
+      "completed_updates": 1500,
+      "source_native_loss_denominator": 320,
+      "reconstruction_weight": 0.0,
+      "calibration_prior_weight": 0.0001,
+      "first_step_gradient_l2": {
+        "encoder": 0.0,
+        "head": 1.0250135660171509,
+        "maps": 0.3266960680484772,
+        "seismic": 0.0030037080869078636
+      },
+      "last_objective": 0.3358192481100559,
+      "last_reconstruction_mae": 0.0,
+      "elapsed_seconds": 3553.752211196348,
+      "batch_identity_sha256": "0631870e534b61684e0ec7f618890f362ac0e3b54540b7e6ef83821100c5aa43",
+      "reconstruction_sequence_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seismic_coefficients": [
+        0.008840790018439293,
+        -0.012471654452383518,
+        0.0,
+        0.0
+      ],
+      "readout_sha256": "b296d6d04083cd36370ad77273b805bb5b5f971401a3b88c39aad6c1951fe353",
+      "checkpoint_sha256": "5ceffb1b6af14caa6ba76e9704452d236e506d52ae2e6aa2d4c808c98c6666d7"
+    }
+  },
+  "scope": "Matched fixed-budget neutral-start supervision controls. All runs use APOGEE as the logg coordinate convention, not an unbiased physical truth. No arm is a pure replica of the production seismic-reference run. CAL not opened. Existing catalogue calibrations/ancestor exposure may remain. Source-level calibration parameters are MAP estimates, not posterior systematic uncertainty.",
+  "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+  "neutral_parent_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+  "initialization": "Earlier pooled NSF before explicit APOKASC supervision; all source maps start identity",
+  "gravity_reference": "APOGEE identity in all arms; seismic identity/map is a separate observation-channel hypothesis",
+  "fit_seismic_stars": 5321,
+  "source_registry": [
+    "apogee",
+    "desi",
+    "galah",
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "lamost_dr12v2_lrs_lasp",
+    "rave_dr6_madera_gauguin",
+    "gaia_dr3_gspspec",
+    "sdss_dr20_bossnet_081",
+    "lamost_dr12v2_mrs_lasp",
+    "APOKASC3_loggSeis"
+  ],
+  "training_records_per_step": 320,
+  "seismic_records_per_step": 32,
+  "panel_stars": 21477,
+  "tess_dev_stars": 12017,
+  "common_panel_sha256": "1040ad9360a04cd21a86ce5e0a1f5345642a7b5e9edb7318e35a70103b924522",
+  "seismic_reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf",
+  "tess_reference_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "panel_sha256": "04723c5c4b68a6d37689995a6a302dc8c90068d109990c67c2988c1590ebe0ee",
+  "baseline_readout_sha256": "4eccb193f12dfb33f4e808227a88f6d45779fda8eabab730a8c83c0d5ee9ee47",
+  "completed_arm_count": 3,
+  "completed_updates_per_arm": 1500
+}

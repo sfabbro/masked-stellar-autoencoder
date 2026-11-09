@@ -1,0 +1,21 @@
+{
+  "run_id": "full_gaia_source_inventory_20261108_v1",
+  "utc": "2026-11-09T01:17:00.272482+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_source_inventory_20261108_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_source_inventory_20261108_v1",
+  "status": "accepted",
+  "session_ids": [
+    "pr2c44vp"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/audit_full_gaia_sources.py', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_source_inventory_20261108_v1'];runpy.run_path('scripts/audit_full_gaia_sources.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/audit_full_gaia_sources.py": "90ee0af81db44771198645b1e4d8d124c7ffa92229cb5aac768155ee2feba9a4",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "500bce69562b942ab7e7b18c202576fa761c1361d6ea941105c2da55931ec999"
+}

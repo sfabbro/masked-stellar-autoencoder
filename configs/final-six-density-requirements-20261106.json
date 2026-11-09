@@ -1,0 +1,89 @@
+{
+  "status": "design_requirements_not_yet_verified",
+  "interpretation": "Six flexible target distributions conditioned on Gaia inputs are the minimum. Full joint modeling is desirable, not a launch prerequisite. Visually inspect population correlations/nonlinearities and within-star correlations where genuine joint draws exist.",
+  "targets": [
+    {
+      "name": "teff",
+      "unit": "K"
+    },
+    {
+      "name": "logg",
+      "unit": "dex(cm/s2)"
+    },
+    {
+      "name": "fe_h",
+      "unit": "dex"
+    },
+    {
+      "name": "alpha",
+      "unit": "dex"
+    },
+    {
+      "name": "age",
+      "unit": "Gyr"
+    },
+    {
+      "name": "distance",
+      "unit": "kpc"
+    }
+  ],
+  "required_behavior": [
+    "predict all six targets with flexible marginal uncertainty conditional on Gaia inputs",
+    "provide six marginal prediction summaries and distributions or declared uncertainty-region outputs",
+    "provide population corner/Kiel plots across predicted stars for correlation and nonlinear trend inspection",
+    "provide per-star corner plots from genuine joint predictive draws for models that support them",
+    "label marginal-only output as having unestimated within-star dependence; never pair independently drawn marginals to claim learned correlations",
+    "retain feature availability and population support flags"
+  ],
+  "survey_mapping": {
+    "latent_target_dimension": 6,
+    "formulation": "For source s, compare its observed subset to M_s h_s(theta_6, measurement_conditions_s). Sources need not measure all six targets.",
+    "coverage": [
+      "teff",
+      "logg",
+      "fe_h",
+      "alpha",
+      "age",
+      "distance"
+    ],
+    "requirements": [
+      "source-specific quantity definitions and transforms",
+      "source errors and shared teacher/measurement dependencies",
+      "age/distance teacher mapping distinct from direct physical observations",
+      "physically anchored scale in supported regions",
+      "source-target maps with no supporting data remain unavailable rather than guessed"
+    ]
+  },
+  "methods": {
+    "primary_comparisons": [
+      "unrestricted joint six-target NSF",
+      "contrastive-flow model with conformal region calibration",
+      "SLS multivariate conditional prediction regions"
+    ],
+    "controls": [
+      "Gaussian",
+      "mixture density model"
+    ],
+    "note": "Methods are compared for their actual output object. Normalized log_prob is required only for likelihood-based scoring; region methods use coverage and volume/efficiency, with no claim that a region score is a PDF."
+  },
+  "evaluation": [
+    "same inputs, identities, roles and supported target masks",
+    "point accuracy plus calibrated multivariate and per-target uncertainty",
+    "sample-based proper scores where joint samples exist",
+    "region coverage and size/volume where regions are the output",
+    "physical seismic/benchmark checks and source-scale residuals",
+    "sparse label and selection-support limitations",
+    "noise and posterior-teacher dependence retained"
+  ],
+  "not_required": [
+    "enumeration of 602 target-on-target conditionals",
+    "63 arbitrary subset log-density APIs",
+    "a normalized-log-density API for every compared method"
+  ],
+  "current_limitations": [
+    "trained survey mapping presently covers atmospheric three only",
+    "six-target pilots are pooled-label rather than expanded six-target mapped-survey training",
+    "mapping physical identification remains under investigation"
+  ],
+  "full_joint_requirement": "optional model capability; not a prerequisite imposed on every candidate"
+}

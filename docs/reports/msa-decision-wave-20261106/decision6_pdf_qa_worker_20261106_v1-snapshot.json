@@ -1,0 +1,17 @@
+{
+  "status": "waiting_or_scoring",
+  "pending": [
+    "decision6_gaussian_parallax_20261106_v1",
+    "decision6_gaussian_photxp_20261106_v1",
+    "decision6_mdn_parallax_20261106_v1",
+    "decision6_mdn_photxp_20261106_v1",
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+    "decision6_nsf_energy_parallax_20261106_v1",
+    "decision6_nsf_energy_photxp_20261106_v1"
+  ],
+  "results": {},
+  "training_performed": false,
+  "optimizer_created": false,
+  "scope": "Sample CRPS, interval widths and energy scores against sparse reference values; age/distance teachers and survey-scale dependence retained; no certified physical six-D coverage claim"
+}

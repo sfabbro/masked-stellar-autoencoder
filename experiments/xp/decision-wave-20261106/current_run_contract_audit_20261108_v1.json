@@ -1,0 +1,21 @@
+{
+  "run_id": "current_run_contract_audit_20261108_v1",
+  "utc": "2026-11-08T21:01:15.688703+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/current_run_contract_audit_20261108_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/current_run_contract_audit_20261108_v1",
+  "status": "accepted",
+  "session_ids": [
+    "xz4cgp15"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/audit_current_run_contract.py', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/current_run_contract_audit_20261108_v1'];runpy.run_path('scripts/audit_current_run_contract.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/audit_current_run_contract.py": "d99ab3bdfeb07cbe522a5c4dfc79647fbaf62558164d6aa498e995b49ea4efc1",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "85286ffcb4435ca8503877ef105ca63fc9bf052ee5b73691f8486262d47901ea"
+}

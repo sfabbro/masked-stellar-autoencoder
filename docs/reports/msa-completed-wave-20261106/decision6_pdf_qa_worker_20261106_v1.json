@@ -1,0 +1,473 @@
+{
+  "status": "six_target_pdf_qa_complete",
+  "pending": [],
+  "results": {
+    "decision6_gaussian_photxp_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 47.47207177181007,
+          "mean_standardized_crps": 0.06737291619855985,
+          "coverage90": 0.8037417461482025,
+          "median_width90": 163.27377670914575
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.08650755918791028,
+          "mean_standardized_crps": 0.08127948119212526,
+          "coverage90": 0.8533081285444234,
+          "median_width90": 0.36425327713690914
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.05439312364587183,
+          "mean_standardized_crps": 0.1683923549948265,
+          "coverage90": 0.8092443140132062,
+          "median_width90": 0.18237256609258512
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.04478530512012684,
+          "mean_standardized_crps": 0.30106072075884693,
+          "coverage90": 0.9238820171265462,
+          "median_width90": 0.2660330586004649
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.7326169952609852,
+          "mean_standardized_crps": 0.23143961363646576,
+          "coverage90": 0.90625,
+          "median_width90": 4.325087066034412
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.06035587666880594,
+          "mean_standardized_crps": 0.1765470186954713,
+          "coverage90": 0.9185433636799233,
+          "median_width90": 0.3029772135800781
+        }
+      ],
+      "mean_masked_standardized_energy": 0.2919719354509604,
+      "selected_checkpoint_sha256": "7b91ff212ee310206551081d233bdde5d43ed8e3e2b31ea939225aac2d3af9ac",
+      "scores_sha256": "0ba0cdc88d535d8533b9673cc8edcf4dc9be6d4a07a02bc8fa2928f1942f7003",
+      "complete_six_references": 10
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 48.15154693971955,
+          "mean_standardized_crps": 0.06833723525686032,
+          "coverage90": 0.838958180484226,
+          "median_width90": 202.796426860642
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.08861277142197205,
+          "mean_standardized_crps": 0.08325746507920007,
+          "coverage90": 0.8684310018903592,
+          "median_width90": 0.385543755285894
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.05517349641107079,
+          "mean_standardized_crps": 0.17080826345710232,
+          "coverage90": 0.8044754218635363,
+          "median_width90": 0.19322174154460764
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.04467520981544167,
+          "mean_standardized_crps": 0.30032062595114645,
+          "coverage90": 0.8939105613701237,
+          "median_width90": 0.24721235333811492
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.711639461054402,
+          "mean_standardized_crps": 0.22393991311200312,
+          "coverage90": 0.90771484375,
+          "median_width90": 4.1383811414830225
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.059140802149998395,
+          "mean_standardized_crps": 0.17183689696562857,
+          "coverage90": 0.8993770963104936,
+          "median_width90": 0.27576564255767455
+        }
+      ],
+      "mean_masked_standardized_energy": 0.29049858005346574,
+      "selected_checkpoint_sha256": "2b87eda7fb672659d05e11db2923e272d76ae5b45c597da9c76c006248fd2fdd",
+      "scores_sha256": "9c3fa7fee6335eaa81ec772218decad30a07aed0143c43bf36ec405804f2ee7e",
+      "complete_six_references": 10
+    },
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 50.61307498227078,
+          "mean_standardized_crps": 0.07183066447411406,
+          "coverage90": 0.8195157740278797,
+          "median_width90": 191.9201287988908
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.057179506976127344,
+          "mean_standardized_crps": 0.05372386766508891,
+          "coverage90": 0.8982986767485822,
+          "median_width90": 0.26671827032976214
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.05370222865255485,
+          "mean_standardized_crps": 0.16625345531081073,
+          "coverage90": 0.8239178283198826,
+          "median_width90": 0.18918142695098134
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.0448223376073181,
+          "mean_standardized_crps": 0.3013096646312933,
+          "coverage90": 0.9210275927687916,
+          "median_width90": 0.25192400444353413
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.7043892574142798,
+          "mean_standardized_crps": 0.2245766327149803,
+          "coverage90": 0.9130859375,
+          "median_width90": 4.004498011389222
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.052700896437677495,
+          "mean_standardized_crps": 0.15301389523437178,
+          "coverage90": 0.906085289889794,
+          "median_width90": 0.23382617140212292
+        }
+      ],
+      "mean_masked_standardized_energy": 0.2822887062640115,
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "scores_sha256": "78aaf30289d3a705f8e114120d52f85b488b47e7a8d4bc4b03b498b7caca4f01",
+      "complete_six_references": 10
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 46.39912977926819,
+          "mean_standardized_crps": 0.06585018444804941,
+          "coverage90": 0.8088774761555393,
+          "median_width90": 170.08481836378905
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.056052806814760846,
+          "mean_standardized_crps": 0.05266525954535191,
+          "coverage90": 0.8555765595463138,
+          "median_width90": 0.23259663675587516
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.05189296483004714,
+          "mean_standardized_crps": 0.16065226575856975,
+          "coverage90": 0.8290535583272194,
+          "median_width90": 0.18548183530493678
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.04482510490183765,
+          "mean_standardized_crps": 0.3013282672439219,
+          "coverage90": 0.9100856327307326,
+          "median_width90": 0.2566971429435417
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.6848921360778374,
+          "mean_standardized_crps": 0.21737768071190697,
+          "coverage90": 0.916015625,
+          "median_width90": 3.956043713297799
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.058268220746797356,
+          "mean_standardized_crps": 0.172466948966354,
+          "coverage90": 0.9094393866794441,
+          "median_width90": 0.2460476697645555
+        }
+      ],
+      "mean_masked_standardized_energy": 0.28050544235027086,
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "scores_sha256": "b17e97cb74a5c68a6c3aacc631f752eec65a11d069ce45baac954de5c7902519",
+      "complete_six_references": 10
+    },
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 53.26436974127644,
+          "mean_standardized_crps": 0.07559341282170658,
+          "coverage90": 0.6632428466617755,
+          "median_width90": 146.910551077563
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.06922618625953939,
+          "mean_standardized_crps": 0.06504250676941006,
+          "coverage90": 0.6589792060491494,
+          "median_width90": 0.17582035992474943
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.052152533930922805,
+          "mean_standardized_crps": 0.1614558499113187,
+          "coverage90": 0.7483492296404989,
+          "median_width90": 0.15529163554360337
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.044716115884967565,
+          "mean_standardized_crps": 0.3005956092462662,
+          "coverage90": 0.8981921979067554,
+          "median_width90": 0.25164404456830775
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.6740097489159349,
+          "mean_standardized_crps": 0.21413325619204607,
+          "coverage90": 0.873046875,
+          "median_width90": 3.5459293392895908
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.05269566044599475,
+          "mean_standardized_crps": 0.1519947982485898,
+          "coverage90": 0.8548155246765692,
+          "median_width90": 0.1931444926751914
+        }
+      ],
+      "mean_masked_standardized_energy": 0.27934501904612935,
+      "selected_checkpoint_sha256": "72a18206516ed6970ab0812c99df7e9206b75e6a0908c49e4960efebbe10f12c",
+      "scores_sha256": "7b4fcabdc258cab3562c31a283bad7ee8e162bc4621c0bf76811c597bc62a2c4",
+      "complete_six_references": 10
+    },
+    "decision6_nsf_energy_parallax_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 48.86076299146238,
+          "mean_standardized_crps": 0.06934376292328323,
+          "coverage90": 0.6896551724137931,
+          "median_width90": 138.16426321636754
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.05835061941337244,
+          "mean_standardized_crps": 0.05482420400806859,
+          "coverage90": 0.6495274102079395,
+          "median_width90": 0.15222904173627327
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.052249796987726985,
+          "mean_standardized_crps": 0.16175696067847903,
+          "coverage90": 0.6852531181217901,
+          "median_width90": 0.1370480249866099
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.045034901755654895,
+          "mean_standardized_crps": 0.3027385868086483,
+          "coverage90": 0.8777354900095148,
+          "median_width90": 0.24085957116140433
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.6735377277018847,
+          "mean_standardized_crps": 0.214372192881307,
+          "coverage90": 0.86669921875,
+          "median_width90": 3.3407824694055286
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.052823612540753635,
+          "mean_standardized_crps": 0.15272966772795044,
+          "coverage90": 0.7977958792525156,
+          "median_width90": 0.2000587869331264
+        }
+      ],
+      "mean_masked_standardized_energy": 0.2765952591061931,
+      "selected_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "scores_sha256": "9b6f67faae02808ecb2c3cbcf1eea4762dc2c153915bf4ec44de1e2d5e24dc66",
+      "complete_six_references": 10
+    },
+    "decision6_nsf_energy_photxp_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 50.73314520063358,
+          "mean_standardized_crps": 0.072001069524026,
+          "coverage90": 0.6988261188554659,
+          "median_width90": 147.41002252725593
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.08742891223964797,
+          "mean_standardized_crps": 0.08214515233974545,
+          "coverage90": 0.7368620037807183,
+          "median_width90": 0.2733656009557861
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.0534201242386638,
+          "mean_standardized_crps": 0.16538010545653822,
+          "coverage90": 0.7050623624358033,
+          "median_width90": 0.14903325381357396
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.044080145140048106,
+          "mean_standardized_crps": 0.29632041651656577,
+          "coverage90": 0.873453853472883,
+          "median_width90": 0.23330283784197314
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.7234666521094903,
+          "mean_standardized_crps": 0.22681992508013538,
+          "coverage90": 0.84228515625,
+          "median_width90": 3.4731453334502387
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.05961822727109606,
+          "mean_standardized_crps": 0.17783983299560546,
+          "coverage90": 0.8222328701485385,
+          "median_width90": 0.24477095722888864
+        }
+      ],
+      "mean_masked_standardized_energy": 0.28880145295427195,
+      "selected_checkpoint_sha256": "4311d7f0527e8de79571253ed962e8d9f7121476ac48e2309e584ffb3e49366e",
+      "scores_sha256": "411cad38ecf9306a7fc75332c5cdd6f77afd0fc18c553a97236013491a669e5e",
+      "complete_six_references": 10
+    },
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1": {
+      "status": "pdf_qa_complete",
+      "rows": 6147,
+      "per_target": [
+        {
+          "target": "teff",
+          "n": 2726,
+          "mean_crps": 48.274843374382,
+          "mean_standardized_crps": 0.0685122189904547,
+          "coverage90": 0.7325752017608217,
+          "median_width90": 139.76703681232266
+        },
+        {
+          "target": "logg",
+          "n": 2645,
+          "mean_crps": 0.0886799394049286,
+          "mean_standardized_crps": 0.08332057377003217,
+          "coverage90": 0.7001890359168242,
+          "median_width90": 0.28082338600438606
+        },
+        {
+          "target": "fe_h",
+          "n": 2726,
+          "mean_crps": 0.05319697843336286,
+          "mean_standardized_crps": 0.16468928196372906,
+          "coverage90": 0.731474688187821,
+          "median_width90": 0.1499697960887318
+        },
+        {
+          "target": "alpha",
+          "n": 2102,
+          "mean_crps": 0.044184077148356656,
+          "mean_standardized_crps": 0.2970190797331577,
+          "coverage90": 0.8739295908658421,
+          "median_width90": 0.22900632285361822
+        },
+        {
+          "target": "age",
+          "n": 2048,
+          "mean_crps": 0.7072753096164395,
+          "mean_standardized_crps": 0.2228929126464452,
+          "coverage90": 0.85400390625,
+          "median_width90": 3.5369631257622745
+        },
+        {
+          "target": "distance",
+          "n": 2087,
+          "mean_crps": 0.05840116936512263,
+          "mean_standardized_crps": 0.16915027071459252,
+          "coverage90": 0.8658361284139914,
+          "median_width90": 0.22945502668616435
+        }
+      ],
+      "mean_masked_standardized_energy": 0.28569955075078257,
+      "selected_checkpoint_sha256": "a088af4c74c5681f5fde106ce573510b0e16463ef895cdab18c2eb39ab55a208",
+      "scores_sha256": "ae162b85ed683a90203316e7ab3042285372c498f5d0aa7c993307d048796936",
+      "complete_six_references": 10
+    }
+  },
+  "training_performed": false,
+  "optimizer_created": false,
+  "scope": "Sample CRPS, interval widths and energy scores against sparse reference values; age/distance teachers and survey-scale dependence retained; no certified physical six-D coverage claim"
+}

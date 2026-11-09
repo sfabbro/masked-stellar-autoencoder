@@ -1,0 +1,27 @@
+{
+  "run_id": "six_nsf_inference_benchmark_20261107_v1",
+  "attempt": 3,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_nsf_inference_benchmark_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/six_nsf_inference_benchmark_20261107_v1-attempt-3",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/benchmark_six_nsf_inference.py --config configs/expanded-six-nsf-fullfit-20261107.yaml --output \"$experiment_output\" --reuse-failed-output",
+  "utc": "2026-11-07T00:01:35.215927+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "go29ao1e"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {
+    "scripts/benchmark_six_nsf_inference.py": "6cca6dd743269ff1144dcc6e2b5c70228b58954d7a2b2acb36d29c0147a60580",
+    "configs/expanded-six-nsf-fullfit-20261107.yaml": "b54b349e46e0bcd7a2096bce8ab51afbd727e4a586f7b208313d485663836aba",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd"
+  },
+  "payload_sha256": "1806552cf5434d0806f846d5da21190ed44786e751a30180247d17b11d0449df"
+}

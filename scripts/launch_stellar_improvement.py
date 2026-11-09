@@ -105,6 +105,30 @@ def bind_prediction_policy(
         )
 
         return bind_gaia_cache_census_policy(plan, env)
+    if plan["task"] == "multisurvey-joint-fullfit":
+        from multisurvey_joint_launch_policy import bind_joint_policy
+
+        return bind_joint_policy(plan, env)
+    if plan["task"] == "multisurvey-flexible-rescore":
+        from multisurvey_flexible_launch_policy import bind_flexible_rescore_policy
+
+        return bind_flexible_rescore_policy(plan, env)
+    if plan["task"] == "multisurvey-flexible-refinement":
+        from multisurvey_flexible_launch_policy import bind_flexible_refinement_policy
+
+        return bind_flexible_refinement_policy(plan, env)
+    if plan["task"] == "multisurvey-flexible-calibration":
+        from multisurvey_flexible_launch_policy import bind_flexible_calibration_policy
+
+        return bind_flexible_calibration_policy(plan, env)
+    if plan["task"] == "multisurvey-flexible-suite":
+        from multisurvey_flexible_launch_policy import bind_flexible_policy
+
+        return bind_flexible_policy(plan, env)
+    if plan["task"] == "multisurvey-distribution-pilot":
+        from multisurvey_distribution_launch_policy import bind_distribution_policy
+
+        return bind_distribution_policy(plan, env)
     if plan["task"] == "multisurvey-gaia-gspspec-overlay":
         from multisurvey_gaia_overlay_launch_policy import bind_gaia_overlay_policy
 
@@ -690,6 +714,12 @@ def main():
                 "multisurvey-desi-overlay",
                 "multisurvey-consensus-preflight",
                 "multisurvey-consensus-pilot",
+                "multisurvey-distribution-pilot",
+                "multisurvey-flexible-suite",
+                "multisurvey-flexible-calibration",
+                "multisurvey-flexible-refinement",
+                "multisurvey-flexible-rescore",
+                "multisurvey-joint-fullfit",
                 "multisurvey-fit-collation-census",
                 "multisurvey-lamost-dr12-network-probe",
                 "multisurvey-lamost-dr12-source",

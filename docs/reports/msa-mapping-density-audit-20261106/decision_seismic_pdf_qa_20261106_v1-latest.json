@@ -1,0 +1,69 @@
+{
+  "status": "waiting_or_scoring",
+  "pending": [
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+    "decision6_nsf_energy_parallax_20261106_v1",
+    "decision6_nsf_energy_photxp_20261106_v1"
+  ],
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 734,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "median_bias": 0.03523953254980028,
+      "mae": 0.07676413237712706,
+      "intrinsic_crps": 0.05521422362777982,
+      "convolved_crps": 0.05520503142275672,
+      "intrinsic_coverage90": 0.9005449591280654,
+      "convolved_coverage90": 0.9032697547683923,
+      "artifact_sha256": "6a4a51b1478d514dec05429ecf8b47135031c0c3871d9a9b025dfc4b032c1079"
+    },
+    "decision6_gaussian_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 734,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "7b91ff212ee310206551081d233bdde5d43ed8e3e2b31ea939225aac2d3af9ac",
+      "median_bias": 0.04287386958113282,
+      "mae": 0.09632729540162413,
+      "intrinsic_crps": 0.06855391456047849,
+      "convolved_crps": 0.0685396995544457,
+      "intrinsic_coverage90": 0.896457765667575,
+      "convolved_coverage90": 0.8978201634877384,
+      "artifact_sha256": "18997b8bbdd483f392ade5aedc7acb9b73e3672fa4d7b2a61ee1caba7b3a923c"
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 734,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "median_bias": -0.02939346495048123,
+      "mae": 0.07308599010361162,
+      "intrinsic_crps": 0.05133594133647174,
+      "convolved_crps": 0.05130601207149504,
+      "intrinsic_coverage90": 0.8950953678474114,
+      "convolved_coverage90": 0.9019073569482289,
+      "artifact_sha256": "033a272601304b8ca536055c1ac377f978021f8a092facba6021b1d6355f7163"
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 734,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "2b87eda7fb672659d05e11db2923e272d76ae5b45c597da9c76c006248fd2fdd",
+      "median_bias": 0.04731544524812248,
+      "mae": 0.09988463998421782,
+      "intrinsic_crps": 0.07219507676161972,
+      "convolved_crps": 0.07218530269967396,
+      "intrinsic_coverage90": 0.9577656675749319,
+      "convolved_coverage90": 0.9577656675749319,
+      "artifact_sha256": "224f2c7ee15ae43f2703d92478afd2b6de4cbca11440bd94614cd226c2b01149"
+    }
+  },
+  "stars": 734,
+  "selected_ids_sha256": "a33df2872e85018de046ea6ddaae5b73d369631e3d9df720b394de011bd6e6e2",
+  "reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf",
+  "training_performed": false,
+  "optimizer_created": false,
+  "scope": "All eligible exact-ID APOKASC Gold/Silver devtest stars in current prepared source, no hashed panel cap. Fine-tuning holdout; historical teacher/parent and seismic calibration dependencies remain. PDF QA uses whole six-vector draws, scoring the logg marginal only."
+}

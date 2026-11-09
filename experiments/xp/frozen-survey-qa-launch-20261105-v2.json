@@ -1,0 +1,21 @@
+{
+  "name": "msa-frozen-survey-qa-20261105-v2",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/frozen_survey_qa_20261105_v2",
+  "utc": "2026-11-05T15:30:07.708784+00:00",
+  "status": "completed",
+  "session_ids": [
+    "dwtji68c"
+  ],
+  "checkpoint_sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+  "training_performed": false,
+  "source_sha256": {
+    "scripts/replay_frozen_survey_qa.py": "73eb921a10f33e79130817aec3a9ea2edf6b57521d68f0e1bc6b351120d08776",
+    "src/masked_stellar_autoencoder/training/export_mixture_diagnostics.py": "e52015183322dfd659705ffe68eaa44c79bb20e8d3274c87ecc5b1e89ad6edff"
+  },
+  "resources": {
+    "cores": 4,
+    "ram": 64,
+    "gpu": 1
+  },
+  "completion_evidence": "docs/reports/msa-survey-expansion-20261105/frozen-mapped-manifest.json"
+}

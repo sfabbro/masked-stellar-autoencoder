@@ -1,0 +1,404 @@
+library_revision: 82ca1996cc4f3ca0be3e730d38a99db482a79378
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+model_config: configs/pretrain.canfar.yaml
+source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
+input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4/manifest.json
+joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3/manifest.json
+joint_preflight_run_id: remediation_joint6_preflight_v3
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
+reconstruction_training_rows: 150000000
+reconstruction_batch: 256
+updates: 6000
+batch_size: 288
+seed: 20261106
+head_width: 128
+mixture_components: 4
+particles: 256
+head_lr: 0.001
+encoder_lr: 1.25e-06
+tune_every: 1000
+tune_per_label: 512
+evaluation_per_label: 2048
+evaluation_batch: 4
+evaluation_draws: 512
+corner_draws: 2048
+integration_gate_rows: 128
+integration_gate_particles: 256
+integration_gate:
+  median_relative_ess_min: 0.1
+  minimum_relative_ess_min: 0.01
+  gap_p95_max: 0.1
+scope: 'NSF confirmation on historical pooled six-target source: paired objective/seed/floor/native-error
+  sensitivities, fixed parallax and MAE reconstruction. Not expanded-survey mapped
+  final training.'
+corner_source_ids:
+- 4185355646116022528
+- 4696862405388526080
+- 656977993104090624
+- 4077588074752670208
+- 3616249836305383296
+- 2609559667340662912
+- 615943806835727872
+- 2438481739732690176
+- 78289217922968576
+- 4926812820427520
+arms:
+- run_id: nsfconfirm_energy_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 0.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_energy_s2_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 0.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261107
+- run_id: nsfconfirm_hybrid_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_s2_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261107
+- run_id: nsfconfirm_crps_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 0.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_floor003_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.03
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_corrpos_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.3
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_corrneg_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: -0.3
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_studentt_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: true
+    seed: 20261106
+integration_chunk_rows: 8
+legacy_preflight_library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+energy_training_draws: 32
+energy_micro_batch_size: 16
+energy_sample_seed: 2026102801
+energy_noise_seed: 2026102802
+unknown_error_floor_normalized:
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+energy_noise_assumption: independent_gaussian
+energy_floor_scope: illustrative_not_measured
+evaluation_draw_chunk: 128
+confirmation_energy_weight: 1.0
+confirmation_crps_weight: 0.0
+confirmation_noise_correlation: 0.0
+confirmation_native_student_t: false
+mapping_parent: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_parallax_20261106_v1/selected-checkpoint.pth
+mapping_parent_sha256: c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1
+mapping_native_sha256:
+  fit: ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff
+  tune: 98ce312df18022146c588d9b94c68bd5e2ea6319376a9eeed26494d356ac0ec5
+  cal: 57ed79ae77aec0b832fa328b6baad9cb72c738ad2d37b3fadf7cd50b9745f630
+  devtest: b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9
+benchmark_fit_exclusion_ids:
+- 19316224572460416
+- 60248877811546112
+- 95652018353917056
+- 96331172942614528
+- 140457735662620800
+- 188771135583573504
+- 198558953732674816
+- 378821548641870336
+- 399402894487590144
+- 411220548543503488
+- 411413822074322432
+- 421805237748755968
+- 427322415301550208
+- 436648129327098496
+- 438829629114680704
+- 509342237530006016
+- 512167948043650816
+- 522534933950730240
+- 583588100209595776
+- 615943806835727872
+- 624684408880100992
+- 641662895638787584
+- 643819484617141504
+- 683184784030475520
+- 702343774145932544
+- 704967037090946688
+- 746545172372256384
+- 757565233820538752
+- 779106556394253824
+- 798068905726303232
+- 823773494718931968
+- 841920040781646080
+- 853819947756949120
+- 1018776176872261248
+- 1022456139210632064
+- 1193030490492925824
+- 1243381938292692096
+- 1244946371540479616
+- 1264797229346287744
+- 1265976524286377856
+- 1278391075717325312
+- 1284537517514584704
+- 1297158777130486144
+- 1333760419707327744
+- 1419240920415509376
+- 1460229442589223424
+- 1534011998572555776
+- 1603662211901473408
+- 1604859511344724864
+- 1637110042813188608
+- 1651268660203160448
+- 1676282377934772608
+- 1696798367260229376
+- 1787990525934491776
+- 1821708351374312064
+- 1823067317695766784
+- 1823991938314881152
+- 1872046574983497216
+- 1872046609345556480
+- 1876331990259358976
+- 1876510592179455744
+- 1891598193816300544
+- 1907131544341497600
+- 1982252790090609152
+- 2003961238426647680
+- 2009481748875806976
+- 2029433521248546304
+- 2075067858006232320
+- 2076894387328378240
+- 2103877089862772352
+- 2117279002732678656
+- 2126261703496964096
+- 2127789646700855040
+- 2135110401277424384
+- 2135550755683405952
+- 2135550755683407232
+- 2135864391374790784
+- 2149564787289902848
+- 2156134953382133632
+- 2161275788716592256
+- 2190891581091291520
+- 2195115561168483712
+- 2237040042612803328
+- 2256800156349110528
+- 2261614264931057664
+- 2268048503896398720
+- 2278918344568877056
+- 2348830516542653824
+- 2429415922764859392
+- 2452378776434477184
+- 2462426800883134336
+- 2472524234636869248
+- 2474456351444863744
+- 2494336311948357504
+- 2498460442625153536
+- 2512824943566639232
+- 2552925644460225152
+- 2630155547353593216
+- 2658974606111711488
+- 2661005953843811456
+- 2719475542667772416
+- 2756363608023588864
+- 2802397960855105920
+- 2835207319109249920
+- 2853900872207888768
+- 2858181236614036864
+- 2860924621205256704
+- 2869759781250083200
+- 2981103853463479040
+- 3021524580959406592
+- 3022721124487294848
+- 3023711269067191296
+- 3098404220680931968
+- 3113219383954556416
+- 3195919528989223040
+- 3250477261599098752
+- 3250489115709122560
+- 3256786534197166208
+- 3263836568394170880
+- 3265335443260522112
+- 3269362645115584640
+- 3276860524145383040
+- 3288921720025503360
+- 3342942066329410688
+- 3352485999058854912
+- 3399063235755057792
+- 3478394889483944320
+- 3701693091058501504
+- 3723554268436602240
+- 3736865265441207424
+- 3740176925743994752
+- 3793247534517512064
+- 3796442680948579328
+- 3827873938815011200
+- 3830897080395058048
+- 3879879704937353984
+- 3920615854833203328
+- 4025850731201819392
+- 4034171629042489088
+- 4254220979971917056
+- 4269932382607207040
+- 4281201414717499520
+- 4296708789290712064
+- 4315804351350378496
+- 4345775217221821312
+- 4358031335898505472
+- 4421455530273900032
+- 4423865487962417024
+- 4444057469252265984
+- 4473334474604992384
+- 4530744134231683840
+- 4582680493669880704
+- 4594497769766809216
+- 4609802834185436928
+- 4643560452496180992
+- 4683897617110115200
+- 4697508196671120000
+- 4767368897757788288
+- 4792305954618472960
+- 4808960875719316608
+- 4822128906148720128
+- 4887842970929434880
+- 4929469381645492864
+- 4942522955488925696
+- 4951967794731342464
+- 4979682840735231616
+- 4984231417260290048
+- 5000702410680381824
+- 5010675118584277248
+- 5020586872310485632
+- 5071514326764428544
+- 5127513656557144576
+- 5164120762333028736
+- 5164707970261890560
+- 5168359139139252352
+- 5179627995156977408
+- 5278762854038923008
+- 5358179685572496384
+- 5378451759396269696
+- 5492531416535100672
+- 5536661140353547008
+- 5716535848180090624
+- 5726982995343100928
+- 5922444483103229952
+- 5945941905576552064
+- 6232511606838403968
+- 6268770373590148224
+- 6412595290592307840
+- 6427311635257037056
+- 6498723334930624512
+- 6828451375858909568
+- 6904703228801028864
+mapping_updates: 4200
+mapping_tune_every: 700
+mapping_arms:
+- run_id: sixmap_equalweight_affine_20261107_v1
+  gauge: equal_weight
+  map_kind: affine
+  exclude_desi_logg: false
+- run_id: sixmap_apogee_affine_20261107_v1
+  gauge: apogee
+  map_kind: affine
+  exclude_desi_logg: false
+- run_id: sixmap_seismic_affine_20261107_v1
+  gauge: seismic
+  map_kind: affine
+  exclude_desi_logg: false
+- run_id: sixmap_seismic_nodesig_20261107_v1
+  gauge: seismic
+  map_kind: affine
+  exclude_desi_logg: true
+- run_id: sixmap_seismic_offset_20261107_v1
+  gauge: seismic
+  map_kind: offset
+  exclude_desi_logg: false
+- run_id: sixmap_seismic_spline_20261107_v1
+  gauge: seismic
+  map_kind: spline
+  exclude_desi_logg: false

@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "training_source_ready": false,
+  "training_performed": false,
+  "external_payload": "Public Gaia DR3 source_id values only; no positions or survey labels",
+  "parent_source_sha256": "eace70ffcdbfc7a82760348a230cda8e935629c7d412ed17288b1e0b5c6d36bf",
+  "requested_stars": 34206,
+  "completed_batches": 35,
+  "usable_recovered": 17897,
+  "query_batch_size": 512,
+  "query_workers": 4,
+  "error": "<HTTPError 503: '503'>"
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "representative_corner_analysis_20261106_v1",
+  "utc": "2026-11-06T06:36:05.015216+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_corner_analysis_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/representative_corner_analysis_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "uxeaq7cr"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,'scripts');sys.argv=['scripts/run_representative_corner_analysis.py','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_corner_analysis_20261106_v1'];runpy.run_path('scripts/run_representative_corner_analysis.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_representative_corner_analysis.py": "e28d320f0efc2b8b0253abfd1dee8d5fa03761ae642dc523512907d101e39cc8",
+    "scripts/audit_corner_bimodality.py": "7c52c0f5b33f35025358ff40d59e67dc4daecc7885aa50223dbfcc36fd2d400f",
+    "scripts/plot_decision_six_corners.py": "e0d81791ff46247b7b8563b3a64a035e077e7542d3766dbb041b6ac451b61568",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "70d1ac49b20b0aae09c646869f627e59b34236d576a6742d9a82f9cc4d1f343c"
+}

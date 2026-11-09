@@ -1,0 +1,149 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "encoder_executed": false,
+  "gauge_changed": false,
+  "calibration_source_sha256": "3c01ea7d1765ea52d9a501bb6e572fb8ed1e6a44b6b8871485d3aabbd369fe28",
+  "library_source_revision": "2777b0de88121768434725ef227893cd35595d2a",
+  "results": {
+    "APOGEE": {
+      "standardized_jacobian_smallest_singular": {
+        "min": 0.6327600597565298,
+        "p05": 0.8180035351645598,
+        "median": 0.9422952222946814,
+        "p95": 0.9518167566210993,
+        "max": 0.9950694881959804
+      },
+      "jacobian_nonpositive_determinant_fraction": 0.0,
+      "nonpositive_logg_own_derivative_fraction": 0.0,
+      "exact_minus_affine_logg_mean_abs": {
+        "min": 4.432520625883077e-06,
+        "p05": 0.000177260427965779,
+        "median": 0.0008012798303661047,
+        "p95": 0.00699954858477902,
+        "max": 0.024884932601429897
+      },
+      "exact_minus_affine_logg_draw_abs": {
+        "min": 2.2546693401181983e-09,
+        "p05": 2.616318893566838e-05,
+        "median": 0.0004520001425720732,
+        "p95": 0.008142939603077048,
+        "max": 0.6678410761965069
+      },
+      "exact_logg_mean_bias": -0.024212411118545774,
+      "affine_logg_mean_bias": -0.025392850515436383
+    },
+    "DESI": {
+      "standardized_jacobian_smallest_singular": {
+        "min": 0.42031831037221523,
+        "p05": 0.7916796076241389,
+        "median": 0.8367433498357384,
+        "p95": 1.0266312260717034,
+        "max": 1.08479195658674
+      },
+      "jacobian_nonpositive_determinant_fraction": 0.0,
+      "nonpositive_logg_own_derivative_fraction": 0.0,
+      "exact_minus_affine_logg_mean_abs": {
+        "min": 2.2144083288151532e-06,
+        "p05": 0.00011409769436095388,
+        "median": 0.0012356891523640958,
+        "p95": 0.016395571709078766,
+        "max": 0.05936790825676296
+      },
+      "exact_minus_affine_logg_draw_abs": {
+        "min": 4.182001411834335e-10,
+        "p05": 4.7689626927804873e-05,
+        "median": 0.0007742910845693896,
+        "p95": 0.01655647465178095,
+        "max": 0.725788425806678
+      },
+      "exact_logg_mean_bias": 0.6794292984005785,
+      "affine_logg_mean_bias": 0.6828012420390512
+    },
+    "GALAH": {
+      "standardized_jacobian_smallest_singular": {
+        "min": 0.8057337285247582,
+        "p05": 0.8163509587867447,
+        "median": 0.8447089661394342,
+        "p95": 0.9105612708488848,
+        "max": 1.0066032299902468
+      },
+      "jacobian_nonpositive_determinant_fraction": 0.0,
+      "nonpositive_logg_own_derivative_fraction": 0.0,
+      "exact_minus_affine_logg_mean_abs": {
+        "min": 2.536833974909128e-07,
+        "p05": 6.009785036976622e-05,
+        "median": 0.0005844763743007784,
+        "p95": 0.008750838186684004,
+        "max": 0.04091318942220902
+      },
+      "exact_minus_affine_logg_draw_abs": {
+        "min": 1.2970802210077181e-09,
+        "p05": 2.115543068681447e-05,
+        "median": 0.0004200643225336087,
+        "p95": 0.009271805778095554,
+        "max": 0.40402053914847424
+      },
+      "exact_logg_mean_bias": 0.040821631354906796,
+      "affine_logg_mean_bias": 0.039447012736143705
+    }
+  },
+  "export_replay_max_abs_by_target": [
+    0.00030050887744437205,
+    9.094676934884305e-07,
+    3.2085002366066817e-07
+  ],
+  "export_replay_tolerance_by_target": [
+    0.02,
+    2e-05,
+    2e-05
+  ],
+  "stars": 734,
+  "spline_weights": [
+    [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ]
+  ],
+  "max_common_vs_average_mapped_abs": [
+    0.0002895555435316055,
+    6.262383331900878e-07,
+    3.0377951687476923e-07
+  ],
+  "reference_vs_mixture_mean_abs": [
+    {
+      "min": 0.005969740373075183,
+      "p05": 6.350465385035977,
+      "median": 29.326546273312488,
+      "p95": 80.06141471171256,
+      "max": 162.74370938196353
+    },
+    {
+      "min": 0.00010399528307170058,
+      "p05": 0.012506463595171958,
+      "median": 0.08137188033342024,
+      "p95": 0.2846794956669646,
+      "max": 0.5513019113470565
+    },
+    {
+      "min": 3.1773623479447455e-05,
+      "p05": 0.005207912811980858,
+      "median": 0.0419618454170423,
+      "p95": 0.18172663021700342,
+      "max": 0.33550711373016195
+    }
+  ],
+  "artifact_sha256": "6adfaefca8e8ebac877b1deaac52b91ee641724ebb240d15b956b03a753f3cf7",
+  "scope": "Exact spline evaluation is a diagnostic alternative to the trained local-affine observation model, not a corrected release or an exact nonlinear noisy likelihood. Seismic devtest support only; map geometry is not global invertibility proof."
+}

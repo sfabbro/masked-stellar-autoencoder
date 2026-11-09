@@ -1,0 +1,82 @@
+{
+  "status": "scanning_raw_input",
+  "training_performed": false,
+  "model_loaded": false,
+  "reference_truth_claim": false,
+  "andrae_unique_stars": 174922161,
+  "raw_rows_scanned": 23482030,
+  "raw_shards": {
+    "sslset0_part0": {
+      "index": 0,
+      "rows": 2000000,
+      "andrae_matches": 1929659
+    },
+    "sslset0_part1": {
+      "index": 1,
+      "rows": 2000000,
+      "andrae_matches": 1875663
+    },
+    "sslset0_part2": {
+      "index": 2,
+      "rows": 2000000,
+      "andrae_matches": 1833938
+    },
+    "sslset0_part3": {
+      "index": 3,
+      "rows": 661449,
+      "andrae_matches": 640157
+    },
+    "sslset10_part0": {
+      "index": 4,
+      "rows": 2000000,
+      "andrae_matches": 1904177
+    },
+    "sslset10_part1": {
+      "index": 5,
+      "rows": 2000000,
+      "andrae_matches": 1852546
+    },
+    "sslset10_part2": {
+      "index": 6,
+      "rows": 2000000,
+      "andrae_matches": 1895436
+    },
+    "sslset10_part3": {
+      "index": 7,
+      "rows": 155280,
+      "andrae_matches": 147330
+    },
+    "sslset11_part0": {
+      "index": 8,
+      "rows": 2000000,
+      "andrae_matches": 1938236
+    },
+    "sslset11_part1": {
+      "index": 9,
+      "rows": 2000000,
+      "andrae_matches": 1896492
+    },
+    "sslset11_part2": {
+      "index": 10,
+      "rows": 2000000,
+      "andrae_matches": 1896245
+    },
+    "sslset11_part3": {
+      "index": 11,
+      "rows": 665301,
+      "andrae_matches": 627919
+    },
+    "sslset12_part0": {
+      "index": 12,
+      "rows": 2000000,
+      "andrae_matches": 1934485
+    },
+    "sslset12_part1": {
+      "index": 13,
+      "rows": 2000000,
+      "andrae_matches": 1690586
+    }
+  },
+  "raw_rows_total": 218131884,
+  "raw_matches_so_far": 22062869
+}

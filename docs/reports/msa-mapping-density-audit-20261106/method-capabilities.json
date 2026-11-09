@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "synthetic_only": true,
+  "training_updates": 0,
+  "inference_of_stellar_models": false,
+  "scope": "API and finite-shape proof only, not density fitting, coverage, scientific performance or physical calibration",
+  "methods": {
+    "NSF": {
+      "source_file": "nflows.py",
+      "source_sha256": "c64242128ad62a151b0826fe5206f53b4bf6036f4ac0a633dd5d917c688ad1e8",
+      "callable_log_prob": true,
+      "callable_sample": true,
+      "callable_contains": false,
+      "callable_evaluate_frontier": false
+    },
+    "ContrastiveFlowLoss": {
+      "source_file": "nflows.py",
+      "source_sha256": "c64242128ad62a151b0826fe5206f53b4bf6036f4ac0a633dd5d917c688ad1e8",
+      "callable_log_prob": true,
+      "callable_sample": true,
+      "callable_contains": false,
+      "callable_evaluate_frontier": false
+    },
+    "ContrastiveFlowConformal": {
+      "source_file": "conformal.py",
+      "source_sha256": "5563587e773e0d92e06312868f9103b685681fd670297c09d1236c81e10be3be",
+      "callable_log_prob": false,
+      "callable_sample": false,
+      "callable_contains": true,
+      "callable_evaluate_frontier": false
+    },
+    "SLSLoss": {
+      "source_file": "sls.py",
+      "source_sha256": "80364b31caa799ae1be85070321e425470db85e978f3507f0a2459140de93cbc",
+      "callable_log_prob": false,
+      "callable_sample": false,
+      "callable_contains": false,
+      "callable_evaluate_frontier": true
+    }
+  }
+}

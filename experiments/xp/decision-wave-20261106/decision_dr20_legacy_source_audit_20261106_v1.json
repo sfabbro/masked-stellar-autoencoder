@@ -1,0 +1,21 @@
+{
+  "run_id": "decision_dr20_legacy_source_audit_20261106_v1",
+  "utc": "2026-11-05T23:41:01.319012+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_dr20_legacy_source_audit_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "kdpbzkfs"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 64,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['audit','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1'];runpy.run_path('audit.py',run_name='__main__')",
+  "source_sha256": {
+    "audit.py": "995418d82eda9c67a376df4f99ff5036aadb65d102e49ff064879b0d4ec80874",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "2eab719fbf3ab14daca05814db90db78f1b8f88865343ce02b758ce0d6d25ccc"
+}

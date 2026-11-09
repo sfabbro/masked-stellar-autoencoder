@@ -1,0 +1,3554 @@
+{
+  "status": "native_source_audit_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "sources": {
+    "dr20_bossnet": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1/dr20_bossnet.fits.gz",
+      "sha256": "c525696af3b217f81bc7ebc51c21cd6a2e09f2d2459b92feb80c326d1dbc9883",
+      "bytes": 849231687,
+      "url": "https://data.sdss.org/sas/dr20/spectro/astra/0.8.1/summary/astraAllStarBossNet-0.8.1.fits.gz",
+      "publisher_sha1_verified": true,
+      "status": "native_source_schema_complete",
+      "schema": [
+        {
+          "hdu": "",
+          "rows": 1803883,
+          "columns": [
+            {
+              "name": "sdss_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_id",
+              "format": "18A",
+              "unit": null
+            },
+            {
+              "name": "gaia_dr2_source_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "gaia_dr3_source_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "tic_v8_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "healpix",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "lead",
+              "format": "26A",
+              "unit": null
+            },
+            {
+              "name": "version_id",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "catalogid",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid21",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid25",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid31",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "n_associated",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_neighborhood",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "crossmatch_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss5_target_flags",
+              "format": "71B",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_target1_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_target2_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target1_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target2_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target3_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_member_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_extra_target_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss5_dr19_apogee_flag",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "ra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "dec",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "l",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "b",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "pmra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_pmra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "pmde",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_pmde",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "g_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "bp_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rp_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "j_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_j_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "h_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_h_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "k_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_k_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ph_qual",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "bl_flg",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "cc_flg",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "w1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_w1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_flux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_dflux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_frac",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_w2_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_flux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_dflux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_frac",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1uflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w2uflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w1aflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w2aflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "mag4_5",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "d4_5m",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rms_f4_5",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "sqf_4_5",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "mf4_5",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "csf",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "zgr_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_e",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_teff_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_logg_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_fe_h_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_ln_prior",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_chi2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_quality_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "r_med_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_lo_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_hi_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_med_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_lo_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_hi_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "bailer_jones_flags",
+              "format": "5A",
+              "unit": null
+            },
+            {
+              "name": "ebv",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "ebv_zhang_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_zhang_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_sfd",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_sfd",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_rjce_glimpse",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_rjce_glimpse",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_rjce_allwise",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_rjce_allwise",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_bayestar_2019",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_bayestar_2019",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_edenhofer_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_edenhofer_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "c_star",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "b_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "b_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "v_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "v_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "r_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "i_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "i_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "u_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "g_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "g_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "r_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "i_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "i_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "z_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "z_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "y_ps1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "y_ps1_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_boss_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "boss_min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "boss_max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_apogee_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "apogee_min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "apogee_max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "created",
+              "format": "26A",
+              "unit": null
+            },
+            {
+              "name": "modified",
+              "format": "26A",
+              "unit": null
+            },
+            {
+              "name": "spectrum_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "source",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "release",
+              "format": "5A",
+              "unit": null
+            },
+            {
+              "name": "filetype",
+              "format": "7A",
+              "unit": null
+            },
+            {
+              "name": "v_astra",
+              "format": "5A",
+              "unit": null
+            },
+            {
+              "name": "run2d",
+              "format": "6A",
+              "unit": null
+            },
+            {
+              "name": "telescope",
+              "format": "6A",
+              "unit": null
+            },
+            {
+              "name": "min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_good_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_good_rvs",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "std_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "median_e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcsao_meanrxc",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "snr",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gri_gaia_transform_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "zwarning_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "nmf_rchi2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "nmf_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "task_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "result_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "flag_warn",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "flag_bad",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "bn_v_r",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_bn_v_r",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "source_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "t_elapsed",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "t_overhead",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "tag",
+              "format": "1A",
+              "unit": null
+            }
+          ],
+          "native_target_availability": {
+            "teff": {
+              "finite": 1802983
+            },
+            "logg": {
+              "finite": 1802983
+            },
+            "fe_h": {
+              "finite": 1802983
+            }
+          }
+        },
+        {
+          "hdu": "",
+          "rows": 0,
+          "columns": [
+            {
+              "name": "sdss_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_id",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "gaia_dr2_source_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "gaia_dr3_source_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "tic_v8_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "healpix",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "lead",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "version_id",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "catalogid",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid21",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid25",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "catalogid31",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "n_associated",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_neighborhood",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "crossmatch_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss5_target_flags",
+              "format": "1B",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_target1_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_target2_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target1_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target2_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee2_target3_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_member_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss4_apogee_extra_target_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "sdss5_dr19_apogee_flag",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "ra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "dec",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "l",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "b",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "pmra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_pmra",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "pmde",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_pmde",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "g_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "bp_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rp_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "j_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_j_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "h_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_h_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "k_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_k_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ph_qual",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "bl_flg",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "cc_flg",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "w1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_w1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_flux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_dflux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1_frac",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_w2_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_flux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_dflux",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w2_frac",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "w1uflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w2uflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w1aflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "w2aflags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "mag4_5",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "d4_5m",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rms_f4_5",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "sqf_4_5",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "mf4_5",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "csf",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "zgr_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_e",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_e_plx",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_teff_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_logg_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_fe_h_confidence",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_ln_prior",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_chi2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "zgr_quality_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "r_med_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_lo_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_hi_geo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_med_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_lo_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_hi_photogeo",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "bailer_jones_flags",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "ebv",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "ebv_zhang_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_zhang_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_sfd",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_sfd",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_rjce_glimpse",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_rjce_glimpse",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_rjce_allwise",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_rjce_allwise",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_bayestar_2019",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_bayestar_2019",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ebv_edenhofer_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_ebv_edenhofer_2023",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "c_star",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "b_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "b_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "v_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "v_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "r_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "i_jkc_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "i_jkc_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "u_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "u_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "g_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "g_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "r_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "r_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "i_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "i_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "z_sdss_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "z_sdss_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "y_ps1_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "y_ps1_mag_flag",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_boss_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "boss_min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "boss_max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_apogee_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "apogee_min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "apogee_max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "created",
+              "format": "26A",
+              "unit": null
+            },
+            {
+              "name": "modified",
+              "format": "26A",
+              "unit": null
+            },
+            {
+              "name": "source",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "star_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "spectrum_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "release",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "filetype",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "apred",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "apstar",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "obj",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "telescope",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "field",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "prefix",
+              "format": "1A",
+              "unit": null
+            },
+            {
+              "name": "min_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "max_mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "starver",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_entries",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_good_visits",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "n_good_rvs",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "snr",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "mean_fiber",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "std_fiber",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "spectrum_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "std_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "median_e_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_rchi2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "doppler_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "xcorr_v_rad",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcorr_v_rel",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "xcorr_e_v_rel",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ccfwhm",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "autofwhm",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "n_components",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "task_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_teff",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_logg",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_fe_h",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "result_flags",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "flag_warn",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "flag_bad",
+              "format": "L",
+              "unit": null
+            },
+            {
+              "name": "bn_v_r",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "e_bn_v_r",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "source_pk",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "v_astra",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "t_elapsed",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "t_overhead",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "tag",
+              "format": "1A",
+              "unit": null
+            }
+          ],
+          "native_target_availability": {
+            "teff": {
+              "finite": 0
+            },
+            "logg": {
+              "finite": 0
+            },
+            "fe_h": {
+              "finite": 0
+            }
+          }
+        }
+      ]
+    },
+    "legacy_sspp": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1/legacy_sspp.fits",
+      "sha256": "04628d84a5c817a50def945f9d37a7e273770a75aed9ac20e297ac55b989c586",
+      "bytes": 1913284800,
+      "url": "https://data.sdss.org/sas/dr9/sdss/sspp/ssppOut-dr9.fits",
+      "status": "native_source_schema_complete",
+      "schema": [
+        {
+          "hdu": "",
+          "rows": 1843200,
+          "columns": [
+            {
+              "name": "SPECOBJID",
+              "format": "22A",
+              "unit": null
+            },
+            {
+              "name": "PLATEID",
+              "format": "19A",
+              "unit": null
+            },
+            {
+              "name": "BESTOBJID",
+              "format": "19A",
+              "unit": null
+            },
+            {
+              "name": "FLUXOBJID",
+              "format": "19A",
+              "unit": null
+            },
+            {
+              "name": "TARGETOBJID",
+              "format": "22A",
+              "unit": null
+            },
+            {
+              "name": "SPECPRIMARY",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SPECLEGACY",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SPECSEGUE",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SPECSEGUE1",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SPECSEGUE2",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "PLUG_RA",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "PLUG_DEC",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "LEGACY_TARGET1",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "LEGACY_TARGET2",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SPECIAL_TARGET1",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "SPECIAL_TARGET2",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "FIRSTRELEASE",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "PROGRAMNAME",
+              "format": "23A",
+              "unit": null
+            },
+            {
+              "name": "CHUNK",
+              "format": "16A",
+              "unit": null
+            },
+            {
+              "name": "PLATERUN",
+              "format": "16A",
+              "unit": null
+            },
+            {
+              "name": "RUNSSPP",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "RUN1D",
+              "format": "A",
+              "unit": null
+            },
+            {
+              "name": "RUN2D",
+              "format": "3A",
+              "unit": null
+            },
+            {
+              "name": "MJD",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "PLATE",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FIBER",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "PRIM_TARGET",
+              "format": "13A",
+              "unit": null
+            },
+            {
+              "name": "SPECTYPE_HAMMER",
+              "format": "4A",
+              "unit": null
+            },
+            {
+              "name": "SPECTYPE_SUBCLASS",
+              "format": "20A",
+              "unit": null
+            },
+            {
+              "name": "FLAG",
+              "format": "5A",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ADOP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ADOP_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ADOP_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HA24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HD24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TK",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TI",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_NGS1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNSR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNRR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_WBG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_K24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_KI13",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HA24_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HD24_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TK_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TG_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TI_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_NGS1_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNSR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNRR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_WBG_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_K24_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_KI13_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HA24_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_HD24_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TK_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_TI_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_NGS1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNSR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_ANNRR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_WBG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_K24_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_KI13_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ADOP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ADOP_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ADOP_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNSR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNRR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_MGH",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_WBG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_K24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_KI13",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS2_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNSR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNRR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI2_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_MGH_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_WBG_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_K24_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_KI13_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNSR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_ANNRR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_MGH_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_WBG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_K24_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_KI13_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ADOP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ADOP_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_ADOP_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNSR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNRR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK3",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ACF",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIT",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_WBG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_K24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_KI13",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS2_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNSR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNRR_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK2_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK3_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_ACF_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIT_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_WBG_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_K24_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_KI13_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNSR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ANNRR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK3_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_ACF_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIT_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_WBG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_K24_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_KI13_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "AFE",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "AFE_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "AFE_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_DWARF",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_TO",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_GIANT",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_AGB",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_FHB",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_AP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "DIST_Z",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_FLAG",
+              "format": "4A",
+              "unit": null
+            },
+            {
+              "name": "RV_ADOP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_ADOP_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_CAL",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_CAL_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_BS",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_BS_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_ELODIE",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_ELODIE_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_GSR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RV_GSR_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "V_MAG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "BV",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "BV_BALMER",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "GR_PREDICT",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "GR_HA24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "GR_HD24",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "GR_HP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "G_MAG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "UG",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "GR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RI",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "IZ",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "U_MAG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "G_MAG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "R_MAG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "I_MAG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "Z_MAG_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "EBV",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "SNR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "QA",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "CC_CAHK",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "CC_MGH",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "RA",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "DEC",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "L",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "B",
+              "format": "D",
+              "unit": null
+            },
+            {
+              "name": "TEFF_SPEC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_SPEC_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_SPEC_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_SPEC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_SPEC_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_SPEC_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_SPEC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_SPEC_N",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_SPEC_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_COL",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_COL_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_NGS2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_NGS1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_TFIX_NGS2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_TFIX_NGS1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_NGS2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_NGS1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_TFIX_NGS2_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_TFIX_NGS1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_CAIIK1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_TFIX_CAIIK1_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ACF1",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ACF1_SNR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ACF2",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ACF2_SNR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "INSPECT",
+              "format": "6A",
+              "unit": null
+            },
+            {
+              "name": "ELODIERVFINAL",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ELODIERVFINALERR",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ZWARNING",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SURVEY",
+              "format": "6A",
+              "unit": null
+            },
+            {
+              "name": "PRIMTARGET",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SECTARGET",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SEGUE1_TARGET1",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SEGUE1_TARGET2",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SEGUE2_TARGET1",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "SEGUE2_TARGET2",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "L_CLASS",
+              "format": "4A",
+              "unit": null
+            },
+            {
+              "name": "DIST_ADOP",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "MP_FLAG",
+              "format": "2A",
+              "unit": null
+            },
+            {
+              "name": "TEFF_IRFM",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "TEFF_IRFM_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "TEFF_IRFM_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1_IRFM",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1_IRFM_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_NGS1_IRFM_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1_IRFM",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1_IRFM_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_NGS1_IRFM_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1_IRFM",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1_IRFM_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "LOGG_CAI1_IRFM_UNC",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1_IRFM",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1_IRFM_IND",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "FEH_CAIIK1_IRFM_UNC",
+              "format": "E",
+              "unit": null
+            }
+          ],
+          "native_target_availability": {
+            "teff_adop": {
+              "finite": 435941
+            },
+            "logg_adop": {
+              "finite": 435941
+            },
+            "feh_adop": {
+              "finite": 435941
+            }
+          }
+        }
+      ]
+    },
+    "lamost_dr12_mrs": {
+      "status": "native_source_schema_complete",
+      "schema": [
+        {
+          "hdu": "",
+          "rows": 3224901,
+          "columns": [
+            {
+              "name": "mobsid",
+              "format": "20A",
+              "unit": null
+            },
+            {
+              "name": "obsid",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "uid",
+              "format": "32A",
+              "unit": null
+            },
+            {
+              "name": "gp_id",
+              "format": "K",
+              "unit": null
+            },
+            {
+              "name": "designation",
+              "format": "19A",
+              "unit": null
+            },
+            {
+              "name": "obsdate",
+              "format": "10A",
+              "unit": null
+            },
+            {
+              "name": "lmjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "mjd",
+              "format": "J",
+              "unit": null
+            },
+            {
+              "name": "planid",
+              "format": "40A",
+              "unit": null
+            },
+            {
+              "name": "spid",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "fiberid",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "lmjm",
+              "format": "J",
+              "unit": "min"
+            },
+            {
+              "name": "band",
+              "format": "2A",
+              "unit": null
+            },
+            {
+              "name": "ra_obs",
+              "format": "D",
+              "unit": "deg"
+            },
+            {
+              "name": "dec_obs",
+              "format": "D",
+              "unit": "deg"
+            },
+            {
+              "name": "snr",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_source_id",
+              "format": "25A",
+              "unit": null
+            },
+            {
+              "name": "gaia_g_mean_mag",
+              "format": "E",
+              "unit": "mag"
+            },
+            {
+              "name": "gaia_bp_mean_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "gaia_rp_mean_mag",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "fibertype",
+              "format": "10A",
+              "unit": null
+            },
+            {
+              "name": "offsets",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "offsets_v",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "ra",
+              "format": "D",
+              "unit": "deg"
+            },
+            {
+              "name": "dec",
+              "format": "D",
+              "unit": "deg"
+            },
+            {
+              "name": "teff_lasp",
+              "format": "E",
+              "unit": "K"
+            },
+            {
+              "name": "teff_lasp_err",
+              "format": "E",
+              "unit": "K"
+            },
+            {
+              "name": "logg_lasp",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "logg_lasp_err",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "feh_lasp",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "feh_lasp_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "vsini_lasp",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "vsini_lasp_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_b0",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_b0_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_b1",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_b1_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_b_flag",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "rv_r0",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_r0_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_r1",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_r1_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_r_flag",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "rv_br0",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_br0_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_br1",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_br1_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_br_flag",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "rv_lasp0",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_lasp0_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "rv_lasp1",
+              "format": "E",
+              "unit": "km/s"
+            },
+            {
+              "name": "rv_lasp1_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "coadd",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "fibermask",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "alpha_m_cnn",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "m_h_cnn",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "teff_cnn",
+              "format": "E",
+              "unit": "K"
+            },
+            {
+              "name": "logg_cnn",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "feh_cnn",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "c_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "n_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "o_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "mg_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "al_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "si_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "s_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "ca_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "ti_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "cr_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "ni_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "cu_fe",
+              "format": "E",
+              "unit": "dex"
+            },
+            {
+              "name": "alpha_m_lasp",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "alpha_m_lasp_err",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "moon_angle",
+              "format": "E",
+              "unit": null
+            },
+            {
+              "name": "lunardate",
+              "format": "I",
+              "unit": null
+            },
+            {
+              "name": "moon_flg",
+              "format": "10A",
+              "unit": null
+            }
+          ],
+          "native_target_availability": {
+            "teff_lasp": {
+              "finite": 3222602
+            },
+            "logg_lasp": {
+              "finite": 3222602
+            },
+            "feh_lasp": {
+              "finite": 3222602
+            },
+            "alpha_m_lasp": {
+              "finite": 1736750
+            }
+          }
+        }
+      ],
+      "archive_sha256": "e10551be296cddcacf0ceb9c9b2827884d10e550b14850adb01348435be12369"
+    }
+  },
+  "scope": "Native products and schema audit only; no atmospheric-label quality admission, Gaia association or training activation. DR20 redirects legacy survey products to final older releases."
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "seismic_supervision_comparison_20261107_v1",
+  "utc": "2026-11-07T07:49:35.236783+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_supervision_comparison_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/seismic_supervision_comparison_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "uqec4ehi"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/report_seismic_supervision_experiments.py', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_supervision_comparison_20261107_v1', '--benchmarks', 'docs/reports/msa-survey-expansion-20261105/staged/benchmarks.csv'];runpy.run_path(\"scripts/report_seismic_supervision_experiments.py\",run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_seismic_supervision_experiments.py": "acbc693c7441fe7236d91a3414c1e193d8d1d4f95ea2451c041683f869414baf",
+    "docs/reports/msa-survey-expansion-20261105/staged/benchmarks.csv": "d2a724ec2648523d1cac71fef6b5c0fa5279a012690e029d349fd50d727dce52",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "535cbe6fc6a36e9863793dceac2d0b2fe8548abc12231849e3bf75d561e56425"
+}

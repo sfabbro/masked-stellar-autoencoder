@@ -1,0 +1,22 @@
+{
+  "run_id": "expanded_checkpoint_xp_recovery_20261107_v1",
+  "utc": "2026-11-07T03:00:40.544127+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_checkpoint_xp_recovery_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_checkpoint_xp_recovery_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "yx63xa1o"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.path.insert(0,\"scripts\");sys.argv=['scripts/compare_expanded_xp_catalogues.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_checkpoint_xp_qa_20261107_v2',\"--reuse-waiting-output\"];runpy.run_path('scripts/compare_expanded_xp_catalogues.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/compare_expanded_xp_catalogues.py": "10a3133891c6847d4ce5f03f056a679b7f80810e9674d1ac91cae4a9f71c9a8e",
+    "scripts/saved_array_source_binding.py": "cd00bbb07861f3b9e405daadfa01b7155a46578930a4e4a890b8121b61a3a14b",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "3f2d11dc105b27152dec19c895d64dd0fe6c179fe690c6768e1502160acb2e67"
+}

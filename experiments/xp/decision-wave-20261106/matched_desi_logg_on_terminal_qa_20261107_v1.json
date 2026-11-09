@@ -1,0 +1,34 @@
+{
+  "run_id": "matched_desi_logg_on_terminal_qa_20261107_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/matched_desi_logg_on_terminal_qa_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/matched_desi_logg_on_terminal_qa_20261107_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_matched_desi_logg_ablation.py --config configs/matched-desi-logg-20261107.yaml --run-id matched_desi_logg_on_20261107_v1 --output \"$experiment_output\" --terminal-readout-from /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/matched_desi_logg_on_20261107_v1",
+  "utc": "2026-11-06T22:47:46.587303+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "hdv50iud"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_matched_desi_logg_ablation.py": "45a04f6372a7b838a779f81e7724ea1baa334eac20072e86e379fb8e3005e60b",
+    "scripts/run_six_survey_map_ablation.py": "f06aa92437dbcff03d6e762f8fb569d3c7233ab3f5d0a5663e085e425e1e24c5",
+    "scripts/wait_six_map_preflight.py": "8fbe923bfda9261f8933f50e287704efafd0234f47ea82f4cce0a79928a930b2",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "scripts/run_after_preflight.py": "b33e5f5834762d05ac72322dd638d192691024c605acc80bfd05eef3365e455d",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/cached_inputs.py": "82e707eba12c81db544bc76d8baeb4c7b6f2dcc12b1bff0acaf77f0b43610157",
+    "src/masked_stellar_autoencoder/training/matched_label_ablation.py": "4df3238989c1292b49b16e40601a8647ca97c757e4d1eeaed92bbda6eeb8b438",
+    "configs/matched-desi-logg-20261107.yaml": "83fc49f7a4a3ec7598edc96f103221cdcaa4d321392bfa693bd0b4cd775f77e3"
+  },
+  "payload_sha256": "1df24884976ea698449aa3a2cbd6a25fab6d43a9eb3d392751bad8094e786ac5"
+}

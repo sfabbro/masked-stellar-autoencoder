@@ -1,0 +1,22 @@
+{
+  "run_id": "decision_ges_gaia_candidates_20261106_v1",
+  "utc": "2026-11-05T23:58:07.392087+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_20261106_v1",
+  "status": "failed_before_script_confirmed_by_arc",
+  "session_ids": [
+    "hlb1ofvx"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v1'];runpy.run_path('candidate.py',run_name='__main__')",
+  "source_sha256": {
+    "candidate.py": "1b9916c580ba6d5739dd58c5fa1bc50438abc6546137eddd03416dbe5ba78a8b",
+    "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+  },
+  "payload_sha256": "09192f2ea388867eced3b0a4a0b526d6be812bd74bb61fc580acf7274dfb1ded",
+  "reconciliation": "Session no longer listed and logs unavailable. Authenticated ARC metadata confirms source bundle exists but script output directory does not. Script creates that directory and initial manifest before any ESA submission; no upload/query executed."
+}

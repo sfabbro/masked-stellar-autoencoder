@@ -1,0 +1,526 @@
+{
+  "scope": "All ten predeclared corner stars; metal-poor stress sample, not random Gaia or random development stars",
+  "all_native_reference_feh_below_minus2": true,
+  "stars": [
+    {
+      "source_id": 4926812820427520,
+      "reference_teff": 4496.74169921875,
+      "reference_logg": 1.2567996978759766,
+      "reference_feh": -2.1753010749816895,
+      "mixture": {
+        "clear_separated_gravity_modes": true,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.598759986111009,
+              4.629000702882659
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.598759986111009,
+                  4.629000702882659
+                ],
+                "valley": 4.32822430039797,
+                "lower_branch_mass": 0.7923583984375,
+                "upper_branch_mass": 0.2076416015625,
+                "valley_to_smaller_peak": 0.12922474923430224,
+                "strong": true
+              }
+            ]
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              2.598759986111009,
+              4.629000702882659
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.598759986111009,
+                  4.629000702882659
+                ],
+                "valley": 4.253030199776798,
+                "lower_branch_mass": 0.787353515625,
+                "upper_branch_mass": 0.212646484375,
+                "valley_to_smaller_peak": 0.18068789320870615,
+                "strong": true
+              }
+            ]
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.982689115078689
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              3.098446574596239
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 78289217922968576,
+      "reference_teff": 4608.49951171875,
+      "reference_logg": 1.184237003326416,
+      "reference_feh": -2.0429000854492188,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.296211859751686
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.2674664455184284
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.31198465406499
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.3260601182827654
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 615943806835727872,
+      "reference_teff": 6268.4091796875,
+      "reference_logg": 4.106898307800293,
+      "reference_feh": -2.142794609069824,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              4.071762269057663
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              4.071762269057663
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              4.082215137580411
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              4.06233695274666
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 656977993104090624,
+      "reference_teff": 4284.03515625,
+      "reference_logg": 1.5847760438919067,
+      "reference_feh": -2.7457594871520996,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.296742828204822
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.296742828204822
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.3563281189845988
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.368385189685059
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 2438481739732690176,
+      "reference_teff": 5170.9013671875,
+      "reference_logg": 2.377556562423706,
+      "reference_feh": -2.029003620147705,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              4.277232127414302
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              4.277232127414302
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              4.0340581265081505
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              4.015128338129175
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 2609559667340662912,
+      "reference_teff": 4437.1884765625,
+      "reference_logg": 1.444623589515686,
+      "reference_feh": -2.5720839500427246,
+      "mixture": {
+        "clear_separated_gravity_modes": true,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.48089508495738,
+              4.592974474369962
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.48089508495738,
+                  4.592974474369962
+                ],
+                "valley": 4.314020592749433,
+                "lower_branch_mass": 0.8648681640625,
+                "upper_branch_mass": 0.1351318359375,
+                "valley_to_smaller_peak": 0.09206277070012019,
+                "strong": true
+              }
+            ]
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              2.5207456394745984,
+              4.592974474369962
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.5207456394745984,
+                  4.592974474369962
+                ],
+                "valley": 4.234319483714996,
+                "lower_branch_mass": 0.8619384765625,
+                "upper_branch_mass": 0.1380615234375,
+                "valley_to_smaller_peak": 0.17714477814654822,
+                "strong": true
+              }
+            ]
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              3.1335304181703445
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              3.07544422477725
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 3616249836305383296,
+      "reference_teff": 4119.86962890625,
+      "reference_logg": 0.835330605506897,
+      "reference_feh": -2.5266430377960205,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              0.7996722774198302
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              0.7888581651567543
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              0.7791978224307394
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              0.8030912262595589
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 4077588074752670208,
+      "reference_teff": 4458.7021484375,
+      "reference_logg": 1.8134715557098389,
+      "reference_feh": -2.593245029449463,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.0734831353657786
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              2.0734831353657786
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.3834712035773737
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              2.3834712035773737
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 4185355646116022528,
+      "reference_teff": 4730.27734375,
+      "reference_logg": 2.277984619140625,
+      "reference_feh": -3.227942943572998,
+      "mixture": {
+        "clear_separated_gravity_modes": true,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              2.620835899034672,
+              3.655647110830711
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.620835899034672,
+                  3.655647110830711
+                ],
+                "valley": 3.103747797872823,
+                "lower_branch_mass": 0.3721923828125,
+                "upper_branch_mass": 0.6278076171875,
+                "valley_to_smaller_peak": 0.5033139946999026,
+                "strong": true
+              }
+            ]
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              2.5518484849149363,
+              3.655647110830711
+            ],
+            "pairs": [
+              {
+                "peaks": [
+                  2.5518484849149363,
+                  3.655647110830711
+                ],
+                "valley": 3.0692540908129553,
+                "lower_branch_mass": 0.364013671875,
+                "upper_branch_mass": 0.635986328125,
+                "valley_to_smaller_peak": 0.5571754483950554,
+                "strong": true
+              }
+            ]
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              3.5343438909416003
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              3.5343438909416003
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    },
+    {
+      "source_id": 4696862405388526080,
+      "reference_teff": 3975.21435546875,
+      "reference_logg": 0.8306902647018433,
+      "reference_feh": -3.224889039993286,
+      "mixture": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.037883702094415
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.037883702094415
+            ],
+            "pairs": []
+          }
+        ]
+      },
+      "gaussian": {
+        "clear_separated_gravity_modes": false,
+        "smoothing_checks": [
+          {
+            "smoothing_bins": 2.0,
+            "peak_locations": [
+              1.0928857085419148
+            ],
+            "pairs": []
+          },
+          {
+            "smoothing_bins": 3.0,
+            "peak_locations": [
+              1.0928857085419148
+            ],
+            "pairs": []
+          }
+        ]
+      }
+    }
+  ],
+  "clear_gravity_bimodality_count": 3,
+  "total_stress_stars": 10
+}

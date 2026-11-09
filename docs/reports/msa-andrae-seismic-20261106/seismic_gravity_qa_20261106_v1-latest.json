@@ -1,0 +1,4711 @@
+{
+  "status": "apokasc_gravity_qa_complete_other_sources_staged_or_recorded",
+  "training_performed": false,
+  "model_loaded": false,
+  "sources": {
+    "apokasc3": {
+      "raw_rows": 15808,
+      "selected_rows": 12384,
+      "source_sha256": "af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d",
+      "reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf",
+      "selected_categories": [
+        "Gold",
+        "Silver"
+      ],
+      "reference_column": "loggSeis",
+      "not_reference_column": "loggSpec",
+      "dependence": "Seismic logg uses spectroscopic Teff. APOGEE logg calibration uses Kepler seismology; parent/teacher exposure not certified. Age is not a gravity reference."
+    },
+    "tess_hon_2021": {
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/votable?-source=J%2FApJ%2F919%2F131%2Ftable1&-out.all=&-out.max=1000000",
+      "sha256": "3e11f211989551a55ab943bb329c0e753cef857b2d61473ebe6997aeda1bdf2b",
+      "tables": [
+        {
+          "name": "J/ApJ/919/131/table1",
+          "rows": 158505,
+          "fields": [
+            {
+              "name": "TIC",
+              "unit": "None",
+              "datatype": "int",
+              "description": "[1078/471010941] TESS identifier"
+            },
+            {
+              "name": "numax",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[5.5/244] Frequency at maximum power"
+            },
+            {
+              "name": "e_numax",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.4/20] Frequency at maximum power uncertainty"
+            },
+            {
+              "name": "Tmag",
+              "unit": "mag",
+              "datatype": "float",
+              "description": "[1.9/14] TESS magnitude"
+            },
+            {
+              "name": "Teff",
+              "unit": "K",
+              "datatype": "short",
+              "description": "[2959/5896] Surface temperature"
+            },
+            {
+              "name": "e_Teff",
+              "unit": "K",
+              "datatype": "short",
+              "description": "[59/117] Surface temperature uncertainty"
+            },
+            {
+              "name": "Rstar",
+              "unit": "solRad",
+              "datatype": "float",
+              "description": "[3.4/38] Stellar radius"
+            },
+            {
+              "name": "e_Rstar",
+              "unit": "solRad",
+              "datatype": "float",
+              "description": "[0.1/1771] Stellar radius uncertainty"
+            },
+            {
+              "name": "Lstar",
+              "unit": "solLum",
+              "datatype": "float",
+              "description": "[5.3/290] Luminosity"
+            },
+            {
+              "name": "e_Lstar",
+              "unit": "solLum",
+              "datatype": "double",
+              "description": "[0.2/992942] Luminosity uncertainty"
+            },
+            {
+              "name": "Dist",
+              "unit": "kpc",
+              "datatype": "float",
+              "description": "[0.03/10.4] Distance"
+            },
+            {
+              "name": "e_Dist",
+              "unit": "kpc",
+              "datatype": "float",
+              "description": "[0/2] Distance uncertainty"
+            },
+            {
+              "name": "RUWE",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.5/42] Gaia DR3 re-normalized unit weight error"
+            },
+            {
+              "name": "Flag",
+              "unit": "None",
+              "datatype": "unsignedByte",
+              "description": "[0/1] Flag indicating normal or unusual scaling mass (1)"
+            },
+            {
+              "name": "Simbad",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Simbad column added by the CDS"
+            },
+            {
+              "name": "_RA",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions in Epoch 2000 from the TESS Input Catalog - v8.0 (Stassun+, 2019, IV/38) -- those are not the original(RAOdeg,DEOdeg) (right ascension part)"
+            },
+            {
+              "name": "_DE",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions in Epoch 2000 from the TESS Input Catalog - v8.0 (Stassun+, 2019, IV/38) -- those are not the original(RAOdeg,DEOdeg) (declination part)"
+            }
+          ]
+        }
+      ],
+      "admission": "Staged source only. Native TIC/EPIC identities require an audited Gaia DR3 bridge; positional or float-ID shortcuts forbidden."
+    },
+    "k2_gap_dr3": {
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/votable?-source=J%2FApJ%2F926%2F191%2Ftable2&-out.all=&-out.max=1000000",
+      "sha256": "fb17308f72f3df6ce474bf7a79a591da7d801a43943f7ad9bb8294f03a56db10",
+      "tables": [
+        {
+          "name": "J/ApJ/926/191/table2",
+          "rows": 19417,
+          "fields": [
+            {
+              "name": "EPIC",
+              "unit": "None",
+              "datatype": "int",
+              "description": "[201051625/251630759] EPIC identifier"
+            },
+            {
+              "name": "numax-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[3.5/257.1] Mean frequency at maximum acoustic power across all pipelines (1)"
+            },
+            {
+              "name": "e_numax-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.001/3.1] Adopted uncertainties in numax-c"
+            },
+            {
+              "name": "s_numax-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.15/69.3] Statistical estimate of uncertainties in numax"
+            },
+            {
+              "name": "Nnumax",
+              "unit": "None",
+              "datatype": "unsignedByte",
+              "description": "[2/6] Number of pipelines returning valid numax"
+            },
+            {
+              "name": "dnu-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.68/18.5]? Mean corrected large frequency separation across all pipelines (1)"
+            },
+            {
+              "name": "e_dnu-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0/0.6]? Adopted uncertainties in dnu-c"
+            },
+            {
+              "name": "s_dnu-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.009/7]? Statistical estimate of uncertainties in dnu-c"
+            },
+            {
+              "name": "Ndnu",
+              "unit": "None",
+              "datatype": "unsignedByte",
+              "description": "[0/5]? Number of pipelines returning valid dnu-c"
+            },
+            {
+              "name": "XSharma",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.9/1.2]? Sharma+ (2016ApJ...822...15S) large frequency separation correction"
+            },
+            {
+              "name": "e_XSharma",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0/0.3]? Uncertainty in XSharma (2)"
+            },
+            {
+              "name": "dnu-u",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.67/18.3]? Mean uncorrected large frequency separation across all pipelines"
+            },
+            {
+              "name": "numax-A2Z-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[4.2/239]? A2Z+ corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "numax-BAM-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[3.6/237]? BAM corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "numax-BHM-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[5/261]? BHM corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "numax-CAN-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[6/263]? CAN corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "numax-COR-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[2.9/223]? COR corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "numax-SYD-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[4/241]? SYD corrected frequency at maximum acoustic power (3)"
+            },
+            {
+              "name": "dnu-A2Z-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "? A2Z corrected large frequency separation (3)"
+            },
+            {
+              "name": "dnu-BAM-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.6/18.4]? BAM corrected large frequency separation (3)"
+            },
+            {
+              "name": "dnu-BHM-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.79/18.4]? BHM corrected large frequency separation (3)"
+            },
+            {
+              "name": "dnu-CAN-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[1/18.5]? CAN corrected large frequency separation (3)"
+            },
+            {
+              "name": "dnu-COR-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.7/17.6]? COR corrected large frequency separation (3)"
+            },
+            {
+              "name": "dnu-SYD-c",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.8/18.5]? SYD corrected large frequency separation (3)"
+            },
+            {
+              "name": "Teff",
+              "unit": "K",
+              "datatype": "short",
+              "description": "[3251/19194] EPIC effective temperature"
+            },
+            {
+              "name": "e_Teff",
+              "unit": "K",
+              "datatype": "short",
+              "description": "[36/7943] Uncertainty in Teff-epic"
+            },
+            {
+              "name": "feh",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[-3.2/0.8] EPIC metallicity"
+            },
+            {
+              "name": "e_feh",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.05/1.5] Uncertainty in feh"
+            },
+            {
+              "name": "DR1+DR2",
+              "unit": "None",
+              "datatype": "short",
+              "description": "EPIC also in K2 GAP DR1/DR2 release"
+            },
+            {
+              "name": "All",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Display all data in this catalog for this source (Tables 2,4,6,8)"
+            },
+            {
+              "name": "Simbad",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Simbad column added by the CDS"
+            },
+            {
+              "name": "_RA",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions from SIMBAD if any (right ascension part)"
+            },
+            {
+              "name": "_DE",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions from SIMBAD if any (declination part)"
+            }
+          ]
+        }
+      ],
+      "admission": "Staged source only. Native TIC/EPIC identities require an audited Gaia DR3 bridge; positional or float-ID shortcuts forbidden."
+    },
+    "apokasc3_vizier": {
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/votable?-source=J%2FApJS%2F276%2F69%2Ftable4&-out.all=&-out.max=1000000",
+      "sha256": "9d334fc7c3cc7b3fbb44698b75858cb4282442b5378b142a0a69247eb87f1a39",
+      "tables": [
+        {
+          "name": "J/ApJS/276/69/table4",
+          "rows": 15808,
+          "fields": [
+            {
+              "name": "KIC",
+              "unit": "None",
+              "datatype": "int",
+              "description": "[893214/12885196] Kepler Input Catalog number"
+            },
+            {
+              "name": "EvolSt",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Evolutionary State (1)"
+            },
+            {
+              "name": "EvolSrc",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Evolutionary Source (2)"
+            },
+            {
+              "name": "CatTab",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Category (3)"
+            },
+            {
+              "name": "SeisSrc",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Seismic Weighting Scheme (4)"
+            },
+            {
+              "name": "SpecSrc",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Spectroscopic Data Release (5)"
+            },
+            {
+              "name": "NNumax",
+              "unit": "None",
+              "datatype": "short",
+              "description": "[0/10] Number of Filtered {nu}_max_ values"
+            },
+            {
+              "name": "NDNu",
+              "unit": "None",
+              "datatype": "unsignedByte",
+              "description": "[0/7] Number of Filtered {Delta}{nu} values"
+            },
+            {
+              "name": "Quar",
+              "unit": "None",
+              "datatype": "short",
+              "description": "[1/18] Quarters of Kepler data"
+            },
+            {
+              "name": "Numax",
+              "unit": "uHz",
+              "datatype": "double",
+              "description": "[0.099/494]? {nu}_max_ value"
+            },
+            {
+              "name": "e_Numax",
+              "unit": "uHz",
+              "datatype": "double",
+              "description": "[0/894]? Uncertainty in Numax"
+            },
+            {
+              "name": "DNu",
+              "unit": "uHz",
+              "datatype": "double",
+              "description": "[0.066/23.6]? {Delta}{nu} value"
+            },
+            {
+              "name": "e_DNu",
+              "unit": "uHz",
+              "datatype": "float",
+              "description": "[0.003/2.2]? Uncertainty in DNu"
+            },
+            {
+              "name": "fDNu",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.94/1.2]? Mosser f_{Delta}{nu}_ (6)"
+            },
+            {
+              "name": "e_fDNu",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.005/0.03]? Uncertainty in fDNu"
+            },
+            {
+              "name": "fNumax",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.99/1.1]? Mosser f_{nu}max_"
+            },
+            {
+              "name": "Mass",
+              "unit": "solMass",
+              "datatype": "double",
+              "description": "[0.49/6.3]? Mosser Mass"
+            },
+            {
+              "name": "e_Mass",
+              "unit": "solMass",
+              "datatype": "float",
+              "description": "[0.02/2.3]? Uncertainty in Mass"
+            },
+            {
+              "name": "Radius",
+              "unit": "solRad",
+              "datatype": "double",
+              "description": "[3.3/99.7]? Mosser Radius"
+            },
+            {
+              "name": "e_Radius",
+              "unit": "solRad",
+              "datatype": "double",
+              "description": "[0.066/13.22]? Uncertainty in Radius"
+            },
+            {
+              "name": "loggSeis",
+              "unit": "log(cm.s**-2)",
+              "datatype": "double",
+              "description": "[-0.15/3.63]? Log, Mosser Seismic surface gravity"
+            },
+            {
+              "name": "e_loggSeis",
+              "unit": "log(cm.s**-2)",
+              "datatype": "float",
+              "description": "[0.0027/0.9]? Uncertainty in loggSeis"
+            },
+            {
+              "name": "Teff",
+              "unit": "K",
+              "datatype": "double",
+              "description": "[3259/7480]? Stellar effective temperature"
+            },
+            {
+              "name": "e_Teff",
+              "unit": "K",
+              "datatype": "double",
+              "description": "[16/743]? Uncertainty in Teff"
+            },
+            {
+              "name": "loggSpec",
+              "unit": "log(cm.s**-2)",
+              "datatype": "double",
+              "description": "[-0.35/4.8]? Log, Spectroscopic surface gravity"
+            },
+            {
+              "name": "e_loggSpec",
+              "unit": "log(cm.s**-2)",
+              "datatype": "float",
+              "description": "[0.058/0.14]? Uncertainty in loggSpec"
+            },
+            {
+              "name": "[Fe/H]",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[-2.44/0.53]? Metallicity, Fe/H"
+            },
+            {
+              "name": "e_[Fe/H]",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.058]? Uncertainty in [Fe/H]"
+            },
+            {
+              "name": "[a/Fe]",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[-0.51/0.4]? {alpha} metal abundance ratio"
+            },
+            {
+              "name": "e_[a/Fe]",
+              "unit": "None",
+              "datatype": "float",
+              "description": "[0.02/0.5]? Uncertainty in [Alp/Fe]"
+            },
+            {
+              "name": "[C/Fe]",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[-9999.99/0.9]? Carbon/Iron abundance ratio"
+            },
+            {
+              "name": "e_[C/Fe]",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[-999.99/0.5]? Uncertainty in [C/Fe]"
+            },
+            {
+              "name": "[N/Fe]",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[-9999.99/1.6]? Nitrogen/Iron abundance ratio"
+            },
+            {
+              "name": "e_[N/Fe]",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[-999.99/41.6]? Uncertainty in [N/Fe]"
+            },
+            {
+              "name": "InvRGaia",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[0.002/3]? MIST inverse Gaia radius, 1/Rgaia (7)"
+            },
+            {
+              "name": "e_InvRGaia",
+              "unit": "None",
+              "datatype": "double",
+              "description": "[0.0005/0.2]? Uncertainty in InvRGaia"
+            },
+            {
+              "name": "AgeCat",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Recommended Age Class (8)"
+            },
+            {
+              "name": "AgeRGB",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[0.12/66.1]? Garstec Age, RGB"
+            },
+            {
+              "name": "E_AgeRGB",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[0.0098/99]? Upper uncertainty in AgeRGB"
+            },
+            {
+              "name": "e_AgeRGB",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[-44/-0.009]? Lower uncertainty in AgeRGB"
+            },
+            {
+              "name": "AgeRC",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[0.094/60.2]? Garstec Age, RC or AGB"
+            },
+            {
+              "name": "E_AgeRC",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[0.008/99]? Upper uncertainty in AgeRC"
+            },
+            {
+              "name": "e_AgeRC",
+              "unit": "Gyr",
+              "datatype": "double",
+              "description": "[-44/-0.001]? Lower uncertainty in AgeRC"
+            },
+            {
+              "name": "vsini",
+              "unit": "km / s",
+              "datatype": "double",
+              "description": "[-5/57]? Projected rotational velocity"
+            },
+            {
+              "name": "alphaCat",
+              "unit": "None",
+              "datatype": "char",
+              "description": "{alpha}-based category (9)"
+            },
+            {
+              "name": "GaiaDR3",
+              "unit": "None",
+              "datatype": "long",
+              "description": "Gaia DR3 source identifier"
+            },
+            {
+              "name": "2MASS",
+              "unit": "None",
+              "datatype": "char",
+              "description": "2MASS position-based identifier"
+            },
+            {
+              "name": "KCat",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Display data from Q1-17 Kepler cat. (Mathur+ 2017, J/ApJS/229/30)"
+            },
+            {
+              "name": "Simbad",
+              "unit": "None",
+              "datatype": "char",
+              "description": "Simbad column added by the CDS"
+            },
+            {
+              "name": "_RA",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions from 2MASS names (right ascension part)"
+            },
+            {
+              "name": "_DE",
+              "unit": "deg",
+              "datatype": "double",
+              "description": "Positions from 2MASS names (declination part)"
+            }
+          ]
+        }
+      ],
+      "admission": "Staged source only. Native TIC/EPIC identities require an audited Gaia DR3 bridge; positional or float-ID shortcuts forbidden."
+    }
+  },
+  "roles": {
+    "fit": {
+      "matched_stars": 5296,
+      "exposure": "Direct FIT exposure",
+      "models": {
+        "common": {
+          "all": {
+            "point": {
+              "n": 5296,
+              "bias": 0.22469190152956853,
+              "mae": 0.2279018156254319,
+              "nmad": 0.09963865840128354,
+              "rmse": 0.2553341593553485,
+              "p05": 0.029552986150015337,
+              "p95": 0.4047237357647891
+            },
+            "intrinsic_vs_reference": {
+              "n": 5296,
+              "nll": 4.015150928757582,
+              "crps": 0.19806724721924218,
+              "coverage68": 0.06703172205438067,
+              "coverage90": 0.12481117824773413,
+              "coverage95": 0.167107250755287,
+              "pit_histogram": [
+                4755,
+                176,
+                71,
+                77,
+                54,
+                39,
+                34,
+                29,
+                13,
+                48
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 5296,
+              "nll": 3.991482205480983,
+              "crps": 0.19752042893036353,
+              "coverage68": 0.0677870090634441,
+              "coverage90": 0.12651057401812688,
+              "coverage95": 0.16880664652567975,
+              "pit_histogram": [
+                4751,
+                176,
+                74,
+                78,
+                54,
+                39,
+                34,
+                29,
+                15,
+                46
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 2385,
+              "bias": 0.25265882477485446,
+              "mae": 0.2554210736614594,
+              "nmad": 0.07925481901794515,
+              "rmse": 0.274860526712616,
+              "p05": 0.09982917335641676,
+              "p95": 0.4007821714927754
+            },
+            "intrinsic_vs_reference": {
+              "n": 2385,
+              "nll": 4.532357554013065,
+              "crps": 0.23027787234929,
+              "coverage68": 0.03018867924528302,
+              "coverage90": 0.05450733752620545,
+              "coverage95": 0.08008385744234801,
+              "pit_histogram": [
+                2280,
+                39,
+                15,
+                19,
+                9,
+                7,
+                7,
+                5,
+                1,
+                3
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2385,
+              "nll": 4.523836105603033,
+              "crps": 0.22972511045462812,
+              "coverage68": 0.030607966457023062,
+              "coverage90": 0.05492662473794549,
+              "coverage95": 0.08134171907756814,
+              "pit_histogram": [
+                2280,
+                38,
+                16,
+                19,
+                9,
+                7,
+                7,
+                5,
+                1,
+                3
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 2909,
+              "bias": 0.1917986824562703,
+              "mae": 0.2053712361628802,
+              "nmad": 0.1084053322000124,
+              "rmse": 0.23814873097297423,
+              "p05": 0.005100137964630626,
+              "p95": 0.4101750295100285
+            },
+            "intrinsic_vs_reference": {
+              "n": 2909,
+              "nll": 3.5913534822926874,
+              "crps": 0.171675459621259,
+              "coverage68": 0.09728429013406668,
+              "coverage90": 0.18253695427982125,
+              "coverage95": 0.23822619456858027,
+              "pit_histogram": [
+                2473,
+                137,
+                56,
+                58,
+                45,
+                32,
+                27,
+                24,
+                12,
+                45
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2909,
+              "nll": 3.5553680990526475,
+              "crps": 0.17113753742387794,
+              "coverage68": 0.0983155723616363,
+              "coverage90": 0.18494327947748368,
+              "coverage95": 0.2402887590237195,
+              "pit_histogram": [
+                2469,
+                138,
+                58,
+                59,
+                45,
+                32,
+                27,
+                24,
+                14,
+                43
+              ]
+            }
+          },
+          "state_Dwarf": {
+            "point": {
+              "n": 1,
+              "bias": 0.3289410226466756,
+              "mae": 0.3289410226466756,
+              "nmad": 0.0,
+              "rmse": 0.3289410226466756,
+              "p05": 0.3289410226466756,
+              "p95": 0.3289410226466756
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": 8.67292702799879,
+              "crps": 0.32300247147729416,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": 8.674152110792567,
+              "crps": 0.3116244781899359,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RC/RGB": {
+            "point": {
+              "n": 1,
+              "bias": 0.03488784924143795,
+              "mae": 0.03488784924143795,
+              "nmad": 0.0,
+              "rmse": 0.03488784924143795,
+              "p05": 0.03488784924143795,
+              "p95": 0.03488784924143795
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": -1.353654638433008,
+              "crps": 0.024501210330103503,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": -1.6993038908969822,
+              "crps": 0.023082336666321625,
+              "coverage68": 0.0,
+              "coverage90": 1.0,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 361,
+              "bias": 0.1987505535292846,
+              "mae": 0.205072666090718,
+              "nmad": 0.1292683670335257,
+              "rmse": 0.23517224334052375,
+              "p05": -0.04724404567702245,
+              "p95": 0.40322621195486263
+            },
+            "intrinsic_vs_reference": {
+              "n": 361,
+              "nll": 2.764790280926921,
+              "crps": 0.17067657119115415,
+              "coverage68": 0.16066481994459833,
+              "coverage90": 0.2770083102493075,
+              "coverage95": 0.3684210526315789,
+              "pit_histogram": [
+                284,
+                22,
+                10,
+                9,
+                10,
+                8,
+                3,
+                8,
+                4,
+                3
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 361,
+              "nll": 2.719745267889548,
+              "crps": 0.16990257553008803,
+              "coverage68": 0.16066481994459833,
+              "coverage90": 0.27977839335180055,
+              "coverage95": 0.37119113573407203,
+              "pit_histogram": [
+                283,
+                22,
+                11,
+                9,
+                10,
+                8,
+                3,
+                8,
+                5,
+                2
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 504,
+              "bias": 0.23731152770966035,
+              "mae": 0.2558421251908207,
+              "nmad": 0.12236386982748187,
+              "rmse": 0.28817716960784895,
+              "p05": 0.06208206443292844,
+              "p95": 0.49261697811173266
+            },
+            "intrinsic_vs_reference": {
+              "n": 504,
+              "nll": 4.191764753886821,
+              "crps": 0.2157933536754154,
+              "coverage68": 0.061507936507936505,
+              "coverage90": 0.1111111111111111,
+              "coverage95": 0.1626984126984127,
+              "pit_histogram": [
+                461,
+                22,
+                7,
+                6,
+                3,
+                2,
+                3,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 504,
+              "nll": 4.14192614875944,
+              "crps": 0.21489968186593708,
+              "coverage68": 0.061507936507936505,
+              "coverage90": 0.1130952380952381,
+              "coverage95": 0.16666666666666666,
+              "pit_histogram": [
+                460,
+                23,
+                7,
+                6,
+                3,
+                2,
+                3,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 2426,
+              "bias": 0.26166426642885376,
+              "mae": 0.26884293573855,
+              "nmad": 0.07556225065397869,
+              "rmse": 0.28644796197243977,
+              "p05": 0.1345673059301744,
+              "p95": 0.4170864479688695
+            },
+            "intrinsic_vs_reference": {
+              "n": 2426,
+              "nll": 4.75047409923053,
+              "crps": 0.23978404894636102,
+              "coverage68": 0.02225886232481451,
+              "coverage90": 0.04534212695795548,
+              "coverage95": 0.06842539159109645,
+              "pit_histogram": [
+                2344,
+                26,
+                11,
+                15,
+                6,
+                8,
+                5,
+                4,
+                2,
+                5
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2426,
+              "nll": 4.733809369750685,
+              "crps": 0.23912602053952187,
+              "coverage68": 0.02225886232481451,
+              "coverage90": 0.04657873042044518,
+              "coverage95": 0.07007419620774938,
+              "pit_histogram": [
+                2343,
+                27,
+                10,
+                16,
+                6,
+                8,
+                5,
+                4,
+                2,
+                5
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 1725,
+              "bias": 0.17164818518514702,
+              "mae": 0.17859524474068728,
+              "nmad": 0.09212321758078537,
+              "rmse": 0.20836857387313215,
+              "p05": 0.011770368826903788,
+              "p95": 0.3340099860274769
+            },
+            "intrinsic_vs_reference": {
+              "n": 1725,
+              "nll": 3.458851558543815,
+              "crps": 0.15128554779000436,
+              "coverage68": 0.08811594202898551,
+              "coverage90": 0.17101449275362318,
+              "coverage95": 0.22376811594202897,
+              "pit_histogram": [
+                1475,
+                82,
+                31,
+                37,
+                23,
+                15,
+                19,
+                8,
+                6,
+                29
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1725,
+              "nll": 3.436891709625959,
+              "crps": 0.15098776879622267,
+              "coverage68": 0.08985507246376812,
+              "coverage90": 0.17333333333333334,
+              "coverage95": 0.22434782608695653,
+              "pit_histogram": [
+                1474,
+                80,
+                34,
+                37,
+                23,
+                15,
+                19,
+                8,
+                7,
+                28
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 280,
+              "bias": 0.1457178671231265,
+              "mae": 0.15608068827841637,
+              "nmad": 0.10132649572331456,
+              "rmse": 0.18420221084958838,
+              "p05": -0.04922512740251763,
+              "p95": 0.30345978452084565
+            },
+            "intrinsic_vs_reference": {
+              "n": 280,
+              "nll": 2.365469600375831,
+              "crps": 0.12823705763950413,
+              "coverage68": 0.21428571428571427,
+              "coverage90": 0.35714285714285715,
+              "coverage95": 0.42142857142857143,
+              "pit_histogram": [
+                191,
+                24,
+                12,
+                10,
+                12,
+                6,
+                4,
+                9,
+                1,
+                11
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 280,
+              "nll": 2.3452543193730557,
+              "crps": 0.1280367685215969,
+              "coverage68": 0.21785714285714286,
+              "coverage90": 0.35714285714285715,
+              "coverage95": 0.425,
+              "pit_histogram": [
+                191,
+                24,
+                12,
+                10,
+                12,
+                6,
+                4,
+                9,
+                1,
+                11
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        }
+      },
+      "native_label_vs_seismic": {
+        "APOGEE": {
+          "n": 5296,
+          "bias": 0.010159759140014657,
+          "mae": 0.051518001390403856,
+          "nmad": 0.05812499071884146,
+          "rmse": 0.07191270375495835,
+          "p05": -0.08557603282928483,
+          "p95": 0.13050096702575692
+        },
+        "DESI": {
+          "n": 0
+        },
+        "GALAH": {
+          "n": 0
+        }
+      }
+    },
+    "tune": {
+      "matched_stars": 689,
+      "exposure": "Role-specific holdout from frozen fine tuning; historical parent/teachers may overlap",
+      "models": {
+        "common": {
+          "all": {
+            "point": {
+              "n": 689,
+              "bias": 0.23003527180402683,
+              "mae": 0.23183027050370816,
+              "nmad": 0.0967635920933184,
+              "rmse": 0.25464052184895986,
+              "p05": 0.0465558673500892,
+              "p95": 0.4043138690097842
+            },
+            "intrinsic_vs_reference": {
+              "n": 689,
+              "nll": 4.1101319525714315,
+              "crps": 0.20171185671160421,
+              "coverage68": 0.05805515239477504,
+              "coverage90": 0.11175616835994194,
+              "coverage95": 0.16110304789550073,
+              "pit_histogram": [
+                630,
+                19,
+                13,
+                9,
+                3,
+                5,
+                2,
+                1,
+                2,
+                5
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 689,
+              "nll": 4.079474424506765,
+              "crps": 0.20111632045311922,
+              "coverage68": 0.059506531204644414,
+              "coverage90": 0.11320754716981132,
+              "coverage95": 0.1625544267053701,
+              "pit_histogram": [
+                630,
+                19,
+                13,
+                9,
+                3,
+                5,
+                2,
+                1,
+                2,
+                5
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 371,
+              "bias": 0.2086462993551661,
+              "mae": 0.2103770060825836,
+              "nmad": 0.1068095520076294,
+              "rmse": 0.23745083019290872,
+              "p05": 0.026708347109251185,
+              "p95": 0.40036440303248044
+            },
+            "intrinsic_vs_reference": {
+              "n": 371,
+              "nll": 3.5889992145764107,
+              "crps": 0.17595993475861627,
+              "coverage68": 0.09164420485175202,
+              "coverage90": 0.1725067385444744,
+              "coverage95": 0.24797843665768193,
+              "pit_histogram": [
+                323,
+                13,
+                11,
+                7,
+                3,
+                5,
+                2,
+                1,
+                2,
+                4
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 371,
+              "nll": 3.54332206059633,
+              "crps": 0.17537382223884088,
+              "coverage68": 0.09433962264150944,
+              "coverage90": 0.1752021563342318,
+              "coverage95": 0.25067385444743934,
+              "pit_histogram": [
+                323,
+                13,
+                11,
+                7,
+                3,
+                5,
+                2,
+                1,
+                2,
+                4
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 318,
+              "bias": 0.2505099229353982,
+              "mae": 0.25685907899502014,
+              "nmad": 0.07429478155442777,
+              "rmse": 0.27333223448839905,
+              "p05": 0.12237987936412818,
+              "p95": 0.4046939102058471
+            },
+            "intrinsic_vs_reference": {
+              "n": 318,
+              "nll": 4.718120146898955,
+              "crps": 0.2317557656567569,
+              "coverage68": 0.018867924528301886,
+              "coverage90": 0.040880503144654086,
+              "coverage95": 0.059748427672955975,
+              "pit_histogram": [
+                307,
+                6,
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 318,
+              "nll": 4.704985515735608,
+              "crps": 0.23114923503644394,
+              "coverage68": 0.018867924528301886,
+              "coverage90": 0.040880503144654086,
+              "coverage95": 0.059748427672955975,
+              "pit_histogram": [
+                307,
+                6,
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 45,
+              "bias": 0.1703872168359719,
+              "mae": 0.193598233381239,
+              "nmad": 0.11333876348081239,
+              "rmse": 0.23100551921530174,
+              "p05": 0.011444932321103798,
+              "p95": 0.42557276240118386
+            },
+            "intrinsic_vs_reference": {
+              "n": 45,
+              "nll": 2.0170921216870905,
+              "crps": 0.16065291228800382,
+              "coverage68": 0.15555555555555556,
+              "coverage90": 0.3333333333333333,
+              "coverage95": 0.4666666666666667,
+              "pit_histogram": [
+                34,
+                4,
+                4,
+                1,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 45,
+              "nll": 1.9588265183300504,
+              "crps": 0.15987311801162937,
+              "coverage68": 0.15555555555555556,
+              "coverage90": 0.3333333333333333,
+              "coverage95": 0.4888888888888889,
+              "pit_histogram": [
+                34,
+                4,
+                4,
+                1,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 68,
+              "bias": 0.2566782890842494,
+              "mae": 0.2522339404404218,
+              "nmad": 0.12026160618183936,
+              "rmse": 0.277188814399764,
+              "p05": 0.059228634964120716,
+              "p95": 0.43624015911025865
+            },
+            "intrinsic_vs_reference": {
+              "n": 68,
+              "nll": 4.388304647222528,
+              "crps": 0.218533873498434,
+              "coverage68": 0.058823529411764705,
+              "coverage90": 0.11764705882352941,
+              "coverage95": 0.17647058823529413,
+              "pit_histogram": [
+                62,
+                2,
+                2,
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 68,
+              "nll": 4.324390518461922,
+              "crps": 0.217445794961302,
+              "coverage68": 0.07352941176470588,
+              "coverage90": 0.1323529411764706,
+              "coverage95": 0.17647058823529413,
+              "pit_histogram": [
+                62,
+                2,
+                2,
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 346,
+              "bias": 0.25618921070947587,
+              "mae": 0.2620197790577543,
+              "nmad": 0.06880967838528594,
+              "rmse": 0.2766350987201507,
+              "p05": 0.1287255404631954,
+              "p95": 0.4051885226771965
+            },
+            "intrinsic_vs_reference": {
+              "n": 346,
+              "nll": 4.779683797082532,
+              "crps": 0.23341858279587244,
+              "coverage68": 0.014450867052023121,
+              "coverage90": 0.031791907514450865,
+              "coverage95": 0.06069364161849711,
+              "pit_histogram": [
+                337,
+                6,
+                2,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 346,
+              "nll": 4.7655848316982645,
+              "crps": 0.2327034883346174,
+              "coverage68": 0.014450867052023121,
+              "coverage90": 0.031791907514450865,
+              "coverage95": 0.06069364161849711,
+              "pit_histogram": [
+                337,
+                6,
+                2,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 202,
+              "bias": 0.1858383194125688,
+              "mae": 0.19248587587841762,
+              "nmad": 0.08412678327804159,
+              "rmse": 0.21650428842211464,
+              "p05": 0.0259770420318525,
+              "p95": 0.34871181370312176
+            },
+            "intrinsic_vs_reference": {
+              "n": 202,
+              "nll": 3.657860425100334,
+              "crps": 0.16193129973130793,
+              "coverage68": 0.06435643564356436,
+              "coverage90": 0.15346534653465346,
+              "coverage95": 0.21287128712871287,
+              "pit_histogram": [
+                181,
+                5,
+                4,
+                3,
+                1,
+                2,
+                1,
+                0,
+                1,
+                4
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 202,
+              "nll": 3.6147009756647557,
+              "crps": 0.1616792561140985,
+              "coverage68": 0.06435643564356436,
+              "coverage90": 0.15346534653465346,
+              "coverage95": 0.21287128712871287,
+              "pit_histogram": [
+                181,
+                5,
+                4,
+                3,
+                1,
+                2,
+                1,
+                0,
+                1,
+                4
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 28,
+              "bias": 0.12527561271883214,
+              "mae": 0.15450848012596913,
+              "nmad": 0.13405961569510796,
+              "rmse": 0.19848046802022315,
+              "p05": -0.042954048109071614,
+              "p95": 0.33146719362062244
+            },
+            "intrinsic_vs_reference": {
+              "n": 28,
+              "nll": 1.787451934780065,
+              "crps": 0.12202973679805595,
+              "coverage68": 0.39285714285714285,
+              "coverage90": 0.42857142857142855,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                16,
+                2,
+                1,
+                4,
+                1,
+                2,
+                0,
+                0,
+                1,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 28,
+              "nll": 1.7675064661792383,
+              "crps": 0.12192584733863468,
+              "coverage68": 0.39285714285714285,
+              "coverage90": 0.42857142857142855,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                16,
+                2,
+                1,
+                4,
+                1,
+                2,
+                0,
+                0,
+                1,
+                1
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        }
+      },
+      "native_label_vs_seismic": {
+        "APOGEE": {
+          "n": 689,
+          "bias": 0.00894279212951643,
+          "mae": 0.052655982173786794,
+          "nmad": 0.06297160991523738,
+          "rmse": 0.07243151044433362,
+          "p05": -0.085033260498047,
+          "p95": 0.13102282356262218
+        },
+        "DESI": {
+          "n": 0
+        },
+        "GALAH": {
+          "n": 0
+        }
+      }
+    },
+    "cal": {
+      "matched_stars": 769,
+      "exposure": "Role-specific holdout from frozen fine tuning; historical parent/teachers may overlap",
+      "models": {
+        "common": {
+          "all": {
+            "point": {
+              "n": 769,
+              "bias": 0.22462520343808645,
+              "mae": 0.22739146028977178,
+              "nmad": 0.109364907598879,
+              "rmse": 0.2567963575299034,
+              "p05": 0.015539471496714275,
+              "p95": 0.40224127546633753
+            },
+            "intrinsic_vs_reference": {
+              "n": 769,
+              "nll": 3.752128108731381,
+              "crps": 0.19534508347579851,
+              "coverage68": 0.0754226267880364,
+              "coverage90": 0.14434330299089726,
+              "coverage95": 0.18855656697009102,
+              "pit_histogram": [
+                677,
+                30,
+                9,
+                18,
+                10,
+                5,
+                3,
+                4,
+                8,
+                5
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 769,
+              "nll": 3.7306696602103098,
+              "crps": 0.194845523766785,
+              "coverage68": 0.0754226267880364,
+              "coverage90": 0.14434330299089726,
+              "coverage95": 0.18985695708712613,
+              "pit_histogram": [
+                677,
+                30,
+                9,
+                18,
+                10,
+                5,
+                3,
+                4,
+                8,
+                5
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 419,
+              "bias": 0.1929639841294275,
+              "mae": 0.20203773946190973,
+              "nmad": 0.11862141509216723,
+              "rmse": 0.23265287322215056,
+              "p05": 0.0001410530948369892,
+              "p95": 0.398384703771852
+            },
+            "intrinsic_vs_reference": {
+              "n": 419,
+              "nll": 3.3486034347040334,
+              "crps": 0.16709716412195844,
+              "coverage68": 0.11694510739856802,
+              "coverage90": 0.1957040572792363,
+              "coverage95": 0.2529832935560859,
+              "pit_histogram": [
+                349,
+                17,
+                8,
+                16,
+                9,
+                3,
+                3,
+                4,
+                7,
+                3
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 419,
+              "nll": 3.314681423112784,
+              "crps": 0.16659538735929488,
+              "coverage68": 0.11694510739856802,
+              "coverage90": 0.1957040572792363,
+              "coverage95": 0.2553699284009546,
+              "pit_histogram": [
+                349,
+                17,
+                8,
+                16,
+                9,
+                3,
+                3,
+                4,
+                7,
+                3
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 349,
+              "bias": 0.24916257783208717,
+              "mae": 0.2580655558631472,
+              "nmad": 0.08252779378760634,
+              "rmse": 0.28330192013349914,
+              "p05": 0.08966555367873062,
+              "p95": 0.42009093576640727
+            },
+            "intrinsic_vs_reference": {
+              "n": 349,
+              "nll": 4.240914223546772,
+              "crps": 0.22948167725110907,
+              "coverage68": 0.025787965616045846,
+              "coverage90": 0.0830945558739255,
+              "coverage95": 0.11174785100286533,
+              "pit_histogram": [
+                327,
+                13,
+                1,
+                2,
+                1,
+                2,
+                0,
+                0,
+                1,
+                2
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 349,
+              "nll": 4.237067777982153,
+              "crps": 0.22899539491986626,
+              "coverage68": 0.025787965616045846,
+              "coverage90": 0.0830945558739255,
+              "coverage95": 0.11174785100286533,
+              "pit_histogram": [
+                327,
+                13,
+                1,
+                2,
+                1,
+                2,
+                0,
+                0,
+                1,
+                2
+              ]
+            }
+          },
+          "state_Dwarf": {
+            "point": {
+              "n": 1,
+              "bias": 0.14534113205594634,
+              "mae": 0.14534113205594634,
+              "nmad": 0.0,
+              "rmse": 0.14534113205594634,
+              "p05": 0.14534113205594634,
+              "p95": 0.14534113205594634
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": 2.2426124556185303,
+              "crps": 0.11755206515139995,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": 1.2967979017005613,
+              "crps": 0.11334764607980075,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 60,
+              "bias": 0.2186131082192594,
+              "mae": 0.20359842629493727,
+              "nmad": 0.11146462222685218,
+              "rmse": 0.23068847687825308,
+              "p05": 0.005172218112634124,
+              "p95": 0.3600802611857252
+            },
+            "intrinsic_vs_reference": {
+              "n": 60,
+              "nll": 2.4501370802519156,
+              "crps": 0.16705015801789264,
+              "coverage68": 0.16666666666666666,
+              "coverage90": 0.26666666666666666,
+              "coverage95": 0.38333333333333336,
+              "pit_histogram": [
+                48,
+                2,
+                1,
+                5,
+                3,
+                0,
+                0,
+                1,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 60,
+              "nll": 2.4044699580002886,
+              "crps": 0.16637241808523098,
+              "coverage68": 0.16666666666666666,
+              "coverage90": 0.26666666666666666,
+              "coverage95": 0.38333333333333336,
+              "pit_histogram": [
+                48,
+                2,
+                1,
+                5,
+                3,
+                0,
+                0,
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 74,
+              "bias": 0.21514985761552397,
+              "mae": 0.24561822244184128,
+              "nmad": 0.1436415809197932,
+              "rmse": 0.27912494942616994,
+              "p05": 0.047498409255482765,
+              "p95": 0.4612490146365623
+            },
+            "intrinsic_vs_reference": {
+              "n": 74,
+              "nll": 3.5550820515026036,
+              "crps": 0.20397609184096793,
+              "coverage68": 0.10810810810810811,
+              "coverage90": 0.16216216216216217,
+              "coverage95": 0.21621621621621623,
+              "pit_histogram": [
+                64,
+                5,
+                1,
+                2,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 74,
+              "nll": 3.5111777353968177,
+              "crps": 0.20305241755622686,
+              "coverage68": 0.10810810810810811,
+              "coverage90": 0.16216216216216217,
+              "coverage95": 0.21621621621621623,
+              "pit_histogram": [
+                64,
+                5,
+                1,
+                2,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 347,
+              "bias": 0.26869672707033,
+              "mae": 0.27106562880251184,
+              "nmad": 0.07762354357197332,
+              "rmse": 0.286660645225958,
+              "p05": 0.11808764778134759,
+              "p95": 0.4266165149292945
+            },
+            "intrinsic_vs_reference": {
+              "n": 347,
+              "nll": 4.602317647882824,
+              "crps": 0.2392059764980204,
+              "coverage68": 0.011527377521613832,
+              "coverage90": 0.04899135446685879,
+              "coverage95": 0.07780979827089338,
+              "pit_histogram": [
+                338,
+                5,
+                0,
+                2,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 347,
+              "nll": 4.5851104564513,
+              "crps": 0.23861215918465886,
+              "coverage68": 0.011527377521613832,
+              "coverage90": 0.04899135446685879,
+              "coverage95": 0.07780979827089338,
+              "pit_histogram": [
+                338,
+                5,
+                0,
+                2,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 239,
+              "bias": 0.17304366906251722,
+              "mae": 0.17880541170569658,
+              "nmad": 0.08908755597396606,
+              "rmse": 0.20493206657083007,
+              "p05": 0.009675093134762447,
+              "p95": 0.3323392887777778
+            },
+            "intrinsic_vs_reference": {
+              "n": 239,
+              "nll": 3.399742019744299,
+              "crps": 0.14988445626350985,
+              "coverage68": 0.09205020920502092,
+              "coverage90": 0.1799163179916318,
+              "coverage95": 0.2217573221757322,
+              "pit_histogram": [
+                199,
+                15,
+                5,
+                5,
+                3,
+                4,
+                1,
+                1,
+                2,
+                4
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 239,
+              "nll": 3.386148645023423,
+              "crps": 0.1496254358222798,
+              "coverage68": 0.09205020920502092,
+              "coverage90": 0.1799163179916318,
+              "coverage95": 0.22594142259414227,
+              "pit_histogram": [
+                199,
+                15,
+                5,
+                5,
+                3,
+                4,
+                1,
+                1,
+                2,
+                4
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 49,
+              "bias": 0.08614163302573008,
+              "mae": 0.15669617004712041,
+              "nmad": 0.1082354721914208,
+              "rmse": 0.25558994243391303,
+              "p05": -0.1173071126854923,
+              "p95": 0.34695745495615804
+            },
+            "intrinsic_vs_reference": {
+              "n": 49,
+              "nll": 1.3420337235489226,
+              "crps": 0.12808714334269236,
+              "coverage68": 0.2857142857142857,
+              "coverage90": 0.46938775510204084,
+              "coverage95": 0.5306122448979592,
+              "pit_histogram": [
+                28,
+                3,
+                2,
+                4,
+                3,
+                1,
+                1,
+                1,
+                5,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 49,
+              "nll": 1.3156482500642253,
+              "crps": 0.12794051824043962,
+              "coverage68": 0.2857142857142857,
+              "coverage90": 0.46938775510204084,
+              "coverage95": 0.5306122448979592,
+              "pit_histogram": [
+                28,
+                3,
+                2,
+                4,
+                3,
+                1,
+                1,
+                1,
+                5,
+                1
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        }
+      },
+      "native_label_vs_seismic": {
+        "APOGEE": {
+          "n": 769,
+          "bias": 0.013912540435791154,
+          "mae": 0.05547543675381742,
+          "nmad": 0.06442431008377023,
+          "rmse": 0.07452751742312379,
+          "p05": -0.08503033210754393,
+          "p95": 0.1409236583709715
+        },
+        "DESI": {
+          "n": 0
+        },
+        "GALAH": {
+          "n": 0
+        }
+      }
+    },
+    "devtest": {
+      "matched_stars": 734,
+      "exposure": "Role-specific holdout from frozen fine tuning; historical parent/teachers may overlap",
+      "models": {
+        "common": {
+          "all": {
+            "point": {
+              "n": 734,
+              "bias": 0.22870788294957078,
+              "mae": 0.22815388531632735,
+              "nmad": 0.09732445707395944,
+              "rmse": 0.2562169624311361,
+              "p05": 0.016602423582044994,
+              "p95": 0.392473709534763
+            },
+            "intrinsic_vs_reference": {
+              "n": 734,
+              "nll": 3.987745826943234,
+              "crps": 0.1988465612463603,
+              "coverage68": 0.0653950953678474,
+              "coverage90": 0.14168937329700274,
+              "coverage95": 0.17574931880108993,
+              "pit_histogram": [
+                651,
+                27,
+                11,
+                8,
+                10,
+                5,
+                5,
+                1,
+                4,
+                12
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 734,
+              "nll": 3.9674019504668103,
+              "crps": 0.19836971673639014,
+              "coverage68": 0.0667574931880109,
+              "coverage90": 0.14305177111716622,
+              "coverage95": 0.17574931880108993,
+              "pit_histogram": [
+                651,
+                27,
+                10,
+                9,
+                10,
+                5,
+                5,
+                1,
+                4,
+                12
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 324,
+              "bias": 0.26004353172627015,
+              "mae": 0.25505898173564023,
+              "nmad": 0.07227601109129447,
+              "rmse": 0.2772284018996577,
+              "p05": 0.08407171204057183,
+              "p95": 0.38790450803376925
+            },
+            "intrinsic_vs_reference": {
+              "n": 324,
+              "nll": 4.486104567683668,
+              "crps": 0.22976826627709654,
+              "coverage68": 0.027777777777777776,
+              "coverage90": 0.06172839506172839,
+              "coverage95": 0.07407407407407407,
+              "pit_histogram": [
+                309,
+                5,
+                5,
+                0,
+                3,
+                0,
+                0,
+                0,
+                2,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 324,
+              "nll": 4.479217762215952,
+              "crps": 0.2293079080089453,
+              "coverage68": 0.027777777777777776,
+              "coverage90": 0.06172839506172839,
+              "coverage95": 0.07407407407407407,
+              "pit_histogram": [
+                309,
+                5,
+                5,
+                0,
+                3,
+                0,
+                0,
+                0,
+                2,
+                0
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 409,
+              "bias": 0.2024079744628806,
+              "mae": 0.2068785413184744,
+              "nmad": 0.10617662129187759,
+              "rmse": 0.2383655664342852,
+              "p05": -0.008622745996327993,
+              "p95": 0.3963231976643074
+            },
+            "intrinsic_vs_reference": {
+              "n": 409,
+              "nll": 3.588290846328623,
+              "crps": 0.17432969156635703,
+              "coverage68": 0.09535452322738386,
+              "coverage90": 0.20537897310513448,
+              "coverage95": 0.2567237163814181,
+              "pit_histogram": [
+                341,
+                22,
+                6,
+                8,
+                7,
+                5,
+                5,
+                1,
+                2,
+                12
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 409,
+              "nll": 3.5572382058598793,
+              "crps": 0.17384918214328327,
+              "coverage68": 0.097799511002445,
+              "coverage90": 0.2078239608801956,
+              "coverage95": 0.2567237163814181,
+              "pit_histogram": [
+                341,
+                22,
+                5,
+                9,
+                7,
+                5,
+                5,
+                1,
+                2,
+                12
+              ]
+            }
+          },
+          "state_RC/RGB": {
+            "point": {
+              "n": 1,
+              "bias": 0.21251834058079666,
+              "mae": 0.21251834058079666,
+              "nmad": 0.0,
+              "rmse": 0.21251834058079666,
+              "p05": 0.21251834058079666,
+              "p95": 0.21251834058079666
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": 5.896600898418333,
+              "crps": 0.20761383040915066,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": 5.896050487979998,
+              "crps": 0.20329439300924043,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 54,
+              "bias": 0.1773038938106879,
+              "mae": 0.17668312252359064,
+              "nmad": 0.1433411650669403,
+              "rmse": 0.20604359301824982,
+              "p05": 0.004067331259377527,
+              "p95": 0.32792846700361294
+            },
+            "intrinsic_vs_reference": {
+              "n": 54,
+              "nll": 2.030742285450798,
+              "crps": 0.14627650878020995,
+              "coverage68": 0.2037037037037037,
+              "coverage90": 0.4074074074074074,
+              "coverage95": 0.5370370370370371,
+              "pit_histogram": [
+                40,
+                6,
+                3,
+                2,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 54,
+              "nll": 2.0012531555327566,
+              "crps": 0.14572052557493856,
+              "coverage68": 0.2222222222222222,
+              "coverage90": 0.42592592592592593,
+              "coverage95": 0.5370370370370371,
+              "pit_histogram": [
+                40,
+                6,
+                2,
+                3,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 65,
+              "bias": 0.2586462871744024,
+              "mae": 0.26197174375220617,
+              "nmad": 0.09956509019280099,
+              "rmse": 0.2876419483916664,
+              "p05": 0.017904460223699518,
+              "p95": 0.47293136341164
+            },
+            "intrinsic_vs_reference": {
+              "n": 65,
+              "nll": 4.505942874719116,
+              "crps": 0.2253691684525358,
+              "coverage68": 0.06153846153846154,
+              "coverage90": 0.12307692307692308,
+              "coverage95": 0.15384615384615385,
+              "pit_histogram": [
+                59,
+                1,
+                1,
+                0,
+                2,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 65,
+              "nll": 4.437261030393477,
+              "crps": 0.22440320751944481,
+              "coverage68": 0.06153846153846154,
+              "coverage90": 0.12307692307692308,
+              "coverage95": 0.15384615384615385,
+              "pit_histogram": [
+                59,
+                1,
+                1,
+                0,
+                2,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 348,
+              "bias": 0.2645746691989992,
+              "mae": 0.2692804875223019,
+              "nmad": 0.06874561593056806,
+              "rmse": 0.2893867758923255,
+              "p05": 0.13144621212369792,
+              "p95": 0.41647466863359506
+            },
+            "intrinsic_vs_reference": {
+              "n": 348,
+              "nll": 4.857412225237064,
+              "crps": 0.24058185400234966,
+              "coverage68": 0.011494252873563218,
+              "coverage90": 0.03735632183908046,
+              "coverage95": 0.04885057471264368,
+              "pit_histogram": [
+                340,
+                3,
+                2,
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 348,
+              "nll": 4.85119633082008,
+              "crps": 0.24001353647624238,
+              "coverage68": 0.011494252873563218,
+              "coverage90": 0.03735632183908046,
+              "coverage95": 0.04885057471264368,
+              "pit_histogram": [
+                340,
+                3,
+                2,
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 230,
+              "bias": 0.1722483723511612,
+              "mae": 0.17718376751753365,
+              "nmad": 0.08548504667701533,
+              "rmse": 0.20113384267350787,
+              "p05": -0.011934024940519178,
+              "p95": 0.3416568873930621
+            },
+            "intrinsic_vs_reference": {
+              "n": 230,
+              "nll": 3.2626243866299722,
+              "crps": 0.15024393139625056,
+              "coverage68": 0.08695652173913043,
+              "coverage90": 0.19130434782608696,
+              "coverage95": 0.23478260869565218,
+              "pit_histogram": [
+                191,
+                12,
+                4,
+                4,
+                4,
+                2,
+                3,
+                0,
+                3,
+                7
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 230,
+              "nll": 3.2347787137326263,
+              "crps": 0.14999733923592076,
+              "coverage68": 0.08695652173913043,
+              "coverage90": 0.19130434782608696,
+              "coverage95": 0.23478260869565218,
+              "pit_histogram": [
+                191,
+                12,
+                4,
+                4,
+                4,
+                2,
+                3,
+                0,
+                3,
+                7
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 37,
+              "bias": 0.14649157915361677,
+              "mae": 0.17389253176278768,
+              "nmad": 0.13340261100358675,
+              "rmse": 0.2363432572759314,
+              "p05": -0.08608529954586608,
+              "p95": 0.35037303914908735
+            },
+            "intrinsic_vs_reference": {
+              "n": 37,
+              "nll": 2.2615136053474605,
+              "crps": 0.1385637599277562,
+              "coverage68": 0.24324324324324326,
+              "coverage90": 0.4594594594594595,
+              "coverage95": 0.5135135135135135,
+              "pit_histogram": [
+                21,
+                5,
+                1,
+                2,
+                2,
+                0,
+                2,
+                1,
+                1,
+                2
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 37,
+              "nll": 2.2531882968757393,
+              "crps": 0.1384907161271799,
+              "coverage68": 0.24324324324324326,
+              "coverage90": 0.4594594594594595,
+              "coverage95": 0.5135135135135135,
+              "pit_histogram": [
+                21,
+                5,
+                1,
+                2,
+                2,
+                0,
+                2,
+                1,
+                1,
+                2
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "APOGEE_mapped": {
+          "all": {
+            "point": {
+              "n": 734,
+              "bias": -0.026324937583218744,
+              "mae": 0.08924777834315813,
+              "nmad": 0.09527078879313683,
+              "rmse": 0.12817896400923484,
+              "p05": -0.22033736751904284,
+              "p95": 0.1426999183744764
+            },
+            "intrinsic_vs_reference": {
+              "n": 734,
+              "nll": 0.693890997356145,
+              "crps": 0.07183439874147445,
+              "coverage68": 0.2956403269754768,
+              "coverage90": 0.5040871934604905,
+              "coverage95": 0.6267029972752044,
+              "pit_histogram": [
+                141,
+                38,
+                37,
+                22,
+                26,
+                26,
+                35,
+                43,
+                65,
+                301
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 734,
+              "nll": 0.5534490956130538,
+              "crps": 0.07148266534975817,
+              "coverage68": 0.31607629427792916,
+              "coverage90": 0.5204359673024523,
+              "coverage95": 0.6430517711171662,
+              "pit_histogram": [
+                137,
+                39,
+                39,
+                23,
+                27,
+                25,
+                40,
+                44,
+                63,
+                297
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 324,
+              "bias": -0.004978561423347294,
+              "mae": 0.06780647228708518,
+              "nmad": 0.06973656217498136,
+              "rmse": 0.11346121042768538,
+              "p05": -0.16725808261016117,
+              "p95": 0.13307645461501447
+            },
+            "intrinsic_vs_reference": {
+              "n": 324,
+              "nll": 0.5981153580642175,
+              "crps": 0.05488016823881381,
+              "coverage68": 0.3117283950617284,
+              "coverage90": 0.5,
+              "coverage95": 0.6203703703703703,
+              "pit_histogram": [
+                66,
+                22,
+                19,
+                14,
+                17,
+                15,
+                14,
+                12,
+                23,
+                122
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 324,
+              "nll": 0.42026858307110687,
+              "crps": 0.05456719775221247,
+              "coverage68": 0.3395061728395062,
+              "coverage90": 0.5308641975308642,
+              "coverage95": 0.6358024691358025,
+              "pit_histogram": [
+                64,
+                23,
+                19,
+                15,
+                17,
+                15,
+                18,
+                11,
+                23,
+                119
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 409,
+              "bias": -0.045555548689902636,
+              "mae": 0.10632242557180793,
+              "nmad": 0.11653428732813251,
+              "rmse": 0.1388543207349279,
+              "p05": -0.2671186294704929,
+              "p95": 0.15722232435375924
+            },
+            "intrinsic_vs_reference": {
+              "n": 409,
+              "nll": 0.7594498912237442,
+              "crps": 0.08531917746961964,
+              "coverage68": 0.28361858190709044,
+              "coverage90": 0.508557457212714,
+              "coverage95": 0.6332518337408313,
+              "pit_histogram": [
+                75,
+                16,
+                18,
+                8,
+                9,
+                11,
+                21,
+                31,
+                42,
+                178
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 409,
+              "nll": 0.6514334038687196,
+              "crps": 0.08494654125038953,
+              "coverage68": 0.2982885085574572,
+              "coverage90": 0.5134474327628362,
+              "coverage95": 0.6503667481662592,
+              "pit_histogram": [
+                73,
+                16,
+                20,
+                8,
+                10,
+                10,
+                22,
+                33,
+                40,
+                177
+              ]
+            }
+          },
+          "state_RC/RGB": {
+            "point": {
+              "n": 1,
+              "bias": -0.052700223993017214,
+              "mae": 0.052700223993017214,
+              "nmad": 0.0,
+              "rmse": 0.052700223993017214,
+              "p05": -0.052700223993017214,
+              "p95": -0.052700223993017214
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": 4.911610536092594,
+              "crps": 0.04973058179213538,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": 3.6283530826365435,
+              "crps": 0.045368923596337166,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 54,
+              "bias": 0.05576401003396858,
+              "mae": 0.0838665486792969,
+              "nmad": 0.10207560357307845,
+              "rmse": 0.09867371776582552,
+              "p05": -0.11040900557565617,
+              "p95": 0.1632999766365815
+            },
+            "intrinsic_vs_reference": {
+              "n": 54,
+              "nll": 0.00505142726450686,
+              "crps": 0.06075524679537182,
+              "coverage68": 0.3333333333333333,
+              "coverage90": 0.5555555555555556,
+              "coverage95": 0.6481481481481481,
+              "pit_histogram": [
+                23,
+                3,
+                4,
+                3,
+                0,
+                2,
+                2,
+                7,
+                4,
+                6
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 54,
+              "nll": -0.1324708179026273,
+              "crps": 0.06024970185960291,
+              "coverage68": 0.37037037037037035,
+              "coverage90": 0.5555555555555556,
+              "coverage95": 0.6666666666666666,
+              "pit_histogram": [
+                23,
+                3,
+                4,
+                3,
+                0,
+                2,
+                2,
+                7,
+                5,
+                5
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 65,
+              "bias": 0.017923106072465167,
+              "mae": 0.08504461244458789,
+              "nmad": 0.09236407967700014,
+              "rmse": 0.11569999147518818,
+              "p05": -0.17985301974509663,
+              "p95": 0.22021564020649415
+            },
+            "intrinsic_vs_reference": {
+              "n": 65,
+              "nll": 0.6594864560721171,
+              "crps": 0.06552841646528441,
+              "coverage68": 0.3076923076923077,
+              "coverage90": 0.5384615384615384,
+              "coverage95": 0.6153846153846154,
+              "pit_histogram": [
+                23,
+                4,
+                5,
+                1,
+                3,
+                2,
+                6,
+                1,
+                5,
+                15
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 65,
+              "nll": 0.44613401160552735,
+              "crps": 0.06489010023554131,
+              "coverage68": 0.35384615384615387,
+              "coverage90": 0.5538461538461539,
+              "coverage95": 0.6307692307692307,
+              "pit_histogram": [
+                21,
+                5,
+                6,
+                1,
+                3,
+                2,
+                7,
+                2,
+                3,
+                15
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 348,
+              "bias": -0.0012133871944468577,
+              "mae": 0.06583631893150402,
+              "nmad": 0.0702109245385518,
+              "rmse": 0.11049893051658823,
+              "p05": -0.13281811524150272,
+              "p95": 0.15015964614239063
+            },
+            "intrinsic_vs_reference": {
+              "n": 348,
+              "nll": 0.4676041566702588,
+              "crps": 0.05314764274504554,
+              "coverage68": 0.3333333333333333,
+              "coverage90": 0.5459770114942529,
+              "coverage95": 0.6666666666666666,
+              "pit_histogram": [
+                78,
+                27,
+                21,
+                14,
+                16,
+                16,
+                12,
+                19,
+                29,
+                116
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 348,
+              "nll": 0.25806307639453824,
+              "crps": 0.05274081048206259,
+              "coverage68": 0.3563218390804598,
+              "coverage90": 0.5747126436781609,
+              "coverage95": 0.6896551724137931,
+              "pit_histogram": [
+                76,
+                27,
+                22,
+                15,
+                17,
+                15,
+                15,
+                19,
+                29,
+                113
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 230,
+              "bias": -0.09563975007114633,
+              "mae": 0.11408784568807585,
+              "nmad": 0.08897083009393988,
+              "rmse": 0.13953571335251547,
+              "p05": -0.28180983028856815,
+              "p95": 0.08603442938109744
+            },
+            "intrinsic_vs_reference": {
+              "n": 230,
+              "nll": 1.1160453384292457,
+              "crps": 0.09407362908745771,
+              "coverage68": 0.23043478260869565,
+              "coverage90": 0.4260869565217391,
+              "coverage95": 0.5869565217391305,
+              "pit_histogram": [
+                14,
+                3,
+                7,
+                3,
+                6,
+                5,
+                11,
+                14,
+                24,
+                143
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 230,
+              "nll": 1.0796086775314262,
+              "crps": 0.09387467441783862,
+              "coverage68": 0.2391304347826087,
+              "coverage90": 0.43043478260869567,
+              "coverage95": 0.5956521739130435,
+              "pit_histogram": [
+                14,
+                3,
+                7,
+                3,
+                6,
+                5,
+                12,
+                14,
+                23,
+                143
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 37,
+              "bias": -0.10829124402358836,
+              "mae": 0.17026844242910738,
+              "nmad": 0.12190443953974014,
+              "rmse": 0.22876758140100328,
+              "p05": -0.3424623835422181,
+              "p95": 0.11339989591713992
+            },
+            "intrinsic_vs_reference": {
+              "n": 37,
+              "nll": 1.2637816481746718,
+              "crps": 0.13659470036912305,
+              "coverage68": 0.2702702702702703,
+              "coverage90": 0.4594594594594595,
+              "coverage95": 0.4864864864864865,
+              "pit_histogram": [
+                3,
+                1,
+                0,
+                1,
+                1,
+                1,
+                4,
+                2,
+                3,
+                21
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 37,
+              "nll": 1.2505514371577504,
+              "crps": 0.13653942667927288,
+              "coverage68": 0.2702702702702703,
+              "coverage90": 0.4594594594594595,
+              "coverage95": 0.4864864864864865,
+              "pit_histogram": [
+                3,
+                1,
+                0,
+                1,
+                1,
+                1,
+                4,
+                2,
+                3,
+                21
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "DESI_mapped": {
+          "all": {
+            "point": {
+              "n": 734,
+              "bias": 0.681425882862154,
+              "mae": 0.6634397457093678,
+              "nmad": 0.11006100045511003,
+              "rmse": 0.6779279560490858,
+              "p05": 0.41730066175767483,
+              "p95": 0.8399202837930516
+            },
+            "intrinsic_vs_reference": {
+              "n": 734,
+              "nll": 6.936008012642974,
+              "crps": 0.6289993802249538,
+              "coverage68": 0.0027247956403269754,
+              "coverage90": 0.010899182561307902,
+              "coverage95": 0.02861035422343324,
+              "pit_histogram": [
+                732,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 734,
+              "nll": 6.933913628693185,
+              "crps": 0.6284955374636014,
+              "coverage68": 0.0027247956403269754,
+              "coverage90": 0.010899182561307902,
+              "coverage95": 0.02861035422343324,
+              "pit_histogram": [
+                732,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 324,
+              "bias": 0.7179142621152432,
+              "mae": 0.7066796065191047,
+              "nmad": 0.07026702895976447,
+              "rmse": 0.7149002496422476,
+              "p05": 0.5189877317608568,
+              "p95": 0.8335330561755765
+            },
+            "intrinsic_vs_reference": {
+              "n": 324,
+              "nll": 7.350716451621464,
+              "crps": 0.6803755707785192,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0030864197530864196,
+              "pit_histogram": [
+                324,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 324,
+              "nll": 7.349187619047511,
+              "crps": 0.6798745955284761,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0030864197530864196,
+              "pit_histogram": [
+                324,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 409,
+              "bias": 0.6329275563941854,
+              "mae": 0.6291352191446956,
+              "nmad": 0.1260030867872384,
+              "rmse": 0.6471253593459729,
+              "p05": 0.36363331827501955,
+              "p95": 0.845781740518767
+            },
+            "intrinsic_vs_reference": {
+              "n": 409,
+              "nll": 6.599953383702173,
+              "crps": 0.5881763944761147,
+              "coverage68": 0.004889975550122249,
+              "coverage90": 0.019559902200488997,
+              "coverage95": 0.0488997555012225,
+              "pit_histogram": [
+                407,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 409,
+              "nll": 6.597433900435206,
+              "crps": 0.5876800677925083,
+              "coverage68": 0.004889975550122249,
+              "coverage90": 0.019559902200488997,
+              "coverage95": 0.0488997555012225,
+              "pit_histogram": [
+                407,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RC/RGB": {
+            "point": {
+              "n": 1,
+              "bias": 0.6842762083054916,
+              "mae": 0.6842762083054916,
+              "nmad": 0.0,
+              "rmse": 0.6842762083054916,
+              "p05": 0.6842762083054916,
+              "p95": 0.6842762083054916
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": 10.016817020400051,
+              "crps": 0.6797148121450022,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": 10.005349611404982,
+              "crps": 0.6752078199212678,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 54,
+              "bias": 0.49958439546100664,
+              "mae": 0.48692036068308703,
+              "nmad": 0.1947911084445086,
+              "rmse": 0.5183365723525982,
+              "p05": 0.19917885334056393,
+              "p95": 0.7493079293359968
+            },
+            "intrinsic_vs_reference": {
+              "n": 54,
+              "nll": 4.536433663702555,
+              "crps": 0.4337394985691116,
+              "coverage68": 0.037037037037037035,
+              "coverage90": 0.1111111111111111,
+              "coverage95": 0.3148148148148148,
+              "pit_histogram": [
+                52,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 54,
+              "nll": 4.52395502002162,
+              "crps": 0.4331818569106763,
+              "coverage68": 0.037037037037037035,
+              "coverage90": 0.1111111111111111,
+              "coverage95": 0.3148148148148148,
+              "pit_histogram": [
+                52,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 65,
+              "bias": 0.7257915868249301,
+              "mae": 0.7140035336364599,
+              "nmad": 0.11171474858357809,
+              "rmse": 0.7286389931473709,
+              "p05": 0.4237350469776203,
+              "p95": 0.9333874366833477
+            },
+            "intrinsic_vs_reference": {
+              "n": 65,
+              "nll": 6.239414443253418,
+              "crps": 0.6648459948379614,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.015384615384615385,
+              "pit_histogram": [
+                65,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 65,
+              "nll": 6.23651529908599,
+              "crps": 0.6639422808806756,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.015384615384615385,
+              "pit_histogram": [
+                65,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 348,
+              "bias": 0.7282383261578369,
+              "mae": 0.7284177275187603,
+              "nmad": 0.06950710917514165,
+              "rmse": 0.7351401570975578,
+              "p05": 0.6030773533988061,
+              "p95": 0.8660080144006803
+            },
+            "intrinsic_vs_reference": {
+              "n": 348,
+              "nll": 7.23301923622105,
+              "crps": 0.6985541419871207,
+              "coverage68": 0.0,
+              "coverage90": 0.0028735632183908046,
+              "coverage95": 0.005747126436781609,
+              "pit_histogram": [
+                348,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 348,
+              "nll": 7.231948385616502,
+              "crps": 0.6979540465363594,
+              "coverage68": 0.0,
+              "coverage90": 0.0028735632183908046,
+              "coverage95": 0.005747126436781609,
+              "pit_histogram": [
+                348,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 230,
+              "bias": 0.6146139228719496,
+              "mae": 0.6118924361623531,
+              "nmad": 0.09328284857891592,
+              "rmse": 0.6201266133367963,
+              "p05": 0.43766869363263894,
+              "p95": 0.7772785204830293
+            },
+            "intrinsic_vs_reference": {
+              "n": 230,
+              "nll": 7.269459007326601,
+              "crps": 0.5805926727043453,
+              "coverage68": 0.0,
+              "coverage90": 0.004347826086956522,
+              "coverage95": 0.004347826086956522,
+              "pit_histogram": [
+                230,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 230,
+              "nll": 7.268558183255096,
+              "crps": 0.580305524572007,
+              "coverage68": 0.0,
+              "coverage90": 0.004347826086956522,
+              "coverage95": 0.004347826086956522,
+              "pit_histogram": [
+                230,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 37,
+              "bias": 0.5555719539161736,
+              "mae": 0.5415193160418809,
+              "nmad": 0.13494242664999342,
+              "rmse": 0.564739657618988,
+              "p05": 0.3403425555860341,
+              "p95": 0.7250614918266823
+            },
+            "intrinsic_vs_reference": {
+              "n": 37,
+              "nll": 6.795520506445662,
+              "crps": 0.49771530714592493,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                37,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 37,
+              "nll": 6.792949124211506,
+              "crps": 0.4975507330175212,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                37,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "GALAH_mapped": {
+          "all": {
+            "point": {
+              "n": 734,
+              "bias": 0.03940438807911045,
+              "mae": 0.09355914178461439,
+              "nmad": 0.0925933343460955,
+              "rmse": 0.13067133470973738,
+              "p05": -0.15555139514623656,
+              "p95": 0.22097794699358858
+            },
+            "intrinsic_vs_reference": {
+              "n": 734,
+              "nll": 0.9063554955727336,
+              "crps": 0.07216435332559615,
+              "coverage68": 0.2997275204359673,
+              "coverage90": 0.47547683923705725,
+              "coverage95": 0.5613079019073569,
+              "pit_histogram": [
+                304,
+                62,
+                45,
+                25,
+                29,
+                35,
+                23,
+                33,
+                28,
+                150
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 734,
+              "nll": 0.8011500420648335,
+              "crps": 0.0718307220332599,
+              "coverage68": 0.3065395095367847,
+              "coverage90": 0.48365122615803813,
+              "coverage95": 0.5708446866485014,
+              "pit_histogram": [
+                301,
+                63,
+                45,
+                26,
+                30,
+                35,
+                24,
+                34,
+                29,
+                147
+              ]
+            }
+          },
+          "state_RC": {
+            "point": {
+              "n": 324,
+              "bias": 0.0657541096654346,
+              "mae": 0.09087035399428782,
+              "nmad": 0.0729350987927225,
+              "rmse": 0.13101429364433942,
+              "p05": -0.09260421485873963,
+              "p95": 0.2141173520282327
+            },
+            "intrinsic_vs_reference": {
+              "n": 324,
+              "nll": 1.5196727338449199,
+              "crps": 0.07102481240759627,
+              "coverage68": 0.2191358024691358,
+              "coverage90": 0.3765432098765432,
+              "coverage95": 0.4351851851851852,
+              "pit_histogram": [
+                189,
+                22,
+                19,
+                8,
+                14,
+                7,
+                5,
+                10,
+                9,
+                41
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 324,
+              "nll": 1.3919606618175466,
+              "crps": 0.07067452683706253,
+              "coverage68": 0.22839506172839505,
+              "coverage90": 0.37962962962962965,
+              "coverage95": 0.4444444444444444,
+              "pit_histogram": [
+                187,
+                23,
+                19,
+                9,
+                14,
+                7,
+                5,
+                12,
+                8,
+                40
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 409,
+              "bias": 0.016853065436644332,
+              "mae": 0.09590326581552398,
+              "nmad": 0.10108941575239375,
+              "rmse": 0.13055865613843845,
+              "p05": -0.19907673128497275,
+              "p95": 0.22516463120101357
+            },
+            "intrinsic_vs_reference": {
+              "n": 409,
+              "nll": 0.4319740529769673,
+              "crps": 0.07323624331370741,
+              "coverage68": 0.36185819070904646,
+              "coverage90": 0.5525672371638142,
+              "coverage95": 0.6601466992665037,
+              "pit_histogram": [
+                115,
+                40,
+                25,
+                17,
+                15,
+                28,
+                18,
+                23,
+                19,
+                109
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 409,
+              "nll": 0.343039636511807,
+              "crps": 0.07291229445268063,
+              "coverage68": 0.36674816625916873,
+              "coverage90": 0.5647921760391198,
+              "coverage95": 0.6699266503667481,
+              "pit_histogram": [
+                114,
+                40,
+                26,
+                16,
+                16,
+                28,
+                19,
+                22,
+                21,
+                107
+              ]
+            }
+          },
+          "state_RC/RGB": {
+            "point": {
+              "n": 1,
+              "bias": 0.005979657208401878,
+              "mae": 0.005979657208401878,
+              "nmad": 0.0,
+              "rmse": 0.005979657208401878,
+              "p05": 0.005979657208401878,
+              "p95": 0.005979657208401878
+            },
+            "intrinsic_vs_reference": {
+              "n": 1,
+              "nll": -3.786419682947057,
+              "crps": 0.00297260562004809,
+              "coverage68": 1.0,
+              "coverage90": 1.0,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 1,
+              "nll": -3.2543348866263146,
+              "crps": 0.0040748460581234575,
+              "coverage68": 1.0,
+              "coverage90": 1.0,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "point": {
+              "n": 54,
+              "bias": -0.00669522924065874,
+              "mae": 0.09096652542145676,
+              "nmad": 0.13578482007578663,
+              "rmse": 0.11288122564643265,
+              "p05": -0.1865410671579313,
+              "p95": 0.12642882286550175
+            },
+            "intrinsic_vs_reference": {
+              "n": 54,
+              "nll": -0.14447126034597724,
+              "crps": 0.06414995751984275,
+              "coverage68": 0.2777777777777778,
+              "coverage90": 0.5370370370370371,
+              "coverage95": 0.6851851851851852,
+              "pit_histogram": [
+                14,
+                7,
+                2,
+                2,
+                0,
+                6,
+                2,
+                0,
+                3,
+                18
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 54,
+              "nll": -0.2575978235256124,
+              "crps": 0.06368842563436947,
+              "coverage68": 0.2962962962962963,
+              "coverage90": 0.5370370370370371,
+              "coverage95": 0.6851851851851852,
+              "pit_histogram": [
+                14,
+                6,
+                3,
+                2,
+                0,
+                6,
+                2,
+                0,
+                4,
+                17
+              ]
+            }
+          },
+          "logg_1.5_2": {
+            "point": {
+              "n": 65,
+              "bias": 0.03457325763187491,
+              "mae": 0.10145656773397976,
+              "nmad": 0.1131744195918743,
+              "rmse": 0.1336840692607451,
+              "p05": -0.18475225314644042,
+              "p95": 0.27186645527471226
+            },
+            "intrinsic_vs_reference": {
+              "n": 65,
+              "nll": 0.9034884942281887,
+              "crps": 0.0762159904482446,
+              "coverage68": 0.2923076923076923,
+              "coverage90": 0.46153846153846156,
+              "coverage95": 0.5538461538461539,
+              "pit_histogram": [
+                25,
+                6,
+                5,
+                2,
+                3,
+                3,
+                1,
+                2,
+                3,
+                15
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 65,
+              "nll": 0.7329996797983225,
+              "crps": 0.07560836035757931,
+              "coverage68": 0.2923076923076923,
+              "coverage90": 0.49230769230769234,
+              "coverage95": 0.5692307692307692,
+              "pit_histogram": [
+                24,
+                7,
+                5,
+                2,
+                3,
+                3,
+                2,
+                1,
+                3,
+                15
+              ]
+            }
+          },
+          "logg_2_2.5": {
+            "point": {
+              "n": 348,
+              "bias": 0.06631601380094798,
+              "mae": 0.09434723850942202,
+              "nmad": 0.0733598682526875,
+              "rmse": 0.1365379533965431,
+              "p05": -0.07522596198936425,
+              "p95": 0.23827254618031038
+            },
+            "intrinsic_vs_reference": {
+              "n": 348,
+              "nll": 1.503020436313032,
+              "crps": 0.07351547446387857,
+              "coverage68": 0.23563218390804597,
+              "coverage90": 0.3764367816091954,
+              "coverage95": 0.4540229885057471,
+              "pit_histogram": [
+                208,
+                22,
+                20,
+                7,
+                17,
+                13,
+                5,
+                10,
+                7,
+                39
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 348,
+              "nll": 1.3808809043158605,
+              "crps": 0.07309543549433081,
+              "coverage68": 0.23850574712643677,
+              "coverage90": 0.382183908045977,
+              "coverage95": 0.46839080459770116,
+              "pit_histogram": [
+                206,
+                23,
+                20,
+                7,
+                18,
+                13,
+                5,
+                11,
+                8,
+                37
+              ]
+            }
+          },
+          "logg_2.5_3": {
+            "point": {
+              "n": 230,
+              "bias": -0.003868852890453356,
+              "mae": 0.08530962775189731,
+              "nmad": 0.10016972352420599,
+              "rmse": 0.11084949759659583,
+              "p05": -0.2008588884421642,
+              "p95": 0.18649145996861458
+            },
+            "intrinsic_vs_reference": {
+              "n": 230,
+              "nll": 0.3566569817976291,
+              "crps": 0.06663212672409818,
+              "coverage68": 0.3826086956521739,
+              "coverage90": 0.5956521739130435,
+              "coverage95": 0.6782608695652174,
+              "pit_histogram": [
+                50,
+                23,
+                17,
+                10,
+                8,
+                11,
+                11,
+                19,
+                13,
+                68
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 230,
+              "nll": 0.28096713149528163,
+              "crps": 0.0664857316797948,
+              "coverage68": 0.39565217391304347,
+              "coverage90": 0.6043478260869565,
+              "coverage95": 0.6826086956521739,
+              "pit_histogram": [
+                50,
+                23,
+                16,
+                11,
+                8,
+                11,
+                11,
+                20,
+                12,
+                68
+              ]
+            }
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 37,
+              "bias": -0.009116495103422384,
+              "mae": 0.12733749757363172,
+              "nmad": 0.1285644531164336,
+              "rmse": 0.19239235853275582,
+              "p05": -0.2542802062099332,
+              "p95": 0.2126577983680875
+            },
+            "intrinsic_vs_reference": {
+              "n": 37,
+              "nll": 0.2502003252391159,
+              "crps": 0.09842497285967126,
+              "coverage68": 0.43243243243243246,
+              "coverage90": 0.5945945945945946,
+              "coverage95": 0.6756756756756757,
+              "pit_histogram": [
+                7,
+                4,
+                1,
+                4,
+                1,
+                2,
+                4,
+                2,
+                2,
+                10
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 37,
+              "nll": 0.24703889765528889,
+              "crps": 0.09840815477119533,
+              "coverage68": 0.43243243243243246,
+              "coverage90": 0.5945945945945946,
+              "coverage95": 0.6756756756756757,
+              "pit_histogram": [
+                7,
+                4,
+                1,
+                4,
+                1,
+                2,
+                4,
+                2,
+                2,
+                10
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        }
+      },
+      "native_label_vs_seismic": {
+        "APOGEE": {
+          "n": 734,
+          "bias": 0.012577107048034719,
+          "mae": 0.049289911270271526,
+          "nmad": 0.05657063383804309,
+          "rmse": 0.06477953757393767,
+          "p05": -0.07774882904052745,
+          "p95": 0.1175126274871827
+        },
+        "DESI": {
+          "n": 0
+        },
+        "GALAH": {
+          "n": 0
+        }
+      }
+    },
+    "external": {
+      "matched_stars": 2,
+      "exposure": "Role-specific holdout from frozen fine tuning; historical parent/teachers may overlap",
+      "models": {
+        "common": {
+          "all": {
+            "point": {
+              "n": 2,
+              "bias": 0.10712998998339307,
+              "mae": 0.10712998998339307,
+              "nmad": 0.0669568021863558,
+              "rmse": 0.11626013034300038,
+              "p05": 0.06648442006047373,
+              "p95": 0.14777555990631241
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -0.43812572484141077,
+              "crps": 0.07528073938414354,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -0.4414829752998294,
+              "crps": 0.07523887323630596,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 2,
+              "bias": 0.10712998998339307,
+              "mae": 0.10712998998339307,
+              "nmad": 0.0669568021863558,
+              "rmse": 0.11626013034300038,
+              "p05": 0.06648442006047373,
+              "p95": 0.14777555990631241
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -0.43812572484141077,
+              "crps": 0.07528073938414354,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -0.4414829752998294,
+              "crps": 0.07523887323630596,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "n": 0
+          },
+          "logg_1.5_2": {
+            "n": 0
+          },
+          "logg_2_2.5": {
+            "n": 0
+          },
+          "logg_2.5_3": {
+            "n": 0
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 2,
+              "bias": 0.10712998998339307,
+              "mae": 0.10712998998339307,
+              "nmad": 0.0669568021863558,
+              "rmse": 0.11626013034300038,
+              "p05": 0.06648442006047373,
+              "p95": 0.14777555990631241
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -0.43812572484141077,
+              "crps": 0.07528073938414354,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -0.4414829752998294,
+              "crps": 0.07523887323630596,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "APOGEE_mapped": {
+          "all": {
+            "point": {
+              "n": 2,
+              "bias": -0.1408313181770824,
+              "mae": 0.1408313181770824,
+              "nmad": 0.06789911248012555,
+              "rmse": 0.14809069876252423,
+              "p05": -0.18204890972713836,
+              "p95": -0.09961372662702642
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 1.792786933788299,
+              "crps": 0.10853493267017128,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 1.7770101514571577,
+              "crps": 0.10848403113630449,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 2,
+              "bias": -0.1408313181770824,
+              "mae": 0.1408313181770824,
+              "nmad": 0.06789911248012555,
+              "rmse": 0.14809069876252423,
+              "p05": -0.18204890972713836,
+              "p95": -0.09961372662702642
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 1.792786933788299,
+              "crps": 0.10853493267017128,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 1.7770101514571577,
+              "crps": 0.10848403113630449,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "n": 0
+          },
+          "logg_1.5_2": {
+            "n": 0
+          },
+          "logg_2_2.5": {
+            "n": 0
+          },
+          "logg_2.5_3": {
+            "n": 0
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 2,
+              "bias": -0.1408313181770824,
+              "mae": 0.1408313181770824,
+              "nmad": 0.06789911248012555,
+              "rmse": 0.14809069876252423,
+              "p05": -0.18204890972713836,
+              "p95": -0.09961372662702642
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 1.792786933788299,
+              "crps": 0.10853493267017128,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 1.7770101514571577,
+              "crps": 0.10848403113630449,
+              "coverage68": 0.0,
+              "coverage90": 0.5,
+              "coverage95": 0.5,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "DESI_mapped": {
+          "all": {
+            "point": {
+              "n": 2,
+              "bias": 0.4964221627476644,
+              "mae": 0.4964221627476644,
+              "nmad": 0.04916120365661222,
+              "rmse": 0.4975283591901136,
+              "p05": 0.4665792629156456,
+              "p95": 0.5262650625796831
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 7.803919826876149,
+              "crps": 0.46499641278692827,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 7.803831126809499,
+              "crps": 0.464913415374438,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 2,
+              "bias": 0.4964221627476644,
+              "mae": 0.4964221627476644,
+              "nmad": 0.04916120365661222,
+              "rmse": 0.4975283591901136,
+              "p05": 0.4665792629156456,
+              "p95": 0.5262650625796831
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 7.803919826876149,
+              "crps": 0.46499641278692827,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 7.803831126809499,
+              "crps": 0.464913415374438,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "n": 0
+          },
+          "logg_1.5_2": {
+            "n": 0
+          },
+          "logg_2_2.5": {
+            "n": 0
+          },
+          "logg_2.5_3": {
+            "n": 0
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 2,
+              "bias": 0.4964221627476644,
+              "mae": 0.4964221627476644,
+              "nmad": 0.04916120365661222,
+              "rmse": 0.4975283591901136,
+              "p05": 0.4665792629156456,
+              "p95": 0.5262650625796831
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": 7.803919826876149,
+              "crps": 0.46499641278692827,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": 7.803831126809499,
+              "crps": 0.464913415374438,
+              "coverage68": 0.0,
+              "coverage90": 0.0,
+              "coverage95": 0.0,
+              "pit_histogram": [
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        },
+        "GALAH_mapped": {
+          "all": {
+            "point": {
+              "n": 2,
+              "bias": -0.034201150389269186,
+              "mae": 0.056529163970258756,
+              "nmad": 0.08381013850230562,
+              "rmse": 0.0660701526192108,
+              "p05": -0.08507739796250206,
+              "p95": 0.016675097183963688
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -1.0099843945486493,
+              "crps": 0.042295887710597405,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -1.0128660021828804,
+              "crps": 0.04227516745548818,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "state_RGB": {
+            "point": {
+              "n": 2,
+              "bias": -0.034201150389269186,
+              "mae": 0.056529163970258756,
+              "nmad": 0.08381013850230562,
+              "rmse": 0.0660701526192108,
+              "p05": -0.08507739796250206,
+              "p95": 0.016675097183963688
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -1.0099843945486493,
+              "crps": 0.042295887710597405,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -1.0128660021828804,
+              "crps": 0.04227516745548818,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_-1_1.5": {
+            "n": 0
+          },
+          "logg_1.5_2": {
+            "n": 0
+          },
+          "logg_2_2.5": {
+            "n": 0
+          },
+          "logg_2.5_3": {
+            "n": 0
+          },
+          "logg_3_3.5": {
+            "point": {
+              "n": 2,
+              "bias": -0.034201150389269186,
+              "mae": 0.056529163970258756,
+              "nmad": 0.08381013850230562,
+              "rmse": 0.0660701526192108,
+              "p05": -0.08507739796250206,
+              "p95": 0.016675097183963688
+            },
+            "intrinsic_vs_reference": {
+              "n": 2,
+              "nll": -1.0099843945486493,
+              "crps": 0.042295887710597405,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            },
+            "convolved_with_quoted_seismic_error": {
+              "n": 2,
+              "nll": -1.0128660021828804,
+              "crps": 0.04227516745548818,
+              "coverage68": 0.5,
+              "coverage90": 0.5,
+              "coverage95": 1.0,
+              "pit_histogram": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          "logg_3.5_6": {
+            "n": 0
+          }
+        }
+      },
+      "native_label_vs_seismic": {
+        "APOGEE": {
+          "n": 2,
+          "bias": -0.019261749267578177,
+          "mae": 0.04917736701965336,
+          "nmad": 0.07291036434333807,
+          "rmse": 0.05281503963676198,
+          "p05": -0.0635213795852662,
+          "p95": 0.024997881050109846
+        },
+        "DESI": {
+          "n": 0
+        },
+        "GALAH": {
+          "n": 0
+        }
+      }
+    }
+  },
+  "scope": "Independent oscillation measurements with Teff and survey-calibration dependencies; no certified unseen-parent exposure claim. No source added to FIT."
+}

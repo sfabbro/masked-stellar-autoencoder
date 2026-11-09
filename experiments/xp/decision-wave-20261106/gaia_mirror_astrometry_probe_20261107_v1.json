@@ -1,0 +1,21 @@
+{
+  "run_id": "gaia_mirror_astrometry_probe_20261107_v1",
+  "utc": "2026-11-07T02:07:25.570125+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_mirror_astrometry_probe_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/gaia_mirror_astrometry_probe_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "ycsw5j0w"
+  ],
+  "resources": {
+    "cpu": 1,
+    "ram": 4,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/probe_gaia_mirror.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_mirror_astrometry_probe_20261107_v1'];runpy.run_path('scripts/probe_gaia_mirror.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/probe_gaia_mirror.py": "b0f44b62bf3fbd8c6324db9f38cb0410e7abe423776e57dd89c56eddfda02343",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "2d2d869ffe9323be968f0caf08efe67397aa06f758e86b03dbe3300d469078f0"
+}

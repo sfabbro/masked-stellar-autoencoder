@@ -1,0 +1,32 @@
+{
+  "run_id": "multisurvey_joint_fullfit_20261105_v1",
+  "source_commit": "eef5e16e1ef4391c516774fe98c384f00e2c8ebc",
+  "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+  "census_receipt_sha256": "8244f3529c2e30166b026fc28c43c1e903f9830594536fda3e90d04099e47544",
+  "fit_stars": 1736618,
+  "labeled_stars": 1698746,
+  "reconstruction_only_stars": 37872,
+  "scalar_survey_labels_per_pass": 5131568,
+  "planned_passes": 3,
+  "planned_scalar_label_presentations": 15394704,
+  "per_source": {
+    "apogee": {
+      "fe_h": 126621,
+      "logg": 126638,
+      "teff": 126638
+    },
+    "desi_dr1_rvs_raw": {
+      "fe_h": 1197647,
+      "logg": 1197647,
+      "teff": 1197647
+    },
+    "galah": {
+      "fe_h": 390566,
+      "logg": 377598,
+      "teff": 390566
+    }
+  },
+  "scope": "Source masks and current FIT identity digest agree; counts do not certify physical accuracy or independence of measurements",
+  "source_binding": "60c097676bab21fe03f04afc0b26a608ee1ea0e7ea93a1577725dccb97a7a32a:09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+  "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff"
+}

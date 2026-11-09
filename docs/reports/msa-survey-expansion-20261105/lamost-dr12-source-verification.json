@@ -1,0 +1,242 @@
+{
+  "url": "https://www.lamost.org/dr12/v2.0/catdl?name=dr12_v2.0_LRS_stellar.fits.gz",
+  "training_performed": false,
+  "status": "verified_native_source",
+  "publisher_checksum_verified": false,
+  "reused_archive": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
+  "recorded_archive_sha256_verified": true,
+  "compressed_bytes": 1221786815,
+  "compressed_sha256": "6b7d367535b34605a117f59d1e6bb1b35ebb77fb4ece6efe6da4609bd6dfb210",
+  "rows": 8376135,
+  "columns": [
+    {
+      "name": "obsid",
+      "format": "J",
+      "unit": null
+    },
+    {
+      "name": "uid",
+      "format": "32A",
+      "unit": null
+    },
+    {
+      "name": "gp_id",
+      "format": "K",
+      "unit": null
+    },
+    {
+      "name": "designation",
+      "format": "19A",
+      "unit": null
+    },
+    {
+      "name": "obsdate",
+      "format": "10A",
+      "unit": null
+    },
+    {
+      "name": "lmjd",
+      "format": "J",
+      "unit": null
+    },
+    {
+      "name": "mjd",
+      "format": "J",
+      "unit": null
+    },
+    {
+      "name": "planid",
+      "format": "40A",
+      "unit": null
+    },
+    {
+      "name": "spid",
+      "format": "I",
+      "unit": null
+    },
+    {
+      "name": "fiberid",
+      "format": "I",
+      "unit": null
+    },
+    {
+      "name": "ra_obs",
+      "format": "D",
+      "unit": "deg"
+    },
+    {
+      "name": "dec_obs",
+      "format": "D",
+      "unit": "deg"
+    },
+    {
+      "name": "snru",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "snrg",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "snrr",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "snri",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "snrz",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "class",
+      "format": "20A",
+      "unit": null
+    },
+    {
+      "name": "subclass",
+      "format": "20A",
+      "unit": null
+    },
+    {
+      "name": "z",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "z_err",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "ps_id",
+      "format": "K",
+      "unit": null
+    },
+    {
+      "name": "mag_ps_g",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "mag_ps_r",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "mag_ps_i",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "mag_ps_z",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "mag_ps_y",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "gaia_source_id",
+      "format": "25A",
+      "unit": null
+    },
+    {
+      "name": "gaia_g_mean_mag",
+      "format": "E",
+      "unit": "mag"
+    },
+    {
+      "name": "fibertype",
+      "format": "10A",
+      "unit": null
+    },
+    {
+      "name": "offsets",
+      "format": "I",
+      "unit": null
+    },
+    {
+      "name": "offsets_v",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "ra",
+      "format": "D",
+      "unit": "deg"
+    },
+    {
+      "name": "dec",
+      "format": "D",
+      "unit": "deg"
+    },
+    {
+      "name": "teff",
+      "format": "E",
+      "unit": "K"
+    },
+    {
+      "name": "teff_err",
+      "format": "E",
+      "unit": "K"
+    },
+    {
+      "name": "logg",
+      "format": "E",
+      "unit": "dex"
+    },
+    {
+      "name": "logg_err",
+      "format": "E",
+      "unit": "dex"
+    },
+    {
+      "name": "feh",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "feh_err",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "rv",
+      "format": "E",
+      "unit": "km/s"
+    },
+    {
+      "name": "rv_err",
+      "format": "E",
+      "unit": "km/s"
+    },
+    {
+      "name": "alpha_m",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "alpha_m_err",
+      "format": "E",
+      "unit": null
+    },
+    {
+      "name": "vsini_lasp",
+      "format": "E",
+      "unit": "km/s"
+    }
+  ],
+  "native_bytes": 2864658240,
+  "native_sha256": "e58d4b9878e56c1c2ffea97f6395d8f3e65d0c2fc397265652790ddb4817763a",
+  "native_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
+  "gzip_crc_verified": true
+}

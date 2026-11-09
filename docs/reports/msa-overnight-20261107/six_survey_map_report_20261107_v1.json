@@ -1,0 +1,168 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "models": {
+    "equalweight_affine": {
+      "selected_update": 2800,
+      "checkpoint_sha256": "b9c6f42d4524783e2752dc5cd5d5b4a8e63f332ccea265ea126adecc39a9173f",
+      "artifact_sha256": {
+        "training-predictions.npz": "dfd3e44a4c439f7e90de28e52939d611c4016d90d0c985ca3994346c645db927",
+        "development-predictions.npz": "d3f6627e4281287139cfe9e315b901241c885c941cd0554c0cf3675ab7f60749",
+        "whole-vector-corners.npz": "bac30e88192e0c6e660e3cc5d1e4e5783b5cfe4499da03ac613da3c69ab2baab"
+      },
+      "tune_macro_crps": 0.14381054052375628,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.09997930978591889,
+          "bias": 0.08491071708485658,
+          "coverage90": 0.630859375
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.10440717467606668,
+          "bias": 0.08645512340093318,
+          "coverage90": 0.6484375
+        }
+      }
+    },
+    "apogee_affine": {
+      "selected_update": 2800,
+      "checkpoint_sha256": "0c324bb5d649011752260c98a59ffd2b942a3861840b313d25b5f2e3240fa8f5",
+      "artifact_sha256": {
+        "training-predictions.npz": "585e0581811b51ab5d8a6e6e2def31c3e928b9c26911d5b55f31011c7153dbab",
+        "development-predictions.npz": "6bd0b88ff880f60bd00f1b630be253551b0820bdad95273723e23d52ad11e74c",
+        "whole-vector-corners.npz": "e03667d2d360de45aabf90d7a4d3f70f20e83608dafc71043481ff24b28da570"
+      },
+      "tune_macro_crps": 0.14203359628361173,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.0664397142651827,
+          "bias": -0.0048606787298149864,
+          "coverage90": 0.86328125
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.07228457304021922,
+          "bias": -0.003859598153217246,
+          "coverage90": 0.84375
+        }
+      }
+    },
+    "seismic_affine": {
+      "selected_update": 4200,
+      "checkpoint_sha256": "ee859b29613092d736fa11cb44b2f9e4a9eb7d5e3042e2ae26198623eee53cde",
+      "artifact_sha256": {
+        "training-predictions.npz": "4cb1c5db039528b316c79352b1c4779b8521919e73960e23f195d34da2ebdec7",
+        "development-predictions.npz": "189dfa74a2bb86d45372cc7087526922cab7d8ca8110f17e436c1eba78e09e5e",
+        "whole-vector-corners.npz": "5a49785966fa65268c51be634821dd96a5cf1f4a842a3b8e4a4f90c97b4f19d0"
+      },
+      "tune_macro_crps": 0.14100153940632876,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.05532831470175571,
+          "bias": -0.003137648234125172,
+          "coverage90": 0.916015625
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.06009266981134431,
+          "bias": 0.0004196673403538601,
+          "coverage90": 0.9140625
+        }
+      }
+    },
+    "seismic_nodesig": {
+      "selected_update": 4200,
+      "checkpoint_sha256": "010226e5a377ee4dca40b05c3764ad2dabee7926c0ba5cb758fa0de74bae5c03",
+      "artifact_sha256": {
+        "training-predictions.npz": "a5f70ff2315c6671685e1eb28d3a1b9527ce6c82d407a374366409c3457e9bbd",
+        "development-predictions.npz": "0df841bc3e85dff6ec0e7bd11c74c226d9eb45e819b766e2f02988b4d9a433ec",
+        "whole-vector-corners.npz": "7379a6696f7563d2b1269735b8ca49c868afada676030f3be09b516bdd6e88cf"
+      },
+      "tune_macro_crps": 0.13867476142134044,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.054114228831363936,
+          "bias": 0.0021000790621831535,
+          "coverage90": 0.912109375
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.05851046719120377,
+          "bias": 0.005057042605673489,
+          "coverage90": 0.89453125
+        }
+      }
+    },
+    "seismic_offset": {
+      "selected_update": 4200,
+      "checkpoint_sha256": "3f19f357f69ea8edbed6a3a376df8daa1a995f3d5e314046fc76a7436a795cef",
+      "artifact_sha256": {
+        "training-predictions.npz": "c5a2c532bc5fb68f1a8cc06848399a12b9592f7537c616252140234c2359ed87",
+        "development-predictions.npz": "242344d3666af3ac9bd2b14aa93bf63621f832c464f649fe99508aa6302328bf",
+        "whole-vector-corners.npz": "c522954ad72e774edd450f8a1a0fe02b603574371c50be54c76ffa9f3f7f9bf7"
+      },
+      "tune_macro_crps": 0.14130309904349947,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.05561674916280149,
+          "bias": -0.0036166805996300853,
+          "coverage90": 0.92578125
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.05984096088154574,
+          "bias": 0.00022302225826764172,
+          "coverage90": 0.91015625
+        }
+      }
+    },
+    "seismic_spline": {
+      "selected_update": 4200,
+      "checkpoint_sha256": "dae45ff2a473a3d1887a88a1238ff93d6d6281a21d5d0648aef92abe02d9cf78",
+      "artifact_sha256": {
+        "training-predictions.npz": "88ce26f866e5fd3dee3de52c4451d25097a84f12d0a5cfb749883bfca7f1503b",
+        "development-predictions.npz": "f644e98befe9a00d546976fa037db406ce4a0cfb431285142d74ec075b98ea2c",
+        "whole-vector-corners.npz": "ed8f961c060f9e839d28df9585e7224b6174db3af0822e7de50946c40a82171d"
+      },
+      "tune_macro_crps": 0.14085887024991228,
+      "seismic": {
+        "tune": {
+          "n": 512,
+          "mae": 0.055350574602759446,
+          "bias": -0.004187634926763487,
+          "coverage90": 0.9140625
+        },
+        "devtest": {
+          "n": 512,
+          "mae": 0.06001102566741662,
+          "bias": -0.0007669485160640552,
+          "coverage90": 0.908203125
+        }
+      }
+    }
+  },
+  "plots": [
+    "equalweight_affine-4926812820427520-single-star.png",
+    "apogee_affine-4926812820427520-single-star.png",
+    "seismic_affine-4926812820427520-single-star.png",
+    "seismic_nodesig-4926812820427520-single-star.png",
+    "seismic_offset-4926812820427520-single-star.png",
+    "seismic_spline-4926812820427520-single-star.png",
+    "equalweight_affine-78289217922968576-single-star.png",
+    "apogee_affine-78289217922968576-single-star.png",
+    "seismic_affine-78289217922968576-single-star.png",
+    "seismic_nodesig-78289217922968576-single-star.png",
+    "seismic_offset-78289217922968576-single-star.png",
+    "seismic_spline-78289217922968576-single-star.png"
+  ],
+  "fit_stars": 2048,
+  "dev_stars": 2048,
+  "scope": "Pure saved-array plotting; no model execution. Same identities across every control. Single-star draws and population medians are distinct objects. Native-error-convolved seismic coverage, not physical joint certification."
+}

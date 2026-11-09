@@ -1,0 +1,8 @@
+{
+  "status": "morning_report_live",
+  "updated_utc": "2026-11-09T05:17:13.223671+00:00",
+  "large_training_status": "training",
+  "training_performed": true,
+  "completed_updates": 71000,
+  "report": "morning-report.md"
+}

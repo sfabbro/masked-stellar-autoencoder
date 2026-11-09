@@ -1,0 +1,61 @@
+run_id: multisurvey_flexible_calibration_20261105_v1
+suite:
+  batch_size: 64
+  density_reference: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth
+  density_reference_sha256: efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d
+  draws: 2048
+  evaluation_particles: 4096
+  fit_stars: 65536
+  frozen_cache:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/frozen-contexts.h5
+    producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/manifest.json
+    sha256: 99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed
+    source_commit: 451cf0dc036b8cacde5fb7fddcd9d86db5817b00
+  gate_particles: 4096
+  head_lr: 0.0003
+  micro_batch: 8
+  parent:
+    base_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5
+    checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+    checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+    library_revision: 2777b0de88121768434725ef227893cd35595d2a
+    model_config: configs/pretrain.canfar.yaml
+    overlay_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json
+    overlay_manifest_sha256: 09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff
+    overlay_producer_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json
+    reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+    reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+    run_id: multisurvey_flexible_parent_20261105
+    seed: 20261105
+  particles: 1024
+  run_id: multisurvey_flexible_refinement_20261105_v2
+  save_all_snapshots: true
+  seed: 20261105
+  snapshots:
+  - 100
+  - 300
+  - 600
+  - 1000
+  tune_stars: 2048
+  updates: 1000
+training_source_commit: 6f1b3c790b921878e857e79b3d09b4baf3cdebbb
+fit_cache_sha256: 99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed
+selection_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/manifest.json
+selection_manifest_sha256: 14af7cd20b5581361dd6b14f9c73566e8c4cefcdc5f46a653f2c87d77f1a604f
+heads:
+  copula:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/copula-selected.pth
+    sha256: 92069527ecaab6c13d24ae71ac88aee5597fdb1318c2b44115d8e11a878daf15
+  gaussian:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/gaussian-selected.pth
+    sha256: 0cd6d9f84c9b8ff4eddf97194c6690622e3f7d940593ab44207b744cb57caaf5
+  mixture:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth
+    sha256: 448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184
+  nsf:
+    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/nsf-selected.pth
+    sha256: fb834829ba3c5fc45ebeee486f9882cb9f2d2286338993250deca0e2af70ffa6
+primary_head: mixture
+integration_proposal: defensive_mixture
+cal_stars: 2048
+evaluation_particles: 4096

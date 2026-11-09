@@ -1,0 +1,22 @@
+{
+  "run_id": "tess_k2_local_gaia_candidates_20261107_v1",
+  "utc": "2026-11-06T22:02:10.112066+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_k2_local_gaia_candidates_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/tess_k2_local_gaia_candidates_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "hj4jd2dm"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"src\");sys.argv=['scripts/stage_tess_k2_gaia_candidates.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_k2_local_gaia_candidates_20261107_v1'];runpy.run_path('scripts/stage_tess_k2_gaia_candidates.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/stage_tess_k2_gaia_candidates.py": "fa57921c664c93a32a3921f0638a959f0da8e5b5ef79e3d7331690452b841dc2",
+    "src/masked_stellar_autoencoder/training/astrometric_vectors.py": "65f97f48770ae00d3674c06c60aebf585a989c5687e9221b1fb75dbfe3786f12",
+    "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+  },
+  "payload_sha256": "3cbf6d904e86b4a9091e4ae0ee615572e2da1b1dc0a6b9f641df2dcee64be339"
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "expanded_six_source_census_20261107_v1",
+  "utc": "2026-11-06T21:14:17.463152+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_census_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_six_source_census_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "utdssxy2"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/census_expanded_six_source.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_census_20261107_v1'];runpy.run_path('scripts/census_expanded_six_source.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/census_expanded_six_source.py": "66b59c87490ea9bd8bbdf5e68c413427996dfed9e30a4337b0c6c2c160bd8508",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "1ee88d83454cdfc89dfd9a2ad13c5d3ea09512ed33e1228ea502eb179562404c"
+}

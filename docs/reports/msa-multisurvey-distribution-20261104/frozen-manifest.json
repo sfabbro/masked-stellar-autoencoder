@@ -1,0 +1,455 @@
+{
+  "config": {
+    "batch_size": 64,
+    "encoder": "frozen",
+    "parent": {
+      "base_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
+      "checkpoint_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+      "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+      "model_config": "configs/pretrain.canfar.yaml",
+      "overlay_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
+      "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
+      "overlay_producer_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json",
+      "reference_checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
+      "reference_checkpoint_sha256": "d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3",
+      "run_id": "multisurvey_distribution_parent_20261104",
+      "seed": 20261104
+    },
+    "run_id": "multisurvey_gaussian_frozen_20261104_v1",
+    "seed": 20261104,
+    "updates": 1000
+  },
+  "result": {
+    "checkpoint_reload": "pass",
+    "checkpoint_sha256": "6d5e04b2aa93a3c08d58da2893a82e84d1064ef1674c297bd1729fc10b7ea3fd",
+    "device": "cuda",
+    "encoder": "frozen",
+    "final": {
+      "array_sha256": "c99853f2a7200a804afe61b03417c47f0069235e0b0cde90f75656b79c3103e1",
+      "mean_joint_observation_nll": 5.698105670191122,
+      "metrics": [
+        {
+          "bias": 20.219219101835854,
+          "count": 79,
+          "mae": 91.23274779547991,
+          "observed_coverage68": 0.8607594936708861,
+          "observed_coverage90": 1.0,
+          "pit_histogram": [
+            3,
+            8,
+            14,
+            8,
+            14,
+            10,
+            7,
+            10,
+            4,
+            1
+          ],
+          "source": "apogee",
+          "target": "teff"
+        },
+        {
+          "bias": 0.04543668454097781,
+          "count": 79,
+          "mae": 0.24532166248557108,
+          "observed_coverage68": 0.7341772151898734,
+          "observed_coverage90": 0.8987341772151899,
+          "pit_histogram": [
+            9,
+            6,
+            6,
+            14,
+            8,
+            5,
+            14,
+            7,
+            3,
+            7
+          ],
+          "source": "apogee",
+          "target": "logg"
+        },
+        {
+          "bias": -0.007501205718708121,
+          "count": 79,
+          "mae": 0.12507340698185015,
+          "observed_coverage68": 0.810126582278481,
+          "observed_coverage90": 0.9620253164556962,
+          "pit_histogram": [
+            3,
+            9,
+            8,
+            11,
+            11,
+            8,
+            10,
+            9,
+            5,
+            5
+          ],
+          "source": "apogee",
+          "target": "fe_h"
+        },
+        {
+          "bias": -26.426013815574354,
+          "count": 707,
+          "mae": 134.3960990968929,
+          "observed_coverage68": 0.743988684582744,
+          "observed_coverage90": 0.9391796322489392,
+          "pit_histogram": [
+            53,
+            67,
+            68,
+            92,
+            78,
+            84,
+            73,
+            74,
+            70,
+            48
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "teff"
+        },
+        {
+          "bias": 0.0018752454544032312,
+          "count": 707,
+          "mae": 0.20179697906505734,
+          "observed_coverage68": 0.7227722772277227,
+          "observed_coverage90": 0.9151343705799151,
+          "pit_histogram": [
+            71,
+            59,
+            73,
+            62,
+            65,
+            78,
+            91,
+            88,
+            74,
+            46
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "logg"
+        },
+        {
+          "bias": 0.0035198110928633146,
+          "count": 707,
+          "mae": 0.18353224004822064,
+          "observed_coverage68": 0.6619519094766619,
+          "observed_coverage90": 0.8811881188118812,
+          "pit_histogram": [
+            79,
+            66,
+            59,
+            72,
+            73,
+            62,
+            72,
+            70,
+            77,
+            77
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "fe_h"
+        },
+        {
+          "bias": -13.63178541980988,
+          "count": 244,
+          "mae": 76.64442648643447,
+          "observed_coverage68": 0.9057377049180327,
+          "observed_coverage90": 0.9713114754098361,
+          "pit_histogram": [
+            5,
+            10,
+            23,
+            38,
+            40,
+            37,
+            43,
+            22,
+            16,
+            10
+          ],
+          "source": "galah",
+          "target": "teff"
+        },
+        {
+          "bias": -0.049051690178398166,
+          "count": 237,
+          "mae": 0.13751586867830384,
+          "observed_coverage68": 0.8016877637130801,
+          "observed_coverage90": 0.9704641350210971,
+          "pit_histogram": [
+            5,
+            12,
+            19,
+            26,
+            25,
+            30,
+            39,
+            36,
+            33,
+            12
+          ],
+          "source": "galah",
+          "target": "logg"
+        },
+        {
+          "bias": -0.010516381931968797,
+          "count": 244,
+          "mae": 0.09208863417977485,
+          "observed_coverage68": 0.860655737704918,
+          "observed_coverage90": 0.9549180327868853,
+          "pit_histogram": [
+            5,
+            15,
+            15,
+            28,
+            40,
+            30,
+            43,
+            35,
+            21,
+            12
+          ],
+          "source": "galah",
+          "target": "fe_h"
+        }
+      ],
+      "scope": "Previously assigned TUNE only; first-order survey observation model with declared floors, not physical truth calibration",
+      "scored_stars": 1024
+    },
+    "fit_eligible_source_associated": 1698746,
+    "head_precision": "float64",
+    "initial": {
+      "array_sha256": "4c0d81ebdd0f3ded02ce08e519324e4d256c828abd3c8a82f047389c570b8dee",
+      "mean_joint_observation_nll": 15.407194387721404,
+      "metrics": [
+        {
+          "bias": 684.6733758074214,
+          "count": 79,
+          "mae": 726.4793297719291,
+          "observed_coverage68": 0.31645569620253167,
+          "observed_coverage90": 0.6582278481012658,
+          "pit_histogram": [
+            38,
+            22,
+            12,
+            3,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1
+          ],
+          "source": "apogee",
+          "target": "teff"
+        },
+        {
+          "bias": 1.035778630861733,
+          "count": 79,
+          "mae": 1.0858130168134694,
+          "observed_coverage68": 0.34177215189873417,
+          "observed_coverage90": 0.7468354430379747,
+          "pit_histogram": [
+            32,
+            29,
+            13,
+            1,
+            2,
+            0,
+            0,
+            0,
+            1,
+            1
+          ],
+          "source": "apogee",
+          "target": "logg"
+        },
+        {
+          "bias": 0.10546247800441069,
+          "count": 79,
+          "mae": 0.2736589025137826,
+          "observed_coverage68": 0.620253164556962,
+          "observed_coverage90": 0.8860759493670886,
+          "pit_histogram": [
+            11,
+            17,
+            9,
+            7,
+            8,
+            3,
+            7,
+            5,
+            8,
+            4
+          ],
+          "source": "apogee",
+          "target": "fe_h"
+        },
+        {
+          "bias": -141.09491956890943,
+          "count": 707,
+          "mae": 658.9933714021519,
+          "observed_coverage68": 0.33946251768033947,
+          "observed_coverage90": 0.6096181046676096,
+          "pit_histogram": [
+            128,
+            24,
+            28,
+            28,
+            32,
+            40,
+            36,
+            44,
+            88,
+            259
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "teff"
+        },
+        {
+          "bias": -1.2218067859318202,
+          "count": 707,
+          "mae": 1.2547160499078,
+          "observed_coverage68": 0.157001414427157,
+          "observed_coverage90": 0.5983026874115983,
+          "pit_histogram": [
+            2,
+            5,
+            2,
+            8,
+            6,
+            9,
+            7,
+            28,
+            167,
+            473
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "logg"
+        },
+        {
+          "bias": 0.414397647829687,
+          "count": 707,
+          "mae": 0.46911341545534607,
+          "observed_coverage68": 0.37623762376237624,
+          "observed_coverage90": 0.6067892503536068,
+          "pit_histogram": [
+            367,
+            80,
+            63,
+            53,
+            35,
+            34,
+            21,
+            27,
+            17,
+            10
+          ],
+          "source": "desi_dr1_rvs_raw",
+          "target": "fe_h"
+        },
+        {
+          "bias": -178.83765426982586,
+          "count": 244,
+          "mae": 587.4418266126552,
+          "observed_coverage68": 0.45901639344262296,
+          "observed_coverage90": 0.7131147540983607,
+          "pit_histogram": [
+            25,
+            23,
+            20,
+            28,
+            12,
+            5,
+            11,
+            15,
+            27,
+            78
+          ],
+          "source": "galah",
+          "target": "teff"
+        },
+        {
+          "bias": -0.31799132779454475,
+          "count": 237,
+          "mae": 0.9112493652821841,
+          "observed_coverage68": 0.3291139240506329,
+          "observed_coverage90": 0.8523206751054853,
+          "pit_histogram": [
+            25,
+            27,
+            14,
+            5,
+            10,
+            8,
+            9,
+            13,
+            56,
+            70
+          ],
+          "source": "galah",
+          "target": "logg"
+        },
+        {
+          "bias": 0.024745299513189004,
+          "count": 244,
+          "mae": 0.22746783038161808,
+          "observed_coverage68": 0.7377049180327869,
+          "observed_coverage90": 0.9467213114754098,
+          "pit_histogram": [
+            21,
+            27,
+            20,
+            22,
+            20,
+            31,
+            30,
+            34,
+            24,
+            15
+          ],
+          "source": "galah",
+          "target": "fe_h"
+        }
+      ],
+      "scope": "Previously assigned TUNE only; first-order survey observation model with declared floors, not physical truth calibration",
+      "scored_stars": 1024
+    },
+    "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+    "model_weights_saved": true,
+    "normalization": {
+      "center": [
+        5167.052611106721,
+        3.2020125674811806,
+        -0.17646449743408812
+      ],
+      "scale": [
+        704.61654994867,
+        1.0643222363025064,
+        0.32301421075525066
+      ],
+      "scope": "old FIT labels only; numerical preflight scaling, not physical calibration"
+    },
+    "normalization_sha256": "5aa22dead132810d80723eb11a723f2f405b7626676f0ca5caf6b538e04bdfdd",
+    "source_commit": "0517c90880f97358bb9e352580300ca3ef7f286c",
+    "source_floor_native": [
+      100.0,
+      0.1,
+      0.1
+    ],
+    "source_floor_scope": "Explicit illustrative floor per source [K,dex,dex]; not a validated uncertainty model",
+    "supervised_xp_masking": false,
+    "unique_fit_seen": 62827,
+    "updates": 1000
+  },
+  "run_id": "multisurvey_gaussian_frozen_20261104_v1",
+  "scope": "1000-update three-survey Gaussian distribution pilot; TUNE diagnostics only; no final-test promotion",
+  "source_commit": "0517c90880f97358bb9e352580300ca3ef7f286c",
+  "status": "multisurvey_distribution_pilot_complete"
+}
