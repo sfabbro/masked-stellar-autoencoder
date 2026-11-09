@@ -1,0 +1,22 @@
+{
+  "run_id": "corner_input_role_audit_20261106_v1",
+  "utc": "2026-11-06T06:38:33.710795+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/corner_input_role_audit_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/corner_input_role_audit_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "n5scvcn3"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/audit_corner_inputs.py','--config','configs/decision-six-wave-20261106.yaml','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/corner_input_role_audit_20261106_v1'];runpy.run_path('scripts/audit_corner_inputs.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/audit_corner_inputs.py": "9e869f4d2c911a454ed3aea3b55b9ee23d617bb6d64057e28ec0905655ed5d23",
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+    "pixi.toml": "252140f949edee4e42cfdd2d38d8d0bbe11d9fae2ee6464b80aa305f420f666a"
+  },
+  "payload_sha256": "3f972e3b6549a0d13873584f0766bd52df4394b288a33c9912247f50e314ecf3"
+}

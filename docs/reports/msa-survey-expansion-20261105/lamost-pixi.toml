@@ -1,0 +1,9 @@
+[workspace]
+name="msa-source-admission"
+channels=["conda-forge"]
+platforms=["linux-64"]
+[dependencies]
+python="3.13.*"
+numpy=">=2.2,<3"
+h5py=">=3.10"
+astropy=">=6"

@@ -1,0 +1,133 @@
+{
+  "status": "complete",
+  "pending": [],
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "6e02879c04c5d445d54f6ad3f52554c03cc4bedbecedb55e25933508c59c7a2d"
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "d5110bf5362ce697cf508c646042350106b4abbb6b4c5206d12148a184286b6b"
+    },
+    "decision6_nsf_energy_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "4d27eadbd46f27dec6a4fdf39cb30be537da79041b731071d548d44084b6cf7f"
+    },
+    "nsfconfirm_hybrid_corrpos_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "17208224bb06c53cbb710f95cb35a3d38eb3d7122accf2eaa6763a89d181f1dc",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "aa2512e9b191db0ad151a9d01392fdd7bd53902975b17c3b231b590496e19948"
+    },
+    "nsfconfirm_energy_s1_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "2dbb076e28eb815e29e9b293e3d6822b10fbe6bf527cfffd609df88ba5180852",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "075a96570545212cc81d46f6c77f0877b17040cb4c7304546c91166d61269394"
+    },
+    "nsfconfirm_hybrid_corrneg_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "3087b20a66d9deff7d02670dba4f5e0dd13945379d85c18ec05dd52e719305ba",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "ac01e3edee87f30051d33190ac8f903338a01a3172c57bebbec5c0dd28d15185"
+    },
+    "nsfconfirm_hybrid_s1_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "6ea50d44a3db11af489784d88f3c9e8514089e33447a6751daf280eb826dcc6c",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "ada83769efa8b085d709ee24cf3b2b979c68c2bdb5f67af3ba38ff3a4d90cd01"
+    },
+    "nsfconfirm_hybrid_s2_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 6000,
+      "selected_checkpoint_sha256": "b8d3e0c9318e94d121fcf5e91e5045b113b1e229d6691388884a433795a1e131",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "a89ce1881ef2f31928ebb2491b246f5f237cecb4d8ef827bd5e10edff48d2827"
+    },
+    "nsfconfirm_energy_s2_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 6000,
+      "selected_checkpoint_sha256": "116142c807736b1bcb87882e6cd3f469b4e7e3fcd559a8c202d512a637486ad4",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "c338a9191fdd3fd012684c76037ff86e1082ae1f5ac19694c778ec09ba39de6e"
+    },
+    "nsfconfirm_hybrid_floor003_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "150711f2ab7784f232ecd3ef4077b3aa11df7e73adf2b9c899cc716b0402790f",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "05f2340334d1f700ad03374b8bffef54d2ebc022b4a5bc3c3148469d44b9e80c"
+    },
+    "nsfconfirm_crps_s1_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "00b441d17a984bdcc0b8471a812f3bac0e5bf1490b8981a9cd6dbb4928e941dd",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "4f5bfbd95c7541efda5442f2c6cf847438653e351a6bfe5e86ad3b21db5566b9"
+    },
+    "nsfconfirm_hybrid_studentt_20261106_v1": {
+      "status": "complete",
+      "stars": 1024,
+      "random_stars": 1024,
+      "stress_stars": 0,
+      "selected_update": 5000,
+      "selected_checkpoint_sha256": "292efd8ecb001bab6c8b518f94251d6d66dc639f172542131ccd840fac3b0697",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "artifact_sha256": "bfb42791dd17eccd6c3c2a5756a1fc6794a21fab6193c3c7ca2e2bab3ce3801e"
+    }
+  },
+  "stars": 1024,
+  "selected_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+  "random_stars": 1024,
+  "stress_stars": 0,
+  "training_performed": false,
+  "optimizer_created": false,
+  "scope": "Model-blind random development panel, plus separately flagged predeclared stress stars. Genuine coupled six-vector draws; not all-Gaia frequency estimation or certified physical dependence."
+}

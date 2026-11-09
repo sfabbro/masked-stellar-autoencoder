@@ -1,0 +1,21 @@
+{
+  "run_id": "native_label_covariance_audit_20261107_v2",
+  "utc": "2026-11-06T16:22:55.922749+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_label_covariance_audit_20261107_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/native_label_covariance_audit_20261107_v2",
+  "status": "accepted",
+  "session_ids": [
+    "uaff5668"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/audit_native_label_covariance.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_label_covariance_audit_20261107_v2'];runpy.run_path('scripts/audit_native_label_covariance.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/audit_native_label_covariance.py": "86a789d18054f00586969b5c8c1c0af7d68b7aa2d8f1e91e71a24dcc8b384399",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "66503aa5a5540085f8c96944cfa660a81190a37b01ede95d7913e0a278b040f7"
+}

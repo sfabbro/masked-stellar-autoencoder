@@ -1,0 +1,21 @@
+{
+  "run_id": "expanded_raw_parallax_20261107_v1",
+  "utc": "2026-11-06T16:12:12.647115+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_raw_parallax_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_raw_parallax_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "usrexy0k"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/recover_expanded_raw_parallax.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_raw_parallax_20261107_v1'];runpy.run_path('scripts/recover_expanded_raw_parallax.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/recover_expanded_raw_parallax.py": "bd66be3e3608da14016e18bbae1f9fba043c42927c0156296ed3c51d791a3234",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "1ec5955f3d81c75d5f808bd7f83ae50944221181709053ff431121df51a5ee6b"
+}

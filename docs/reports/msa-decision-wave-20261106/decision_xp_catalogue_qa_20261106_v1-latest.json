@@ -1,0 +1,19 @@
+{
+  "status": "xp_catalogue_qa_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "catalogues": {
+    "andrae": {
+      "status": "qa_complete",
+      "raw_rows": 174922161,
+      "matched_unique_stars": 2432999,
+      "sha256": "b448e96dac6fdd7c04be5e9b6cd3419ac56084c738c929c39432e7e25eacf323"
+    },
+    "gaia_net": {
+      "status": "qa_complete",
+      "raw_rows": 219196764,
+      "matched_unique_stars": 2497991,
+      "sha256": "206f10d56158a711cfa1073f90152dbf7b1f3e781649c1f4019bca16466d657c"
+    }
+  }
+}

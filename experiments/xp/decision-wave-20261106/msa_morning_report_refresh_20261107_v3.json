@@ -1,0 +1,22 @@
+{
+  "run_id": "msa_morning_report_refresh_20261107_v3",
+  "utc": "2026-11-07T03:01:18.004934+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/msa_morning_report_refresh_20261107_v3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/msa_morning_report_refresh_20261107_v3",
+  "status": "accepted",
+  "session_ids": [
+    "l44pw7oe"
+  ],
+  "resources": {
+    "cpu": 1,
+    "ram": 4,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/write_msa_morning_report.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/msa_morning_report_20261107_v3',\"--reuse-live-output\",\"--formulation\",'docs/reports/msa-common-map-formulation-20261107.md'];runpy.run_path('scripts/write_msa_morning_report.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/write_msa_morning_report.py": "52ecc3ec1ed183024f827613300dfb6e078a03a3942e79015ab05e99c949c3bd",
+    "docs/reports/msa-common-map-formulation-20261107.md": "3eedf7c9ae5897118719eaea567bd8240c342d9e74e90b3bb14d3ad701a7af7c",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "b2e720a1fb8243bdfd862b3975d73f16a9bac400ee9e7f6e93b0646d85d6462b"
+}

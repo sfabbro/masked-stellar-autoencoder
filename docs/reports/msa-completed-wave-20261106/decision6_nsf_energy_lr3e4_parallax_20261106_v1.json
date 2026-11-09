@@ -1,0 +1,319 @@
+{
+  "status": "remediation_pilot_complete",
+  "run_id": "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+  "arm": {
+    "run_id": "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+    "kind": "nsf_energy",
+    "encoder": "finetune",
+    "reconstruction_weight": 0.03,
+    "input_profile": "phot_xp_measured_parallax",
+    "head_lr_override": 0.0003
+  },
+  "training_performed": true,
+  "completed_updates": 10000,
+  "declared_updates": 10000,
+  "full_epoch_claim": false,
+  "script_sha256": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+  "config_sha256": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+  "started_utc": "2026-11-05T23:34:00Z",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "source_manifest_sha256": "9462c283cbe5e855d6db7bd142db03978a483c5493710065f38e8d8c15be5cdf",
+  "input_audit_sha256": "680262c55c71cf5e4c41e72ac00885e9914af9d06859d5520d0a42bac099ba99",
+  "joint_preflight_sha256": "091e1554c105556a2a70f66c0ecb48d165c15478a53b41dfd3171bee54e33864",
+  "parent_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "fit_per_target": [
+    506331,
+    493548,
+    506315,
+    1197641,
+    115834,
+    117573
+  ],
+  "tune_panel_rows": 740,
+  "devtest_panel_rows": 24607,
+  "sampler": "round-robin target; uniform nonempty source strata, logg additionally uniform gravity bins <1/1-2/2-3/3-4/4-4.5/>=4.5; every FIT identity eligible",
+  "unknown_error_scope": "Independent Gaussian illustrative positive normalized floors, not measured uncertainties",
+  "selection": "first minimum macro-six native conditional-median absolute error / FIT native standard deviation; common model-blind fixed TUNE identity panel",
+  "natural_xp_at_inference": true,
+  "pit_scope": "512 whole-vector empirical marginal intrinsic PIT; observed PIT only when quoted target error is known, not an exact CDF; baseline unavailable",
+  "covariance_scope": "Actual whole-vector conditional sample covariance; no manufactured correlations and no physical six-dimensional truth claim",
+  "supervised_xp_dropout": 0.0,
+  "energy_device_preflight": {
+    "copy_only": true,
+    "updates": 2,
+    "steps": [
+      {
+        "step": 1,
+        "score": 1.0181262493133545,
+        "flow_gradient_l2": 1.143220383757463,
+        "context_gradient_l2": 0.0
+      },
+      {
+        "step": 2,
+        "score": 0.9723517894744873,
+        "flow_gradient_l2": 0.9886582146339189,
+        "context_gradient_l2": 0.0006802473362754473
+      }
+    ],
+    "scope": "Numerical sample-score preflight only; no encoder/reconstruction/physical calibration certificate"
+  },
+  "objective_scope": "Six-target joint NSF sample energy score, not marginal NLL; stratified star sample, not population weighted",
+  "reconstruction_cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+  "sampler_strata": [
+    {
+      "target": "teff",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115765
+    },
+    {
+      "target": "teff",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 0,
+      "eligible_rows": 8031
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 1,
+      "eligible_rows": 30203
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 2,
+      "eligible_rows": 59784
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 3,
+      "eligible_rows": 11079
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 4,
+      "eligible_rows": 6624
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 5,
+      "eligible_rows": 229
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 0,
+      "eligible_rows": 4965
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 1,
+      "eligible_rows": 28158
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 2,
+      "eligible_rows": 93687
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 3,
+      "eligible_rows": 79642
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 4,
+      "eligible_rows": 143346
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 5,
+      "eligible_rows": 27800
+    },
+    {
+      "target": "fe_h",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115749
+    },
+    {
+      "target": "fe_h",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "alpha",
+      "source": "DESI_RVSpecFit_alpha_fe",
+      "gravity_bin": -2,
+      "eligible_rows": 1197641
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35012
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 77995
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35824
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 78922
+    }
+  ],
+  "encoder_gradient_contract": {
+    "update": 10000,
+    "reconstruction_weight": 0.03,
+    "supervised_l2": 3.2185259655226783,
+    "reconstruction_unweighted_l2": 2.620198372279942,
+    "cosine": 0.33012475495726906
+  },
+  "encoder_gradient_startup": [
+    {
+      "update": 1,
+      "status": "zero_initialized_flow_projection_first_step",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.0,
+      "reconstruction_unweighted_l2": 11.228953531674449,
+      "cosine": null
+    },
+    {
+      "update": 2,
+      "status": "supervised_nonzero",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.03442367022035955,
+      "reconstruction_unweighted_l2": 10.019515658399479,
+      "cosine": -0.2935710324877143
+    }
+  ],
+  "per_target_presentations": [
+    2123145,
+    2091265,
+    2122761,
+    509423,
+    1127755,
+    1135288
+  ],
+  "per_target_unique_identities": [
+    449158,
+    439519,
+    449142,
+    399812,
+    115338,
+    116986
+  ],
+  "supervised_loss_components": {
+    "masked_energy_score": 0.33292052149772644
+  },
+  "supervised_objective": 0.33292052149772644,
+  "encoder_dropout_seed": null,
+  "per_target_source_presentations": {
+    "teff:apogee": 808694,
+    "teff:galah": 1314451,
+    "logg:apogee": 810156,
+    "logg:galah": 1281109,
+    "fe_h:apogee": 808310,
+    "fe_h:galah": 1314451,
+    "age:StarHorse_apogee17_posterior_median": 389290,
+    "age:StarHorse_galahdr3_posterior_median": 417613,
+    "distance:StarHorse_apogee17_posterior_median": 394677,
+    "distance:StarHorse_galahdr3_posterior_median": 419759,
+    "alpha:DESI_RVSpecFit_alpha_fe": 509423,
+    "age:StarHorse_catalogue_posterior_median": 320852,
+    "distance:StarHorse_catalogue_posterior_median": 320852
+  },
+  "finite_gradient_updates": 10000,
+  "last_loss": 0.35681283473968506,
+  "last_reconstruction_mae": 0.7964106202125549,
+  "selected_update": 8000,
+  "best_tune_score": 0.20022416688956848,
+  "selected_checkpoint_sha256": "72a18206516ed6970ab0812c99df7e9206b75e6a0908c49e4960efebbe10f12c",
+  "sample_sequence_sha256": "dfdaf9043def6eea24feed77f20f4456c18a78bc338c0da686323cdb70d17aaa",
+  "tune_score": 0.20022416688956848,
+  "tune_per_label": [
+    0.09050213305454263,
+    0.07188312276805732,
+    0.18538281408583562,
+    0.4106756245004643,
+    0.25593054353961525,
+    0.1869707633888957
+  ],
+  "development_score": 0.2242097134128763,
+  "development_per_label": [
+    0.09987583155504769,
+    0.08767629907844195,
+    0.21750806864986683,
+    0.4241022579982223,
+    0.2981250101351145,
+    0.2179708130605645
+  ],
+  "development_scope": "Fixed hashed pilot panel from previously consumed development roles; not an untouched test or promotion",
+  "reconstruction_presentations": 2560000,
+  "corner_scope": "Whole coupled six-target vectors; posterior-reference age/distance scales are not physical truth",
+  "artifacts": {
+    "development-predictions.npz": {
+      "bytes": 2940136,
+      "sha256": "988a3ddb761a2875518fb9f8747a3c7ebf47fdf4e71c5eac5cdcd3ef34bba2e3"
+    },
+    "selected-checkpoint.pth": {
+      "bytes": 411503261,
+      "sha256": "72a18206516ed6970ab0812c99df7e9206b75e6a0908c49e4960efebbe10f12c"
+    },
+    "tune-predictions.npz": {
+      "bytes": 97473,
+      "sha256": "7bbcf99af6e316ee037bdfa4b5953360b63fd535dc620f70b63ab186882b9b7c"
+    },
+    "metrics.jsonl": {
+      "bytes": 2831,
+      "sha256": "602b1abfe31843099d2731887fe69dbdcd782a5fc37cfab453f886910c371230"
+    },
+    "normalization.npz": {
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+    },
+    "whole-vector-corners.npz": {
+      "bytes": 5625901,
+      "sha256": "a39d9ab0789f9ed50754f808bed53e9e74908dfae5370668fefe72afe8bbb94f"
+    }
+  }
+}

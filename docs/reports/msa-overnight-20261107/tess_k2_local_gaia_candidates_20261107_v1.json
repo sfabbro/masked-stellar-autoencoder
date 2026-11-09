@@ -1,0 +1,34 @@
+{
+  "status": "conservative_seismic_gaia_candidates_complete",
+  "training_performed": false,
+  "identity_promoted": false,
+  "external_data_upload": false,
+  "rows_scanned": 218131884,
+  "reference_rows": 177922,
+  "valid_position_rows": 163470,
+  "raw_identity": {
+    "path": "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5",
+    "bytes": 474657279648,
+    "mtime_ns": 1748880347632755420
+  },
+  "scope": "Public TESS/K2 source-only local QA matching; subset of Gaia in our raw input, not the entire Gaia catalogue. No use as training labels or final model selection.",
+  "last_shard": "sslset9_part3",
+  "candidate_gaia_stars": 172329,
+  "conflicting_astrometry_ids": 0,
+  "matched_reference_rows": 155562,
+  "matched_by_catalogue": {
+    "k2_gap_dr3": 3974,
+    "tess_hon_2021": 151588
+  },
+  "tess_with_nu_scaling_gravity": 151316,
+  "solar_convention": {
+    "numax_microhz": 3090,
+    "teff_kelvin": 5772,
+    "logg_cgs": 4.438
+  },
+  "tess_mass_flag_scope": "Retained, not a primary filter: the mass flag may use Gaia geometry. RUWE is retained for slices, not forced normal.",
+  "k2_scope": "Unknown position epochs require a stable unique counterpart across three scenarios. Gravity not derived until pipeline/evolutionary-state solar reference conventions are audited.",
+  "reference_dependence": "nu-max scaling uses external Teff, shared solar calibration and potentially shared photometric inputs. Formal errors omit global scaling systematics; adopted solar nu uncertainty 30/3090 corresponds to about .0042 dex common offset.",
+  "source_reference": "Hon et al 2021, https://doi.org/10.3847/1538-4357/ac14b1; K2 GAP DR3 https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJ/926/191",
+  "candidate_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540"
+}

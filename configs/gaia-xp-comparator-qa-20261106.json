@@ -1,0 +1,134 @@
+{
+  "schema": "msa-xp-comparator-registry-v1",
+  "audit_date": "2026-11-06",
+  "purpose": "Evaluation-only comparator catalogues; never automatically added as stellar training truth",
+  "training_enabled": false,
+  "checkpoint_sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+  "execution_status": "Andrae/Gaia Net full-source acquisition and frozen-model paired QA accepted on CANFAR as mkoy9zq3; results pending; other comparator arms remain planned",
+  "join": {
+    "key": "Gaia DR3 source_id",
+    "dtype": "exact int64 or validated decimal strings",
+    "duplicates": "fail or resolve with documented publisher policy; never many-to-many",
+    "missing": "retain unmatched denominator and per-target missingness"
+  },
+  "panels": [
+    "catalogue-wide common-ID agreement by original role",
+    "paired spectroscopy comparison on identical eligible held-out stars per target",
+    "all-comparator intersection as a secondary panel",
+    "same benchmark/cluster members across methods"
+  ],
+  "governance": {
+    "selection": "TUNE/development only; inspected current devtest is not a fresh test",
+    "comparison_targets": "Teff/logg; native metallicity definitions retained; MH versus FeH explicitly proxy-only",
+    "reference_gauge": "fixed original three-survey common reference; no evaluation-fitted recentering",
+    "training_membership": "known in, known out, unknown for each comparator plus MSA ancestry; unknown is not held out",
+    "input_budget": "record XP/parallax/photometry/extinction/priors; catalogue comparison is not equal-input architecture control",
+    "uncertainty": "no full PDFs fabricated from point predictions or scalar errors; proper scores against shared references only when distribution semantics are validated"
+  },
+  "required_outputs": [
+    "ID/checkpoint/catalogue hashes and per-role/per-target matched counts",
+    "raw and quality-cut coverage, missingness and rejection counts",
+    "common-reference agreement and paired native-survey/physical-reference accuracy reported separately",
+    "Teff/logg/metallicity hexbin/residual panels and Kiel diagrams",
+    "median bias, MAE, NMAD, RMSE and outlier fractions; paired error differences with spatial/cluster-block bootstrap intervals",
+    "trends versus magnitude, colour, extinction, parallax SNR, sky/crowding and stellar regime",
+    "metal-poor/hot/cool/giant/dwarf/RC and teacher-membership strata",
+    "coverage/PIT/CRPS/NLL for validated predictive distributions; point/interval baselines only as supplied",
+    "same-star cluster Fe/H scatter and conditional RGB widths with posterior draws and population selection retained"
+  ],
+  "comparators": [
+    {
+      "id": "andrae_rix_chandra_2023_xgboost",
+      "published_scale": "175 million XP stars",
+      "priority": 1,
+      "quantities": [
+        "teff",
+        "logg",
+        "mh"
+      ],
+      "metallicity_comparison": "Native [M/H], proxy comparison to common Fe/H only",
+      "membership_field": "in_training_sample",
+      "existing_code": "scripts/compare_released_andrae.py",
+      "status": "earlier-checkpoint paired comparisons exist; current-checkpoint match/scoring pending",
+      "source": "https://arxiv.org/abs/2302.02611",
+      "caveat": "Distinct from Gaia GSP-Phot; additional parallax/input information and spectroscopic teacher lineage must be retained",
+      "current_qa_run": "decision_xp_catalogue_qa_20261106_v1"
+    },
+    {
+      "id": "zhang_green_rix_2023",
+      "published_scale": "220 million XP stars",
+      "priority": 2,
+      "quantities": [
+        "teff",
+        "logg",
+        "fe_h",
+        "extinction",
+        "model_parallax"
+      ],
+      "status": "publisher table schema verified; current matched data not acquired",
+      "source": "https://dc.zah.uni-heidelberg.de/tableinfo/xpparams.main",
+      "bulk_source": "https://zenodo.org/records/7811871",
+      "table": "xpparams.main",
+      "quality_panels": [
+        "publisher basic quality_flags < 8",
+        "publisher stricter quality_flags == 0"
+      ],
+      "unit_contract": "VO Teff/errors in K; original HDF5 Teff/errors in kK; verify gravity/covariance convention from original release",
+      "caveat": "XP plus 2MASS/WISE and model/prior constraints; do not treat fitted parallax as independent evidence"
+    },
+    {
+      "id": "shboost_2024",
+      "published_scale": "217 million XP stars",
+      "priority": 2,
+      "quantities": [
+        "teff",
+        "logg",
+        "native_metallicity",
+        "extinction",
+        "mass"
+      ],
+      "status": "author data route verified; native schema and selected rows pending",
+      "source": "https://data.aip.de/projects/shboost2024.html",
+      "doi": "10.17876/data/2024_3",
+      "caveat": "StarHorse training references include APOGEE/GALAH/LAMOST/RAVE/SEGUE/GES; mixed shared teacher and photometric/parallax dependencies; native metallicity definition must be verified"
+    },
+    {
+      "id": "gaia_net_huson_2025_xp",
+      "published_scale": "219196764 XP rows in CDS table1; RVS table2 excluded from XP comparison",
+      "priority": 2,
+      "quantities": [
+        "log10_teff",
+        "logg",
+        "native_feh"
+      ],
+      "status": "latest author version and file checksums pinned from metadata; CDS schema verified; no full matched data acquired",
+      "source": "https://cdsarc.cds.unistra.fr/viz-bin/ReadMe/J/ApJ/984/58?format=html&tex=true",
+      "author_record": "https://zenodo.org/records/15048995",
+      "unit_contract": "Teff = 10**logTeff; transform supplied log-temperature uncertainty consistently, no silent symmetric-K Gaussian assumption",
+      "caveat": "Audit BOSSNet/other training labels and per-target/domain reliability; quoted errors do not imply a full joint density",
+      "author_doi": "10.5281/zenodo.15048995",
+      "xp_file": {
+        "key": "gaia xp.parquet",
+        "size": 9049244346,
+        "checksum": "md5:4cc09524fc1b4fe774dbeeb9dc0d50c2"
+      },
+      "current_qa_run": "decision_xp_catalogue_qa_20261106_v1"
+    },
+    {
+      "id": "ye_etal_2025_xp_ferre",
+      "published_scale": "68394431 atmospheric parameter rows",
+      "priority": 2,
+      "quantities": [
+        "teff",
+        "logg",
+        "mh"
+      ],
+      "domain": "4000 <= Teff <= 7000 K; retain published domain and quality rules",
+      "status": "paper and CDS catalogue verified; native schema and matched rows pending",
+      "source": "https://arxiv.org/abs/2411.19105",
+      "catalogue": "J/A+A/695/A75/catalog",
+      "metallicity_comparison": "Native [M/H], never silently relabelled Fe/H",
+      "caveat": "Synthetic-spectrum FERRE analysis with APOGEE-trained flux corrections; not fully independent of APOGEE"
+    }
+  ]
+}

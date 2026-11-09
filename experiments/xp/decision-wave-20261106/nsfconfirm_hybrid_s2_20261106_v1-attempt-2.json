@@ -1,0 +1,32 @@
+{
+  "run_id": "nsfconfirm_hybrid_s2_20261106_v1",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsfconfirm_hybrid_s2_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/nsfconfirm_hybrid_s2_20261106_v1-attempt-2",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_after_preflight.py --preflight-script scripts/wait_nsf_confirmation_preflight.py --script scripts/run_nsf_confirmation.py --config configs/nsfconfirm_hybrid_s2_20261106_v1.yaml --run-id nsfconfirm_hybrid_s2_20261106_v1 --output \"$experiment_output\"",
+  "utc": "2026-11-06T19:31:13.687884+00:00",
+  "status": "accepted_reconciled",
+  "session_ids": [
+    "esd566bk"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_nsf_confirmation.py": "0a4ef3208f9640dde817ed29f284a6efa4a33094056d2ad73022746be8d839db",
+    "scripts/wait_nsf_confirmation_preflight.py": "6f08d1929fefac5a2d0c2b8f41a9df3371500ff0e189fc5be27f96627ed6e605",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd",
+    "configs/nsfconfirm_hybrid_s2_20261106_v1.yaml": "b0627b62031a0ce4720ae73129b7697eb3733253fec6a9aba3239fc7595e103c",
+    "scripts/run_after_preflight.py": "b33e5f5834762d05ac72322dd638d192691024c605acc80bfd05eef3365e455d"
+  },
+  "payload_sha256": "c5136d93b40b7be3f898de4dc88fdad4c36d2c4e462a239c081a38d3074794a2",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout",
+  "reconciliation": "Exact job-name inventory found one running session after request timeout"
+}

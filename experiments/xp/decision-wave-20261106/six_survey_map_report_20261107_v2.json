@@ -1,0 +1,22 @@
+{
+  "run_id": "six_survey_map_report_20261107_v2",
+  "utc": "2026-11-07T03:08:28.047739+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_survey_map_report_20261107_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/six_survey_map_report_20261107_v2",
+  "status": "accepted",
+  "session_ids": [
+    "d74618sj"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/report_six_map_wave.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_survey_map_report_20261107_v2'];runpy.run_path('scripts/report_six_map_wave.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_six_map_wave.py": "8397c5f0f75f8d9e563f5bd8695eb1b645dbd90209c0f9ba28b62cca80f1314b",
+    "scripts/plot_decision_six_corners.py": "e0d81791ff46247b7b8563b3a64a035e077e7542d3766dbb041b6ac451b61568",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "53c1dee00424e8ff472e08c029dbe269aaba07b34e4a9394890434bf1921aa13"
+}

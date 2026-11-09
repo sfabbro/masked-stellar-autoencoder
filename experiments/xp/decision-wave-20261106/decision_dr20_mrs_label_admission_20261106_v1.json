@@ -1,0 +1,25 @@
+{
+  "run_id": "decision_dr20_mrs_label_admission_20261106_v1",
+  "utc": "2026-11-05T23:49:04.966264+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_dr20_mrs_label_admission_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "gf3f4b5v"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.path.insert(0,'src');sys.argv=['admit','--benchmarks','benchmarks.json','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1'];runpy.run_path('admit.py',run_name='__main__')",
+  "source_sha256": {
+    "admit.py": "169a90d6a9108cfa128d2cc787a4e3e6da0bede53d917bfe53004ac152015d60",
+    "benchmarks.json": "5f21640d33d3313e8584e6439706b522dbdaf5964c3d2ad671d130da87df87bd",
+    "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/multisurvey_overlay.py": "8114002725c61bacd4ee02b4660fa01133c910743287cf01ca12ad0fa68db03b",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "1a9753ae63b29310a0f40ab1283e561cdf556ea306386ce1d6689796e2d95a71"
+}

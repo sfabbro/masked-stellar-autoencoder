@@ -1,0 +1,101 @@
+{
+  "status": "planned_not_submitted",
+  "purpose": "Isolate source-scale convention, mapping complexity, noise and input effects before expanded six-target training",
+  "design_constraints": [
+    "same star/dependency roles and source quality selection within each contrast",
+    "same measured-parallax input profile, encoder initialization and one fixed flexible head for mapping contrasts",
+    "FIT-only anchor and map fitting; TUNE selection; CAL separate; existing devtest is inspected development evidence",
+    "all six targets remain the large-run contract; first logg mapping contrasts can isolate atmospheric supervision before six-target integration"
+  ],
+  "stages": [
+    {
+      "name": "reference_scale",
+      "variants": [
+        "original_equal_weight_zero_sum_control",
+        "apogee_reference_convention_control",
+        "physical_anchor_constrained_scale",
+        "physical_anchor_scale_without_desi_logg_supervision"
+      ],
+      "note": "Last variant retains DESI temperature/iron labels. A source-ablation difference alone is not proof that DESI labels are wrong."
+    },
+    {
+      "name": "mapping_complexity",
+      "variants": [
+        "source_offsets",
+        "diagonal_affine",
+        "regularized_monotone_own_target_splines_with_supported_covariates"
+      ],
+      "note": "Run only under the best-supported anchored scale; unconstrained source NN is not the default."
+    },
+    {
+      "name": "noise_and_population",
+      "variants": [
+        "declared_fixed_floor_control",
+        "source_dependent_discrepancy_and_outlier_model"
+      ],
+      "slices": [
+        "survey overlap support",
+        "Teff/logg/FeH domain",
+        "metal-poor tails",
+        "XP missingness",
+        "parallax availability and SNR",
+        "RGB versus clump",
+        "source quality and repeats"
+      ]
+    },
+    {
+      "name": "external_validation",
+      "sources": [
+        "APOKASC-3 already scored",
+        "TESS and K2 staged, identity bridges pending",
+        "fundamental benchmarks"
+      ],
+      "note": "Retain source calibration/teacher dependencies and protect validation subsets before fitting anchors."
+    }
+  ],
+  "decisions": {
+    "physical_scale": "Do not interpret equal-weight zero-sum survey convention as physical calibration",
+    "forward_model": "source-specific observed subset of h_s(theta_six,q_s) with source error and discrepancy; learn only supported source-target edges",
+    "function_class": "nested offsets/affine/monotone spline candidates; final flexibility selected by ablation",
+    "propagation": "exact forward sample propagation preferred for nonlinear sample-based scoring; retain affine surrogate as explicit control",
+    "uncertainty": "include source discrepancy and mapping uncertainty; distinguish latent predictive uncertainty from observation noise",
+    "six_target_status": "not yet implemented or fitted in the current mapped three-target checkpoint"
+  },
+  "label_error_model": {
+    "status": "planned_ablation_not_implemented_or_empirically_selected",
+    "systematic_bias": "source-specific forward calibration h_s; anchored physical scale",
+    "within_source_noise": "full covariance among jointly estimated observed targets, retaining published covariance when supplied",
+    "covariance_when_unpublished": "Unknown covariance: test a regularized source/domain covariance against the diagonal control using repeats, overlaps and anchors. Keep the simpler model if added covariance fails held-out validation.",
+    "catastrophic_failures": "explicit robust inlier/outlier mixture or heavy-tailed measurement model with source quality dependence",
+    "cross_source_dependence": "shared per-star/random effects or block covariance for shared inputs, teachers, spectra and calibration; do not multiply dependent products as independent evidence",
+    "covariance_components": "distinguish quoted measurement uncertainty, residual survey discrepancy, calibration-function uncertainty and stellar predictive uncertainty",
+    "missing_targets": "select observed covariance submatrix; missing errors are not zero errors",
+    "posterior_teachers": "age/distance posterior widths are not independent Gaussian label errors; retain priors and shared-input dependence",
+    "controls": [
+      "quoted-diagonal-plus-floor historical control",
+      "regularized correlated source errors",
+      "correlated errors plus robust failures"
+    ],
+    "validation": [
+      "repeat residual covariance",
+      "same-star cross-source residual covariance with dependencies modeled",
+      "anchor residuals and error coverage",
+      "check whether uncertainty is incorrectly absorbed by maps or intrinsic stellar spread"
+    ]
+  },
+  "reconstruction_decision": {
+    "default": "retain MAE reconstruction and current 0.03 weight for mapping/noise contrasts",
+    "prior_evidence": "User reports correlated XP Gaussian-NLL reconstruction did not improve results and MAE performed better; this is distinct from label-noise covariance.",
+    "current_wave": "All eight controlled arms held the reconstruction recipe fixed; this wave does not compare reconstruction losses."
+  },
+  "completed_wave_lessons": {
+    "all_eight_10000_updates_complete": true,
+    "shortlist": [
+      "NSF energy plus measured parallax, calibration unresolved",
+      "mixture plus measured parallax, comparison control"
+    ],
+    "selected_final_model": false,
+    "lower_nsf_lr": "3e-4 parallax arm worsened seismic logg accuracy/coverage relative to 1e-3 in this fixed-budget recipe",
+    "next_priority": "fix physical reference scale first; compare simple versus correlated/robust label-error models with fixed reconstruction and head/input controls"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "decision_ges_gaia_candidates_batched_20261106_v3",
+  "utc": "2026-11-06T01:21:31.380766+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_batched_20261106_v3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_batched_20261106_v3",
+  "status": "failed_before_query_run",
+  "session_ids": [
+    "eyi2xvzd"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_batched_20261106_v3'];runpy.run_path('candidate.py',run_name='__main__')",
+  "source_sha256": {
+    "candidate.py": "5ba72afa66eecb675e15594fcc9c38ec7330a63b528605fe575550f2b9f11158",
+    "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+  },
+  "payload_sha256": "2a462b05874c53509ed63f469f18c5e587bd72a72dc854ec6c794ed988ca4eb0",
+  "outcome": "ESA created the first 5000-row upload job, but changing executionduration returned HTTP 500. The upload was reused by v4; not blindly resubmitted."
+}

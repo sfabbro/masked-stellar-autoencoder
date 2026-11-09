@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "training_performed": false,
+  "encoder_executed": false,
+  "gauge_changed": false,
+  "calibration_source_sha256": "3c01ea7d1765ea52d9a501bb6e572fb8ed1e6a44b6b8871485d3aabbd369fe28",
+  "library_source_revision": "2777b0de88121768434725ef227893cd35595d2a",
+  "results": {},
+  "error": "AssertionError('\\nNot equal to tolerance rtol=1e-08, atol=1e-07\\n\\nMismatched elements: 10848 / 26424 (41.1%)\\nFirst 5 mismatches are at indices:\\n [0, 0, 0, 0]: 4684.478960930434 (ACTUAL), 4684.479018244069 (DESIRED)\\n [0, 0, 0, 1]: 2.827425889474503 (ACTUAL), 2.8274260911002895 (DESIRED)\\n [0, 0, 1, 0]: 4663.842444851628 (ACTUAL), 4663.8425081904425 (DESIRED)\\n [0, 0, 1, 1]: 2.782955817067589 (ACTUAL), 2.7829560443196404 (DESIRED)\\n [0, 0, 2, 0]: 4570.540177902651 (ACTUAL), 4570.540226123835 (DESIRED)\\nMax absolute difference among violations: 0.00030051\\nMax relative difference among violations: 0.00100956\\n ACTUAL: array([[[[ 4.684479e+03,  2.827426e+00,  2.827686e-01],\\n         [ 4.663842e+03,  2.782956e+00,  2.510985e-01],\\n         [ 4.570540e+03,  2.405740e+00,  1.437650e-01],...\\n DESIRED: array([[[[ 4.684479e+03,  2.827426e+00,  2.827685e-01],\\n         [ 4.663843e+03,  2.782956e+00,  2.510985e-01],\\n         [ 4.570540e+03,  2.405740e+00,  1.437649e-01],...')"
+}

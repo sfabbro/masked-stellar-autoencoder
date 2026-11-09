@@ -1,0 +1,125 @@
+{
+  "status": "waiting_or_scoring",
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "random_stars": 1024,
+      "random_clear_separated_logg_modes": 0,
+      "random_mode_fraction": 0.0,
+      "stress_stars": 0,
+      "stress_clear_separated_logg_modes": 0,
+      "artifact_sha256": "6e02879c04c5d445d54f6ad3f52554c03cc4bedbecedb55e25933508c59c7a2d",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "gallery": "decision6_gaussian_parallax_20261106_v1-random-logg-gallery.png",
+      "random_single_star_corners": [
+        "decision6_gaussian_parallax_20261106_v1-4694907817311533952-corner.png",
+        "decision6_gaussian_parallax_20261106_v1-1405433012875924224-corner.png"
+      ],
+      "by_native_reference_feh": {
+        "below_minus2": {
+          "stars": 1,
+          "flagged": 0
+        },
+        "at_least_minus2": {
+          "stars": 292,
+          "flagged": 0
+        },
+        "missing_reference": {
+          "stars": 731,
+          "flagged": 0
+        }
+      }
+    },
+    "decision6_gaussian_photxp_20261106_v1": {
+      "status": "complete",
+      "random_stars": 1024,
+      "random_clear_separated_logg_modes": 0,
+      "random_mode_fraction": 0.0,
+      "stress_stars": 0,
+      "stress_clear_separated_logg_modes": 0,
+      "artifact_sha256": "5fa8e6b0137b40646ad108b5abd959605b417deaddd2b0fdb4c1ac50f7257197",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "gallery": "decision6_gaussian_photxp_20261106_v1-random-logg-gallery.png",
+      "random_single_star_corners": [
+        "decision6_gaussian_photxp_20261106_v1-4694907817311533952-corner.png",
+        "decision6_gaussian_photxp_20261106_v1-1405433012875924224-corner.png"
+      ],
+      "by_native_reference_feh": {
+        "below_minus2": {
+          "stars": 1,
+          "flagged": 0
+        },
+        "at_least_minus2": {
+          "stars": 292,
+          "flagged": 0
+        },
+        "missing_reference": {
+          "stars": 731,
+          "flagged": 0
+        }
+      }
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "random_stars": 1024,
+      "random_clear_separated_logg_modes": 7,
+      "random_mode_fraction": 0.0068359375,
+      "stress_stars": 0,
+      "stress_clear_separated_logg_modes": 0,
+      "artifact_sha256": "d5110bf5362ce697cf508c646042350106b4abbb6b4c5206d12148a184286b6b",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "gallery": "decision6_mdn_parallax_20261106_v1-random-logg-gallery.png",
+      "random_single_star_corners": [
+        "decision6_mdn_parallax_20261106_v1-4694907817311533952-corner.png",
+        "decision6_mdn_parallax_20261106_v1-1405433012875924224-corner.png"
+      ],
+      "by_native_reference_feh": {
+        "below_minus2": {
+          "stars": 1,
+          "flagged": 1
+        },
+        "at_least_minus2": {
+          "stars": 292,
+          "flagged": 4
+        },
+        "missing_reference": {
+          "stars": 731,
+          "flagged": 2
+        }
+      }
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "status": "complete",
+      "random_stars": 1024,
+      "random_clear_separated_logg_modes": 207,
+      "random_mode_fraction": 0.2021484375,
+      "stress_stars": 0,
+      "stress_clear_separated_logg_modes": 0,
+      "artifact_sha256": "7f8534418f64fbc4e827e4842d1632c3d066dbccf476d065bf173d98fb140e5d",
+      "panel_ids_sha256": "a4dc14ce5875ed055834c7933a7910dfe601e8d89be0942d7cbf6d2bfb052836",
+      "gallery": "decision6_mdn_photxp_20261106_v1-random-logg-gallery.png",
+      "random_single_star_corners": [
+        "decision6_mdn_photxp_20261106_v1-4694907817311533952-corner.png",
+        "decision6_mdn_photxp_20261106_v1-1405433012875924224-corner.png"
+      ],
+      "by_native_reference_feh": {
+        "below_minus2": {
+          "stars": 1,
+          "flagged": 1
+        },
+        "at_least_minus2": {
+          "stars": 292,
+          "flagged": 4
+        },
+        "missing_reference": {
+          "stars": 731,
+          "flagged": 202
+        }
+      }
+    }
+  },
+  "failures": {},
+  "training_performed": false,
+  "model_loaded": false,
+  "scope": "Descriptive sample-mode diagnostic on a uniform eligible-development panel; not all-Gaia prevalence, a general joint-mode count or physical branch validation."
+}

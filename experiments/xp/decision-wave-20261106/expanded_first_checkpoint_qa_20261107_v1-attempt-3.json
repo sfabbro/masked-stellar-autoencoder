@@ -1,0 +1,28 @@
+{
+  "run_id": "expanded_first_checkpoint_qa_20261107_v1",
+  "attempt": 3,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_first_checkpoint_qa_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_first_checkpoint_qa_20261107_v1-attempt-3",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_expanded_checkpoint_qa.py --config configs/expanded-six-nsf-fullfit-20261107.yaml --output \"$experiment_output\" --reuse-waiting-output",
+  "utc": "2026-11-06T22:50:55.522719+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "rduagye3"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {
+    "scripts/run_expanded_checkpoint_qa.py": "05f83bc17e7eff2ddd748346b4a8c4c4818f646c845fe080f5e1f0e3ea3842cb",
+    "configs/expanded-six-nsf-fullfit-20261107.yaml": "8b58b4c030a586c97e9c2ceef912f64ab44d6194137c3c4d4fdbe58f97c8c3a9",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/cached_inputs.py": "82e707eba12c81db544bc76d8baeb4c7b6f2dcc12b1bff0acaf77f0b43610157"
+  },
+  "payload_sha256": "29919aed181a41ca9cf69de3645551d0208107160215ce8b3dd5d2dd50be9f94",
+  "superseded_reason": "Waiting-only replacement: fix admitted profile-dictionary argument to RAM cache; no model loaded"
+}

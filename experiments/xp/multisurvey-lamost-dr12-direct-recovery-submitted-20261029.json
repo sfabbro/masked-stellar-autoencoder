@@ -1,0 +1,61 @@
+{
+  "output_root": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015",
+  "jobs": [
+    {
+      "run_id": "multisurvey_lamost_dr12_lrs_source_direct_v2",
+      "name": "msa-si15-multisurvey-lamost-dr12-lrs-source-direct-v2",
+      "source_sha": "ec104432bd8664bcde00b7f1f1bfa4adc7ae7d8f",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2",
+      "plan": {
+        "run_id": "multisurvey_lamost_dr12_lrs_source_direct_v2",
+        "task": "multisurvey-lamost-dr12-source",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "insknp6k"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T15:11:41.275619+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    },
+    {
+      "run_id": "multisurvey_lamost_dr12_mrs_source_direct_v2",
+      "name": "msa-si15-multisurvey-lamost-dr12-mrs-source-direct-v2",
+      "source_sha": "ec104432bd8664bcde00b7f1f1bfa4adc7ae7d8f",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_mrs_source_direct_v2",
+      "plan": {
+        "run_id": "multisurvey_lamost_dr12_mrs_source_direct_v2",
+        "task": "multisurvey-lamost-dr12-source",
+        "depends_on": [],
+        "resources": {
+          "cores": 8,
+          "ram": 128,
+          "gpu": 0
+        },
+        "image": "images.canfar.net/astroai/terminal:latest"
+      },
+      "resources": {
+        "cores": 8,
+        "ram": 128
+      },
+      "session_ids": [
+        "ntidqyve"
+      ],
+      "status": "accepted",
+      "attempted_at": "2026-10-29T15:11:47.191315+00:00",
+      "attempts": 1,
+      "submission_transport": "form_body"
+    }
+  ]
+}

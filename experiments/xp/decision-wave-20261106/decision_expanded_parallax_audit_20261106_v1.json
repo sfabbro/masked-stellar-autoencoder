@@ -1,0 +1,21 @@
+{
+  "run_id": "decision_expanded_parallax_audit_20261106_v1",
+  "utc": "2026-11-05T23:50:56.722109+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_expanded_parallax_audit_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_expanded_parallax_audit_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "es4y8r67"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['audit','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_expanded_parallax_audit_20261106_v1'];runpy.run_path('audit.py',run_name='__main__')",
+  "source_sha256": {
+    "audit.py": "8a4dfecc5497cfafc7bafe2628761c2f1d2da27b367f9c60e9873942248e5205",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "4ab51a671d7a25fb7f6fbc0ad7d6a21afed083cb4bc3e956d6d28e38382c52e9"
+}

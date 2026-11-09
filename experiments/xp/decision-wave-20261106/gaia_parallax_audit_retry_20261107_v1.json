@@ -1,0 +1,21 @@
+{
+  "run_id": "gaia_parallax_audit_retry_20261107_v1",
+  "utc": "2026-11-06T23:54:33.962995+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_parallax_audit_retry_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/gaia_parallax_audit_retry_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "a92szjku"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/audit_parallax_against_esa.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_parallax_release_unit_audit_20261107_v2'];runpy.run_path('scripts/audit_parallax_against_esa.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/audit_parallax_against_esa.py": "83d972bf650c5beef6863dcd56accf90276d606ff00224725328ee004fdebcec",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "89298ecd0572017cc598e5a5c9870f0034bd4e0c912f961aed05109de1283060"
+}

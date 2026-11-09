@@ -1,0 +1,3154 @@
+{
+  "status": "complete",
+  "pending": [],
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "selected_update": 9000,
+      "checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "tune_score": 0.20022191772035702,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.591796875,
+              "unbounded": false,
+              "raw_coverage": 0.7635285396590067,
+              "calibrated_coverage": 0.6790214974054856,
+              "raw_median_width": 177.49726562500018,
+              "calibrated_median_width": 147.54052734375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.83984375,
+              "unbounded": false,
+              "raw_coverage": 0.9377316530763529,
+              "calibrated_coverage": 0.8962194217939214,
+              "raw_median_width": 292.68642578124945,
+              "calibrated_median_width": 250.0419921875
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.919921875,
+              "unbounded": false,
+              "raw_coverage": 0.9681245366938473,
+              "calibrated_coverage": 0.9503335804299481,
+              "raw_median_width": 348.81582031250036,
+              "calibrated_median_width": 311.2646484375
+            }
+          ],
+          "dev_mean_crps": 49.85863506031628,
+          "dev_mae_median": 69.1496549839518
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.41796875,
+              "unbounded": false,
+              "raw_coverage": 0.8698630136986302,
+              "calibrated_coverage": 0.6598173515981736,
+              "raw_median_width": 0.24728325843811028,
+              "calibrated_median_width": 0.13741016387939453
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.734375,
+              "unbounded": false,
+              "raw_coverage": 0.9634703196347032,
+              "calibrated_coverage": 0.9010654490106544,
+              "raw_median_width": 0.40756940841674805,
+              "calibrated_median_width": 0.2767273187637329
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.8515625,
+              "unbounded": false,
+              "raw_coverage": 0.9779299847792998,
+              "calibrated_coverage": 0.9505327245053272,
+              "raw_median_width": 0.48365542888641366,
+              "calibrated_median_width": 0.3583444356918335
+            }
+          ],
+          "dev_mean_crps": 0.0600391103494459,
+          "dev_mae_median": 0.07774255989880656
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.595703125,
+              "unbounded": false,
+              "raw_coverage": 0.7412898443291327,
+              "calibrated_coverage": 0.6664195700518903,
+              "raw_median_width": 0.16207020401954658,
+              "calibrated_median_width": 0.13528311252593994
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.84375,
+              "unbounded": false,
+              "raw_coverage": 0.9340252038547072,
+              "calibrated_coverage": 0.8888065233506302,
+              "raw_median_width": 0.2676599562168121,
+              "calibrated_median_width": 0.2312895506620407
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.908203125,
+              "unbounded": false,
+              "raw_coverage": 0.9673832468495182,
+              "calibrated_coverage": 0.9421793921423276,
+              "raw_median_width": 0.3180405095219611,
+              "calibrated_median_width": 0.2739078402519226
+            }
+          ],
+          "dev_mean_crps": 0.052707145193167264,
+          "dev_mae_median": 0.07389120673103258
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.650390625,
+              "unbounded": false,
+              "raw_coverage": 0.7274453941120608,
+              "calibrated_coverage": 0.6970560303893637,
+              "raw_median_width": 0.15621659755706788,
+              "calibrated_median_width": 0.14637741446495056
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8671875,
+              "unbounded": false,
+              "raw_coverage": 0.9183285849952516,
+              "calibrated_coverage": 0.8869895536562203,
+              "raw_median_width": 0.2577795896679162,
+              "calibrated_median_width": 0.23476530611515045
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.92578125,
+              "unbounded": false,
+              "raw_coverage": 0.9620132953466287,
+              "calibrated_coverage": 0.9411206077872745,
+              "raw_median_width": 0.3074133162386714,
+              "calibrated_median_width": 0.2785680741071701
+            }
+          ],
+          "dev_mean_crps": 0.04484608567301744,
+          "dev_mae_median": 0.06256812762056262
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.642578125,
+              "unbounded": false,
+              "raw_coverage": 0.705078125,
+              "calibrated_coverage": 0.6796875,
+              "raw_median_width": 2.412475566864015,
+              "calibrated_median_width": 2.2204341888427734
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.900390625,
+              "unbounded": false,
+              "raw_coverage": 0.91796875,
+              "calibrated_coverage": 0.9189453125,
+              "raw_median_width": 4.0175002098083485,
+              "calibrated_median_width": 4.022103786468506
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.951171875,
+              "unbounded": false,
+              "raw_coverage": 0.9599609375,
+              "calibrated_coverage": 0.9599609375,
+              "raw_median_width": 4.809097290039061,
+              "calibrated_median_width": 4.8407933712005615
+            }
+          ],
+          "dev_mean_crps": 0.706843203897467,
+          "dev_mae_median": 0.9773817266273098
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.599609375,
+              "unbounded": false,
+              "raw_coverage": 0.733909702209414,
+              "calibrated_coverage": 0.659942363112392,
+              "raw_median_width": 0.14310669779777524,
+              "calibrated_median_width": 0.12130361795425415
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.880859375,
+              "unbounded": false,
+              "raw_coverage": 0.9106628242074928,
+              "calibrated_coverage": 0.9010566762728146,
+              "raw_median_width": 0.23770697116851824,
+              "calibrated_median_width": 0.22510120272636414
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.947265625,
+              "unbounded": false,
+              "raw_coverage": 0.9538904899135446,
+              "calibrated_coverage": 0.9538904899135446,
+              "raw_median_width": 0.2824438095092773,
+              "calibrated_median_width": 0.28011393547058105
+            }
+          ],
+          "dev_mean_crps": 0.05036989160187168,
+          "dev_mae_median": 0.06965328015655506
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.701171875,
+              "unbounded": false,
+              "raw_coverage": 0.6893732970027248,
+              "calibrated_coverage": 0.717983651226158,
+              "raw_median_width": 0.17733470916748062,
+              "calibrated_median_width": 0.18541598320007324
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.90625,
+              "unbounded": false,
+              "raw_coverage": 0.9059945504087193,
+              "calibrated_coverage": 0.9114441416893733,
+              "raw_median_width": 0.29451687335968013,
+              "calibrated_median_width": 0.3004019260406494
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.94921875,
+              "unbounded": false,
+              "raw_coverage": 0.946866485013624,
+              "calibrated_coverage": 0.9455040871934605,
+              "raw_median_width": 0.3507375001907349,
+              "calibrated_median_width": 0.34965646266937256
+            }
+          ],
+          "dev_mean_crps": 0.05517807961404444,
+          "dev_mae_median": 0.07667845538409064
+        }
+      ]
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "selected_update": 8000,
+      "checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "tune_score": 0.20325348751743513,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.556640625,
+              "unbounded": false,
+              "raw_coverage": 0.7954040029651593,
+              "calibrated_coverage": 0.6790214974054856,
+              "raw_median_width": 168.72533203125022,
+              "calibrated_median_width": 129.955078125
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.802734375,
+              "unbounded": false,
+              "raw_coverage": 0.9510748702742773,
+              "calibrated_coverage": 0.9006671608598962,
+              "raw_median_width": 281.4548828124998,
+              "calibrated_median_width": 219.8798828125
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.884765625,
+              "unbounded": false,
+              "raw_coverage": 0.9785025945144552,
+              "calibrated_coverage": 0.9421793921423276,
+              "raw_median_width": 339.01171875,
+              "calibrated_median_width": 269.50732421875
+            }
+          ],
+          "dev_mean_crps": 45.90942599509083,
+          "dev_mae_median": 61.80873343125495
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.390625,
+              "unbounded": false,
+              "raw_coverage": 0.860730593607306,
+              "calibrated_coverage": 0.6423135464231354,
+              "raw_median_width": 0.24211203575134288,
+              "calibrated_median_width": 0.12327802181243896
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.69140625,
+              "unbounded": false,
+              "raw_coverage": 0.9665144596651446,
+              "calibrated_coverage": 0.8645357686453576,
+              "raw_median_width": 0.40428662300109863,
+              "calibrated_median_width": 0.24790674448013306
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.826171875,
+              "unbounded": false,
+              "raw_coverage": 0.9802130898021308,
+              "calibrated_coverage": 0.936834094368341,
+              "raw_median_width": 0.48491630554199183,
+              "calibrated_median_width": 0.33158648014068604
+            }
+          ],
+          "dev_mean_crps": 0.0597402884364346,
+          "dev_mae_median": 0.07637502205507868
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.568359375,
+              "unbounded": false,
+              "raw_coverage": 0.7583395107487028,
+              "calibrated_coverage": 0.6397331356560415,
+              "raw_median_width": 0.16058418154716497,
+              "calibrated_median_width": 0.1268986500799656
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.830078125,
+              "unbounded": false,
+              "raw_coverage": 0.9355077835433655,
+              "calibrated_coverage": 0.882876204595997,
+              "raw_median_width": 0.26800439357757566,
+              "calibrated_median_width": 0.22250144183635712
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.904296875,
+              "unbounded": false,
+              "raw_coverage": 0.9710896960711638,
+              "calibrated_coverage": 0.9399555226093402,
+              "raw_median_width": 0.321385446935892,
+              "calibrated_median_width": 0.27171799540519714
+            }
+          ],
+          "dev_mean_crps": 0.05138127401911057,
+          "dev_mae_median": 0.07095423966683338
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.654296875,
+              "unbounded": false,
+              "raw_coverage": 0.7274453941120608,
+              "calibrated_coverage": 0.6932573599240266,
+              "raw_median_width": 0.16325354456901553,
+              "calibrated_median_width": 0.15372934937477112
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.87890625,
+              "unbounded": false,
+              "raw_coverage": 0.912630579297246,
+              "calibrated_coverage": 0.899335232668566,
+              "raw_median_width": 0.26801756024360657,
+              "calibrated_median_width": 0.2530458867549896
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.9610636277302944,
+              "calibrated_coverage": 0.9468186134852802,
+              "raw_median_width": 0.3162629067897795,
+              "calibrated_median_width": 0.29748567938804626
+            }
+          ],
+          "dev_mean_crps": 0.04487387137529945,
+          "dev_mae_median": 0.0630298925838689
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.650390625,
+              "unbounded": false,
+              "raw_coverage": 0.7138671875,
+              "calibrated_coverage": 0.69140625,
+              "raw_median_width": 2.3585014295578004,
+              "calibrated_median_width": 2.218133807182312
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8984375,
+              "unbounded": false,
+              "raw_coverage": 0.9208984375,
+              "calibrated_coverage": 0.9208984375,
+              "raw_median_width": 4.010314631462096,
+              "calibrated_median_width": 3.9731184244155884
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.958984375,
+              "unbounded": false,
+              "raw_coverage": 0.9619140625,
+              "calibrated_coverage": 0.9658203125,
+              "raw_median_width": 4.840044689178464,
+              "calibrated_median_width": 5.114143490791321
+            }
+          ],
+          "dev_mean_crps": 0.6867494131171433,
+          "dev_mae_median": 0.9523360783362423
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.6328125,
+              "unbounded": false,
+              "raw_coverage": 0.6945244956772334,
+              "calibrated_coverage": 0.6493756003842459,
+              "raw_median_width": 0.14324229121208198,
+              "calibrated_median_width": 0.12887290120124817
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8828125,
+              "unbounded": false,
+              "raw_coverage": 0.9135446685878963,
+              "calibrated_coverage": 0.8972142170989433,
+              "raw_median_width": 0.25280639529228205,
+              "calibrated_median_width": 0.23885387182235718
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.943359375,
+              "unbounded": false,
+              "raw_coverage": 0.9586935638808838,
+              "calibrated_coverage": 0.9567723342939481,
+              "raw_median_width": 0.3162501096725463,
+              "calibrated_median_width": 0.3028925061225891
+            }
+          ],
+          "dev_mean_crps": 0.05548204436165745,
+          "dev_mae_median": 0.07728073386051104
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.716796875,
+              "unbounded": false,
+              "raw_coverage": 0.6376021798365122,
+              "calibrated_coverage": 0.6771117166212534,
+              "raw_median_width": 0.14842892408370978,
+              "calibrated_median_width": 0.1607069969177246
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9140625,
+              "unbounded": false,
+              "raw_coverage": 0.8978201634877384,
+              "calibrated_coverage": 0.9209809264305178,
+              "raw_median_width": 0.25508635044097905,
+              "calibrated_median_width": 0.2667118310928345
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.951171875,
+              "unbounded": false,
+              "raw_coverage": 0.9618528610354223,
+              "calibrated_coverage": 0.9632152588555858,
+              "raw_median_width": 0.31087753772735605,
+              "calibrated_median_width": 0.3136528730392456
+            }
+          ],
+          "dev_mean_crps": 0.051302756238235186,
+          "dev_mae_median": 0.07311101241895904
+        }
+      ]
+    },
+    "decision6_nsf_energy_parallax_20261106_v1": {
+      "status": "complete",
+      "selected_update": 8000,
+      "checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "tune_score": 0.19900584635913454,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.595703125,
+              "unbounded": false,
+              "raw_coverage": 0.7442550037064493,
+              "calibrated_coverage": 0.6723498888065234,
+              "raw_median_width": 157.19173828124985,
+              "calibrated_median_width": 131.501708984375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.876953125,
+              "unbounded": false,
+              "raw_coverage": 0.9236471460340994,
+              "calibrated_coverage": 0.9073387694588584,
+              "raw_median_width": 262.9677246093752,
+              "calibrated_median_width": 246.33837890625
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.9562638991845812,
+              "calibrated_coverage": 0.9451445515196442,
+              "raw_median_width": 316.66445312499945,
+              "calibrated_median_width": 294.875
+            }
+          ],
+          "dev_mean_crps": 46.12410219466111,
+          "dev_mae_median": 62.23567387136439
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.44140625,
+              "unbounded": false,
+              "raw_coverage": 0.8226788432267884,
+              "calibrated_coverage": 0.6400304414003044,
+              "raw_median_width": 0.2204659700393674,
+              "calibrated_median_width": 0.12967300415039062
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.796875,
+              "unbounded": false,
+              "raw_coverage": 0.9337899543378996,
+              "calibrated_coverage": 0.8820395738203958,
+              "raw_median_width": 0.36668524742126474,
+              "calibrated_median_width": 0.283178448677063
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9140625,
+              "unbounded": false,
+              "raw_coverage": 0.958904109589041,
+              "calibrated_coverage": 0.9398782343987824,
+              "raw_median_width": 0.43962335586547874,
+              "calibrated_median_width": 0.383758544921875
+            }
+          ],
+          "dev_mean_crps": 0.059232919226579854,
+          "dev_mae_median": 0.07564734254788784
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.640625,
+              "unbounded": false,
+              "raw_coverage": 0.687175685693106,
+              "calibrated_coverage": 0.6434395848776872,
+              "raw_median_width": 0.14274000063538556,
+              "calibrated_median_width": 0.13151058554649353
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.888671875,
+              "unbounded": false,
+              "raw_coverage": 0.9021497405485545,
+              "calibrated_coverage": 0.8932542624166049,
+              "raw_median_width": 0.2392964363098144,
+              "calibrated_median_width": 0.2317284196615219
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9453125,
+              "unbounded": false,
+              "raw_coverage": 0.9518161601186064,
+              "calibrated_coverage": 0.9458858413639734,
+              "raw_median_width": 0.29119523726403707,
+              "calibrated_median_width": 0.2847931981086731
+            }
+          ],
+          "dev_mean_crps": 0.050357296207656506,
+          "dev_mae_median": 0.07019347367879616
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.681640625,
+              "unbounded": false,
+              "raw_coverage": 0.6723646723646723,
+              "calibrated_coverage": 0.6733143399810066,
+              "raw_median_width": 0.1513053464889527,
+              "calibrated_median_width": 0.151652529835701
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9140625,
+              "unbounded": false,
+              "raw_coverage": 0.8926875593542261,
+              "calibrated_coverage": 0.905982905982906,
+              "raw_median_width": 0.2534724652767181,
+              "calibrated_median_width": 0.2661174386739731
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.955078125,
+              "unbounded": false,
+              "raw_coverage": 0.9477682811016145,
+              "calibrated_coverage": 0.9553656220322887,
+              "raw_median_width": 0.3166613101959226,
+              "calibrated_median_width": 0.32701901625841856
+            }
+          ],
+          "dev_mean_crps": 0.04490315639482936,
+          "dev_mae_median": 0.06290010071649253
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.7421875,
+              "unbounded": false,
+              "raw_coverage": 0.6142578125,
+              "calibrated_coverage": 0.6728515625,
+              "raw_median_width": 1.8963598537445068,
+              "calibrated_median_width": 2.214726448059082
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9453125,
+              "unbounded": false,
+              "raw_coverage": 0.859375,
+              "calibrated_coverage": 0.9208984375,
+              "raw_median_width": 3.3296884059906,
+              "calibrated_median_width": 4.0328593254089355
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9765625,
+              "unbounded": false,
+              "raw_coverage": 0.92578125,
+              "calibrated_coverage": 0.9609375,
+              "raw_median_width": 4.150485539436339,
+              "calibrated_median_width": 5.127385139465332
+            }
+          ],
+          "dev_mean_crps": 0.6904590912360392,
+          "dev_mae_median": 0.9569802275490505
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.841796875,
+              "unbounded": false,
+              "raw_coverage": 0.5312199807877042,
+              "calibrated_coverage": 0.7214217098943324,
+              "raw_median_width": 0.0928330397605896,
+              "calibrated_median_width": 0.15509697794914246
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.8126801152737753,
+              "calibrated_coverage": 0.9289145052833814,
+              "raw_median_width": 0.20643388032913212,
+              "calibrated_median_width": 0.33961203694343567
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.982421875,
+              "unbounded": false,
+              "raw_coverage": 0.9068203650336215,
+              "calibrated_coverage": 0.9644572526416907,
+              "raw_median_width": 0.29476926922798136,
+              "calibrated_median_width": 0.45612651109695435
+            }
+          ],
+          "dev_mean_crps": 0.05048020131687399,
+          "dev_mae_median": 0.06869395289368058
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.791015625,
+              "unbounded": false,
+              "raw_coverage": 0.6294277929155313,
+              "calibrated_coverage": 0.7125340599455041,
+              "raw_median_width": 0.1443482780456542,
+              "calibrated_median_width": 0.18296408653259277
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9609375,
+              "unbounded": false,
+              "raw_coverage": 0.832425068119891,
+              "calibrated_coverage": 0.9059945504087193,
+              "raw_median_width": 0.2424427986145019,
+              "calibrated_median_width": 0.3146404027938843
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.98046875,
+              "unbounded": false,
+              "raw_coverage": 0.8978201634877384,
+              "calibrated_coverage": 0.9550408719346049,
+              "raw_median_width": 0.2967203617095948,
+              "calibrated_median_width": 0.3703956604003906
+            }
+          ],
+          "dev_mean_crps": 0.051363634619610334,
+          "dev_mae_median": 0.0696480874413855
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_corrpos_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "17208224bb06c53cbb710f95cb35a3d38eb3d7122accf2eaa6763a89d181f1dc",
+      "tune_score": 0.14823864897775058,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.634765625,
+              "unbounded": false,
+              "raw_coverage": 0.704225352112676,
+              "calibrated_coverage": 0.6649369903632321,
+              "raw_median_width": 167.3901953125005,
+              "calibrated_median_width": 152.03955078125
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.86328125,
+              "unbounded": false,
+              "raw_coverage": 0.9147516679021498,
+              "calibrated_coverage": 0.8806523350630097,
+              "raw_median_width": 284.1867187500002,
+              "calibrated_median_width": 255.3798828125
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.919921875,
+              "unbounded": false,
+              "raw_coverage": 0.9592290585618977,
+              "calibrated_coverage": 0.9310600444773907,
+              "raw_median_width": 346.93349609375036,
+              "calibrated_median_width": 305.16845703125
+            }
+          ],
+          "dev_mean_crps": 52.10997659784611,
+          "dev_mae_median": 71.38443031932077
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.51171875,
+              "unbounded": false,
+              "raw_coverage": 0.7732115677321156,
+              "calibrated_coverage": 0.6156773211567732,
+              "raw_median_width": 0.22969275116920462,
+              "calibrated_median_width": 0.1595245599746704
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.79296875,
+              "unbounded": false,
+              "raw_coverage": 0.9299847792998478,
+              "calibrated_coverage": 0.8515981735159818,
+              "raw_median_width": 0.3860777616500859,
+              "calibrated_median_width": 0.2929750680923462
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.90234375,
+              "unbounded": false,
+              "raw_coverage": 0.9596651445966514,
+              "calibrated_coverage": 0.9322678843226788,
+              "raw_median_width": 0.4684379816055295,
+              "calibrated_median_width": 0.3895690441131592
+            }
+          ],
+          "dev_mean_crps": 0.06886092757682413,
+          "dev_mae_median": 0.09383034578484055
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.625,
+              "unbounded": false,
+              "raw_coverage": 0.7138621200889548,
+              "calibrated_coverage": 0.6560415122312825,
+              "raw_median_width": 0.15240147873759274,
+              "calibrated_median_width": 0.13610119186341763
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.865234375,
+              "unbounded": false,
+              "raw_coverage": 0.916234247590808,
+              "calibrated_coverage": 0.8836174944403261,
+              "raw_median_width": 0.2601019501686096,
+              "calibrated_median_width": 0.23372651636600494
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.9681245366938473,
+              "calibrated_coverage": 0.9414381022979985,
+              "raw_median_width": 0.3217613130807876,
+              "calibrated_median_width": 0.287925660610199
+            }
+          ],
+          "dev_mean_crps": 0.05295642287848727,
+          "dev_mae_median": 0.07409519517670628
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.669921875,
+              "unbounded": false,
+              "raw_coverage": 0.7056030389363722,
+              "calibrated_coverage": 0.6932573599240266,
+              "raw_median_width": 0.16004585176706326,
+              "calibrated_median_width": 0.15601636469364166
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.896484375,
+              "unbounded": false,
+              "raw_coverage": 0.9116809116809117,
+              "calibrated_coverage": 0.9078822412155746,
+              "raw_median_width": 0.2714605793356895,
+              "calibrated_median_width": 0.2683237371966243
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.9601139601139601,
+              "calibrated_coverage": 0.9525166191832859,
+              "raw_median_width": 0.3397324517369269,
+              "calibrated_median_width": 0.3158337399363518
+            }
+          ],
+          "dev_mean_crps": 0.04477197969174797,
+          "dev_mae_median": 0.06277426466537231
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.712890625,
+              "unbounded": false,
+              "raw_coverage": 0.62109375,
+              "calibrated_coverage": 0.6533203125,
+              "raw_median_width": 2.032548489570618,
+              "calibrated_median_width": 2.188143730163574
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.8681640625,
+              "calibrated_coverage": 0.9248046875,
+              "raw_median_width": 3.5680718660354613,
+              "calibrated_median_width": 4.145498275756836
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.96875,
+              "unbounded": false,
+              "raw_coverage": 0.9423828125,
+              "calibrated_coverage": 0.9697265625,
+              "raw_median_width": 4.435650825500487,
+              "calibrated_median_width": 5.08876097202301
+            }
+          ],
+          "dev_mean_crps": 0.7085286201215081,
+          "dev_mae_median": 0.9932785934240023
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.75,
+              "unbounded": false,
+              "raw_coverage": 0.6080691642651297,
+              "calibrated_coverage": 0.664745437079731,
+              "raw_median_width": 0.10863104581832894,
+              "calibrated_median_width": 0.12861906737089157
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.931640625,
+              "unbounded": false,
+              "raw_coverage": 0.8453410182516811,
+              "calibrated_coverage": 0.8914505283381364,
+              "raw_median_width": 0.21505252122879032,
+              "calibrated_median_width": 0.25655272603034973
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.9346781940441883,
+              "calibrated_coverage": 0.9673390970220941,
+              "raw_median_width": 0.29501280188560464,
+              "calibrated_median_width": 0.35240626335144043
+            }
+          ],
+          "dev_mean_crps": 0.05249120424611257,
+          "dev_mae_median": 0.07237680625945518
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.732421875,
+              "unbounded": false,
+              "raw_coverage": 0.6212534059945504,
+              "calibrated_coverage": 0.6825613079019074,
+              "raw_median_width": 0.16112962245941165,
+              "calibrated_median_width": 0.1805325746536255
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.921875,
+              "unbounded": false,
+              "raw_coverage": 0.8760217983651226,
+              "calibrated_coverage": 0.9019073569482289,
+              "raw_median_width": 0.2829700469970704,
+              "calibrated_median_width": 0.30833786725997925
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.96875,
+              "unbounded": false,
+              "raw_coverage": 0.9332425068119891,
+              "calibrated_coverage": 0.9645776566757494,
+              "raw_median_width": 0.35432176589965825,
+              "calibrated_median_width": 0.41078460216522217
+            }
+          ],
+          "dev_mean_crps": 0.05622440746258117,
+          "dev_mae_median": 0.0785232451070526
+        }
+      ]
+    },
+    "nsfconfirm_energy_s1_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "2dbb076e28eb815e29e9b293e3d6822b10fbe6bf527cfffd609df88ba5180852",
+      "tune_score": 0.14652933958466416,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.62890625,
+              "unbounded": false,
+              "raw_coverage": 0.7049666419570052,
+              "calibrated_coverage": 0.6604892512972572,
+              "raw_median_width": 165.29812499999935,
+              "calibrated_median_width": 148.5517578125
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8828125,
+              "unbounded": false,
+              "raw_coverage": 0.9095626389918459,
+              "calibrated_coverage": 0.8962194217939214,
+              "raw_median_width": 281.28173828125,
+              "calibrated_median_width": 267.06201171875
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.9451445515196442,
+              "calibrated_coverage": 0.9318013343217197,
+              "raw_median_width": 344.35146484375036,
+              "calibrated_median_width": 320.70654296875
+            }
+          ],
+          "dev_mean_crps": 51.633629078582,
+          "dev_mae_median": 70.59852720177608
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.525390625,
+              "unbounded": false,
+              "raw_coverage": 0.7526636225266362,
+              "calibrated_coverage": 0.6057838660578386,
+              "raw_median_width": 0.22823867797851616,
+              "calibrated_median_width": 0.1646435260772705
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8125,
+              "unbounded": false,
+              "raw_coverage": 0.9200913242009132,
+              "calibrated_coverage": 0.8546423135464232,
+              "raw_median_width": 0.3829379558563233,
+              "calibrated_median_width": 0.3047623634338379
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.919921875,
+              "unbounded": false,
+              "raw_coverage": 0.954337899543379,
+              "calibrated_coverage": 0.9345509893455098,
+              "raw_median_width": 0.46709399223327597,
+              "calibrated_median_width": 0.4100618362426758
+            }
+          ],
+          "dev_mean_crps": 0.07169541196640541,
+          "dev_mae_median": 0.0988573895068906
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.63671875,
+              "unbounded": false,
+              "raw_coverage": 0.7071905114899926,
+              "calibrated_coverage": 0.6671608598962194,
+              "raw_median_width": 0.15194809198379516,
+              "calibrated_median_width": 0.13881966471672058
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.873046875,
+              "unbounded": false,
+              "raw_coverage": 0.9206819866567828,
+              "calibrated_coverage": 0.8917716827279466,
+              "raw_median_width": 0.25886612981557844,
+              "calibrated_median_width": 0.23885643482208252
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.9696071163825055,
+              "calibrated_coverage": 0.9451445515196442,
+              "raw_median_width": 0.3214509069919586,
+              "calibrated_median_width": 0.2886239290237427
+            }
+          ],
+          "dev_mean_crps": 0.0527771233348101,
+          "dev_mae_median": 0.07390861750661737
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.685546875,
+              "unbounded": false,
+              "raw_coverage": 0.6942070275403609,
+              "calibrated_coverage": 0.7027540360873694,
+              "raw_median_width": 0.15675783157348633,
+              "calibrated_median_width": 0.15873196721076965
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.896484375,
+              "unbounded": false,
+              "raw_coverage": 0.9050332383665717,
+              "calibrated_coverage": 0.9012345679012346,
+              "raw_median_width": 0.2657659500837326,
+              "calibrated_median_width": 0.2628048062324524
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.94140625,
+              "unbounded": false,
+              "raw_coverage": 0.956315289648623,
+              "calibrated_coverage": 0.9477682811016145,
+              "raw_median_width": 0.3336893886327743,
+              "calibrated_median_width": 0.31528350710868835
+            }
+          ],
+          "dev_mean_crps": 0.044846016849062614,
+          "dev_mae_median": 0.06287212749483859
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.708984375,
+              "unbounded": false,
+              "raw_coverage": 0.619140625,
+              "calibrated_coverage": 0.6494140625,
+              "raw_median_width": 2.0155553150177004,
+              "calibrated_median_width": 2.1632806062698364
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.875,
+              "calibrated_coverage": 0.92578125,
+              "raw_median_width": 3.5494891643524173,
+              "calibrated_median_width": 4.076705574989319
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.9404296875,
+              "calibrated_coverage": 0.9599609375,
+              "raw_median_width": 4.42895300388336,
+              "calibrated_median_width": 4.856940150260925
+            }
+          ],
+          "dev_mean_crps": 0.7017372823407002,
+          "dev_mae_median": 0.9790823997334385
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.7421875,
+              "unbounded": false,
+              "raw_coverage": 0.6080691642651297,
+              "calibrated_coverage": 0.6685878962536023,
+              "raw_median_width": 0.11083621740341187,
+              "calibrated_median_width": 0.13144028186798096
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.8520653218059558,
+              "calibrated_coverage": 0.909702209414025,
+              "raw_median_width": 0.2224291205406187,
+              "calibrated_median_width": 0.2708768844604492
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.96484375,
+              "unbounded": false,
+              "raw_coverage": 0.9346781940441883,
+              "calibrated_coverage": 0.9558117195004803,
+              "raw_median_width": 0.30457735061645486,
+              "calibrated_median_width": 0.34865280985832214
+            }
+          ],
+          "dev_mean_crps": 0.05217778929201571,
+          "dev_mae_median": 0.07206459318093632
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.76171875,
+              "unbounded": false,
+              "raw_coverage": 0.603542234332425,
+              "calibrated_coverage": 0.6798365122615804,
+              "raw_median_width": 0.1607411432266237,
+              "calibrated_median_width": 0.19321489334106445
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.95703125,
+              "unbounded": false,
+              "raw_coverage": 0.8269754768392371,
+              "calibrated_coverage": 0.9128065395095368,
+              "raw_median_width": 0.2790965557098386,
+              "calibrated_median_width": 0.3671751022338867
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.986328125,
+              "unbounded": false,
+              "raw_coverage": 0.9019073569482289,
+              "calibrated_coverage": 0.9591280653950953,
+              "raw_median_width": 0.3503399610519409,
+              "calibrated_median_width": 0.516286313533783
+            }
+          ],
+          "dev_mean_crps": 0.06264413182043586,
+          "dev_mae_median": 0.08722193717881539
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_corrneg_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "3087b20a66d9deff7d02670dba4f5e0dd13945379d85c18ec05dd52e719305ba",
+      "tune_score": 0.14996665574175946,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.61328125,
+              "unbounded": false,
+              "raw_coverage": 0.720533728687917,
+              "calibrated_coverage": 0.6634544106745738,
+              "raw_median_width": 168.95917968750018,
+              "calibrated_median_width": 146.6982421875
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.859375,
+              "unbounded": false,
+              "raw_coverage": 0.9177168272794662,
+              "calibrated_coverage": 0.8821349147516679,
+              "raw_median_width": 287.13535156249964,
+              "calibrated_median_width": 254.458984375
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.919921875,
+              "unbounded": false,
+              "raw_coverage": 0.9607116382505559,
+              "calibrated_coverage": 0.938472942920682,
+              "raw_median_width": 350.80117187499945,
+              "calibrated_median_width": 307.8046875
+            }
+          ],
+          "dev_mean_crps": 51.57251783442529,
+          "dev_mae_median": 70.50861058643308
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.48828125,
+              "unbounded": false,
+              "raw_coverage": 0.789193302891933,
+              "calibrated_coverage": 0.6232876712328768,
+              "raw_median_width": 0.23032030582427998,
+              "calibrated_median_width": 0.15142321586608887
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.791015625,
+              "unbounded": false,
+              "raw_coverage": 0.9337899543378996,
+              "calibrated_coverage": 0.8584474885844748,
+              "raw_median_width": 0.38836579322814946,
+              "calibrated_median_width": 0.29192447662353516
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.90234375,
+              "unbounded": false,
+              "raw_coverage": 0.9627092846270928,
+              "calibrated_coverage": 0.9353120243531202,
+              "raw_median_width": 0.47199909687042196,
+              "calibrated_median_width": 0.3910630941390991
+            }
+          ],
+          "dev_mean_crps": 0.06797793379535569,
+          "dev_mae_median": 0.09122548975891297
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.6328125,
+              "unbounded": false,
+              "raw_coverage": 0.7116382505559674,
+              "calibrated_coverage": 0.6649369903632321,
+              "raw_median_width": 0.15241656661033637,
+              "calibrated_median_width": 0.13781443238258362
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.869140625,
+              "unbounded": false,
+              "raw_coverage": 0.9169755374351372,
+              "calibrated_coverage": 0.8851000741289844,
+              "raw_median_width": 0.26054520159959793,
+              "calibrated_median_width": 0.2359340488910675
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.931640625,
+              "unbounded": false,
+              "raw_coverage": 0.9688658265381764,
+              "calibrated_coverage": 0.9525574499629355,
+              "raw_median_width": 0.32131581827998157,
+              "calibrated_median_width": 0.2936549186706543
+            }
+          ],
+          "dev_mean_crps": 0.053109056271810624,
+          "dev_mae_median": 0.07410503883976588
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.685546875,
+              "unbounded": false,
+              "raw_coverage": 0.7056030389363722,
+              "calibrated_coverage": 0.7094017094017094,
+              "raw_median_width": 0.15630661964416506,
+              "calibrated_median_width": 0.15834368020296097
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.89453125,
+              "unbounded": false,
+              "raw_coverage": 0.9078822412155746,
+              "calibrated_coverage": 0.9040835707502374,
+              "raw_median_width": 0.2676249004900455,
+              "calibrated_median_width": 0.2624240629374981
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.939453125,
+              "unbounded": false,
+              "raw_coverage": 0.9582146248812915,
+              "calibrated_coverage": 0.9477682811016145,
+              "raw_median_width": 0.336256745457649,
+              "calibrated_median_width": 0.31550855934619904
+            }
+          ],
+          "dev_mean_crps": 0.044622231455982014,
+          "dev_mae_median": 0.06267230744192791
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.724609375,
+              "unbounded": false,
+              "raw_coverage": 0.5947265625,
+              "calibrated_coverage": 0.658203125,
+              "raw_median_width": 1.9934790611267097,
+              "calibrated_median_width": 2.2261996269226074
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.8603515625,
+              "calibrated_coverage": 0.9189453125,
+              "raw_median_width": 3.5311172723770143,
+              "calibrated_median_width": 4.0880972146987915
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.9375,
+              "calibrated_coverage": 0.962890625,
+              "raw_median_width": 4.388611268997192,
+              "calibrated_median_width": 4.964109420776367
+            }
+          ],
+          "dev_mean_crps": 0.7137295360162811,
+          "dev_mae_median": 0.9994947845663593
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.763671875,
+              "unbounded": false,
+              "raw_coverage": 0.5869356388088377,
+              "calibrated_coverage": 0.6801152737752162,
+              "raw_median_width": 0.10707336664199829,
+              "calibrated_median_width": 0.1317262053489685
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.8434197886647454,
+              "calibrated_coverage": 0.9029779058597502,
+              "raw_median_width": 0.21634742021560666,
+              "calibrated_median_width": 0.26775336265563965
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.930835734870317,
+              "calibrated_coverage": 0.9615754082612872,
+              "raw_median_width": 0.30125505924224827,
+              "calibrated_median_width": 0.3447108864784241
+            }
+          ],
+          "dev_mean_crps": 0.05393548026415941,
+          "dev_mae_median": 0.07449993741057752
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.734375,
+              "unbounded": false,
+              "raw_coverage": 0.6389645776566758,
+              "calibrated_coverage": 0.7016348773841962,
+              "raw_median_width": 0.16513741493225087,
+              "calibrated_median_width": 0.18693292140960693
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9296875,
+              "unbounded": false,
+              "raw_coverage": 0.888283378746594,
+              "calibrated_coverage": 0.9182561307901907,
+              "raw_median_width": 0.29368035793304426,
+              "calibrated_median_width": 0.33135902881622314
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.94141689373297,
+              "calibrated_coverage": 0.9659400544959128,
+              "raw_median_width": 0.3710516929626464,
+              "calibrated_median_width": 0.41988521814346313
+            }
+          ],
+          "dev_mean_crps": 0.05699080553714691,
+          "dev_mae_median": 0.07977735569639924
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_s1_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "6ea50d44a3db11af489784d88f3c9e8514089e33447a6751daf280eb826dcc6c",
+      "tune_score": 0.14648515990268615,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.611328125,
+              "unbounded": false,
+              "raw_coverage": 0.7286879169755375,
+              "calibrated_coverage": 0.6619718309859155,
+              "raw_median_width": 166.90083984374996,
+              "calibrated_median_width": 144.42529296875
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.845703125,
+              "unbounded": false,
+              "raw_coverage": 0.927353595255745,
+              "calibrated_coverage": 0.8806523350630097,
+              "raw_median_width": 283.8137695312498,
+              "calibrated_median_width": 242.986328125
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.923828125,
+              "unbounded": false,
+              "raw_coverage": 0.9621942179392142,
+              "calibrated_coverage": 0.9444032616753151,
+              "raw_median_width": 346.69003906249964,
+              "calibrated_median_width": 308.279296875
+            }
+          ],
+          "dev_mean_crps": 50.41976998900287,
+          "dev_mae_median": 68.7513940944025
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.486328125,
+              "unbounded": false,
+              "raw_coverage": 0.7785388127853882,
+              "calibrated_coverage": 0.6111111111111112,
+              "raw_median_width": 0.22903500556945833,
+              "calibrated_median_width": 0.15018677711486816
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.787109375,
+              "unbounded": false,
+              "raw_coverage": 0.936834094368341,
+              "calibrated_coverage": 0.8614916286149162,
+              "raw_median_width": 0.384480547904968,
+              "calibrated_median_width": 0.287483274936676
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.892578125,
+              "unbounded": false,
+              "raw_coverage": 0.9642313546423136,
+              "calibrated_coverage": 0.9322678843226788,
+              "raw_median_width": 0.46631054878234846,
+              "calibrated_median_width": 0.3760875463485718
+            }
+          ],
+          "dev_mean_crps": 0.06714634665455549,
+          "dev_mae_median": 0.08994245055840815
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.634765625,
+              "unbounded": false,
+              "raw_coverage": 0.7123795404002965,
+              "calibrated_coverage": 0.6641957005189029,
+              "raw_median_width": 0.15206911325454714,
+              "calibrated_median_width": 0.1380804255604744
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.87109375,
+              "unbounded": false,
+              "raw_coverage": 0.9140103780578206,
+              "calibrated_coverage": 0.888065233506301,
+              "raw_median_width": 0.25931417346000674,
+              "calibrated_median_width": 0.23737525939941406
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.9688658265381764,
+              "calibrated_coverage": 0.9444032616753151,
+              "raw_median_width": 0.32029325962066646,
+              "calibrated_median_width": 0.2869124487042427
+            }
+          ],
+          "dev_mean_crps": 0.05268214235261993,
+          "dev_mae_median": 0.07355265615309388
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.677734375,
+              "unbounded": false,
+              "raw_coverage": 0.6904083570750238,
+              "calibrated_coverage": 0.6894586894586895,
+              "raw_median_width": 0.15904071986675264,
+              "calibrated_median_width": 0.15847502648830414
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.892578125,
+              "unbounded": false,
+              "raw_coverage": 0.9078822412155746,
+              "calibrated_coverage": 0.9012345679012346,
+              "raw_median_width": 0.2684373050928116,
+              "calibrated_median_width": 0.2619572654366493
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.9572649572649573,
+              "calibrated_coverage": 0.9468186134852802,
+              "raw_median_width": 0.3350905463099479,
+              "calibrated_median_width": 0.3125591203570366
+            }
+          ],
+          "dev_mean_crps": 0.04462385937239178,
+          "dev_mae_median": 0.0627657894979664
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.71484375,
+              "unbounded": false,
+              "raw_coverage": 0.6279296875,
+              "calibrated_coverage": 0.6669921875,
+              "raw_median_width": 2.0744362449646,
+              "calibrated_median_width": 2.249144434928894
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.873046875,
+              "calibrated_coverage": 0.923828125,
+              "raw_median_width": 3.6199534654617302,
+              "calibrated_median_width": 4.135247588157654
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.9462890625,
+              "calibrated_coverage": 0.9658203125,
+              "raw_median_width": 4.506122422218323,
+              "calibrated_median_width": 5.060830593109131
+            }
+          ],
+          "dev_mean_crps": 0.7045719648892974,
+          "dev_mae_median": 0.9925279822185679
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.7265625,
+              "unbounded": false,
+              "raw_coverage": 0.6186359269932757,
+              "calibrated_coverage": 0.6532180595581172,
+              "raw_median_width": 0.11172362565994265,
+              "calibrated_median_width": 0.12436556816101074
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.931640625,
+              "unbounded": false,
+              "raw_coverage": 0.8530259365994236,
+              "calibrated_coverage": 0.9087415946205571,
+              "raw_median_width": 0.22174579501152036,
+              "calibrated_median_width": 0.2679712772369385
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.9385206532180596,
+              "calibrated_coverage": 0.9558117195004803,
+              "raw_median_width": 0.3113510072231292,
+              "calibrated_median_width": 0.35275012254714966
+            }
+          ],
+          "dev_mean_crps": 0.05248444287840196,
+          "dev_mae_median": 0.0728826360863943
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.7109375,
+              "unbounded": false,
+              "raw_coverage": 0.667574931880109,
+              "calibrated_coverage": 0.6880108991825613,
+              "raw_median_width": 0.16068072319030757,
+              "calibrated_median_width": 0.17332243919372559
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9140625,
+              "unbounded": false,
+              "raw_coverage": 0.9046321525885559,
+              "calibrated_coverage": 0.9182561307901907,
+              "raw_median_width": 0.2820289611816409,
+              "calibrated_median_width": 0.2952454090118408
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.9482288828337875,
+              "calibrated_coverage": 0.9659400544959128,
+              "raw_median_width": 0.3505746603012083,
+              "calibrated_median_width": 0.38739025592803955
+            }
+          ],
+          "dev_mean_crps": 0.05292884036454527,
+          "dev_mae_median": 0.07341208515917681
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_s2_20261106_v1": {
+      "status": "complete",
+      "selected_update": 6000,
+      "checkpoint_sha256": "b8d3e0c9318e94d121fcf5e91e5045b113b1e229d6691388884a433795a1e131",
+      "tune_score": 0.1458271618452851,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.638671875,
+              "unbounded": false,
+              "raw_coverage": 0.7168272794662713,
+              "calibrated_coverage": 0.6775389177168273,
+              "raw_median_width": 168.9022851562504,
+              "calibrated_median_width": 154.9482421875
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.87109375,
+              "unbounded": false,
+              "raw_coverage": 0.916234247590808,
+              "calibrated_coverage": 0.8917716827279466,
+              "raw_median_width": 283.51816406249964,
+              "calibrated_median_width": 260.65478515625
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9296875,
+              "unbounded": false,
+              "raw_coverage": 0.9592290585618977,
+              "calibrated_coverage": 0.938472942920682,
+              "raw_median_width": 345.5390625,
+              "calibrated_median_width": 315.36181640625
+            }
+          ],
+          "dev_mean_crps": 51.08745167504786,
+          "dev_mae_median": 70.85766178872726
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.46484375,
+              "unbounded": false,
+              "raw_coverage": 0.7922374429223744,
+              "calibrated_coverage": 0.619482496194825,
+              "raw_median_width": 0.22516947746276816,
+              "calibrated_median_width": 0.14051079750061035
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.78515625,
+              "unbounded": false,
+              "raw_coverage": 0.9337899543378996,
+              "calibrated_coverage": 0.8660578386605784,
+              "raw_median_width": 0.3774985551834109,
+              "calibrated_median_width": 0.28143835067749023
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.904296875,
+              "unbounded": false,
+              "raw_coverage": 0.9604261796042618,
+              "calibrated_coverage": 0.9360730593607306,
+              "raw_median_width": 0.4568233966827393,
+              "calibrated_median_width": 0.38305068016052246
+            }
+          ],
+          "dev_mean_crps": 0.06506723878835353,
+          "dev_mae_median": 0.08776398957229375
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.62890625,
+              "unbounded": false,
+              "raw_coverage": 0.6975537435137139,
+              "calibrated_coverage": 0.647887323943662,
+              "raw_median_width": 0.1528309965133668,
+              "calibrated_median_width": 0.1372559666633606
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.892578125,
+              "unbounded": false,
+              "raw_coverage": 0.9043736100815419,
+              "calibrated_coverage": 0.8939955522609341,
+              "raw_median_width": 0.25854922533035274,
+              "calibrated_median_width": 0.2524920329451561
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.939453125,
+              "unbounded": false,
+              "raw_coverage": 0.9577464788732394,
+              "calibrated_coverage": 0.9481097108969607,
+              "raw_median_width": 0.3172972787171602,
+              "calibrated_median_width": 0.30236291885375977
+            }
+          ],
+          "dev_mean_crps": 0.05192350033332857,
+          "dev_mae_median": 0.07121914849062362
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.685546875,
+              "unbounded": false,
+              "raw_coverage": 0.6828110161443495,
+              "calibrated_coverage": 0.6875593542260209,
+              "raw_median_width": 0.1549152541160584,
+              "calibrated_median_width": 0.15737265348434448
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.890625,
+              "unbounded": false,
+              "raw_coverage": 0.9116809116809117,
+              "calibrated_coverage": 0.9021842355175689,
+              "raw_median_width": 0.2670051097869872,
+              "calibrated_median_width": 0.25785697251558304
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.9610636277302944,
+              "calibrated_coverage": 0.9487179487179487,
+              "raw_median_width": 0.3355876550078391,
+              "calibrated_median_width": 0.3108461871743202
+            }
+          ],
+          "dev_mean_crps": 0.044156183078185134,
+          "dev_mae_median": 0.06168198967813171
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.740234375,
+              "unbounded": false,
+              "raw_coverage": 0.62109375,
+              "calibrated_coverage": 0.6806640625,
+              "raw_median_width": 1.9375590896606445,
+              "calibrated_median_width": 2.224397897720337
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.8798828125,
+              "calibrated_coverage": 0.923828125,
+              "raw_median_width": 3.4670280933380107,
+              "calibrated_median_width": 4.110939979553223
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.96875,
+              "unbounded": false,
+              "raw_coverage": 0.939453125,
+              "calibrated_coverage": 0.9560546875,
+              "raw_median_width": 4.433342456817626,
+              "calibrated_median_width": 5.169267177581787
+            }
+          ],
+          "dev_mean_crps": 0.6874438267711183,
+          "dev_mae_median": 0.9621797596891796
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.73828125,
+              "unbounded": false,
+              "raw_coverage": 0.6090297790585975,
+              "calibrated_coverage": 0.6705091258405379,
+              "raw_median_width": 0.11418419599533092,
+              "calibrated_median_width": 0.13127297163009644
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.8491834774255523,
+              "calibrated_coverage": 0.8962536023054755,
+              "raw_median_width": 0.2114166915416717,
+              "calibrated_median_width": 0.23977679014205933
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.9231508165225745,
+              "calibrated_coverage": 0.9452449567723343,
+              "raw_median_width": 0.2748095870018005,
+              "calibrated_median_width": 0.30455970764160156
+            }
+          ],
+          "dev_mean_crps": 0.052488698506269395,
+          "dev_mae_median": 0.07216440768233781
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.79296875,
+              "unbounded": false,
+              "raw_coverage": 0.5817438692098093,
+              "calibrated_coverage": 0.6920980926430518,
+              "raw_median_width": 0.16221273422241222,
+              "calibrated_median_width": 0.20796287059783936
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.94140625,
+              "unbounded": false,
+              "raw_coverage": 0.8392370572207084,
+              "calibrated_coverage": 0.9005449591280654,
+              "raw_median_width": 0.2892658472061158,
+              "calibrated_median_width": 0.3616902828216553
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.974609375,
+              "unbounded": false,
+              "raw_coverage": 0.9168937329700273,
+              "calibrated_coverage": 0.9604904632152589,
+              "raw_median_width": 0.38722884654998757,
+              "calibrated_median_width": 0.5007897615432739
+            }
+          ],
+          "dev_mean_crps": 0.06682705517544041,
+          "dev_mae_median": 0.09666129854625653
+        }
+      ]
+    },
+    "nsfconfirm_energy_s2_20261106_v1": {
+      "status": "complete",
+      "selected_update": 6000,
+      "checkpoint_sha256": "116142c807736b1bcb87882e6cd3f469b4e7e3fcd559a8c202d512a637486ad4",
+      "tune_score": 0.14550381579014224,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.63671875,
+              "unbounded": false,
+              "raw_coverage": 0.7331356560415122,
+              "calibrated_coverage": 0.6812453669384729,
+              "raw_median_width": 167.58755859375015,
+              "calibrated_median_width": 153.1708984375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.87109375,
+              "unbounded": false,
+              "raw_coverage": 0.9177168272794662,
+              "calibrated_coverage": 0.8984432913269088,
+              "raw_median_width": 283.2626953125,
+              "calibrated_median_width": 259.69775390625
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.9607116382505559,
+              "calibrated_coverage": 0.9429206819866568,
+              "raw_median_width": 344.44345703124964,
+              "calibrated_median_width": 318.75439453125
+            }
+          ],
+          "dev_mean_crps": 50.68206548816404,
+          "dev_mae_median": 70.00536900909141
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.474609375,
+              "unbounded": false,
+              "raw_coverage": 0.7792998477929984,
+              "calibrated_coverage": 0.624048706240487,
+              "raw_median_width": 0.22448830604553227,
+              "calibrated_median_width": 0.14287197589874268
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.802734375,
+              "unbounded": false,
+              "raw_coverage": 0.9353120243531202,
+              "calibrated_coverage": 0.8622526636225266,
+              "raw_median_width": 0.3776004076004029,
+              "calibrated_median_width": 0.2918975353240967
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.931640625,
+              "unbounded": false,
+              "raw_coverage": 0.9619482496194824,
+              "calibrated_coverage": 0.9490106544901066,
+              "raw_median_width": 0.4564924478530885,
+              "calibrated_median_width": 0.4213467836380005
+            }
+          ],
+          "dev_mean_crps": 0.0654718076276373,
+          "dev_mae_median": 0.08810812687099474
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.642578125,
+              "unbounded": false,
+              "raw_coverage": 0.6931060044477391,
+              "calibrated_coverage": 0.6530763528539659,
+              "raw_median_width": 0.15259186357259755,
+              "calibrated_median_width": 0.14080266281962395
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.890625,
+              "unbounded": false,
+              "raw_coverage": 0.9006671608598962,
+              "calibrated_coverage": 0.8895478131949592,
+              "raw_median_width": 0.2576683104038239,
+              "calibrated_median_width": 0.2500928460940486
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.943359375,
+              "unbounded": false,
+              "raw_coverage": 0.955522609340252,
+              "calibrated_coverage": 0.9532987398072647,
+              "raw_median_width": 0.31571182757616034,
+              "calibrated_median_width": 0.3041168451309204
+            }
+          ],
+          "dev_mean_crps": 0.052568339872514656,
+          "dev_mae_median": 0.0721832612564605
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.69140625,
+              "unbounded": false,
+              "raw_coverage": 0.6866096866096866,
+              "calibrated_coverage": 0.6989553656220323,
+              "raw_median_width": 0.15766440331935885,
+              "calibrated_median_width": 0.16132839024066925
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.892578125,
+              "unbounded": false,
+              "raw_coverage": 0.9164292497625831,
+              "calibrated_coverage": 0.9135802469135802,
+              "raw_median_width": 0.2700143851339817,
+              "calibrated_median_width": 0.2636546695139259
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.9591642924976258,
+              "calibrated_coverage": 0.9430199430199431,
+              "raw_median_width": 0.3372440218925475,
+              "calibrated_median_width": 0.3076760470867157
+            }
+          ],
+          "dev_mean_crps": 0.0445730605724401,
+          "dev_mae_median": 0.0620536897936298
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.76953125,
+              "unbounded": false,
+              "raw_coverage": 0.5966796875,
+              "calibrated_coverage": 0.6943359375,
+              "raw_median_width": 1.8130158996582035,
+              "calibrated_median_width": 2.191988706588745
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.8603515625,
+              "calibrated_coverage": 0.919921875,
+              "raw_median_width": 3.3426375389099126,
+              "calibrated_median_width": 3.997324228286743
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.9365234375,
+              "calibrated_coverage": 0.94921875,
+              "raw_median_width": 4.33328628540039,
+              "calibrated_median_width": 5.0062408447265625
+            }
+          ],
+          "dev_mean_crps": 0.6865444821255192,
+          "dev_mae_median": 0.9560218726905295
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.751953125,
+              "unbounded": false,
+              "raw_coverage": 0.595581171950048,
+              "calibrated_coverage": 0.6628242074927954,
+              "raw_median_width": 0.10762324929237366,
+              "calibrated_median_width": 0.1283245086669922
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.8386167146974063,
+              "calibrated_coverage": 0.8962536023054755,
+              "raw_median_width": 0.2009856939315796,
+              "calibrated_median_width": 0.23742613196372986
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.966796875,
+              "unbounded": false,
+              "raw_coverage": 0.9221902017291066,
+              "calibrated_coverage": 0.9481268011527377,
+              "raw_median_width": 0.2606352508068084,
+              "calibrated_median_width": 0.29954904317855835
+            }
+          ],
+          "dev_mean_crps": 0.05134144621685476,
+          "dev_mae_median": 0.07009419520602164
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.826171875,
+              "unbounded": false,
+              "raw_coverage": 0.49182561307901906,
+              "calibrated_coverage": 0.6798365122615804,
+              "raw_median_width": 0.14136501789093003,
+              "calibrated_median_width": 0.20585370063781738
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9453125,
+              "unbounded": false,
+              "raw_coverage": 0.8160762942779292,
+              "calibrated_coverage": 0.9155313351498637,
+              "raw_median_width": 0.2695231199264525,
+              "calibrated_median_width": 0.35256919264793396
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.97265625,
+              "unbounded": false,
+              "raw_coverage": 0.9250681198910081,
+              "calibrated_coverage": 0.9673024523160763,
+              "raw_median_width": 0.36710374951362607,
+              "calibrated_median_width": 0.47702133655548096
+            }
+          ],
+          "dev_mean_crps": 0.06857214135193299,
+          "dev_mae_median": 0.09780839404755168
+        }
+      ]
+    },
+    "nsfconfirm_crps_s1_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "00b441d17a984bdcc0b8471a812f3bac0e5bf1490b8981a9cd6dbb4928e941dd",
+      "tune_score": 0.146229978428277,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.54296875,
+              "unbounded": false,
+              "raw_coverage": 0.7916975537435137,
+              "calibrated_coverage": 0.6716085989621943,
+              "raw_median_width": 175.1737695312495,
+              "calibrated_median_width": 130.58740234375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.818359375,
+              "unbounded": false,
+              "raw_coverage": 0.9518161601186064,
+              "calibrated_coverage": 0.8954781319495922,
+              "raw_median_width": 298.18984374999945,
+              "calibrated_median_width": 237.3857421875
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.89453125,
+              "unbounded": false,
+              "raw_coverage": 0.9733135656041513,
+              "calibrated_coverage": 0.9481097108969607,
+              "raw_median_width": 368.32216796874945,
+              "calibrated_median_width": 293.083984375
+            }
+          ],
+          "dev_mean_crps": 47.58774509063091,
+          "dev_mae_median": 63.338587221960594
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.447265625,
+              "unbounded": false,
+              "raw_coverage": 0.8318112633181126,
+              "calibrated_coverage": 0.6552511415525114,
+              "raw_median_width": 0.23264397621154753,
+              "calibrated_median_width": 0.138755202293396
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.76171875,
+              "unbounded": false,
+              "raw_coverage": 0.954337899543379,
+              "calibrated_coverage": 0.8858447488584474,
+              "raw_median_width": 0.39024949073791504,
+              "calibrated_median_width": 0.27625107765197754
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.875,
+              "unbounded": false,
+              "raw_coverage": 0.974124809741248,
+              "calibrated_coverage": 0.941400304414003,
+              "raw_median_width": 0.47515389919281015,
+              "calibrated_median_width": 0.3625403642654419
+            }
+          ],
+          "dev_mean_crps": 0.06233970230570225,
+          "dev_mae_median": 0.08127866204828334
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.625,
+              "unbounded": false,
+              "raw_coverage": 0.7116382505559674,
+              "calibrated_coverage": 0.6575240919199407,
+              "raw_median_width": 0.15489769220352176,
+              "calibrated_median_width": 0.13806714117527008
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.86328125,
+              "unbounded": false,
+              "raw_coverage": 0.9229058561897702,
+              "calibrated_coverage": 0.8865826538176427,
+              "raw_median_width": 0.2634782373905181,
+              "calibrated_median_width": 0.23555690050125122
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9296875,
+              "unbounded": false,
+              "raw_coverage": 0.9681245366938473,
+              "calibrated_coverage": 0.9473684210526315,
+              "raw_median_width": 0.3253772139549254,
+              "calibrated_median_width": 0.29511094093322754
+            }
+          ],
+          "dev_mean_crps": 0.05314158120383639,
+          "dev_mae_median": 0.07442696876345327
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.681640625,
+              "unbounded": false,
+              "raw_coverage": 0.6923076923076923,
+              "calibrated_coverage": 0.6923076923076923,
+              "raw_median_width": 0.1565560239553452,
+              "calibrated_median_width": 0.15698623657226562
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.890625,
+              "unbounded": false,
+              "raw_coverage": 0.9164292497625831,
+              "calibrated_coverage": 0.9069325735992403,
+              "raw_median_width": 0.26831068545579895,
+              "calibrated_median_width": 0.2603612691164017
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9375,
+              "unbounded": false,
+              "raw_coverage": 0.9572649572649573,
+              "calibrated_coverage": 0.9439696106362773,
+              "raw_median_width": 0.33796125426888446,
+              "calibrated_median_width": 0.3124517649412155
+            }
+          ],
+          "dev_mean_crps": 0.04434390190133419,
+          "dev_mae_median": 0.061919564325580205
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.70703125,
+              "unbounded": false,
+              "raw_coverage": 0.6337890625,
+              "calibrated_coverage": 0.6572265625,
+              "raw_median_width": 2.1302446365356458,
+              "calibrated_median_width": 2.2653796672821045
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.921875,
+              "unbounded": false,
+              "raw_coverage": 0.8740234375,
+              "calibrated_coverage": 0.9111328125,
+              "raw_median_width": 3.718400168418884,
+              "calibrated_median_width": 4.05920135974884
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.953125,
+              "calibrated_coverage": 0.9658203125,
+              "raw_median_width": 4.587714838981627,
+              "calibrated_median_width": 5.071026802062988
+            }
+          ],
+          "dev_mean_crps": 0.6946545485008793,
+          "dev_mae_median": 0.9718226522296043
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.71875,
+              "unbounded": false,
+              "raw_coverage": 0.6138328530259366,
+              "calibrated_coverage": 0.6464937560038425,
+              "raw_median_width": 0.11480797052383429,
+              "calibrated_median_width": 0.12665694952011108
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.91796875,
+              "unbounded": false,
+              "raw_coverage": 0.8731988472622478,
+              "calibrated_coverage": 0.9039385206532181,
+              "raw_median_width": 0.23515661358833312,
+              "calibrated_median_width": 0.25896281003952026
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.955078125,
+              "unbounded": false,
+              "raw_coverage": 0.9567723342939481,
+              "calibrated_coverage": 0.9586935638808838,
+              "raw_median_width": 0.32895109057426447,
+              "calibrated_median_width": 0.34493492543697357
+            }
+          ],
+          "dev_mean_crps": 0.05249512454475883,
+          "dev_mae_median": 0.0730011218633773
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.736328125,
+              "unbounded": false,
+              "raw_coverage": 0.659400544959128,
+              "calibrated_coverage": 0.7193460490463215,
+              "raw_median_width": 0.17847729682922364,
+              "calibrated_median_width": 0.2000828981399536
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9296875,
+              "unbounded": false,
+              "raw_coverage": 0.888283378746594,
+              "calibrated_coverage": 0.9237057220708447,
+              "raw_median_width": 0.29900305271148664,
+              "calibrated_median_width": 0.33308637142181396
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9609375,
+              "unbounded": false,
+              "raw_coverage": 0.9550408719346049,
+              "calibrated_coverage": 0.9686648501362398,
+              "raw_median_width": 0.3758411407470703,
+              "calibrated_median_width": 0.41346895694732666
+            }
+          ],
+          "dev_mean_crps": 0.05756767604528201,
+          "dev_mae_median": 0.08067744980706518
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_floor003_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "150711f2ab7784f232ecd3ef4077b3aa11df7e73adf2b9c899cc716b0402790f",
+      "tune_score": 0.14756384223075572,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.6328125,
+              "unbounded": false,
+              "raw_coverage": 0.7116382505559674,
+              "calibrated_coverage": 0.6634544106745738,
+              "raw_median_width": 169.04244140624996,
+              "calibrated_median_width": 152.677734375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.861328125,
+              "unbounded": false,
+              "raw_coverage": 0.9191994069681245,
+              "calibrated_coverage": 0.8776871756856931,
+              "raw_median_width": 286.6252929687498,
+              "calibrated_median_width": 255.9384765625
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.919921875,
+              "unbounded": false,
+              "raw_coverage": 0.9547813194959229,
+              "calibrated_coverage": 0.9347664936990363,
+              "raw_median_width": 350.9697265625,
+              "calibrated_median_width": 307.39990234375
+            }
+          ],
+          "dev_mean_crps": 52.208833461203,
+          "dev_mae_median": 71.53819931335256
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.498046875,
+              "unbounded": false,
+              "raw_coverage": 0.7815829528158296,
+              "calibrated_coverage": 0.6225266362252664,
+              "raw_median_width": 0.23130669832229622,
+              "calibrated_median_width": 0.1554344892501831
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.794921875,
+              "unbounded": false,
+              "raw_coverage": 0.9307458143074582,
+              "calibrated_coverage": 0.867579908675799,
+              "raw_median_width": 0.3906589031219483,
+              "calibrated_median_width": 0.2947808504104614
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.890625,
+              "unbounded": false,
+              "raw_coverage": 0.9627092846270928,
+              "calibrated_coverage": 0.9223744292237442,
+              "raw_median_width": 0.4744369745254513,
+              "calibrated_median_width": 0.37852609157562256
+            }
+          ],
+          "dev_mean_crps": 0.0690522211234946,
+          "dev_mae_median": 0.09339912975211734
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.634765625,
+              "unbounded": false,
+              "raw_coverage": 0.7005189028910304,
+              "calibrated_coverage": 0.6627131208302446,
+              "raw_median_width": 0.15255213499069215,
+              "calibrated_median_width": 0.1387704350054264
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.86328125,
+              "unbounded": false,
+              "raw_coverage": 0.9191994069681245,
+              "calibrated_coverage": 0.8784284655300222,
+              "raw_median_width": 0.25976494997739796,
+              "calibrated_median_width": 0.23242750763893127
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.9696071163825055,
+              "calibrated_coverage": 0.9481097108969607,
+              "raw_median_width": 0.3207556053996085,
+              "calibrated_median_width": 0.2880350798368454
+            }
+          ],
+          "dev_mean_crps": 0.05306194232859362,
+          "dev_mae_median": 0.0744343192718961
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.67578125,
+              "unbounded": false,
+              "raw_coverage": 0.7037037037037037,
+              "calibrated_coverage": 0.6999050332383666,
+              "raw_median_width": 0.16145820677280429,
+              "calibrated_median_width": 0.15991589426994324
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.89453125,
+              "unbounded": false,
+              "raw_coverage": 0.9107312440645774,
+              "calibrated_coverage": 0.9069325735992403,
+              "raw_median_width": 0.2741151601076126,
+              "calibrated_median_width": 0.26873549818992615
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.9601139601139601,
+              "calibrated_coverage": 0.9487179487179487,
+              "raw_median_width": 0.34195284098386763,
+              "calibrated_median_width": 0.31527265161275864
+            }
+          ],
+          "dev_mean_crps": 0.04482879909926056,
+          "dev_mae_median": 0.06298960112147431
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.69140625,
+              "unbounded": false,
+              "raw_coverage": 0.640625,
+              "calibrated_coverage": 0.650390625,
+              "raw_median_width": 2.2628565835952763,
+              "calibrated_median_width": 2.319331645965576
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.9140625,
+              "unbounded": false,
+              "raw_coverage": 0.892578125,
+              "calibrated_coverage": 0.90625,
+              "raw_median_width": 3.8456573963165273,
+              "calibrated_median_width": 4.04079794883728
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.9609375,
+              "unbounded": false,
+              "raw_coverage": 0.9443359375,
+              "calibrated_coverage": 0.9560546875,
+              "raw_median_width": 4.744192218780517,
+              "calibrated_median_width": 5.066729545593262
+            }
+          ],
+          "dev_mean_crps": 0.704895598283414,
+          "dev_mae_median": 0.9934550751637361
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.64453125,
+              "unbounded": false,
+              "raw_coverage": 0.6772334293948127,
+              "calibrated_coverage": 0.6388088376560999,
+              "raw_median_width": 0.1308811235427857,
+              "calibrated_median_width": 0.12066727131605148
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.900390625,
+              "unbounded": false,
+              "raw_coverage": 0.9020172910662824,
+              "calibrated_coverage": 0.9029779058597502,
+              "raw_median_width": 0.2458450973033905,
+              "calibrated_median_width": 0.24595582485198975
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.953125,
+              "unbounded": false,
+              "raw_coverage": 0.9615754082612872,
+              "calibrated_coverage": 0.9663784822286263,
+              "raw_median_width": 0.3284362792968749,
+              "calibrated_median_width": 0.33785656094551086
+            }
+          ],
+          "dev_mean_crps": 0.05207220934041489,
+          "dev_mae_median": 0.07249030598428272
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.73046875,
+              "unbounded": false,
+              "raw_coverage": 0.6267029972752044,
+              "calibrated_coverage": 0.6866485013623979,
+              "raw_median_width": 0.16250687122344964,
+              "calibrated_median_width": 0.181676983833313
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.927734375,
+              "unbounded": false,
+              "raw_coverage": 0.8746594005449592,
+              "calibrated_coverage": 0.9005449591280654,
+              "raw_median_width": 0.2894951820373537,
+              "calibrated_median_width": 0.32303905487060547
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.97265625,
+              "unbounded": false,
+              "raw_coverage": 0.9359673024523161,
+              "calibrated_coverage": 0.9741144414168937,
+              "raw_median_width": 0.362620449066162,
+              "calibrated_median_width": 0.44279563426971436
+            }
+          ],
+          "dev_mean_crps": 0.05766395320974294,
+          "dev_mae_median": 0.08045982978726196
+        }
+      ]
+    },
+    "nsfconfirm_hybrid_studentt_20261106_v1": {
+      "status": "complete",
+      "selected_update": 5000,
+      "checkpoint_sha256": "292efd8ecb001bab6c8b518f94251d6d66dc639f172542131ccd840fac3b0697",
+      "tune_score": 0.14845913898423846,
+      "catalogue": [
+        {
+          "target": "teff",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.65234375,
+              "unbounded": false,
+              "raw_coverage": 0.687175685693106,
+              "calibrated_coverage": 0.6575240919199407,
+              "raw_median_width": 172.74658203125,
+              "calibrated_median_width": 163.20849609375
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.8828125,
+              "unbounded": false,
+              "raw_coverage": 0.8999258710155671,
+              "calibrated_coverage": 0.882876204595997,
+              "raw_median_width": 293.18740234375036,
+              "calibrated_median_width": 278.08349609375
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.9532987398072647,
+              "calibrated_coverage": 0.9399555226093402,
+              "raw_median_width": 358.1027343750002,
+              "calibrated_median_width": 334.7265625
+            }
+          ],
+          "dev_mean_crps": 55.34931342279787,
+          "dev_mae_median": 76.29314402365128
+        },
+        {
+          "target": "logg",
+          "cal_stars": 1471,
+          "dev_stars": 1314,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.54296875,
+              "unbounded": false,
+              "raw_coverage": 0.7427701674277016,
+              "calibrated_coverage": 0.624048706240487,
+              "raw_median_width": 0.23290437340736375,
+              "calibrated_median_width": 0.17332422733306885
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.818359375,
+              "unbounded": false,
+              "raw_coverage": 0.921613394216134,
+              "calibrated_coverage": 0.8668188736681888,
+              "raw_median_width": 0.3931700706481933,
+              "calibrated_median_width": 0.3150991201400757
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.912109375,
+              "unbounded": false,
+              "raw_coverage": 0.9558599695585996,
+              "calibrated_coverage": 0.9315068493150684,
+              "raw_median_width": 0.4829301357269289,
+              "calibrated_median_width": 0.40987706184387207
+            }
+          ],
+          "dev_mean_crps": 0.07337975133198105,
+          "dev_mae_median": 0.10036134801738994
+        },
+        {
+          "target": "fe_h",
+          "cal_stars": 1509,
+          "dev_stars": 1349,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.61328125,
+              "unbounded": false,
+              "raw_coverage": 0.7346182357301705,
+              "calibrated_coverage": 0.6612305411415864,
+              "raw_median_width": 0.15908998161554336,
+              "calibrated_median_width": 0.1383265107870102
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.861328125,
+              "unbounded": false,
+              "raw_coverage": 0.927353595255745,
+              "calibrated_coverage": 0.8932542624166049,
+              "raw_median_width": 0.2723033428192138,
+              "calibrated_median_width": 0.2415517419576645
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.91796875,
+              "unbounded": false,
+              "raw_coverage": 0.9740548554484804,
+              "calibrated_coverage": 0.9466271312083024,
+              "raw_median_width": 0.33756767213344574,
+              "calibrated_median_width": 0.2895452231168747
+            }
+          ],
+          "dev_mean_crps": 0.05318279333726576,
+          "dev_mae_median": 0.07444219918978778
+        },
+        {
+          "target": "alpha",
+          "cal_stars": 1050,
+          "dev_stars": 1053,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.689453125,
+              "unbounded": false,
+              "raw_coverage": 0.7075023741690408,
+              "calibrated_coverage": 0.7150997150997151,
+              "raw_median_width": 0.1578624838590623,
+              "calibrated_median_width": 0.1620798110961914
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.892578125,
+              "unbounded": false,
+              "raw_coverage": 0.9116809116809117,
+              "calibrated_coverage": 0.905982905982906,
+              "raw_median_width": 0.26757609546184535,
+              "calibrated_median_width": 0.26109452545642853
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.935546875,
+              "unbounded": false,
+              "raw_coverage": 0.9544159544159544,
+              "calibrated_coverage": 0.9420702754036088,
+              "raw_median_width": 0.3340358838438986,
+              "calibrated_median_width": 0.3076353073120117
+            }
+          ],
+          "dev_mean_crps": 0.0447140210252045,
+          "dev_mae_median": 0.06270300399271309
+        },
+        {
+          "target": "age",
+          "cal_stars": 1024,
+          "dev_stars": 1024,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.70703125,
+              "unbounded": false,
+              "raw_coverage": 0.625,
+              "calibrated_coverage": 0.65625,
+              "raw_median_width": 2.0683956146240243,
+              "calibrated_median_width": 2.2136144638061523
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.93359375,
+              "unbounded": false,
+              "raw_coverage": 0.87890625,
+              "calibrated_coverage": 0.9169921875,
+              "raw_median_width": 3.6701352119445794,
+              "calibrated_median_width": 4.158652305603027
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.962890625,
+              "unbounded": false,
+              "raw_coverage": 0.94140625,
+              "calibrated_coverage": 0.958984375,
+              "raw_median_width": 4.540208768844604,
+              "calibrated_median_width": 4.9417688846588135
+            }
+          ],
+          "dev_mean_crps": 0.7004303011169417,
+          "dev_mae_median": 0.9827101638490365
+        },
+        {
+          "target": "distance",
+          "cal_stars": 1043,
+          "dev_stars": 1041,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.71875,
+              "unbounded": false,
+              "raw_coverage": 0.6147934678194045,
+              "calibrated_coverage": 0.654178674351585,
+              "raw_median_width": 0.11586048841476437,
+              "calibrated_median_width": 0.12805140018463135
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.92578125,
+              "unbounded": false,
+              "raw_coverage": 0.8722382324687801,
+              "calibrated_coverage": 0.9135446685878963,
+              "raw_median_width": 0.23389794826507565,
+              "calibrated_median_width": 0.2683508098125458
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.958984375,
+              "unbounded": false,
+              "raw_coverage": 0.94716618635927,
+              "calibrated_coverage": 0.9586935638808838,
+              "raw_median_width": 0.31877205371856676,
+              "calibrated_median_width": 0.3435331881046295
+            }
+          ],
+          "dev_mean_crps": 0.052448886572032935,
+          "dev_mae_median": 0.07299144043873473
+        }
+      ],
+      "seismic": [
+        {
+          "target": "logg",
+          "cal_stars": 769,
+          "dev_stars": 734,
+          "levels": [
+            {
+              "nominal": 0.68,
+              "cal_selected_mass": 0.76953125,
+              "unbounded": false,
+              "raw_coverage": 0.5926430517711172,
+              "calibrated_coverage": 0.6934604904632152,
+              "raw_median_width": 0.16604938983917217,
+              "calibrated_median_width": 0.20301318168640137
+            },
+            {
+              "nominal": 0.9,
+              "cal_selected_mass": 0.943359375,
+              "unbounded": false,
+              "raw_coverage": 0.8433242506811989,
+              "calibrated_coverage": 0.8978201634877384,
+              "raw_median_width": 0.291212511062622,
+              "calibrated_median_width": 0.352026104927063
+            },
+            {
+              "nominal": 0.95,
+              "cal_selected_mass": 0.97265625,
+              "unbounded": false,
+              "raw_coverage": 0.9059945504087193,
+              "calibrated_coverage": 0.946866485013624,
+              "raw_median_width": 0.3696973085403441,
+              "calibrated_median_width": 0.4634016752243042
+            }
+          ],
+          "dev_mean_crps": 0.0628778671167695,
+          "dev_mae_median": 0.08745473432600805
+        }
+      ]
+    }
+  },
+  "training_performed": false,
+  "density_parameters_changed": false,
+  "selection_role": "TUNE only; CAL never chooses a candidate",
+  "scope": "CAL-fitted central CDF-score intervals; separate devtest evaluation. Sparse noisy/teacher reference coverage is not latent physical PDF calibration; seismic CAL and DEV are scored separately. Parent exposure and survey calibration dependencies remain. Marginal, not simultaneous six-target, coverage."
+}

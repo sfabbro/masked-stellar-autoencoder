@@ -1,0 +1,27 @@
+{
+  "status": "private_preservation_complete",
+  "destination": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1",
+  "files": [
+    {
+      "name": "gaia_eso_dr51_raw.h5",
+      "bytes": 22383277,
+      "sha256": "9932d63fc89278425ace2ee9f44507990d0efc7ece0750028c27c28eaf0992e4",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "gaia_eso_dr51_raw.json",
+      "bytes": 647,
+      "sha256": "f502be07edff7d8404c95f8921a34241bfd3da798cbc045bb1cca92f30ba64d7",
+      "status": "private_sha_verified",
+      "public": false
+    },
+    {
+      "name": "gaia_eso_dr51_release_doc.pdf",
+      "bytes": 1564756,
+      "sha256": "0b8d88ba23b1619c30e29c0524ecb5598c10c0f78fd45fddaf5b19cd2cc7743d",
+      "status": "private_sha_verified",
+      "public": false
+    }
+  ]
+}

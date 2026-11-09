@@ -1,0 +1,19 @@
+{
+  "status": "publisher_identity_join_audited",
+  "parameter_rows": 24290,
+  "crossmatch_rows": 24290,
+  "joined_rows": 24290,
+  "valid_gaia_id_rows": 24289,
+  "distinct_positive_gaia_ids": 24129,
+  "publisher_cleanmatch_counts": {
+    "0": 733,
+    "1": 23557
+  },
+  "parameter_sha256": "a55bebc33b9b003eb45cd8e542098a12c06749a3a00fb27e77547d754d665cde",
+  "crossmatch_sha256": "bb83abb8276031e29242e2174a70e5be99260105de27d938721b480deb04215e",
+  "crossmatch_publisher_sha1": "2a3c82483e5807b615228a2e7be469fab13e7fb6",
+  "xmatcher_version": "0.5.1",
+  "training_performed": false,
+  "training_identity_promoted": false,
+  "scope": "Exact MANGAID join to publisher proper-motion-aware Gaia EDR3 VAC; no fresh positional crossmatch, DR3 archive validation or parameter-quality admission claimed; repeated Gaia identities retained"
+}

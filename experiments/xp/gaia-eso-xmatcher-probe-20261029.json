@@ -1,0 +1,10 @@
+{
+  "status": "candidate_retrieval_failed",
+  "scope": "Three real Gaia-ESO source positions, 10 arcsec candidate probe only; no association or proper-motion result.",
+  "xmatcher_commit": "804b38b4221a20bc9610c8ab18b7167309bce3d5",
+  "catalogue": "gaia_dr3_cds",
+  "error": "TAP query failed: ConnectionResetError(54, 'Connection reset by peer')",
+  "fallback": "error",
+  "cached_gaia_dr3": {"path": "/arc/projects/hats/zensus/data/cache/gaia_stars_chunks/I/355/gaiadr3/manifest.json", "records": 3500000, "complete": false},
+  "limitation": "This incomplete Gaia cache cannot support an all-sky completeness claim. Source positions lack per-row epochs."
+}

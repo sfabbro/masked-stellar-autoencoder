@@ -1,0 +1,14 @@
+{
+  "multisurvey_lamost_dr12_lrs_source_direct_v2/source.h5": {
+    "sha256": "889c90553e71a681ddee05f97fc6dcffb7933a338253e3e57912460be8d58fb9",
+    "bytes": 296580091
+  },
+  "multisurvey_lamost_dr12_mrs_source_direct_v2/source.h5": {
+    "sha256": "293201d803cb569c79ce2c76f51b912e6dc8a69c27296450154a18946d60c8f6",
+    "bytes": 255244595
+  },
+  "multisurvey_lamost_dr12_mrs_source_direct_v2/dr12_mrs_stellar.fits.gz": {
+    "sha256": "e10551be296cddcacf0ceb9c9b2827884d10e550b14850adb01348435be12369",
+    "bytes": 725541580
+  }
+}

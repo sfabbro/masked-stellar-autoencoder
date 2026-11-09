@@ -1,0 +1,23 @@
+{
+  "run_id": "decision_ges_gaia_candidates_resume_20261106_v4",
+  "utc": "2026-11-06T01:24:24.303822+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_resume_20261106_v4",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_resume_20261106_v4",
+  "status": "archive_query_aborted",
+  "session_ids": [
+    "u3ynajtc"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_resume_20261106_v4'];runpy.run_path('candidate.py',run_name='__main__')",
+  "source_sha256": {
+    "candidate.py": "48fd16d7dad05eabba96191e98aee8f195d8425c454591bc1b41b70a4544887a",
+    "resume-job.json": "6a72692b21561f6b9034625f84efbbff2fe494e9d6e185666060c04334ae3936",
+    "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+  },
+  "payload_sha256": "776382e889d150156c3d47fa9cfda873f198b573c94b5037a1a741599e7abe97",
+  "outcome": "Resumed the existing first batch without re-upload; archive phase confirmed ABORTED before indexed v5 recovery."
+}

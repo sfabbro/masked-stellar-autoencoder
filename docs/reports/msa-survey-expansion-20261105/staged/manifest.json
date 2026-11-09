@@ -1,0 +1,67 @@
+{
+  "status": "source_candidates_staged",
+  "training_performed": false,
+  "benchmark_sources": {
+    "docs/reports/msa-survey-expansion-20261105/sources/gbsv3-corrected-parameters.tsv": "11f618b70c1297b33bdf5cf5ff241d9b63c2903fa7c769840cf9132d21d0b071",
+    "docs/reports/msa-survey-expansion-20261105/sources/gbsv3-2026-recommended-abundances.tsv": "48874ccf108953d41cbc0608e0d20976d01d7e71ad760af404b0addaf7ecc2cd"
+  },
+  "benchmark_rows": 201,
+  "direct_diameters": 192,
+  "indirect_diameters": 9,
+  "gaia_ids": 192,
+  "spectral_warning_stars": 10,
+  "reserved_for_evaluation": true,
+  "future_fit_exclusions": 192,
+  "benchmark_role_counts": {
+    "current_fit": 1,
+    "devtest": 0,
+    "external": 30,
+    "excluded": 0
+  },
+  "benchmarks_not_in_checked_roles": 170,
+  "checked_roles": [
+    "current_fit",
+    "devtest",
+    "external",
+    "excluded"
+  ],
+  "remaining_role_scope": "TUNE/CAL and input-ineligible/not-in-cohort unresolved",
+  "reference_dependencies": [
+    "Teff bolometric flux may use Gaia XP/photometry also supplied to the model",
+    "gravity uses parallax and evolutionary masses; not model-independent dynamical gravity",
+    "FeI/H and FeII/H are separate spectroscopy-based references using fixed fundamental atmosphere parameters",
+    "survey calibration ancestry remains to audit; new release does not guarantee independent standards"
+  ],
+  "rave": {
+    "receipt": {
+      "path": "/Users/seb/src/masked-stellar-autoencoder/docs/reports/msa-survey-expansion-20261105/staged/rave-candidate.h5",
+      "sha256": "125a7c07129c2f4b64401ec76f951508fa3ba0f368cc87c5c99c8f8d9af84f50"
+    },
+    "selected_unique_stars": 188943,
+    "observed_per_target": [
+      188943,
+      188943,
+      151160
+    ],
+    "known_error_per_target": [
+      188943,
+      188943,
+      151160
+    ],
+    "benchmark_reserved": 0,
+    "training_enabled": false,
+    "role_counts": {
+      "current_fit": 13176,
+      "devtest": 1796,
+      "external": 68,
+      "excluded": 5
+    },
+    "future_fit_candidates_after_benchmark_exclusion": 13176
+  },
+  "artifacts": {
+    "rave-candidate.rows.csv": "b1b7eb189167e67c96dc1cc85d5a2321fe96bf60d168e8f7920c80c847b4e5b2",
+    "benchmarks.csv": "d2a724ec2648523d1cac71fef6b5c0fa5279a012690e029d349fd50d727dce52",
+    "rave-candidate.h5": "125a7c07129c2f4b64401ec76f951508fa3ba0f368cc87c5c99c8f8d9af84f50",
+    "benchmark-fit-exclusions.npy": "b120fb2edf8e54af1628581d647c571428f0275594b57ca6d3e736d55af407b6"
+  }
+}

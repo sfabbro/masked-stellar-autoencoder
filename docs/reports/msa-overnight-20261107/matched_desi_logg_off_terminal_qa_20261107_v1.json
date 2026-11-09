@@ -1,0 +1,947 @@
+{
+  "status": "complete",
+  "run_id": "matched_desi_logg_off_20261107_v1",
+  "arm": {
+    "run_id": "matched_desi_logg_off_20261107_v1",
+    "gauge": "seismic",
+    "map_kind": "affine",
+    "exclude_desi_logg": true
+  },
+  "config_sha256": "83fc49f7a4a3ec7598edc96f103221cdcaa4d321392bfa693bd0b4cd775f77e3",
+  "script_sha256": "45a04f6372a7b838a779f81e7724ea1baa334eac20072e86e379fb8e3005e60b",
+  "completed_updates": 0,
+  "training_performed": false,
+  "encoder_updated": false,
+  "reconstruction_updated": false,
+  "scope": "Read-only native CUDA evaluation of fixed terminal states; no optimization, no checkpoint selection.",
+  "parent_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "source_registry": [
+    "apogee",
+    "desi",
+    "galah",
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "APOKASC3_loggSeis"
+  ],
+  "supported_edges": [
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  ],
+  "reference_source_per_target": [
+    0,
+    -1,
+    0,
+    1,
+    3,
+    3
+  ],
+  "zero_sum_targets": [],
+  "role_source_rows": {
+    "fit": {
+      "apogee": 126637,
+      "desi": 1197647,
+      "galah": 390566,
+      "StarHorse_apogee17_posterior_median": 35825,
+      "StarHorse_galahdr3_posterior_median": 79086,
+      "StarHorse_catalogue_posterior_median": 2827,
+      "APOKASC3_loggSeis": 5296
+    },
+    "tune": {
+      "apogee": 18013,
+      "desi": 171085,
+      "galah": 55473,
+      "StarHorse_apogee17_posterior_median": 5004,
+      "StarHorse_galahdr3_posterior_median": 10782,
+      "StarHorse_catalogue_posterior_median": 676,
+      "APOKASC3_loggSeis": 689
+    },
+    "cal": {
+      "apogee": 18271,
+      "desi": 170669,
+      "galah": 55522,
+      "StarHorse_apogee17_posterior_median": 4334,
+      "StarHorse_galahdr3_posterior_median": 6840,
+      "StarHorse_catalogue_posterior_median": 1360,
+      "APOKASC3_loggSeis": 769
+    },
+    "devtest": {
+      "apogee": 17904,
+      "desi": 171796,
+      "galah": 55710,
+      "StarHorse_apogee17_posterior_median": 3554,
+      "StarHorse_galahdr3_posterior_median": 2803,
+      "StarHorse_catalogue_posterior_median": 2038,
+      "APOKASC3_loggSeis": 734
+    }
+  },
+  "teacher_reference": "StarHorse APOGEE posterior scale for age/distance; DESI alpha/Fe scale; APOGEE temperature/iron convention unless equal-weight control",
+  "benchmark_exclusions": [
+    19316224572460416,
+    60248877811546112,
+    95652018353917056,
+    96331172942614528,
+    140457735662620800,
+    188771135583573504,
+    198558953732674816,
+    378821548641870336,
+    399402894487590144,
+    411220548543503488,
+    411413822074322432,
+    421805237748755968,
+    427322415301550208,
+    436648129327098496,
+    438829629114680704,
+    509342237530006016,
+    512167948043650816,
+    522534933950730240,
+    583588100209595776,
+    615943806835727872,
+    624684408880100992,
+    641662895638787584,
+    643819484617141504,
+    683184784030475520,
+    702343774145932544,
+    704967037090946688,
+    746545172372256384,
+    757565233820538752,
+    779106556394253824,
+    798068905726303232,
+    823773494718931968,
+    841920040781646080,
+    853819947756949120,
+    1018776176872261248,
+    1022456139210632064,
+    1193030490492925824,
+    1243381938292692096,
+    1244946371540479616,
+    1264797229346287744,
+    1265976524286377856,
+    1278391075717325312,
+    1284537517514584704,
+    1297158777130486144,
+    1333760419707327744,
+    1419240920415509376,
+    1460229442589223424,
+    1534011998572555776,
+    1603662211901473408,
+    1604859511344724864,
+    1637110042813188608,
+    1651268660203160448,
+    1676282377934772608,
+    1696798367260229376,
+    1787990525934491776,
+    1821708351374312064,
+    1823067317695766784,
+    1823991938314881152,
+    1872046574983497216,
+    1872046609345556480,
+    1876331990259358976,
+    1876510592179455744,
+    1891598193816300544,
+    1907131544341497600,
+    1982252790090609152,
+    2003961238426647680,
+    2009481748875806976,
+    2029433521248546304,
+    2075067858006232320,
+    2076894387328378240,
+    2103877089862772352,
+    2117279002732678656,
+    2126261703496964096,
+    2127789646700855040,
+    2135110401277424384,
+    2135550755683405952,
+    2135550755683407232,
+    2135864391374790784,
+    2149564787289902848,
+    2156134953382133632,
+    2161275788716592256,
+    2190891581091291520,
+    2195115561168483712,
+    2237040042612803328,
+    2256800156349110528,
+    2261614264931057664,
+    2268048503896398720,
+    2278918344568877056,
+    2348830516542653824,
+    2429415922764859392,
+    2452378776434477184,
+    2462426800883134336,
+    2472524234636869248,
+    2474456351444863744,
+    2494336311948357504,
+    2498460442625153536,
+    2512824943566639232,
+    2552925644460225152,
+    2630155547353593216,
+    2658974606111711488,
+    2661005953843811456,
+    2719475542667772416,
+    2756363608023588864,
+    2802397960855105920,
+    2835207319109249920,
+    2853900872207888768,
+    2858181236614036864,
+    2860924621205256704,
+    2869759781250083200,
+    2981103853463479040,
+    3021524580959406592,
+    3022721124487294848,
+    3023711269067191296,
+    3098404220680931968,
+    3113219383954556416,
+    3195919528989223040,
+    3250477261599098752,
+    3250489115709122560,
+    3256786534197166208,
+    3263836568394170880,
+    3265335443260522112,
+    3269362645115584640,
+    3276860524145383040,
+    3288921720025503360,
+    3342942066329410688,
+    3352485999058854912,
+    3399063235755057792,
+    3478394889483944320,
+    3701693091058501504,
+    3723554268436602240,
+    3736865265441207424,
+    3740176925743994752,
+    3793247534517512064,
+    3796442680948579328,
+    3827873938815011200,
+    3830897080395058048,
+    3879879704937353984,
+    3920615854833203328,
+    4025850731201819392,
+    4034171629042489088,
+    4254220979971917056,
+    4269932382607207040,
+    4281201414717499520,
+    4296708789290712064,
+    4315804351350378496,
+    4345775217221821312,
+    4358031335898505472,
+    4421455530273900032,
+    4423865487962417024,
+    4444057469252265984,
+    4473334474604992384,
+    4530744134231683840,
+    4582680493669880704,
+    4594497769766809216,
+    4609802834185436928,
+    4643560452496180992,
+    4683897617110115200,
+    4697508196671120000,
+    4767368897757788288,
+    4792305954618472960,
+    4808960875719316608,
+    4822128906148720128,
+    4887842970929434880,
+    4929469381645492864,
+    4942522955488925696,
+    4951967794731342464,
+    4979682840735231616,
+    4984231417260290048,
+    5000702410680381824,
+    5010675118584277248,
+    5020586872310485632,
+    5071514326764428544,
+    5127513656557144576,
+    5164120762333028736,
+    5164707970261890560,
+    5168359139139252352,
+    5179627995156977408,
+    5278762854038923008,
+    5358179685572496384,
+    5378451759396269696,
+    5492531416535100672,
+    5536661140353547008,
+    5716535848180090624,
+    5726982995343100928,
+    5922444483103229952,
+    5945941905576552064,
+    6232511606838403968,
+    6268770373590148224,
+    6412595290592307840,
+    6427311635257037056,
+    6498723334930624512,
+    6828451375858909568,
+    6904703228801028864
+  ],
+  "ancestor_exposure": "Warm-start NSF and its supervised/pretraining ancestors may contain newly reserved benchmark IDs; new ablation FIT excludes them, no fresh absolute benchmark claim",
+  "matched_design": "Same non-logg-eligible DESI records, original logg sampling strata, RNG seeds and common-edge TUNE metric. Removing DESI logg changes only scored observations.",
+  "terminal_evaluation": {
+    "tune": {
+      "macro_common_edge_crps": 0.1402009884278388,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.06868526471041701,
+            0.08833482451108977,
+            0.17016670623565855,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 65.20421631085256,
+              "bias": 14.252861672658698,
+              "coverage90": 0.845703125
+            },
+            "logg": {
+              "n": 512,
+              "mae": 0.1249731300771645,
+              "bias": 0.016062974192874366,
+              "coverage90": 0.810546875
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.07612227405136072,
+              "bias": 0.022550176088819762,
+              "coverage90": 0.853515625
+            }
+          }
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.11637406673398978,
+            null,
+            0.3585836847955816,
+            0.30974064688685987,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 111.65181695202098,
+              "bias": -0.8059473075247924,
+              "coverage90": 0.875
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.16117922629334716,
+              "bias": 0.029677618730186792,
+              "coverage90": 0.853515625
+            },
+            "alpha": {
+              "n": 511,
+              "mae": 0.0653326995710556,
+              "bias": 0.004646002792470493,
+              "coverage90": 0.9041095890410958
+            }
+          }
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.06197934189214176,
+            0.04546216883838646,
+            0.1572166897935642,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 58.42541272350329,
+              "bias": 7.672288039103166,
+              "coverage90": 0.951171875
+            },
+            "logg": {
+              "n": 497,
+              "mae": 0.0609773754288562,
+              "bias": -0.011986767296844652,
+              "coverage90": 0.9919517102615694
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.06944082170164512,
+              "bias": 0.017373104119873386,
+              "coverage90": 0.900390625
+            }
+          }
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.22708312070446707,
+            0.1365887823331733
+          ],
+          "targets": {
+            "age": {
+              "n": 495,
+              "mae": 0.176678502808909,
+              "bias": -0.013090305457123915,
+              "coverage90": 0.8161616161616162
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.08692871823445315,
+              "bias": 0.012921625165804114,
+              "coverage90": 0.755859375
+            }
+          }
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.16651586299936785,
+            0.09996215523569939
+          ],
+          "targets": {
+            "age": {
+              "n": 505,
+              "mae": 0.12862363616539454,
+              "bias": 0.023500986565121923,
+              "coverage90": 0.8712871287128713
+            },
+            "distance": {
+              "n": 511,
+              "mae": 0.0616806708458457,
+              "bias": 0.0012429205860615368,
+              "coverage90": 0.6320939334637965
+            }
+          }
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.14616444453161692,
+            0.052653889165898575
+          ],
+          "targets": {
+            "age": {
+              "n": 512,
+              "mae": 0.11427808037216954,
+              "bias": 0.010897436310104912,
+              "coverage90": 0.83984375
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.031431959379445304,
+              "bias": -0.0025399548814293853,
+              "coverage90": 0.544921875
+            }
+          }
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.03770416547750866,
+            null,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "logg": {
+              "n": 512,
+              "mae": 0.05607053197949945,
+              "bias": -0.011435824814932792,
+              "coverage90": 0.919921875
+            }
+          }
+        }
+      ]
+    },
+    "cal": {
+      "macro_common_edge_crps": 0.14054747129236164,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.0604177163293825,
+            0.07433061040981388,
+            0.15664931430243328,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 57.42997708800316,
+              "bias": 7.922512326865309,
+              "coverage90": 0.85546875
+            },
+            "logg": {
+              "n": 512,
+              "mae": 0.10622795060525583,
+              "bias": 0.003052493980052219,
+              "coverage90": 0.8125
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.07061109830569322,
+              "bias": 0.0200826365866557,
+              "coverage90": 0.8515625
+            }
+          }
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.10144506064030233,
+            null,
+            0.3393499630239606,
+            0.29682238223376267,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 97.20459937514698,
+              "bias": 15.976701194994375,
+              "coverage90": 0.892578125
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.14981517398750654,
+              "bias": 0.01985101558964446,
+              "coverage90": 0.884765625
+            },
+            "alpha": {
+              "n": 512,
+              "mae": 0.06288402554880497,
+              "bias": -0.0010807076383746392,
+              "coverage90": 0.9140625
+            }
+          }
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.06893573104133936,
+            0.05984117829711229,
+            0.17307825512807595,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 65.70887184787894,
+              "bias": 3.3023763030781716,
+              "coverage90": 0.93359375
+            },
+            "logg": {
+              "n": 497,
+              "mae": 0.08235781897955816,
+              "bias": -0.006808277873031446,
+              "coverage90": 0.96579476861167
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.07656626731901064,
+              "bias": 0.02416641773622721,
+              "coverage90": 0.91015625
+            }
+          }
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.23756348264238478,
+            0.1655544602781912
+          ],
+          "targets": {
+            "age": {
+              "n": 502,
+              "mae": 0.18714618573879752,
+              "bias": 0.027832704380540717,
+              "coverage90": 0.850597609561753
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.10624075338904242,
+              "bias": 0.007012195187004368,
+              "coverage90": 0.78515625
+            }
+          }
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.1789481097836824,
+            0.11452562148029621
+          ],
+          "targets": {
+            "age": {
+              "n": 497,
+              "mae": 0.13922351472062036,
+              "bias": 0.03526291154892926,
+              "coverage90": 0.8853118712273642
+            },
+            "distance": {
+              "n": 511,
+              "mae": 0.07213254357901124,
+              "bias": 0.0029051023297881804,
+              "coverage90": 0.6712328767123288
+            }
+          }
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.1347295720608172,
+            0.048148162847425104
+          ],
+          "targets": {
+            "age": {
+              "n": 512,
+              "mae": 0.10368131363159708,
+              "bias": 0.007401342980599588,
+              "coverage90": 0.83203125
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.02858084479987253,
+              "bias": -0.008868467298542114,
+              "coverage90": 0.537109375
+            }
+          }
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.03841992017880663,
+            null,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "logg": {
+              "n": 512,
+              "mae": 0.05635855107354048,
+              "bias": -0.010577180620338541,
+              "coverage90": 0.892578125
+            }
+          }
+        }
+      ]
+    },
+    "devtest": {
+      "macro_common_edge_crps": 0.14697325753667337,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.06259253114850323,
+            0.07949374556747167,
+            0.16585556879055938,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 59.644645000603745,
+              "bias": 9.472407189708978,
+              "coverage90": 0.86328125
+            },
+            "logg": {
+              "n": 512,
+              "mae": 0.11495022726629595,
+              "bias": 0.007824186299327173,
+              "coverage90": 0.83203125
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.07405528669441094,
+              "bias": 0.024170297147361377,
+              "coverage90": 0.853515625
+            }
+          }
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.10112856307598014,
+            null,
+            0.31298282914341496,
+            0.2831297363265902,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 95.48667889992103,
+              "bias": 9.906228877510314,
+              "coverage90": 0.896484375
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.13862785768401037,
+              "bias": 0.020007131132527833,
+              "coverage90": 0.890625
+            },
+            "alpha": {
+              "n": 511,
+              "mae": 0.06013074387891791,
+              "bias": 0.0032193904351962396,
+              "coverage90": 0.913894324853229
+            }
+          }
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.06624796894729446,
+            0.054812014641218695,
+            0.1845768842358156,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "teff": {
+              "n": 512,
+              "mae": 63.260601085549816,
+              "bias": 7.516895196065567,
+              "coverage90": 0.947265625
+            },
+            "logg": {
+              "n": 497,
+              "mae": 0.0753463084062871,
+              "bias": -0.009375286147213998,
+              "coverage90": 0.9738430583501007
+            },
+            "fe_h": {
+              "n": 512,
+              "mae": 0.08174577819134925,
+              "bias": 0.021619238522097003,
+              "coverage90": 0.87890625
+            }
+          }
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.24968197109897566,
+            0.16546621927427005
+          ],
+          "targets": {
+            "age": {
+              "n": 505,
+              "mae": 0.19574330828468753,
+              "bias": 0.016761344647269347,
+              "coverage90": 0.8257425742574257
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.10817977639740335,
+              "bias": 0.0033763885566214474,
+              "coverage90": 0.845703125
+            }
+          }
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.21213721028661947,
+            0.1842981457755101
+          ],
+          "targets": {
+            "age": {
+              "n": 494,
+              "mae": 0.16684342459638696,
+              "bias": 0.05050206756620722,
+              "coverage90": 0.9008097165991903
+            },
+            "distance": {
+              "n": 511,
+              "mae": 0.11893592455634074,
+              "bias": -0.00624692773968093,
+              "coverage90": 0.8043052837573386
+            }
+          }
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.13850236366236482,
+            0.048789054695430614
+          ],
+          "targets": {
+            "age": {
+              "n": 512,
+              "mae": 0.10736609260745504,
+              "bias": 0.0003728007022800318,
+              "coverage90": 0.84375
+            },
+            "distance": {
+              "n": 512,
+              "mae": 0.029347732232348114,
+              "bias": -0.004786428594457701,
+              "coverage90": 0.55859375
+            }
+          }
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.041877313916754845,
+            null,
+            null,
+            null,
+            null
+          ],
+          "targets": {
+            "logg": {
+              "n": 512,
+              "mae": 0.06058013111472838,
+              "bias": -0.00737152632426872,
+              "coverage90": 0.900390625
+            }
+          }
+        }
+      ]
+    }
+  },
+  "terminal_update": 4200,
+  "batch_identity_sha256": "b5edda4a199de75ad3827d3887528bb0aff5dacf384c67d92fe69ff364a1ae74",
+  "terminal_checkpoint_sha256": "5ffcbbcd0ddc0e1de618b1fa8f228673e482f219f889d6d87de152a8c5483923",
+  "array_sha256": {
+    "terminal-cal-StarHorse_apogee17_posterior_median.npz": "eb39b2a4e5853896e57c35093c9f40e5b401ad5b3eb208fa615830687782e256",
+    "terminal-tune-StarHorse_catalogue_posterior_median.npz": "1fe34bcb49351201df8586211bdf47ed7d79638a8dd0242d43f1ec906b01c589",
+    "terminal-cal-StarHorse_galahdr3_posterior_median.npz": "1c9fe8ad60ba534c93a4c1abc278940975a51d1631c3aba167b64711f333b8d3",
+    "terminal-cal-galah.npz": "8a4b089af11ea78b8d1ea201e11e8e004ff2c7edb198b1b5f5adaca74ca86b08",
+    "terminal-tune-desi.npz": "982f091b5005397037fba89d8f4bdf56ddbf3d6ce8c9da056bcf310a3a047283",
+    "terminal-cal-apogee.npz": "81f300631d68f101788d1a69a5dde179266e2be5f16c4c84aef95bf36ec49bf9",
+    "terminal-devtest-APOKASC3_loggSeis.npz": "7a2e4aceac215791b5e8f3ec96b64533d316e459037b7ecab7b17683e8f91528",
+    "terminal-tune-StarHorse_galahdr3_posterior_median.npz": "d4448e3cf817ea121bb340abb34e7ead7d78d8415f63f4525a2da7cde5183ced",
+    "terminal-devtest-galah.npz": "0dbd44dc72e580308fed490a4c6a286f2b21284a52977c1e40c65a31a43015a4",
+    "terminal-devtest-apogee.npz": "40991835f12537c4b48d82eacf35c12bf27183122d0c518ff82e099db1b060ed",
+    "terminal-tune-StarHorse_apogee17_posterior_median.npz": "a71fb9a92b926671e5233c9eede2dc4e7e466bfd076d9613a22ff47b710073f2",
+    "terminal-tune-galah.npz": "415c6842e2e3f8574875c67eea1900a38c43639ea3d976238a7e5b7069618b5f",
+    "terminal-cal-StarHorse_catalogue_posterior_median.npz": "5d14a1165fbc6b6ec9967b4f30013dc45a09f97f299c9a9c593db9ecb1ca1b1f",
+    "terminal-cal-APOKASC3_loggSeis.npz": "cc848352c2b27378a865a1f7a6a0e861b52e2e7f8a09d8e25e9668a2249895a5",
+    "terminal-cal-desi.npz": "be930a8db2f79d7ab33eb1ba545750fe993eb6e1bccbc034a26cfc669e9bdfb0",
+    "terminal-devtest-StarHorse_galahdr3_posterior_median.npz": "cde6b952169e2ae575bb54dfd2e6221b2d53937f70eeb8189cf67cf112044510",
+    "terminal-tune-apogee.npz": "42fd37b943dfcd5a25140cf5ada307f7ffe58a74bf28b618a14cb9653d824568",
+    "terminal-tune-APOKASC3_loggSeis.npz": "05454260de9d36faae9bf96ccae4ea1aad6fc9e62a6f509ecee1db7d62677813",
+    "terminal-devtest-StarHorse_catalogue_posterior_median.npz": "9a94dfaf12a31e50773f6054165ff81cce9d20fd3f4269694339743bbc7fcbfb",
+    "terminal-devtest-StarHorse_apogee17_posterior_median.npz": "e90757cd3e3d48a7125c391e28b9d2f5b69f47d782d2a68a45c5e8580985abfc",
+    "terminal-devtest-desi.npz": "d63947be3338ae6aa12ae6866abad2558bf65dc0e1bfe72a42863d47395eb94a"
+  }
+}

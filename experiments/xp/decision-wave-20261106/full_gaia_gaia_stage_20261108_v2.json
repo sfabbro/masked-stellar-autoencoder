@@ -1,0 +1,23 @@
+{
+  "run_id": "full_gaia_gaia_stage_20261108_v2",
+  "utc": "2026-11-09T02:04:44.298243+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_gaia_stage_20261108_v2",
+  "status": "accepted",
+  "session_ids": [
+    "v1kyrpx1"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/run_full_gaia_correction_sources.py', '--mode', 'gaia', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2'];runpy.run_path(sys.argv[0],run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/run_full_gaia_correction_sources.py": "127cce243f0f187b0db5824698968f46f37de55b305c1c75dc22fe2c3b600658",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+    "configs/full-gaia-observation-columns-20261108.json": "50a8d0b734f97ae96fd6a97cb038fa84ff892144a28757ef57fba4be5e593fb4",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "1cd96b0b1de14dd967c6e3694cd2af1658a98399b3307acc44a587c5009b7d0c"
+}

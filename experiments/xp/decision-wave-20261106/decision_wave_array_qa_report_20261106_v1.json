@@ -1,0 +1,22 @@
+{
+  "run_id": "decision_wave_array_qa_report_20261106_v1",
+  "utc": "2026-11-05T23:42:14.845919+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_array_qa_report_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_wave_array_qa_report_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "txf2kymg"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['report','--runs','runs.json','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_array_qa_report_20261106_v1'];runpy.run_path('report.py',run_name='__main__')",
+  "source_sha256": {
+    "report.py": "a49c072a2fb742d1be8138052204b9841bbd65378acbed5cd8c68c8465efe9e4",
+    "runs.json": "1589c9864c0783c780a02ff471deef16784fe377a3a8e395345de0d66fc3378b",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "c18f56bbc2bb13e5368d5d5f0c61cd07e7354ce97f8ba7f6473bb933b250ccfc"
+}

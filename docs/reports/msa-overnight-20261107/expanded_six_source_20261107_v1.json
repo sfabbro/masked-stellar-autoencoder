@@ -1,0 +1,169 @@
+{
+  "status": "failed",
+  "training_performed": false,
+  "model_loaded": false,
+  "config_sha256": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+  "sources": {
+    "apogee": {
+      "rows": 180826,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        180826,
+        180826,
+        180800,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 126108,
+        "tune": 17924,
+        "cal": 18189,
+        "devtest": 17828,
+        "external": 777
+      }
+    },
+    "desi": {
+      "rows": 1711197,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        1711197,
+        1711197,
+        1711197,
+        1710481,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 1197575,
+        "tune": 171071,
+        "cal": 170662,
+        "devtest": 171783,
+        "external": 106
+      }
+    },
+    "galah": {
+      "rows": 557273,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        557273,
+        538557,
+        557273,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 390345,
+        "tune": 55446,
+        "cal": 55490,
+        "devtest": 55678,
+        "external": 314
+      }
+    },
+    "StarHorse_apogee17_posterior_median": {
+      "rows": 49669,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        48547,
+        49667
+      ],
+      "role_rows": {
+        "fit": 35825,
+        "tune": 5004,
+        "cal": 4334,
+        "devtest": 3554,
+        "external": 952
+      }
+    },
+    "StarHorse_galahdr3_posterior_median": {
+      "rows": 99647,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        98180,
+        99438
+      ],
+      "role_rows": {
+        "fit": 79086,
+        "tune": 10782,
+        "cal": 6840,
+        "devtest": 2803,
+        "external": 136
+      }
+    },
+    "StarHorse_catalogue_posterior_median": {
+      "rows": 6901,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        6901,
+        6901
+      ],
+      "role_rows": {
+        "fit": 2827,
+        "tune": 676,
+        "cal": 1360,
+        "devtest": 2038,
+        "external": 0
+      }
+    },
+    "lamost_dr12v2_lrs_lasp": {
+      "rows": 1982248,
+      "outside_feature_union": 1282853,
+      "observed_per_target": [
+        1964717,
+        1982160,
+        1982246,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 1460683,
+        "tune": 195716,
+        "cal": 142940,
+        "devtest": 160943,
+        "external": 183
+      }
+    },
+    "rave_dr6_madera_gauguin": {
+      "rows": 119075,
+      "outside_feature_union": 69868,
+      "observed_per_target": [
+        119075,
+        119075,
+        98492,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 88537,
+        "tune": 11799,
+        "cal": 8981,
+        "devtest": 9637,
+        "external": 68
+      }
+    }
+  },
+  "training_source_ready": false,
+  "base_stars": 4441942,
+  "expanded_feature_stars": 4756867,
+  "total_stars": 9198809,
+  "benchmark_stars": 94,
+  "protected_globular_members": 2418,
+  "prior_fit_moved_to_external": 847,
+  "feature_rows_written": 9183232,
+  "error": "ValueError('Native records require sorted unique exact IDs and finite observed values')"
+}

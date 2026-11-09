@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "native_vs_vizier_exact_id_and_five_columns": 12384,
+  "saved_devtest_ids_and_seismic_values_verified": 734,
+  "common_bias_recomputed": 0.22870788294957078,
+  "plot_sha256": "f478da84623f515ce05bf2faba95c812ac9be423b4c1fe4bf19d502e7810b7ea"
+}

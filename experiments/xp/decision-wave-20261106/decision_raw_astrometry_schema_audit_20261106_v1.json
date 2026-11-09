@@ -1,0 +1,22 @@
+{
+  "run_id": "decision_raw_astrometry_schema_audit_20261106_v1",
+  "utc": "2026-11-06T01:17:15.675246+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_raw_astrometry_schema_audit_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_raw_astrometry_schema_audit_20261106_v1",
+  "status": "completed",
+  "session_ids": [
+    "fkmbxxu0"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import runpy;runpy.run_path('audit.py',run_name='__main__')",
+  "source_sha256": {
+    "audit.py": "10b061746ba146b655a496527d41a5e77c9e37f64d07006f5b8c7ea0044ec760",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "ac20aca8474ee11010e2152408dbb3f101ceb21f2811787ee88be9654f179646",
+  "outcome": "512 representative raw rows across four shards have finite distinct RA/Dec, proper motions, parallaxes and positive formal errors; source producer uses degree coordinates."
+}

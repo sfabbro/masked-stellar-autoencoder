@@ -1,0 +1,14 @@
+{
+  "status": "additional_full_raw_features_complete",
+  "training_performed": false,
+  "role_assignment_performed": false,
+  "training_source_ready": false,
+  "current_source_sha256": "c5e68ed0b8b0c01030e5dd69cd99afc0faf18d930635a9277fbf630187d0956f",
+  "additional_candidate_stars": 3823504,
+  "scope": "All admitted additional-survey candidates outside current 9.2M-star input union; full raw lookup including cache misses. Source-only, no automatic change to the active training job or its roles.",
+  "input_recovered": 3187386,
+  "input_with_xp": 3187386,
+  "raw_parallax_with_formal_error": 3187338,
+  "output_sha256": "d63e7e8165cf962f394c6a44d40f2bf1722405e40d944bdcd6ec4d5ef14b9261",
+  "remaining": "Join identities to original supervised/benchmark/dependency roles and fresh protected groups before any future activation. The running large candidate keeps its pinned existing source."
+}

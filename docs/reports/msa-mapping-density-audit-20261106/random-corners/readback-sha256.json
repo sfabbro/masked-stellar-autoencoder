@@ -1,0 +1,26 @@
+{
+  "decision6_mdn_parallax_20261106_v1-random-logg-gallery.png": {
+    "bytes": 179809,
+    "sha256": "e5f4edcac04f31e32015f85f708dbd9f49dba0f905d095375373103c6402be2a"
+  },
+  "decision6_mdn_photxp_20261106_v1-random-logg-gallery.png": {
+    "bytes": 181642,
+    "sha256": "4d203414ca021d1a331bfdb10673fe19ad143f1dccd8e23dc65e6f9ba49dd653"
+  },
+  "decision6_mdn_parallax_20261106_v1-4694907817311533952-corner.png": {
+    "bytes": 143935,
+    "sha256": "464aaa5e65e7975c94cdfa364a168ab9996d9026439302340fa0a5c6b8895415"
+  },
+  "decision6_mdn_parallax_20261106_v1-1405433012875924224-corner.png": {
+    "bytes": 145551,
+    "sha256": "1ddc0393c3e87a955736f81ce78879568ac5778c692896c028dd4f3220f02e46"
+  },
+  "decision6_mdn_parallax_20261106_v1-mode-flags.npz": {
+    "bytes": 7931,
+    "sha256": "a197e93f36b9d61648dea29bab1c21f272dafa5ac39d1d80315b95b7fcf9cfd9"
+  },
+  "decision6_mdn_photxp_20261106_v1-mode-flags.npz": {
+    "bytes": 8086,
+    "sha256": "a92b48f08a93dd8e6b27879e0069a01c669e0e1287290396f29e8f6ca6dbf06f"
+  }
+}

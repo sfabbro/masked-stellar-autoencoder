@@ -1,0 +1,38 @@
+{
+  "status": "feature_union_candidate_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "role_assignment_performed": false,
+  "config_sha256": "ec8e43bb3c7bd199410fc721e35fa4bfbc67aea53028be7b5f9c056063228b4f",
+  "config": {
+    "schema": "msa-new-survey-feature-union-v1",
+    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_feature_union_dr12_20261106_v1",
+    "base": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+    "gaia_sidecar": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+    "gaia_sha256": "3427de9f51b116bcc59817b015b3dc2965ae8de8cf86baeb696b2a127937ac49",
+    "lamost_sidecar": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+    "lamost_sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23",
+    "legacy": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+    "legacy_sha256": "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120",
+    "cache": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1",
+    "cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+    "original": "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5",
+    "scan_original": false,
+    "allow_unknown_photometry": false,
+    "training_enabled": false,
+    "assign_roles": false,
+    "lamost_source_name": "lamost_dr12v2_lrs_lasp"
+  },
+  "candidate_union": 8127876,
+  "new_candidate_stars": 7591872,
+  "new_ids_sha256": "8abbad75375b0fb27025acc3b17eee33fa68ccf33027f5884c04bc3e437834ec",
+  "recovered_stars": 4756867,
+  "counts": {
+    "complete_xp": 4756867,
+    "unknown": 2835005
+  },
+  "input_xp_present": 4756867,
+  "feature_table_sha256": "d4d8ea8e972625cb040c0fdcf4cc60675c03823b43826cef4b57d6d725e14f23",
+  "feature_proof_sha256": "2409b983df1801bf0f80c9483615966cf39c993ded9f932a77cfed0332c7857f",
+  "source_scope": "Existing base not modified or copied; new candidates remain unassigned; only available cached/legacy inputs recovered, no full original-source scan"
+}

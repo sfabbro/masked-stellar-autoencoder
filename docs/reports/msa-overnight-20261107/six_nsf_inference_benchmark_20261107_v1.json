@@ -1,0 +1,203 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "models_changed": false,
+  "benchmarks": [
+    {
+      "operation": "encoder",
+      "batch": 64,
+      "draws": 0,
+      "median_seconds": 0.0017895549535751343,
+      "stars_per_second": 35763.08169365919,
+      "peak_allocated_bytes": 187315200
+    },
+    {
+      "operation": "encoder",
+      "batch": 256,
+      "draws": 0,
+      "median_seconds": 0.004754744470119476,
+      "stars_per_second": 53840.95856439732,
+      "peak_allocated_bytes": 212589568
+    },
+    {
+      "operation": "encoder",
+      "batch": 1024,
+      "draws": 0,
+      "median_seconds": 0.01700221188366413,
+      "stars_per_second": 60227.45787469381,
+      "peak_allocated_bytes": 316702720
+    },
+    {
+      "operation": "encoder",
+      "batch": 4096,
+      "draws": 0,
+      "median_seconds": 0.07106356136500835,
+      "stars_per_second": 57638.541065532176,
+      "peak_allocated_bytes": 736301056
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 16,
+      "draws": 32,
+      "median_seconds": 0.01959356665611267,
+      "stars_per_second": 816.5945629408124,
+      "peak_allocated_bytes": 208014336
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 16,
+      "draws": 128,
+      "median_seconds": 0.022310500964522362,
+      "stars_per_second": 717.1510861832653,
+      "peak_allocated_bytes": 363569152
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 16,
+      "draws": 512,
+      "median_seconds": 0.10689987242221832,
+      "stars_per_second": 149.67276983086953,
+      "peak_allocated_bytes": 952655872
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 64,
+      "draws": 32,
+      "median_seconds": 0.022277211770415306,
+      "stars_per_second": 2872.8909461189214,
+      "peak_allocated_bytes": 363581440
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 64,
+      "draws": 128,
+      "median_seconds": 0.10688798874616623,
+      "stars_per_second": 598.7576410665272,
+      "peak_allocated_bytes": 952668160
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 64,
+      "draws": 512,
+      "median_seconds": 0.4260997623205185,
+      "stars_per_second": 150.19956747091132,
+      "peak_allocated_bytes": 3148779520
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 256,
+      "draws": 32,
+      "median_seconds": 0.1068454161286354,
+      "stars_per_second": 2395.984865572441,
+      "peak_allocated_bytes": 952717312
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 256,
+      "draws": 128,
+      "median_seconds": 0.4261720385402441,
+      "stars_per_second": 600.6963781032423,
+      "peak_allocated_bytes": 3148828672
+    },
+    {
+      "operation": "flow_samples_given_latent",
+      "batch": 256,
+      "draws": 512,
+      "status": "out_of_memory"
+    }
+  ],
+  "allocated_before_quantile_bytes": 177885184,
+  "checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+  "source_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "gpu": "NVIDIA H100 NVL MIG 1g.12gb",
+  "latent_dim": 256,
+  "input_rows": 4096,
+  "storage_218131884_stars": {
+    "source_id_int64": 1745055072,
+    "latent_float32": 223367049216,
+    "six_marginal_quantile_grids_float32": 172760452128,
+    "joint_1024_draws_float32": 5360809181184
+  },
+  "storage_174922161_stars": {
+    "source_id_int64": 1399377288,
+    "latent_float32": 179120292864,
+    "six_marginal_quantile_grids_float32": 138538351512,
+    "joint_1024_draws_float32": 4298887028736
+  },
+  "sample_quantile_convergence": {
+    "32": {
+      "median_absolute_standardized_quantile_difference_per_target": [
+        0.04212567880749696,
+        0.057204410061239996,
+        0.11304016113281268,
+        0.10710805356502429,
+        0.07544675469398499,
+        0.0680930256843566
+      ],
+      "p95_absolute_standardized_quantile_difference_per_target": [
+        0.24831965051591393,
+        0.36848106808960435,
+        0.5399899998307224,
+        0.38067313767969585,
+        0.4772397890686987,
+        0.3060154218226671
+      ]
+    },
+    "128": {
+      "median_absolute_standardized_quantile_difference_per_target": [
+        0.020631656050682068,
+        0.026128429174423373,
+        0.0466418236494065,
+        0.045260779559612274,
+        0.03632411211729042,
+        0.03081259354949057
+      ],
+      "p95_absolute_standardized_quantile_difference_per_target": [
+        0.12330373749136928,
+        0.19537321619689452,
+        0.2767347151041029,
+        0.2019102351740002,
+        0.2056034060567616,
+        0.1369737195968628
+      ]
+    },
+    "256": {
+      "median_absolute_standardized_quantile_difference_per_target": [
+        0.011531239748001007,
+        0.015469828248023954,
+        0.029309525340795367,
+        0.02737414985895148,
+        0.023012726008892093,
+        0.020247501134872392
+      ],
+      "p95_absolute_standardized_quantile_difference_per_target": [
+        0.07645937606692321,
+        0.10846953339874767,
+        0.1932945585250852,
+        0.13376361653208715,
+        0.13334019795060142,
+        0.0775372145697474
+      ]
+    },
+    "512": {
+      "median_absolute_standardized_quantile_difference_per_target": [
+        0.007181066274642878,
+        0.009674255549907682,
+        0.016659718751907304,
+        0.017035180330276456,
+        0.012181949615478804,
+        0.009683814644812938
+      ],
+      "p95_absolute_standardized_quantile_difference_per_target": [
+        0.05159578070044507,
+        0.0644358137249962,
+        0.1192181977629657,
+        0.08685054555535243,
+        0.06507772415876382,
+        0.04734854370355585
+      ]
+    }
+  },
+  "scope": "Warm GPU architecture benchmark on an existing frozen checkpoint; no physical accuracy, PDF normalization, marginal quadrature or training choice inferred. Timing excludes catalogue I/O, CPU conversion, quantile reduction, compression and job scheduling. Flow+exact float32 context defines on-demand whole-vector draws; stored marginal grids are approximations, not exact analytic marginal densities. Finite-draw quantile convergence uses 1,024 nested draws as a noisy reference, not ground truth. No per-star 1,024-draw all-sky catalogue is launched by this benchmark."
+}

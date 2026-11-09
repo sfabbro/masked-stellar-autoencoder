@@ -1,0 +1,550 @@
+{
+  "utc": "2026-11-05T23:53:09.118929+00:00",
+  "decision_target": "2026-11-07T19:30:00+08:00",
+  "receipts": [
+    {
+      "run_id": "decision6_gaussian_parallax_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_gaussian_parallax_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_gaussian_parallax_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:27.800191+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "wpkuk4w1"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "e29ed97f69f12d91dfba2a0473ed52dc85ff296c15436c1105ab65af6845e767"
+    },
+    {
+      "run_id": "decision6_gaussian_photxp_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_gaussian_photxp_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_gaussian_photxp_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:22.854908+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "qau40ujl"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "0266eefb30ad1b5338ff1704bd5f3b781ef03ce0366c99ff870328de1283fc5b"
+    },
+    {
+      "run_id": "decision6_mdn_parallax_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_mdn_parallax_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_mdn_parallax_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:33.642158+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "xd67cic9"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "58a1261679edb74a7db9fb586aa07bb1ad458252a4aeec0fac5e73849d30fe71"
+    },
+    {
+      "run_id": "decision6_mdn_photxp_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_mdn_photxp_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_mdn_photxp_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:30:36.110390+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "fy21b76l"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "96d8585c87868c8bbfc7f0819be89a9d74b799c8ebc88ce11326143b6b3a2c69"
+    },
+    {
+      "run_id": "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:47.512195+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "ow1dv01n"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "9b82b60c3d0eab89879d45c3877dce7e854481774c47691745817e1990549137"
+    },
+    {
+      "run_id": "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:42.214840+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "vm57z70n"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "be4a49583b398508fa89e2a8dbec76269b91a2f4e916385b369534e504810f93"
+    },
+    {
+      "run_id": "decision6_nsf_energy_parallax_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_parallax_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_nsf_energy_parallax_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:32:37.901135+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "tf5ol2y2"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "49273635afcca549eba4459c593ac8653a4e0a5322ba87f2f849b751d3510b0a"
+    },
+    {
+      "run_id": "decision6_nsf_energy_photxp_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_photxp_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_nsf_energy_photxp_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_six_pilot.py --config configs/decision-six-wave-20261106.yaml --run-id \"$MSA_EXPERIMENT_RUNS\" --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:30:41.697375+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "pti5lsfz"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5"
+      },
+      "payload_sha256": "21c348ae75deacac1cb9e45b2c5000734f5d17ec7edac5253c83275f95aa84db"
+    },
+    {
+      "run_id": "decision6_pdf_qa_worker_20261106_v1",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_pdf_qa_worker_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision6_pdf_qa_worker_20261106_v1",
+      "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+      "branch": "codex/multisurvey-abundance-union-20261028",
+      "command": "python -u scripts/run_decision_pdf_worker.py --config configs/decision-six-wave-20261106.yaml --output \"$experiment_output\"",
+      "utc": "2026-11-05T23:44:59.820243+00:00",
+      "status": "accepted",
+      "session_ids": [
+        "uh9gy7on"
+      ],
+      "resources": {
+        "gpu": 1,
+        "cores": 4,
+        "ram": 64
+      },
+      "source_sha256": {
+        "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+        "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+        "scripts/run_decision_pdf_worker.py": "d9a7ca68d4874a1e3519aca95424c82fe1b9b548b93049c70cb8f05ae0b0244a",
+        "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3"
+      },
+      "payload_sha256": "dbea9cd563734ed5ab35ecb96390c24d9a45c9edc65d49d6604f0ca8c0ec634d"
+    },
+    {
+      "run_id": "decision_dr20_legacy_source_audit_20261106_v1",
+      "utc": "2026-11-05T23:41:01.319012+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_dr20_legacy_source_audit_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "kdpbzkfs"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 64,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['audit','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1'];runpy.run_path('audit.py',run_name='__main__')",
+      "source_sha256": {
+        "audit.py": "995418d82eda9c67a376df4f99ff5036aadb65d102e49ff064879b0d4ec80874",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "2eab719fbf3ab14daca05814db90db78f1b8f88865343ce02b758ce0d6d25ccc"
+    },
+    {
+      "run_id": "decision_dr20_mrs_label_admission_20261106_v1",
+      "utc": "2026-11-05T23:49:04.966264+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_dr20_mrs_label_admission_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "gf3f4b5v"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.path.insert(0,'src');sys.argv=['admit','--benchmarks','benchmarks.json','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1'];runpy.run_path('admit.py',run_name='__main__')",
+      "source_sha256": {
+        "admit.py": "169a90d6a9108cfa128d2cc787a4e3e6da0bede53d917bfe53004ac152015d60",
+        "benchmarks.json": "5f21640d33d3313e8584e6439706b522dbdaf5964c3d2ad671d130da87df87bd",
+        "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "src/masked_stellar_autoencoder/training/multisurvey_overlay.py": "8114002725c61bacd4ee02b4660fa01133c910743287cf01ca12ad0fa68db03b",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "1a9753ae63b29310a0f40ab1283e561cdf556ea306386ce1d6689796e2d95a71"
+    },
+    {
+      "run_id": "decision_expanded_parallax_audit_20261106_v1",
+      "utc": "2026-11-05T23:50:56.722109+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_expanded_parallax_audit_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_expanded_parallax_audit_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "es4y8r67"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['audit','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_expanded_parallax_audit_20261106_v1'];runpy.run_path('audit.py',run_name='__main__')",
+      "source_sha256": {
+        "audit.py": "8a4dfecc5497cfafc7bafe2628761c2f1d2da27b367f9c60e9873942248e5205",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "4ab51a671d7a25fb7f6fbc0ad7d6a21afed083cb4bc3e956d6d28e38382c52e9"
+    },
+    {
+      "run_id": "decision_frozen_new_survey_maps_20261106_v1",
+      "utc": "2026-11-05T23:39:08.527477+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_frozen_new_survey_maps_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_frozen_new_survey_maps_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "utd9dmii"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.path.insert(0,'src');sys.argv=['maps','--config','config.json','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_frozen_new_survey_maps_20261106_v1'];runpy.run_path('maps.py',run_name='__main__')",
+      "source_sha256": {
+        "maps.py": "9030b3780884a587befa11d96fb23d3a91fb6b4eaf6b6a305ddf87c1b4998084",
+        "config.json": "07178b77f745d58ca0fbde2d6b4b487c8f61fe1cb142908014223268ce2c9a4b",
+        "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "src/masked_stellar_autoencoder/training/export_mixture_diagnostics.py": "e52015183322dfd659705ffe68eaa44c79bb20e8d3274c87ecc5b1e89ad6edff",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "bcc2e59f2b5577bb1cda11b4c7f985537fbc7a780db05da873e2cbc0a78be4a0"
+    },
+    {
+      "run_id": "decision_source_census_20261106_v1",
+      "utc": "2026-11-05T23:36:44.961796+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_source_census_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_source_census_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "qkltlmzo"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['census','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_source_census_20261106_v1','--config','config.json'];runpy.run_path('census.py',run_name='__main__')",
+      "source_sha256": {
+        "census.py": "5e2c71b379e2096bbdd12cbd96bf3af570574944f932a96c2a01ed2d9547ba63",
+        "config.json": "ec8e43bb3c7bd199410fc721e35fa4bfbc67aea53028be7b5f9c056063228b4f",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "c4fdb5f7928ff36a783d16452298358c07946d6390d13a695307bc99c112ebf1"
+    },
+    {
+      "run_id": "decision_wave_array_qa_report_20261106_v1",
+      "utc": "2026-11-05T23:42:14.845919+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_array_qa_report_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_wave_array_qa_report_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "txf2kymg"
+      ],
+      "resources": {
+        "cpu": 2,
+        "ram": 16,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['report','--runs','runs.json','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_array_qa_report_20261106_v1'];runpy.run_path('report.py',run_name='__main__')",
+      "source_sha256": {
+        "report.py": "a49c072a2fb742d1be8138052204b9841bbd65378acbed5cd8c68c8465efe9e4",
+        "runs.json": "1589c9864c0783c780a02ff471deef16784fe377a3a8e395345de0d66fc3378b",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "c18f56bbc2bb13e5368d5d5f0c61cd07e7354ce97f8ba7f6473bb933b250ccfc"
+    },
+    {
+      "run_id": "decision_xp_catalogue_qa_20261106_v1",
+      "utc": "2026-11-05T23:34:56.570181+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_xp_catalogue_qa_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_xp_catalogue_qa_20261106_v1",
+      "status": "accepted",
+      "session_ids": [
+        "mkoy9zq3"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['qa','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_xp_catalogue_qa_20261106_v1','--bindings','bindings.json'];runpy.run_path('run_decision_xp_catalogues.py',run_name='__main__')",
+      "source_sha256": {
+        "run_decision_xp_catalogues.py": "7a7a18f2196fc9531ff949713f254d6a1ff391d4cb7cb3c05f06bb151b02b59f",
+        "bindings.json": "b8590fa64a8b39e7f909639167e192ad065521621b8bc41f495ba0075777e9af",
+        "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+      },
+      "payload_sha256": "2194ff13c29295d873fa2f7c42fc674c7de745088f7c9dc4c945389538f0a5d9"
+    }
+  ],
+  "gaia_eso_upload_status": "User-approved indexed ESA query working: first 5000 source rows complete, 62496 candidate pairs, subsequent batches running. Local full-input scan progressing independently.",
+  "final_training_started": false,
+  "snapshot_utc": "2026-11-05T23:54:30.854800+00:00",
+  "runtime_status": {
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1": "running",
+    "decision6_mdn_photxp_20261106_v1": "running",
+    "decision6_gaussian_photxp_20261106_v1": "running",
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1": "running",
+    "decision_dr20_mrs_label_admission_20261106_v1": "additional_native_source_candidates_complete",
+    "decision_dr20_legacy_source_audit_20261106_v1": "native_source_audit_complete",
+    "decision_source_census_20261106_v1": "source_census_complete",
+    "decision_expanded_parallax_audit_20261106_v1": "expanded_cache_parallax_candidate_complete",
+    "decision6_pdf_qa_worker_20261106_v1": "waiting_or_scoring",
+    "decision6_mdn_parallax_20261106_v1": "running",
+    "decision6_nsf_energy_parallax_20261106_v1": "running",
+    "decision_wave_array_qa_report_20261106_v1": "waiting",
+    "decision_xp_catalogue_qa_20261106_v1": "running",
+    "decision6_nsf_energy_photxp_20261106_v1": "running",
+    "decision_frozen_new_survey_maps_20261106_v1": "frozen_new_survey_maps_complete",
+    "decision6_gaussian_parallax_20261106_v1": "running"
+  },
+  "crossmatch_receipts": [
+    {
+      "run_id": "decision_ges_gaia_candidates_20261106_v1",
+      "utc": "2026-11-05T23:58:07.392087+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_20261106_v1",
+      "status": "failed_before_script_confirmed_by_arc",
+      "session_ids": [
+        "hlb1ofvx"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v1'];runpy.run_path('candidate.py',run_name='__main__')",
+      "source_sha256": {
+        "candidate.py": "1b9916c580ba6d5739dd58c5fa1bc50438abc6546137eddd03416dbe5ba78a8b",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "09192f2ea388867eced3b0a4a0b526d6be812bd74bb61fc580acf7274dfb1ded",
+      "reconciliation": "Session no longer listed and logs unavailable. Authenticated ARC metadata confirms source bundle exists but script output directory does not. Script creates that directory and initial manifest before any ESA submission; no upload/query executed."
+    },
+    {
+      "run_id": "decision_ges_gaia_candidates_20261106_v2",
+      "utc": "2026-11-06T01:13:29.681342+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v2",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_20261106_v2",
+      "status": "archive_query_aborted",
+      "session_ids": [
+        "m3py8p5m"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_20261106_v2'];runpy.run_path('candidate.py',run_name='__main__')",
+      "source_sha256": {
+        "candidate.py": "1b9916c580ba6d5739dd58c5fa1bc50438abc6546137eddd03416dbe5ba78a8b",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "cfcbd9be2c585cc3ea7e03f838b019f1bc49b0f4a11e534ca5e394d6607b4ada",
+      "outcome": "ESA accepted the upload and created an archive job, then cancelled query execution. Its terminal ABORTED phase and error were read; no successful result claimed."
+    },
+    {
+      "run_id": "decision_ges_gaia_candidates_batched_20261106_v3",
+      "utc": "2026-11-06T01:21:31.380766+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_batched_20261106_v3",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_batched_20261106_v3",
+      "status": "failed_before_query_run",
+      "session_ids": [
+        "eyi2xvzd"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_batched_20261106_v3'];runpy.run_path('candidate.py',run_name='__main__')",
+      "source_sha256": {
+        "candidate.py": "5ba72afa66eecb675e15594fcc9c38ec7330a63b528605fe575550f2b9f11158",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "2a462b05874c53509ed63f469f18c5e587bd72a72dc854ec6c794ed988ca4eb0",
+      "outcome": "ESA created the first 5000-row upload job, but changing executionduration returned HTTP 500. The upload was reused by v4; not blindly resubmitted."
+    },
+    {
+      "run_id": "decision_ges_gaia_candidates_indexed_20261106_v5",
+      "utc": "2026-11-06T01:27:27.441974+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_indexed_20261106_v5",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_indexed_20261106_v5",
+      "status": "accepted",
+      "session_ids": [
+        "cs1y9521"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_indexed_20261106_v5'];runpy.run_path('candidate.py',run_name='__main__')",
+      "source_sha256": {
+        "candidate.py": "c50d8d7a352f3cb529084afb0883dfdfc47550bf8d7379a87732b38111f707dc",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "d99b96968ea9758c6a445244adfb408cfdac15254a6ec0f95f60553033096576"
+    },
+    {
+      "run_id": "decision_ges_gaia_candidates_resume_20261106_v4",
+      "utc": "2026-11-06T01:24:24.303822+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_resume_20261106_v4",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_gaia_candidates_resume_20261106_v4",
+      "status": "archive_query_aborted",
+      "session_ids": [
+        "u3ynajtc"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['candidate','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_gaia_candidates_resume_20261106_v4'];runpy.run_path('candidate.py',run_name='__main__')",
+      "source_sha256": {
+        "candidate.py": "48fd16d7dad05eabba96191e98aee8f195d8425c454591bc1b41b70a4544887a",
+        "resume-job.json": "6a72692b21561f6b9034625f84efbbff2fe494e9d6e185666060c04334ae3936",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "776382e889d150156c3d47fa9cfda873f198b573c94b5037a1a741599e7abe97",
+      "outcome": "Resumed the existing first batch without re-upload; archive phase confirmed ABORTED before indexed v5 recovery."
+    },
+    {
+      "run_id": "decision_ges_local_full_input_xmatch_20261106_v1",
+      "utc": "2026-11-06T01:09:38.340445+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v1",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_local_full_input_xmatch_20261106_v1",
+      "status": "failed_before_script",
+      "session_ids": [
+        "tq7zmfa3"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['local-match','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v1'];runpy.run_path('local_match.py',run_name='__main__')",
+      "source_sha256": {
+        "local_match.py": "bee86c00f7351a64d28b1d94df999fa53b59bf95ae5a26a5457270f441a9d7c9",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "b1b50c57d150508437d5fef085c2406d1391830487cf86ef142006e36711e462",
+      "failure_reason": "Pixi conda/PyPI mapping hostname absent from worker DNS proxy allowlist; no matching or data upload",
+      "session_status": "Failed"
+    },
+    {
+      "run_id": "decision_ges_local_full_input_xmatch_20261106_v2",
+      "utc": "2026-11-06T01:13:13.312698+00:00",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v2",
+      "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_wave_source_bundles_20261106_v1/decision_ges_local_full_input_xmatch_20261106_v2",
+      "status": "accepted",
+      "session_ids": [
+        "bcstwc07"
+      ],
+      "resources": {
+        "cpu": 4,
+        "ram": 32,
+        "gpu": 0
+      },
+      "command": "import runpy,sys;sys.argv=['local-match','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/decision_ges_local_full_input_xmatch_20261106_v2'];runpy.run_path('local_match.py',run_name='__main__')",
+      "source_sha256": {
+        "local_match.py": "bee86c00f7351a64d28b1d94df999fa53b59bf95ae5a26a5457270f441a9d7c9",
+        "pixi.toml": "755e1ff83ac2c87b57ed27379bf8e681fa70bd4e5ee28a6ab60ef6c95a985981"
+      },
+      "payload_sha256": "6f36b1bb5a2ae5e66c0438b39897139f25a342a635726fefd43f2b4d6df89d38"
+    }
+  ]
+}

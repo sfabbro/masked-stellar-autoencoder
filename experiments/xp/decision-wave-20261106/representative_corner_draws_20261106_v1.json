@@ -1,0 +1,24 @@
+{
+  "run_id": "representative_corner_draws_20261106_v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/representative_corner_draws_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/representative_corner_draws_20261106_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_representative_corner_worker.py --config configs/decision-six-wave-20261106.yaml --output \"$experiment_output\"",
+  "utc": "2026-11-06T06:32:53.880495+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "e38nvr91"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {
+    "scripts/run_representative_corner_worker.py": "fe917fa951d6ea8faf0755be4e284f4fe3c33624d168a62aede2d374f1ac45ad",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e"
+  },
+  "payload_sha256": "004dbdf7ccb810d5f9eb0455dac7061e8230b9058a2790f55ee1c7de9a713c07"
+}

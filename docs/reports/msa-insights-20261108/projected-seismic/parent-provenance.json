@@ -1,0 +1,28 @@
+{
+  "run_id": "decision6_nsf_energy_parallax_20261106_v1",
+  "arm": {
+    "run_id": "decision6_nsf_energy_parallax_20261106_v1",
+    "kind": "nsf_energy",
+    "encoder": "finetune",
+    "reconstruction_weight": 0.03,
+    "input_profile": "phot_xp_measured_parallax"
+  },
+  "selected_update": 8000,
+  "per_target_source_presentations": {
+    "teff:apogee": 808694,
+    "teff:galah": 1314451,
+    "logg:apogee": 810156,
+    "logg:galah": 1281109,
+    "fe_h:apogee": 808310,
+    "fe_h:galah": 1314451,
+    "age:StarHorse_apogee17_posterior_median": 389290,
+    "age:StarHorse_galahdr3_posterior_median": 417613,
+    "distance:StarHorse_apogee17_posterior_median": 394677,
+    "distance:StarHorse_galahdr3_posterior_median": 419759,
+    "alpha:DESI_RVSpecFit_alpha_fe": 509423,
+    "age:StarHorse_catalogue_posterior_median": 320852,
+    "distance:StarHorse_catalogue_posterior_median": 320852
+  },
+  "parent_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "selected_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1"
+}

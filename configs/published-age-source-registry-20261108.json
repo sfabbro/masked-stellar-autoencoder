@@ -1,0 +1,199 @@
+{
+  "status": "candidate_registry_not_training_admission",
+  "created": "2026-11-08",
+  "age_reference": null,
+  "matching_parent": "all Gaia DR3, independent of XP availability",
+  "policy": {
+    "identity": "Gaia DR3 source_id plus original catalogue identifier; DR2 requires explicit DR2-to-DR3 resolution",
+    "split": "All observations and age estimators for one Gaia star share its existing role; seismic training/calibration overlaps explicitly tracked",
+    "source_unit": "publication + estimator + release, not survey alone",
+    "priors": "Record isochrones, IMF/SFH, extinction/distance priors and seismic training lineage; unknown is an unresolved field",
+    "likelihood": "Published posterior is not an independent likelihood. Preserve samples/quantiles and priors; explicit teacher objective unless justified likelihood recovery exists",
+    "deduplication": "One published age measurement linked to several surveys remains one record, with multiple association edges",
+    "calibration": "No privileged StarHorse or other survey identity map; symmetric gauge is a coordinate convention, not absolute physical truth",
+    "qa": "Held-out source-space and common-space residuals/coverage by evolutionary stage and quality; clusters and seismic references with dependency exclusions"
+  },
+  "sources": [
+    {
+      "id": "apogee_leung2023",
+      "associated_survey": "APOGEE DR17",
+      "publication": "Leung et al. 2023",
+      "url": "https://arxiv.org/abs/2302.05479",
+      "method": "Spectral latent-space age estimator; Kepler seismic calibration",
+      "publication_verified": true,
+      "local_candidate_path": "/arc/projects/k-pop/catalogues/nn_latent_age_dr17.csv.gz",
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "apogee_anders2023",
+      "associated_survey": "APOGEE DR17",
+      "publication": "Anders et al. 2023",
+      "url": "https://doi.org/10.1051/0004-6361/202346666",
+      "method": "XGBoost spectroscopic ages; 178825 red giants",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "apogee_catboost2024",
+      "associated_survey": "APOGEE DR17",
+      "publication": "Asteroseismically calibrated CatBoost ages, 2024",
+      "url": "https://doi.org/10.1051/0004-6361/202348031",
+      "method": "Chemical clock and stellar parameters; 125445 red giants",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "lamost_subgiants2024",
+      "associated_survey": "LAMOST DR7 + Gaia EDR3",
+      "publication": "Xiang, Rix & Liu 2024",
+      "url": "https://doi.org/10.12149/101467",
+      "method": "Updated subgiant catalogue; do not duplicate superseded 2022 catalogue",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "lamost_rgb2019",
+      "associated_survey": "LAMOST DR4",
+      "publication": "Wu et al. 2019",
+      "url": "https://arxiv.org/abs/1901.07233",
+      "method": "640986 RGB stars; KPCA with seismic/isochrone training",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "rave_bdasp_dr6",
+      "associated_survey": "RAVE DR6",
+      "publication": "RAVE DR6 BDASP",
+      "url": "https://www.rave-survey.org/metadata/ravedr6/dr6_bdasp/",
+      "method": "Bayesian isochrones using spectroscopy, Gaia and photometry; 494695 table rows, not unique stars",
+      "publication_verified": true,
+      "local_candidate_path": "/arc/projects/k-pop/catalogues/rave_dr6_bdasp.fits",
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "galah_dr4_main",
+      "associated_survey": "GALAH DR4",
+      "publication": "GALAH DR4 main catalogue",
+      "url": "https://www.galah-survey.org/dr4/the_catalogues/",
+      "method": "Native Bayesian isochrone age; main table age uncertainties need audit",
+      "publication_verified": true,
+      "local_candidate_path": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "galah_dr4_bstep",
+      "associated_survey": "GALAH DR4",
+      "publication": "GALAH DR4 BSTEP ages/masses VAC",
+      "url": "https://www.galah-survey.org/dr4/the_catalogues/",
+      "method": "Separately published VAC; dependent on main GALAH/Gaia observations",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "gaia_rvs_kordopatis2023",
+      "associated_survey": "Gaia DR3 GSP-Spec",
+      "publication": "Kordopatis et al. 2023",
+      "url": "https://arxiv.org/abs/2206.07937",
+      "method": "Isochrone ages using calibrated GSP-Spec, Gaia and 2MASS",
+      "publication_verified": true,
+      "local_candidate_path": null,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    },
+    {
+      "id": "lamost_rgb_rc_wang2023",
+      "associated_survey": "LAMOST DR8",
+      "publication": "Wang et al. 2023",
+      "url": "https://arxiv.org/abs/2305.04528",
+      "method": "Neural-network RGB/RC masses and ages calibrated on LAMOST-Kepler; 998023 stars reported across three classes",
+      "publication_verified": true,
+      "local_candidate_path": "/arc/projects/k-pop/catalogues/lamost-kepler-ages.fits",
+      "local_publication_association_verified": false,
+      "gaia_match_verified": false,
+      "quality_admitted": false,
+      "training_admitted": false,
+      "prior_and_dependency_audit": "pending"
+    }
+  ],
+  "local_files_requiring_publication_identification": [
+    "ambre-ages.fits",
+    "lamost-kepler-ages.fits",
+    "apo_k2_2024.fits",
+    "apo_k2_2024_recal.fits",
+    "apokasc-3-2024.fits"
+  ],
+  "local_header_findings": {
+    "nn_latent_age_dr17.csv.gz": {
+      "identity": "APOGEE_ID",
+      "ages": [
+        "Age",
+        "Age_Error",
+        "LogAge",
+        "LogAge_Error"
+      ],
+      "rows": "not counted"
+    },
+    "lamost-kepler-ages.fits": {
+      "hdu": "dr8_age.dat",
+      "rows": 1348645,
+      "identity": "obsid",
+      "ages": [
+        "Agergb",
+        "e_Agergb",
+        "Agerc",
+        "e_Agerc"
+      ],
+      "age_unit": "Gyr",
+      "publication_association": "pending"
+    },
+    "rave_dr6_bdasp.fits": {
+      "rows": 494695,
+      "identity": "rave_obs_id",
+      "ages": [
+        "age_bdasp",
+        "age_error_bdasp"
+      ],
+      "age_unit": "yr"
+    },
+    "ambre-ages.fits": {
+      "rows": 1065,
+      "identity": "GaiaDR2",
+      "ages": [
+        "Age",
+        "e_Age"
+      ],
+      "age_unit": "Gyr"
+    }
+  }
+}

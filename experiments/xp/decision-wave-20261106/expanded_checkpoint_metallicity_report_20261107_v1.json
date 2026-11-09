@@ -1,0 +1,25 @@
+{
+  "run_id": "expanded_checkpoint_metallicity_report_20261107_v1",
+  "utc": "2026-11-07T03:08:46.983412+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_checkpoint_metallicity_report_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_checkpoint_metallicity_report_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "g46t0qkr"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.path.insert(0,\"scripts\");sys.path.insert(0,\"src\");sys.path.insert(0,\"scripts\");sys.argv=['scripts/report_expanded_checkpoint_qa.py',\"--benchmarks\",'docs/reports/msa-survey-expansion-20261105/staged/benchmarks.csv',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_checkpoint_report_20261107_v1',\"--reuse-waiting-output\"];runpy.run_path('scripts/report_expanded_checkpoint_qa.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_expanded_checkpoint_qa.py": "721a9635d263bc8859ea8cb94345bf1f8806ca1ac92a5ad32bb7b7e57e7f96e7",
+    "docs/reports/msa-survey-expansion-20261105/staged/benchmarks.csv": "d2a724ec2648523d1cac71fef6b5c0fa5279a012690e029d349fd50d727dce52",
+    "scripts/plot_decision_six_corners.py": "e0d81791ff46247b7b8563b3a64a035e077e7542d3766dbb041b6ac451b61568",
+    "src/masked_stellar_autoencoder/training/survey_map_arrays.py": "b2101fa5028a5eb71105960eef0cf78e80dcc17f8c5c29550e074b8ae347381a",
+    "scripts/saved_array_source_binding.py": "2deff2ee3d702710736a4b1d866682c4ce3c7bf59910d7a491fbff93e87cfef9",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "5ea2cd9a371b1e9ff75226d005831098ea00341efd7c7cff445d0010887b55ed"
+}

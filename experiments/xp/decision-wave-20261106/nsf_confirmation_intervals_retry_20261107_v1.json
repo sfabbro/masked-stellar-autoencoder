@@ -1,0 +1,23 @@
+{
+  "run_id": "nsf_confirmation_intervals_retry_20261107_v1",
+  "utc": "2026-11-07T01:38:04.279078+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsf_confirmation_intervals_retry_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/nsf_confirmation_intervals_retry_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "j8oojpo0"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.path.insert(0,\"src\");sys.argv=['scripts/recompute_nsf_calibration_intervals.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsf_confirmation_intervals_20261107_v2'];runpy.run_path('scripts/recompute_nsf_calibration_intervals.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/recompute_nsf_calibration_intervals.py": "fa4ebc993f9c24b52b353833fdd35736c2a77c396a56b08553d9bea5b0a811a9",
+    "scripts/run_nsf_calibration_worker.py": "847860e5d1076c60d55eefe0a6e490c1657c6f83f13d22d4d5f7865bb1a15b88",
+    "src/masked_stellar_autoencoder/training/marginal_calibration.py": "00ed8bc57a4e51bda0959933bda8adafe60a1b3332fbb3c089fe057ad4bb73c3",
+    "pixi.toml": "252140f949edee4e42cfdd2d38d8d0bbe11d9fae2ee6464b80aa305f420f666a"
+  },
+  "payload_sha256": "e03aa4bc7640b530cf689448cb29f665b9e408485fb40ed0a0f362f8f6e5787d"
+}

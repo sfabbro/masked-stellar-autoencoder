@@ -1,0 +1,21 @@
+{
+  "run_id": "tess_first_checkpoint_gravity_qa_20261107_v1",
+  "utc": "2026-11-06T23:14:26.708840+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_first_checkpoint_gravity_qa_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/tess_first_checkpoint_gravity_qa_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "s7z0h0ib"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/report_tess_gravity_qa.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_first_checkpoint_gravity_qa_20261107_v1'];runpy.run_path('scripts/report_tess_gravity_qa.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_tess_gravity_qa.py": "514387f4561ee4c0ad3f542a53394e607ae10395043ebd98fc36757f0c6eb649",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "e6c75c5d0b0dded91a58334065a82c41168708067a4e601c75316b3c64b7d0c5"
+}

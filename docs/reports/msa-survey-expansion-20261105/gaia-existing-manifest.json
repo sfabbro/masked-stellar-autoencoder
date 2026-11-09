@@ -1,0 +1,25 @@
+{
+  "model_loaded": false,
+  "result": {
+    "fit_arrays_bytes": 16068219,
+    "fit_arrays_crc": "pass",
+    "fit_arrays_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/fit-star-availability.npz",
+    "fit_arrays_roundtrip": "pass",
+    "fit_arrays_sha256": "454a91a1cbd4d5456fa5b6ecb083ef7aeffa2ca27bf557a02621499719565f29",
+    "fit_ids_sha256": "870027a5393713aa5e507534750b048900428b8f9f839475181b7cbb0c010ed8",
+    "gaia_sidecar_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+    "gaia_sidecar_sha256": "3427de9f51b116bcc59817b015b3dc2965ae8de8cf86baeb696b2a127937ac49",
+    "gaia_source_sha256": "e165c6f1fc4375389f24db86ff093e0c5d6e7c5da7a49b5564998a625f55dd83",
+    "overlay_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay-manifest.json",
+    "overlay_manifest_sha256": "f0156b1a79d4e73ade5d63c980b61d5ed86b9684514ead1af8d1047050c1593b",
+    "overlay_sha256": "a47bcbc3f91382786b38b93e8afcccc910b80cfacf653ceffe9f1cefd10a91ab",
+    "summary_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/summary.json",
+    "summary_sha256": "296b30a14ae2bc373525018af0105aa031b8cc3b6a96fbe5d8e231015525ac99"
+  },
+  "run_id": "multisurvey_gaia_gspspec_overlay_v1",
+  "scope": "Gaia RVS source materialization and existing-base FIT census only; not a trained model, full feature union or physical-scale certificate",
+  "source_commit": "8b4d5a947066400a657fa281cc3051177f1157e6",
+  "source_only": true,
+  "status": "multisurvey_gaia_gspspec_overlay_complete",
+  "training_performed": false
+}

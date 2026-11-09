@@ -1,0 +1,22 @@
+{
+  "run_id": "andrae_full_footprint_census_20261106_v1",
+  "utc": "2026-11-06T05:21:15.115906+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/andrae_full_footprint_census_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/andrae_full_footprint_census_20261106_v1",
+  "status": "stopped_incomplete_command",
+  "session_ids": [
+    "c8vheepk"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 64,
+    "gpu": 0
+  },
+  "command": "exec(compile(open('scripts/run_andrae_full_footprint_census.py').read(),'scripts/run_andrae_full_footprint_census.py','exec'))\n",
+  "source_sha256": {
+    "scripts/run_andrae_full_footprint_census.py": "3b66b3402415058ce28075da90c53ec7c220ebf2e0208efbebf7979f9d2625ce",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "bbf52ced9dbfbdfca4daf9a49092c152a125b8cffa08b5de0c09fe470656937c",
+  "reason": "Missing --output argument; own session c8vheepk destroyed before replacement"
+}

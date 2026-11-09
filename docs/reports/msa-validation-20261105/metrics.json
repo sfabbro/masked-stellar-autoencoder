@@ -1,0 +1,4970 @@
+{
+  "predictions_sha256": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9",
+  "attributes": {
+    "artificial_masking": "False",
+    "role": "devtest",
+    "selected_checkpoint_sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+    "source_binding": "60c097676bab21fe03f04afc0b26a608ee1ea0e7ea93a1577725dccb97a7a32a:09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff"
+  },
+  "devtest_stars": 248489,
+  "fit_overlap": 0,
+  "refitting": false,
+  "native_common_scale_comparisons": {
+    "APOGEE": {
+      "Teff": {
+        "n": 17904,
+        "bias": 85.6850661710655,
+        "mae": 104.29064878984063,
+        "nmad": 63.655473852952206,
+        "rmse": 140.08265509781245,
+        "p05": -51.27222692402722,
+        "p95": 225.66719192980662,
+        "subgroups": {
+          "cool": {
+            "n": 5998,
+            "bias": 86.17689222527406,
+            "mae": 112.48712609907919,
+            "nmad": 67.05415480085102,
+            "rmse": 168.02830053055916,
+            "p05": -10.583235306737285,
+            "p95": 288.42769312732673
+          },
+          "hot": {
+            "n": 30,
+            "bias": 16.595656361486817,
+            "mae": 96.86622541857656,
+            "nmad": 107.87448726311325,
+            "rmse": 131.2160709795711,
+            "p05": -118.30094311642505,
+            "p95": 237.29362758885034
+          },
+          "giants": {
+            "n": 14982,
+            "bias": 89.13430391039219,
+            "mae": 107.79342997735469,
+            "nmad": 63.230333200039595,
+            "rmse": 144.34124401024533,
+            "p05": -46.52874440179964,
+            "p95": 232.8245321398037
+          },
+          "dwarfs": {
+            "n": 1581,
+            "bias": 64.06555909824874,
+            "mae": 85.25927077896117,
+            "nmad": 67.47077435444668,
+            "rmse": 120.31127966932635,
+            "p05": -61.8337643256682,
+            "p95": 190.1447736704904
+          },
+          "metalpoor": {
+            "n": 177,
+            "bias": 52.72667372580145,
+            "mae": 123.96106083445825,
+            "nmad": 104.87260996893852,
+            "rmse": 200.19942477020666,
+            "p05": -131.84718479902548,
+            "p95": 405.70161058699983
+          }
+        }
+      },
+      "logg": {
+        "n": 17904,
+        "bias": 0.2062714402915924,
+        "mae": 0.25127895557921276,
+        "nmad": 0.18124023327479083,
+        "rmse": 0.32717739328803447,
+        "p05": -0.15745477638845526,
+        "p95": 0.5759173515181929,
+        "subgroups": {
+          "cool": {
+            "n": 5998,
+            "bias": 0.20168196626297563,
+            "mae": 0.2736198001361051,
+            "nmad": 0.20404418426206966,
+            "rmse": 0.3812268942401238,
+            "p05": -0.15052348055091222,
+            "p95": 0.7258396701713077
+          },
+          "hot": {
+            "n": 30,
+            "bias": 0.020188145801522506,
+            "mae": 0.12570567567585475,
+            "nmad": 0.12812235014421364,
+            "rmse": 0.1656117273991673,
+            "p05": -0.2936896590469393,
+            "p95": 0.24890306835088033
+          },
+          "giants": {
+            "n": 14982,
+            "bias": 0.23026645800670886,
+            "mae": 0.271666759687335,
+            "nmad": 0.16886037376615975,
+            "rmse": 0.3468650265158382,
+            "p05": -0.14000926731517946,
+            "p95": 0.6090326879944908
+          },
+          "dwarfs": {
+            "n": 1581,
+            "bias": 0.021808191147701717,
+            "mae": 0.09328607358181784,
+            "nmad": 0.10787720545056259,
+            "rmse": 0.127993513972676,
+            "p05": -0.17859397565498547,
+            "p95": 0.19957484144576743
+          },
+          "metalpoor": {
+            "n": 177,
+            "bias": 0.26830825401820757,
+            "mae": 0.41569537690602004,
+            "nmad": 0.2645475228807493,
+            "rmse": 0.5951085901126943,
+            "p05": -0.19985828202633094,
+            "p95": 1.2893593293044763
+          }
+        }
+      },
+      "FeH": {
+        "n": 17898,
+        "bias": 0.03288009855673327,
+        "mae": 0.09712395268299652,
+        "nmad": 0.09306024831004496,
+        "rmse": 0.14255968897120103,
+        "p05": -0.16348656585779892,
+        "p95": 0.2457417124454417,
+        "subgroups": {
+          "cool": {
+            "n": 5995,
+            "bias": 0.04892966584598182,
+            "mae": 0.11908528336690893,
+            "nmad": 0.11071375844384237,
+            "rmse": 0.17020850818943906,
+            "p05": -0.1735909805831565,
+            "p95": 0.33006847203875983
+          },
+          "hot": {
+            "n": 30,
+            "bias": -0.11915791480445445,
+            "mae": 0.1277096683139855,
+            "nmad": 0.05109581298216035,
+            "rmse": 0.1408016874303557,
+            "p05": -0.23654405221077843,
+            "p95": -0.014814605031628863
+          },
+          "giants": {
+            "n": 14982,
+            "bias": 0.04513102199343916,
+            "mae": 0.10093826061407707,
+            "nmad": 0.08468734007092849,
+            "rmse": 0.14925591876088778,
+            "p05": -0.15701698535699787,
+            "p95": 0.26839005531056237
+          },
+          "dwarfs": {
+            "n": 1575,
+            "bias": -0.07736473623073514,
+            "mae": 0.08728560363435263,
+            "nmad": 0.05358344662295441,
+            "rmse": 0.10809031046961733,
+            "p05": -0.18313372962375823,
+            "p95": 0.018076690481731245
+          },
+          "metalpoor": {
+            "n": 177,
+            "bias": 0.05269624238770665,
+            "mae": 0.28834838956497283,
+            "nmad": 0.22234946337376962,
+            "rmse": 0.4750156374962903,
+            "p05": -0.19489973613997005,
+            "p95": 1.2907822114649585
+          }
+        }
+      }
+    },
+    "DESI": {
+      "Teff": {
+        "n": 171796,
+        "bias": -100.32021950536682,
+        "mae": 122.11518074167148,
+        "nmad": 85.14523600814303,
+        "rmse": 177.2371225857586,
+        "p05": -262.47010104571245,
+        "p95": 67.51932388263663,
+        "subgroups": {
+          "cool": {
+            "n": 25292,
+            "bias": -69.17242566137566,
+            "mae": 91.16218956659185,
+            "nmad": 74.43813867399967,
+            "rmse": 115.85098153035274,
+            "p05": -220.05383961365936,
+            "p95": 61.80225253389656
+          },
+          "hot": {
+            "n": 3805,
+            "bias": -80.40001360158931,
+            "mae": 316.64587864458986,
+            "nmad": 162.78405205671686,
+            "rmse": 705.9287510810334,
+            "p05": -1292.2636334283684,
+            "p95": 310.54161471757396
+          },
+          "giants": {
+            "n": 3545,
+            "bias": -103.93604399704418,
+            "mae": 185.1104164410733,
+            "nmad": 156.33728270412564,
+            "rmse": 232.22671925309737,
+            "p05": -336.4675046604216,
+            "p95": 368.2565952637389
+          },
+          "dwarfs": {
+            "n": 160136,
+            "bias": -100.09318030429358,
+            "mae": 118.81257078451691,
+            "nmad": 81.97005575043963,
+            "rmse": 174.5942834172823,
+            "p05": -257.31931658365784,
+            "p95": 52.137251367234626
+          },
+          "metalpoor": {
+            "n": 6378,
+            "bias": 4.718349594758365,
+            "mae": 129.3169304017653,
+            "nmad": 128.11360560523883,
+            "rmse": 234.19176617514418,
+            "p05": -237.38983186769536,
+            "p95": 301.2427399970276
+          }
+        }
+      },
+      "logg": {
+        "n": 171796,
+        "bias": -0.18645717939968565,
+        "mae": 0.24559054250650125,
+        "nmad": 0.1803878619140777,
+        "rmse": 0.315090679108311,
+        "p05": -0.5027338645924203,
+        "p95": 0.2859811401514849,
+        "subgroups": {
+          "cool": {
+            "n": 25292,
+            "bias": -0.2306078265021867,
+            "mae": 0.2539795067908816,
+            "nmad": 0.148555519945327,
+            "rmse": 0.30856784650482305,
+            "p05": -0.5211242642616217,
+            "p95": 0.07415968191459973
+          },
+          "hot": {
+            "n": 3805,
+            "bias": -0.06539062839421028,
+            "mae": 0.19901845276335148,
+            "nmad": 0.20950088135373182,
+            "rmse": 0.27051907017664195,
+            "p05": -0.47411469806408424,
+            "p95": 0.3508400545635723
+          },
+          "giants": {
+            "n": 3545,
+            "bias": 0.00346223868867801,
+            "mae": 0.5180922635681194,
+            "nmad": 0.48583447967197846,
+            "rmse": 0.7212492610652768,
+            "p05": -0.688010103771712,
+            "p95": 1.5666750063593806
+          },
+          "dwarfs": {
+            "n": 160136,
+            "bias": -0.18820369229554812,
+            "mae": 0.22768504811973186,
+            "nmad": 0.1703326426712737,
+            "rmse": 0.27979820395310523,
+            "p05": -0.46881011168636166,
+            "p95": 0.21813078735306357
+          },
+          "metalpoor": {
+            "n": 6378,
+            "bias": 0.04857096939925398,
+            "mae": 0.3235988917153446,
+            "nmad": 0.34204830125349245,
+            "rmse": 0.4573148455706183,
+            "p05": -0.5387387117634379,
+            "p95": 0.8308617735569849
+          }
+        }
+      },
+      "FeH": {
+        "n": 171796,
+        "bias": 0.054714743891999464,
+        "mae": 0.14642953284546323,
+        "nmad": 0.154402092853958,
+        "rmse": 0.19564060176870998,
+        "p05": -0.2556806116851513,
+        "p95": 0.34369660967309773,
+        "subgroups": {
+          "cool": {
+            "n": 25292,
+            "bias": -0.023817131499277968,
+            "mae": 0.15009560204663194,
+            "nmad": 0.16842840947307783,
+            "rmse": 0.20213832195028317,
+            "p05": -0.3484132038189075,
+            "p95": 0.29669930357131674
+          },
+          "hot": {
+            "n": 3805,
+            "bias": 0.06752839851079856,
+            "mae": 0.24358336775282285,
+            "nmad": 0.24225558673559475,
+            "rmse": 0.3358697811661902,
+            "p05": -0.5834943502954087,
+            "p95": 0.5367848142383532
+          },
+          "giants": {
+            "n": 3545,
+            "bias": 0.022180806172415357,
+            "mae": 0.2126900455254026,
+            "nmad": 0.22890866089254605,
+            "rmse": 0.29372265234046974,
+            "p05": -0.3523541649225124,
+            "p95": 0.5842857098596289
+          },
+          "dwarfs": {
+            "n": 160136,
+            "bias": 0.05696581722288411,
+            "mae": 0.14300632439202587,
+            "nmad": 0.15001432281394686,
+            "rmse": 0.18991067792020172,
+            "p05": -0.24886838032652225,
+            "p95": 0.3322766204709183
+          },
+          "metalpoor": {
+            "n": 6378,
+            "bias": 0.27309441866646156,
+            "mae": 0.3144906198869479,
+            "nmad": 0.21059023320681636,
+            "rmse": 0.38955199833143017,
+            "p05": -0.030030941070659407,
+            "p95": 0.7358759624267711
+          }
+        }
+      }
+    },
+    "GALAH": {
+      "Teff": {
+        "n": 55710,
+        "bias": 51.14852896487355,
+        "mae": 80.19764044309285,
+        "nmad": 70.55426926773391,
+        "rmse": 111.17004830900761,
+        "p05": -87.55577456930446,
+        "p95": 185.10915368382786,
+        "subgroups": {
+          "cool": {
+            "n": 5801,
+            "bias": 112.64741874451738,
+            "mae": 126.67798087096921,
+            "nmad": 59.42186448122971,
+            "rmse": 150.7538516158109,
+            "p05": 5.097413400309961,
+            "p95": 264.1313371196047
+          },
+          "hot": {
+            "n": 907,
+            "bias": -34.58813502943667,
+            "mae": 128.77430432757464,
+            "nmad": 106.3004884966841,
+            "rmse": 226.28330195985322,
+            "p05": -422.27463575231786,
+            "p95": 181.9624320154293
+          },
+          "giants": {
+            "n": 18579,
+            "bias": 81.43667856004504,
+            "mae": 95.66253220602,
+            "nmad": 58.56878305156864,
+            "rmse": 118.1830602568201,
+            "p05": -26.191227574875285,
+            "p95": 202.6582371427056
+          },
+          "dwarfs": {
+            "n": 30774,
+            "bias": 30.681076825721448,
+            "mae": 71.84156559215624,
+            "nmad": 70.04456608170787,
+            "rmse": 106.91008889400794,
+            "p05": -106.29926406709797,
+            "p95": 168.7413235262206
+          },
+          "metalpoor": {
+            "n": 342,
+            "bias": 137.9688643253512,
+            "mae": 167.26063870096132,
+            "nmad": 102.30802791915927,
+            "rmse": 206.144399418873,
+            "p05": -55.94137196979518,
+            "p95": 374.6928079090383
+          }
+        }
+      },
+      "logg": {
+        "n": 53717,
+        "bias": 0.10362818860337475,
+        "mae": 0.1611602299576424,
+        "nmad": 0.14800551611943846,
+        "rmse": 0.22613853453282226,
+        "p05": -0.15172224561754816,
+        "p95": 0.3778268167060831,
+        "subgroups": {
+          "cool": {
+            "n": 5614,
+            "bias": 0.19863687894891324,
+            "mae": 0.2383276879860979,
+            "nmad": 0.1362398765353274,
+            "rmse": 0.31932944095171023,
+            "p05": -0.061077963645866776,
+            "p95": 0.5028335135871775
+          },
+          "hot": {
+            "n": 838,
+            "bias": 0.04567022556836697,
+            "mae": 0.131371946961163,
+            "nmad": 0.12252115182685779,
+            "rmse": 0.1930162818463646,
+            "p05": -0.13629436308706172,
+            "p95": 0.39971834479810536
+          },
+          "giants": {
+            "n": 18025,
+            "bias": 0.18915282727355365,
+            "mae": 0.21723931646868813,
+            "nmad": 0.1291494809491299,
+            "rmse": 0.2753648163248175,
+            "p05": -0.10046199893432686,
+            "p95": 0.45850928261733975
+          },
+          "dwarfs": {
+            "n": 29583,
+            "bias": 0.05548990155583233,
+            "mae": 0.12287287108772497,
+            "nmad": 0.12449421256747506,
+            "rmse": 0.18426236828837364,
+            "p05": -0.16430123704526833,
+            "p95": 0.2918201087101021
+          },
+          "metalpoor": {
+            "n": 327,
+            "bias": 0.06469510963133529,
+            "mae": 0.2809123694268649,
+            "nmad": 0.21141053684122485,
+            "rmse": 0.47612204880840053,
+            "p05": -0.30527382502988654,
+            "p95": 1.2172228763029642
+          }
+        }
+      },
+      "FeH": {
+        "n": 55710,
+        "bias": -0.02619198807543579,
+        "mae": 0.09006430388407385,
+        "nmad": 0.09509123523145224,
+        "rmse": 0.1337387631640495,
+        "p05": -0.19195209510067227,
+        "p95": 0.15965778108972006,
+        "subgroups": {
+          "cool": {
+            "n": 5801,
+            "bias": 0.08733122119547254,
+            "mae": 0.1389863796168766,
+            "nmad": 0.094146940005465,
+            "rmse": 0.21368257125676052,
+            "p05": -0.13299566990924883,
+            "p95": 0.3445513851130792
+          },
+          "hot": {
+            "n": 907,
+            "bias": -0.061797955745966415,
+            "mae": 0.10745492848335333,
+            "nmad": 0.09256268814984936,
+            "rmse": 0.15047931049178576,
+            "p05": -0.2606550243893679,
+            "p95": 0.1344308377654323
+          },
+          "giants": {
+            "n": 18579,
+            "bias": 0.04248825268431272,
+            "mae": 0.09717154818923475,
+            "nmad": 0.0876072609506098,
+            "rmse": 0.15829493867740252,
+            "p05": -0.144460872958432,
+            "p95": 0.219565535006907
+          },
+          "dwarfs": {
+            "n": 30774,
+            "bias": -0.05820427116868588,
+            "mae": 0.08796727852624975,
+            "nmad": 0.07351549849807767,
+            "rmse": 0.12001534317284006,
+            "p05": -0.20787589628457337,
+            "p95": 0.09103539854390345
+          },
+          "metalpoor": {
+            "n": 342,
+            "bias": 0.08835654119183967,
+            "mae": 0.35358584602029625,
+            "nmad": 0.2097189982660704,
+            "rmse": 0.6360276268982389,
+            "p05": -0.1891139316455413,
+            "p95": 1.6672758340716123
+          }
+        }
+      }
+    }
+  },
+  "globular_clusters": {
+    "source_sha256": "9eafa2e10afc031790cfe36ed8545aa6336cc87c317fab167e9cea9dacbd0748",
+    "clusters": [
+      {
+        "cluster": "AM_1",
+        "total_members": 38,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "AM_4",
+        "total_members": 4,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Arp_2",
+        "total_members": 152,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "BH_140",
+        "total_members": 3356,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "BH_176",
+        "total_members": 79,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "BH_261_AL_3",
+        "total_members": 16,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Bliss_1",
+        "total_members": 8,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Crater",
+        "total_members": 8,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Djorg_1",
+        "total_members": 35,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Djorg_2_ESO456-",
+        "total_members": 11,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "ESO280-06",
+        "total_members": 37,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "ESO452-11",
+        "total_members": 100,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "ESO_93-8",
+        "total_members": 42,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "E_3",
+        "total_members": 379,
+        "fit_members": 2,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Eridanus",
+        "total_members": 36,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "FSR_1716",
+        "total_members": 122,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "FSR_1735",
+        "total_members": 49,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "FSR_1758",
+        "total_members": 669,
+        "fit_members": 4,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Gran_1",
+        "total_members": 14,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "HP_1_BH_229",
+        "total_members": 61,
+        "fit_members": 4,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "IC_1257",
+        "total_members": 55,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "IC_1276_Pal_7",
+        "total_members": 1238,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "IC_4499",
+        "total_members": 1207,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Kim_3",
+        "total_members": 6,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Ko_1",
+        "total_members": 4,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Ko_2",
+        "total_members": 4,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Laevens_3",
+        "total_members": 13,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Liller_1",
+        "total_members": 0,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Lynga_7_BH184",
+        "total_members": 297,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Mercer_5",
+        "total_members": 0,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Munoz_1",
+        "total_members": 4,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_104_47Tuc",
+        "total_members": 56103,
+        "fit_members": 127,
+        "devtest_members": 12,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 12,
+            "mean_feh_nmad": 0.20399424923372214
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 12,
+            "mean_feh_nmad": 0.20399424923372214
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 12,
+            "mean_feh_nmad": 0.20399424923372214
+          }
+        ],
+        "feh_median": -0.6051083074893581,
+        "mean_feh_nmad": 0.20399424923372214,
+        "median_individual_feh_sigma": 0.08413656454557812,
+        "native_matched": {
+          "APOGEE": {
+            "n": 5,
+            "native_feh_median": -0.7462800145149231,
+            "common_feh_median": -0.5168127322409015,
+            "native_feh_nmad": 0.05506378147602081,
+            "common_feh_nmad": 0.22302425869978093
+          },
+          "GALAH": {
+            "n": 10,
+            "native_feh_median": -0.7340305745601654,
+            "common_feh_median": -0.6051083074893581,
+            "native_feh_nmad": 0.039839468532800675,
+            "common_feh_nmad": 0.21218679932788553
+          }
+        }
+      },
+      {
+        "cluster": "NGC_1261",
+        "total_members": 2065,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_1851",
+        "total_members": 4648,
+        "fit_members": 10,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_1904_M_79",
+        "total_members": 2760,
+        "fit_members": 7,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_2298",
+        "total_members": 1470,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_2419",
+        "total_members": 645,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_2808",
+        "total_members": 7879,
+        "fit_members": 34,
+        "devtest_members": 5,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 5,
+            "mean_feh_nmad": 0.2498678998772647
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 5,
+            "mean_feh_nmad": 0.2498678998772647
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 5,
+            "mean_feh_nmad": 0.2498678998772647
+          }
+        ],
+        "feh_median": -0.8702103157839265,
+        "mean_feh_nmad": 0.2498678998772647,
+        "median_individual_feh_sigma": 0.1701140102404223,
+        "native_matched": {
+          "APOGEE": {
+            "n": 5,
+            "native_feh_median": -1.0720000267028809,
+            "common_feh_median": -0.8702103157839265,
+            "native_feh_nmad": 0.00963690848350525,
+            "common_feh_nmad": 0.2498678998772647
+          }
+        }
+      },
+      {
+        "cluster": "NGC_288",
+        "total_members": 5845,
+        "fit_members": 22,
+        "devtest_members": 4,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 4,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 4,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 4,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_3201",
+        "total_members": 18553,
+        "fit_members": 23,
+        "devtest_members": 2,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_362",
+        "total_members": 6306,
+        "fit_members": 17,
+        "devtest_members": 2,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_4147",
+        "total_members": 474,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_4372",
+        "total_members": 10188,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_4590_M_68",
+        "total_members": 4124,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_4833",
+        "total_members": 3319,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5024_M_53",
+        "total_members": 4961,
+        "fit_members": 7,
+        "devtest_members": 2,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5053",
+        "total_members": 2008,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5139_oCen",
+        "total_members": 72932,
+        "fit_members": 158,
+        "devtest_members": 32,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 32,
+            "mean_feh_nmad": 0.3173378696144315
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 32,
+            "mean_feh_nmad": 0.3173378696144315
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 32,
+            "mean_feh_nmad": 0.3173378696144315
+          }
+        ],
+        "feh_median": -1.725556100393284,
+        "mean_feh_nmad": 0.3173378696144315,
+        "median_individual_feh_sigma": 0.16730153446260576,
+        "native_matched": {
+          "APOGEE": {
+            "n": 28,
+            "native_feh_median": -1.6817499995231628,
+            "common_feh_median": -1.725556100393284,
+            "native_feh_nmad": 0.15196653181314468,
+            "common_feh_nmad": 0.3407916853333367,
+            "scatter_ratio_bootstrap95": [
+              1.1470593336801422,
+              3.7382969215978212
+            ]
+          },
+          "GALAH": {
+            "n": 8,
+            "native_feh_median": -1.7037573456764221,
+            "common_feh_median": -1.577088879398776,
+            "native_feh_nmad": 0.2072483217000961,
+            "common_feh_nmad": 0.4887367470693927
+          }
+        },
+        "conditional_sequence_width": {
+          "APOGEE": {
+            "Teff": {
+              "native": {
+                "n": 26,
+                "nmad": 46.00620732421875
+              },
+              "common": {
+                "n": 26,
+                "nmad": 81.27029171336791
+              }
+            },
+            "logg": {
+              "native": {
+                "n": 26,
+                "nmad": 0.1444728572130203
+              },
+              "common": {
+                "n": 26,
+                "nmad": 0.14556805320504337
+              }
+            }
+          }
+        }
+      },
+      {
+        "cluster": "NGC_5272_M_3",
+        "total_members": 13220,
+        "fit_members": 35,
+        "devtest_members": 3,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5286",
+        "total_members": 2286,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5466",
+        "total_members": 3134,
+        "fit_members": 5,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5634",
+        "total_members": 499,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5694",
+        "total_members": 242,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5824",
+        "total_members": 753,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5897",
+        "total_members": 3141,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5904_M_5",
+        "total_members": 11843,
+        "fit_members": 24,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5927",
+        "total_members": 1058,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5946",
+        "total_members": 186,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_5986",
+        "total_members": 1475,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6093_M_80",
+        "total_members": 1599,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6101",
+        "total_members": 3836,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6121_M_4",
+        "total_members": 14607,
+        "fit_members": 9,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6139",
+        "total_members": 585,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6144",
+        "total_members": 1308,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6171_M107",
+        "total_members": 3915,
+        "fit_members": 3,
+        "devtest_members": 3,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6205_M_13",
+        "total_members": 14484,
+        "fit_members": 19,
+        "devtest_members": 6,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.14467777039013566
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.14467777039013566
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.14467777039013566
+          }
+        ],
+        "feh_median": -1.1393810464770504,
+        "mean_feh_nmad": 0.14467777039013566,
+        "median_individual_feh_sigma": 0.25110108246850027,
+        "native_matched": {}
+      },
+      {
+        "cluster": "NGC_6218_M_12",
+        "total_members": 8123,
+        "fit_members": 26,
+        "devtest_members": 6,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.28920063166883914
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.28920063166883914
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 6,
+            "mean_feh_nmad": 0.28920063166883914
+          }
+        ],
+        "feh_median": -1.0334181518957457,
+        "mean_feh_nmad": 0.28920063166883914,
+        "median_individual_feh_sigma": 0.22306751926373064,
+        "native_matched": {}
+      },
+      {
+        "cluster": "NGC_6229",
+        "total_members": 427,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6235",
+        "total_members": 623,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6254_M_10",
+        "total_members": 10037,
+        "fit_members": 13,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6256",
+        "total_members": 168,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6266_M_62",
+        "total_members": 1653,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6273_M_19",
+        "total_members": 2301,
+        "fit_members": 15,
+        "devtest_members": 3,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6284",
+        "total_members": 185,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6287",
+        "total_members": 691,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6293",
+        "total_members": 285,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6304",
+        "total_members": 232,
+        "fit_members": 8,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6316",
+        "total_members": 95,
+        "fit_members": 5,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6325",
+        "total_members": 302,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6333_M_9",
+        "total_members": 926,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6341_M_92",
+        "total_members": 6925,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6342",
+        "total_members": 298,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6352",
+        "total_members": 1783,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6355",
+        "total_members": 160,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6356",
+        "total_members": 361,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6362",
+        "total_members": 7073,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6366",
+        "total_members": 5560,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6380_Ton1",
+        "total_members": 146,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6388",
+        "total_members": 600,
+        "fit_members": 8,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6397",
+        "total_members": 20293,
+        "fit_members": 19,
+        "devtest_members": 3,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6401",
+        "total_members": 115,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6402_M_14",
+        "total_members": 3007,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6426",
+        "total_members": 260,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6440",
+        "total_members": 177,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6441",
+        "total_members": 369,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6453",
+        "total_members": 58,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6496",
+        "total_members": 924,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6517",
+        "total_members": 271,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6522",
+        "total_members": 60,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6528",
+        "total_members": 16,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6535",
+        "total_members": 565,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6539",
+        "total_members": 798,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6540_Djorg",
+        "total_members": 13,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6541",
+        "total_members": 3330,
+        "fit_members": 0,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6544",
+        "total_members": 2602,
+        "fit_members": 14,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6553",
+        "total_members": 350,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6558",
+        "total_members": 28,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6569",
+        "total_members": 253,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6584",
+        "total_members": 1047,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6624",
+        "total_members": 181,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6626_M_28",
+        "total_members": 750,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6637_M_69",
+        "total_members": 415,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6638",
+        "total_members": 92,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6642",
+        "total_members": 83,
+        "fit_members": 4,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6652",
+        "total_members": 387,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6656_M_22",
+        "total_members": 8451,
+        "fit_members": 9,
+        "devtest_members": 3,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 3,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6681_M_70",
+        "total_members": 763,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6712",
+        "total_members": 599,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6715_M_54",
+        "total_members": 1710,
+        "fit_members": 3,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6717_Pal9",
+        "total_members": 289,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6723",
+        "total_members": 2623,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6749",
+        "total_members": 368,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6752",
+        "total_members": 21066,
+        "fit_members": 34,
+        "devtest_members": 7,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 7,
+            "mean_feh_nmad": 0.06096061023731041
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 7,
+            "mean_feh_nmad": 0.06096061023731041
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 7,
+            "mean_feh_nmad": 0.06096061023731041
+          }
+        ],
+        "feh_median": -1.2438456284226131,
+        "mean_feh_nmad": 0.06096061023731041,
+        "median_individual_feh_sigma": 0.1864668108507996,
+        "native_matched": {
+          "APOGEE": {
+            "n": 6,
+            "native_feh_median": -1.4577500224113464,
+            "common_feh_median": -1.2281180651300196,
+            "native_feh_nmad": 0.024981802082061765,
+            "common_feh_nmad": 0.060417527003093545
+          }
+        }
+      },
+      {
+        "cluster": "NGC_6760",
+        "total_members": 344,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6779_M_56",
+        "total_members": 2392,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6809_M_55",
+        "total_members": 9508,
+        "fit_members": 4,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6838_M_71",
+        "total_members": 3360,
+        "fit_members": 10,
+        "devtest_members": 2,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6864_M_75",
+        "total_members": 691,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6934",
+        "total_members": 984,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_6981_M_72",
+        "total_members": 1103,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_7006",
+        "total_members": 208,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_7078_M_15",
+        "total_members": 7268,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_7089_M_2",
+        "total_members": 4583,
+        "fit_members": 13,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_7099_M_30",
+        "total_members": 4231,
+        "fit_members": 2,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "NGC_7492",
+        "total_members": 243,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_1",
+        "total_members": 80,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_10",
+        "total_members": 216,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_11",
+        "total_members": 243,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_12",
+        "total_members": 262,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_13",
+        "total_members": 51,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_14",
+        "total_members": 75,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_15",
+        "total_members": 104,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_2",
+        "total_members": 136,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_3",
+        "total_members": 37,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_4",
+        "total_members": 71,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_5",
+        "total_members": 308,
+        "fit_members": 2,
+        "devtest_members": 2,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 2,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_6",
+        "total_members": 62,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pal_8",
+        "total_members": 127,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pfleiderer_2",
+        "total_members": 59,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Pyxis",
+        "total_members": 97,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Rup_106",
+        "total_members": 418,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Ryu_059_RLGC1",
+        "total_members": 30,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Ryu_879_RLGC2",
+        "total_members": 3,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Segue_3",
+        "total_members": 16,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_10",
+        "total_members": 35,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_12",
+        "total_members": 126,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_1_HP_2",
+        "total_members": 75,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_2_HP_3",
+        "total_members": 37,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_3",
+        "total_members": 853,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_4_HP_4",
+        "total_members": 27,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_5_11",
+        "total_members": 152,
+        "fit_members": 1,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_6_HP_5",
+        "total_members": 30,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_7",
+        "total_members": 155,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_8",
+        "total_members": 390,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Terzan_9",
+        "total_members": 54,
+        "fit_members": 3,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Ton2_Pismis26",
+        "total_members": 201,
+        "fit_members": 2,
+        "devtest_members": 1,
+        "no_selected_members_in_current_fit": false,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 1,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "UKS_1",
+        "total_members": 2,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "VVV_CL001",
+        "total_members": 1,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "VVV_CL002",
+        "total_members": 3,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      },
+      {
+        "cluster": "Whiting_1",
+        "total_members": 20,
+        "fit_members": 0,
+        "devtest_members": 0,
+        "no_selected_members_in_current_fit": true,
+        "sensitivity": [
+          {
+            "probability": 0.5,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.9,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          },
+          {
+            "probability": 0.99,
+            "devtest_members": 0,
+            "mean_feh_nmad": null
+          }
+        ]
+      }
+    ]
+  },
+  "rave": {
+    "matched": 1796,
+    "source_sha256": {
+      "/private/tmp/msa-rave-madera.csv.gz": "53e11b82aea7302a614bd9872a3622f51340efa68b75f0f3bf115035a501b0a6",
+      "/private/tmp/msa-rave-fe.csv.gz": "bb903b093ca397c9b2c7f4f80820153236a1df6712ed150175db853eb9431255",
+      "/private/tmp/msa-rave-x2.xml": "cbee8d02b099a2398f8100b60a4f40e7421c8793c8e087d9f42cd705a95ba418"
+    },
+    "selection": "MADERA convergence0; SNR>=40; EDR3 separation<=1arcsec; highest SNR repeat then smallest separation then observation ID",
+    "metrics": {
+      "Teff": {
+        "n": 1796,
+        "bias": 60.60249818368311,
+        "mae": 127.51260989189247,
+        "nmad": 115.07939708291869,
+        "rmse": 182.00913735376048,
+        "p05": -162.00439962668747,
+        "p95": 343.2317687119844,
+        "subgroups": {
+          "cool": {
+            "n": 255,
+            "bias": 35.84530882998115,
+            "mae": 86.02003522259577,
+            "nmad": 91.14976747325079,
+            "rmse": 119.13816345636018,
+            "p05": -99.11842300793232,
+            "p95": 245.04995994542648
+          },
+          "hot": {
+            "n": 35,
+            "bias": -223.24867101182917,
+            "mae": 281.8273718391727,
+            "nmad": 265.51073583207835,
+            "rmse": 351.30382911303803,
+            "p05": -695.0124060887745,
+            "p95": 204.2914570284648
+          },
+          "giants": {
+            "n": 1074,
+            "bias": 62.45636595221504,
+            "mae": 96.54604278731203,
+            "nmad": 90.74691791004344,
+            "rmse": 131.8526715548006,
+            "p05": -78.3337846017572,
+            "p95": 263.534726325652
+          },
+          "dwarfs": {
+            "n": 367,
+            "bias": 32.051520571486435,
+            "mae": 160.8659866120831,
+            "nmad": 181.07964261008922,
+            "rmse": 215.02406904096773,
+            "p05": -333.01247775103167,
+            "p95": 319.44196457476136
+          }
+        },
+        "intrinsic_reference_comparison": {
+          "n": 1796,
+          "nll": 10.53842374268469,
+          "crps": 118.02064890230399,
+          "coverage68": 0.08630289532293986,
+          "coverage90": 0.13808463251670378,
+          "coverage95": 0.18207126948775057,
+          "pit_histogram": [
+            1151,
+            45,
+            19,
+            29,
+            18,
+            16,
+            18,
+            25,
+            32,
+            443
+          ]
+        },
+        "gaussian_reference_error_proxy": {
+          "n": 1796,
+          "nll": 7.2764614267451035,
+          "crps": 99.76224327705988,
+          "coverage68": 0.3992204899777283,
+          "coverage90": 0.5918708240534521,
+          "coverage95": 0.673162583518931,
+          "pit_histogram": [
+            732,
+            186,
+            139,
+            119,
+            88,
+            86,
+            89,
+            95,
+            75,
+            187
+          ]
+        }
+      },
+      "logg": {
+        "n": 1796,
+        "bias": 0.1687322414531549,
+        "mae": 0.3311094104574557,
+        "nmad": 0.3301532448473022,
+        "rmse": 0.4450217001840106,
+        "p05": -0.4822646902516785,
+        "p95": 0.8041397149410007,
+        "subgroups": {
+          "cool": {
+            "n": 255,
+            "bias": 0.22213111925989537,
+            "mae": 0.34499765219274847,
+            "nmad": 0.3257420674808835,
+            "rmse": 0.4622862596312115,
+            "p05": -0.2804180174857695,
+            "p95": 0.9691174718510901
+          },
+          "hot": {
+            "n": 35,
+            "bias": -0.1770509213385596,
+            "mae": 0.22447137612890217,
+            "nmad": 0.16993773019500436,
+            "rmse": 0.27584496706563083,
+            "p05": -0.4426556782531398,
+            "p95": 0.18880849419227796
+          },
+          "giants": {
+            "n": 1074,
+            "bias": 0.23374222732813155,
+            "mae": 0.33694960437482907,
+            "nmad": 0.3057947053600236,
+            "rmse": 0.45198639350431724,
+            "p05": -0.2392148340970614,
+            "p95": 0.91798272150092
+          },
+          "dwarfs": {
+            "n": 367,
+            "bias": 0.05665706533325032,
+            "mae": 0.24000333084531578,
+            "nmad": 0.25661799017893233,
+            "rmse": 0.38017438992562547,
+            "p05": -0.3987348807721502,
+            "p95": 0.49480553175701225
+          }
+        },
+        "intrinsic_reference_comparison": {
+          "n": 1796,
+          "nll": 4.41621169957142,
+          "crps": 0.3040133665653021,
+          "coverage68": 0.10356347438752785,
+          "coverage90": 0.1653674832962138,
+          "coverage95": 0.21325167037861914,
+          "pit_histogram": [
+            1136,
+            40,
+            27,
+            28,
+            23,
+            29,
+            24,
+            27,
+            33,
+            429
+          ]
+        },
+        "gaussian_reference_error_proxy": {
+          "n": 1796,
+          "nll": 1.5761968697875506,
+          "crps": 0.26193394912976586,
+          "coverage68": 0.33351893095768376,
+          "coverage90": 0.5350779510022272,
+          "coverage95": 0.6119153674832962,
+          "pit_histogram": [
+            803,
+            161,
+            105,
+            96,
+            94,
+            81,
+            71,
+            73,
+            88,
+            224
+          ]
+        }
+      },
+      "FeH": {
+        "n": 1530,
+        "bias": 0.12980600295633504,
+        "mae": 0.1686881122385731,
+        "nmad": 0.161122301848376,
+        "rmse": 0.20414806785983014,
+        "p05": -0.20247510663726637,
+        "p95": 0.3484377671640274,
+        "subgroups": {
+          "cool": {
+            "n": 242,
+            "bias": 0.17979440473833702,
+            "mae": 0.19543060055203185,
+            "nmad": 0.13730370906986594,
+            "rmse": 0.2289100801745289,
+            "p05": -0.06994335984599256,
+            "p95": 0.3842561720395303
+          },
+          "giants": {
+            "n": 1033,
+            "bias": 0.18224236323640913,
+            "mae": 0.19098564808376575,
+            "nmad": 0.10705674760310474,
+            "rmse": 0.2210327734845213,
+            "p05": -0.04483775221147574,
+            "p95": 0.3662525481339438
+          },
+          "dwarfs": {
+            "n": 220,
+            "bias": -0.07202486645609003,
+            "mae": 0.13589117372660012,
+            "nmad": 0.14719894140518447,
+            "rmse": 0.17746881148360433,
+            "p05": -0.3332882202392654,
+            "p95": 0.1503709033046704
+          }
+        },
+        "intrinsic_reference_comparison": {
+          "n": 1530,
+          "nll": 4.720381260827839,
+          "crps": 0.15764214046414626,
+          "coverage68": 0.07254901960784314,
+          "coverage90": 0.12222222222222222,
+          "coverage95": 0.14248366013071895,
+          "pit_histogram": [
+            1063,
+            21,
+            18,
+            21,
+            15,
+            10,
+            18,
+            14,
+            23,
+            327
+          ]
+        },
+        "gaussian_reference_error_proxy": {
+          "n": 1530,
+          "nll": 0.07811346734042622,
+          "crps": 0.12220670019321724,
+          "coverage68": 0.47908496732026146,
+          "coverage90": 0.7437908496732026,
+          "coverage95": 0.826797385620915,
+          "pit_histogram": [
+            575,
+            210,
+            124,
+            117,
+            114,
+            110,
+            95,
+            87,
+            56,
+            42
+          ]
+        }
+      }
+    }
+  }
+}

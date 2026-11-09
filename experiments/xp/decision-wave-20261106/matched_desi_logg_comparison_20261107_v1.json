@@ -1,0 +1,23 @@
+{
+  "run_id": "matched_desi_logg_comparison_20261107_v1",
+  "utc": "2026-11-06T22:51:00.442617+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/matched_desi_logg_comparison_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/matched_desi_logg_comparison_20261107_v1",
+  "status": "accepted_after_timeout_reconciliation",
+  "session_ids": [
+    "dv58l83g"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/compare_matched_desi_logg.py',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/matched_desi_logg_comparison_20261107_v1'];runpy.run_path('scripts/compare_matched_desi_logg.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/compare_matched_desi_logg.py": "be534c30df62546af6df3aaab454cea2ffd166dea754954100c1e38b83211613",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "799dbb388d0473d7f2914da8ae66e0a34f22610a0f34dc9579d2a21ecad79d2f",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout"
+}

@@ -1,0 +1,20 @@
+{
+  "APOGEE-native-reference.png": "13f22db4fc881ba178df2ac326dd7ac41c87e4a6c2d9dc6e9c7d18985fe5bf3b",
+  "DESI-native-reference.png": "6a44400bc747a527d7d0fe9e31ee8ed481ab03eb0e14b314630a06e4125a6a9e",
+  "GALAH-native-reference.png": "85c5e0f9fbbfa3d1c50ce16f8ca610fd1d3e9ccef319342d4194d28834c97cc8",
+  "RAVE-spectroscopic-reference.png": "93a6aa954d19316faa95c7d5f2e2b115f872505feb843dc50a6403efd540021e",
+  "cluster-NGC_104_47Tuc-kiel.png": "d96b6ac5c3b9fc18ea35d3d4ef0a260b75254e8b38d584b29b8fb91b8d2e2dde",
+  "cluster-NGC_2808-kiel.png": "490b2854542cb49a614b3e361a590620a9aef0fd10d155625faf3f2dad1bc277",
+  "cluster-NGC_5139_oCen-kiel.png": "c3b9faa37a040ee16baaa76ddc7966df12e901133f8270d1643d8dac5436fce1",
+  "cluster-NGC_6205_M_13-kiel.png": "61d19c5b8b5d14eda3351938204c1fb9c0478964afc3336434bba2dd3958ec58",
+  "cluster-NGC_6218_M_12-kiel.png": "82403d46f5d38b1302f8fb0af94461a00a2d7298ebdeab16e0f8eaa5c3231704",
+  "cluster-NGC_6752-kiel.png": "f4208883c4e6e12209039eaf3b6a55a4520f0e0f48c0c02bd97d2356e44a3ee9",
+  "cluster-common-summary.png": "be42c5315b88a6fb50f1e797aeaa0a7b2cbe3eb48e7f9ca4f9e99a06a0ce4858",
+  "cluster-metallicity-summary.png": "d315f552528f618b8d3b45fa6b3c8757441c21179fb98ec9bcf50ecdd5fdd801",
+  "cluster-trends.png": "f99d277838f3912b60dcea75d78d1dfd01f3d460702aab69846a4ee7bf7c1a20",
+  "clusters.csv": "7b1f943a72abe27a107ca458b4114146fe768f9a643b6ea0270e2300200a785d",
+  "largest-native-disagreements.csv": "0c8e262358c38dd35c2a3b1f7a0cd63495951216982d122e4752daaa1a883ad5",
+  "metrics.json": "cdbed973e9c8c6bf3d54b8e92a786c44f829bdb410bfffb1e410d80c8ba63688",
+  "population-audit.json": "d1b1e03a4e26e0a596ad1505f77ea54e5315ec4132f9848c1e3ac3bb1d3f74fc",
+  "provenance.json": "a11207944bc87c1929b32032e0ba6daeabaa76911cb945068aade3bc5feb122d"
+}

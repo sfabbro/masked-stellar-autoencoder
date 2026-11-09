@@ -1,0 +1,113 @@
+{
+  "status": "complete_saved_array_corners",
+  "pending": [],
+  "ready": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "b00b2e901d92c2b6104631e69c5240cfdac487f98884bd2b2adaef4569179265",
+          "bytes": 5625077
+        },
+        "development-predictions.npz": {
+          "sha256": "3668126a044a8cf993c4e6e9c360e74417d4dacafc633613ae12780820b146d6",
+          "bytes": 2942474
+        }
+      }
+    },
+    "decision6_gaussian_photxp_20261106_v1": {
+      "selected_checkpoint_sha256": "7b91ff212ee310206551081d233bdde5d43ed8e3e2b31ea939225aac2d3af9ac",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "8e2e40960c6726f77980911d031aa764d4bdc2c35b67b61cd3081119be2c3ea2",
+          "bytes": 5622434
+        },
+        "development-predictions.npz": {
+          "sha256": "55b5a26310db1b37354c1fe3c89454182776cd5a355d0a1cca6c53f2704f6dfa",
+          "bytes": 2943166
+        }
+      }
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "3ceacaf03aff5a0a70200a1e24a43dc492deff1962084d2ccefc546111b1f009",
+          "bytes": 5624221
+        },
+        "development-predictions.npz": {
+          "sha256": "32a2f6e795af8336a3d023b7a97cce8ab7699ea658ae8d517e8e85a590be368e",
+          "bytes": 2942948
+        }
+      }
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "selected_checkpoint_sha256": "2b87eda7fb672659d05e11db2923e272d76ae5b45c597da9c76c006248fd2fdd",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "b62226e7798b8b6978e11db8a78171831a32cc3b053a3a56540180d00d46c0c2",
+          "bytes": 5623127
+        },
+        "development-predictions.npz": {
+          "sha256": "27236b6b97450ab5244ada49fdb9ab681d05684f448ec6b206377ca9e2b3b486",
+          "bytes": 2943466
+        }
+      }
+    },
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1": {
+      "selected_checkpoint_sha256": "72a18206516ed6970ab0812c99df7e9206b75e6a0908c49e4960efebbe10f12c",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "a39d9ab0789f9ed50754f808bed53e9e74908dfae5370668fefe72afe8bbb94f",
+          "bytes": 5625901
+        },
+        "development-predictions.npz": {
+          "sha256": "988a3ddb761a2875518fb9f8747a3c7ebf47fdf4e71c5eac5cdcd3ef34bba2e3",
+          "bytes": 2940136
+        }
+      }
+    },
+    "decision6_nsf_energy_parallax_20261106_v1": {
+      "selected_checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "f58ce29eeeb25a260a935b037cf6a46110f63482db0da621483e505a3e1b3974",
+          "bytes": 5618238
+        },
+        "development-predictions.npz": {
+          "sha256": "48f212df84cf918c0c15c20625a33a49060dd3748ec45c4a7b2ea23215de187c",
+          "bytes": 2941774
+        }
+      }
+    },
+    "decision6_nsf_energy_photxp_20261106_v1": {
+      "selected_checkpoint_sha256": "4311d7f0527e8de79571253ed962e8d9f7121476ac48e2309e584ffb3e49366e",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "8402d3392a266f8d12abd5b31d46c0cb4d79707804636277293ef5c7557a5aa8",
+          "bytes": 5626150
+        },
+        "development-predictions.npz": {
+          "sha256": "54f9336b704c006be1440d4c18ffebfce232569a21ab89979f6599cfd02b34f2",
+          "bytes": 2942396
+        }
+      }
+    },
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1": {
+      "selected_checkpoint_sha256": "a088af4c74c5681f5fde106ce573510b0e16463ef895cdab18c2eb39ab55a208",
+      "artifacts": {
+        "whole-vector-corners.npz": {
+          "sha256": "f3831ef49e24de1b64aba37484c6c3f57b838f870432c2ab5d526e7132b8cf0e",
+          "bytes": 5624757
+        },
+        "development-predictions.npz": {
+          "sha256": "908183360fff33a5fac9db755d56be52ab4b7e340e8d7ab46c2476d1913c035a",
+          "bytes": 2942041
+        }
+      }
+    }
+  },
+  "failures": {},
+  "training_performed": false,
+  "model_loaded": false
+}

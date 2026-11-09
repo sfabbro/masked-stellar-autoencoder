@@ -1,0 +1,16 @@
+{
+  "status": "waiting",
+  "pending": [
+    "decision6_gaussian_parallax_20261106_v1",
+    "decision6_gaussian_photxp_20261106_v1",
+    "decision6_mdn_parallax_20261106_v1",
+    "decision6_mdn_photxp_20261106_v1",
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+    "decision6_nsf_energy_parallax_20261106_v1",
+    "decision6_nsf_energy_photxp_20261106_v1"
+  ],
+  "results": {},
+  "model_loaded": false,
+  "training_performed": false
+}

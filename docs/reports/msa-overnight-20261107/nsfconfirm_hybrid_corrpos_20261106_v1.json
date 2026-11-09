@@ -1,0 +1,328 @@
+{
+  "status": "remediation_pilot_complete",
+  "run_id": "nsfconfirm_hybrid_corrpos_20261106_v1",
+  "arm": {
+    "run_id": "nsfconfirm_hybrid_corrpos_20261106_v1",
+    "kind": "nsf_energy",
+    "encoder": "finetune",
+    "reconstruction_weight": 0.03,
+    "input_profile": "phot_xp_measured_parallax",
+    "confirmation": {
+      "energy_weight": 1.0,
+      "crps_weight": 1.0,
+      "unknown_floor": 0.1,
+      "native_error_correlation": 0.3,
+      "native_student_t": false,
+      "seed": 20261106
+    }
+  },
+  "training_performed": true,
+  "completed_updates": 6000,
+  "declared_updates": 6000,
+  "full_epoch_claim": false,
+  "script_sha256": "0a4ef3208f9640dde817ed29f284a6efa4a33094056d2ad73022746be8d839db",
+  "config_sha256": "72b3b650fc2bc0073f4ad3814afcc3ce42adbb35c777008c536668981568ae10",
+  "started_utc": "2026-11-06T19:32:07Z",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "library_revision": "82ca1996cc4f3ca0be3e730d38a99db482a79378",
+  "prepared_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "source_manifest_sha256": "9462c283cbe5e855d6db7bd142db03978a483c5493710065f38e8d8c15be5cdf",
+  "input_audit_sha256": "680262c55c71cf5e4c41e72ac00885e9914af9d06859d5520d0a42bac099ba99",
+  "joint_preflight_sha256": "091e1554c105556a2a70f66c0ecb48d165c15478a53b41dfd3171bee54e33864",
+  "parent_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
+  "fit_per_target": [
+    506331,
+    493548,
+    506315,
+    1197641,
+    115834,
+    117573
+  ],
+  "tune_panel_rows": 1483,
+  "devtest_panel_rows": 6147,
+  "sampler": "round-robin target; uniform nonempty source strata, logg additionally uniform gravity bins <1/1-2/2-3/3-4/4-4.5/>=4.5; every FIT identity eligible",
+  "unknown_error_scope": "Independent Gaussian illustrative positive normalized floors, not measured uncertainties",
+  "selection": "first minimum TUNE macro standardized marginal sample CRPS, quoted-error convolution where known; unknown-error reference values are scored as retained point teachers; same panel across objective/floor controls",
+  "natural_xp_at_inference": true,
+  "pit_scope": "512 whole-vector empirical marginal intrinsic PIT; observed PIT only when quoted target error is known, not an exact CDF; baseline unavailable",
+  "covariance_scope": "Actual whole-vector conditional sample covariance; no manufactured correlations and no physical six-dimensional truth claim",
+  "supervised_xp_dropout": 0.0,
+  "energy_device_preflight": {
+    "copy_only": true,
+    "updates": 2,
+    "steps": [
+      {
+        "step": 1,
+        "score": 1.8000110387802124,
+        "flow_gradient_l2": 1.9240761240990623,
+        "context_gradient_l2": 0.0
+      },
+      {
+        "step": 2,
+        "score": 1.4453307390213013,
+        "flow_gradient_l2": 1.4147890047455574,
+        "context_gradient_l2": 0.0011280709542365649
+      }
+    ],
+    "scope": "Numerical sample-score preflight only; no encoder/reconstruction/physical calibration certificate"
+  },
+  "objective_scope": "Six-target joint NSF sample energy score, not marginal NLL; stratified star sample, not population weighted",
+  "reconstruction_cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+  "sampler_strata": [
+    {
+      "target": "teff",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115765
+    },
+    {
+      "target": "teff",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 0,
+      "eligible_rows": 8031
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 1,
+      "eligible_rows": 30203
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 2,
+      "eligible_rows": 59784
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 3,
+      "eligible_rows": 11079
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 4,
+      "eligible_rows": 6624
+    },
+    {
+      "target": "logg",
+      "source": "apogee",
+      "gravity_bin": 5,
+      "eligible_rows": 229
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 0,
+      "eligible_rows": 4965
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 1,
+      "eligible_rows": 28158
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 2,
+      "eligible_rows": 93687
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 3,
+      "eligible_rows": 79642
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 4,
+      "eligible_rows": 143346
+    },
+    {
+      "target": "logg",
+      "source": "galah",
+      "gravity_bin": 5,
+      "eligible_rows": 27800
+    },
+    {
+      "target": "fe_h",
+      "source": "apogee",
+      "gravity_bin": -2,
+      "eligible_rows": 115749
+    },
+    {
+      "target": "fe_h",
+      "source": "galah",
+      "gravity_bin": -2,
+      "eligible_rows": 390566
+    },
+    {
+      "target": "alpha",
+      "source": "DESI_RVSpecFit_alpha_fe",
+      "gravity_bin": -2,
+      "eligible_rows": 1197641
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35012
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "age",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 77995
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_apogee17_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 35824
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_catalogue_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 2827
+    },
+    {
+      "target": "distance",
+      "source": "StarHorse_galahdr3_posterior_median",
+      "gravity_bin": -2,
+      "eligible_rows": 78922
+    }
+  ],
+  "encoder_gradient_contract": {
+    "update": 6000,
+    "reconstruction_weight": 0.03,
+    "supervised_l2": 21.52506315079747,
+    "reconstruction_unweighted_l2": 1.046611397459808,
+    "cosine": -0.04749550775163651
+  },
+  "encoder_gradient_startup": [
+    {
+      "update": 1,
+      "status": "zero_initialized_flow_projection_first_step",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.0,
+      "reconstruction_unweighted_l2": 11.228953531674449,
+      "cosine": null
+    },
+    {
+      "update": 2,
+      "status": "supervised_nonzero",
+      "reconstruction_weight": 0.03,
+      "supervised_l2": 0.20542488408074186,
+      "reconstruction_unweighted_l2": 10.019515658399479,
+      "cosine": -0.3403203209340832
+    }
+  ],
+  "per_target_presentations": [
+    1273704,
+    1254628,
+    1273472,
+    305629,
+    676886,
+    681418
+  ],
+  "per_target_unique_identities": [
+    389471,
+    381902,
+    389455,
+    260086,
+    112371,
+    113861
+  ],
+  "supervised_loss_components": {
+    "masked_energy_score": 0.31383318950732547,
+    "marginal_crps": 0.1418304480612278,
+    "known_same_source_native_fraction": 0.6944444444444444
+  },
+  "supervised_objective": 0.45566368103027344,
+  "encoder_dropout_seed": null,
+  "per_target_source_presentations": {
+    "teff:apogee": 484601,
+    "teff:galah": 789103,
+    "logg:apogee": 485488,
+    "logg:galah": 769140,
+    "fe_h:apogee": 484369,
+    "fe_h:galah": 789103,
+    "age:StarHorse_apogee17_posterior_median": 233725,
+    "age:StarHorse_galahdr3_posterior_median": 250764,
+    "distance:StarHorse_apogee17_posterior_median": 237028,
+    "distance:StarHorse_galahdr3_posterior_median": 251993,
+    "alpha:DESI_RVSpecFit_alpha_fe": 305629,
+    "age:StarHorse_catalogue_posterior_median": 192397,
+    "distance:StarHorse_catalogue_posterior_median": 192397
+  },
+  "finite_gradient_updates": 6000,
+  "last_loss": 0.47712442278862,
+  "last_reconstruction_mae": 0.7153581380844116,
+  "selected_update": 5000,
+  "best_tune_score": 0.14823864897775058,
+  "selected_checkpoint_sha256": "17208224bb06c53cbb710f95cb35a3d38eb3d7122accf2eaa6763a89d181f1dc",
+  "sample_sequence_sha256": "cb5a3f80661dc30b944e9df27ee2faf1b373ee0eaf80aaf177d1cfb2e51626ea",
+  "tune_score": 0.14823864897775058,
+  "tune_per_label": [
+    0.09788334287848788,
+    0.07966351637051419,
+    0.22022617923125576,
+    0.4025993490673124,
+    0.28461689154134057,
+    0.19655255284220324
+  ],
+  "development_score": 0.16447910188185322,
+  "development_per_label": [
+    0.10254415167760092,
+    0.08767626235518369,
+    0.22943386008468683,
+    0.42013437994034664,
+    0.3152944352573545,
+    0.23806931009445245
+  ],
+  "development_scope": "Fixed hashed pilot panel from previously consumed development roles; not an untouched test or promotion",
+  "reconstruction_presentations": 1536000,
+  "corner_scope": "Whole coupled six-target vectors; posterior-reference age/distance scales are not physical truth",
+  "artifacts": {
+    "development-predictions.npz": {
+      "bytes": 746323,
+      "sha256": "c2a0c09d635709c0b73b619867002f99069cb649b5cb59bfc2c17362b1af1f4e"
+    },
+    "selected-checkpoint.pth": {
+      "bytes": 411503453,
+      "sha256": "17208224bb06c53cbb710f95cb35a3d38eb3d7122accf2eaa6763a89d181f1dc"
+    },
+    "tune-predictions.npz": {
+      "bytes": 190722,
+      "sha256": "ccdd0af1d0c7820664ebd39eefabf807355afb6724491bc7b7e3d8fc743692d9"
+    },
+    "metrics.jsonl": {
+      "bytes": 1725,
+      "sha256": "bd64d71827e67342dafa773ee703116aac9acb4ff6ed0d377b31fd17f4ac913a"
+    },
+    "normalization.npz": {
+      "bytes": 1696,
+      "sha256": "cb7c9f25cd9bd7d2372b1ee50dd129b9eb6e4a33ecbac4e722dc53fd573131a2"
+    },
+    "whole-vector-corners.npz": {
+      "bytes": 1409008,
+      "sha256": "b4fe2e5ef511ca7e75f80a0511d1e2f782fc2d912e26fa9f5eafacbf334e3c79"
+    }
+  }
+}

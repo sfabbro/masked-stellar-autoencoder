@@ -1,0 +1,35 @@
+{
+  "status": "native_rave_candidate_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "sources": {
+    "madera.csv.gz": {
+      "url": "https://www.rave-survey.org/files/csv/ravedr6_dr6_madera.csv.gz",
+      "bytes": 14180656,
+      "sha256": "53e11b82aea7302a614bd9872a3622f51340efa68b75f0f3bf115035a501b0a6"
+    },
+    "iron.csv.gz": {
+      "url": "https://www.rave-survey.org/files/csv/ravedr6_dr6_gauguin_madera.csv.gz",
+      "bytes": 16665885,
+      "sha256": "bb903b093ca397c9b2c7f4f80820153236a1df6712ed150175db853eb9431255"
+    },
+    "crossmatch.xml": {
+      "url": "https://www.rave-survey.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+600000+rave_obs_id%2Csource_id%2Cdist+FROM+ravedr6.dr6_x_gaiaedr3",
+      "bytes": 108106491,
+      "sha256": "8af5e90a74befbf041a2ea547e92554f32701c3d6da1d4a7dbbc7fe4b048112d",
+      "rows": 517357
+    }
+  },
+  "receipt": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+    "sha256": "d18c0d65ee08ed74e7a64b9515e1bead1550aa131c659eccb8136066351fa78a"
+  },
+  "selected_unique_stars": 188943,
+  "selected_per_target": [
+    188943,
+    188943,
+    151160
+  ],
+  "benchmark_reserved": 0,
+  "training_enabled": false
+}

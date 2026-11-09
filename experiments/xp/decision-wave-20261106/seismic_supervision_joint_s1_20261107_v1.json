@@ -1,0 +1,32 @@
+{
+  "run_id": "seismic_supervision_joint_s1_20261107_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_supervision_joint_s1_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/seismic_supervision_joint_s1_20261107_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_seismic_supervision_experiments.py --config configs/seismic-supervision-experiments-20261107.yaml --output \"$experiment_output\" --seed 202611071 --mode joint --require-preflight /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/seismic_supervision_readout_preflight_20261107_v2",
+  "utc": "2026-11-07T07:49:17.336549+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "lffjg57w"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/nsf_confirmation.py": "477a95d17649009afea9a45e25fd9b2194c58deadf4ec067460ea57544f64a0e",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/fullfit_records.py": "84caa7895ffede7f0f6076d173ffbccee7a3f14eb40ae8be973dd6cbc575aafc",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/cached_inputs.py": "82e707eba12c81db544bc76d8baeb4c7b6f2dcc12b1bff0acaf77f0b43610157",
+    "scripts/run_seismic_supervision_experiments.py": "4ce59e533fd8ec72725efeb66cea19419fd305184ecbebbdbeed74d4eddac4da",
+    "src/masked_stellar_autoencoder/training/seismic_ablation.py": "1007eca67fca8dba0e2dea736b223c5fc36209ec837f4401e872054da1337311",
+    "configs/seismic-supervision-experiments-20261107.yaml": "f152bcc1c2b31adf56891645398c11b56f0efeca7320cd9c95cfc94e58d5ab47"
+  },
+  "payload_sha256": "0927016ffece0553450e8c29a2b0250931c9b3f480a4cc0fb57cbcb00726000f"
+}

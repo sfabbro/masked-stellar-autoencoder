@@ -1,0 +1,11 @@
+{
+  "status": "expanded_cache_parallax_candidate_complete",
+  "training_performed": false,
+  "profile_activated": false,
+  "expanded_stars": 7591872,
+  "cache_matched": 4756093,
+  "available_cache_parallax_coordinate": 4756093,
+  "known_formal_errors": 0,
+  "candidate_sha256": "b6c1b5d25820aeac218eb82662e104de613f1e3446515727a9283fe1d45fb02d",
+  "scope": "Recoverable cache coordinate, not certified measured Gaia parallax; final profile requires raw measurement/error/unit provenance"
+}

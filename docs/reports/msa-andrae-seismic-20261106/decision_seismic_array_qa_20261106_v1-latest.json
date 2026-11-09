@@ -1,0 +1,63 @@
+{
+  "status": "waiting_or_scoring",
+  "pending": [
+    "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+    "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+    "decision6_nsf_energy_parallax_20261106_v1",
+    "decision6_nsf_energy_photxp_20261106_v1"
+  ],
+  "results": {
+    "decision6_gaussian_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 87,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "e2795b391ab9d08bdb857f02b0847c23f4b31b4c3c4a2d944af22d0101c63ccc",
+      "prediction_sha256": "3668126a044a8cf993c4e6e9c360e74417d4dacafc633613ae12780820b146d6",
+      "matched_ids_sha256": "180853801c912af146582667ca55cf963053c5b85aadaf1ab8038a2a44e495c6",
+      "median_bias": 0.02480405963330856,
+      "mae": 0.08719948963994516,
+      "nmad": 0.08484256610859175,
+      "rmse": 0.13580194478569824
+    },
+    "decision6_gaussian_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 87,
+      "selected_update": 9000,
+      "selected_checkpoint_sha256": "7b91ff212ee310206551081d233bdde5d43ed8e3e2b31ea939225aac2d3af9ac",
+      "prediction_sha256": "55b5a26310db1b37354c1fe3c89454182776cd5a355d0a1cca6c53f2704f6dfa",
+      "matched_ids_sha256": "180853801c912af146582667ca55cf963053c5b85aadaf1ab8038a2a44e495c6",
+      "median_bias": 0.03877859171214082,
+      "mae": 0.10276417715764127,
+      "nmad": 0.09889620980443035,
+      "rmse": 0.19332252330769922
+    },
+    "decision6_mdn_parallax_20261106_v1": {
+      "status": "complete",
+      "stars": 87,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "730cdda93bbdf608f9e8781e5fc917c28eed39c48f6a3c87937f5c728e6d7486",
+      "prediction_sha256": "32a2f6e795af8336a3d023b7a97cce8ab7699ea658ae8d517e8e85a590be368e",
+      "matched_ids_sha256": "180853801c912af146582667ca55cf963053c5b85aadaf1ab8038a2a44e495c6",
+      "median_bias": -0.024280111096498302,
+      "mae": 0.0800836627614433,
+      "nmad": 0.07386703366733488,
+      "rmse": 0.1367566553376819
+    },
+    "decision6_mdn_photxp_20261106_v1": {
+      "status": "complete",
+      "stars": 87,
+      "selected_update": 8000,
+      "selected_checkpoint_sha256": "2b87eda7fb672659d05e11db2923e272d76ae5b45c597da9c76c006248fd2fdd",
+      "prediction_sha256": "27236b6b97450ab5244ada49fdb9ab681d05684f448ec6b206377ca9e2b3b486",
+      "matched_ids_sha256": "180853801c912af146582667ca55cf963053c5b85aadaf1ab8038a2a44e495c6",
+      "median_bias": 0.04166265968617422,
+      "mae": 0.11024400644867229,
+      "nmad": 0.0945226338596462,
+      "rmse": 0.20724822579146907
+    }
+  },
+  "reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf",
+  "training_performed": false,
+  "model_loaded": false,
+  "scope": "Saved devtest pilot panels, not all seismic stars. Same exact IDs required across arms; current historical teacher/parent exposure unverified. Point accuracy versus seismic logg; not physical PDF calibration."
+}

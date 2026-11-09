@@ -1,0 +1,19 @@
+{
+  "name": "msa-rave-native-admission-20261105-v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1",
+  "utc": "2026-11-05T15:10:25.932712+00:00",
+  "session_ids": [
+    "xwu1g1p5"
+  ],
+  "status": "completed",
+  "training_performed": false,
+  "source_sha256": {
+    "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/multisurvey_overlay.py": "8114002725c61bacd4ee02b4660fa01133c910743287cf01ca12ad0fa68db03b",
+    "src/masked_stellar_autoencoder/training/survey_expansion_sources.py": "d388b95b366e1ba01b3708facb5e51b1f872235b96bcba46901f1bcac4326f05",
+    "stage_rave_native.py": "250fffec78ec15122c5d0f15770f719d15f6765914ba41bc7f8bb1c9c7a8178a",
+    "benchmark-ids.json": "5f21640d33d3313e8584e6439706b522dbdaf5964c3d2ad671d130da87df87bd",
+    "pixi.toml": "5d419afa566ed0f12fcefef3952878d9170b2cd01a73164f92a8a403ce503c58"
+  }
+}

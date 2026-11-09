@@ -1,0 +1,25 @@
+{
+  "run_id": "remaining_survey_raw_features_20261107_v1",
+  "utc": "2026-11-06T21:24:51.792142+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remaining_survey_raw_features_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/remaining_survey_raw_features_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "abv2y05q"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"src\");sys.argv=['scripts/recover_remaining_survey_inputs.py',\"--config\",'configs/expanded-six-source-20261107.json',\"--feature-config\",'configs/multisurvey-feature-union-dr12-20261106.json',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remaining_survey_raw_features_20261107_v1'];runpy.run_path('scripts/recover_remaining_survey_inputs.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/recover_remaining_survey_inputs.py": "1d1dc9b657b5873240edfafda718d8e65f32553bec64e1f2a27e9f07236ebb5e",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+    "configs/multisurvey-feature-union-dr12-20261106.json": "ec8e43bb3c7bd199410fc721e35fa4bfbc67aea53028be7b5f9c056063228b4f",
+    "src/masked_stellar_autoencoder/training/evaluation_feature_lookup.py": "71341809256fda4b3c8005aa10c06dc987fa0c3793cb3afc75a0534c0910fdae",
+    "src/masked_stellar_autoencoder/training/hdf5_io.py": "70e65d13d3c2d19130e8667a1c873cd66ed631bf373b0ac405e0a994eb71fcc4",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "4758d7159a919ca2eef3e1c437d88b2beb7d77e32aac52e6b796f525da159591"
+}

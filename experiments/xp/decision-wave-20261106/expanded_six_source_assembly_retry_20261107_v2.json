@@ -1,0 +1,23 @@
+{
+  "run_id": "expanded_six_source_assembly_retry_20261107_v2",
+  "utc": "2026-11-07T02:36:31.446462+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_assembly_retry_20261107_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_six_source_assembly_retry_20261107_v2",
+  "status": "accepted",
+  "session_ids": [
+    "w29278tl"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/extend_full_raw_source.py',\"--config\",'configs/expanded-six-source-20261107.json',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5',\"--reuse-waiting-output\"];runpy.run_path('scripts/extend_full_raw_source.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/extend_full_raw_source.py": "f31e9962747aa0e5a4ffd9f92101f85256b59c6780f218200c88beb147d2936e",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+    "scripts/prepare_expanded_six_source.py": "d9dd22d40fa970fe6036352c8fbc258b4abb9880fe6910c461b3fb95dda58671",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "a9f6de23ee86e7f8904beba98b87bc3121265105d773ccd7b41e8e424a69af42"
+}

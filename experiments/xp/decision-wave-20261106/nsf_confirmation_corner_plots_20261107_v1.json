@@ -1,0 +1,23 @@
+{
+  "run_id": "nsf_confirmation_corner_plots_20261107_v1",
+  "utc": "2026-11-06T16:14:27.886837+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsf_confirmation_corner_plots_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/nsf_confirmation_corner_plots_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "ep4fiicg"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/run_decision_corner_worker.py',\"--config\",'configs/nsf-confirmation-qa-20261107.yaml',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/nsf_confirmation_corner_plots_20261107_v1'];runpy.run_path('scripts/run_decision_corner_worker.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "configs/nsf-confirmation-qa-20261107.yaml": "3d55bd74959766413f5cfaae02b0622ca6d5f022fc8eeb68e8222ec75008d0e8",
+    "scripts/run_decision_corner_worker.py": "be83c241de6d75a84fc7fb39b6a67f3d369a6943944a797d129bba217093d276",
+    "scripts/plot_decision_six_corners.py": "e0d81791ff46247b7b8563b3a64a035e077e7542d3766dbb041b6ac451b61568",
+    "pixi.toml": "252140f949edee4e42cfdd2d38d8d0bbe11d9fae2ee6464b80aa305f420f666a"
+  },
+  "payload_sha256": "327f0db591418a5acbff12139035ae0352d309025cf15b143c3e1d6a87d96ed3"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "timeout_no_result",
+  "scope": "Three-row Gaia-ESO TAP_UPLOAD candidate-only sync query against Gaia ESA DR3, radius 10 arcsec and maxrec 5000; no source labels or model execution.",
+  "service": "https://gea.esac.esa.int/tap-server/tap",
+  "timeout_seconds": 60,
+  "reason": "Local process timed out after 60 seconds; no result or server job ID was returned.",
+  "limitation": "Does not show that the server rejected uploads or that a bulk query would fail. Do not infer candidates, matches, or completeness. The bounded ESA cone xmatcher probe succeeded separately."
+}

@@ -1,0 +1,95 @@
+{
+  "status": "first_checkpoint_common_qa_complete",
+  "model_training_performed": false,
+  "models": {
+    "large_first_checkpoint": {
+      "status": "complete",
+      "checkpoint_sha256": "1cb3ebae5fa64f5f89fb47b9ec4e4713f57e4225d499a3081737267c1241071b",
+      "training_update": 35953,
+      "epoch": 1,
+      "artifacts": {
+        "large_first_checkpoint-common.npz": {
+          "sha256": "19fd8299c9a853d118613f5862ab282bb71ebcc21bb93b897d073f9438e24c5e",
+          "bytes": 89441970
+        },
+        "large_first_checkpoint-single-star.npz": {
+          "sha256": "b9d55f573ac9763bc8741661ccf62bc8f1982dde4691a8d01dc01f6caa2a0ee4",
+          "bytes": 703225
+        }
+      }
+    },
+    "earlier_pooled_nsf": {
+      "status": "complete",
+      "checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "training_update": 8000,
+      "epoch": null,
+      "artifacts": {
+        "earlier_pooled_nsf-common.npz": {
+          "sha256": "f397a035ea2c2dc8a3476d71fea640f1b108fc87353d17c642be36bfea37e5cb",
+          "bytes": 89408716
+        },
+        "earlier_pooled_nsf-single-star.npz": {
+          "sha256": "dac090f9919f1a6e833afbc33fd502a72868058d922964d3b8328b5ce5c27a48",
+          "bytes": 702686
+        }
+      }
+    }
+  },
+  "scope": "Immutable large-run snapshot versus frozen earlier six-target NSF. Common reference predictions; source-native labels retain their scales. Preliminary checkpoint may precede a full FIT epoch. Benchmark/cluster parent exposure and teacher dependencies remain; raw density QA is not a release certificate.",
+  "tess_candidate_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "stars": 21561,
+  "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+  "source_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/manifest.json",
+  "large_snapshot_sha256": "1cb3ebae5fa64f5f89fb47b9ec4e4713f57e4225d499a3081737267c1241071b",
+  "cached_inputs_verified_rows": 128,
+  "tess_devtest_stars": 12017,
+  "large_decision": {
+    "status": "large_candidate_admitted",
+    "objective": "energy",
+    "noise_choice": {
+      "run_id": "nsfconfirm_energy_s1_20261106_v1",
+      "correlation": 0.0,
+      "native_student_t": false,
+      "unknown_floor": 0.1
+    },
+    "paired_tune_macro_crps": {
+      "energy": 0.1460165776874032,
+      "hybrid": 0.14615616087398564
+    },
+    "mapping_run": "sixmap_seismic_spline_20261107_v1",
+    "mapping_checkpoint_sha256": "dae45ff2a473a3d1887a88a1238ff93d6d6281a21d5d0648aef92abe02d9cf78",
+    "mapping_kind": "spline",
+    "mapping_tune_seismic": {
+      "n": 512,
+      "mae": 0.055350574602759446,
+      "bias": -0.004187634926763487,
+      "coverage90": 0.9140625
+    },
+    "expanded_source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+    "noise": "TUNE-screened operational noise assumption; correlated/Student-t changes apply only to known-error, complete APOGEE/GALAH atmospheric blocks as in the controls. Other quoted errors use independent Gaussian convolution; unknown-error floors remain illustrative. A single-seed sensitivity gain is provisional, not identified physical covariance. No XP Gaussian NLL reconstruction.",
+    "coverage_scope": "Candidate gates tolerate remaining raw underdispersion. CAL interval diagnostics do not alter or certify a physical joint PDF. Final export needs post-training QA.",
+    "selection": "Paired TUNE objective comparison and same-panel anchored TUNE map comparisons. DEV outcomes do not select this run.",
+    "all_decision_statuses": {
+      "nsfconfirm_energy_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_energy_s2_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_s2_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_crps_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_floor003_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_corrpos_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_corrneg_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_studentt_20261106_v1": "remediation_pilot_complete",
+      "sixmap_equalweight_affine_20261107_v1": "complete",
+      "sixmap_apogee_affine_20261107_v1": "complete",
+      "sixmap_seismic_affine_20261107_v1": "complete",
+      "sixmap_seismic_nodesig_20261107_v1": "complete",
+      "sixmap_seismic_offset_20261107_v1": "complete",
+      "sixmap_seismic_spline_20261107_v1": "complete",
+      "expanded_six_source_20261107_v5": "expanded_six_source_complete",
+      "nsf_confirmation_calibration_20261107_v1": "complete",
+      "native_label_covariance_audit_20261107_v2": "complete"
+    }
+  },
+  "panel_sha256": "4da7a3f48ce4902396b51acd6ec33eea9457c8702289478835a62432ea9a952b",
+  "seismic_reference_sha256": "b1dbf11a210abdd835aee1d9e9d0ef3e57c543a6a920021d99e7223164b8c2cf"
+}

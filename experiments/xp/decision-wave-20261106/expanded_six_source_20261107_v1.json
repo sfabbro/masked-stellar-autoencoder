@@ -1,0 +1,22 @@
+{
+  "run_id": "expanded_six_source_20261107_v1",
+  "utc": "2026-11-06T16:31:00.305804+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_six_source_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "py35y34n"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/prepare_expanded_six_source.py',\"--config\",'configs/expanded-six-source-20261107.json',\"--output\",'/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v1'];runpy.run_path('scripts/prepare_expanded_six_source.py',run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/prepare_expanded_six_source.py": "7e03ba8eada6b13d2ba50fdb2f6e6fd7d7917aff92592086fd728a3048a9fdd2",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "df35bcb875e4d9a3ab225dea5e65a9e81c63a260f613f20da3b3a35f07cae4c0"
+}

@@ -1,0 +1,22 @@
+{
+  "status": "gaia_eso_raw_source_complete",
+  "output": "/private/tmp/msa-gaia-eso-dr51-raw-20261029.h5",
+  "output_sha256": "9932d63fc89278425ace2ee9f44507990d0efc7ece0750028c27c28eaf0992e4",
+  "output_bytes": 22383277,
+  "source_sha256": "ecc0b76f5fea97c8a56f8fe1adf65c257bc4f7cd83a5148f82b361797e05fec1",
+  "counts": {
+    "rows": 114916,
+    "finite_values": {
+      "TEFF": 97499,
+      "LOGG": 89799,
+      "FEH": 94247,
+      "MG1": 54223,
+      "SI1": 34556,
+      "CA1": 49355,
+      "TI1": 39147
+    },
+    "position_epoch": "unknown_per_row",
+    "gaia_id": "not_supplied_in_checked_schema",
+    "valid_coordinate_rows": 114916
+  }
+}

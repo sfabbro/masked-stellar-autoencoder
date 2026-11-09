@@ -1,0 +1,13 @@
+{
+  "predictions": {
+    "fit": "ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff",
+    "tune": "98ce312df18022146c588d9b94c68bd5e2ea6319376a9eeed26494d356ac0ec5",
+    "cal": "57ed79ae77aec0b832fa328b6baad9cb72c738ad2d37b3fadf7cd50b9745f630",
+    "devtest": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9",
+    "external": "aca9420f31ec08fc1a3d8a10cece8989e532f371d877f2c0150e16df4ff89335"
+  },
+  "mapped": {
+    "devtest": "6dcb955227cf6aff7b89389336a31bd2067650b4f57c8b008aa7dae4fdf890a5",
+    "external": "ca781766ebd44a67a8750e3f0d0b73d2140532f76771e275c45ac8ecb56b0f37"
+  }
+}

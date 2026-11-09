@@ -1,0 +1,6 @@
+{
+  "status": "waiting_for_first_checkpoint",
+  "model_training_performed": false,
+  "models": {},
+  "scope": "First large-run snapshot versus frozen earlier six-target NSF. Common reference predictions; source-native labels retain their scales. Preliminary checkpoint may precede a full FIT epoch. Benchmark/cluster parent exposure and teacher dependencies remain; raw density QA is not a release certificate."
+}

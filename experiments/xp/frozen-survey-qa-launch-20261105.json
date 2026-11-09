@@ -1,0 +1,22 @@
+{
+  "name": "msa-frozen-survey-qa-20261105-v1",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/frozen_survey_qa_20261105_v1",
+  "utc": "2026-11-05T15:21:01.199880+00:00",
+  "status": "failed_consistency_check_api",
+  "session_ids": [
+    "y49w5scn"
+  ],
+  "checkpoint_sha256": "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7",
+  "training_performed": false,
+  "source_sha256": {
+    "scripts/replay_frozen_survey_qa.py": "cfb6dfafee8ba9a86174dc8b18e1557c05c71abe1394680c03f37f964d4a3f59",
+    "src/masked_stellar_autoencoder/training/export_mixture_diagnostics.py": "e52015183322dfd659705ffe68eaa44c79bb20e8d3274c87ecc5b1e89ad6edff"
+  },
+  "resources": {
+    "cores": 4,
+    "ram": 64,
+    "gpu": 1
+  },
+  "failure": "NumPy assert_allclose formats atol as a scalar; per-target array tolerance raised TypeError before comparison",
+  "updates": 0
+}

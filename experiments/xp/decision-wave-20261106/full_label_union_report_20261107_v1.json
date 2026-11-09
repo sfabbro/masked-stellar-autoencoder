@@ -1,0 +1,22 @@
+{
+  "run_id": "full_label_union_report_20261107_v1",
+  "utc": "2026-11-07T03:27:06.347273+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_union_report_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_label_union_report_20261107_v1",
+  "status": "accepted",
+  "session_ids": [
+    "if263n5h"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.path.insert(0,\"src\");sys.argv=['scripts/report_full_label_union_qa.py', '--producer', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_union_inference_20261107_v1', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_union_report_20261107_v1'];runpy.run_path(\"scripts/report_full_label_union_qa.py\",run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_full_label_union_qa.py": "379869e6e7ebe49186cea39cd09c10757987066d7db44dde4ca7167a2582570f",
+    "src/masked_stellar_autoencoder/training/survey_map_arrays.py": "1bcb0de05d9cf8e2d363d38319ab9a99a63604a64bcaf7de79cb19aebb8e79fe",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "22e67b7de8e72b750107a4d4f37c22b878e285b46a41b7852c93aef816d890a2"
+}

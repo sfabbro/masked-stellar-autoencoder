@@ -1,0 +1,398 @@
+{
+  "status": "expanded_six_source_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "config_sha256": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+  "sources": {
+    "apogee": {
+      "rows": 180826,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        180826,
+        180826,
+        180800,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 126108,
+        "tune": 17924,
+        "cal": 18189,
+        "devtest": 17828,
+        "external": 777
+      }
+    },
+    "desi": {
+      "rows": 1711197,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        1711197,
+        1711197,
+        1711197,
+        1710481,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 1197575,
+        "tune": 171071,
+        "cal": 170662,
+        "devtest": 171783,
+        "external": 106
+      }
+    },
+    "galah": {
+      "rows": 557273,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        557273,
+        538557,
+        557273,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 390345,
+        "tune": 55446,
+        "cal": 55490,
+        "devtest": 55678,
+        "external": 314
+      }
+    },
+    "StarHorse_apogee17_posterior_median": {
+      "rows": 49669,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        48547,
+        49667
+      ],
+      "role_rows": {
+        "fit": 35825,
+        "tune": 5004,
+        "cal": 4334,
+        "devtest": 3554,
+        "external": 952
+      }
+    },
+    "StarHorse_galahdr3_posterior_median": {
+      "rows": 99647,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        98180,
+        99438
+      ],
+      "role_rows": {
+        "fit": 79086,
+        "tune": 10782,
+        "cal": 6840,
+        "devtest": 2803,
+        "external": 136
+      }
+    },
+    "StarHorse_catalogue_posterior_median": {
+      "rows": 6901,
+      "outside_feature_union": 0,
+      "observed_per_target": [
+        0,
+        0,
+        0,
+        0,
+        6901,
+        6901
+      ],
+      "role_rows": {
+        "fit": 2827,
+        "tune": 676,
+        "cal": 1360,
+        "devtest": 2038,
+        "external": 0
+      }
+    },
+    "lamost_dr12v2_lrs_lasp": {
+      "rows": 1982248,
+      "outside_feature_union": 1282853,
+      "observed_per_target": [
+        1964717,
+        1982160,
+        1982246,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 1460683,
+        "tune": 195716,
+        "cal": 142940,
+        "devtest": 160943,
+        "external": 183
+      }
+    },
+    "rave_dr6_madera_gauguin": {
+      "rows": 119075,
+      "outside_feature_union": 69868,
+      "observed_per_target": [
+        119075,
+        119075,
+        98492,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 88537,
+        "tune": 11799,
+        "cal": 8981,
+        "devtest": 9637,
+        "external": 68
+      }
+    },
+    "gaia_dr3_gspspec": {
+      "rows": 3692522,
+      "outside_feature_union": 1774266,
+      "observed_per_target": [
+        3624131,
+        3666485,
+        0,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 2744104,
+        "tune": 367918,
+        "cal": 269642,
+        "devtest": 302463,
+        "external": 2008
+      }
+    },
+    "sdss_dr20_bossnet_081": {
+      "rows": 103616,
+      "outside_feature_union": 825416,
+      "observed_per_target": [
+        101495,
+        103616,
+        103614,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 67416,
+        "tune": 9238,
+        "cal": 7901,
+        "devtest": 8243,
+        "external": 323
+      }
+    },
+    "lamost_dr12v2_mrs_lasp": {
+      "rows": 407872,
+      "outside_feature_union": 414119,
+      "observed_per_target": [
+        406010,
+        407149,
+        407872,
+        0,
+        0,
+        0
+      ],
+      "role_rows": {
+        "fit": 300257,
+        "tune": 40449,
+        "cal": 30344,
+        "devtest": 33873,
+        "external": 127
+      }
+    }
+  },
+  "training_source_ready": true,
+  "base_stars": 4441942,
+  "expanded_feature_stars": 4756867,
+  "total_stars": 9198809,
+  "benchmark_stars": 94,
+  "protected_globular_members": 2418,
+  "prior_fit_moved_to_external": 847,
+  "feature_rows_written": 9183232,
+  "prepared_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v3/prepared.h5",
+  "prepared_sha256": "eace70ffcdbfc7a82760348a230cda8e935629c7d412ed17288b1e0b5c6d36bf",
+  "source_registry": [
+    "apogee",
+    "desi",
+    "galah",
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "lamost_dr12v2_lrs_lasp",
+    "rave_dr6_madera_gauguin",
+    "gaia_dr3_gspspec",
+    "sdss_dr20_bossnet_081",
+    "lamost_dr12v2_mrs_lasp"
+  ],
+  "roles": {
+    "fit": 5303250,
+    "tune": 723363,
+    "cal": 580954,
+    "devtest": 629006,
+    "external": 4773,
+    "excluded": 1957463
+  },
+  "eligible_role_counts": {
+    "fit": 5303250,
+    "tune": 723363,
+    "cal": 580954,
+    "devtest": 629006,
+    "external": 3538
+  },
+  "feature_profiles": {
+    "phot_xp": {
+      "ready": true
+    },
+    "phot_xp_measured_parallax": {
+      "ready": true,
+      "feature_index": 134,
+      "override_dataset": "measured_parallax/input_value",
+      "availability_dataset": "measured_parallax/observed"
+    }
+  },
+  "remaining_sources": "Gaia-ESO identities and MaSTAR source-quality/dependency admission remain separate; no implicit activation. LAMOST alpha/M and GSP-Spec M/H are excluded from Fe/H or alpha/Fe targets.",
+  "holdout_scope": "New stage protects GBS and all selected globular members as groups. Existing ancestors may contain their labels or inputs. New stars inherit stable ID roles; all products of one star share one role; unlinked binary/open-cluster dependencies remain unknown. Newly staged TESS/K2 identities are not yet admitted.",
+  "normalization": "Feature scaler is identical to parent. Target normalization must remain the selected six-target parent normalization, not be refitted using new target labels.",
+  "parent_source_sha256": "c5e68ed0b8b0c01030e5dd69cd99afc0faf18d930635a9277fbf630187d0956f",
+  "parallax_repair": {
+    "raw_identity": {
+      "path": "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5",
+      "bytes": 474657279648,
+      "mtime_ns": 1748880347632755420
+    },
+    "independent_esa_audit_sha256": "cca7d5c88104a61515be338a6e4c4e36e1de4af996b1b999660b3b3a6f82e754",
+    "role_availability": {
+      "cal": {
+        "stars": 580954,
+        "before": 400072,
+        "after": 577579,
+        "newly_available": 177507,
+        "negative": 3696
+      },
+      "devtest": {
+        "stars": 629006,
+        "before": 447188,
+        "after": 625578,
+        "newly_available": 178390,
+        "negative": 3783
+      },
+      "excluded": {
+        "stars": 1957463,
+        "before": 854,
+        "after": 39972,
+        "newly_available": 39118,
+        "negative": 1810
+      },
+      "external": {
+        "stars": 4773,
+        "before": 2342,
+        "after": 3480,
+        "newly_available": 1138,
+        "negative": 48
+      },
+      "fit": {
+        "stars": 5303250,
+        "before": 4035167,
+        "after": 5279400,
+        "newly_available": 1244233,
+        "negative": 29212
+      },
+      "tune": {
+        "stars": 723363,
+        "before": 541788,
+        "after": 719926,
+        "newly_available": 178138,
+        "negative": 4101
+      }
+    },
+    "raw_matched": 7245935,
+    "unmatched_old_observed_retained": 0,
+    "unchanged_datasets": [
+      "error",
+      "error_observed",
+      "feature_names",
+      "input",
+      "label_source",
+      "native_observations/StarHorse_apogee17_posterior_median/error",
+      "native_observations/StarHorse_apogee17_posterior_median/error_known",
+      "native_observations/StarHorse_apogee17_posterior_median/observed",
+      "native_observations/StarHorse_apogee17_posterior_median/star_row",
+      "native_observations/StarHorse_apogee17_posterior_median/value",
+      "native_observations/StarHorse_catalogue_posterior_median/error",
+      "native_observations/StarHorse_catalogue_posterior_median/error_known",
+      "native_observations/StarHorse_catalogue_posterior_median/observed",
+      "native_observations/StarHorse_catalogue_posterior_median/star_row",
+      "native_observations/StarHorse_catalogue_posterior_median/value",
+      "native_observations/StarHorse_galahdr3_posterior_median/error",
+      "native_observations/StarHorse_galahdr3_posterior_median/error_known",
+      "native_observations/StarHorse_galahdr3_posterior_median/observed",
+      "native_observations/StarHorse_galahdr3_posterior_median/star_row",
+      "native_observations/StarHorse_galahdr3_posterior_median/value",
+      "native_observations/apogee/error",
+      "native_observations/apogee/error_known",
+      "native_observations/apogee/observed",
+      "native_observations/apogee/star_row",
+      "native_observations/apogee/value",
+      "native_observations/desi/error",
+      "native_observations/desi/error_known",
+      "native_observations/desi/observed",
+      "native_observations/desi/star_row",
+      "native_observations/desi/value",
+      "native_observations/gaia_dr3_gspspec/error",
+      "native_observations/gaia_dr3_gspspec/error_known",
+      "native_observations/gaia_dr3_gspspec/observed",
+      "native_observations/gaia_dr3_gspspec/star_row",
+      "native_observations/gaia_dr3_gspspec/value",
+      "native_observations/galah/error",
+      "native_observations/galah/error_known",
+      "native_observations/galah/observed",
+      "native_observations/galah/star_row",
+      "native_observations/galah/value",
+      "native_observations/lamost_dr12v2_lrs_lasp/error",
+      "native_observations/lamost_dr12v2_lrs_lasp/error_known",
+      "native_observations/lamost_dr12v2_lrs_lasp/observed",
+      "native_observations/lamost_dr12v2_lrs_lasp/star_row",
+      "native_observations/lamost_dr12v2_lrs_lasp/value",
+      "native_observations/lamost_dr12v2_mrs_lasp/error",
+      "native_observations/lamost_dr12v2_mrs_lasp/error_known",
+      "native_observations/lamost_dr12v2_mrs_lasp/observed",
+      "native_observations/lamost_dr12v2_mrs_lasp/star_row",
+      "native_observations/lamost_dr12v2_mrs_lasp/value",
+      "native_observations/rave_dr6_madera_gauguin/error",
+      "native_observations/rave_dr6_madera_gauguin/error_known",
+      "native_observations/rave_dr6_madera_gauguin/observed",
+      "native_observations/rave_dr6_madera_gauguin/star_row",
+      "native_observations/rave_dr6_madera_gauguin/value",
+      "native_observations/sdss_dr20_bossnet_081/error",
+      "native_observations/sdss_dr20_bossnet_081/error_known",
+      "native_observations/sdss_dr20_bossnet_081/observed",
+      "native_observations/sdss_dr20_bossnet_081/star_row",
+      "native_observations/sdss_dr20_bossnet_081/value",
+      "observed",
+      "primary_input_eligible",
+      "quality",
+      "reserved_benchmark",
+      "reserved_globular_member",
+      "role",
+      "scaler_center",
+      "scaler_scale",
+      "source_id",
+      "target_names",
+      "value"
+    ],
+    "scope": "Only measured parallax values/errors/availability change. All labels, roles, features, scalers verified unchanged. Input error is stored, not yet an encoder precision context."
+  }
+}

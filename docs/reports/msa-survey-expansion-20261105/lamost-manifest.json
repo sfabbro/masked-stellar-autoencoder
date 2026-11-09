@@ -1,0 +1,81 @@
+{
+  "status": "source_candidate_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "source_path": "/arc/projects/k-pop/catalogues/lamost-param/dr8_v2_LRS_stellar.fits",
+  "source_sha256": "a4d17c0577a5ee5f7e440be3f86abab52e1e558cc3da392a60b7dceaa88e0677",
+  "raw_rows": 6684413,
+  "valid_gaia_id_rows": 6581919,
+  "quality_selected_spectrum_rows": 3801113,
+  "selected_unique_stars": 2827370,
+  "selected_per_target": [
+    2803939,
+    2827347,
+    2827369
+  ],
+  "benchmark_reserved": 0,
+  "role_counts": {
+    "fit": {
+      "stars": 116321,
+      "observed_per_target": [
+        116239,
+        116319,
+        116321
+      ],
+      "benchmark_reserved": 0
+    },
+    "tune": {
+      "stars": 16438,
+      "observed_per_target": [
+        16428,
+        16438,
+        16438
+      ],
+      "benchmark_reserved": 0
+    },
+    "cal": {
+      "stars": 16619,
+      "observed_per_target": [
+        16607,
+        16619,
+        16619
+      ],
+      "benchmark_reserved": 0
+    },
+    "devtest": {
+      "stars": 16776,
+      "observed_per_target": [
+        16765,
+        16776,
+        16776
+      ],
+      "benchmark_reserved": 0
+    },
+    "external": {
+      "stars": 125,
+      "observed_per_target": [
+        125,
+        125,
+        125
+      ],
+      "benchmark_reserved": 0
+    },
+    "excluded": {
+      "stars": 3910,
+      "observed_per_target": [
+        3846,
+        3910,
+        3910
+      ],
+      "benchmark_reserved": 0
+    }
+  },
+  "outside_existing_base": 2642086,
+  "outside_base_scope": "feature availability and roles unresolved; not promoted to FIT",
+  "receipt": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
+    "sha256": "95d252e5f89d2a1db45edb172693167384a37b7ab72f4b0d12f533aea747fcd0"
+  },
+  "benchmark_input_audit_sha256": "9440063865b5814652c17ca04072c1a9fd8793aed2434c80259d9e995709d48f",
+  "publisher_checksum_verified": false
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "decision_corner_plots_20261106_v1",
+  "utc": "2026-11-06T06:16:26.795390+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_corner_plots_20261106_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/decision_corner_plots_20261106_v1",
+  "status": "accepted",
+  "session_ids": [
+    "omg7oigf"
+  ],
+  "resources": {
+    "cpu": 2,
+    "ram": 8,
+    "gpu": 0
+  },
+  "command": "import sys,runpy;sys.argv=['scripts/run_decision_corner_worker.py','--config','configs/decision-six-wave-20261106.yaml','--output','/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_corner_plots_20261106_v1'];runpy.run_path('scripts/run_decision_corner_worker.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_decision_corner_worker.py": "be83c241de6d75a84fc7fb39b6a67f3d369a6943944a797d129bba217093d276",
+    "scripts/plot_decision_six_corners.py": "e0d81791ff46247b7b8563b3a64a035e077e7542d3766dbb041b6ac451b61568",
+    "configs/decision-six-wave-20261106.yaml": "2a12c1ba70af92b893047187fdf640c88ed81ab7075d7a02406baf72f7a3d15e",
+    "pixi.toml": "252140f949edee4e42cfdd2d38d8d0bbe11d9fae2ee6464b80aa305f420f666a"
+  },
+  "payload_sha256": "8374c191eac5cb4dc6030f26d0f2813ead39a079bf904998b99dd7c56441f943"
+}

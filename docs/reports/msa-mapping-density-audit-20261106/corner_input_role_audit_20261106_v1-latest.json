@@ -1,0 +1,129 @@
+{
+  "status": "complete",
+  "model_loaded": false,
+  "training_performed": false,
+  "source_expected_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "full_source_rehashed": false,
+  "records": [
+    {
+      "source_id": 4926812820427520,
+      "visible_xp_coefficients": 0,
+      "measured_parallax_observed": false,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": false,
+      "real_no_xp": true,
+      "xp_status": "official_no_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 78289217922968576,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 615943806835727872,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 656977993104090624,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 2438481739732690176,
+      "visible_xp_coefficients": 0,
+      "measured_parallax_observed": false,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": false,
+      "real_no_xp": true,
+      "xp_status": "official_no_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 2609559667340662912,
+      "visible_xp_coefficients": 0,
+      "measured_parallax_observed": false,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": false,
+      "real_no_xp": true,
+      "xp_status": "official_no_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 3616249836305383296,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 4077588074752670208,
+      "visible_xp_coefficients": 0,
+      "measured_parallax_observed": false,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": false,
+      "real_no_xp": true,
+      "xp_status": "official_no_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 4185355646116022528,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    },
+    {
+      "source_id": 4696862405388526080,
+      "visible_xp_coefficients": 110,
+      "measured_parallax_observed": true,
+      "role": "external",
+      "primary_input_eligible": true,
+      "real_xp_present": true,
+      "real_no_xp": false,
+      "xp_status": "complete_xp",
+      "reserved_reference": true,
+      "known_supervised_ancestor_exposed": false
+    }
+  ]
+}

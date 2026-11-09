@@ -1,0 +1,81 @@
+{
+  "status": "source_candidate_complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "source_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
+  "source_sha256": "e58d4b9878e56c1c2ffea97f6395d8f3e65d0c2fc397265652790ddb4817763a",
+  "raw_rows": 8376135,
+  "valid_gaia_id_rows": 8226110,
+  "quality_selected_spectrum_rows": 4607044,
+  "selected_unique_stars": 3265101,
+  "selected_per_target": [
+    3237842,
+    3264956,
+    3265098
+  ],
+  "benchmark_reserved": 0,
+  "role_counts": {
+    "fit": {
+      "stars": 132140,
+      "observed_per_target": [
+        132010,
+        132138,
+        132140
+      ],
+      "benchmark_reserved": 0
+    },
+    "tune": {
+      "stars": 18683,
+      "observed_per_target": [
+        18657,
+        18681,
+        18683
+      ],
+      "benchmark_reserved": 0
+    },
+    "cal": {
+      "stars": 18869,
+      "observed_per_target": [
+        18851,
+        18867,
+        18869
+      ],
+      "benchmark_reserved": 0
+    },
+    "devtest": {
+      "stars": 19148,
+      "observed_per_target": [
+        19123,
+        19148,
+        19148
+      ],
+      "benchmark_reserved": 0
+    },
+    "external": {
+      "stars": 132,
+      "observed_per_target": [
+        132,
+        132,
+        132
+      ],
+      "benchmark_reserved": 0
+    },
+    "excluded": {
+      "stars": 4581,
+      "observed_per_target": [
+        4420,
+        4581,
+        4581
+      ],
+      "benchmark_reserved": 0
+    }
+  },
+  "outside_existing_base": 3054344,
+  "outside_base_scope": "feature availability and roles unresolved; not promoted to FIT",
+  "receipt": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+    "sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23"
+  },
+  "benchmark_input_audit_sha256": "9440063865b5814652c17ca04072c1a9fd8793aed2434c80259d9e995709d48f",
+  "publisher_checksum_verified": false
+}

@@ -1,0 +1,28 @@
+{
+  "run_id": "expanded_first_checkpoint_qa_20261107_v1",
+  "attempt": 4,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_first_checkpoint_qa_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_first_checkpoint_qa_20261107_v1-attempt-4",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_expanded_checkpoint_qa.py --config configs/expanded-six-nsf-fullfit-20261107.yaml --output \"$experiment_output\" --reuse-waiting-output",
+  "utc": "2026-11-06T23:14:17.178545+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "bd5y2ma0"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {
+    "scripts/run_expanded_checkpoint_qa.py": "edd68a476e323f63fad5196e8680f304e63e4d2a52699382a875bd5bdb5bf5db",
+    "configs/expanded-six-nsf-fullfit-20261107.yaml": "8b58b4c030a586c97e9c2ceef912f64ab44d6194137c3c4d4fdbe58f97c8c3a9",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12",
+    "src/masked_stellar_autoencoder/training/cached_inputs.py": "82e707eba12c81db544bc76d8baeb4c7b6f2dcc12b1bff0acaf77f0b43610157"
+  },
+  "payload_sha256": "644964c3c811387c8e66b3d24e6f32ff69d5893f815d79ff6a343d8b0fec46da",
+  "superseded_reason": "Pre-admission switch to source v4: recover remaining raw-file parallax gaps directly from ESA; no optimization/snapshot work discarded"
+}

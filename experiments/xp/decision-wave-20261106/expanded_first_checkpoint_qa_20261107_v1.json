@@ -1,0 +1,27 @@
+{
+  "run_id": "expanded_first_checkpoint_qa_20261107_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_first_checkpoint_qa_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_first_checkpoint_qa_20261107_v1",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/run_expanded_checkpoint_qa.py --config configs/expanded-six-nsf-fullfit-20261107.yaml --output \"$experiment_output\"",
+  "utc": "2026-11-06T21:14:22.155076+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "u2xsuhk9"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {
+    "scripts/run_expanded_checkpoint_qa.py": "aefd2bfad9532bbebd78f747e65bed70ef7fc3fab0f65489f0b55d364cec58d8",
+    "configs/expanded-six-nsf-fullfit-20261107.yaml": "4ce9c7af21e28d71bc95a09c675e116747dd073e03ed9fcb950d74a25dbe597e",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/six_survey_map.py": "6d198f71395db6c737fcb834eb79297ca4390d1d0bdc6da44166abb81896ad12"
+  },
+  "payload_sha256": "2ffd6d0d3cd06246fe3b2258c509e6b567b52621c2bb91b0a5903dd5f80bee55",
+  "superseded_reason": "Stopped before snapshot to bind identical repaired astrometry as training source v3"
+}

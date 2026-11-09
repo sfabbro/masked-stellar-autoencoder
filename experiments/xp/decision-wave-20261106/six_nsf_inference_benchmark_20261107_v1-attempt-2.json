@@ -1,0 +1,28 @@
+{
+  "run_id": "six_nsf_inference_benchmark_20261107_v1",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_nsf_inference_benchmark_20261107_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/six_nsf_inference_benchmark_20261107_v1-attempt-2",
+  "source_commit": "60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
+  "branch": "codex/multisurvey-abundance-union-20261028",
+  "command": "python -u scripts/benchmark_six_nsf_inference.py --config configs/expanded-six-nsf-fullfit-20261107.yaml --output \"$experiment_output\" --reuse-failed-output",
+  "utc": "2026-11-06T23:54:22.788665+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "h42cjwlh"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {
+    "scripts/benchmark_six_nsf_inference.py": "2c87123ba42b391a7a45eb68fd4082c01577d7bd56e2ec726acbc25683888c78",
+    "configs/expanded-six-nsf-fullfit-20261107.yaml": "8b58b4c030a586c97e9c2ceef912f64ab44d6194137c3c4d4fdbe58f97c8c3a9",
+    "scripts/run_decision_six_pilot.py": "7cd3bd3a65496ee86a3a3be671eeb5ad892be6058c32c82c39be9c3cbb04bdc5",
+    "src/masked_stellar_autoencoder/training/decision_pdf_metrics.py": "e998ea1247d6c84fcabf27db9e3ed45c45821e22a24737d18ce9437adf537db3",
+    "src/masked_stellar_autoencoder/training/multisurvey_masked_energy.py": "ef696fae52dafe4a0b01231577be65bb1e1e5fe9f1ca0949b0d9463263b7a3dd"
+  },
+  "payload_sha256": "441d602f4822b5adddf88fa88152b8dfd81dda1a0416021c0bab43be277d62f8",
+  "superseded_reason": "Read-only final sampling retained transient GPU allocations; explicit garbage collection and bounded star+draw axes added"
+}
