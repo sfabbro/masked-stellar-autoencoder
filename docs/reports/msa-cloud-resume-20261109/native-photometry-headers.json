@@ -1,0 +1,1336 @@
+{
+  "adql_matches/catwise.fits": {
+    "headers": [
+      {
+        "type": "PRIMARY",
+        "rows": null,
+        "fields": []
+      },
+      {
+        "type": "BINTABLE",
+        "rows": 678990741,
+        "fields": [
+          {
+            "name": "id2",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "source_id",
+            "format": "18A",
+            "unit": null
+          },
+          {
+            "name": "w1mpro",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w1mpro_pm",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w1sigmpro",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w1sigmpro_pm",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w1snr",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w1snr_pm",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2mpro",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2mpro_pm",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2sigmpro",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2sigmpro_pm",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2snr",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "w2snr_pm",
+            "format": "D",
+            "unit": null
+          }
+        ]
+      }
+    ],
+    "header_only": true,
+    "bytes_read": 131040
+  },
+  "adql_matches/twomass.fits": {
+    "headers": [
+      {
+        "type": "PRIMARY",
+        "rows": null,
+        "fields": []
+      },
+      {
+        "type": "BINTABLE",
+        "rows": 469001402,
+        "fields": [
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "tmass_oid",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "ph_qual",
+            "format": "3A",
+            "unit": null
+          },
+          {
+            "name": "j_m",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "j_msigcom",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "h_m",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "h_msigcom",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ks_m",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ks_msigcom",
+            "format": "E",
+            "unit": null
+          }
+        ]
+      }
+    ],
+    "header_only": true,
+    "bytes_read": 131040
+  },
+  "adql_matches/sdss.fits": {
+    "headers": [
+      {
+        "type": "PRIMARY",
+        "rows": null,
+        "fields": []
+      },
+      {
+        "type": "BINTABLE",
+        "rows": 119663765,
+        "fields": [
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "objid",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags_u",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags_g",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags_r",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags_i",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "flags_z",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "u",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "g",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "r",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "i",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "z",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "err_u",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "err_g",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "err_r",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "err_i",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "err_z",
+            "format": "E",
+            "unit": null
+          }
+        ]
+      }
+    ],
+    "header_only": true,
+    "bytes_read": 131040
+  },
+  "galah_dr4_vac_wise_tmass_gaiadr3_240705.fits": {
+    "headers": [
+      {
+        "type": "PRIMARY",
+        "rows": null,
+        "fields": []
+      },
+      {
+        "type": "BINTABLE",
+        "rows": 917588,
+        "fields": [
+          {
+            "name": "sobject_id",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "tmass_id",
+            "format": "17A",
+            "unit": null
+          },
+          {
+            "name": "tmass_ph_qual",
+            "format": "3A",
+            "unit": null
+          },
+          {
+            "name": "raj2000",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "dej2000",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "j_m",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "j_msigcom",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "h_m",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "h_msigcom",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ks_m",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ks_msigcom",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "wise_id",
+            "format": "19A",
+            "unit": null
+          },
+          {
+            "name": "W1mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "e_W1mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "W2mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "e_W2mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "W3mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "e_W3mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "W4mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "e_W4mag",
+            "format": "D",
+            "unit": "mag"
+          },
+          {
+            "name": "wise_ph_qual",
+            "format": "4A",
+            "unit": null
+          },
+          {
+            "name": "r_med_geo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "r_lo_geo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "r_hi_geo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "r_med_photogeo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "r_lo_photogeo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "r_hi_photogeo",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "calj_flag",
+            "format": "5A",
+            "unit": null
+          },
+          {
+            "name": "solution_id",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "designation",
+            "format": "28A",
+            "unit": null
+          },
+          {
+            "name": "source_id",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "random_index",
+            "format": "K",
+            "unit": null
+          },
+          {
+            "name": "ref_epoch",
+            "format": "D",
+            "unit": "yr"
+          },
+          {
+            "name": "ra",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "ra_error",
+            "format": "E",
+            "unit": "mas"
+          },
+          {
+            "name": "dec",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "dec_error",
+            "format": "E",
+            "unit": "mas"
+          },
+          {
+            "name": "parallax",
+            "format": "D",
+            "unit": "mas"
+          },
+          {
+            "name": "parallax_error",
+            "format": "E",
+            "unit": "mas"
+          },
+          {
+            "name": "parallax_over_error",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "pm",
+            "format": "E",
+            "unit": "mas yr-1"
+          },
+          {
+            "name": "pmra",
+            "format": "D",
+            "unit": "mas yr-1"
+          },
+          {
+            "name": "pmra_error",
+            "format": "E",
+            "unit": "mas yr-1"
+          },
+          {
+            "name": "pmdec",
+            "format": "D",
+            "unit": "mas yr-1"
+          },
+          {
+            "name": "pmdec_error",
+            "format": "E",
+            "unit": "mas yr-1"
+          },
+          {
+            "name": "ra_dec_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ra_parallax_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ra_pmra_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ra_pmdec_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "dec_parallax_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "dec_pmra_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "dec_pmdec_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "parallax_pmra_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "parallax_pmdec_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "pmra_pmdec_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "astrometric_n_obs_al",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_n_obs_ac",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_n_good_obs_al",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_n_bad_obs_al",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_gof_al",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "astrometric_chi2_al",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "astrometric_excess_noise",
+            "format": "E",
+            "unit": "mas"
+          },
+          {
+            "name": "astrometric_excess_noise_sig",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "astrometric_params_solved",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_primary_flag",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "nu_eff_used_in_astrometry",
+            "format": "E",
+            "unit": "um-1"
+          },
+          {
+            "name": "pseudocolour",
+            "format": "E",
+            "unit": "um-1"
+          },
+          {
+            "name": "pseudocolour_error",
+            "format": "E",
+            "unit": "um-1"
+          },
+          {
+            "name": "ra_pseudocolour_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "dec_pseudocolour_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "parallax_pseudocolour_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "pmra_pseudocolour_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "pmdec_pseudocolour_corr",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "astrometric_matched_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "visibility_periods_used",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "astrometric_sigma5d_max",
+            "format": "E",
+            "unit": "mas"
+          },
+          {
+            "name": "matched_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "new_matched_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "matched_transits_removed",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "ipd_gof_harmonic_amplitude",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "ipd_gof_harmonic_phase",
+            "format": "E",
+            "unit": "deg"
+          },
+          {
+            "name": "ipd_frac_multi_peak",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "ipd_frac_odd_win",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "ruwe",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "scan_direction_strength_k1",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "scan_direction_strength_k2",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "scan_direction_strength_k3",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "scan_direction_strength_k4",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "scan_direction_mean_k1",
+            "format": "E",
+            "unit": "deg"
+          },
+          {
+            "name": "scan_direction_mean_k2",
+            "format": "E",
+            "unit": "deg"
+          },
+          {
+            "name": "scan_direction_mean_k3",
+            "format": "E",
+            "unit": "deg"
+          },
+          {
+            "name": "scan_direction_mean_k4",
+            "format": "E",
+            "unit": "deg"
+          },
+          {
+            "name": "duplicated_source",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "phot_g_n_obs",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_g_mean_flux",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_g_mean_flux_error",
+            "format": "E",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_g_mean_flux_over_error",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_g_mean_mag",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "phot_bp_n_obs",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_bp_mean_flux",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_bp_mean_flux_error",
+            "format": "E",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_bp_mean_flux_over_error",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_bp_mean_mag",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "phot_rp_n_obs",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_rp_mean_flux",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_rp_mean_flux_error",
+            "format": "E",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_rp_mean_flux_over_error",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_rp_mean_mag",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "phot_bp_rp_excess_factor",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_bp_n_contaminated_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_bp_n_blended_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_rp_n_contaminated_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_rp_n_blended_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "phot_proc_mode",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "bp_rp",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "bp_g",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "g_rp",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "radial_velocity",
+            "format": "E",
+            "unit": "km s-1"
+          },
+          {
+            "name": "radial_velocity_error",
+            "format": "E",
+            "unit": "km s-1"
+          },
+          {
+            "name": "rv_method_used",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "rv_nb_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "rv_nb_deblended_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "rv_visibility_periods_used",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "rv_expected_sig_to_noise",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "rv_renormalised_gof",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "rv_chisq_pvalue",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "rv_time_duration",
+            "format": "E",
+            "unit": "d"
+          },
+          {
+            "name": "rv_amplitude_robust",
+            "format": "E",
+            "unit": "km s-1"
+          },
+          {
+            "name": "rv_template_teff",
+            "format": "E",
+            "unit": "K"
+          },
+          {
+            "name": "rv_template_logg",
+            "format": "E",
+            "unit": "log(cm.s**-2)"
+          },
+          {
+            "name": "rv_template_fe_h",
+            "format": "E",
+            "unit": "'dex'"
+          },
+          {
+            "name": "rv_atm_param_origin",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "vbroad",
+            "format": "E",
+            "unit": "km s-1"
+          },
+          {
+            "name": "vbroad_error",
+            "format": "E",
+            "unit": "km s-1"
+          },
+          {
+            "name": "vbroad_nb_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "grvs_mag",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "grvs_mag_error",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "grvs_mag_nb_transits",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "rvs_spec_sig_to_noise",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_variable_flag",
+            "format": "13A",
+            "unit": null
+          },
+          {
+            "name": "l",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "b",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "ecl_lon",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "ecl_lat",
+            "format": "D",
+            "unit": "deg"
+          },
+          {
+            "name": "in_qso_candidates",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "in_galaxy_candidates",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "non_single_star",
+            "format": "I",
+            "unit": null
+          },
+          {
+            "name": "has_xp_continuous",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_xp_sampled",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_rvs",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_epoch_photometry",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_epoch_rv",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_mcmc_gspphot",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "has_mcmc_msc",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "in_andromeda_survey",
+            "format": "L",
+            "unit": null
+          },
+          {
+            "name": "classprob_dsc_combmod_quasar",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "classprob_dsc_combmod_galaxy",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "classprob_dsc_combmod_star",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "teff_gspphot",
+            "format": "E",
+            "unit": "K"
+          },
+          {
+            "name": "teff_gspphot_lower",
+            "format": "E",
+            "unit": "K"
+          },
+          {
+            "name": "teff_gspphot_upper",
+            "format": "E",
+            "unit": "K"
+          },
+          {
+            "name": "logg_gspphot",
+            "format": "E",
+            "unit": "log(cm.s**-2)"
+          },
+          {
+            "name": "logg_gspphot_lower",
+            "format": "E",
+            "unit": "log(cm.s**-2)"
+          },
+          {
+            "name": "logg_gspphot_upper",
+            "format": "E",
+            "unit": "log(cm.s**-2)"
+          },
+          {
+            "name": "mh_gspphot",
+            "format": "E",
+            "unit": "'dex'"
+          },
+          {
+            "name": "mh_gspphot_lower",
+            "format": "E",
+            "unit": "'dex'"
+          },
+          {
+            "name": "mh_gspphot_upper",
+            "format": "E",
+            "unit": "'dex'"
+          },
+          {
+            "name": "distance_gspphot",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "distance_gspphot_lower",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "distance_gspphot_upper",
+            "format": "E",
+            "unit": "pc"
+          },
+          {
+            "name": "azero_gspphot",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "azero_gspphot_lower",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "azero_gspphot_upper",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ag_gspphot",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ag_gspphot_lower",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ag_gspphot_upper",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ebpminrp_gspphot",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ebpminrp_gspphot_lower",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "ebpminrp_gspphot_upper",
+            "format": "E",
+            "unit": "mag"
+          },
+          {
+            "name": "libname_gspphot",
+            "format": "7A",
+            "unit": null
+          },
+          {
+            "name": "ebv",
+            "format": "E",
+            "unit": null
+          },
+          {
+            "name": "phot_g_mean_mag_error",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_bp_mean_mag_error",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "phot_rp_mean_mag_error",
+            "format": "D",
+            "unit": "'electron'.s**-1"
+          },
+          {
+            "name": "plx_zpt_corr",
+            "format": "D",
+            "unit": null
+          },
+          {
+            "name": "parallax_raw",
+            "format": "D",
+            "unit": "mas"
+          },
+          {
+            "name": "parallax_error_raw",
+            "format": "E",
+            "unit": "mas"
+          }
+        ]
+      }
+    ],
+    "header_only": true
+  },
+  "skymapperdr4/SkyMapper.DR4.master.part289.csv.gz": {
+    "csv_columns": [
+      "object_id",
+      "raj2000",
+      "dej2000",
+      "e_raj2000",
+      "e_dej2000",
+      "mean_epoch",
+      "rms_epoch",
+      "glon",
+      "glat",
+      "nimaflags",
+      "smss_j",
+      "flags",
+      "ngood",
+      "ngood_min",
+      "u_flags",
+      "u_nimaflags",
+      "u_ngood",
+      "u_nclip",
+      "v_flags",
+      "v_nimaflags",
+      "v_ngood",
+      "v_nclip",
+      "g_flags",
+      "g_nimaflags",
+      "g_ngood",
+      "g_nclip",
+      "r_flags",
+      "r_nimaflags",
+      "r_ngood",
+      "r_nclip",
+      "i_flags",
+      "i_nimaflags",
+      "i_ngood",
+      "i_nclip",
+      "z_flags",
+      "z_nimaflags",
+      "z_ngood",
+      "z_nclip",
+      "class_star",
+      "chi2_psf",
+      "radius_petro",
+      "mean_fwhm",
+      "u_psf",
+      "e_u_psf",
+      "u_petro",
+      "e_u_petro",
+      "u_apc05",
+      "e_u_apc05",
+      "u_mmvar",
+      "v_psf",
+      "e_v_psf",
+      "v_petro",
+      "e_v_petro",
+      "v_apc05",
+      "e_v_apc05",
+      "v_mmvar",
+      "g_psf",
+      "e_g_psf",
+      "g_petro",
+      "e_g_petro",
+      "g_apc05",
+      "e_g_apc05",
+      "g_mmvar",
+      "r_psf",
+      "e_r_psf",
+      "r_petro",
+      "e_r_petro",
+      "r_apc05",
+      "e_r_apc05",
+      "r_mmvar",
+      "i_psf",
+      "e_i_psf",
+      "i_petro",
+      "e_i_petro",
+      "i_apc05",
+      "e_i_apc05",
+      "i_mmvar",
+      "z_psf",
+      "e_z_psf",
+      "z_petro",
+      "e_z_petro",
+      "z_apc05",
+      "e_z_apc05",
+      "z_mmvar",
+      "self_id1",
+      "self_id2",
+      "self_id3",
+      "self_dist1",
+      "self_dist2",
+      "self_dist3",
+      "cnt_self_15",
+      "refcat2_id",
+      "gaia_dr3_id1",
+      "gaia_dr3_id2",
+      "allwise_cntr",
+      "ps1_dr1_id",
+      "galex_guv_id",
+      "vhs_dr6_id",
+      "ls_dr9_id",
+      "des_dr2_id",
+      "twomass_key",
+      "refcat2_dist",
+      "gaia_dr3_dist1",
+      "gaia_dr3_dist2",
+      "allwise_dist",
+      "ps1_dr1_dist",
+      "galex_guv_dist",
+      "vhs_dr6_dist",
+      "ls_dr9_dist",
+      "des_dr2_dist",
+      "catwise_dist",
+      "twomass_dist",
+      "nsc_dr2_dist",
+      "splus_dr3_dist",
+      "ebmv_sfd",
+      "ebmv_gnilc",
+      "ebmv_g_err",
+      "flags_psf",
+      "cnt_gaia_dr3_15",
+      "catwise_id",
+      "nsc_dr2_id",
+      "splus_dr3_id"
+    ],
+    "header_only": true
+  }
+}

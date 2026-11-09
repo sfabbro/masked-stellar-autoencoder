@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "canfar": {
+      "source": "opencadc/canfar",
+      "sourceType": "github",
+      "skillPath": "skills/canfar/SKILL.md",
+      "computedHash": "b3b6a66c1fffc2a2c8da7f0e3138607a80ea1ba3569ab152732f8c6f8d50dc94"
+    }
+  }
+}

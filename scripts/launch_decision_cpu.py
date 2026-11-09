@@ -11,12 +11,17 @@ from launch_decision_wave import ROOT, addresses
 from launch_stellar_improvement import create_form_session, submission_error_evidence
 
 
-def submit_cpu(run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None):
+def submit_cpu(
+    run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None,
+    image="images.canfar.net/astroai/terminal:latest",
+):
     from canfar.sessions import Session
 
     directory = Path("experiments/xp/decision-wave-20261106")
     directory.mkdir(parents=True, exist_ok=True)
     receipt = directory / (run_id + ".json")
+    if (cpu is None) != (ram is None):
+        raise ValueError("CPU and RAM must be supplied together, or both omitted")
     if receipt.exists():
         raise RuntimeError("Reconcile existing receipt before submission")
     manifest = '[workspace]\nname="msa-decision-qa"\nchannels=["conda-forge"]\nplatforms=["linux-64"]\n[dependencies]\npython="3.13.*"\nnumpy=">=2.2,<3"\nh5py=">=3.10"\nastropy=">=6"\npandas=">=2.1"\nscipy=">=1.14"\nmatplotlib-base=">=3.8"\npyarrow=">=18"\n'
@@ -71,6 +76,7 @@ def submit_cpu(run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None
         status="submission_pending",
         session_ids=[],
         resources=dict(cpu=cpu, ram=ram, gpu=0),
+        image=image,
         command=command,
         source_sha256={
             name: hashlib.sha256(content.encode()).hexdigest()
@@ -83,13 +89,12 @@ def submit_cpu(run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None
         r["session_ids"] = create_form_session(
             Session(timeout=40),
             name="msa-" + run_id.replace("_", "-"),
-            image="images.canfar.net/astroai/terminal:latest",
+            image=image,
             kind="headless",
             cmd="python",
             args=payload,
             env={"PYTHONNOUSERSITE": "1", "WORK": "/scratch"},
-            cores=cpu,
-            ram=ram,
+            **({"cores": cpu, "ram": ram} if cpu is not None else {}),
         )
         r["status"] = "accepted" if r["session_ids"] else "submission_ambiguous"
     except Exception as exc:

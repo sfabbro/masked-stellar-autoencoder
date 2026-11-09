@@ -1,0 +1,20 @@
+{
+  "checked_utc": "2026-11-09T23:44:28.515010+00:00",
+  "info": [
+    {
+      "id": "m1n37991",
+      "status": "Failed",
+      "name": "msa-expanded-selected-checkpoint-qa-20261109-v1",
+      "image": "images.canfar.net/astroai/base:latest",
+      "startTime": "2026-11-09T23:41:52Z"
+    }
+  ],
+  "events": [
+    {
+      "m1n37991": "TYPE     REASON      MESSAGE                                                                                                                              FIRST-TIME             LAST-TIME\nNormal   Scheduled   Successfully assigned canfar-workloads/skaha-headless-sfabbro-m1n37991-wqjsj to keel-prod-g0126.arbutus.uvic.ca                      2026-11-09T23:41:52Z   2026-11-09T23:41:52Z\nNormal   Pulling     Pulling image \"images.canfar.net/astroai/base:latest\"                                                                                2026-11-09T23:41:53Z   2026-11-09T23:41:53Z\nNormal   Pulled      Successfully pulled image \"images.canfar.net/astroai/base:latest\" in 323ms (323ms including waiting). Image size: 690048172 bytes.   2026-11-09T23:41:53Z   2026-11-09T23:41:53Z\nNormal   Created     Created container: backup-original-passwd-groups                                                                                     2026-11-09T23:41:53Z   2026-11-09T23:41:53Z\nNormal   Started     Started container backup-original-passwd-groups                                                                                      2026-11-09T23:41:54Z   2026-11-09T23:41:54Z\nNormal   Pulled      Container image \"redis:8.2.2-bookworm\" already present on machine                                                                    2026-11-09T23:41:54Z   2026-11-09T23:41:54Z\nNormal   Created     Created container: init-users-groups                                                                                                 2026-11-09T23:41:54Z   2026-11-09T23:41:54Z\nNormal   Started     Started container init-users-groups                                                                                                  2026-11-09T23:41:54Z   2026-11-09T23:41:54Z\nNormal   Pulling     Pulling image \"images.canfar.net/astroai/base:latest\"                                                                                2026-11-09T23:41:55Z   2026-11-09T23:41:55Z\nNormal   Pulled      Successfully pulled image \"images.canfar.net/astroai/base:latest\" in 298ms (299ms including waiting). Image size: 690048172 bytes.   2026-11-09T23:41:55Z   2026-11-09T23:41:55Z\nNormal   Created     Created container: skaha-headless-sfabbro-m1n37991                                                                                   2026-11-09T23:41:55Z   2026-11-09T23:41:55Z\nNormal   Started     Started container skaha-headless-sfabbro-m1n37991                                                                                    2026-11-09T23:42:04Z   2026-11-09T23:42:04Z\n"
+    }
+  ],
+  "logs": {
+    "m1n37991": "Cloning into '/scratch/src/sfabbro/masked-stellar-autoencoder'...\nwarning: Could not find remote branch codex/multisurvey-abundance-union-20261028 to clone.\nfatal: Remote branch codex/multisurvey-abundance-union-20261028 not found in upstream origin\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n[long encoded launch/source line omitted]\n[long encoded launch/source line omitted]\n  File \"<string>\", line 76, in <module>\n  File \"/usr/local/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['git', 'clone', '--depth', '100', '--branch', 'codex/multisurvey-abundance-union-20261028', 'https://github.com/sfabbro/masked-stellar-autoencoder.git', '/scratch/src/sfabbro/masked-stellar-autoencoder']' returned non-zero exit status 128.\n"
+  }
+}

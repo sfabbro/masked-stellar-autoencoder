@@ -1,0 +1,16 @@
+{
+  "run_id": "full_gaia_resume_audit_20261109_v1",
+  "utc": "2026-11-09T23:28:05.541148+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_resume_audit_20261109_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_resume_audit_20261109_v1",
+  "source_sha256": {
+    "scripts/run_full_gaia_resume_audit.py": "9f238bc6157f76ce8686022421a05369c748e4e6be234d17fb31c36332a88a9b"
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "resources": "server flexible defaults; CPU-only",
+  "status": "accepted",
+  "session_ids": [
+    "vexwzwnb"
+  ],
+  "command": "python -u /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_resume_audit_20261109_v1/run_full_gaia_resume_audit.py --root /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/ --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_resume_audit_20261109_v1"
+}

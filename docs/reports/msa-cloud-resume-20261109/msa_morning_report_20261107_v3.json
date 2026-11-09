@@ -1,0 +1,8 @@
+{
+  "status": "morning_report_live",
+  "updated_utc": "2026-11-09T05:54:15.305634+00:00",
+  "large_training_status": "large_six_candidate_complete",
+  "training_performed": true,
+  "completed_updates": 71906,
+  "report": "morning-report.md"
+}

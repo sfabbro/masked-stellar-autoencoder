@@ -1,0 +1,64 @@
+{
+  "checked_utc": "2026-11-09T23:17:01.191822+00:00",
+  "access": "anonymous ARC HTTPS; authenticated session reconciliation pending",
+  "runs": [
+    {
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "session": "lohnjtr7",
+      "manifest": {
+        "status": "large_six_candidate_complete",
+        "completed_updates": 71906,
+        "completed_full_fit_epochs": 2
+      }
+    },
+    {
+      "run": "msa_morning_report_20261107_v3",
+      "session": "l44pw7oe",
+      "manifest": {
+        "status": "morning_report_live",
+        "completed_updates": 71906
+      }
+    },
+    {
+      "run": "full_gaia_gaia_stage_20261108_v2",
+      "session": "v1kyrpx1",
+      "manifest": {
+        "status": "source_stage_complete",
+        "candidate_stars": 13592882,
+        "completed_gaia_shards": 3386,
+        "matched_unique_candidates": 13592882,
+        "all_gaia_rows_scanned": 1811709771
+      }
+    },
+    {
+      "run": "full_gaia_photometry_stage_20261108_v1",
+      "session": "fxc6kwlb",
+      "manifest": {
+        "status": "source_stage_complete",
+        "candidate_stars": 13592882
+      }
+    },
+    {
+      "run": "full_gaia_alpha_stage_20261108_v1",
+      "session": "lbhf0ucu",
+      "manifest": {
+        "status": "source_stage_complete"
+      }
+    },
+    {
+      "run": "full_gaia_ages_stage_20261108_v1",
+      "session": "fvll9eut",
+      "manifest": {
+        "status": "source_stage_complete"
+      }
+    },
+    {
+      "run": "full_gaia_contract_pilot_20261108_v1",
+      "session": "hshxs209",
+      "manifest": {
+        "status": "engineering_pilot_complete",
+        "real_no_xp_ssl_rows": 164
+      }
+    }
+  ]
+}

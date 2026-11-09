@@ -1,0 +1,54 @@
+{
+  "checked_utc": "2026-11-09T23:55:17.069480+00:00",
+  "sessions": [
+    {
+      "id": "eo0ywcd8",
+      "name": "msa-full-gaia-corrected-sources-20261109-v2",
+      "status": "Running",
+      "type": "headless",
+      "startTime": "2026-11-09T23:50:42Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    },
+    {
+      "id": "fwib7zhu",
+      "name": "msa-expanded-selected-checkpoint-report-20261109-v1",
+      "status": "Running",
+      "type": "headless",
+      "startTime": "2026-11-09T23:41:23Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    },
+    {
+      "id": "gqc68dfi",
+      "name": "msa-expanded-selected-checkpoint-qa-20261109-v1",
+      "status": "Running",
+      "type": "headless",
+      "startTime": "2026-11-09T23:52:23Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    },
+    {
+      "id": "m1n37991",
+      "name": "msa-expanded-selected-checkpoint-qa-20261109-v1",
+      "status": "Failed",
+      "type": "headless",
+      "startTime": "2026-11-09T23:41:52Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    },
+    {
+      "id": "noz8klgb",
+      "name": "msa-full-gaia-corrected-sources-20261109-v1",
+      "status": "Failed",
+      "type": "headless",
+      "startTime": "2026-11-09T23:33:43Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    },
+    {
+      "id": "vexwzwnb",
+      "name": "msa-full-gaia-resume-audit-20261109-v1",
+      "status": "Completed",
+      "type": "headless",
+      "startTime": "2026-11-09T23:28:30Z",
+      "image": "images.canfar.net/astroai/base:latest"
+    }
+  ],
+  "other_sessions_omitted": 12
+}

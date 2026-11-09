@@ -1,0 +1,28 @@
+{
+  "run_id": "full_gaia_corrected_sources_20261109_v1",
+  "utc": "2026-11-09T23:33:29.275851+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/full_gaia_corrected_sources_20261109_v1",
+  "status": "accepted",
+  "session_ids": [
+    "noz8klgb"
+  ],
+  "resources": {
+    "cpu": null,
+    "ram": null,
+    "gpu": 0
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "command": "import sys,runpy;sys.argv=['scripts/run_full_gaia_resume_programme.py', '--root', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1'];runpy.run_path(sys.argv[0],run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/run_full_gaia_resume_programme.py": "b3aba5f917f68587c12c913ef92769cfe52108799695d442d2cd33e8f97883cd",
+    "scripts/run_full_gaia_resume_audit.py": "9f238bc6157f76ce8686022421a05369c748e4e6be234d17fb31c36332a88a9b",
+    "scripts/run_full_gaia_correction_sources.py": "bb44febba56b7e0e423d502292c111936a8eab05eddecd3805fbfd6867d7921a",
+    "scripts/run_full_gaia_input_census.py": "039e3b7ee9eca206d41650091450c4ca590ba9cf8ca8e01548dc7c1010528527",
+    "configs/expanded-six-source-20261107.json": "344e2543656f3e271074eef69416b21b8a87ec0b0879b40fef354ecce7f85d74",
+    "configs/full-gaia-observation-columns-20261108.json": "50a8d0b734f97ae96fd6a97cb038fa84ff892144a28757ef57fba4be5e593fb4",
+    "configs/published-age-source-registry-20261108.json": "0f851b669b77dd6eca7b8bf192c93604c516fc06d14ded1df3cd4e72f48f971c",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "6d6d6085c557386b22fefb125b9dd34e3d532cf8bd6e8b33cbc53dd318b0ea8d"
+}

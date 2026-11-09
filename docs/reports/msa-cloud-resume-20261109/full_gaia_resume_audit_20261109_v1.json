@@ -1,0 +1,57 @@
+{
+  "status": "artifact_audit_complete",
+  "training_performed": false,
+  "checked_utc": "2026-11-09T23:29:06.411595+00:00",
+  "python": "3.13.17 (main, Oct 21 2026, 22:33:32) [GCC 14.2.0]",
+  "executables": {
+    "python": "/usr/local/bin/python",
+    "pixi": "/usr/local/bin/pixi",
+    "uv": "/usr/local/bin/uv"
+  },
+  "packages": {
+    "numpy": null,
+    "pandas": null,
+    "pyarrow": null,
+    "astropy": null,
+    "h5py": null,
+    "torch": null
+  },
+  "training_admitted": false,
+  "comparison_checkpoint": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-checkpoint.pth",
+    "bytes": 137372427,
+    "sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+    "expected_sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+    "digest_matches": true,
+    "selected_update": 71906,
+    "selected_epoch": 2
+  },
+  "stages": {
+    "full_gaia_gaia_stage_20261108_v2": {
+      "status": "source_stage_complete",
+      "partition_count": 11394,
+      "partition_bytes": 2727140309,
+      "table_metadata": []
+    },
+    "full_gaia_photometry_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 1754,
+      "partition_bytes": 25926584487,
+      "table_metadata": []
+    },
+    "full_gaia_alpha_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 301,
+      "partition_bytes": 1308930268,
+      "table_metadata": []
+    },
+    "full_gaia_ages_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 24,
+      "partition_bytes": 107673373,
+      "table_metadata": []
+    }
+  },
+  "elapsed_seconds": 2.4386448469012976,
+  "peak_rss_kib": 50612
+}

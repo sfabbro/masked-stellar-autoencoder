@@ -58,6 +58,7 @@ def submit(
     commit="60c47fcf609f5ee80a1f985cc95ab8ca648793e9",
     record_directory=Path("experiments/xp/decision-wave-20261106"),
     attempt=None,
+    image="images.canfar.net/astroai/terminal:latest",
 ):
     from canfar.sessions import Session
 
@@ -94,11 +95,11 @@ def submit(
         + repr("github.com:443:" + resolved["github.com"])
         + ")\n"
     )
-    entry += (
-        "subprocess.run(['git','clone','--depth','100','--branch',"
-        + repr(branch)
-        + ",'https://github.com/sfabbro/masked-stellar-autoencoder.git',str(root)],check=True)\n"
-    )
+    # Historical branch names may disappear; retrieve the immutable pin itself.
+    entry += "root.mkdir(parents=True,exist_ok=False)\n"
+    entry += "subprocess.run(['git','init',str(root)],check=True)\n"
+    entry += "subprocess.run(['git','remote','add','origin','https://github.com/sfabbro/masked-stellar-autoencoder.git'],cwd=root,check=True)\n"
+    entry += "subprocess.run(['git','fetch','--depth','1','origin'," + repr(commit) + "],cwd=root,check=True)\n"
     entry += (
         "subprocess.run(['git','checkout','--detach',"
         + repr(commit)
@@ -136,11 +137,13 @@ def submit(
         source_bundle=bundle,
         source_commit=commit,
         branch=branch,
+        source_acquisition="exact_commit_fetch",
         command=command,
         utc=dt.datetime.now(dt.UTC).isoformat(),
         status="submission_pending",
         session_ids=[],
         resources=dict(gpu=gpu, cores=cpu, ram=ram),
+        image=image,
         source_sha256={
             name: hashlib.sha256(content.encode()).hexdigest()
             for name, content in files.items()
@@ -164,7 +167,7 @@ def submit(
         r["session_ids"] = create_form_session(
             Session(timeout=40),
             name="msa-" + run_id.replace("_", "-"),
-            image="images.canfar.net/astroai/terminal:latest",
+            image=image,
             kind="headless",
             cmd="python",
             args=payload,

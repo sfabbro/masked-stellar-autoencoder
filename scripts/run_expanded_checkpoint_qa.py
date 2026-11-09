@@ -1,4 +1,4 @@
-"""Native CUDA common-space QA of the first immutable large-run snapshot."""
+"""Native CUDA common-space QA of an immutable large-run checkpoint."""
 
 import argparse
 import importlib.metadata
@@ -15,17 +15,28 @@ import yaml
 ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
 
 
+def verify_final_snapshot(progress, digest, expected):
+    if progress.get("status") != "large_six_candidate_complete":
+        raise ValueError("Final QA requires a completed comparison run")
+    if not expected or digest != expected or digest != progress.get("selected_checkpoint_sha256"):
+        raise ValueError("Final QA snapshot differs from the explicitly bound selected checkpoint")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--reuse-waiting-output", action="store_true")
+    p.add_argument("--final-selected", action="store_true")
+    p.add_argument("--expected-checkpoint-sha256")
     p.add_argument(
         "--checkpoint-name",
         choices=["latest-checkpoint.pth", "selected-checkpoint.pth"],
         default="latest-checkpoint.pth",
     )
     a = p.parse_args()
+    if a.final_selected and (a.checkpoint_name != "selected-checkpoint.pth" or not a.expected_checkpoint_sha256):
+        p.error("Final QA requires selected-checkpoint.pth and its expected SHA256")
     if a.output.exists() and a.reuse_waiting_output:
         previous = json.loads((a.output / "manifest.json").read_text())
         if (
@@ -62,6 +73,10 @@ def main():
         models={},
         scope="Immutable large-run snapshot versus frozen earlier six-target NSF. Common reference predictions; source-native labels retain their scales. Preliminary checkpoint may precede a full FIT epoch. Benchmark/cluster parent exposure and teacher dependencies remain; raw density QA is not a release certificate.",
     )
+    large_name = "large_selected_checkpoint" if a.final_selected else "large_first_checkpoint"
+    m.update(snapshot_kind="final_selected" if a.final_selected else "intermediate", large_model_key=large_name)
+    if a.final_selected:
+        m["scope"] = "Selected final checkpoint of the older comparison architecture versus the earlier supervised-adapted six-target NSF. This does not fulfill the corrected full-Gaia architecture. Common predictions and native labels retain distinct conventions; benchmark/cluster ancestry, teacher dependencies and shared Gaia inputs remain. DEV is not a pristine final test."
 
     def save():
         prior.atomic(a.output / "manifest.json", m)
@@ -88,6 +103,8 @@ def main():
         time.sleep(30)
     else:
         raise TimeoutError("Large run produced no checkpoint in 48h")
+    if a.final_selected:
+        verify_final_snapshot(progress, prior.sha(a.output / "large-snapshot.pth"), a.expected_checkpoint_sha256)
     if not torch.cuda.is_available():
         raise RuntimeError("CANFAR CUDA required")
     direct = json.loads(
@@ -208,12 +225,12 @@ def main():
         m["tess_devtest_stars"] = len(panels["tess_devtest"])
         save()
         for name, path in [
-            ("large_first_checkpoint", a.output / "large-snapshot.pth"),
+            (large_name, a.output / "large-snapshot.pth"),
             ("earlier_pooled_nsf", Path(cfg["encoder_parent"])),
         ]:
             state = torch_load_trusted(path, map_location="cpu", weights_only=False)
             if (
-                name == "large_first_checkpoint"
+                name == large_name
                 and state.get("source_sha256", state.get("prepared_sha256"))
                 != source["prepared_sha256"]
             ):
@@ -298,7 +315,7 @@ def main():
                     standardized_draws=np.concatenate([c[1] for c in corners], axis=1),
                     native_draws=np.concatenate([c[2] for c in corners], axis=1),
                 )
-            if name == "large_first_checkpoint":
+            if name == large_name:
                 map_state = state["map_state_dict"]
                 maps = SixSurveyMap(
                     map_state["support"].cpu(),
@@ -335,7 +352,7 @@ def main():
             del state, model, head
             torch.cuda.empty_cache()
         m.update(
-            status="first_checkpoint_common_qa_complete",
+            status="selected_checkpoint_common_qa_complete" if a.final_selected else "first_checkpoint_common_qa_complete",
             panel_sha256=prior.sha(a.output / "panel.npz"),
             seismic_reference_sha256=refmanifest["sources"]["apokasc3"][
                 "reference_sha256"
@@ -345,4 +362,17 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exc:
+        # Ensure a downstream report cannot wait 48 hours on a dead producer.
+        import sys
+        if "--output" in sys.argv:
+            output = Path(sys.argv[sys.argv.index("--output") + 1]) / "manifest.json"
+            if output.exists():
+                failed = json.loads(output.read_text())
+                failed.update(status="failed", error=repr(exc))
+                temporary = output.with_suffix(".tmp")
+                temporary.write_text(json.dumps(failed, indent=2) + "\n")
+                temporary.replace(output)
+        raise

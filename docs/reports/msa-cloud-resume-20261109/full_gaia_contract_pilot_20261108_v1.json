@@ -1,0 +1,174 @@
+{
+  "status": "engineering_pilot_complete",
+  "training_scope": "Fresh small-network engineering pilot, not continuation of SSL and not final architecture selection",
+  "arms": {
+    "restricted_inputs": {
+      "completed_updates": 600,
+      "energy": 0.5573297739028931,
+      "mae": 0.3348419666290283,
+      "tune_native_mae_standardized": [
+        0.32918986678123474,
+        0.3835730254650116,
+        0.7156895995140076,
+        0.5863166451454163,
+        0.5777266621589661,
+        0.7535790801048279
+      ]
+    },
+    "restored_inputs": {
+      "completed_updates": 600,
+      "energy": 0.386762797832489,
+      "mae": 0.9461135864257812,
+      "tune_native_mae_standardized": [
+        0.3112453818321228,
+        0.31942641735076904,
+        0.609791100025177,
+        0.5721456408500671,
+        0.3442278206348419,
+        0.6344766020774841
+      ]
+    },
+    "restored_consensus": {
+      "completed_updates": 600,
+      "energy": 0.38719606399536133,
+      "mae": 0.9459089636802673,
+      "tune_native_mae_standardized": [
+        0.3098558783531189,
+        0.3185422718524933,
+        0.6095448136329651,
+        0.5714887380599976,
+        0.3401636481285095,
+        0.6381931304931641
+      ]
+    }
+  },
+  "reconstruction_weight": 0.03,
+  "new_age_alpha_products_admitted": false,
+  "cuda": "NVIDIA H100 NVL MIG 1g.12gb",
+  "stars": 48625,
+  "fit_records": 48233,
+  "tune_records": 6593,
+  "sources": [
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "apogee",
+    "desi",
+    "gaia_dr3_gspspec",
+    "galah",
+    "lamost_dr12v2_lrs_lasp",
+    "lamost_dr12v2_mrs_lasp",
+    "rave_dr6_madera_gauguin",
+    "sdss_dr20_bossnet_081"
+  ],
+  "support": [
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ]
+  ],
+  "active_targets": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "real_no_xp_ssl_rows": 164,
+  "raw_parts": [
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000000000.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000131072.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000262144.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000393216.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000524288.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000655360.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000786432.parquet",
+    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000917504.parquet"
+  ],
+  "scope_limit": "New ages/alpha still pending admission. Small fresh network, bounded current native records. Additional catalogue joins and cluster exclusions beyond inherited roles remain production requirements."
+}

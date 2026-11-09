@@ -1,0 +1,1737 @@
+{
+  "checked_utc": "2026-11-09T23:26:53.594519+00:00",
+  "authenticated": true,
+  "receipts": [
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/andrae_full_footprint_census_20261106_v1.json",
+      "run": "andrae_full_footprint_census_20261106_v1",
+      "sessions": [
+        "c8vheepk"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/andrae_full_footprint_census_20261106_v2.json",
+      "run": "andrae_full_footprint_census_20261106_v2",
+      "sessions": [
+        "qohdziqz"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/corner_input_role_audit_20261106_v1.json",
+      "run": "corner_input_role_audit_20261106_v1",
+      "sessions": [
+        "n5scvcn3"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/current_run_contract_audit_20261108_v1.json",
+      "run": "current_run_contract_audit_20261108_v1",
+      "sessions": [
+        "xz4cgp15"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_gaussian_parallax_20261106_v1.json",
+      "run": "decision6_gaussian_parallax_20261106_v1",
+      "sessions": [
+        "wpkuk4w1"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_gaussian_photxp_20261106_v1.json",
+      "run": "decision6_gaussian_photxp_20261106_v1",
+      "sessions": [
+        "qau40ujl"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_mdn_parallax_20261106_v1.json",
+      "run": "decision6_mdn_parallax_20261106_v1",
+      "sessions": [
+        "xd67cic9"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_mdn_photxp_20261106_v1.json",
+      "run": "decision6_mdn_photxp_20261106_v1",
+      "sessions": [
+        "fy21b76l"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_nsf_energy_lr3e4_parallax_20261106_v1.json",
+      "run": "decision6_nsf_energy_lr3e4_parallax_20261106_v1",
+      "sessions": [
+        "ow1dv01n"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_nsf_energy_lr3e4_photxp_20261106_v1.json",
+      "run": "decision6_nsf_energy_lr3e4_photxp_20261106_v1",
+      "sessions": [
+        "vm57z70n"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_nsf_energy_parallax_20261106_v1.json",
+      "run": "decision6_nsf_energy_parallax_20261106_v1",
+      "sessions": [
+        "tf5ol2y2"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_nsf_energy_photxp_20261106_v1.json",
+      "run": "decision6_nsf_energy_photxp_20261106_v1",
+      "sessions": [
+        "pti5lsfz"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision6_pdf_qa_worker_20261106_v1.json",
+      "run": "decision6_pdf_qa_worker_20261106_v1",
+      "sessions": [
+        "uh9gy7on"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_corner_plots_20261106_v1.json",
+      "run": "decision_corner_plots_20261106_v1",
+      "sessions": [
+        "omg7oigf"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_dr20_legacy_source_audit_20261106_v1.json",
+      "run": "decision_dr20_legacy_source_audit_20261106_v1",
+      "sessions": [
+        "kdpbzkfs"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_dr20_mrs_label_admission_20261106_v1.json",
+      "run": "decision_dr20_mrs_label_admission_20261106_v1",
+      "sessions": [
+        "gf3f4b5v"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_expanded_parallax_audit_20261106_v1.json",
+      "run": "decision_expanded_parallax_audit_20261106_v1",
+      "sessions": [
+        "es4y8r67"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_frozen_new_survey_maps_20261106_v1.json",
+      "run": "decision_frozen_new_survey_maps_20261106_v1",
+      "sessions": [
+        "utd9dmii"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_gaia_candidates_20261106_v1.json",
+      "run": "decision_ges_gaia_candidates_20261106_v1",
+      "sessions": [
+        "hlb1ofvx"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_gaia_candidates_20261106_v2.json",
+      "run": "decision_ges_gaia_candidates_20261106_v2",
+      "sessions": [
+        "m3py8p5m"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_gaia_candidates_batched_20261106_v3.json",
+      "run": "decision_ges_gaia_candidates_batched_20261106_v3",
+      "sessions": [
+        "eyi2xvzd"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_gaia_candidates_indexed_20261106_v5.json",
+      "run": "decision_ges_gaia_candidates_indexed_20261106_v5",
+      "sessions": [
+        "cs1y9521"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_gaia_candidates_resume_20261106_v4.json",
+      "run": "decision_ges_gaia_candidates_resume_20261106_v4",
+      "sessions": [
+        "u3ynajtc"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_local_full_input_xmatch_20261106_v1.json",
+      "run": "decision_ges_local_full_input_xmatch_20261106_v1",
+      "sessions": [
+        "tq7zmfa3"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_ges_local_full_input_xmatch_20261106_v2.json",
+      "run": "decision_ges_local_full_input_xmatch_20261106_v2",
+      "sessions": [
+        "bcstwc07"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_raw_astrometry_schema_audit_20261106_v1.json",
+      "run": "decision_raw_astrometry_schema_audit_20261106_v1",
+      "sessions": [
+        "fkmbxxu0"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_seismic_array_qa_20261106_v1.json",
+      "run": "decision_seismic_array_qa_20261106_v1",
+      "sessions": [
+        "q5feyeos"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_seismic_pdf_qa_20261106_v1.json",
+      "run": "decision_seismic_pdf_qa_20261106_v1",
+      "sessions": [
+        "w31qbg8q"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_source_census_20261106_v1.json",
+      "run": "decision_source_census_20261106_v1",
+      "sessions": [
+        "qkltlmzo"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_wave_array_qa_report_20261106_v1.json",
+      "run": "decision_wave_array_qa_report_20261106_v1",
+      "sessions": [
+        "txf2kymg"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/decision_xp_catalogue_qa_20261106_v1.json",
+      "run": "decision_xp_catalogue_qa_20261106_v1",
+      "sessions": [
+        "mkoy9zq3"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/esa_parallax_query_batch_probe_20261107_v1.json",
+      "run": "esa_parallax_query_batch_probe_20261107_v1",
+      "sessions": [
+        "aoj3vgzx"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_metallicity_report_20261107_v1.json",
+      "run": "expanded_checkpoint_metallicity_report_20261107_v1",
+      "sessions": [
+        "g46t0qkr"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_population_report_20261107_v1.json",
+      "run": "expanded_checkpoint_population_report_20261107_v1",
+      "sessions": [
+        "admn443g"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_report_20261107_binding_retry_v1.json",
+      "run": "expanded_checkpoint_report_20261107_binding_retry_v1",
+      "sessions": [
+        "h8qzdkkf"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_report_20261107_v1.json",
+      "run": "expanded_checkpoint_report_20261107_v1",
+      "sessions": [
+        "eawqc1bo"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_report_recovery_20261107_v1.json",
+      "run": "expanded_checkpoint_report_recovery_20261107_v1",
+      "sessions": [
+        "mjjdhdcg"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_xp_qa_20261107_binding_retry_v2.json",
+      "run": "expanded_checkpoint_xp_qa_20261107_binding_retry_v2",
+      "sessions": [
+        "lk7kmppp"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_xp_qa_20261107_v1.json",
+      "run": "expanded_checkpoint_xp_qa_20261107_v1",
+      "sessions": [
+        "i7bz8vbw"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_xp_qa_20261107_v2.json",
+      "run": "expanded_checkpoint_xp_qa_20261107_v2",
+      "sessions": [
+        "ra67z6vv"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_checkpoint_xp_recovery_20261107_v1.json",
+      "run": "expanded_checkpoint_xp_recovery_20261107_v1",
+      "sessions": [
+        "yx63xa1o"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_epoch1_checkpoint_qa_20261108_v1.json",
+      "run": "expanded_epoch1_checkpoint_qa_20261108_v1",
+      "sessions": [
+        "irttn21q"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_epoch1_checkpoint_report_20261108_v1.json",
+      "run": "expanded_epoch1_checkpoint_report_20261108_v1",
+      "sessions": [
+        "i7thtv1z"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-2.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "hrlrd9cg"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-3.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "rduagye3"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-4.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "bd5y2ma0"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-5.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "y2zrkl7a"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-6.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "ojspn08t"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1-attempt-7.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "cr31m89i"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_first_checkpoint_qa_20261107_v1.json",
+      "run": "expanded_first_checkpoint_qa_20261107_v1",
+      "sessions": [
+        "u2xsuhk9"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_raw_parallax_20261107_v1.json",
+      "run": "expanded_raw_parallax_20261107_v1",
+      "sessions": [
+        "usrexy0k"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-2.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "fwuo7mxr"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-3.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "dsx57gs2"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-4.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "k8qvrwfu"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-5.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "hfesjz6r"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-6.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "bcwbag1x"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1-attempt-7.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "lohnjtr7"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_nsf_fullfit_20261107_v1.json",
+      "run": "expanded_six_nsf_fullfit_20261107_v1",
+      "sessions": [
+        "smunjtct"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_20261107_v1.json",
+      "run": "expanded_six_source_20261107_v1",
+      "sessions": [
+        "py35y34n"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_20261107_v2.json",
+      "run": "expanded_six_source_20261107_v2",
+      "sessions": [
+        "cziwm8wc"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_20261107_v3.json",
+      "run": "expanded_six_source_20261107_v3",
+      "sessions": [
+        "wy4mxrfs"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_20261107_v4.json",
+      "run": "expanded_six_source_20261107_v4",
+      "sessions": [
+        "oki3u7pm"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_20261107_v5.json",
+      "run": "expanded_six_source_20261107_v5",
+      "sessions": [
+        "qbxaedaa"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_assembly_retry_20261107_v1.json",
+      "run": "expanded_six_source_assembly_retry_20261107_v1",
+      "sessions": [
+        "oftco5r8"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_assembly_retry_20261107_v2.json",
+      "run": "expanded_six_source_assembly_retry_20261107_v2",
+      "sessions": [
+        "w29278tl"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_census_20261107_v1.json",
+      "run": "expanded_six_source_census_20261107_v1",
+      "sessions": [
+        "utdssxy2"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_mirror_resume_20261107_v1.json",
+      "run": "expanded_six_source_mirror_resume_20261107_v1",
+      "sessions": [
+        "z7k5jvn6"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/expanded_six_source_recovery_retry_20261107_v1.json",
+      "run": "expanded_six_source_recovery_retry_20261107_v1",
+      "sessions": [
+        "q7yic5c1"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_ages_stage_20261108_v1.json",
+      "run": "full_gaia_ages_stage_20261108_v1",
+      "sessions": [
+        "fvll9eut"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_alpha_stage_20261108_v1.json",
+      "run": "full_gaia_alpha_stage_20261108_v1",
+      "sessions": [
+        "lbhf0ucu"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_contract_pilot_20261108_v1.json",
+      "run": "full_gaia_contract_pilot_20261108_v1",
+      "sessions": [
+        "hshxs209"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_gaia_stage_20261108_v1.json",
+      "run": "full_gaia_gaia_stage_20261108_v1",
+      "sessions": [
+        "l1udxnyk"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_gaia_stage_20261108_v2.json",
+      "run": "full_gaia_gaia_stage_20261108_v2",
+      "sessions": [
+        "v1kyrpx1"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_photometry_stage_20261108_v1.json",
+      "run": "full_gaia_photometry_stage_20261108_v1",
+      "sessions": [
+        "fxc6kwlb"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_gaia_source_inventory_20261108_v1.json",
+      "run": "full_gaia_source_inventory_20261108_v1",
+      "sessions": [
+        "pr2c44vp"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_label_union_inference_20261107_v1.json",
+      "run": "full_label_union_inference_20261107_v1",
+      "sessions": [
+        "i9qzn8xg"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/full_label_union_report_20261107_v1.json",
+      "run": "full_label_union_report_20261107_v1",
+      "sessions": [
+        "if263n5h"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/gaia_mirror_astrometry_probe_20261107_v1.json",
+      "run": "gaia_mirror_astrometry_probe_20261107_v1",
+      "sessions": [
+        "ycsw5j0w"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/gaia_parallax_audit_retry_20261107_v1.json",
+      "run": "gaia_parallax_audit_retry_20261107_v1",
+      "sessions": [
+        "a92szjku"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/gaia_parallax_release_unit_audit_20261107_v1.json",
+      "run": "gaia_parallax_release_unit_audit_20261107_v1",
+      "sessions": [
+        "njliscr4"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/gaia_parallax_release_unit_audit_20261107_v2.json",
+      "run": "gaia_parallax_release_unit_audit_20261107_v2",
+      "sessions": [
+        "ols9ikkx"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/matched_desi_logg_comparison_20261107_v1.json",
+      "run": "matched_desi_logg_comparison_20261107_v1",
+      "sessions": [
+        "dv58l83g"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/matched_desi_logg_off_20261107_v1.json",
+      "run": "matched_desi_logg_off_20261107_v1",
+      "sessions": [
+        "zm9ut7lq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/matched_desi_logg_off_terminal_qa_20261107_v1.json",
+      "run": "matched_desi_logg_off_terminal_qa_20261107_v1",
+      "sessions": [
+        "da4oi4v3"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/matched_desi_logg_on_20261107_v1.json",
+      "run": "matched_desi_logg_on_20261107_v1",
+      "sessions": [
+        "x3vtemdn"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/matched_desi_logg_on_terminal_qa_20261107_v1.json",
+      "run": "matched_desi_logg_on_terminal_qa_20261107_v1",
+      "sessions": [
+        "hdv50iud"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_20261107_v1.json",
+      "run": "msa_morning_report_20261107_v1",
+      "sessions": [
+        "ukjblbuj"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_20261107_v2.json",
+      "run": "msa_morning_report_20261107_v2",
+      "sessions": [
+        "o5zhi5qn"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_20261107_v3.json",
+      "run": "msa_morning_report_20261107_v3",
+      "sessions": [
+        "erfetszj"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_refresh_20261107_v1.json",
+      "run": "msa_morning_report_refresh_20261107_v1",
+      "sessions": [
+        "i3hv7x3k"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_refresh_20261107_v2.json",
+      "run": "msa_morning_report_refresh_20261107_v2",
+      "sessions": [
+        "tff7whak"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/msa_morning_report_refresh_20261107_v3.json",
+      "run": "msa_morning_report_refresh_20261107_v3",
+      "sessions": [
+        "l44pw7oe"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/native_label_covariance_audit_20261107_v1.json",
+      "run": "native_label_covariance_audit_20261107_v1",
+      "sessions": [
+        "evqh3zuq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/native_label_covariance_audit_20261107_v2.json",
+      "run": "native_label_covariance_audit_20261107_v2",
+      "sessions": [
+        "uaff5668"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_calibration_20261107_v1-attempt-2.json",
+      "run": "nsf_confirmation_calibration_20261107_v1",
+      "sessions": [
+        "lzm7ckom"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_calibration_20261107_v1.json",
+      "run": "nsf_confirmation_calibration_20261107_v1",
+      "sessions": [
+        "zethvfj0"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_corner_plots_20261107_v1.json",
+      "run": "nsf_confirmation_corner_plots_20261107_v1",
+      "sessions": [
+        "ep4fiicg"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_intervals_20261107_v2.json",
+      "run": "nsf_confirmation_intervals_20261107_v2",
+      "sessions": [
+        "h1wmo9pl"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_intervals_retry_20261107_v1.json",
+      "run": "nsf_confirmation_intervals_retry_20261107_v1",
+      "sessions": [
+        "j8oojpo0"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_intervals_retry_20261107_v2.json",
+      "run": "nsf_confirmation_intervals_retry_20261107_v2",
+      "sessions": [
+        "ci24uc3g"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_intervals_retry_20261107_v3.json",
+      "run": "nsf_confirmation_intervals_retry_20261107_v3",
+      "sessions": [
+        "ya92ynx9"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_random_draws_20261107_v1.json",
+      "run": "nsf_confirmation_random_draws_20261107_v1",
+      "sessions": [
+        "mj8kgec4"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsf_confirmation_random_modes_20261107_v1.json",
+      "run": "nsf_confirmation_random_modes_20261107_v1",
+      "sessions": [
+        "j19bt1yo"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_crps_s1_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_crps_s1_20261106_v1",
+      "sessions": [
+        "xy07s7f1"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_crps_s1_20261106_v1.json",
+      "run": "nsfconfirm_crps_s1_20261106_v1",
+      "sessions": [
+        "e2mwxl33"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_device_preflight_20261106_v1.json",
+      "run": "nsfconfirm_device_preflight_20261106_v1",
+      "sessions": [
+        "h1jh35k8"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_energy_s1_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_energy_s1_20261106_v1",
+      "sessions": [
+        "ecwlqa08"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_energy_s1_20261106_v1.json",
+      "run": "nsfconfirm_energy_s1_20261106_v1",
+      "sessions": [
+        "xw78olnq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_energy_s2_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_energy_s2_20261106_v1",
+      "sessions": [
+        "ro5y5b5u"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_energy_s2_20261106_v1.json",
+      "run": "nsfconfirm_energy_s2_20261106_v1",
+      "sessions": [
+        "c3d9uy73"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_corrneg_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_corrneg_20261106_v1",
+      "sessions": [
+        "i8zaoezz"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_corrneg_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_corrneg_20261106_v1",
+      "sessions": [
+        "r3ud4dx0"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_corrpos_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_corrpos_20261106_v1",
+      "sessions": [
+        "tqzgb5xw"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_corrpos_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_corrpos_20261106_v1",
+      "sessions": [
+        "zv5pom94"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_floor003_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_floor003_20261106_v1",
+      "sessions": [
+        "pljx5mez"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_floor003_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_floor003_20261106_v1",
+      "sessions": [
+        "m7cw8p62"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_s1_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_s1_20261106_v1",
+      "sessions": [
+        "hfat175p"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_s1_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_s1_20261106_v1",
+      "sessions": [
+        "f4650x30"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_s2_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_s2_20261106_v1",
+      "sessions": [
+        "esd566bk"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_s2_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_s2_20261106_v1",
+      "sessions": [
+        "nzxoe1f9"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_studentt_20261106_v1-attempt-2.json",
+      "run": "nsfconfirm_hybrid_studentt_20261106_v1",
+      "sessions": [
+        "yw5quq4c"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/nsfconfirm_hybrid_studentt_20261106_v1.json",
+      "run": "nsfconfirm_hybrid_studentt_20261106_v1",
+      "sessions": [
+        "h3rswuo4"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/remaining_survey_raw_features_20261107_v1.json",
+      "run": "remaining_survey_raw_features_20261107_v1",
+      "sessions": [
+        "abv2y05q"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/representative_corner_analysis_20261106_v1.json",
+      "run": "representative_corner_analysis_20261106_v1",
+      "sessions": [
+        "uxeaq7cr"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/representative_corner_draws_20261106_v1.json",
+      "run": "representative_corner_draws_20261106_v1",
+      "sessions": [
+        "e38nvr91"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_anchor_controls_20261106_v1.json",
+      "run": "seismic_anchor_controls_20261106_v1",
+      "sessions": [
+        "wn74pl3l"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_gravity_qa_20261106_v1.json",
+      "run": "seismic_gravity_qa_20261106_v1",
+      "sessions": [
+        "sz8tlqlt"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_comparison_20261107_v1.json",
+      "run": "seismic_supervision_comparison_20261107_v1",
+      "sessions": [
+        "uqec4ehi"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_comparison_recovery_20261107_v1.json",
+      "run": "seismic_supervision_comparison_recovery_20261107_v1",
+      "sessions": [
+        "ysjvul0o"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_frozen_s1_20261107_v1.json",
+      "run": "seismic_supervision_frozen_s1_20261107_v1",
+      "sessions": [
+        "ck66z83m"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_joint_s1_20261107_v1.json",
+      "run": "seismic_supervision_joint_s1_20261107_v1",
+      "sessions": [
+        "lffjg57w"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_joint_s2_20261107_v1.json",
+      "run": "seismic_supervision_joint_s2_20261107_v1",
+      "sessions": [
+        "mx7dv2bq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_preflight_20261107_v1.json",
+      "run": "seismic_supervision_preflight_20261107_v1",
+      "sessions": [
+        "hn8ywxph"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/seismic_supervision_readout_preflight_20261107_v2.json",
+      "run": "seismic_supervision_readout_preflight_20261107_v2",
+      "sessions": [
+        "rnq82i2b"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/six_nsf_inference_benchmark_20261107_v1-attempt-2.json",
+      "run": "six_nsf_inference_benchmark_20261107_v1",
+      "sessions": [
+        "h42cjwlh"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/six_nsf_inference_benchmark_20261107_v1-attempt-3.json",
+      "run": "six_nsf_inference_benchmark_20261107_v1",
+      "sessions": [
+        "go29ao1e"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/six_nsf_inference_benchmark_20261107_v1.json",
+      "run": "six_nsf_inference_benchmark_20261107_v1",
+      "sessions": [
+        "ptihw68m"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/six_survey_map_report_20261107_v1.json",
+      "run": "six_survey_map_report_20261107_v1",
+      "sessions": [
+        "xc9j7vsc"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/six_survey_map_report_20261107_v2.json",
+      "run": "six_survey_map_report_20261107_v2",
+      "sessions": [
+        "d74618sj"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_apogee_affine_20261107_v1-attempt-2.json",
+      "run": "sixmap_apogee_affine_20261107_v1",
+      "sessions": [
+        "d49tvs8l"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_apogee_affine_20261107_v1.json",
+      "run": "sixmap_apogee_affine_20261107_v1",
+      "sessions": [
+        "vkqzw7rv"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_device_preflight_20261107_v1.json",
+      "run": "sixmap_device_preflight_20261107_v1",
+      "sessions": [
+        "vwahmj7b"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_equalweight_affine_20261107_v1-attempt-2.json",
+      "run": "sixmap_equalweight_affine_20261107_v1",
+      "sessions": [
+        "d5ookbbi"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_equalweight_affine_20261107_v1.json",
+      "run": "sixmap_equalweight_affine_20261107_v1",
+      "sessions": [
+        "i8nkguya"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_affine_20261107_v1-attempt-2.json",
+      "run": "sixmap_seismic_affine_20261107_v1",
+      "sessions": [
+        "fc7a9nmn"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_affine_20261107_v1.json",
+      "run": "sixmap_seismic_affine_20261107_v1",
+      "sessions": [
+        "wex2wzfq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_nodesig_20261107_v1-attempt-2.json",
+      "run": "sixmap_seismic_nodesig_20261107_v1",
+      "sessions": [
+        "ym81kx1h"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_nodesig_20261107_v1.json",
+      "run": "sixmap_seismic_nodesig_20261107_v1",
+      "sessions": [
+        "zeulo1oa"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_offset_20261107_v1-attempt-2.json",
+      "run": "sixmap_seismic_offset_20261107_v1",
+      "sessions": [
+        "mprzk4oh"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_offset_20261107_v1.json",
+      "run": "sixmap_seismic_offset_20261107_v1",
+      "sessions": [
+        "sk876rs5"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_spline_20261107_v1-attempt-2.json",
+      "run": "sixmap_seismic_spline_20261107_v1",
+      "sessions": [
+        "zs6270cx"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/sixmap_seismic_spline_20261107_v1.json",
+      "run": "sixmap_seismic_spline_20261107_v1",
+      "sessions": [
+        "jvgu81zw"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/survey_mapping_geometry_audit_20261106_v1.json",
+      "run": "survey_mapping_geometry_audit_20261106_v1",
+      "sessions": [
+        "xhw1gkfm"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/survey_mapping_geometry_audit_20261106_v2.json",
+      "run": "survey_mapping_geometry_audit_20261106_v2",
+      "sessions": [
+        "fpchhtv1"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/tess_epoch1_checkpoint_qa_20261108_v1.json",
+      "run": "tess_epoch1_checkpoint_qa_20261108_v1",
+      "sessions": [
+        "uof8qnrx"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/tess_first_checkpoint_gravity_qa_20261107_v1.json",
+      "run": "tess_first_checkpoint_gravity_qa_20261107_v1",
+      "sessions": [
+        "s7z0h0ib"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/tess_first_checkpoint_recovery_20261107_v1.json",
+      "run": "tess_first_checkpoint_recovery_20261107_v1",
+      "sessions": [
+        "bmdf50bq"
+      ],
+      "retained": []
+    },
+    {
+      "receipt": "experiments/xp/decision-wave-20261106/tess_k2_local_gaia_candidates_20261107_v1.json",
+      "run": "tess_k2_local_gaia_candidates_20261107_v1",
+      "sessions": [
+        "hj4jd2dm"
+      ],
+      "retained": []
+    }
+  ],
+  "outputs": {
+    "expanded_six_nsf_fullfit_20261107_v1": {
+      "status": "large_six_candidate_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-single-star-corners.npz",
+          "type": "file",
+          "size": 1408479
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-StarHorse_apogee17_posterior_median.npz",
+          "type": "file",
+          "size": 165961
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-rave_dr6_madera_gauguin.npz",
+          "type": "file",
+          "size": 217923
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-1.json",
+          "type": "file",
+          "size": 605
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-desi.npz",
+          "type": "file",
+          "size": 238590
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-5.json",
+          "type": "file",
+          "size": 605
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-StarHorse_apogee17_posterior_median.npz",
+          "type": "file",
+          "size": 165967
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/first-checkpoint-fit-common.npz",
+          "type": "file",
+          "size": 585131
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-gaia_dr3_gspspec.npz",
+          "type": "file",
+          "size": 170130
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-desi.npz",
+          "type": "file",
+          "size": 238726
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-checkpoint.pth",
+          "type": "file",
+          "size": 137372427
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/manifest.json",
+          "type": "file",
+          "size": 23147
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-lamost_dr12v2_lrs_lasp.npz",
+          "type": "file",
+          "size": 219888
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-6.json",
+          "type": "file",
+          "size": 712
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-lamost_dr12v2_lrs_lasp.npz",
+          "type": "file",
+          "size": 219891
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-StarHorse_catalogue_posterior_median.npz",
+          "type": "file",
+          "size": 166903
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-gaia_dr3_gspspec.npz",
+          "type": "file",
+          "size": 170232
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-StarHorse_galahdr3_posterior_median.npz",
+          "type": "file",
+          "size": 166996
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-sdss_dr20_bossnet_081.npz",
+          "type": "file",
+          "size": 220951
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-2.json",
+          "type": "file",
+          "size": 605
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-gaia_dr3_gspspec.npz",
+          "type": "file",
+          "size": 170199
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/architecture-decision.json",
+          "type": "file",
+          "size": 2657
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-lamost_dr12v2_mrs_lasp.npz",
+          "type": "file",
+          "size": 220783
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-APOKASC3_loggSeis.npz",
+          "type": "file",
+          "size": 183822
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-apogee.npz",
+          "type": "file",
+          "size": 221625
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-StarHorse_galahdr3_posterior_median.npz",
+          "type": "file",
+          "size": 167960
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-rave_dr6_madera_gauguin.npz",
+          "type": "file",
+          "size": 218549
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-sdss_dr20_bossnet_081.npz",
+          "type": "file",
+          "size": 221170
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-3.json",
+          "type": "file",
+          "size": 605
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/pre-admission-attempt-4.json",
+          "type": "file",
+          "size": 605
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-apogee.npz",
+          "type": "file",
+          "size": 221578
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-galah.npz",
+          "type": "file",
+          "size": 220056
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-StarHorse_catalogue_posterior_median.npz",
+          "type": "file",
+          "size": 166757
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-desi.npz",
+          "type": "file",
+          "size": 238770
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-apogee.npz",
+          "type": "file",
+          "size": 221457
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-lamost_dr12v2_lrs_lasp.npz",
+          "type": "file",
+          "size": 220022
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-APOKASC3_loggSeis.npz",
+          "type": "file",
+          "size": 184046
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/first-checkpoint-qa-complete.json",
+          "type": "file",
+          "size": 247
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/device-preflight.json",
+          "type": "file",
+          "size": 159
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-lamost_dr12v2_mrs_lasp.npz",
+          "type": "file",
+          "size": 220427
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-StarHorse_galahdr3_posterior_median.npz",
+          "type": "file",
+          "size": 166753
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-APOKASC3_loggSeis.npz",
+          "type": "file",
+          "size": 184127
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/first-checkpoint-single-star-corners.npz",
+          "type": "file",
+          "size": 1407273
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-sdss_dr20_bossnet_081.npz",
+          "type": "file",
+          "size": 220762
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-devtest-common.npz",
+          "type": "file",
+          "size": 585494
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-fit-common.npz",
+          "type": "file",
+          "size": 585328
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/first-checkpoint-devtest-common.npz",
+          "type": "file",
+          "size": 584966
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/decision-wait.json",
+          "type": "file",
+          "size": 113
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-galah.npz",
+          "type": "file",
+          "size": 220214
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-StarHorse_catalogue_posterior_median.npz",
+          "type": "file",
+          "size": 167071
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-qa-complete.json",
+          "type": "file",
+          "size": 240
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-rave_dr6_madera_gauguin.npz",
+          "type": "file",
+          "size": 218317
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/latest-checkpoint.pth",
+          "type": "file",
+          "size": 411526935
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/devtest-galah.npz",
+          "type": "file",
+          "size": 220015
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/cal-StarHorse_apogee17_posterior_median.npz",
+          "type": "file",
+          "size": 166137
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/tune-lamost_dr12v2_mrs_lasp.npz",
+          "type": "file",
+          "size": 220553
+        }
+      ]
+    },
+    "full_gaia_gaia_stage_20261108_v2": {
+      "status": "source_stage_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/unmatched-candidate-source-id.npy",
+          "type": "file",
+          "size": 128
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/label-candidate-source-id.npy",
+          "type": "file",
+          "size": 108743184
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/candidate-found-in-gaia.npy",
+          "type": "file",
+          "size": 13593010
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/labelled-gaia",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/manifest.json",
+          "type": "file",
+          "size": 6928
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/ssl-reservoir",
+          "type": "directory",
+          "size": 0
+        }
+      ]
+    },
+    "full_gaia_photometry_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/label-candidate-source-id.npy",
+          "type": "file",
+          "size": 108743184
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/manifest.json",
+          "type": "file",
+          "size": 800575
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations",
+          "type": "directory",
+          "size": 0
+        }
+      ]
+    },
+    "full_gaia_alpha_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/001-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/manifest.json",
+          "type": "file",
+          "size": 30404
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/008-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/006-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/000-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/004-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/007-02",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/007-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/011-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/013-01",
+          "type": "directory",
+          "size": 0
+        }
+      ]
+    },
+    "full_gaia_ages_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/apogee-latent-age",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/002-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/manifest.json",
+          "type": "file",
+          "size": 7956
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/004-01",
+          "type": "directory",
+          "size": 0
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/003-01",
+          "type": "directory",
+          "size": 0
+        }
+      ]
+    },
+    "full_gaia_contract_pilot_20261108_v1": {
+      "status": "engineering_pilot_complete",
+      "children": [
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restored_consensus.pth",
+          "type": "file",
+          "size": 1359837
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/manifest.json",
+          "type": "file",
+          "size": 4244
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restricted_inputs.pth",
+          "type": "file",
+          "size": 1359185
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restored_consensus-tune.npz",
+          "type": "file",
+          "size": 1456719
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restricted_inputs-tune.npz",
+          "type": "file",
+          "size": 1453154
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restored_inputs-tune.npz",
+          "type": "file",
+          "size": 1452233
+        },
+        {
+          "name": "/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_contract_pilot_20261108_v1/restored_inputs.pth",
+          "type": "file",
+          "size": 1359049
+        }
+      ]
+    }
+  }
+}

@@ -81,11 +81,11 @@ def main():
             producer = json.loads((qa / "manifest.json").read_text())
         except (FileNotFoundError, json.JSONDecodeError):
             producer = {}
-        if producer.get("status") == "upstream_failed":
+        if producer.get("status") in ["upstream_failed", "failed"]:
             m.update(status="upstream_failed", error=producer.get("error"))
             save()
             return
-        if producer.get("status") == "first_checkpoint_common_qa_complete":
+        if producer.get("status") in ["first_checkpoint_common_qa_complete", "selected_checkpoint_common_qa_complete"]:
             break
         time.sleep(30)
     else:
@@ -109,7 +109,12 @@ def main():
         coefficients = {k: f[k] for k in f.files}
     m["status"] = "rendering_saved_arrays"
     save()
-    large = models["large_first_checkpoint"]
+    large_name = producer.get("large_model_key", "large_first_checkpoint")
+    large = models[large_name]
+    if producer.get("snapshot_kind") == "final_selected":
+        m["scope"] = producer["scope"]
+    m["snapshot_kind"] = producer.get("snapshot_kind", "intermediate")
+    m["large_model_key"] = large_name
     source = load_bound_source(producer, sha)
     panel.update(population_panel_masks(source, panel["row"]))
     m["population_panel_selection"] = dict(
@@ -243,7 +248,7 @@ def main():
             raise ValueError("Single-star artifact differs")
         with np.load(path) as f:
             corners[name] = {k: f[k] for k in f.files}
-    for sid in corners["large_first_checkpoint"]["source_id"]:
+    for sid in corners[large_name]["source_id"]:
         values = {
             name: data["native_draws"][:, np.flatnonzero(data["source_id"] == sid)[0]]
             for name, data in corners.items()
@@ -416,17 +421,17 @@ def main():
                 fig.savefig(a.output / (name + "-common-kiel.png"), dpi=150)
                 plt.close(fig)
     m.update(
-        status="first_checkpoint_array_report_complete",
+        status="selected_checkpoint_array_report_complete" if m["snapshot_kind"] == "final_selected" else "first_checkpoint_array_report_complete",
         producer_manifest_sha256=sha(qa / "manifest.json"),
         benchmark_scope="Common predictions compared separately with Fe I and Fe II. Native/source maps used only for catalogue compatibility. Lower cluster dispersion alone does not prove calibrated accuracy.",
     )
     save()
     text = [
-        "# First large-checkpoint QA",
+        "# Selected comparison-checkpoint QA" if m["snapshot_kind"] == "final_selected" else "# First large-checkpoint QA",
         "",
         m["scope"],
         "",
-        f"Training snapshot: update {m['models']['large_first_checkpoint']['training_update']}; this may precede completion of a full FIT epoch.",
+        f"Training snapshot: update {m['models'][large_name]['training_update']}; epoch {m['models'][large_name].get('epoch')}; snapshot kind {m['snapshot_kind']}.",
         "",
         "| Model | Seismic stars | logg MAE | noisy-reference C90 |",
         "|---|---:|---:|---:|",

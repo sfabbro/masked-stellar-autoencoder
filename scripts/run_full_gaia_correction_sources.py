@@ -107,6 +107,7 @@ def native_fields(cols):
             r"(^|_)(age|ages|logage|log_age|lnage|tau)(_|$)|agergb|agerc|alpha|mg.?fe|si.?fe|ca.?fe|ti.?fe",
             c.lower(),
         )
+        and not c.lower().startswith("tau_gran")
     ]
 
 
@@ -122,6 +123,51 @@ def table_frame(data, cols, lo, hi):
             a = a.astype(a.dtype.newbyteorder("="))
         out[c] = a
     return pd.DataFrame(out)
+
+
+def ascii_table_frame(path, hdu, cols, lo, hi, *, extra_null_tokens=()):
+    """Read native ASCII fields without Astropy's zero-filled numeric nulls.
+
+    Parse integer fields directly from text, never through floating point.
+    Additional null tokens are explicit per-product representation repairs.
+    """
+    rows = min(hi, int(hdu.header["NAXIS2"])) - lo
+    width = int(hdu.header["NAXIS1"])
+    selected = [hdu.columns[c] for c in cols]
+    formats = [re.fullmatch(r"([AIFED])(\d+)(?:\.\d+)?", str(c.format)) for c in selected]
+    if any(f is None for f in formats):
+        raise ValueError("Unsupported ASCII field format")
+    dtype = np.dtype({
+        "names": cols,
+        "formats": [f"S{int(f.group(2))}" for f in formats],
+        "offsets": [int(c.start) - 1 for c in selected],
+        "itemsize": width,
+    })
+    with Path(path).open("rb") as stream:
+        stream.seek(hdu.fileinfo()["datLoc"] + lo * width)
+        payload = stream.read(rows * width)
+    if len(payload) != rows * width:
+        raise ValueError("Truncated ASCII table records")
+    raw = np.frombuffer(payload, dtype=dtype, count=rows)
+    frame = {}
+    for column, fmt in zip(selected, formats, strict=True):
+        text = np.char.strip(np.char.decode(raw[column.name], "ascii"))
+        if fmt.group(1) == "A":
+            frame[column.name] = text
+            continue
+        nulls = {"", *extra_null_tokens}
+        if column.null is not None:
+            nulls.add(str(column.null).strip())
+        missing = np.isin(text, list(nulls))
+        if fmt.group(1) == "I":
+            frame[column.name] = pd.array(
+                [pd.NA if absent else int(value) for value, absent in zip(text, missing, strict=True)],
+                dtype="Int64",
+            )
+        else:
+            values = [None if absent else value.replace("D", "E").replace("d", "e") for value, absent in zip(text, missing, strict=True)]
+            frame[column.name] = pd.to_numeric(pd.Series(values), errors="raise")
+    return pd.DataFrame(frame)
 
 
 def stage_labels(mode, out, m, save):
@@ -165,7 +211,7 @@ def stage_labels(mode, out, m, save):
         try:
             with fits.open(path, memmap=not path.name.endswith(".gz")) as hd:
                 for k, h in enumerate(hd):
-                    if not isinstance(h, fits.BinTableHDU):
+                    if not isinstance(h, (fits.BinTableHDU, fits.TableHDU)):
                         continue
                     cols = list(h.columns.names)
                     selected = native_fields(cols)
@@ -186,12 +232,23 @@ def stage_labels(mode, out, m, save):
                     fields = list(dict.fromkeys(ids + selected))
                     entry = dict(
                         hdu=h.name,
+                        hdu_index=k,
+                        hdu_type=type(h).__name__,
                         rows=int(h.header["NAXIS2"]),
                         selected_fields=selected,
                         identity_and_quality_fields=ids,
                         units={c.name: c.unit for c in h.columns if c.unit},
                         training_admitted=False,
                     )
+                    extra_nulls = ("---",) if path.name == "lamost-kepler-ages.fits" else ()
+                    if isinstance(h, fits.TableHDU):
+                        entry["ascii_null_policy"] = dict(
+                            blank_is_missing=True,
+                            header_null_tokens={c.name: c.null for c in h.columns if c.null is not None},
+                            additional_numeric_null_tokens=list(extra_nulls),
+                            additional_token_reason="Observed undeclared native missing marker" if extra_nulls else None,
+                            integer_parser="direct text-to-integer; nullable Int64",
+                        )
                     item["tables"].append(entry)
                     if not selected:
                         continue
@@ -199,14 +256,20 @@ def stage_labels(mode, out, m, save):
                     target.mkdir()
                     finite = {c: 0 for c in selected}
                     for lo in range(0, entry["rows"], 100000):
-                        df = table_frame(h.data, fields, lo, lo + 100000)
+                        if isinstance(h, fits.TableHDU):
+                            df = ascii_table_frame(path, h, fields, lo, lo + 100000, extra_null_tokens=extra_nulls)
+                        else:
+                            df = table_frame(h.data, fields, lo, lo + 100000)
+                        if "source_row" in df:
+                            raise ValueError("Reserved source_row column already present")
+                        df["source_row"] = np.arange(lo, lo + len(df), dtype="i8")
                         pq.write_table(
                             pa.Table.from_pandas(df, preserve_index=False),
                             target / f"part-{lo:010}.parquet",
                         )
                         for c in selected:
                             if c in df and pd.api.types.is_numeric_dtype(df[c]):
-                                a = df[c].to_numpy()
+                                a = df[c].to_numpy(dtype="f8", na_value=np.nan)
                                 finite[c] += int((np.isfinite(a) & (a != -9999)).sum())
                     entry.update(output=str(target), finite_not_quality_selected=finite)
                     save()
@@ -223,12 +286,16 @@ def stage_labels(mode, out, m, save):
             for k, df in enumerate(
                 pd.read_csv(path, chunksize=100000, dtype={"APOGEE_ID": "string"})
             ):
+                if "source_row" in df:
+                    raise ValueError("Reserved source_row column already present")
+                df["source_row"] = np.arange(count, count + len(df), dtype="i8")
                 keep = [
                     c
                     for c in df
                     if c
                     in [
                         "APOGEE_ID",
+                        "source_row",
                         "TELESCOPE",
                         "FIELD",
                         "STARFLAG",

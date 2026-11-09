@@ -1,0 +1,310 @@
+{
+  "status": "source_stage_complete",
+  "mode": "gaia",
+  "training_performed": false,
+  "sources": [],
+  "started_unix": 1794189932.037965,
+  "candidate_stars": 13592882,
+  "candidate_provenance": [
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/prepared.h5",
+      "key": "source_id",
+      "rows": 12386195,
+      "scope": "existing registry, including ineligible rows"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "source": "lamost_dr12v2_lrs_lasp",
+      "rows": 3265101,
+      "scope": "native sidecar before feature intersection"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "source": "rave_dr6_madera_gauguin",
+      "rows": 188943,
+      "scope": "native sidecar before feature intersection"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+      "source": "gaia_dr3_gspspec",
+      "rows": 5591594,
+      "scope": "native sidecar before feature intersection"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "source": "sdss_dr20_bossnet_081",
+      "rows": 929032,
+      "scope": "native sidecar before feature intersection"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "source": "lamost_dr12v2_mrs_lasp",
+      "rows": 821991,
+      "scope": "native sidecar before feature intersection"
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+      "column": "gaiadr3_source_id",
+      "rows": 917588,
+      "scope": "native release, no XP selection"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+      "column": "GAIAEDR3_SOURCE_ID",
+      "rows": 733901,
+      "scope": "native release, no XP selection"
+    }
+  ],
+  "scope": "Full Gaia shard join for native-label candidate union, independent of XP; does not certify discovery of every possible survey catalogue",
+  "gaia_index_schema": [
+    {
+      "name": "GaiaSource_000000-003111",
+      "shape": [
+        528333,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_003112-005263",
+      "shape": [
+        518501,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_005264-006601",
+      "shape": [
+        513525,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_006602-007952",
+      "shape": [
+        514380,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_007953-010234",
+      "shape": [
+        523111,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_010235-012597",
+      "shape": [
+        526885,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_012598-014045",
+      "shape": [
+        514786,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_014046-015369",
+      "shape": [
+        517977,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_015370-016240",
+      "shape": [
+        519421,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_016241-017018",
+      "shape": [
+        511448,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_017019-017658",
+      "shape": [
+        508306,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_017659-018028",
+      "shape": [
+        515027,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_018029-018472",
+      "shape": [
+        510416,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_018473-019161",
+      "shape": [
+        509254,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_019162-019657",
+      "shape": [
+        508030,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_019658-020091",
+      "shape": [
+        511697,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_020092-020493",
+      "shape": [
+        515952,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_020494-020747",
+      "shape": [
+        529171,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_020748-020984",
+      "shape": [
+        523771,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_020985-021233",
+      "shape": [
+        512229,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_021234-021441",
+      "shape": [
+        514983,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_021442-021665",
+      "shape": [
+        522006,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_021666-021919",
+      "shape": [
+        528274,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_021920-022158",
+      "shape": [
+        518148,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_022159-022410",
+      "shape": [
+        519910,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_022411-022698",
+      "shape": [
+        516986,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_022699-022881",
+      "shape": [
+        513206,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_022882-023058",
+      "shape": [
+        516358,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_023059-023264",
+      "shape": [
+        512077,
+        2
+      ],
+      "dtype": "int64"
+    },
+    {
+      "name": "GaiaSource_023265-023450",
+      "shape": [
+        514205,
+        2
+      ],
+      "dtype": "int64"
+    }
+  ],
+  "gaia_shards": 3386,
+  "matched_rows": 13592882,
+  "all_gaia_rows_scanned": 1811709771,
+  "completed_gaia_shards": 3386,
+  "matched_unique_candidates": 13592882,
+  "ssl_reservoir_sampling": "bounded per-shard/per-chunk XP-availability stratification, not population-uniform; native source IDs retained for role assignment",
+  "roles": "existing roles must be inherited by Gaia ID; new stars require protected benchmark/cluster and dependency-group assignment before training",
+  "training_admitted": false,
+  "finished_unix": 1794199216.0068662
+}

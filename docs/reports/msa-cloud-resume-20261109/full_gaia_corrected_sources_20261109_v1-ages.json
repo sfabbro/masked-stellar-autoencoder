@@ -1,0 +1,485 @@
+{
+  "status": "source_stage_complete",
+  "mode": "ages",
+  "training_performed": false,
+  "sources": [
+    {
+      "path": "/arc/projects/k-pop/catalogues/ambre-ages.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "mgfe-age.dat",
+          "hdu_index": 1,
+          "hdu_type": "TableHDU",
+          "rows": 1065,
+          "selected_fields": [
+            "Age",
+            "e_Age"
+          ],
+          "identity_and_quality_fields": [
+            "GaiaDR2"
+          ],
+          "units": {
+            "[M/H]": "[-]",
+            "e_[M/H]": "[-]",
+            "[Mg/Fe]": "[-]",
+            "e_[Mg/Fe]": "[-]",
+            "Age": "Gyr",
+            "e_Age": "Gyr"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/000-01",
+          "finite_not_quality_selected": {
+            "Age": 1065,
+            "e_Age": 1065
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/lamost-kepler-ages.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "dr8_age.dat",
+          "hdu_index": 1,
+          "hdu_type": "TableHDU",
+          "rows": 1348645,
+          "selected_fields": [
+            "Agergb",
+            "e_Agergb",
+            "Agerc",
+            "e_Agerc"
+          ],
+          "identity_and_quality_fields": [
+            "obsid",
+            "RAdeg",
+            "DEdeg",
+            "uqflag",
+            "status",
+            "SNR"
+          ],
+          "units": {
+            "RAdeg": "deg",
+            "DEdeg": "deg",
+            "dnu": "muHz",
+            "numax": "muHz",
+            "dp": "s",
+            "dnuv": "muHz",
+            "Agergb": "Gyr",
+            "Massrgb": "Msun",
+            "e_Agergb": "Gyr",
+            "e_Massrgb": "Msun",
+            "Agerc": "Gyr",
+            "Massrc": "Msun",
+            "e_Agerc": "Gyr",
+            "e_Massrc": "Msun"
+          },
+          "training_admitted": false
+        }
+      ],
+      "error": "ValueError(\"could not convert string to float: np.bytes_(b'         ---'); the header may be missing the necessary TNULL14 keyword or the table contains invalid data\")"
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/rave_dr6_bdasp.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "rave_user_anonymous.rave_dr6_bdasp",
+          "hdu_index": 1,
+          "hdu_type": "BinTableHDU",
+          "rows": 494695,
+          "selected_fields": [
+            "age_bdasp",
+            "age_error_bdasp"
+          ],
+          "identity_and_quality_fields": [
+            "rave_obs_id"
+          ],
+          "units": {
+            "distance_bdasp": "kpc",
+            "distance_error_bdasp": "kpc",
+            "age_bdasp": "yr",
+            "age_error_bdasp": "yr",
+            "teff_bdasp": "K",
+            "teff_error_bdasp": "K",
+            "logg_bdasp": "log(cm/s**2)",
+            "logg_error_bdasp": "log(cm/s**2)",
+            "mass_bdasp": "solMass",
+            "mass_error_bdasp": "solMass",
+            "log_a_v_bdasp": "log(mag)",
+            "log_a_v_error_bdasp": "log(mag)",
+            "parallax_bdasp": "mas",
+            "parallax_error_bdasp": "mas"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/002-01",
+          "finite_not_quality_selected": {
+            "age_bdasp": 494695,
+            "age_error_bdasp": 494695
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "Joined",
+          "hdu_index": 1,
+          "hdu_type": "BinTableHDU",
+          "rows": 917588,
+          "selected_fields": [
+            "age"
+          ],
+          "identity_and_quality_fields": [
+            "sobject_id",
+            "gaiadr3_source_id",
+            "ra",
+            "dec",
+            "flag_sp",
+            "flag_sp_fit",
+            "flag_red",
+            "snr_px_ccd1",
+            "snr_px_ccd2",
+            "snr_px_ccd3",
+            "snr_px_ccd4",
+            "rv_gaia_dr3",
+            "e_rv_gaia_dr3",
+            "flag_fe_h",
+            "nn_flag_li_fe",
+            "flag_c_fe",
+            "flag_n_fe",
+            "flag_o_fe",
+            "flag_na_fe",
+            "flag_mg_fe",
+            "flag_al_fe",
+            "flag_si_fe",
+            "flag_k_fe",
+            "flag_ca_fe",
+            "flag_sc_fe",
+            "flag_ti_fe",
+            "flag_v_fe",
+            "flag_cr_fe",
+            "flag_mn_fe",
+            "flag_co_fe",
+            "flag_ni_fe",
+            "flag_cu_fe",
+            "flag_zn_fe",
+            "flag_rb_fe",
+            "flag_sr_fe",
+            "flag_y_fe",
+            "flag_zr_fe",
+            "flag_mo_fe",
+            "flag_ru_fe",
+            "flag_ba_fe",
+            "flag_la_fe",
+            "flag_ce_fe",
+            "flag_nd_fe",
+            "flag_sm_fe",
+            "flag_eu_fe",
+            "flag_a_li"
+          ],
+          "units": {
+            "phot_g_mean_mag": "mag",
+            "bp_rp": "mag",
+            "j_m": "mag",
+            "j_msigcom": "mag",
+            "h_m": "mag",
+            "h_msigcom": "mag",
+            "ks_m": "mag",
+            "ks_msigcom": "mag",
+            "W2mag": "mag",
+            "e_W2mag": "mag",
+            "parallax": "mas",
+            "parallax_error": "mas"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/003-01",
+          "finite_not_quality_selected": {
+            "age": 904016
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/apokasc-3-2024.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "Joined",
+          "hdu_index": 1,
+          "hdu_type": "BinTableHDU",
+          "rows": 24010,
+          "selected_fields": [
+            "AGE_DW",
+            "AGE_DW_PERR",
+            "AGE_DW_MERR",
+            "AGE_DW_SYSERR",
+            "AGE_DW_SDSS",
+            "AGE_DW_SDSS_PERR",
+            "AGE_DW_SDSS_MERR",
+            "AGE_DW_SDSS_SYSERR",
+            "APOKASC2_AGE",
+            "APOKASC2_AGE_PERR",
+            "APOKASC2_AGE_MERR",
+            "APOKASC3_CAT_AGE",
+            "APOKASC3_AGE_RGB",
+            "APOKASC3_AGE_RGB_PERR",
+            "APOKASC3_AGE_RGB_MERR",
+            "APOKASC3_AGE_RCAGB",
+            "APOKASC3_AGE_RCAGB_PERR",
+            "APOKASC3_AGE_RCAGB_MERR"
+          ],
+          "identity_and_quality_fields": [
+            "RA",
+            "DEC",
+            "GAIA_L",
+            "GAIA_B",
+            "GAIA_ECLIPTIC_LONGITUDE",
+            "GAIA_ECLIPTIC_LATITUTE",
+            "GAIA_PARALLAX",
+            "GAIA_PARALLAX_ERR",
+            "GAIAEDR3_SOURCE_ID",
+            "GAIAEDR3_PARALLAX",
+            "GAIAEDR3_PARALLAX_ERROR",
+            "GAIAEDR3_PMRA",
+            "GAIAEDR3_PMRA_ERROR",
+            "GAIAEDR3_PMDEC",
+            "GAIAEDR3_PMDEC_ERROR",
+            "GAIAEDR3_PHOT_G_MEAN_MAG",
+            "GAIAEDR3_PHOT_BP_MEAN_MAG",
+            "GAIAEDR3_PHOT_RP_MEAN_MAG",
+            "DR17_ASPCAP_SNR",
+            "APOKASC3_INVR_GAIA",
+            "APOKASC3_INVR_GAIA_ERR",
+            "GAIA_TEFF",
+            "GAIA_RADIUS",
+            "GAIA_LUMINOSITY",
+            "BERGER_BINARY_FLAG",
+            "HON_FLAG",
+            "TARGFLAGS",
+            "ASPCAPFLAGS"
+          ],
+          "units": {
+            "GAIA_PARALLAX": "Angle[mas]",
+            "GAIA_PARALLAX_ERR": "Angle[mas]",
+            "PW_BINARY_P": "d",
+            "PW_BINARY_K": "km s-1"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/004-01",
+          "finite_not_quality_selected": {
+            "AGE_DW": 414,
+            "AGE_DW_PERR": 414,
+            "AGE_DW_MERR": 414,
+            "AGE_DW_SYSERR": 414,
+            "AGE_DW_SDSS": 407,
+            "AGE_DW_SDSS_PERR": 407,
+            "AGE_DW_SDSS_MERR": 407,
+            "AGE_DW_SDSS_SYSERR": 407,
+            "APOKASC2_AGE": 6529,
+            "APOKASC2_AGE_PERR": 6527,
+            "APOKASC2_AGE_MERR": 6529,
+            "APOKASC3_CAT_AGE": 0,
+            "APOKASC3_AGE_RGB": 6680,
+            "APOKASC3_AGE_RGB_PERR": 6680,
+            "APOKASC3_AGE_RGB_MERR": 6681,
+            "APOKASC3_AGE_RCAGB": 12023,
+            "APOKASC3_AGE_RCAGB_PERR": 12023,
+            "APOKASC3_AGE_RCAGB_MERR": 12023
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/apokasc-2-2018.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "table5.dat",
+          "hdu_index": 1,
+          "hdu_type": "TableHDU",
+          "rows": 6676,
+          "selected_fields": [
+            "LogAge",
+            "E_LogAge",
+            "e_LogAge"
+          ],
+          "identity_and_quality_fields": [],
+          "units": {
+            "Teff": "K",
+            "e_Teff": "K",
+            "FeH": "[-]",
+            "e_FeH": "[-]",
+            "AFe": "[-]",
+            "e_AFe": "[-]",
+            "Numax": "uHz",
+            "Dnu": "uHz",
+            "M(cor)": "Msun",
+            "R(cor)": "Rsun",
+            "logg(seis)": "[cm/s2]",
+            "Rho": "g/cm3",
+            "LogAge": "Myr",
+            "E_LogAge": "Myr",
+            "e_LogAge": "Myr",
+            "Av": "mag",
+            "e_Av": "mag"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/005-01",
+          "finite_not_quality_selected": {
+            "LogAge": 6529,
+            "E_LogAge": 6529,
+            "e_LogAge": 6529
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/apo_k2_2024.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "table1.dat",
+          "hdu_index": 1,
+          "hdu_type": "TableHDU",
+          "rows": 4661,
+          "selected_fields": [
+            "Age",
+            "e_Age",
+            "E_Age"
+          ],
+          "identity_and_quality_fields": [
+            "GaiaEDR3",
+            "RAdeg",
+            "DEdeg",
+            "aFlag"
+          ],
+          "units": {
+            "RAdeg": "deg",
+            "DEdeg": "deg",
+            "GLON": "deg",
+            "GLAT": "deg",
+            "Rkpc": "kpc",
+            "Zkpc": "kpc",
+            "Teff": "K",
+            "Teff-u": "K",
+            "e_Teff": "K",
+            "logg": "[cm.s-2]",
+            "logg-u": "[cm.s-2]",
+            "e_logg": "[cm.s-2]",
+            "[Fe/H]": "[Sun]",
+            "e_[Fe/H]": "[Sun]",
+            "[a/M]": "[Sun]",
+            "e_[a/M]": "[Sun]",
+            "[O/Fe]": "[Sun]",
+            "e_[O/Fe]": "[Sun]",
+            "Mstar": "Msun",
+            "e_Mstar": "Msun",
+            "Rstar": "Rsun",
+            "e_Rstar": "Rsun",
+            "logg-seis": "[cm.s-2]",
+            "e_logg-seis": "[cm.s-2]",
+            "numax": "uHz",
+            "e_numax": "uHz",
+            "deltanu": "uHz",
+            "e_deltanu": "uHz",
+            "Age": "Gyr",
+            "e_Age": "Gyr",
+            "E_Age": "Gyr",
+            "Age-mode": "Gyr"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/006-01",
+          "finite_not_quality_selected": {
+            "Age": 4661,
+            "e_Age": 4661,
+            "E_Age": 4661
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/apo_k2_2024_recal.fits",
+      "exists": true,
+      "tables": [
+        {
+          "hdu": "table2.dat",
+          "hdu_index": 1,
+          "hdu_type": "TableHDU",
+          "rows": 3209,
+          "selected_fields": [
+            "Age",
+            "e_Age",
+            "E_Age"
+          ],
+          "identity_and_quality_fields": [
+            "GaiaEDR3",
+            "RAdeg",
+            "DEdeg",
+            "aFlag"
+          ],
+          "units": {
+            "RAdeg": "deg",
+            "DEdeg": "deg",
+            "GLON": "deg",
+            "GLAT": "deg",
+            "Rkpc": "kpc",
+            "Zkpc": "kpc",
+            "Teff": "K",
+            "Teff-u": "K",
+            "e_Teff": "K",
+            "logg": "[cm.s-2]",
+            "logg-u": "[cm.s-2]",
+            "e_logg": "[cm.s-2]",
+            "[Fe/H]": "[Sun]",
+            "e_[Fe/H]": "[Sun]",
+            "[a/M]": "[Sun]",
+            "e_[a/M]": "[Sun]",
+            "Mstar": "Msun",
+            "e_Mstar": "Msun",
+            "Rstar": "Rsun",
+            "e_Rstar": "Rsun",
+            "logg-seis": "[cm.s-2]",
+            "e_logg-seis": "[cm.s-2]",
+            "numax": "uHz",
+            "e_numax": "uHz",
+            "deltanu": "uHz",
+            "e_deltanu": "uHz",
+            "Age": "Gyr",
+            "e_Age": "Gyr",
+            "E_Age": "Gyr",
+            "Age-mode": "Gyr"
+          },
+          "training_admitted": false,
+          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/007-01",
+          "finite_not_quality_selected": {
+            "Age": 3209,
+            "e_Age": 3209,
+            "E_Age": 3209
+          }
+        }
+      ]
+    },
+    {
+      "path": "/arc/projects/k-pop/catalogues/nn_latent_age_dr17.csv.gz",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages/apogee-latent-age",
+      "rows": 733901,
+      "finite_age_before_quality": 142257,
+      "training_admitted": false,
+      "age_units": "must verify publication; CSV has no unit header"
+    }
+  ],
+  "started_unix": 1794267977.796855,
+  "semantic_admission_pending": [
+    "native quantity definitions and solar conventions",
+    "quality/domain cuts",
+    "publication/release identity and priors",
+    "shared-calibrator/dependency groups",
+    "exact Gaia ID association; no duplication across surveys"
+  ],
+  "training_admitted": false,
+  "finished_unix": 1794267991.6167283
+}

@@ -1,0 +1,15 @@
+{
+  "status": "scoring",
+  "model_training_performed": false,
+  "models": {},
+  "scope": "Selected final checkpoint of the older comparison architecture versus the earlier supervised-adapted six-target NSF. This does not fulfill the corrected full-Gaia architecture. Common predictions and native labels retain distinct conventions; benchmark/cluster ancestry, teacher dependencies and shared Gaia inputs remain. DEV is not a pristine final test.",
+  "snapshot_kind": "final_selected",
+  "large_model_key": "large_selected_checkpoint",
+  "tess_candidate_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "stars": 21561,
+  "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+  "source_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/manifest.json",
+  "large_snapshot_sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+  "cached_inputs_verified_rows": 128,
+  "tess_devtest_stars": 12017
+}

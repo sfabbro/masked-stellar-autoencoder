@@ -4,37 +4,104 @@ Start here when resuming on another computer. This is a WIP research handoff, no
 
 ## Cloud resume — 2026-11-09, Vancouver
 
-The cloud checkout initially contained `0c01ce7`; it was fetched and
-fast-forwarded to origin/main `6358d94` before continuing. Git fetch and a
-push dry run to a new `codex/` branch succeeded. `gh auth status` separately
-reports an invalid `GH_TOKEN`; Git transport success does not prove API access.
+Resumed branch `codex/cloud-resume-20261109` from `26f59be` in the managed
+cloud executor under `/workspace`. Current network status is unrestricted,
+enforced, with current observations and matching spec revision 1. Fresh requests
+reach CANFAR/CADC; the previous executor's proxy CONNECT 403 is resolved.
 
-CANFAR 1.4.1 is installed in `/workspace/.venvs/canfar`, at the monitor
-environment's pinned source revision
-`0d96a72761cc6dc7063d6cd97049ae3743133efa`. Use
-`/workspace/.venvs/canfar/bin/python scripts/inspect_msa_handoff.py` after
-authentication/network setup. Installation used a separate uv environment and
-`UV_CACHE_DIR=/workspace/.cache/uv`; the existing scientific environment was
-left intact. Pixi's executable is absent in this cloud image, but its existing
-environment's Python is available at `.pixi/envs/default/bin/python`.
+The pinned CANFAR 1.4.1 client was installed at
+`/workspace/.venvs/canfar`, revision `0d96a72761cc6dc7063d6cd97049ae3743133efa`.
+Pixi's executable is absent locally, but `.pixi/envs/default/bin/python` works.
+The official `canfar` skill was recovered from `opencadc/canfar` and installed
+at `.agents/skills/canfar/SKILL.md`; read it and its references. Its content hash
+is recorded in `skills-lock.json`. AGENTS.md now points to that available skill.
 
-Live CANFAR reconciliation remains blocked: proxy CONNECT requests to
-`ws-uv.canfar.net` and `ws-cadc.canfar.net` returned 403, and no CADC certificate
-is configured. Add CANFAR/CADC service domains in environment settings and bind
-credentials through secrets, never Git or chat. The installed client's default
-certificate selector is `~/.ssl/cadcproxy.pem`; configure its path to a supplied
-secret file when available. No job was launched or retried. The referenced
-`canfar-lab-workflow` skill is not present in this cloud skill catalog or local
-skill search; recover it before CANFAR execution. The job states below remain
-historical snapshots.
+User certificate login succeeded, but cloud TLS inspection made X.509 requests
+arrive anonymously. The user then completed CADC's advertised token login with
+`/workspace/canfar-token-login.py`. The private token is stored outside Git at
+`/workspace/.canfar-runtime/cadc-token` (0600). Do not print or commit it. Runtime
+session clients require both `token=` and
+`url="https://ws-uv.canfar.net/skaha/v1"`; storage accepts
+`filesystem("arc", token=...)`. Credentials and these local runtime files are
+not portable to another executor. No cloud TLS/proxy bypass was configured.
 
-The full-Gaia input policy now supports explicit `encoder_parallax=True` while
-keeping reconstruction restricted to mags+XP and retaining parallax in head
-context. Eligibility still requires photometry or XP; parallax alone does not
-admit a source. The default and existing pilot remain unchanged. Any trainer
-using this option must use `policy.reconstruction` for decoder columns, rather
-than assuming its columns equal `policy.encoder`. This is a policy extension,
-not an integrated pretrained six-target training run.
+Read-only status, including the newly submitted jobs:
+
+```bash
+/workspace/.venvs/canfar/bin/python scripts/inspect_msa_handoff.py --token-file /workspace/.canfar-runtime/cadc-token
+```
+
+Before any submission, reconciled all 158 existing decision-wave receipts with
+authenticated sessions: none of their session IDs remained retained. Refreshed
+all handoff manifests and inspected ARC outputs. Evidence is under
+`docs/reports/msa-cloud-resume-20261109/`. The older comparison run completed
+71,906 joint updates and two full FIT epochs, selecting epoch 2. A CANFAR CPU
+audit independently verified `selected-checkpoint.pth`, 137,372,427 bytes, SHA256
+`ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd`.
+
+Remote continuation (snapshots; recheck before acting):
+
+| Work | Session | Last observed |
+|---|---|---|
+| full_gaia_resume_audit_20261109_v1 | vexwzwnb | Completed; checkpoint digest verified |
+| full_gaia_corrected_sources_20261109_v1 | noz8klgb | Failed on native LAMOST undeclared ASCII nulls, after completing full partition metadata audit |
+| full_gaia_corrected_sources_20261109_v2 | eo0ywcd8 | Running; repaired age and alpha extraction complete, input census follows |
+| expanded_selected_checkpoint_qa_20261109_v1 attempt 1 | m1n37991 | Failed before model execution: historical source branch was deleted |
+| expanded_selected_checkpoint_qa_20261109_v1 attempt 2 | gqc68dfi | Running; exact-commit acquisition preserves the original source pin |
+| expanded_selected_checkpoint_report_20261109_v1 | fwib7zhu | Running watcher, waiting for CUDA arrays |
+
+Every new job has an immutable source bundle and receipt in the existing
+locations. Attempt 1's branch failure was reconciled before retry. The GPU
+launcher now fetches the exact pinned commit rather than requiring its old
+branch name. New jobs use the live-listed `astroai/base:latest`; a resolved image
+digest was not established. CPU jobs save Pixi lockfiles to their bundles after
+successful execution. No unrelated sessions were changed or deleted.
+
+The metadata audit verified 13,592,882 labelled Gaia records plus 513,698
+reservoir rows across 11,394 partitions; photometry has 1,754 partitions and
+10,931,306 observation rows, alpha 301 partitions, and old age staging 24.
+The photometry manifest reports zero no-XP observation rows, so its legacy XP
+parent cannot supply all missing-band coverage. This does not replace unique
+star/quality auditing. The new census validates integer candidate-row joins,
+counts unique-star band/error availability by inherited role and native Gaia XP
+flag, and leaves new stars unassigned. It does not perform quality admission or
+FIT normalization. The v2 bundle includes protected `external`/`excluded` roles;
+the v1 census implementation would reject them, but was never reached because
+age extraction halted first.
+
+Age-source recovery now supports native ASCII FITS tables and explicit nullable
+integer parsing. LAMOST's observed undeclared `---` numeric null marker is an
+explicit per-product rule recorded in the manifest. AMBRE, APOKASC-2, both
+APO-K2 files and LAMOST were previously silently skipped by binary-only parsing.
+Native source-row indices and HDU identity are retained, and `TAU_GRAN_SSI`
+(granulation timescale) is excluded from age candidates. These are extraction
+repairs, not age publication/quality/dependency admission. The source driver
+halts before subsequent steps when a source reports an error.
+
+Native photometric header evidence is in `native-photometry-headers.json`:
+SkyMapper DR4 has `gaia_dr3_id1/id2`, match distances/ambiguity fields, native PSF
+photometry, errors and flags; 726 compressed shards were listed. Existing ADQL
+products contain 469,001,402 2MASS rows and 119,663,765 SDSS rows, with errors and
+quality flags. CatWISE has 678,990,741 rows: its `source_id` is a string catalogue
+identifier and `id2` is integer; verify the latter's Gaia release/association
+before using it as a Gaia ID. Do not infer identity solely from a column name.
+The GALAH WISE/2MASS/Gaia VAC also retains native errors/quality and Gaia IDs.
+These products were inspected, not fully joined or quality-admitted.
+
+Selected-final comparison QA binds the completed producer and expected SHA,
+uses a distinct `large_selected_checkpoint` artifact key, and preserves earlier
+snapshot defaults. The report accepts both snapshot types and describes the
+older architecture explicitly. It is configured to include common/source-native comparisons,
+Kiel diagrams, seismic/benchmark/cluster checks and whole-vector corners.
+No corrected full-Gaia production training was submitted: native admission,
+role-safe source assembly/FIT normalization and actual pretrained-trainer
+integration remain necessary. Preserve the scientific requirements below.
+
+Validation: 23 relevant pipeline, full-Gaia, selected-checkpoint binding,
+saved-array source-binding and survey-map tests pass together. Tests include
+ASCII null preservation, exact 18-digit IDs, original rows, no-XP eligibility,
+duplicate-star counting and protected roles. New scripts compile. This is a
+bounded continuation, not a claim that the accumulated tree is fully tested.
 
 ## Get the working state
 

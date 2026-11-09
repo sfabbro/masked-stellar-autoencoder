@@ -1,0 +1,141 @@
+{
+  "status": "artifact_audit_complete",
+  "training_performed": false,
+  "checked_utc": "2026-11-09T23:34:13.090197+00:00",
+  "python": "3.13.18 | packaged by conda-forge | (main, Oct 26 2026, 11:38:18) [GCC 15.3.0]",
+  "executables": {
+    "python": "/scratch/msa-decision-cpu/.pixi/envs/default/bin/python",
+    "pixi": "/usr/local/bin/pixi",
+    "uv": "/usr/local/bin/uv"
+  },
+  "packages": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "astropy": "8.0.2",
+    "h5py": "3.16.0",
+    "torch": null
+  },
+  "training_admitted": false,
+  "comparison_checkpoint": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_nsf_fullfit_20261107_v1/selected-checkpoint.pth",
+    "bytes": 137372427,
+    "sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+    "expected_sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+    "digest_matches": true,
+    "selected_update": 71906,
+    "selected_epoch": 2
+  },
+  "stages": {
+    "full_gaia_gaia_stage_20261108_v2": {
+      "status": "source_stage_complete",
+      "partition_count": 11394,
+      "partition_bytes": 2727140309,
+      "table_metadata": {
+        "labelled-gaia": {
+          "partitions": 8008,
+          "rows": 13592882,
+          "schema": "source_id: int64\nra: double\ndec: double\nra_error: float\ndec_error: float\nparallax: double\nparallax_error: float\npmra: double\npmdec: double\npmra_error: float\npmdec_error: float\nra_dec_corr: float\nparallax_pmra_corr: float\nparallax_pmdec_corr: float\npmra_pmdec_corr: float\nphot_g_mean_mag: float\nphot_bp_mean_mag: float\nphot_rp_mean_mag: float\nphot_g_mean_flux: double\nphot_g_mean_flux_error: float\nphot_bp_mean_flux: double\nphot_bp_mean_flux_error: float\nphot_rp_mean_flux: double\nphot_rp_mean_flux_error: float\nhas_xp_continuous: int32\nruwe: float\ncandidate_row: int64\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 3498"
+        },
+        "ssl-reservoir": {
+          "partitions": 3386,
+          "rows": 513698,
+          "schema": "source_id: int64\nra: double\ndec: double\nra_error: float\ndec_error: float\nparallax: double\nparallax_error: float\npmra: double\npmdec: double\npmra_error: float\npmdec_error: float\nra_dec_corr: float\nparallax_pmra_corr: float\nparallax_pmdec_corr: float\npmra_pmdec_corr: float\nphot_g_mean_mag: float\nphot_bp_mean_mag: float\nphot_rp_mean_mag: float\nphot_g_mean_flux: double\nphot_g_mean_flux_error: float\nphot_bp_mean_flux: double\nphot_bp_mean_flux_error: float\nphot_rp_mean_flux: double\nphot_rp_mean_flux_error: float\nhas_xp_continuous: int32\nruwe: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 3375"
+        }
+      }
+    },
+    "full_gaia_photometry_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 1754,
+      "partition_bytes": 25926584487,
+      "table_metadata": {
+        "raw-observations": {
+          "partitions": 1754,
+          "rows": 10931306,
+          "schema": "source_id: int64\nW1: double\nW2: double\nG: float\nBP: float\nRP: float\nbp_1: double\nbp_2: double\nbp_3: double\nbp_4: double\nbp_5: double\nbp_6: double\nbp_7: double\nbp_8: double\nbp_9: double\nbp_10: double\nbp_11: double\nbp_12: double\nbp_13: double\nbp_14: double\nbp_15: double\nbp_16: double\nbp_17: double\nbp_18: double\nbp_19: double\nbp_20: double\nbp_21: double\nbp_22: double\nbp_23: double\nbp_24: double\nbp_25: double\nbp_26: double\nbp_27: double\nbp_28: double\nbp_29: double\nbp_30: double\nbp_31: double\nbp_32: double\nbp_33: double\nbp_34: double\nbp_35: double\nbp_36: double\nbp_37: double\nbp_38: double\nbp_39: double\nbp_40: double\nbp_41: double\nbp_42: double\nbp_43: double\nbp_44: double\nbp_45: double\nbp_46: double\nbp_47: double\nbp_48: double\nbp_49: double\nbp_50: double\nbp_51: double\nbp_52: double\nbp_53: double\nbp_54: double\nbp_55: double\nrp_1: double\nrp_2: double\nrp_3: double\nrp_4: double\nrp_5: double\nrp_6: double\nrp_7: double\nrp_8: double\nrp_9: double\nrp_10: double\nrp_11: double\nrp_12: double\nrp_13: double\nrp_14: double\nrp_15: double\nrp_16: double\nrp_17: double\nrp_18: double\nrp_19: double\nrp_20: double\nrp_21: double\nrp_22: double\nrp_23: double\nrp_24: double\nrp_25: double\nrp_26: double\nrp_27: double\nrp_28: double\nrp_29: double\nrp_30: double\nrp_31: double\nrp_32: double\nrp_33: double\nrp_34: double\nrp_35: double\nrp_36: double\nrp_37: double\nrp_38: double\nrp_39: double\nrp_40: double\nrp_41: double\nrp_42: double\nrp_43: double\nrp_44: double\nrp_45: double\nrp_46: double\nrp_47: double\nrp_48: double\nrp_49: double\nrp_50: double\nrp_51: double\nrp_52: double\nrp_53: double\nrp_54: double\nrp_55: double\nU_SMSS: double\nV_SMSS: double\nG_SMSS: double\nR_SMSS: double\nI_SMSS: double\nZ_SMSS: double\nU_SDSS: double\nG_SDSS: double\nR_SDSS: double\nI_SDSS: double\nZ_SDSS: double\nG_PS1: double\nR_PS1: double\nI_PS1: double\nZ_PS1: double\nY_PS1: double\nJ: double\nH: double\nKS: double\nPARALLAX: double\nEBV: float\npmra: double\npmdec: double\nRA: double\nDEC: double\nbpe_1: double\nbpe_2: double\nbpe_3: double\nbpe_4: double\nbpe_5: double\nbpe_6: double\nbpe_7: double\nbpe_8: double\nbpe_9: double\nbpe_10: double\nbpe_11: double\nbpe_12: double\nbpe_13: double\nbpe_14: double\nbpe_15: double\nbpe_16: double\nbpe_17: double\nbpe_18: double\nbpe_19: double\nbpe_20: double\nbpe_21: double\nbpe_22: double\nbpe_23: double\nbpe_24: double\nbpe_25: double\nbpe_26: double\nbpe_27: double\nbpe_28: double\nbpe_29: double\nbpe_30: double\nbpe_31: double\nbpe_32: double\nbpe_33: double\nbpe_34: double\nbpe_35: double\nbpe_36: double\nbpe_37: double\nbpe_38: double\nbpe_39: double\nbpe_40: double\nbpe_41: double\nbpe_42: double\nbpe_43: double\nbpe_44: double\nbpe_45: double\nbpe_46: double\nbpe_47: double\nbpe_48: double\nbpe_49: double\nbpe_50: double\nbpe_51: double\nbpe_52: double\nbpe_53: double\nbpe_54: double\nbpe_55: double\nrpe_1: double\nrpe_2: double\nrpe_3: double\nrpe_4: double\nrpe_5: double\nrpe_6: double\nrpe_7: double\nrpe_8: double\nrpe_9: double\nrpe_10: double\nrpe_11: double\nrpe_12: double\nrpe_13: double\nrpe_14: double\nrpe_15: double\nrpe_16: double\nrpe_17: double\nrpe_18: double\nrpe_19: double\nrpe_20: double\nrpe_21: double\nrpe_22: double\nrpe_23: double\nrpe_24: double\nrpe_25: double\nrpe_26: double\nrpe_27: double\nrpe_28: double\nrpe_29: double\nrpe_30: double\nrpe_31: double\nrpe_32: double\nrpe_33: double\nrpe_34: double\nrpe_35: double\nrpe_36: double\nrpe_37: double\nrpe_38: double\nrpe_39: double\nrpe_40: double\nrpe_41: double\nrpe_42: double\nrpe_43: double\nrpe_44: double\nrpe_45: double\nrpe_46: double\nrpe_47: double\nrpe_48: double\nrpe_49: double\nrpe_50: double\nrpe_51: double\nrpe_52: double\nrpe_53: double\nrpe_54: double\nrpe_55: double\nE_U_SMSS: double\nE_V_SMSS: double\nE_G_SMSS: double\nE_R_SMSS: double\nE_I_SMSS: double\nE_Z_SMSS: double\nE_U_SDSS: double\nE_G_SDSS: double\nE_R_SDSS: double\nE_I_SDSS: double\nE_Z_SDSS: double\nE_G_PS1: double\nE_R_PS1: double\nE_I_PS1: double\nE_Z_PS1: double\nE_Y_PS1: double\nE_J: double\nE_H: double\nE_KS: double\ne_parallax: float\ne_pmra: float\ne_pmdec: float\ncandidate_row: int64\nraw_any_xp_present: bool\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 30852"
+        }
+      }
+    },
+    "full_gaia_alpha_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 301,
+      "partition_bytes": 1308930268,
+      "table_metadata": {
+        "000-01": {
+          "partitions": 10,
+          "rows": 917588,
+          "schema": "sobject_id: int64\ngaiadr3_source_id: int64\nra: double\ndec: double\nflag_sp: int32\nflag_sp_fit: int32\nflag_red: int32\nsnr_px_ccd1: float\nsnr_px_ccd2: float\nsnr_px_ccd3: float\nsnr_px_ccd4: float\nrv_gaia_dr3: float\ne_rv_gaia_dr3: float\nflag_fe_h: int32\nnn_flag_li_fe: int32\nflag_c_fe: int32\nflag_n_fe: int32\nflag_o_fe: int32\nflag_na_fe: int32\nflag_mg_fe: int32\nflag_al_fe: int32\nflag_si_fe: int32\nflag_k_fe: int32\nflag_ca_fe: int32\nflag_sc_fe: int32\nflag_ti_fe: int32\nflag_v_fe: int32\nflag_cr_fe: int32\nflag_mn_fe: int32\nflag_co_fe: int32\nflag_ni_fe: int32\nflag_cu_fe: int32\nflag_zn_fe: int32\nflag_rb_fe: int32\nflag_sr_fe: int32\nflag_y_fe: int32\nflag_zr_fe: int32\nflag_mo_fe: int32\nflag_ru_fe: int32\nflag_ba_fe: int32\nflag_la_fe: int32\nflag_ce_fe: int32\nflag_nd_fe: int32\nflag_sm_fe: int32\nflag_eu_fe: int32\nflag_a_li: int64\nmg_fe: float\ne_mg_fe: float\nsi_fe: float\ne_si_fe: float\nca_fe: float\ne_ca_fe: float\nti_fe: float\ne_ti_fe: float\new_h_alpha: float\nres_h_alpha: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 6637"
+        },
+        "001-01": {
+          "partitions": 5,
+          "rows": 426574,
+          "schema": "rave_obs_id: large_string\nsource_id: int64\nsnr_cnn: float\nteff_flag_cnn: float\nlogg_flag_cnn: float\nm_h_flag_cnn: float\nfe_h_flag_cnn: float\nalpha_m_flag_cnn: float\nsi_fe_flag_cnn: float\nal_fe_flag_cnn: float\nmg_fe_flag_cnn: float\nni_fe_flag_cnn: float\nalpha_m_cnn: float\nalpha_m_error_cnn: float\nsi_fe_cnn: float\nsi_fe_error_cnn: float\nmg_fe_cnn: float\nmg_fe_error_cnn: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 2354"
+        },
+        "004-01": {
+          "partitions": 56,
+          "rows": 5591594,
+          "schema": "source_id: int64\nflags_gspspec: large_string\nalphafe_gspspec: float\nalphafe_gspspec_lower: float\nalphafe_gspspec_upper: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 747"
+        },
+        "006-01": {
+          "partitions": 14,
+          "rows": 1365769,
+          "schema": "sdss4_apogee_id: large_string\ngaia_dr2_source_id: int64\ngaia_dr3_source_id: int64\nsdss4_apogee_target1_flags: int64\nsdss4_apogee_target2_flags: int64\nsdss4_apogee2_target1_flags: int64\nsdss4_apogee2_target2_flags: int64\nsdss4_apogee2_target3_flags: int64\nsdss4_apogee_member_flags: int64\nsdss4_apogee_extra_target_flags: int64\nra: float\ndec: float\ngaia_v_rad: float\ngaia_e_v_rad: float\nw1uflags: int64\nw2uflags: int64\nw1aflags: int64\nw2aflags: int64\nzgr_quality_flags: int64\nbailer_jones_flags: large_string\nebv_flags: int64\nu_jkc_mag_flag: int32\nb_jkc_mag_flag: int32\nv_jkc_mag_flag: int32\nr_jkc_mag_flag: int32\ni_jkc_mag_flag: int32\nu_sdss_mag_flag: int32\ng_sdss_mag_flag: int32\nr_sdss_mag_flag: int32\ni_sdss_mag_flag: int32\nz_sdss_mag_flag: int32\ny_ps1_mag_flag: int32\nsnr: float\ngri_gaia_transform_flags: int64\nzwarning_flags: int64\nspectrum_flags: int64\ndoppler_flags: int64\nal_h_flags: int64\nc_12_13_flags: int64\nca_h_flags: int64\nce_h_flags: int64\nc_1_h_flags: int64\nc_h_flags: int64\nco_h_flags: int64\ncr_h_flags: int64\ncu_h_flags: int64\nfe_h_flags: int64\nk_h_flags: int64\nmg_h_flags: int64\nmn_h_flags: int64\nna_h_flags: int64\nnd_h_flags: int64\nni_h_flags: int64\nn_h_flags: int64\no_h_flags: int64\np_h_flags: int64\nsi_h_flags: int64\ns_h_flags: int64\nti_h_flags: int64\nti_2_h_flags: int64\nv_h_flags: int64\npipeline_flags: int64\nalpha_m_atm: float\ne_alpha_m_atm: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 8021"
+        },
+        "007-01": {
+          "partitions": 64,
+          "rows": 6372607,
+          "schema": "ALPHAFE: double\nALPHAFE_ERR: double\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 331"
+        },
+        "007-02": {
+          "partitions": 64,
+          "rows": 6372607,
+          "schema": "SNR_MED: double\nALPHAFE: double\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 323"
+        },
+        "008-01": {
+          "partitions": 8,
+          "rows": 733901,
+          "schema": "APOGEE_ID: large_string\nRA: double\nDEC: double\nWASH_DDO51_GIANT_FLAG: int32\nWASH_DDO51_STAR_FLAG: int32\nTARGFLAGS: large_string\nSNR: float\nSNREV: float\nSTARFLAG: int64\nSTARFLAGS: large_string\nANDFLAG: int64\nANDFLAGS: large_string\nRV_FLAG: int32\nGAIAEDR3_SOURCE_ID: int64\nGAIAEDR3_PARALLAX: float\nGAIAEDR3_PARALLAX_ERROR: float\nGAIAEDR3_PMRA: float\nGAIAEDR3_PMRA_ERROR: float\nGAIAEDR3_PMDEC: float\nGAIAEDR3_PMDEC_ERROR: float\nGAIAEDR3_PHOT_G_MEAN_MAG: float\nGAIAEDR3_PHOT_BP_MEAN_MAG: float\nGAIAEDR3_PHOT_RP_MEAN_MAG: float\nGAIAEDR3_DR2_RADIAL_VELOCITY: float\nGAIAEDR3_DR2_RADIAL_VELOCITY_ERROR: float\nGAIAEDR3_R_MED_GEO: float\nGAIAEDR3_R_LO_GEO: float\nGAIAEDR3_R_HI_GEO: float\nGAIAEDR3_R_MED_PHOTOGEO: float\nGAIAEDR3_R_LO_PHOTOGEO: float\nGAIAEDR3_R_HI_PHOTOGEO: float\nASPCAPFLAG: int64\nASPCAPFLAGS: large_string\nFRAC_LOWSNR: float\nMEMBERFLAG: int64\nC_FE_FLAG: int32\nCI_FE_FLAG: int32\nN_FE_FLAG: int32\nO_FE_FLAG: int32\nNA_FE_FLAG: int32\nMG_FE_FLAG: int32\nAL_FE_FLAG: int32\nSI_FE_FLAG: int32\nP_FE_FLAG: int32\nS_FE_FLAG: int32\nK_FE_FLAG: int32\nCA_FE_FLAG: int32\nTI_FE_FLAG: int32\nTIII_FE_FLAG: int32\nV_FE_FLAG: int32\nCR_FE_FLAG: int32\nMN_FE_FLAG: int32\nFE_H_FLAG: int32\nCO_FE_FLAG: int32\nNI_FE_FLAG: int32\nCU_FE_FLAG: int32\nCE_FE_FLAG: int32\nYB_FE_FLAG: int32\nRV_ALPHA: float\nALPHA_M: float\nALPHA_M_ERR: float\nMG_FE: float\nMG_FE_SPEC: float\nMG_FE_ERR: float\nSI_FE: float\nSI_FE_SPEC: float\nSI_FE_ERR: float\nCA_FE: float\nCA_FE_SPEC: float\nCA_FE_ERR: float\nTI_FE: float\nTI_FE_SPEC: float\nTI_FE_ERR: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 9073"
+        },
+        "011-01": {
+          "partitions": 67,
+          "rows": 6684413,
+          "schema": "obsid: int32\ndesignation: large_string\nsnru: float\nsnrg: float\nsnrr: float\nsnri: float\nsnrz: float\ngaia_source_id: large_string\ngaia_g_mean_mag: float\nra: double\ndec: double\nalpha_m: float\nalpha_m_err: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 1568"
+        },
+        "013-01": {
+          "partitions": 13,
+          "rows": 1230307,
+          "schema": "mobsid: large_string\nobsid: int32\ndesignation: large_string\nsnr: float\ngaia_source_id: large_string\ngaia_g_mean_mag: float\ngaia_bp_mean_mag: float\ngaia_rp_mean_mag: float\nra: double\ndec: double\nrv_b_flag: int16\nrv_r_flag: int16\nrv_br_flag: int16\nalpha_m_cnn: float\nmg_fe: float\nsi_fe: float\nca_fe: float\nti_fe: float\nalpha_m_lasp: float\nalpha_m_lasp_err: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 2438"
+        }
+      }
+    },
+    "full_gaia_ages_stage_20261108_v1": {
+      "status": "source_stage_complete",
+      "partition_count": 24,
+      "partition_bytes": 107673373,
+      "table_metadata": {
+        "002-01": {
+          "partitions": 5,
+          "rows": 494695,
+          "schema": "rave_obs_id: large_string\nage_bdasp: double\nage_error_bdasp: double\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 461"
+        },
+        "003-01": {
+          "partitions": 10,
+          "rows": 917588,
+          "schema": "sobject_id: int64\ngaiadr3_source_id: int64\nra: double\ndec: double\nflag_sp: int32\nflag_sp_fit: int32\nflag_red: int32\nsnr_px_ccd1: float\nsnr_px_ccd2: float\nsnr_px_ccd3: float\nsnr_px_ccd4: float\nrv_gaia_dr3: float\ne_rv_gaia_dr3: float\nflag_fe_h: int32\nnn_flag_li_fe: int32\nflag_c_fe: int32\nflag_n_fe: int32\nflag_o_fe: int32\nflag_na_fe: int32\nflag_mg_fe: int32\nflag_al_fe: int32\nflag_si_fe: int32\nflag_k_fe: int32\nflag_ca_fe: int32\nflag_sc_fe: int32\nflag_ti_fe: int32\nflag_v_fe: int32\nflag_cr_fe: int32\nflag_mn_fe: int32\nflag_co_fe: int32\nflag_ni_fe: int32\nflag_cu_fe: int32\nflag_zn_fe: int32\nflag_rb_fe: int32\nflag_sr_fe: int32\nflag_y_fe: int32\nflag_zr_fe: int32\nflag_mo_fe: int32\nflag_ru_fe: int32\nflag_ba_fe: int32\nflag_la_fe: int32\nflag_ce_fe: int32\nflag_nd_fe: int32\nflag_sm_fe: int32\nflag_eu_fe: int32\nflag_a_li: int64\nage: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 5596"
+        },
+        "004-01": {
+          "partitions": 1,
+          "rows": 24010,
+          "schema": "RA: double\nDEC: double\nGAIA_L: float\nGAIA_B: float\nGAIA_ECLIPTIC_LONGITUDE: float\nGAIA_ECLIPTIC_LATITUTE: float\nGAIA_PARALLAX: float\nGAIA_PARALLAX_ERR: float\nGAIAEDR3_SOURCE_ID: large_string\nGAIAEDR3_PARALLAX: double\nGAIAEDR3_PARALLAX_ERROR: double\nGAIAEDR3_PMRA: double\nGAIAEDR3_PMRA_ERROR: double\nGAIAEDR3_PMDEC: double\nGAIAEDR3_PMDEC_ERROR: double\nGAIAEDR3_PHOT_G_MEAN_MAG: double\nGAIAEDR3_PHOT_BP_MEAN_MAG: double\nGAIAEDR3_PHOT_RP_MEAN_MAG: double\nDR17_ASPCAP_SNR: float\nAPOKASC3_INVR_GAIA: float\nAPOKASC3_INVR_GAIA_ERR: float\nGAIA_TEFF: float\nGAIA_RADIUS: float\nGAIA_LUMINOSITY: float\nBERGER_BINARY_FLAG: int32\nHON_FLAG: large_string\nTARGFLAGS: large_string\nASPCAPFLAGS: large_string\nTAU_GRAN_SSI: float\nTAU_GRAN_SSI_PERR: float\nTAU_GRAN_SSI_MERR: float\nAGE_DW: float\nAGE_DW_PERR: float\nAGE_DW_MERR: float\nAGE_DW_SYSERR: float\nAGE_DW_SDSS: float\nAGE_DW_SDSS_PERR: float\nAGE_DW_SDSS_MERR: float\nAGE_DW_SDSS_SYSERR: float\nAPOKASC2_AGE: float\nAPOKASC2_AGE_PERR: float\nAPOKASC2_AGE_MERR: float\nAPOKASC3_CAT_AGE: large_string\nAPOKASC3_AGE_RGB: float\nAPOKASC3_AGE_RGB_PERR: float\nAPOKASC3_AGE_RGB_MERR: float\nAPOKASC3_AGE_RCAGB: float\nAPOKASC3_AGE_RCAGB_PERR: float\nAPOKASC3_AGE_RCAGB_MERR: float\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 6529"
+        },
+        "apogee-latent-age": {
+          "partitions": 8,
+          "rows": 733901,
+          "schema": "APOGEE_ID: large_string\nTELESCOPE: large_string\nFIELD: large_string\nSTARFLAG: int64\nASPCAPFLAG: double\nAge: double\nAge_Error: double\nLogAge: double\nLogAge_Error: double\n-- schema metadata --\npandas: '{\"index_columns\": [], \"column_indexes\": [], \"columns\": [{\"name\":' + 1128"
+        }
+      }
+    }
+  },
+  "elapsed_seconds": 723.7176183843985,
+  "peak_rss_kib": 115196
+}

@@ -36,4 +36,6 @@ are a separate path. Do not push this fork to `upstream`.
 - Prefer `pixi run` / `pixi run python` over bare `python3` when Pixi exists.
 - Never `pip install --user` or install into `~/.local` / `$HOME/.local` (esp. CANFAR `/arc/home`).
 - Headless/batch: `export PYTHONNOUSERSITE=1` and `unset PYTHONPATH`.
-- On CANFAR: read skill `canfar-lab-workflow` (mounts, quotas, resources, headless, ports).
+- On CANFAR: read the official [`canfar` skill](.agents/skills/canfar/SKILL.md)
+  and its relevant references (storage, resources, headless execution). It is
+  installed from `opencadc/canfar`; `skills-lock.json` records its content hash.

@@ -1,0 +1,67 @@
+{
+  "status": "failed",
+  "started_utc": "2026-11-09T23:34:12.950415+00:00",
+  "training_performed": false,
+  "training_admitted": false,
+  "steps": {
+    "artifact_audit": {
+      "status": "artifact_audit_complete",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/artifact_audit",
+      "source_errors": []
+    },
+    "ages": {
+      "status": "source_stage_complete",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v1/ages",
+      "source_errors": [
+        {
+          "path": "/arc/projects/k-pop/catalogues/lamost-kepler-ages.fits",
+          "exists": true,
+          "tables": [
+            {
+              "hdu": "dr8_age.dat",
+              "hdu_index": 1,
+              "hdu_type": "TableHDU",
+              "rows": 1348645,
+              "selected_fields": [
+                "Agergb",
+                "e_Agergb",
+                "Agerc",
+                "e_Agerc"
+              ],
+              "identity_and_quality_fields": [
+                "obsid",
+                "RAdeg",
+                "DEdeg",
+                "uqflag",
+                "status",
+                "SNR"
+              ],
+              "units": {
+                "RAdeg": "deg",
+                "DEdeg": "deg",
+                "dnu": "muHz",
+                "numax": "muHz",
+                "dp": "s",
+                "dnuv": "muHz",
+                "Agergb": "Gyr",
+                "Massrgb": "Msun",
+                "e_Agergb": "Gyr",
+                "e_Massrgb": "Msun",
+                "Agerc": "Gyr",
+                "Massrc": "Msun",
+                "e_Agerc": "Gyr",
+                "e_Massrc": "Msun"
+              },
+              "training_admitted": false
+            }
+          ],
+          "error": "ValueError(\"could not convert string to float: np.bytes_(b'         ---'); the header may be missing the necessary TNULL14 keyword or the table contains invalid data\")"
+        }
+      ]
+    }
+  },
+  "scope": "Native-source extraction and availability census; no quality admission or production model claim",
+  "current_step": "ages",
+  "error": "RuntimeError('ages reported extraction errors; inspect its manifest')",
+  "updated_utc": "2026-11-09T23:46:31.747331+00:00"
+}

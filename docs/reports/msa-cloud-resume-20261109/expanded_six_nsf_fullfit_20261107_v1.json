@@ -1,0 +1,1049 @@
+{
+  "status": "large_six_candidate_complete",
+  "run_id": "expanded_six_nsf_fullfit_20261107_v1",
+  "training_performed": true,
+  "completed_updates": 71906,
+  "completed_full_fit_epochs": 2,
+  "script_sha256": "9d07e510ce04cf80e3028154f8c2e45f75f78819fd2f4f16f798a3f05f6c1873",
+  "config_sha256": "0a53d6c7db85fec090c781f0e2a644e7c1c221ed16fb3082ec417fdc6910a55a",
+  "scope": "Large expanded multi-survey six-target NSF candidate, full FIT record epochs and retained masked MAE reconstruction; age/distance are mapped posterior-teacher estimands. No model publication or physical six-dimensional coverage claim.",
+  "decision": {
+    "status": "large_candidate_admitted",
+    "objective": "energy",
+    "noise_choice": {
+      "run_id": "nsfconfirm_energy_s1_20261106_v1",
+      "correlation": 0.0,
+      "native_student_t": false,
+      "unknown_floor": 0.1
+    },
+    "paired_tune_macro_crps": {
+      "energy": 0.1460165776874032,
+      "hybrid": 0.14615616087398564
+    },
+    "mapping_run": "sixmap_seismic_spline_20261107_v1",
+    "mapping_checkpoint_sha256": "dae45ff2a473a3d1887a88a1238ff93d6d6281a21d5d0648aef92abe02d9cf78",
+    "mapping_kind": "spline",
+    "mapping_tune_seismic": {
+      "n": 512,
+      "mae": 0.055350574602759446,
+      "bias": -0.004187634926763487,
+      "coverage90": 0.9140625
+    },
+    "expanded_source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+    "noise": "TUNE-screened operational noise assumption; correlated/Student-t changes apply only to known-error, complete APOGEE/GALAH atmospheric blocks as in the controls. Other quoted errors use independent Gaussian convolution; unknown-error floors remain illustrative. A single-seed sensitivity gain is provisional, not identified physical covariance. No XP Gaussian NLL reconstruction.",
+    "coverage_scope": "Candidate gates tolerate remaining raw underdispersion. CAL interval diagnostics do not alter or certify a physical joint PDF. Final export needs post-training QA.",
+    "selection": "Paired TUNE objective comparison and same-panel anchored TUNE map comparisons. DEV outcomes do not select this run.",
+    "all_decision_statuses": {
+      "nsfconfirm_energy_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_energy_s2_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_s2_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_crps_s1_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_floor003_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_corrpos_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_corrneg_20261106_v1": "remediation_pilot_complete",
+      "nsfconfirm_hybrid_studentt_20261106_v1": "remediation_pilot_complete",
+      "sixmap_equalweight_affine_20261107_v1": "complete",
+      "sixmap_apogee_affine_20261107_v1": "complete",
+      "sixmap_seismic_affine_20261107_v1": "complete",
+      "sixmap_seismic_nodesig_20261107_v1": "complete",
+      "sixmap_seismic_offset_20261107_v1": "complete",
+      "sixmap_seismic_spline_20261107_v1": "complete",
+      "expanded_six_source_20261107_v5": "expanded_six_source_complete",
+      "nsf_confirmation_calibration_20261107_v1": "complete",
+      "native_label_covariance_audit_20261107_v2": "complete"
+    }
+  },
+  "prepared_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+  "source_registry": [
+    "apogee",
+    "desi",
+    "galah",
+    "StarHorse_apogee17_posterior_median",
+    "StarHorse_galahdr3_posterior_median",
+    "StarHorse_catalogue_posterior_median",
+    "lamost_dr12v2_lrs_lasp",
+    "rave_dr6_madera_gauguin",
+    "gaia_dr3_gspspec",
+    "sdss_dr20_bossnet_081",
+    "lamost_dr12v2_mrs_lasp",
+    "APOKASC3_loggSeis"
+  ],
+  "supported_edges": [
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ]
+  ],
+  "fit_unique_stars": 7693002,
+  "fit_records_per_epoch": 9203880,
+  "fit_native_or_teacher_labels_per_target": [
+    8950099,
+    9049488,
+    5169827,
+    1197569,
+    115834,
+    117573
+  ],
+  "fit_source_records": {
+    "apogee": 126108,
+    "desi": 1197575,
+    "galah": 390345,
+    "StarHorse_apogee17_posterior_median": 35825,
+    "StarHorse_galahdr3_posterior_median": 79086,
+    "StarHorse_catalogue_posterior_median": 2827,
+    "lamost_dr12v2_lrs_lasp": 2170467,
+    "rave_dr6_madera_gauguin": 129277,
+    "gaia_dr3_gspspec": 3890960,
+    "sdss_dr20_bossnet_081": 622516,
+    "lamost_dr12v2_mrs_lasp": 558894,
+    "APOKASC3_loggSeis": 5321
+  },
+  "reconstruction_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
+  "target_names": [
+    "teff",
+    "logg",
+    "fe_h",
+    "alpha",
+    "age",
+    "distance"
+  ],
+  "target_coordinates": [
+    "K",
+    "dex(cgs)",
+    "dex Fe/H",
+    "dex alpha/Fe",
+    "ln(Gyr posterior median)",
+    "ln(kpc posterior median)"
+  ],
+  "reconstruction_loss": "MAE",
+  "reconstruction_weight": 0.03,
+  "reconstruction_sampling": "Independent seed +1901; contiguous random blocks across all 150M cache rows; no fixed prefix. RNG states and epoch-sampler initial state retained in latest checkpoint for recovery.",
+  "full_pass_contract": "Every admitted non-anchor FIT observation record once per epoch; seismic and age/distance teacher auxiliary records are additional explicit repeats, not extra unique stars.",
+  "input_loading": {
+    "mode": "read_only_RAM",
+    "bytes": 6936269200,
+    "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
+    "exact_profile_rows_checked": 128,
+    "load_seconds": 5.469528900459409,
+    "scope": "Bit-identical admitted input profile; no change to identities, values, masks or normalizations"
+  },
+  "startup_encoder_gradient_contract": [
+    {
+      "update": 1,
+      "supervised_l2": 6.805158977904471,
+      "reconstruction_unweighted_l2": 4.699622072317817,
+      "cosine": -0.08968437510372106
+    },
+    {
+      "update": 2,
+      "supervised_l2": 9.70539326640232,
+      "reconstruction_unweighted_l2": 6.22377953748791,
+      "cosine": 0.15231364571351705
+    },
+    {
+      "update": 1,
+      "supervised_l2": 8.29455953725503,
+      "reconstruction_unweighted_l2": 4.32301658285403,
+      "cosine": 0.16755432157175945
+    },
+    {
+      "update": 2,
+      "supervised_l2": 8.006188180195595,
+      "reconstruction_unweighted_l2": 6.458213896554321,
+      "cosine": 0.040368006129966647
+    }
+  ],
+  "training_scope": "Joint encoder, decoder, NSF and source-map updates",
+  "warm_map_updates": 1000,
+  "last_progress": {
+    "supervised_objective": 0.21044627731216364,
+    "reconstruction_mae": 0.61976158618927,
+    "reconstruction_cache_start": 39588636,
+    "supervised_encoder_gradient_l2": 3.1569708170350865
+  },
+  "warm_source_target_presentations": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      25372,
+      25598,
+      25600,
+      0,
+      0,
+      0
+    ],
+    [
+      25600,
+      25600,
+      20541,
+      0,
+      0,
+      0
+    ],
+    [
+      25081,
+      25409,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      23850,
+      25600,
+      25600,
+      0,
+      0,
+      0
+    ],
+    [
+      25515,
+      25564,
+      25600,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "current_epoch": 2,
+  "current_epoch_uniform_records": 9203880,
+  "per_source_target_presentations": [
+    [
+      252216,
+      252216,
+      252182,
+      0,
+      0,
+      0
+    ],
+    [
+      2395150,
+      2395150,
+      2395150,
+      2395138,
+      0,
+      0
+    ],
+    [
+      780690,
+      754830,
+      780690,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1194618,
+      1222108
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      723189,
+      731882
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      580902,
+      580902
+    ],
+    [
+      4304208,
+      4340742,
+      4340930,
+      0,
+      0,
+      0
+    ],
+    [
+      258554,
+      258554,
+      207940,
+      0,
+      0,
+      0
+    ],
+    [
+      7635042,
+      7725908,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1161128,
+      1245032,
+      1244974,
+      0,
+      0,
+      0
+    ],
+    [
+      1113210,
+      1115902,
+      1117788,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      2300992,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "elapsed_training_seconds": 182684.71375544555,
+  "tune_macro_source_target_crps": 0.13597212189905267,
+  "tune_report": [
+    {
+      "source": "apogee",
+      "rows": 512,
+      "per_target_crps": [
+        0.08183736934900293,
+        0.10930968684550688,
+        0.16240126768395158,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "desi",
+      "rows": 512,
+      "per_target_crps": [
+        0.0766716038897019,
+        0.10814903959685554,
+        0.2648077170856792,
+        0.2525619671195727,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "galah",
+      "rows": 512,
+      "per_target_crps": [
+        0.07528501554832408,
+        0.07092292011310988,
+        0.17489573611306086,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "StarHorse_apogee17_posterior_median",
+      "rows": 512,
+      "per_target_crps": [
+        null,
+        null,
+        null,
+        null,
+        0.18931429897455368,
+        0.07386872046927451
+      ]
+    },
+    {
+      "source": "StarHorse_galahdr3_posterior_median",
+      "rows": 512,
+      "per_target_crps": [
+        null,
+        null,
+        null,
+        null,
+        0.1368375276724513,
+        0.03263257599728374
+      ]
+    },
+    {
+      "source": "StarHorse_catalogue_posterior_median",
+      "rows": 512,
+      "per_target_crps": [
+        null,
+        null,
+        null,
+        null,
+        0.1365517804050589,
+        0.033055361827274116
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_lrs_lasp",
+      "rows": 512,
+      "per_target_crps": [
+        0.0801872237845265,
+        0.06256947287894371,
+        0.17458481068335846,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "rave_dr6_madera_gauguin",
+      "rows": 512,
+      "per_target_crps": [
+        0.1293997186193864,
+        0.19914615444177214,
+        0.26043501486534454,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "gaia_dr3_gspspec",
+      "rows": 512,
+      "per_target_crps": [
+        0.10405052216211283,
+        0.1514086907839811,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "sdss_dr20_bossnet_081",
+      "rows": 512,
+      "per_target_crps": [
+        0.1572137469271422,
+        0.1048045561818501,
+        0.3820739425413304,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_mrs_lasp",
+      "rows": 512,
+      "per_target_crps": [
+        0.11480899476656231,
+        0.09151485989924306,
+        0.18232365208474904,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "source": "APOKASC3_loggSeis",
+      "rows": 512,
+      "per_target_crps": [
+        null,
+        0.04151182955966801,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  ],
+  "evaluation": {
+    "tune": {
+      "macro_source_target_crps": 0.13597212189905267,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.08183736934900293,
+            0.10930968684550688,
+            0.16240126768395158,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.0766716038897019,
+            0.10814903959685554,
+            0.2648077170856792,
+            0.2525619671195727,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.07528501554832408,
+            0.07092292011310988,
+            0.17489573611306086,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.18931429897455368,
+            0.07386872046927451
+          ]
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.1368375276724513,
+            0.03263257599728374
+          ]
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.1365517804050589,
+            0.033055361827274116
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_lrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.0801872237845265,
+            0.06256947287894371,
+            0.17458481068335846,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "rave_dr6_madera_gauguin",
+          "rows": 512,
+          "per_target_crps": [
+            0.1293997186193864,
+            0.19914615444177214,
+            0.26043501486534454,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "gaia_dr3_gspspec",
+          "rows": 512,
+          "per_target_crps": [
+            0.10405052216211283,
+            0.1514086907839811,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "sdss_dr20_bossnet_081",
+          "rows": 512,
+          "per_target_crps": [
+            0.1572137469271422,
+            0.1048045561818501,
+            0.3820739425413304,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_mrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.11480899476656231,
+            0.09151485989924306,
+            0.18232365208474904,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.04151182955966801,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    "cal": {
+      "macro_source_target_crps": 0.13583766566013453,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.07698265569520446,
+            0.09412550404101826,
+            0.1547861861577121,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.06999142883490375,
+            0.09972247646834191,
+            0.2732636633155128,
+            0.2529870431676805,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.07602387163293765,
+            0.06363310312606034,
+            0.16921203506781524,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.19546238448113462,
+            0.07629015351691493
+          ]
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.13910021085300384,
+            0.03235709478468093
+          ]
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.13035322754557455,
+            0.03361702026724603
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_lrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.07403093914140473,
+            0.06753380813477528,
+            0.17332684215774194,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "rave_dr6_madera_gauguin",
+          "rows": 512,
+          "per_target_crps": [
+            0.12497086694288881,
+            0.20017198796650265,
+            0.2671607516504176,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "gaia_dr3_gspspec",
+          "rows": 512,
+          "per_target_crps": [
+            0.12253995645562075,
+            0.1428352010620696,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "sdss_dr20_bossnet_081",
+          "rows": 512,
+          "per_target_crps": [
+            0.16748995555217513,
+            0.09547591986631634,
+            0.4142278408189155,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_mrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.11270076958109049,
+            0.08524383459949575,
+            0.1821607853558102,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.043190117223203386,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    "devtest": {
+      "macro_source_target_crps": 0.1366039764854375,
+      "sources": [
+        {
+          "source": "apogee",
+          "rows": 512,
+          "per_target_crps": [
+            0.07825299014059629,
+            0.09958300215602375,
+            0.1731198695209679,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "desi",
+          "rows": 512,
+          "per_target_crps": [
+            0.07675689866090947,
+            0.10785606196832717,
+            0.26529214145544777,
+            0.24961825091022494,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "galah",
+          "rows": 512,
+          "per_target_crps": [
+            0.07110540370891019,
+            0.06609121829541646,
+            0.15893200982974576,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "StarHorse_apogee17_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.19748251761952995,
+            0.08154555163460575
+          ]
+        },
+        {
+          "source": "StarHorse_galahdr3_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.14404689386529515,
+            0.0428878469795911
+          ]
+        },
+        {
+          "source": "StarHorse_catalogue_posterior_median",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            null,
+            null,
+            null,
+            0.13669268147315794,
+            0.03270929931168194
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_lrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.07146490275854803,
+            0.060988345309457966,
+            0.16312384552963455,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "rave_dr6_madera_gauguin",
+          "rows": 512,
+          "per_target_crps": [
+            0.11306870620828943,
+            0.19505741967094514,
+            0.2501382765175169,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "gaia_dr3_gspspec",
+          "rows": 512,
+          "per_target_crps": [
+            0.12126783865043249,
+            0.1674113513997137,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "sdss_dr20_bossnet_081",
+          "rows": 512,
+          "per_target_crps": [
+            0.16528543814675487,
+            0.10526143644892469,
+            0.40501406547957874,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "lamost_dr12v2_mrs_lasp",
+          "rows": 512,
+          "per_target_crps": [
+            0.11513378237878281,
+            0.08850519169576392,
+            0.18709053629535277,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "source": "APOKASC3_loggSeis",
+          "rows": 512,
+          "per_target_crps": [
+            null,
+            0.04393949702843646,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  },
+  "selected_checkpoint_sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+  "selected_epoch": 2,
+  "selected_update": 71906,
+  "release_ready": false,
+  "remaining": "Post-training PDF/calibration, native versus common benchmark/cluster and complete per-star corner QA; no automatic catalogue publication."
+}

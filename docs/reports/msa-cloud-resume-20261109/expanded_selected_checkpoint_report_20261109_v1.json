@@ -1,0 +1,10 @@
+{
+  "status": "waiting_for_cuda_arrays",
+  "model_loaded": false,
+  "training_performed": false,
+  "plots": {},
+  "models": {},
+  "native_reference": {},
+  "clusters": [],
+  "scope": "Preliminary first-checkpoint QA, not a selected final model. Catalogue/reference errors, calibration/teacher dependence, shared Gaia inputs and ancestor exposure remain. No DEV/benchmark outcome feeds training selection."
+}
