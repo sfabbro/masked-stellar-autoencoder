@@ -1,6 +1,7 @@
 """Symmetric coordinate convention for survey maps, with no fixed survey edge."""
 
 import torch
+
 from masked_stellar_autoencoder.training.six_survey_map import SixSurveyMap
 
 

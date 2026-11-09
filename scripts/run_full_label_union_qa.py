@@ -31,9 +31,10 @@ def main():
     if a.draws < 128 or not 1 <= a.batch <= 64:
         raise ValueError("At least 128 draws and a bounded star batch required")
     a.output.mkdir(parents=True, exist_ok=False)
-    import torch
     import run_decision_six_pilot as prior
     import run_multilabel_screen as native
+    import torch
+
     from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
     from masked_stellar_autoencoder.training.cached_inputs import cache_natural_inputs
     from masked_stellar_autoencoder.training.remediation_energy6 import (

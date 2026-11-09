@@ -135,7 +135,7 @@ def schema(path):
             path, memmap=not lower.endswith(".gz"), lazy_load_hdus=True
         ) as hdul:
             for h in hdul:
-                if isinstance(h, (fits.BinTableHDU, fits.TableHDU)):
+                if isinstance(h, fits.BinTableHDU | fits.TableHDU):
                     cols = h.columns.names
                     tables.append(
                         dict(

@@ -48,8 +48,8 @@ def main():
     a = p.parse_args()
     from saved_array_source_binding import (
         load_bound_source,
-        prepare_report_output,
         population_panel_masks,
+        prepare_report_output,
     )
 
     prepare_report_output(a.output, "waiting_for_cuda_arrays", a.reuse_waiting_output)

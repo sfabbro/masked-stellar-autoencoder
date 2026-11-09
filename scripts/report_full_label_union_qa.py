@@ -13,9 +13,9 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
+from matplotlib.lines import Line2D
 
 from masked_stellar_autoencoder.training.survey_map_arrays import inverse_map_axis
 

@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 import torch
+
 from masked_stellar_autoencoder.training.seismic_ablation import (
     SeismicChannel,
     matched_schedule,
@@ -51,6 +52,7 @@ def test_incremental_report_uses_paired_heldout_arrays_and_checks_batches(
     import importlib.util
     import json
     import sys
+
     import pandas as pd
 
     spec = importlib.util.spec_from_file_location(

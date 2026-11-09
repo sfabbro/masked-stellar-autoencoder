@@ -6,6 +6,7 @@ auxiliary measurements are explicitly exposed to the predictive head.
 """
 
 from dataclasses import dataclass
+
 import numpy as np
 
 PHOTOMETRY = (

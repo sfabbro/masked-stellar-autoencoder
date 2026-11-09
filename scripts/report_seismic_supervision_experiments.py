@@ -3,9 +3,9 @@
 import argparse
 import hashlib
 import io
-import zipfile
 import json
 import time
+import zipfile
 from pathlib import Path
 
 import matplotlib

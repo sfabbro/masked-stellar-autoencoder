@@ -1,15 +1,16 @@
 import numpy as np
 import pytest
 import torch
+
+from masked_stellar_autoencoder.training.consensus_survey_map import ConsensusSurveyMap
 from masked_stellar_autoencoder.training.full_gaia_inputs import (
-    PHOTOMETRY,
     AUXILIARY,
+    PHOTOMETRY,
     XP,
+    auxiliary_context,
     full_gaia_policy,
     input_eligible,
-    auxiliary_context,
 )
-from masked_stellar_autoencoder.training.consensus_survey_map import ConsensusSurveyMap
 
 
 def test_no_xp_and_additional_bands_are_admitted_without_dropping_photometry():

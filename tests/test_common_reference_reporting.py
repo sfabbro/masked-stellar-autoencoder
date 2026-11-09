@@ -48,7 +48,6 @@ def test_full_union_report_on_saved_synthetic_arrays(tmp_path, monkeypatch):
     Comparator catalogues are independently scheduled read-only joins; this check
     uses no astronomical input or neural checkpoint and never loads a model.
     """
-    import hashlib
     import importlib.util
     import json
     import sys

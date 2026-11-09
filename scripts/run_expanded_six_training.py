@@ -194,10 +194,6 @@ def main():
     import run_decision_six_pilot as prior
     import run_multilabel_screen as native
     import torch
-    from masked_stellar_autoencoder.training.remediation_energy6 import (
-        EnergyJointSixHead,
-        capture_pilot_rng_state,
-    )
 
     from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
     from masked_stellar_autoencoder.training.cached_inputs import cache_natural_inputs
@@ -211,6 +207,10 @@ def main():
         reconstruction_block_start,
     )
     from masked_stellar_autoencoder.training.nsf_confirmation import confirmation_score
+    from masked_stellar_autoencoder.training.remediation_energy6 import (
+        EnergyJointSixHead,
+        capture_pilot_rng_state,
+    )
     from masked_stellar_autoencoder.training.six_survey_map import SixSurveyMap
 
     cfg = yaml.safe_load(a.config.read_text())

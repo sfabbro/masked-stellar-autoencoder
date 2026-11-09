@@ -5,7 +5,10 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        # Report data are preserved byte-for-byte as retrieved evidence.
+        exclude: '^docs/reports/.*\.(json|tsv|xml)$'
       - id: end-of-file-fixer
+        exclude: '^docs/reports/.*\.(json|tsv|xml)$'
       - id: check-yaml
         args: [--unsafe]
       - id: check-toml
@@ -20,6 +23,8 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
+        # This is a pinned copy of the source used for a recorded experiment.
+        exclude: '^experiments/xp/mapping-audit-20261106/pinned_multisource\.py$'
 
 #  - repo: https://github.com/pre-commit/mirrors-mypy
 #    rev: v1.15.0
@@ -32,6 +37,7 @@ repos:
     rev: v2.3.0
     hooks:
       - id: codespell
+        exclude: '^docs/reports/.*\.(json|tsv|csv|xml)$'
         additional_dependencies: [tomli]
         args: ["--ignore-words-list", "nd,th,te,mape,ot,aci,fpr,ois,aussian,numer,commun,multline,als,activ,strat,oen,suh,vas,mye,fo,hte,ue,nax,ags,bu,acn,vew,ecept,ure,ege,edn,whe,inh,ths,proceedure,eazy,clen,acess,astroid,degress,som,sompz,slac,ges,recal,litterature,wee,sme,vai,wit,noo,tru,ofo,tne,wel,egde,meu,onl,nwe,tey,coo,hel,fwe,fpt,wrte,nce"]
 

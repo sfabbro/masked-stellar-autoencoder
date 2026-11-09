@@ -40,9 +40,10 @@ def main():
     p.add_argument("--require-preflight", type=Path)
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=False)
-    import torch
     import run_decision_six_pilot as prior
     import run_multilabel_screen as native
+    import torch
+
     from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
     from masked_stellar_autoencoder.training.cached_inputs import cache_natural_inputs
     from masked_stellar_autoencoder.training.decision_pdf_metrics import sample_scores

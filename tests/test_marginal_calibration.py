@@ -25,5 +25,5 @@ def test_bounds_use_cal_rank_without_changing_density():
     np.testing.assert_array_equal(before, quantiles)
     lo, hi = central_bounds(quantiles, grid, np.inf)
     assert np.isneginf(lo).all() and np.isposinf(hi).all()
-    lo, hi = central_bounds(quantiles, grid, 1.)
+    lo, hi = central_bounds(quantiles, grid, 1.0)
     assert np.isneginf(lo).all() and np.isposinf(hi).all()
