@@ -2,6 +2,40 @@
 
 Start here when resuming on another computer. This is a WIP research handoff, not a release or a claim that the corrected full-Gaia model has been trained.
 
+## Cloud resume — 2026-11-09, Vancouver
+
+The cloud checkout initially contained `0c01ce7`; it was fetched and
+fast-forwarded to origin/main `6358d94` before continuing. Git fetch and a
+push dry run to a new `codex/` branch succeeded. `gh auth status` separately
+reports an invalid `GH_TOKEN`; Git transport success does not prove API access.
+
+CANFAR 1.4.1 is installed in `/workspace/.venvs/canfar`, at the monitor
+environment's pinned source revision
+`0d96a72761cc6dc7063d6cd97049ae3743133efa`. Use
+`/workspace/.venvs/canfar/bin/python scripts/inspect_msa_handoff.py` after
+authentication/network setup. Installation used a separate uv environment and
+`UV_CACHE_DIR=/workspace/.cache/uv`; the existing scientific environment was
+left intact. Pixi's executable is absent in this cloud image, but its existing
+environment's Python is available at `.pixi/envs/default/bin/python`.
+
+Live CANFAR reconciliation remains blocked: proxy CONNECT requests to
+`ws-uv.canfar.net` and `ws-cadc.canfar.net` returned 403, and no CADC certificate
+is configured. Add CANFAR/CADC service domains in environment settings and bind
+credentials through secrets, never Git or chat. The installed client's default
+certificate selector is `~/.ssl/cadcproxy.pem`; configure its path to a supplied
+secret file when available. No job was launched or retried. The referenced
+`canfar-lab-workflow` skill is not present in this cloud skill catalog or local
+skill search; recover it before CANFAR execution. The job states below remain
+historical snapshots.
+
+The full-Gaia input policy now supports explicit `encoder_parallax=True` while
+keeping reconstruction restricted to mags+XP and retaining parallax in head
+context. Eligibility still requires photometry or XP; parallax alone does not
+admit a source. The default and existing pilot remain unchanged. Any trainer
+using this option must use `policy.reconstruction` for decoder columns, rather
+than assuming its columns equal `policy.encoder`. This is a policy extension,
+not an integrated pretrained six-target training run.
+
 ## Get the working state
 
 ```bash

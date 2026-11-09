@@ -44,6 +44,26 @@ def test_auxiliary_context_preserves_negative_parallax_missing_errors_and_sky_wr
     assert "EBV" in labels and "pmra" in labels
 
 
+def test_encoder_parallax_ablation_preserves_decoder_and_photometric_eligibility():
+    names = PHOTOMETRY + XP + AUXILIARY
+    baseline = full_gaia_policy(names)
+    policy = full_gaia_policy(names, encoder_parallax=True)
+    assert sum(policy.encoder) == 135
+    assert policy.reconstruction == baseline.reconstruction
+    assert not policy.reconstruction[names.index("PARALLAX")]
+    assert policy.auxiliary == baseline.auxiliary
+    a = np.full((3, len(names)), np.nan)
+    a[:, names.index("PARALLAX")] = [-0.2, 0, 0.3]
+    a[1, names.index("G")] = 17
+    a[2, names.index("bp_1")] = 1
+    np.testing.assert_array_equal(input_eligible(a, policy), [False, True, True])
+    np.testing.assert_array_equal(
+        input_eligible(a, policy), input_eligible(a, baseline)
+    )
+    with pytest.raises(TypeError, match="boolean"):
+        full_gaia_policy(names, encoder_parallax="false")
+
+
 @pytest.mark.parametrize("kind", ["affine", "spline"])
 def test_weighted_common_gauge_has_no_preferred_survey_and_mean_identity(kind):
     support = torch.ones((3, 6), dtype=torch.bool)

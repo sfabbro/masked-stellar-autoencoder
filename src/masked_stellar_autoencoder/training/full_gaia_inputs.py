@@ -47,7 +47,15 @@ class InputPolicy:
     auxiliary: tuple
 
 
-def full_gaia_policy(feature_names):
+def full_gaia_policy(feature_names, *, encoder_parallax=False):
+    """Select encoder inputs and mags+XP decoder targets independently.
+
+    Parallax is always available to the separate auxiliary head context. The
+    optional encoder ablation includes signed measured parallax as an input,
+    but never as a reconstruction target or an eligibility criterion.
+    """
+    if not isinstance(encoder_parallax, bool):
+        raise TypeError("encoder_parallax must be boolean")
     names = tuple(feature_names)
     if len(set(names)) != len(names):
         raise ValueError("Unique observation columns required")
@@ -55,8 +63,14 @@ def full_gaia_policy(feature_names):
         raise ValueError(
             "Declare full photometry, XP and auxiliary layout; unavailable values may be missing"
         )
-    enc = tuple(n in set(XP + PHOTOMETRY) for n in names)
-    return InputPolicy(names, enc, enc, tuple(names.index(n) for n in AUXILIARY))
+    reconstruction = tuple(n in set(XP + PHOTOMETRY) for n in names)
+    enc = tuple(
+        reconstruct or (encoder_parallax and n == "PARALLAX")
+        for n, reconstruct in zip(names, reconstruction, strict=True)
+    )
+    return InputPolicy(
+        names, enc, reconstruction, tuple(names.index(n) for n in AUXILIARY)
+    )
 
 
 def visible_observations(values):
@@ -69,7 +83,7 @@ def input_eligible(values, policy):
     a = np.asarray(values)
     if a.ndim != 2 or a.shape[1] != len(policy.feature_names):
         raise ValueError("Input layout differs")
-    return visible_observations(a)[:, np.asarray(policy.encoder)].any(1)
+    return visible_observations(a)[:, np.asarray(policy.reconstruction)].any(1)
 
 
 def auxiliary_context(raw_values, raw_errors, feature_names):
