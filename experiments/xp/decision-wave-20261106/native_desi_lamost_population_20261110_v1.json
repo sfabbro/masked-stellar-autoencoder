@@ -1,0 +1,22 @@
+{
+  "run_id": "native_desi_lamost_population_20261110_v1",
+  "utc": "2026-11-10T16:56:08.545916+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_desi_lamost_population_20261110_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/native_desi_lamost_population_20261110_v1",
+  "status": "accepted",
+  "session_ids": [
+    "dolylw69"
+  ],
+  "resources": {
+    "cpu": null,
+    "ram": null,
+    "gpu": 0
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "command": "import sys,runpy;sys.argv=['scripts/run_native_survey_population_audit.py', '--root', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_desi_lamost_population_20261110_v1'];runpy.run_path(sys.argv[0],run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/run_native_survey_population_audit.py": "dbc6b50189a4526fe90afd4d74f5cd64b56138a5303c1362a07554bd8d8003e4",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "e3d34d53d039baaff6fa656dc727d53776402a0de7f62792829bc26aa6e48a78"
+}

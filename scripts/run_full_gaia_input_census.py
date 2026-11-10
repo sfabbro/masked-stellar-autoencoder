@@ -48,11 +48,11 @@ def add_bits(bits, rows, masks):
         np.bitwise_or.at(bits[:, start // 64], rows, encoded)
 
 
-def census(root, contract, progress):
+def census(root, contract, progress, *, gaia_stage=None, photometry_stage=None):
     names = contract["feature_names"]
     errors = dict(zip(names, contract["error_names"], strict=True))
-    gaia = root / "full_gaia_gaia_stage_20261108_v2"
-    photo = root / "full_gaia_photometry_stage_20261108_v1"
+    gaia = Path(gaia_stage) if gaia_stage else root / "full_gaia_gaia_stage_20261108_v2"
+    photo = Path(photometry_stage) if photometry_stage else root / "full_gaia_photometry_stage_20261108_v1"
     ids = np.load(gaia / "label-candidate-source-id.npy", mmap_mode="r")
     if ids.dtype.kind not in "iu" or not np.all(ids[1:] > ids[:-1]):
         raise ValueError("Unique sorted integer candidate IDs required")
@@ -154,6 +154,8 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--contract", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--gaia-stage", type=Path)
+    parser.add_argument("--photometry-stage", type=Path)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
@@ -167,7 +169,7 @@ def main():
         save()
     save()
     try:
-        report.update(census(args.root, json.loads(args.contract.read_text()), progress), status="input_census_complete")
+        report.update(census(args.root, json.loads(args.contract.read_text()), progress, gaia_stage=args.gaia_stage, photometry_stage=args.photometry_stage), status="input_census_complete")
     except Exception as exc:
         report.update(status="failed", error=repr(exc))
         raise

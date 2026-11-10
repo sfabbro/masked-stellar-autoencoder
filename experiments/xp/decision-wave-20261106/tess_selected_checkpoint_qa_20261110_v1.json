@@ -1,0 +1,23 @@
+{
+  "run_id": "tess_selected_checkpoint_qa_20261110_v1",
+  "utc": "2026-11-10T17:03:21.413179+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_selected_checkpoint_qa_20261110_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/tess_selected_checkpoint_qa_20261110_v1",
+  "status": "accepted",
+  "session_ids": [
+    "vmuapd4t"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 16,
+    "gpu": 0
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "command": "import sys,runpy;sys.path.insert(0,\"scripts\");sys.argv=['scripts/report_tess_gravity_qa.py', '--qa-run', 'expanded_selected_checkpoint_qa_20261109_v1', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/tess_selected_checkpoint_qa_20261110_v1'];runpy.run_path(sys.argv[0],run_name=\"__main__\")",
+  "source_sha256": {
+    "scripts/report_tess_gravity_qa.py": "82affccc63b7e425f836c1f2282fd025a5d37166617d40b808e8ddc8292e6cdc",
+    "scripts/saved_array_source_binding.py": "2deff2ee3d702710736a4b1d866682c4ce3c7bf59910d7a491fbff93e87cfef9",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "4eccadd0dcd92092fde5a64af391b7d7244ad986c1ec28022e5e5c0793a3e0af"
+}

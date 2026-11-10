@@ -100,3 +100,40 @@ def test_ascii_missing_marker_preserves_nulls_and_exact_integer_ids(tmp_path, mo
     assert frame.Agergb.iloc[0] == 3.5
     assert np.isnan(frame.Agergb.iloc[1])
     assert frame.source_row.tolist() == [0, 1]
+
+
+def test_raw_native_parent_retains_stars_outside_quality_and_feature_sidecars(tmp_path):
+    import h5py
+    from astropy.io import fits
+
+    ids = np.arange(100000000000000001, 100000000000000005, dtype="i8")
+    for product, raw in [("lrs", ids[[0, 1, 1]]), ("mrs", ids[[2]])]:
+        directory = tmp_path / f"multisurvey_lamost_dr12_{product}_source_direct_v2"
+        directory.mkdir()
+        with h5py.File(directory / "source.h5", "w") as data:
+            data["observations/source_id"] = raw
+            # Selected features/labels deliberately omit native identities.
+            data["selected/source_id"] = np.array([], dtype="i8")
+    directory = tmp_path / "desi_collection_v1"
+    directory.mkdir()
+    fits.BinTableHDU.from_columns([
+        fits.Column(name="SOURCE_ID", format="K", array=ids[[1, 3]]),
+    ], name="GAIA").writeto(directory / "mwsall-pix-iron.fits")
+    arrays, provenance = m.raw_native_candidate_ids(tmp_path)
+    np.testing.assert_array_equal(np.unique(np.concatenate(arrays)), ids)
+    assert sum(source["rows"] for source in provenance) == 6
+
+
+def test_explicit_audited_parent_requires_exact_unique_positive_integer_ids(tmp_path):
+    import pytest
+
+    path = tmp_path / "parent.npy"
+    ids = np.array([100000000000000001, 100000000000000002], dtype="i8")
+    np.save(path, ids)
+    actual, provenance = m.candidates(path)
+    np.testing.assert_array_equal(actual, ids)
+    assert len(provenance[0]["sha256"]) == 64
+    for invalid in [ids.astype(float), ids[::-1], np.r_[ids, ids], np.array([0, 1])]:
+        np.save(path, invalid)
+        with pytest.raises(ValueError):
+            m.candidates(path)

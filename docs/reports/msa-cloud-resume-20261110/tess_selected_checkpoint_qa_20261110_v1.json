@@ -1,0 +1,228 @@
+{
+  "status": "complete",
+  "training_performed": false,
+  "model_loaded": false,
+  "models": {
+    "large_selected_checkpoint": {
+      "checkpoint_sha256": "ebee9539bb6a53683899fba9d4979a57e96c8a9e5b409a085bfd51c80bf534dd",
+      "training_update": 71906,
+      "slices": {
+        "all": {
+          "n": 12017,
+          "median_bias": -0.006948591135631954,
+          "mae": 0.0723596686672616,
+          "nmad": 0.0768890697140627,
+          "reference_coverage90": 0.8455521344761587,
+          "median_width90": 0.293424317669432
+        },
+        "parallax_missing": {
+          "n": 0
+        },
+        "parallax_snr_negative": {
+          "n": 0
+        },
+        "parallax_snr_0_5": {
+          "n": 2,
+          "median_bias": 0.03515286683833896,
+          "mae": 0.15742407563790994,
+          "nmad": 0.23339693454076527,
+          "reference_coverage90": 0.5,
+          "median_width90": 0.4369339913372764
+        },
+        "parallax_snr_5_20": {
+          "n": 156,
+          "median_bias": 0.012279363118532283,
+          "mae": 0.14546330557082734,
+          "nmad": 0.12068127483593469,
+          "reference_coverage90": 0.7884615384615384,
+          "median_width90": 0.390223774488186
+        },
+        "parallax_snr_ge20": {
+          "n": 11859,
+          "median_bias": -0.007096752391643868,
+          "mae": 0.0713836760733753,
+          "nmad": 0.07653241052327983,
+          "reference_coverage90": 0.8455181718526014,
+          "median_width90": 0.29250932056101364
+        },
+        "ruwe_lt1p4": {
+          "n": 10820,
+          "median_bias": -0.006795510888057521,
+          "mae": 0.0696130420150702,
+          "nmad": 0.07521254379509226,
+          "reference_coverage90": 0.8520332717190389,
+          "median_width90": 0.29141926040738
+        },
+        "ruwe_ge1p4": {
+          "n": 1197,
+          "median_bias": -0.008003909730664116,
+          "mae": 0.09718715436209117,
+          "nmad": 0.1012218652546697,
+          "reference_coverage90": 0.7861319966583125,
+          "median_width90": 0.31499261821035773
+        },
+        "mass_flag_0": {
+          "n": 181,
+          "median_bias": -0.2852777252795389,
+          "mae": 0.3523018021090923,
+          "nmad": 0.30032269247360194,
+          "reference_coverage90": 0.2983425414364641,
+          "median_width90": 0.44615728452960957
+        },
+        "mass_flag_1": {
+          "n": 11836,
+          "median_bias": -0.006163046961791707,
+          "mae": 0.0680787016046584,
+          "nmad": 0.07569997459547939,
+          "reference_coverage90": 0.8530753632984116,
+          "median_width90": 0.2925997925921827
+        },
+        "gravity_0_2": {
+          "n": 237,
+          "median_bias": -0.06995779934078472,
+          "mae": 0.11070974939886027,
+          "nmad": 0.1144243029899708,
+          "reference_coverage90": 0.6497890295358649,
+          "median_width90": 0.32062129511024806
+        },
+        "gravity_2_2.5": {
+          "n": 8898,
+          "median_bias": 0.0025538515052170307,
+          "mae": 0.0640296337778703,
+          "nmad": 0.06762388096243517,
+          "reference_coverage90": 0.8928972802877051,
+          "median_width90": 0.2922327678350847
+        },
+        "gravity_2.5_3": {
+          "n": 2815,
+          "median_bias": -0.04879816512932056,
+          "mae": 0.09445009160713795,
+          "nmad": 0.1011178037524624,
+          "reference_coverage90": 0.7072824156305506,
+          "median_width90": 0.29293491064264066
+        },
+        "gravity_3_5": {
+          "n": 67,
+          "median_bias": -0.04123439745174906,
+          "mae": 0.1148543065279018,
+          "nmad": 0.09721089259094862,
+          "reference_coverage90": 0.6716417910447762,
+          "median_width90": 0.26797720322222274
+        }
+      }
+    },
+    "earlier_pooled_nsf": {
+      "checkpoint_sha256": "c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1",
+      "training_update": 8000,
+      "slices": {
+        "all": {
+          "n": 12017,
+          "median_bias": 0.053821805131953226,
+          "mae": 0.08690014181897161,
+          "nmad": 0.07346376032294787,
+          "reference_coverage90": 0.8686860281268204,
+          "median_width90": 0.3132757836745954
+        },
+        "parallax_missing": {
+          "n": 0
+        },
+        "parallax_snr_negative": {
+          "n": 0
+        },
+        "parallax_snr_0_5": {
+          "n": 2,
+          "median_bias": 0.05513639688289462,
+          "mae": 0.1016617846833201,
+          "nmad": 0.15072376197149037,
+          "reference_coverage90": 0.5,
+          "median_width90": 0.2686083854063941
+        },
+        "parallax_snr_5_20": {
+          "n": 156,
+          "median_bias": 0.05259229185575043,
+          "mae": 0.16749385374395998,
+          "nmad": 0.11082305439745904,
+          "reference_coverage90": 0.7307692307692307,
+          "median_width90": 0.3589407729537246
+        },
+        "parallax_snr_ge20": {
+          "n": 11859,
+          "median_bias": 0.0538517733703574,
+          "mae": 0.08583747697825765,
+          "nmad": 0.073179303630954,
+          "reference_coverage90": 0.8708154144531579,
+          "median_width90": 0.31249909605345305
+        },
+        "ruwe_lt1p4": {
+          "n": 10820,
+          "median_bias": 0.05476537682823435,
+          "mae": 0.08538068739077956,
+          "nmad": 0.07157879277844631,
+          "reference_coverage90": 0.8705175600739371,
+          "median_width90": 0.3107240354318306
+        },
+        "ruwe_ge1p4": {
+          "n": 1197,
+          "median_bias": 0.04558051561318477,
+          "mae": 0.10063489279059913,
+          "nmad": 0.09238411402867318,
+          "reference_coverage90": 0.849624060150376,
+          "median_width90": 0.3294753366189207
+        },
+        "mass_flag_0": {
+          "n": 181,
+          "median_bias": -0.08429238085505819,
+          "mae": 0.34466345227608386,
+          "nmad": 0.4529231930478018,
+          "reference_coverage90": 0.32044198895027626,
+          "median_width90": 0.3602232295094123
+        },
+        "mass_flag_1": {
+          "n": 11836,
+          "median_bias": 0.054229467211474036,
+          "mae": 0.082958340602958,
+          "nmad": 0.07232735744378913,
+          "reference_coverage90": 0.8768164920581277,
+          "median_width90": 0.31203952088681297
+        },
+        "gravity_0_2": {
+          "n": 237,
+          "median_bias": 0.07151942538231082,
+          "mae": 0.11844950819709209,
+          "nmad": 0.09405661175885521,
+          "reference_coverage90": 0.8607594936708861,
+          "median_width90": 0.3993171447228119
+        },
+        "gravity_2_2.5": {
+          "n": 8898,
+          "median_bias": 0.06706191059325461,
+          "mae": 0.0907711228066684,
+          "nmad": 0.06505076558626197,
+          "reference_coverage90": 0.8431108114182962,
+          "median_width90": 0.3078437047443807
+        },
+        "gravity_2.5_3": {
+          "n": 2815,
+          "median_bias": 0.0019262614760013896,
+          "mae": 0.07109067189122946,
+          "nmad": 0.06783416751137139,
+          "reference_coverage90": 0.9392539964476021,
+          "median_width90": 0.3205381522353834
+        },
+        "gravity_3_5": {
+          "n": 67,
+          "median_bias": -0.00108458722823368,
+          "mae": 0.1254444580346988,
+          "nmad": 0.08698741830882695,
+          "reference_coverage90": 0.9253731343283582,
+          "median_width90": 0.45813558439134416
+        }
+      }
+    }
+  },
+  "reference_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
+  "dev_stars": 12017,
+  "scope": "Primary QA uses only current-stage DEV stars; neither TESS reference nor quality flag used to fit/select this run. Conservative local positional QA candidates, not authoritative identifier promotion. Historical parent/teacher exposure and shared photometric Teff remain unknown. Raw intervals convolve per-star nu-max/Teff statistical errors; solar and scaling systematics are separate, not independent errors. The Gaia-dependent mass flag is only a secondary slice. K2 gravity excluded pending pipeline conventions. Selected final checkpoint of the older comparison architecture; not the corrected full-Gaia model.",
+  "snapshot_kind": "final_selected",
+  "producer_manifest_sha256": "36a6b076c294b8215f4ffd6f95b2646b2cac3dfb5b4e2f5a6a3c9e33c154ef0a"
+}

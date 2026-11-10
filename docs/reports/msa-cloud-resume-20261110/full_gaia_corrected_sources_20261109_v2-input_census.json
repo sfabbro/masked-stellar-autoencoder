@@ -1,0 +1,6545 @@
+{
+  "status": "input_census_complete",
+  "training_performed": false,
+  "started_utc": "2026-11-09T23:54:09.444653+00:00",
+  "current_stage": "photometry",
+  "completed_partitions": 1754,
+  "total_partitions": 1754,
+  "candidate_stars": 13592882,
+  "input_eligible_before_native_quality": {
+    "unassigned": {
+      "unknown_xp": 0,
+      "no_xp": 667946,
+      "xp": 538659
+    },
+    "fit": {
+      "unknown_xp": 0,
+      "no_xp": 23850,
+      "xp": 7669152
+    },
+    "tune": {
+      "unknown_xp": 0,
+      "no_xp": 3437,
+      "xp": 1038372
+    },
+    "cal": {
+      "unknown_xp": 0,
+      "no_xp": 3375,
+      "xp": 800700
+    },
+    "dev": {
+      "unknown_xp": 0,
+      "no_xp": 0,
+      "xp": 0
+    },
+    "devtest": {
+      "unknown_xp": 0,
+      "no_xp": 3428,
+      "xp": 880391
+    },
+    "external": {
+      "unknown_xp": 0,
+      "no_xp": 1293,
+      "xp": 4734
+    },
+    "excluded": {
+      "unknown_xp": 0,
+      "no_xp": 1908565,
+      "xp": 48898
+    }
+  },
+  "parent_by_role_and_native_xp": {
+    "unassigned": {
+      "unknown_xp": 0,
+      "no_xp": 668028,
+      "xp": 538659
+    },
+    "fit": {
+      "unknown_xp": 0,
+      "no_xp": 23850,
+      "xp": 7669152
+    },
+    "tune": {
+      "unknown_xp": 0,
+      "no_xp": 3437,
+      "xp": 1038372
+    },
+    "cal": {
+      "unknown_xp": 0,
+      "no_xp": 3375,
+      "xp": 800700
+    },
+    "dev": {
+      "unknown_xp": 0,
+      "no_xp": 0,
+      "xp": 0
+    },
+    "devtest": {
+      "unknown_xp": 0,
+      "no_xp": 3428,
+      "xp": 880391
+    },
+    "external": {
+      "unknown_xp": 0,
+      "no_xp": 1293,
+      "xp": 4734
+    },
+    "excluded": {
+      "unknown_xp": 0,
+      "no_xp": 1908565,
+      "xp": 48898
+    }
+  },
+  "channels": {
+    "W1": {
+      "visible_unique_stars": 10539414,
+      "known_positive_error_unique_stars": 0,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 469210
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7401475
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1001856
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 773915
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 850532
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4118
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 38308
+        }
+      }
+    },
+    "W2": {
+      "visible_unique_stars": 10539414,
+      "known_positive_error_unique_stars": 0,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 469210
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7401475
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1001856
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 773915
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 850532
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4118
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 38308
+        }
+      }
+    },
+    "G": {
+      "visible_unique_stars": 13592439,
+      "known_positive_error_unique_stars": 13592439,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 667585,
+          "xp": 538659
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23850,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3437,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3375,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3428,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1908565,
+          "xp": 48898
+        }
+      }
+    },
+    "BP": {
+      "visible_unique_stars": 13582855,
+      "known_positive_error_unique_stars": 13582855,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 658078,
+          "xp": 538659
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23845,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3436,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3375,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3427,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1908495,
+          "xp": 48898
+        }
+      }
+    },
+    "RP": {
+      "visible_unique_stars": 13583347,
+      "known_positive_error_unique_stars": 13583347,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 658537,
+          "xp": 538659
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23845,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3436,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3375,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3427,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1908528,
+          "xp": 48898
+        }
+      }
+    },
+    "bp_1": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_2": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_3": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_4": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_5": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_6": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_7": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_8": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_9": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_10": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_11": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_12": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_13": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_14": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_15": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_16": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_17": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_18": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_19": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_20": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_21": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_22": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_23": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_24": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_25": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_26": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_27": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_28": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_29": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_30": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_31": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_32": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_33": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_34": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_35": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_36": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_37": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_38": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_39": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_40": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_41": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_42": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_43": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_44": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_45": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_46": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_47": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_48": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_49": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_50": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_51": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_52": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_53": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_54": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "bp_55": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_1": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_2": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_3": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_4": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_5": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_6": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_7": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_8": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_9": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_10": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_11": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_12": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_13": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_14": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_15": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_16": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_17": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_18": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_19": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_20": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_21": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_22": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_23": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_24": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_25": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_26": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_27": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_28": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_29": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_30": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_31": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_32": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_33": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_34": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_35": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_36": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_37": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_38": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_39": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_40": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_41": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_42": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_43": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_44": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_45": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_46": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_47": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_48": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_49": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_50": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_51": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_52": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_53": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_54": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "rp_55": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 10931306,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "U_SMSS": {
+      "visible_unique_stars": 5177103,
+      "known_positive_error_unique_stars": 5156584,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 327327
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3578485
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 483406
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 368611
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 406220
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2954
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 10100
+        }
+      }
+    },
+    "V_SMSS": {
+      "visible_unique_stars": 5246422,
+      "known_positive_error_unique_stars": 5229442,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 333216
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3621507
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 489423
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 374943
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 412834
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3061
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 11438
+        }
+      }
+    },
+    "G_SMSS": {
+      "visible_unique_stars": 6003314,
+      "known_positive_error_unique_stars": 5943225,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 384441
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4132238
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 559760
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 433057
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 474969
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3155
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 15694
+        }
+      }
+    },
+    "R_SMSS": {
+      "visible_unique_stars": 6069700,
+      "known_positive_error_unique_stars": 5986171,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 388835
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4177157
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 565872
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 438232
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 480440
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3170
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 15994
+        }
+      }
+    },
+    "I_SMSS": {
+      "visible_unique_stars": 6039765,
+      "known_positive_error_unique_stars": 5919816,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 388050
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4155602
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 562946
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 436132
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 477964
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3153
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 15918
+        }
+      }
+    },
+    "Z_SMSS": {
+      "visible_unique_stars": 6030324,
+      "known_positive_error_unique_stars": 5865954,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 387835
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4149101
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 562023
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 435416
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 477239
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 3154
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 15556
+        }
+      }
+    },
+    "U_SDSS": {
+      "visible_unique_stars": 3155914,
+      "known_positive_error_unique_stars": 3155914,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 63266
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2242687
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 306055
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 248850
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 268618
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1106
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 25332
+        }
+      }
+    },
+    "G_SDSS": {
+      "visible_unique_stars": 3155914,
+      "known_positive_error_unique_stars": 3155914,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 63266
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2242687
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 306055
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 248850
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 268618
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1106
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 25332
+        }
+      }
+    },
+    "R_SDSS": {
+      "visible_unique_stars": 3155914,
+      "known_positive_error_unique_stars": 3155914,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 63266
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2242687
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 306055
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 248850
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 268618
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1106
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 25332
+        }
+      }
+    },
+    "I_SDSS": {
+      "visible_unique_stars": 3155914,
+      "known_positive_error_unique_stars": 3155914,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 63266
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2242687
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 306055
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 248850
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 268618
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1106
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 25332
+        }
+      }
+    },
+    "Z_SDSS": {
+      "visible_unique_stars": 3155914,
+      "known_positive_error_unique_stars": 3155914,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 63266
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 2242687
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 306055
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 248850
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 268618
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1106
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 25332
+        }
+      }
+    },
+    "G_PS1": {
+      "visible_unique_stars": 6391231,
+      "known_positive_error_unique_stars": 5655867,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 224985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4499999
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 613144
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 486977
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 529428
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 757
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 35941
+        }
+      }
+    },
+    "R_PS1": {
+      "visible_unique_stars": 6404368,
+      "known_positive_error_unique_stars": 4545349,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 225192
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4509861
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 614188
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 487977
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 530439
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 761
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 35950
+        }
+      }
+    },
+    "I_PS1": {
+      "visible_unique_stars": 6421976,
+      "known_positive_error_unique_stars": 4148808,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 225764
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4522378
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 615992
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 489253
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 531846
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 757
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 35986
+        }
+      }
+    },
+    "Z_PS1": {
+      "visible_unique_stars": 6405264,
+      "known_positive_error_unique_stars": 4536559,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 225391
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4510255
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 614358
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 488019
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 530539
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 761
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 35941
+        }
+      }
+    },
+    "Y_PS1": {
+      "visible_unique_stars": 6406132,
+      "known_positive_error_unique_stars": 5806551,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 225439
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4510835
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 614449
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 488106
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 530587
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 764
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 35952
+        }
+      }
+    },
+    "J": {
+      "visible_unique_stars": 10837729,
+      "known_positive_error_unique_stars": 10399917,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 494181
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7605970
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1029733
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 793701
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 873127
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4705
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 36312
+        }
+      }
+    },
+    "H": {
+      "visible_unique_stars": 10837715,
+      "known_positive_error_unique_stars": 9911267,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 494181
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7605960
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1029730
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 793701
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 873126
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4705
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 36312
+        }
+      }
+    },
+    "KS": {
+      "visible_unique_stars": 10837695,
+      "known_positive_error_unique_stars": 8432317,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 494180
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7605947
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1029731
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 793699
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 873122
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4705
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 36311
+        }
+      }
+    },
+    "PARALLAX": {
+      "visible_unique_stars": 13516491,
+      "known_positive_error_unique_stars": 13516491,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 656845,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23831,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3435,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3372,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3425,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1892984,
+          "xp": 39972
+        }
+      }
+    },
+    "EBV": {
+      "visible_unique_stars": 10931306,
+      "known_positive_error_unique_stars": 0,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 39972
+        }
+      }
+    },
+    "pmra": {
+      "visible_unique_stars": 13516491,
+      "known_positive_error_unique_stars": 13516491,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 656845,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23831,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3435,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3372,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3425,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1892984,
+          "xp": 39972
+        }
+      }
+    },
+    "pmdec": {
+      "visible_unique_stars": 13516491,
+      "known_positive_error_unique_stars": 13516491,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 656845,
+          "xp": 497985
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23831,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3435,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3372,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3425,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1892984,
+          "xp": 39972
+        }
+      }
+    },
+    "RA": {
+      "visible_unique_stars": 13592882,
+      "known_positive_error_unique_stars": 0,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 668028,
+          "xp": 538659
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23850,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3437,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3375,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3428,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1908565,
+          "xp": 48898
+        }
+      }
+    },
+    "DEC": {
+      "visible_unique_stars": 13592882,
+      "known_positive_error_unique_stars": 0,
+      "visible_by_role_and_native_xp": {
+        "unassigned": {
+          "unknown_xp": 0,
+          "no_xp": 668028,
+          "xp": 538659
+        },
+        "fit": {
+          "unknown_xp": 0,
+          "no_xp": 23850,
+          "xp": 7669152
+        },
+        "tune": {
+          "unknown_xp": 0,
+          "no_xp": 3437,
+          "xp": 1038372
+        },
+        "cal": {
+          "unknown_xp": 0,
+          "no_xp": 3375,
+          "xp": 800700
+        },
+        "dev": {
+          "unknown_xp": 0,
+          "no_xp": 0,
+          "xp": 0
+        },
+        "devtest": {
+          "unknown_xp": 0,
+          "no_xp": 3428,
+          "xp": 880391
+        },
+        "external": {
+          "unknown_xp": 0,
+          "no_xp": 1293,
+          "xp": 4734
+        },
+        "excluded": {
+          "unknown_xp": 0,
+          "no_xp": 1908565,
+          "xp": 48898
+        }
+      }
+    }
+  },
+  "training_admitted": false,
+  "scope": "Staged candidate union, not a population-uniform Gaia sample; finite native values only, before quality/domain admission",
+  "pending": [
+    "Native photometric flags and bandpass/error semantics",
+    "New-star protected dependency-group role assignment",
+    "Published age/alpha quality admission",
+    "FIT-only normalization"
+  ],
+  "elapsed_seconds": 989.1136863399297,
+  "peak_rss_kib": 1904632
+}

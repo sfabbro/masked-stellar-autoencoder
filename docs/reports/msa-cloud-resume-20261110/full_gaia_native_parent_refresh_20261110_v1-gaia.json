@@ -1,0 +1,17 @@
+{
+  "status": "running",
+  "mode": "gaia",
+  "training_performed": false,
+  "sources": [],
+  "started_unix": 1794330212.897453,
+  "candidate_stars": 17359938,
+  "candidate_provenance": [
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_desi_lamost_population_20261110_v1/expanded-native-candidate-source-id.npy",
+      "sha256": "dee7b38c91740cf2b0370764fd480cad7739da26c4959bf99c97cdb94cf24306",
+      "rows": 17359938,
+      "scope": "audited full native identity union before quality and XP/feature selection"
+    }
+  ],
+  "scope": "Full Gaia shard join for native-label candidate union, independent of XP; does not certify discovery of every possible survey catalogue"
+}

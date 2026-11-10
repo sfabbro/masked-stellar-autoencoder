@@ -4,6 +4,7 @@ Each mode writes native records/provenance, not an automatic training admission.
 """
 
 import argparse
+import hashlib
 import json
 import re
 import time
@@ -22,6 +23,33 @@ CAT = ROOT / "catalogues"
 BASE = RUN / "expanded_six_source_20261107_v5/prepared.h5"
 
 
+def raw_native_candidate_ids(root):
+    """DESI/LAMOST identity parent before quality, features, roles, or XP cuts."""
+    arrays, provenance = [], []
+    for product in ["lrs", "mrs"]:
+        path = root / f"multisurvey_lamost_dr12_{product}_source_direct_v2/source.h5"
+        with h5py.File(path) as data:
+            ids = data["observations/source_id"][:]
+        if ids.dtype.kind not in "iu":
+            raise ValueError("Raw LAMOST Gaia identifiers require integer storage")
+        arrays.append(ids[ids > 0].astype("i8"))
+        provenance.append(dict(
+            path=str(path), key="observations/source_id", rows=len(ids),
+            scope="all native observation IDs before quality or XP/feature selection",
+        ))
+    path = root / "desi_collection_v1/mwsall-pix-iron.fits"
+    with fits.open(path, memmap=True) as hdus:
+        ids = np.asarray(hdus["GAIA"].data["SOURCE_ID"])
+        if ids.dtype.kind not in "iu":
+            raise ValueError("Raw DESI Gaia identifiers require integer storage")
+        arrays.append(ids[ids > 0].astype("i8"))
+        provenance.append(dict(
+            path=str(path), extension="GAIA", column="SOURCE_ID", rows=len(ids),
+            scope="all native coadd Gaia IDs before PRIMARY/STAR/SNR/XP selection",
+        ))
+    return arrays, provenance
+
+
 def match_positions(ids, query):
     """Exact integer join; no XP membership predicate and no float ID coercion."""
     q = np.asarray(query)
@@ -33,8 +61,22 @@ def match_positions(ids, query):
     return np.flatnonzero(hit), p[hit]
 
 
-def candidates():
-    arrays, provenance = [], []
+def candidates(parent_file=None):
+    if parent_file is not None:
+        ids = np.load(parent_file, mmap_mode="r")
+        if ids.ndim != 1 or ids.dtype.kind not in "iu":
+            raise ValueError("Audited parent requires a one-dimensional integer ID array")
+        if len(ids) == 0 or (ids <= 0).any() or not np.all(ids[1:] > ids[:-1]):
+            raise ValueError("Audited parent IDs must be positive, unique and sorted")
+        if ids.dtype.kind == "u" and (ids > np.iinfo(np.int64).max).any():
+            raise ValueError("Audited parent identifier exceeds signed integer range")
+        with Path(parent_file).open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        return ids, [dict(
+            path=str(parent_file), sha256=digest, rows=len(ids),
+            scope="audited full native identity union before quality and XP/feature selection",
+        )]
+    arrays, provenance = raw_native_candidate_ids(RUN)
     with h5py.File(BASE) as f:
         arrays.append(f["source_id"][:])
         provenance.append(
@@ -333,8 +375,8 @@ def stage_labels(mode, out, m, save):
     ]
 
 
-def stage_gaia(out, m, save):
-    ids, prov = candidates()
+def stage_gaia(out, m, save, parent_file=None):
+    ids, prov = candidates(parent_file)
     np.save(out / "label-candidate-source-id.npy", ids)
     m.update(
         candidate_stars=len(ids),
@@ -458,8 +500,8 @@ def stage_gaia(out, m, save):
     )
 
 
-def stage_photometry(out, m, save):
-    ids, prov = candidates()
+def stage_photometry(out, m, save, parent_file=None):
+    ids, prov = candidates(parent_file)
     np.save(out / "label-candidate-source-id.npy", ids)
     contract = json.loads(
         Path("configs/full-gaia-observation-columns-20261108.json").read_text()
@@ -542,7 +584,10 @@ def main():
         "--mode", choices=["gaia", "photometry", "alpha", "ages"], required=True
     )
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--candidate-ids", type=Path, help="Immutable audited native-parent ID array")
     a = p.parse_args()
+    if a.candidate_ids is not None and a.mode not in ["gaia", "photometry"]:
+        p.error("--candidate-ids is for Gaia/photometry matching only")
     a.output.mkdir(parents=True, exist_ok=False)
     m = dict(
         status="running",
@@ -562,9 +607,9 @@ def main():
         if a.mode in ["ages", "alpha"]:
             stage_labels(a.mode, a.output, m, save)
         elif a.mode == "gaia":
-            stage_gaia(a.output, m, save)
+            stage_gaia(a.output, m, save, a.candidate_ids)
         else:
-            stage_photometry(a.output, m, save)
+            stage_photometry(a.output, m, save, a.candidate_ids)
         m.update(
             status="source_stage_complete",
             training_admitted=False,

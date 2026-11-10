@@ -1,0 +1,21 @@
+{
+  "status": "running",
+  "started_utc": "2026-11-10T17:03:31.733449+00:00",
+  "training_performed": false,
+  "training_admitted": false,
+  "role_assignment_performed": false,
+  "normalization_performed": false,
+  "audit": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/native_desi_lamost_population_20261110_v1/manifest.json",
+  "audit_sha256": "48fc658928c5898282849e5ccd86744956f686b13f7fb8b5cc5c5a3a62da6973",
+  "candidate_stars": 17359938,
+  "candidate_ids_sha256": "dee7b38c91740cf2b0370764fd480cad7739da26c4959bf99c97cdb94cf24306",
+  "added_native_stars": 3767056,
+  "scope": "Full native identity parent before quality or XP/feature filters; matched source availability is not label admission",
+  "steps": {
+    "gaia": {
+      "status": "running",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_native_parent_refresh_20261110_v1/gaia"
+    }
+  },
+  "current_step": "gaia"
+}

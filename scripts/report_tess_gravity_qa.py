@@ -72,7 +72,7 @@ def main():
             producer = json.loads(path.read_text()) if path.exists() else {}
             if producer.get("status") in ["failed", "upstream_failed"]:
                 raise RuntimeError("Checkpoint QA failed")
-            if producer.get("status") == "first_checkpoint_common_qa_complete":
+            if producer.get("status") in ["first_checkpoint_common_qa_complete", "selected_checkpoint_common_qa_complete"]:
                 break
             time.sleep(30)
         else:
@@ -173,6 +173,10 @@ def main():
             dev_stars=len(sid),
             scope="Primary QA uses only current-stage DEV stars; neither TESS reference nor quality flag used to fit/select this run. Conservative local positional QA candidates, not authoritative identifier promotion. Historical parent/teacher exposure and shared photometric Teff remain unknown. Raw intervals convolve per-star nu-max/Teff statistical errors; solar and scaling systematics are separate, not independent errors. The Gaia-dependent mass flag is only a secondary slice. K2 gravity excluded pending pipeline conventions. First checkpoint is preliminary, not final.",
         )
+        m["snapshot_kind"] = producer.get("snapshot_kind", "intermediate")
+        m["producer_manifest_sha256"] = sha(qa / "manifest.json")
+        if m["snapshot_kind"] == "final_selected":
+            m["scope"] = m["scope"].replace("First checkpoint is preliminary, not final.", "Selected final checkpoint of the older comparison architecture; not the corrected full-Gaia model.")
         save()
     except Exception as exc:
         m.update(status="failed", error=repr(exc))

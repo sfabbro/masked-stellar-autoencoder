@@ -1,0 +1,26 @@
+{
+  "status": "source_recovery_and_census_complete",
+  "started_utc": "2026-11-09T23:50:52.982044+00:00",
+  "training_performed": false,
+  "training_admitted": false,
+  "steps": {
+    "ages": {
+      "status": "source_stage_complete",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v2/ages",
+      "source_errors": []
+    },
+    "alpha": {
+      "status": "source_stage_complete",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v2/alpha",
+      "source_errors": []
+    },
+    "input_census": {
+      "status": "input_census_complete",
+      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_corrected_sources_20261109_v2/input_census",
+      "source_errors": []
+    }
+  },
+  "scope": "Native-source extraction and availability census; no quality admission or production model claim",
+  "current_step": "input_census",
+  "updated_utc": "2026-11-10T00:10:38.701980+00:00"
+}

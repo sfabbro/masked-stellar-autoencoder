@@ -1,0 +1,72 @@
+{
+  "status": "native_population_audit_complete",
+  "started_utc": "2026-11-10T16:56:26.070430+00:00",
+  "native_sources": {
+    "lamost_dr12_lrs": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/source.h5",
+      "sha256": "889c90553e71a681ddee05f97fc6dcffb7933a338253e3e57912460be8d58fb9",
+      "observation_rows": 8376135,
+      "positive_gaia_id_rows": 8226110,
+      "unique_positive_gaia_stars": 5829702,
+      "id_set_sha256": "9983e7e88eb64c87a0f12807cfa0dd37413b7a7f4d26b734908ec4057f458d3b",
+      "scope": "All staged native observation rows, before quality cuts and XP/feature joins"
+    },
+    "lamost_dr12_mrs": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_mrs_source_direct_v2/source.h5",
+      "sha256": "293201d803cb569c79ce2c76f51b912e6dc8a69c27296450154a18946d60c8f6",
+      "observation_rows": 3224901,
+      "positive_gaia_id_rows": 3203771,
+      "unique_positive_gaia_stars": 1499584,
+      "id_set_sha256": "3faf2cdbad328f716341add626fef2fa69e0152c5d6acc378e96424fe5b134ad",
+      "scope": "All staged native observation rows, before quality cuts and XP/feature joins"
+    },
+    "desi_dr1_coadds": {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits",
+      "extension": "GAIA",
+      "column": "SOURCE_ID",
+      "observation_rows": 6372607,
+      "positive_gaia_id_rows": 6372607,
+      "unique_positive_gaia_stars": 4920596,
+      "id_set_sha256": "90287fa002c6ed18e6b7dd3750df175e822a34a15b8ca723b0cb85ae399e4f4f",
+      "file_bytes": 13051186560,
+      "previously_publisher_verified_sha256": "eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5",
+      "whole_file_hash_recomputed": false,
+      "scope": "Full native coadd Gaia-ID column; no PRIMARY/STAR/SNR/XP selection; single epochs are a distinct dependent product"
+    }
+  },
+  "training_performed": false,
+  "training_admitted": false,
+  "unique_gaia_ids_by_source": {
+    "lamost_dr12_lrs": 5829702,
+    "lamost_dr12_mrs": 1499584,
+    "desi_dr1_coadds": 4920596
+  },
+  "pairwise_unique_star_overlap": {
+    "lamost_dr12_lrs__lamost_dr12_mrs": 748508,
+    "lamost_dr12_lrs__desi_dr1_coadds": 314072,
+    "lamost_dr12_mrs__desi_dr1_coadds": 55960
+  },
+  "native_desi_lamost_union_unique_gaia_stars": 11165172,
+  "existing_candidate_parent_unique_gaia_stars": 13592882,
+  "native_union_absent_from_candidate_parent": 3767056,
+  "absent_by_source": {
+    "lamost_dr12_lrs": 2255802,
+    "lamost_dr12_mrs": 305791,
+    "desi_dr1_coadds": 1254465
+  },
+  "expanded_candidate_parent_unique_gaia_stars": 17359938,
+  "native_observation_rows_total": 17973643,
+  "candidate_parent": {
+    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_gaia_stage_20261108_v2/label-candidate-source-id.npy",
+    "sha256": "efa8ede8a53c791002caa6a7e5e8fd45a05f8e131ed15733bd2d3f630963db82"
+  },
+  "pending": [
+    "Match missing native IDs against full Gaia without requiring XP",
+    "Measure per-target quality/domain retention separately from raw population counts",
+    "Retain repeated spectra and shared-input dependencies without double-counting independent evidence",
+    "Discover and audit additional release/VAC products; these three files are not every possible DESI/LAMOST label product",
+    "Preserve inherited protected roles; new native stars remain unassigned"
+  ],
+  "elapsed_seconds": 74.07378614507616,
+  "peak_rss_kib": 5818652
+}

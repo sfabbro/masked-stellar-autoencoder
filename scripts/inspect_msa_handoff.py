@@ -20,6 +20,9 @@ RUNS = [
     ("full_gaia_corrected_sources_20261109_v2", "eo0ywcd8"),
     ("expanded_selected_checkpoint_qa_20261109_v1", "gqc68dfi"),
     ("expanded_selected_checkpoint_report_20261109_v1", "fwib7zhu"),
+    ("native_desi_lamost_population_20261110_v1", "dolylw69"),
+    ("full_gaia_native_parent_refresh_20261110_v1", "m9pwdvrf"),
+    ("tess_selected_checkpoint_qa_20261110_v1", "vmuapd4t"),
 ]
 
 

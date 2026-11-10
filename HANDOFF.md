@@ -4,6 +4,50 @@ Start here when resuming on another computer. This is a WIP research handoff, no
 
 ## Cloud resume — 2026-11-09, Vancouver
 
+### Continuation — 2026-11-10, Vancouver
+
+All Nov 9 recovery, census, selected-checkpoint CUDA QA and report jobs completed
+successfully. Latest results and population correction are in
+`docs/reports/msa-cloud-resume-20261110/progress.md` and its bound manifests.
+The older comparison checkpoint improves benchmark MAEs and APOKASC gravity,
+but cluster Fe/H scatter remains worse than the earlier model; it is not the
+corrected full-Gaia model.
+
+**The 13.59M candidate parent was incomplete.** User reiterated that DESI+LAMOST
+must not be limited to the approximately 10M prepared/prediction footprint.
+A fresh native ID audit measured 17,973,643 observation records and 11,165,172
+unique Gaia stars in the staged LRS/MRS/DESI files. 3,767,056 of those stars were
+absent from the candidate parent. Restoring them expands the all-included-survey
+identity parent to 17,359,938 stars. The raw-ID builder is fixed; it now includes
+native observation IDs before quality or XP/feature selection. No 10M cap is
+admitted. Record counts, unique stars, quality labels and FIT stars are separate.
+
+Native audit `native_desi_lamost_population_20261110_v1` (`dolylw69`) completed;
+expanded and missing-ID arrays remain on ARC. The audited parent is being used
+by `full_gaia_native_parent_refresh_20261110_v1` (`m9pwdvrf`) to refresh full-Gaia
+matching, legacy photometry and census in fresh directories. An expected audit
+manifest hash and parent ID hash bind this execution. No role assignment,
+normalization, label admission or production training occurs. Recheck receipt,
+session and each step's manifest before any retry.
+
+`tess_selected_checkpoint_qa_20261110_v1` (`vmuapd4t`) completed on 12,017 DEV
+stars: logg MAE improves .0869 to .0724 dex, but NMAD worsens .0735 to .0769 and
+reference-convolved C90 falls 86.87% to 84.56%. Its reporter now accepts the new
+selected-checkpoint status while preserving earlier snapshots. The historical
+job table below is superseded by the Nov 10 manifests.
+
+The native-parent refresh is running its Gaia step on exactly 17,359,938 IDs.
+28 relevant tests pass together, including raw native union/overlap arithmetic,
+recovery of IDs outside selected sidecars, and explicit audited-parent binding.
+
+Remaining priorities: validate native quality/domain/dependency cuts; investigate
+LAMOST M-star and other VAC/release channels separately; restore native band
+errors/flags for real no-XP stars; assemble protected roles and FIT-only
+normalization on the corrected parent; integrate the actual pretrained model
+with full inputs/context and the justified common-coordinate/noise model.
+
+The following setup notes describe the Nov 9 executor state and remain relevant:
+
 Resumed branch `codex/cloud-resume-20261109` from `26f59be` in the managed
 cloud executor under `/workspace`. Current network status is unrestricted,
 enforced, with current observations and matching spec revision 1. Fresh requests
@@ -106,14 +150,14 @@ bounded continuation, not a claim that the accumulated tree is fully tested.
 ## Get the working state
 
 ```bash
-git clone --branch codex/multisurvey-flexible-20261105 https://github.com/sfabbro/masked-stellar-autoencoder.git
+git clone --branch codex/cloud-resume-20261109 https://github.com/sfabbro/masked-stellar-autoencoder.git
 cd masked-stellar-autoencoder
 pixi install
 pixi run pytest tests/test_pipeline.py -q
 pixi run -e monitor python scripts/inspect_msa_handoff.py
 ```
 
-For an existing checkout, fetch origin and switch to this branch, then fast-forward if the checkout is clean. Do not reset local changes. Push only to sfabbro's `origin`, never `upstream`. Read AGENTS.md. CANFAR credentials must be configured separately on the new computer; credentials and environments are not committed. Read the canfar-lab-workflow skill before CANFAR operations. Real model execution belongs on CANFAR CUDA, not the laptop.
+For an existing checkout, fetch origin and switch to this branch, then fast-forward if the checkout is clean. Do not reset local changes. Push only to sfabbro's `origin`, never `upstream`. Read AGENTS.md. CANFAR credentials must be configured separately on the new computer; credentials and environments are not committed. Read the official `.agents/skills/canfar/SKILL.md` before CANFAR operations. Real model execution belongs on CANFAR CUDA, not the laptop.
 
 The status script is read-only. No job submission is needed simply because you changed computers: accepted jobs continue remotely. Reconcile receipt/session/output before any retry. Completed CANFAR sessions may disappear while their ARC outputs remain.
 
