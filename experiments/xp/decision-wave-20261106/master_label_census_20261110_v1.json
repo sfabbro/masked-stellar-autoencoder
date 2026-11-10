@@ -3,7 +3,7 @@
   "utc": "2026-11-10T20:48:21.207086+00:00",
   "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261110_v1",
   "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_census_20261110_v1",
-  "status": "accepted",
+  "status": "cancelled_superseded",
   "session_ids": [
     "vv7b9ggj"
   ],
@@ -20,5 +20,7 @@
     "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "pixi.toml": "c0f75fc0e8f3a804b715c24dfcaae66227aafc1d86acb0dfd62fb9f1750a4811"
   },
-  "payload_sha256": "c2c713742d21a78587676d38e761e74ded5e6b8d31862cfbb5875b581ca32393"
+  "payload_sha256": "c2c713742d21a78587676d38e761e74ded5e6b8d31862cfbb5875b581ca32393",
+  "cancelled_utc": "2026-11-10T20:56Z",
+  "cancel_reason": "CDS tunnel 403 and CfA rate limiting dropped S5/Pristine; superseded by v2 with VizieR backoff (d80e649). Cache under master_label_sources_20261110_v1 reused."
 }
