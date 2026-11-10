@@ -1,0 +1,24 @@
+{
+  "run_id": "master_label_overlap_20261110_v1",
+  "utc": "2026-11-10T23:25:48.772410+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_overlap_20261110_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_overlap_20261110_v1",
+  "status": "accepted",
+  "session_ids": [
+    "wq1fimly"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 32,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['scripts/run_master_label_overlap.py', '--observations', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261110_v3/observations.parquet', '--existing-root', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_overlap_20261110_v1'];runpy.run_path('scripts/run_master_label_overlap.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_master_label_overlap.py": "590003b75e35d5ee3856e3e258fc814995412fcf80a953ea9d2e9f691eba7a2f",
+    "src/masked_stellar_autoencoder/training/label_overlap.py": "c70f63f6a215d8e46918f305b1c2ec74cb51a821db4994acc5a43ba83b819be6",
+    "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pixi.toml": "8df769df342a06aff6d71b6362b6aff1bbfb7a46605431d0731c58107287b9fe"
+  },
+  "payload_sha256": "2aa0eb9fc81002b82976970210846285b9568d1220590c5bba4467c0654c782d"
+}
