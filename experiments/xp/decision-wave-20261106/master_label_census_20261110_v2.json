@@ -3,7 +3,7 @@
   "utc": "2026-11-10T20:56:12.078196+00:00",
   "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261110_v2",
   "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_census_20261110_v2",
-  "status": "accepted",
+  "status": "cancelled_superseded",
   "session_ids": [
     "mp9fbhpj"
   ],
@@ -20,5 +20,7 @@
     "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "pixi.toml": "c0f75fc0e8f3a804b715c24dfcaae66227aafc1d86acb0dfd62fb9f1750a4811"
   },
-  "payload_sha256": "9ac6acd1834c9cd64597c7c53834228b848f943c867e24ff6bab5a6d0f81956f"
+  "payload_sha256": "9ac6acd1834c9cd64597c7c53834228b848f943c867e24ff6bab5a6d0f81956f",
+  "cancelled_utc": "2026-11-10T21:00Z",
+  "cancel_reason": "sagadatabase.jp is HTTP-only; the worker CONNECT tunnel only allows listed hosts on 443 (403). VizieR tables (incl. S5, Pristine) were cached on ARC before cancellation. SAGA slices, SIMBAD and Gaia candidate caches were then uploaded from the local cloud-session run into master_label_sources_20261110_v1 (content-addressed except SAGA slices, whose receipt hashes are recomputed on read). Superseded by v3."
 }
