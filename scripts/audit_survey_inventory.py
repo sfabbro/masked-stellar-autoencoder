@@ -19,6 +19,19 @@ TOKENS = (
     "boss",
     "segue",
     "sppparams",
+    "sspp",
+    "astra",
+    "aspcap",
+    "h3survey",
+    "s5dr1",
+    "pigs",
+    "pristine",
+    "saga",
+    "jina",
+    "ambre",
+    "pastel",
+    "vmp",
+    "master_label",
 )
 
 

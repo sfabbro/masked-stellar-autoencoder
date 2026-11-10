@@ -1,0 +1,768 @@
+{
+  "status": "complete",
+  "utc": "2026-11-10T18:52:30.901320+00:00",
+  "training_performed": false,
+  "roles_assigned": false,
+  "script_sha256": "3e8d825181c3cec24e2b68b473b9449d7f7f8e2ed124b62efacaf97d6ffcea66",
+  "module_sha256": "68a1ce64a31f1d0a48eeeed7984c3663d6aa63d5c2cc32d53428f0042072f6b0",
+  "acquisitions": {
+    "sdss_dr19_astra_aspcap": {
+      "url": "https://data.sdss.org/sas/dr19/spectro/astra/0.6.0/summary/astraAllStarASPCAP-0.6.0.fits.gz",
+      "path": "<local-cache>/sdss/astraAllStarASPCAP-0.6.0.fits.gz",
+      "bytes": 1171102556,
+      "sha256": "5324bf39baeede7553b0a3c8a50bea1760f47eb67a95a8a84e6db303aa2edb04"
+    },
+    "sdss_dr12_sspp": {
+      "url": "https://data.sdss.org/sas/dr12/sdss/sspp/ssppOut-dr12.fits",
+      "path": "<local-cache>/sdss/ssppOut-dr12.fits",
+      "bytes": 1913284800,
+      "sha256": "04628d84a5c817a50def945f9d37a7e273770a75aed9ac20e297ac55b989c586"
+    },
+    "gaia_eso_dr5_1": {
+      "table": "J/A+A/676/A129/catalog",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FA%2BA%2F676%2FA129%2Fcatalog&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "716ed530c3def7502aeedc2489298b1fa9a80cc55b390e7494563289db60203c",
+      "bytes": 395578343,
+      "utc": "2026-11-10T18:09:54Z"
+    },
+    "s5_dr1": {
+      "table": "J/MNRAS/490/3508/s5dr1",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F490%2F3508%2Fs5dr1&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "892c53b84fea666f8dc28c6b52f1c866afd691577a1d6f5ddd787856d832c528",
+      "bytes": 27532721,
+      "utc": "2026-11-10T18:10:24Z"
+    },
+    "pigs_aat": {
+      "table": "J/MNRAS/530/3391/tabled2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F530%2F3391%2Ftabled2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "67ef79e35f1752102eb2358d1fb2e31a673e55148ffed1a9a9f4debce87975ba",
+      "bytes": 10173710,
+      "utc": "2026-11-10T18:10:44Z"
+    },
+    "lamost_vmp_li2018": {
+      "table": "J/ApJS/238/16/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F238%2F16%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "c4db0e632bbd99def713c04b04ebbc766c1705408d9775fbbc23bcf8f0683585",
+      "bytes": 6206962,
+      "utc": "2026-11-10T18:11:02Z"
+    },
+    "lamost_cat_li2025": {
+      "table": "J/ApJS/279/53/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F279%2F53%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "57126c9a5735f749106baa8d1ef449cdbddc4d6270129504824340ee6ebb0cd1",
+      "bytes": 3189391,
+      "utc": "2026-11-10T18:11:20Z"
+    },
+    "pristine_aguado2019": {
+      "table": "J/MNRAS/490/2241/table4",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F490%2F2241%2Ftable4&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "d5c404f685ce09366838e4ea420d0d29387808ac573f547919ac743f04280221",
+      "bytes": 206581,
+      "utc": "2026-11-10T18:11:37Z"
+    },
+    "smss_dacosta2019_t2": {
+      "table": "J/MNRAS/489/5900/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F489%2F5900%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "bcc8ebe5f27ba7468f119a153983f4ad67ef584eb6cbefa7a4a77cadedd01c7d",
+      "bytes": 27472,
+      "utc": "2026-11-10T18:11:55Z"
+    },
+    "smss_dacosta2019_t3": {
+      "table": "J/MNRAS/489/5900/table3",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F489%2F5900%2Ftable3&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "104ea7f06199d6390b98e3da321ac92f5247e5cebaf7815c56ae12a939a16eb4",
+      "bytes": 7615,
+      "utc": "2026-11-10T18:12:12Z"
+    },
+    "bestbrightest_placco2019": {
+      "table": "J/ApJ/870/122/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F870%2F122%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "d6053967c8b1350efe0d99fee57ef396c14fca6c06b4e490ed9bd8f075132433",
+      "bytes": 217577,
+      "utc": "2026-11-10T18:12:29Z"
+    },
+    "rpa_hansen2018": {
+      "table": "J/ApJ/858/92/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F858%2F92%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "783b3f973da73649791e070c1d50a65d6124fbe4996c7e19d41275b5ed2517f9",
+      "bytes": 24785,
+      "utc": "2026-11-10T18:12:51Z"
+    },
+    "rpa_holmbeck2020": {
+      "table": "J/ApJS/249/30/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F249%2F30%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "a4fb0aa9b6cd982e22ef0c2dadcb8b789cec22d7afda04383e59373a3a3d43d5",
+      "bytes": 44314,
+      "utc": "2026-11-10T18:13:08Z"
+    },
+    "smss_yong2021": {
+      "table": "J/MNRAS/507/4102/sup",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F507%2F4102%2Fsup&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "fb9c44e196413b5c3da895b27009a8ed993fb5abad4c03fb5198054d57884c3f",
+      "bytes": 41702,
+      "utc": "2026-11-10T18:13:25Z"
+    },
+    "yong2013_program": {
+      "table": "J/ApJ/762/26/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F762%2F26%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "e26122ab30a270a981396387cb0db3fa14a58f5e3898b17703baf41718918133",
+      "bytes": 10471,
+      "utc": "2026-11-10T18:13:42Z"
+    },
+    "yong2013_literature": {
+      "table": "J/ApJ/762/26/sample",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F762%2F26%2Fsample&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "fa5feb704936f4cbab582b8d8143f1a75f71d7aba0c2d237f9803b611891f1b2",
+      "bytes": 37609,
+      "utc": "2026-11-10T18:13:59Z"
+    },
+    "roederer2014": {
+      "table": "J/AJ/147/136/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FAJ%2F147%2F136%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "ecd366d206c44b4874654fa6fd37ee30d4762b3b113d318705b3887402323c0c",
+      "bytes": 88510,
+      "utc": "2026-11-10T18:14:16Z"
+    },
+    "pastel_2020": {
+      "table": "B/pastel/pastel",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=B%2Fpastel%2Fpastel&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "389ab6265fe6570a95e7629187689eb41c7faabd86f7af3f02db99bca79c116a",
+      "bytes": 22459723,
+      "utc": "2026-11-10T18:14:35Z"
+    }
+  },
+  "policies": {
+    "sdss_dr19_astra_aspcap": {
+      "release": "SDSS DR19 Astra 0.6.0 astraAllStarASPCAP",
+      "pipeline": "ASPCAP (FERRE) in Astra; calibrated teff/logg, fe_h abundance, alpha_m_atm",
+      "quality_policy": "flag_bad false; finite calibrated teff/logg; snr>=20",
+      "grid_policy": "fe_h or m_h_atm <= -2.45 marks the lower ASPCAP grid edge (DR19 values pile up at -2.50; censored, not measured)"
+    },
+    "sdss_dr12_sspp": {
+      "release": "SDSS DR12 ssppOut (final SSPP; SEGUE-1/2 + legacy stars)",
+      "pipeline": "SSPP adopted TEFF/LOGG/FEH_ADOP and AFE",
+      "quality_policy": "FEH_ADOP valid; SNR>=10; 4000<=TEFF_ADOP<=10000; FLAG first char 'n'; ZWARNING==0; rows without any adopted label dropped; one row per BESTOBJID kept by quality then highest SNR",
+      "grid_policy": "none flagged; SSPP metallicity estimators extend to about -4"
+    },
+    "gaia_eso_dr5_1": {
+      "release": "Gaia-ESO DR5.1 final (Hourihane+2023)",
+      "pipeline": "GES WG homogenised recommended parameters",
+      "tier": "survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Cluster/benchmark targets must be reserved; positions from 2MASS-based targeting"
+    },
+    "s5_dr1": {
+      "release": "S5 DR1 (Li+2019)",
+      "pipeline": "rvspecfit posterior medians (50th percentile)",
+      "tier": "metal_poor_survey",
+      "quality": {
+        "good_star": [
+          "==",
+          1
+        ],
+        "Prim": [
+          "==",
+          1
+        ]
+      },
+      "fe_h_kind": "fe_h",
+      "notes": "Stream/halo fields; EDR3 IDs are identical to DR3 IDs"
+    },
+    "pigs_aat": {
+      "release": "PIGS VIII AAT (Ardern-Arentsen+2024)",
+      "pipeline": "FERRE on AAOmega blue+CaT",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "ULySS alternative retained natively on ARC; FERRE adopted here"
+    },
+    "lamost_vmp_li2018": {
+      "release": "LAMOST DR3 VMP catalogue (Li+2018)",
+      "pipeline": "Li+2018 VMP template matching on LAMOST LRS",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Same spectra as LASP; separate pipeline extending below the LASP floor"
+    },
+    "lamost_cat_li2025": {
+      "release": "LAMOST DR10 CaT VMP metallicities (Li+2025)",
+      "pipeline": "Ca II triplet calibration",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h_cat",
+      "notes": "Teff/logg columns here are LASP, not this pipeline; not adopted"
+    },
+    "pristine_aguado2019": {
+      "release": "Pristine INT/IDS follow-up (Aguado+2019)",
+      "pipeline": "FERRE",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_dacosta2019_t2": {
+      "release": "SkyMapper EMP 2.3m/WiFeS (Da Costa+2019) table2",
+      "pipeline": "FITTER spectrophotometric",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_dacosta2019_t3": {
+      "release": "SkyMapper EMP 2.3m/WiFeS (Da Costa+2019) table3",
+      "pipeline": "FITTER spectrophotometric",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "bestbrightest_placco2019": {
+      "release": "Best & Brightest medium-res (Placco+2019)",
+      "pipeline": "n-SSPP",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "VizieR decimal positions are rounded to 0.001 deg; WISEA name parsed"
+    },
+    "rpa_hansen2018": {
+      "release": "RPA southern pilot (Hansen+2018)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "rpa_holmbeck2020": {
+      "release": "RPA (Holmbeck+2020)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_yong2021": {
+      "release": "SkyMapper high-res follow-up (Yong+2021)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "yong2013_program": {
+      "release": "Most metal-poor stars II program (Yong+2013)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "yong2013_literature": {
+      "release": "Most metal-poor stars II homogenised literature (Yong+2013)",
+      "pipeline": "1D LTE high-res reanalysis",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "roederer2014": {
+      "release": "Stars of very low metal abundance VI (Roederer+2014)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "m_h_model",
+      "notes": ""
+    },
+    "pastel_2020": {
+      "release": "PASTEL 2020-01-30 (Soubiran+2016)",
+      "pipeline": "heterogeneous high-res literature compilation",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Multiple rows per star from different papers; not independent"
+    }
+  },
+  "errors": {},
+  "census": {
+    "feh_edges": [
+      -1.0,
+      -1.5,
+      -2.0,
+      -2.5,
+      -3.0,
+      -3.5,
+      -4.0
+    ],
+    "sources": {
+      "bestbrightest_placco2019": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "bb_medres",
+        "rows": 857,
+        "gaia_linked_rows": 857,
+        "unique_gaia": 857,
+        "id_methods": {
+          "positional": 819,
+          "positional_ambiguous": 38
+        },
+        "quality_unique_gaia": 796,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.65,
+        "metal_poor_unique": {
+          "lt_-1.0": 549,
+          "lt_-1.5": 454,
+          "lt_-2.0": 311,
+          "lt_-2.5": 121,
+          "lt_-3.0": 17,
+          "lt_-3.5": 1,
+          "lt_-4.0": 0
+        }
+      },
+      "gaia_eso_dr5_1": {
+        "tier": "survey",
+        "dependency_group": "gaia_eso_flames",
+        "rows": 114916,
+        "gaia_linked_rows": 114721,
+        "unique_gaia": 114721,
+        "id_methods": {
+          "positional": 108934,
+          "positional_ambiguous": 5787,
+          "positional_unmatched": 195
+        },
+        "quality_unique_gaia": 94145,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.47,
+        "metal_poor_unique": {
+          "lt_-1.0": 8975,
+          "lt_-1.5": 3506,
+          "lt_-2.0": 1169,
+          "lt_-2.5": 232,
+          "lt_-3.0": 66,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "lamost_cat_li2025": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "lamost_lrs_spectra",
+        "rows": 8440,
+        "gaia_linked_rows": 8440,
+        "unique_gaia": 8378,
+        "id_methods": {
+          "publisher_dr3": 8440
+        },
+        "quality_unique_gaia": 8378,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.36,
+        "metal_poor_unique": {
+          "lt_-1.0": 8378,
+          "lt_-1.5": 8378,
+          "lt_-2.0": 8362,
+          "lt_-2.5": 1070,
+          "lt_-3.0": 24,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "lamost_vmp_li2018": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "lamost_lrs_spectra",
+        "rows": 10011,
+        "gaia_linked_rows": 9980,
+        "unique_gaia": 9674,
+        "id_methods": {
+          "positional": 9920,
+          "positional_ambiguous": 60,
+          "positional_unmatched": 31
+        },
+        "quality_unique_gaia": 9674,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.55,
+        "metal_poor_unique": {
+          "lt_-1.0": 9674,
+          "lt_-1.5": 9674,
+          "lt_-2.0": 9614,
+          "lt_-2.5": 2706,
+          "lt_-3.0": 621,
+          "lt_-3.5": 83,
+          "lt_-4.0": 16
+        }
+      },
+      "pastel_2020": {
+        "tier": "highres_reference",
+        "dependency_group": "pastel_literature",
+        "rows": 81362,
+        "gaia_linked_rows": 79631,
+        "unique_gaia": 36966,
+        "id_methods": {
+          "positional": 72822,
+          "positional_ambiguous": 6809,
+          "positional_unmatched": 1607,
+          "": 124
+        },
+        "quality_unique_gaia": 17943,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.7,
+        "metal_poor_unique": {
+          "lt_-1.0": 2089,
+          "lt_-1.5": 1407,
+          "lt_-2.0": 886,
+          "lt_-2.5": 559,
+          "lt_-3.0": 252,
+          "lt_-3.5": 69,
+          "lt_-4.0": 16
+        }
+      },
+      "pigs_aat": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "pigs_aat",
+        "rows": 13235,
+        "gaia_linked_rows": 13235,
+        "unique_gaia": 13231,
+        "id_methods": {
+          "publisher_dr3": 13235
+        },
+        "quality_unique_gaia": 13231,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.0,
+        "metal_poor_unique": {
+          "lt_-1.0": 11684,
+          "lt_-1.5": 8002,
+          "lt_-2.0": 2349,
+          "lt_-2.5": 315,
+          "lt_-3.0": 49,
+          "lt_-3.5": 21,
+          "lt_-4.0": 0
+        }
+      },
+      "pristine_aguado2019": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "pristine_int_ids",
+        "rows": 1007,
+        "gaia_linked_rows": 990,
+        "unique_gaia": 990,
+        "id_methods": {
+          "positional": 978,
+          "positional_unmatched": 17,
+          "positional_ambiguous": 12
+        },
+        "quality_unique_gaia": 990,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.45,
+        "metal_poor_unique": {
+          "lt_-1.0": 895,
+          "lt_-1.5": 866,
+          "lt_-2.0": 781,
+          "lt_-2.5": 453,
+          "lt_-3.0": 86,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "roederer2014": {
+        "tier": "highres_reference",
+        "dependency_group": "roederer2014",
+        "rows": 313,
+        "gaia_linked_rows": 295,
+        "unique_gaia": 295,
+        "id_methods": {
+          "positional": 272,
+          "positional_ambiguous": 23,
+          "positional_unmatched": 18
+        },
+        "quality_unique_gaia": 295,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.5,
+        "metal_poor_unique": {
+          "lt_-1.0": 295,
+          "lt_-1.5": 285,
+          "lt_-2.0": 249,
+          "lt_-2.5": 194,
+          "lt_-3.0": 76,
+          "lt_-3.5": 15,
+          "lt_-4.0": 4
+        }
+      },
+      "rpa_hansen2018": {
+        "tier": "highres_reference",
+        "dependency_group": "rpa_hansen2018",
+        "rows": 107,
+        "gaia_linked_rows": 107,
+        "unique_gaia": 107,
+        "id_methods": {
+          "positional": 104,
+          "positional_ambiguous": 3
+        },
+        "quality_unique_gaia": 107,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.13,
+        "metal_poor_unique": {
+          "lt_-1.0": 106,
+          "lt_-1.5": 103,
+          "lt_-2.0": 86,
+          "lt_-2.5": 44,
+          "lt_-3.0": 3,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "rpa_holmbeck2020": {
+        "tier": "highres_reference",
+        "dependency_group": "rpa_holmbeck2020",
+        "rows": 233,
+        "gaia_linked_rows": 233,
+        "unique_gaia": 232,
+        "id_methods": {
+          "positional": 230,
+          "positional_ambiguous": 3
+        },
+        "quality_unique_gaia": 232,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 232,
+          "lt_-1.5": 222,
+          "lt_-2.0": 151,
+          "lt_-2.5": 60,
+          "lt_-3.0": 8,
+          "lt_-3.5": 1,
+          "lt_-4.0": 0
+        }
+      },
+      "s5_dr1": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "s5_aat_2df",
+        "rows": 31777,
+        "gaia_linked_rows": 31774,
+        "unique_gaia": 29595,
+        "id_methods": {
+          "publisher_edr3": 31774,
+          "positional_unmatched": 3
+        },
+        "quality_unique_gaia": 29581,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.3995,
+        "metal_poor_unique": {
+          "lt_-1.0": 12427,
+          "lt_-1.5": 5933,
+          "lt_-2.0": 2540,
+          "lt_-2.5": 937,
+          "lt_-3.0": 273,
+          "lt_-3.5": 63,
+          "lt_-4.0": 15
+        }
+      },
+      "sdss_dr12_sspp": {
+        "tier": "survey",
+        "dependency_group": "sdss_optical_spectra_sspp",
+        "rows": 386337,
+        "gaia_linked_rows": 384527,
+        "unique_gaia": 384104,
+        "id_methods": {
+          "positional": 374094,
+          "positional_ambiguous": 10433,
+          "positional_unmatched": 1810
+        },
+        "quality_unique_gaia": 370437,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.499392509460449,
+        "metal_poor_unique": {
+          "lt_-1.0": 156224,
+          "lt_-1.5": 81657,
+          "lt_-2.0": 28763,
+          "lt_-2.5": 7038,
+          "lt_-3.0": 2055,
+          "lt_-3.5": 585,
+          "lt_-4.0": 139
+        }
+      },
+      "sdss_dr19_astra_aspcap": {
+        "tier": "survey",
+        "dependency_group": "apogee_spectra_aspcap",
+        "rows": 1095480,
+        "gaia_linked_rows": 1089060,
+        "unique_gaia": 968486,
+        "id_methods": {
+          "publisher_dr3": 1085270,
+          "positional_unmatched": 6419,
+          "positional": 2015,
+          "positional_ambiguous": 1775,
+          "": 1
+        },
+        "quality_unique_gaia": 696330,
+        "grid_edge_unique_gaia": 652,
+        "fe_h_min": -2.449251174926758,
+        "metal_poor_unique": {
+          "lt_-1.0": 20956,
+          "lt_-1.5": 7019,
+          "lt_-2.0": 1218,
+          "lt_-2.5": 0,
+          "lt_-3.0": 0,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "smss_dacosta2019_t2": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "smss_wifes",
+        "rows": 142,
+        "gaia_linked_rows": 142,
+        "unique_gaia": 142,
+        "id_methods": {
+          "positional": 140,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 142,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 142,
+          "lt_-1.5": 142,
+          "lt_-2.0": 142,
+          "lt_-2.5": 142,
+          "lt_-3.0": 142,
+          "lt_-3.5": 28,
+          "lt_-4.0": 4
+        }
+      },
+      "smss_dacosta2019_t3": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "smss_wifes",
+        "rows": 29,
+        "gaia_linked_rows": 29,
+        "unique_gaia": 29,
+        "id_methods": {
+          "positional": 29
+        },
+        "quality_unique_gaia": 29,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 29,
+          "lt_-1.5": 29,
+          "lt_-2.0": 29,
+          "lt_-2.5": 29,
+          "lt_-3.0": 29,
+          "lt_-3.5": 4,
+          "lt_-4.0": 0
+        }
+      },
+      "smss_yong2021": {
+        "tier": "highres_reference",
+        "dependency_group": "smss_yong2021",
+        "rows": 150,
+        "gaia_linked_rows": 150,
+        "unique_gaia": 150,
+        "id_methods": {
+          "positional": 142,
+          "positional_ambiguous": 8
+        },
+        "quality_unique_gaia": 150,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.09,
+        "metal_poor_unique": {
+          "lt_-1.0": 150,
+          "lt_-1.5": 150,
+          "lt_-2.0": 150,
+          "lt_-2.5": 132,
+          "lt_-3.0": 86,
+          "lt_-3.5": 14,
+          "lt_-4.0": 1
+        }
+      },
+      "yong2013_literature": {
+        "tier": "highres_reference",
+        "dependency_group": "yong2013",
+        "rows": 152,
+        "gaia_linked_rows": 152,
+        "unique_gaia": 152,
+        "id_methods": {
+          "positional": 150,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 152,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -5.76,
+        "metal_poor_unique": {
+          "lt_-1.0": 151,
+          "lt_-1.5": 149,
+          "lt_-2.0": 147,
+          "lt_-2.5": 132,
+          "lt_-3.0": 61,
+          "lt_-3.5": 18,
+          "lt_-4.0": 5
+        }
+      },
+      "yong2013_program": {
+        "tier": "highres_reference",
+        "dependency_group": "yong2013",
+        "rows": 47,
+        "gaia_linked_rows": 47,
+        "unique_gaia": 38,
+        "id_methods": {
+          "positional": 45,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 38,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.1,
+        "metal_poor_unique": {
+          "lt_-1.0": 38,
+          "lt_-1.5": 38,
+          "lt_-2.0": 38,
+          "lt_-2.5": 38,
+          "lt_-3.0": 23,
+          "lt_-3.5": 13,
+          "lt_-4.0": 4
+        }
+      }
+    },
+    "union": {
+      "unique_gaia": 1549757,
+      "multi_source": 17618,
+      "metal_poor_unique_any_source_median": {
+        "lt_-1.0": 226874,
+        "lt_-1.5": 122705,
+        "lt_-2.0": 52423,
+        "lt_-2.5": 12670,
+        "lt_-3.0": 3392,
+        "lt_-3.5": 828,
+        "lt_-4.0": 190
+      },
+      "metal_poor_unique_highres": {
+        "lt_-1.0": 2591,
+        "lt_-1.5": 1898,
+        "lt_-2.0": 1305,
+        "lt_-2.5": 836,
+        "lt_-3.0": 359,
+        "lt_-3.5": 89,
+        "lt_-4.0": 21
+      },
+      "edge_censored_only": 8465,
+      "exclusive_to_source": {
+        "bestbrightest_placco2019": 743,
+        "gaia_eso_dr5_1": 111134,
+        "lamost_cat_li2025": 5392,
+        "lamost_vmp_li2018": 6778,
+        "pastel_2020": 30466,
+        "pigs_aat": 13002,
+        "pristine_aguado2019": 802,
+        "roederer2014": 1,
+        "rpa_hansen2018": 65,
+        "rpa_holmbeck2020": 158,
+        "s5_dr1": 28131,
+        "sdss_dr12_sspp": 379715,
+        "sdss_dr19_astra_aspcap": 955588,
+        "smss_dacosta2019_t2": 56,
+        "smss_dacosta2019_t3": 17,
+        "smss_yong2021": 45,
+        "yong2013_literature": 32,
+        "yong2013_program": 14
+      }
+    }
+  },
+  "existing_sidecars": [],
+  "outputs": {
+    "observations.parquet": "4390eec31eeb3f2f4c2171fabc54b0d8b6428cc88b7cb6bc4b44dfaac313d329",
+    "stars.parquet": "dd3e2734408c18c1df4f31d4e54460b9e9480c2c617098d8e1a43230bc828b9e"
+  }
+}
