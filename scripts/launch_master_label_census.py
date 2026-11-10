@@ -36,7 +36,18 @@ EMPTY = (
 )
 
 
+SKAHA_URL = "https://ws-uv.canfar.net/skaha/v1"  # v0 advertised but 404s
+
+
 def prepare_credentials() -> str:
+    """Pick a credential; runtime credentials also need an explicit server URL."""
+    source = _credential_source()
+    if source != "saved canfar auth":
+        os.environ.setdefault("CANFAR_URL", SKAHA_URL)
+    return source
+
+
+def _credential_source() -> str:
     if os.environ.get("CANFAR_TOKEN"):
         return "CANFAR_TOKEN"
     if os.environ.get("CANFAR_CERTIFICATE"):
