@@ -92,3 +92,17 @@ def test_new_config_source_records_reject_duplicate_stars():
             np.ones((2, 3), bool),
             np.zeros((2, 3), bool),
         )
+
+
+def test_xp_presence_is_read_from_input_sentinels(tmp_path):
+    names = [f"{arm}_{j}" for arm in ("bp", "rp") for j in range(1, 56)] + ["G", "BP"]
+    cols = extension.xp_columns(names)
+    assert len(cols) == 110 and cols[-1] == 109
+    data = np.full((3, len(names)), -9999.0, dtype="f4")
+    data[:, 110] = 15.0  # G always present
+    data[0, 5] = 0.3  # one XP coefficient present
+    data[2, :110] = np.nan
+    with h5py.File(tmp_path / "x.h5", "w") as f:
+        f["input"] = data
+        has = extension.input_has_any(f["input"], cols, chunk=2)
+    np.testing.assert_array_equal(has, [True, False, False])

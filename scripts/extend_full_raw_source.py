@@ -74,6 +74,24 @@ def aligned_copy(
         destination[start:end] = values
 
 
+def xp_columns(names):
+    """Indices of the 110 Gaia XP coefficient inputs (bp_1..55, rp_1..55)."""
+    wanted = {f"{arm}_{j}" for arm in ("bp", "rp") for j in range(1, 56)}
+    cols = [i for i, name in enumerate(names) if name in wanted]
+    if len(cols) != 110:
+        raise ValueError("Complete 110-column XP layout required")
+    return cols
+
+
+def input_has_any(dataset, columns, chunk=65536):
+    """True where any of the given input columns is present (not -9999/NaN)."""
+    out = np.zeros(dataset.shape[0], bool)
+    for start in range(0, dataset.shape[0], chunk):
+        block = dataset[start : start + chunk][:, columns]
+        out[start : start + chunk] = (np.isfinite(block) & (block != -9999)).any(1)
+    return out
+
+
 def native_source_records(ids, sid, value, error, observed, known):
     """Rows and six-column arrays for a sidecar source joined onto source IDs.
 
@@ -125,6 +143,14 @@ def main():
         "--feature-run",
         default="remaining_survey_raw_features_20261107_v1",
         help="recover_remaining_survey_inputs run holding the appended stars",
+    )
+    p.add_argument(
+        "--include-no-xp",
+        action="store_true",
+        help=(
+            "also append recoverable stars without XP (official no-XP with G and "
+            "another band); their XP inputs stay -9999 / not visible"
+        ),
     )
     a = p.parse_args()
     if a.output.exists() and a.reuse_waiting_output:
@@ -207,9 +233,10 @@ def main():
         bench = np.asarray(c["benchmark_fit_exclusion_ids"], dtype="i8")
         with h5py.File(pm["prepared_path"]) as old, h5py.File(features) as extra:
             old_ids = exact_ids(old["source_id"][:])
+            new_has_xp = extra["input_has_xp"][:].astype(bool)
             selected = np.flatnonzero(
                 extra["feature_recoverable"][:].astype(bool)
-                & extra["input_has_xp"][:].astype(bool)
+                & (new_has_xp | a.include_no_xp)
             )
             new_ids = exact_ids(extra["source_id"][:][selected])
             for key in ["feature_names", "scaler_center", "scaler_scale"]:
@@ -246,6 +273,23 @@ def main():
                     additional_full_raw_star=np.isin(ids, new_ids),
                 ).items():
                     f[key] = value
+                # Per-star XP availability, so training can tell no-XP stars apart.
+                xp_cols = xp_columns(old["feature_names"][:].astype("U").tolist())
+                old_has_xp = (
+                    old["input_has_xp"][:].astype(bool)
+                    if "input_has_xp" in old
+                    else input_has_any(old["input"], xp_cols)
+                )
+                has_xp = np.zeros(n, bool)
+                has_xp[op] = old_has_xp
+                has_xp[np_] = new_has_xp[selected]
+                f["input_has_xp"] = has_xp
+                m.update(
+                    include_no_xp=bool(a.include_no_xp),
+                    appended_no_xp_stars=int((~new_has_xp[selected]).sum()),
+                    parent_no_xp_stars=int((~old_has_xp).sum()),
+                )
+                save()
                 for key in [
                     "feature_names",
                     "target_names",
@@ -553,6 +597,8 @@ def main():
                 new_roles="75 FIT / 10 TUNE / 7 CAL / 8 DEV by the same stable Gaia-ID hash; benchmark/globular references external",
                 parent_run=a.parent_run,
                 feature_run=a.feature_run,
+                include_no_xp=bool(a.include_no_xp),
+                appended_no_xp_stars=int((~new_has_xp[selected]).sum()),
                 new_source_groups=[
                     n for n in registry if n not in pm["source_registry"]
                 ],
