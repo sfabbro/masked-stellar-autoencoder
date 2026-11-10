@@ -33,6 +33,8 @@ def addresses():
         "dc.zah.uni-heidelberg.de",
         "dc.g-vo.org",
         "gea.esac.esa.int",
+        "sagadatabase.jp",
+        "simbad.cfa.harvard.edu",
     ]:
         try:
             result[host] = socket.gethostbyname(host)

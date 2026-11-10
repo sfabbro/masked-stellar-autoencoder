@@ -670,21 +670,46 @@ def fetch_vizier(
 
 
 _DESIGNATION = re.compile(
-    r"J?(\d{2})(\d{2})(\d{2}(?:\.\d+)?)([+-])(\d{2})(\d{2})(\d{2}(?:\.\d+)?)"
+    r"J(\d{2})(\d{2})(\d{2})(\.?\d*)([+-])(\d{2})(\d{2})(\d{2})(\.?\d*)"
 )
 
 
+def _seconds(whole: str, frac: str) -> float:
+    """``42`` + ``.77`` or 2MASS-style ``42`` + ``77`` (implied decimal point)."""
+    frac = frac.lstrip(".")
+    return float(whole + ("." + frac if frac else ""))
+
+
 def position_from_designation(names) -> tuple[np.ndarray, np.ndarray]:
-    """RA/Dec (deg) from IAU-style ``JHHMMSS.ss+DDMMSS.s`` designations."""
+    """RA/Dec (deg) from ``JHHMMSS.ss+DDMMSS.s`` or 2MASS ``JHHMMSSss+DDMMSSs``."""
     ra = np.full(len(names), np.nan)
     dec = np.full(len(names), np.nan)
     for i, name in enumerate(names):
         m = _DESIGNATION.search(str(name).replace(" ", ""))
         if not m:
             continue
-        h, mi, se, sign, d, dm, ds = m.groups()
-        ra[i] = 15 * (int(h) + int(mi) / 60 + float(se) / 3600)
-        dec[i] = (1 if sign == "+" else -1) * (int(d) + int(dm) / 60 + float(ds) / 3600)
+        h, mi, se, sf, sign, d, dm, ds, df = m.groups()
+        ra[i] = 15 * (int(h) + int(mi) / 60 + _seconds(se, sf) / 3600)
+        sign = 1 if sign == "+" else -1
+        dec[i] = sign * (int(d) + int(dm) / 60 + _seconds(ds, df) / 3600)
+    return ra, dec
+
+
+def parse_sexagesimal(ra_text, dec_text) -> tuple[np.ndarray, np.ndarray]:
+    """Degrees from ``HH MM SS.s`` / ``±DD MM SS.s`` strings; NaN when blank."""
+    ra = np.full(len(ra_text), np.nan)
+    dec = np.full(len(dec_text), np.nan)
+    for i, (r, d) in enumerate(zip(ra_text, dec_text, strict=True)):
+        rp, dp = str(r).split(), str(d).split()
+        if len(rp) != 3 or len(dp) != 3:
+            continue
+        try:
+            ra[i] = 15 * (float(rp[0]) + float(rp[1]) / 60 + float(rp[2]) / 3600)
+            sign = -1 if dp[0].startswith("-") else 1
+            deg = abs(float(dp[0]))
+            dec[i] = sign * (deg + float(dp[1]) / 60 + float(dp[2]) / 3600)
+        except ValueError:
+            continue
     return ra, dec
 
 
@@ -733,6 +758,364 @@ def vizier_observations(spec: VizierSource, frame: pd.DataFrame) -> pd.DataFrame
         out["fe_h_grid_edge"] = out.fe_h <= spec.fe_h_floor
     out["quality"] = quality
     return finalize(out)
+
+
+# --------------------------------------------------------------------------
+# Metal-poor literature compilations: SAGA (Milky Way) and JINAbase
+# --------------------------------------------------------------------------
+
+SAGA = dict(
+    source="saga_mw",
+    release="SAGA database, Milky Way retrieval system (database update 2026-01-20)",
+    pipeline="literature high-resolution compilation; [Fe/H] on Asplund+2009 solar scale",
+    dependency_group="literature_highres_compilation",
+    url="http://sagadatabase.jp/Retrieval/db.cgi",
+    fe_h_bins=tuple(np.round(np.arange(-8.0, 1.51, 0.5), 2)),
+    query=(
+        "x=[Fe/H] (metal), y=Teff, w1=logg; DATA_CHOICE=data_same (all three from "
+        "the same paper); every paper row kept (DATA_SAME_ONE=0); SOLAR_REF=A09; "
+        "downloaded in 0.5 dex [Fe/H] slices because the server gateway times out "
+        "after 60 s; rows repeated at slice edges are dropped"
+    ),
+    notes=(
+        "Rows are per (star, paper). Positions missing for a row are filled from "
+        "another row of the same object, then from a J2000 designation in the name"
+    ),
+)
+SAGA_COLUMNS = (
+    "Object",
+    "Reference",
+    "Population",
+    "Facility",
+    "RA",
+    "Decl",
+    "Teff",
+    "logg",
+    "Metallicity",
+    "metal",
+    "Teff_2",
+    "logg_2",
+)
+
+
+def _saga_form(lo, hi) -> list[tuple[str, str]]:
+    return [
+        ("OUTPUT_OPTION", "single_selected"),
+        ("xcategory", "Atmosphere"),
+        ("xaxis", "metal"),
+        ("AX:xaxis_text", "[Fe/H]"),
+        ("AX:xaxis_from", lo),
+        ("AX:xaxis_to", hi),
+        ("xupper", "include"),
+        ("GP:xerrorbars", "with"),
+        ("ycategory", "Atmosphere"),
+        ("yaxis", "Teff"),
+        ("AX:yaxis_text", "Teff"),
+        ("AX:yaxis_from", ""),
+        ("AX:yaxis_to", ""),
+        ("yupper", "include"),
+        ("GP:yerrorbars", "with"),
+        ("w1category", "Atmosphere"),
+        ("w1axis", "logg"),
+        ("AX:w1axis_text", "logg"),
+        ("AX:w1axis_from", ""),
+        ("AX:w1axis_to", ""),
+        ("w1upper", "include"),
+        ("SE:star_name", ""),
+        ("auth_mode", "or"),
+        ("DATA_CHOICE", "data_same"),
+        ("DATA_SAME_ONE", "0"),
+        ("DATA_SOL", "sol_any"),
+        ("SOLAR_REF", "A09"),
+        ("DATA_REPRESENTATIVE", "Mean"),
+        ("SE:n_display", "10"),
+        ("OUTPUT_DATA_PLOT", "0"),
+        ("SE:output_text_data", "1"),
+        ("SE:output_search_result", "0"),
+        ("DM:output_data_comment", "0"),
+        ("SE:output_data_error", "0"),
+        ("button", "search"),
+    ]
+
+
+def _multipart(fields) -> dict:
+    return {"files": [(k, (None, v)) for k, v in fields]}
+
+
+def fetch_saga(cache: Path, log=print) -> tuple[pd.DataFrame, dict]:
+    """Query SAGA once per [Fe/H] slice (search, then tab-separated download)."""
+    import requests
+
+    cache.mkdir(parents=True, exist_ok=True)
+    edges = SAGA["fe_h_bins"]
+    parts, files = [], {}
+    for lo, hi in zip(edges[:-1], edges[1:], strict=True):
+        path = cache / f"saga-mw-{lo:+.1f}-{hi:+.1f}.tsv"
+        if not path.exists():
+            for attempt in range(4):
+                try:
+                    with requests.Session() as session:
+                        session.post(
+                            SAGA["url"],
+                            timeout=300,
+                            **_multipart(_saga_form(f"{lo}", f"{hi}")),
+                        ).raise_for_status()
+                        download = [("button", "text_download")]
+                        download += [("TDM:columns", c) for c in SAGA_COLUMNS[:10]]
+                        download += [("TDM:columns", "Teff"), ("TDM:columns", "logg")]
+                        download += [("TDM_ncolumn", "0")]
+                        r = session.post(
+                            SAGA["url"], timeout=300, **_multipart(download)
+                        )
+                        r.raise_for_status()
+                    text = r.content.decode("utf-8", errors="replace")
+                    if not text.startswith("# Object"):
+                        raise ValueError("SAGA did not return a data table")
+                    tmp = path.with_suffix(".part")
+                    tmp.write_text(text)
+                    tmp.replace(path)
+                    break
+                except Exception as error:
+                    log(f"saga slice {lo}..{hi}: attempt {attempt}: {error}")
+                    if attempt == 3:
+                        raise
+                    time.sleep(10 * (attempt + 1))
+        files[path.name] = sha256(path)
+        lines = [ln for ln in path.read_text().splitlines() if ln and ln[0] != "#"]
+        rows = [ln.split("\t") for ln in lines]
+        if any(len(r) != len(SAGA_COLUMNS) for r in rows):
+            raise ValueError(f"Unexpected SAGA column count in {path.name}")
+        parts.append(pd.DataFrame(rows, columns=list(SAGA_COLUMNS)))
+        log(f"saga slice {lo:+.1f}..{hi:+.1f}: {len(rows)} rows")
+    raw = pd.concat(parts, ignore_index=True).map(str.strip)
+    before = len(raw)
+    raw = raw.drop_duplicates(ignore_index=True)
+    receipt = dict(
+        url=SAGA["url"],
+        query=SAGA["query"],
+        slices=files,
+        rows_before_edge_dedup=before,
+        rows=len(raw),
+        utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    )
+    return raw, receipt
+
+
+def _fill_positions(names: pd.Series, ra: np.ndarray, dec: np.ndarray):
+    """Fill missing positions from other rows of the same object, then names."""
+    frame = pd.DataFrame(dict(name=names.to_numpy(), ra=ra, dec=dec))
+    known = frame.dropna().drop_duplicates("name").set_index("name")
+    miss = frame.ra.isna()
+    frame.loc[miss, "ra"] = frame.loc[miss, "name"].map(known.ra)
+    frame.loc[miss, "dec"] = frame.loc[miss, "name"].map(known.dec)
+    miss = frame.ra.isna().to_numpy()
+    nra, ndec = position_from_designation(frame.name[miss])
+    frame.loc[miss, "ra"], frame.loc[miss, "dec"] = nra, ndec
+    return frame.ra.to_numpy("f8"), frame.dec.to_numpy("f8")
+
+
+def saga_observations(raw: pd.DataFrame) -> pd.DataFrame:
+    n = len(raw)
+    out = empty_frame(n, tier="highres_reference", **_meta(SAGA))
+    out["native_row"] = np.arange(n)
+    out["native_id"] = (raw.Object + "|" + raw.Reference).to_numpy(str)
+    ra, dec = parse_sexagesimal(raw.RA, raw.Decl)
+    out["ra"], out["dec"] = _fill_positions(raw.Object, ra, dec)
+    out["position_epoch"] = 2000.0
+    out["teff"], out["logg"] = _f8(raw.Teff), _f8(raw.logg)
+    out["fe_h"] = _f8(raw.metal)
+    out["fe_h_kind"] = np.where(np.isfinite(out.fe_h), "fe_h_a09", "")
+    out["quality"] = np.isfinite(out.fe_h) & raw.Population.eq("MILKYWAY").to_numpy()
+    return finalize(out)
+
+
+JINABASE = dict(
+    source="jinabase_2021",
+    release="JINAbase 2021 CSV (Abohalima & Frebel 2018; Mardini et al. updates)",
+    pipeline="literature high-resolution compilation (paper values; Priority kept)",
+    dependency_group="literature_highres_compilation",
+    commit="e034a8c0bea71b3a657046ae622d75750c661319",
+    url=(
+        "https://raw.githubusercontent.com/Mohammad-Mardini/JINAbase/"
+        "e034a8c0bea71b3a657046ae622d75750c661319/JINAbase_2021.csv"
+    ),
+    quality_policy="finite Fe/H; Priority==1 marks the compilers' preferred paper",
+)
+
+
+def fetch_jinabase(cache: Path) -> tuple[pd.DataFrame, dict]:
+    cache.mkdir(parents=True, exist_ok=True)
+    path = cache / "JINAbase_2021.csv"
+    if not path.exists():
+        with urllib.request.urlopen(JINABASE["url"], timeout=300) as r:
+            payload = r.read()
+        tmp = path.with_suffix(".part")
+        tmp.write_bytes(payload)
+        tmp.replace(path)
+    raw = pd.read_csv(path, dtype=str, keep_default_na=False).map(str.strip)
+    receipt = dict(
+        url=JINABASE["url"],
+        commit=JINABASE["commit"],
+        sha256=sha256(path),
+        rows=len(raw),
+    )
+    return raw, receipt
+
+
+def jinabase_observations(raw: pd.DataFrame) -> pd.DataFrame:
+    n = len(raw)
+    out = empty_frame(n, tier="highres_reference", **_meta(JINABASE))
+    out["native_row"] = np.arange(n)
+    out["native_id"] = (raw.Name + "|" + raw.Ref).to_numpy(str)
+    ra, dec = parse_sexagesimal(raw.RA, raw.DEC)
+    out["ra"], out["dec"] = _fill_positions(raw.Name, ra, dec)
+    out["position_epoch"] = 2000.0
+    out["teff"], out["logg"] = _f8(raw.Teff), _f8(raw.logg)
+    out["fe_h"] = _f8(raw["Fe/H"])
+    out["fe_h_kind"] = np.where(np.isfinite(out.fe_h), "fe_h", "")
+    out["quality"] = np.isfinite(out.fe_h) & (_f8(raw.Priority) == 1)
+    return finalize(out)
+
+
+SIMBAD_TAP = (
+    "https://simbad.cfa.harvard.edu/simbad/sim-tap",
+    "https://simbad.cds.unistra.fr/simbad/sim-tap",
+)
+
+
+def name_variants(name: str) -> list[str]:
+    """SIMBAD spellings for compact literature names (``HD2665``, ``CD-30_298``)."""
+    base = re.sub(r"\s+", " ", str(name).replace("_", " ")).strip()
+    out = [base]
+    spaced = re.sub(r"^(2MASS|SDSS|SMSS|Gaia ?DR[23])J", r"\1 J", base)
+    spaced = re.sub(r"^([A-Za-z]+)(?=[+\-]?\d)", r"\1 ", spaced)
+    spaced = re.sub(r"^(BD|CD|CPD) ([+-])", r"\1\2", spaced)
+    out.append(spaced)
+    cs = re.match(r"^CS ?(\d{5})-(\d{1,4})$", spaced)
+    if cs:
+        out.append(f"BPS CS {cs.group(1)}-{int(cs.group(2)):04d}")
+    bd = re.match(r"^(BD|CD|CPD)([+-])(\d{1,2}) (\d+)$", spaced)
+    if bd:
+        out.append(f"{bd.group(1)}{bd.group(2)}{int(bd.group(3)):02d} {bd.group(4)}")
+    seen, unique = set(), []
+    for v in out:
+        if v and v not in seen:
+            seen.add(v)
+            unique.append(v)
+    return unique
+
+
+def simbad_resolve(names, cache: Path, log=print) -> pd.DataFrame:
+    """Gaia DR3 ID and J2000 position per name through SIMBAD identifiers.
+
+    Returns name, simbad_main_id, ra, dec, gaia_dr3 (0 if SIMBAD lists none).
+    Names SIMBAD does not know are absent. Cached per name set.
+    """
+    import pyvo
+    from astropy.table import Table
+
+    names = sorted(set(map(str, names)))
+    rows = [
+        (k, r, v) for k, n in enumerate(names) for r, v in enumerate(name_variants(n))
+    ]
+    digest = hashlib.sha256("\n".join(names).encode()).hexdigest()[:16]
+    path = cache / f"simbad-{digest}.parquet"
+    cache.mkdir(parents=True, exist_ok=True)
+    if not path.exists():
+        query = (
+            "SELECT t.k, t.r, b.main_id, b.ra, b.dec, g.id AS gaia "
+            "FROM TAP_UPLOAD.t AS t JOIN ident AS i ON i.id = t.v "
+            "JOIN basic AS b ON b.oid = i.oidref "
+            "LEFT JOIN ident AS g ON g.oidref = i.oidref AND g.id LIKE 'Gaia DR3 %'"
+        )
+        parts = []
+        for start in range(0, len(rows), 5000):
+            chunk = rows[start : start + 5000]
+            upload = Table(
+                dict(
+                    k=np.array([c[0] for c in chunk], "i8"),
+                    r=np.array([c[1] for c in chunk], "i8"),
+                    v=np.array([c[2] for c in chunk], str),
+                )
+            )
+            for attempt, url in enumerate(SIMBAD_TAP * 3):
+                try:
+                    table = (
+                        pyvo.dal.TAPService(url)
+                        .run_sync(query, uploads={"t": upload}, maxrec=100000)
+                        .to_table()
+                    )
+                    break
+                except Exception as error:
+                    log(f"simbad batch {start}: {url}: {error}")
+                    if attempt == 3 * len(SIMBAD_TAP) - 1:
+                        raise
+                    time.sleep(5 * (attempt + 1))
+            parts.append(
+                pd.DataFrame(
+                    dict(
+                        k=np.asarray(table["k"], "i8"),
+                        r=np.asarray(table["r"], "i8"),
+                        simbad_main_id=np.asarray(table["main_id"]).astype(str),
+                        ra=np.ma.filled(np.ma.asarray(table["ra"], float), np.nan),
+                        dec=np.ma.filled(np.ma.asarray(table["dec"], float), np.nan),
+                        gaia=np.ma.filled(np.ma.asarray(table["gaia"]), "").astype(str),
+                    )
+                )
+            )
+        found = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+        found.to_parquet(path, index=False)
+    found = pd.read_parquet(path)
+    if found.empty:
+        return pd.DataFrame(columns=["name", "simbad_main_id", "ra", "dec", "gaia_dr3"])
+    found["gaia_dr3"] = _exact_ids(
+        [g.replace("Gaia DR3", "").strip() if g else "" for g in found.gaia]
+    )
+    # Best spelling per name; an object with several Gaia DR3 idents is ambiguous
+    found = found.sort_values(["k", "r"])
+    first = found.groupby("k").r.transform("min")
+    found = found[found.r == first]
+    counts = found.groupby("k").gaia_dr3.nunique()
+    found = found.drop_duplicates("k").set_index("k")
+    found.loc[counts[counts > 1].index, "gaia_dr3"] = 0
+    found["name"] = [names[k] for k in found.index]
+    return found[["name", "simbad_main_id", "ra", "dec", "gaia_dr3"]].reset_index(
+        drop=True
+    )
+
+
+def apply_name_resolution(obs: pd.DataFrame, resolved: pd.DataFrame) -> pd.DataFrame:
+    """Give literature rows SIMBAD Gaia DR3 IDs (exact int64, never via float).
+
+    Rows whose name SIMBAD maps to exactly one Gaia DR3 source get that ID;
+    other rows lacking a position get the SIMBAD J2000 position instead.
+    """
+    obs = obs.copy()
+    names = obs.native_id.str.split("|").str[0].to_numpy()
+    ids = dict(zip(resolved.name, resolved.gaia_dr3.to_numpy("i8"), strict=True))
+    ras = dict(zip(resolved.name, resolved.ra.to_numpy("f8"), strict=True))
+    decs = dict(zip(resolved.name, resolved.dec.to_numpy("f8"), strict=True))
+    gaia = np.array([ids.get(n, 0) for n in names], dtype="i8")
+    hit = (obs.source_id.to_numpy("i8") == 0) & (gaia > 0)
+    obs.loc[hit, "source_id"] = gaia[hit]
+    obs.loc[hit, "id_method"] = "simbad_dr3"
+    fill = obs.ra.isna().to_numpy() & ~hit
+    obs.loc[fill, "ra"] = [ras.get(n, np.nan) for n in names[fill]]
+    obs.loc[fill, "dec"] = [decs.get(n, np.nan) for n in names[fill]]
+    obs["source_id"] = obs.source_id.astype("i8")
+    return obs
+
+
+def resolve_by_name(obs: pd.DataFrame, cache: Path, log=print) -> pd.DataFrame:
+    """SIMBAD identity for literature rows (``native_id`` = ``name|reference``)."""
+    names = obs.native_id.str.split("|").str[0]
+    resolved = simbad_resolve(names.unique(), cache, log=log)
+    out = apply_name_resolution(obs, resolved)
+    log(
+        f"simbad: {len(resolved)} of {names.nunique()} names known; "
+        f"{int((out.id_method == 'simbad_dr3').sum())} rows given Gaia DR3 IDs"
+    )
+    return out
 
 
 # --------------------------------------------------------------------------

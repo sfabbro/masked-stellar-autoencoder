@@ -130,3 +130,61 @@ def test_position_from_designation():
     assert ra[0] == pytest.approx(15 * (1 / 60 + 11.95 / 3600))
     assert dec[0] == pytest.approx(3 + 21 / 60 + 5.0 / 3600)
     assert np.isnan(ra[1]) and dec[2] == pytest.approx(-45.0)
+
+
+def test_two_mass_designation_and_sexagesimal_parsing():
+    ra, dec = ml.position_from_designation(["2MASSJ09544277+5246414"])
+    assert ra[0] == pytest.approx(15 * (9 + 54 / 60 + 42.77 / 3600))
+    assert dec[0] == pytest.approx(52 + 46 / 60 + 41.4 / 3600)
+    ra, dec = ml.parse_sexagesimal(["10 13 34.7", ""], ["-2 7 57.9", ""])
+    assert ra[0] == pytest.approx(15 * (10 + 13 / 60 + 34.7 / 3600))
+    assert dec[0] == pytest.approx(-(2 + 7 / 60 + 57.9 / 3600))
+    assert np.isnan(ra[1])
+
+
+def test_literature_rows_borrow_positions_from_same_object():
+    raw = pd.DataFrame(
+        {
+            "Name": ["CS 1", "CS 1", "2MASSJ09544277+5246414"],
+            "Ref": ["A", "B", "C"],
+            "RA": ["10 00 00.0", "", ""],
+            "DEC": ["+10 00 00", "", ""],
+            "Teff": ["5000", "5100", "4400"],
+            "logg": ["2", "2.1", "0.6"],
+            "Fe/H": ["-3.0", "-3.1", ""],
+            "Priority": ["1", "2", "1"],
+        }
+    )
+    out = ml.jinabase_observations(raw)
+    assert out.ra[1] == pytest.approx(150.0) and out.dec[1] == pytest.approx(10.0)
+    assert out.ra[2] == pytest.approx(148.678208, abs=1e-5)
+    assert out.quality.tolist() == [True, False, False]
+    assert out.dependency_group.unique().tolist() == ["literature_highres_compilation"]
+
+
+def test_name_variants_cover_compact_literature_spellings():
+    assert "HD 2665" in ml.name_variants("HD2665")
+    assert "CD-30 298" in ml.name_variants("CD-30_298")
+    assert "BPS CS 29516-0041" in ml.name_variants("CS29516-041")
+    assert "BD+09 2190" in ml.name_variants("BD+9_2190")
+    assert "HE 2323-0256" in ml.name_variants("HE2323-0256")
+    assert "2MASS J09544277+5246414" in ml.name_variants("2MASSJ09544277+5246414")
+
+
+def test_name_resolution_keeps_exact_19_digit_gaia_ids():
+    obs = _obs("lit", [0, 0, 0], [-3.0, -2.0, -1.0], tier="highres_reference")
+    obs["native_id"] = ["A|p1", "B|p2", "C|p3"]
+    resolved = pd.DataFrame(
+        dict(
+            name=["A", "C"],
+            simbad_main_id=["a", "c"],
+            ra=[1.0, 2.0],
+            dec=[3.0, 4.0],
+            gaia_dr3=np.array([4671418400651900544, 0], dtype="i8"),
+        )
+    )
+    out = ml.apply_name_resolution(obs, resolved)
+    assert out.source_id.dtype == np.int64
+    assert out.source_id.tolist() == [4671418400651900544, 0, 0]
+    assert out.id_method.tolist() == ["simbad_dr3", "", ""]
+    assert out.ra[2] == 2.0 and np.isnan(out.ra[1])

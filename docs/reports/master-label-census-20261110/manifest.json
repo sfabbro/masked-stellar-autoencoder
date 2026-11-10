@@ -1,10 +1,10 @@
 {
   "status": "complete",
-  "utc": "2026-11-10T18:52:30.901320+00:00",
+  "utc": "2026-11-10T19:22:07.253072+00:00",
   "training_performed": false,
   "roles_assigned": false,
-  "script_sha256": "3e8d825181c3cec24e2b68b473b9449d7f7f8e2ed124b62efacaf97d6ffcea66",
-  "module_sha256": "68a1ce64a31f1d0a48eeeed7984c3663d6aa63d5c2cc32d53428f0042072f6b0",
+  "script_sha256": "9a1da8ad8833c7673a3c5cfbf74091fbae7ffb0ae3cd994dead353d0634eef82",
+  "module_sha256": "cc3435411a8c98360096b45bd3a9ebb48c91017dd470172febba1b45c7b1e64b",
   "acquisitions": {
     "sdss_dr19_astra_aspcap": {
       "url": "https://data.sdss.org/sas/dr19/spectro/astra/0.6.0/summary/astraAllStarASPCAP-0.6.0.fits.gz",
@@ -129,6 +129,40 @@
       "sha256": "389ab6265fe6570a95e7629187689eb41c7faabd86f7af3f02db99bca79c116a",
       "bytes": 22459723,
       "utc": "2026-11-10T18:14:35Z"
+    },
+    "saga_mw": {
+      "url": "http://sagadatabase.jp/Retrieval/db.cgi",
+      "query": "x=[Fe/H] (metal), y=Teff, w1=logg; DATA_CHOICE=data_same (all three from the same paper); every paper row kept (DATA_SAME_ONE=0); SOLAR_REF=A09; downloaded in 0.5 dex [Fe/H] slices because the server gateway times out after 60 s; rows repeated at slice edges are dropped",
+      "slices": {
+        "saga-mw--8.0--7.5.tsv": "cc0704917a4792c356dce27f8cbb0f865c19060e868fefa99067b4f35ce3b16e",
+        "saga-mw--7.5--7.0.tsv": "cffc3ae938c2b76b3d9ef67574d82ef900b7aa4b44b6a216ab77856d32de233f",
+        "saga-mw--7.0--6.5.tsv": "485d2cf80951d965a22e2c973bdf31522c9f0405b91b62b9975e58536c8c03c0",
+        "saga-mw--6.5--6.0.tsv": "a0fc41f4a226dbd8f3ff1cc7eeac3ec9099877dad02f74e112a23cec2200be3f",
+        "saga-mw--6.0--5.5.tsv": "5506ca3fa26b13ccb1a97d75e43e233e6fe3e6612761b35bbeb0cf15a9488629",
+        "saga-mw--5.5--5.0.tsv": "a831f17fda0c08899331607db025fd12689e229c1e4b539fd81578ae48c8ee11",
+        "saga-mw--5.0--4.5.tsv": "be5340ef32b6d61e7a6ed20192204175b21e197894c8a347fac0df79f4c34463",
+        "saga-mw--4.5--4.0.tsv": "71c8938cf0fcd34099828415b65fe6de1a1926df709f3b62b36d51cd9b227016",
+        "saga-mw--4.0--3.5.tsv": "2a46dec400d7555203ed63db937d84cf819784353c4fdab0f2dfe2ec86f3aea7",
+        "saga-mw--3.5--3.0.tsv": "66a3501ac733e5582c04887a8b95955890a5f967b43d9d593e4c3f3e99e4f7ea",
+        "saga-mw--3.0--2.5.tsv": "5d3d5545242d3efb2942df75d4f1348fda5ebc9d9485fb184ed80ae57c39fbdb",
+        "saga-mw--2.5--2.0.tsv": "1f49270a30d02362a5cf8131f2e670558fc0f487bb319970ebd9928acde4fe57",
+        "saga-mw--2.0--1.5.tsv": "f7ddae2c9da763e09f85973536f86dac751dedaf200b4a43cfe9bee55aab4218",
+        "saga-mw--1.5--1.0.tsv": "0ca7b8995f106068c629f0c90773e58c2a3e18ffb04f4ab51f875a72f178c55c",
+        "saga-mw--1.0--0.5.tsv": "5b236d5de8a0c5f45ba42463fbc89a1ce2908e63f507f06e0d9deb798d1cb14e",
+        "saga-mw--0.5-+0.0.tsv": "533e7b4d4468e739a0e807c6b10bbefba1b4eb14dfce669f29f8439b1e694f90",
+        "saga-mw-+0.0-+0.5.tsv": "bc3b29d0519040fb888d3b830fe31a594d0e23e76de3e62ff92c7d7b2b508a67",
+        "saga-mw-+0.5-+1.0.tsv": "daa27afd0bc5636d217b53e00ba8f6eaa4ee2ae1d0913d4bd0d11f2ee9b459f8",
+        "saga-mw-+1.0-+1.5.tsv": "cc0704917a4792c356dce27f8cbb0f865c19060e868fefa99067b4f35ce3b16e"
+      },
+      "rows_before_edge_dedup": 17513,
+      "rows": 16117,
+      "utc": "2026-11-10T19:22:47Z"
+    },
+    "jinabase_2021": {
+      "url": "https://raw.githubusercontent.com/Mohammad-Mardini/JINAbase/e034a8c0bea71b3a657046ae622d75750c661319/JINAbase_2021.csv",
+      "commit": "e034a8c0bea71b3a657046ae622d75750c661319",
+      "sha256": "4784c1e29e6a2815408029b03a2e0dc0d28d154b2c4346e881d2d1613361045d",
+      "rows": 7789
     }
   },
   "policies": {
@@ -280,6 +314,24 @@
       "quality": {},
       "fe_h_kind": "fe_h",
       "notes": "Multiple rows per star from different papers; not independent"
+    },
+    "saga_mw": {
+      "source": "saga_mw",
+      "release": "SAGA database, Milky Way retrieval system (database update 2026-01-20)",
+      "pipeline": "literature high-resolution compilation; [Fe/H] on Asplund+2009 solar scale",
+      "dependency_group": "literature_highres_compilation",
+      "url": "http://sagadatabase.jp/Retrieval/db.cgi",
+      "query": "x=[Fe/H] (metal), y=Teff, w1=logg; DATA_CHOICE=data_same (all three from the same paper); every paper row kept (DATA_SAME_ONE=0); SOLAR_REF=A09; downloaded in 0.5 dex [Fe/H] slices because the server gateway times out after 60 s; rows repeated at slice edges are dropped",
+      "notes": "Rows are per (star, paper). Positions missing for a row are filled from another row of the same object, then from a J2000 designation in the name"
+    },
+    "jinabase_2021": {
+      "source": "jinabase_2021",
+      "release": "JINAbase 2021 CSV (Abohalima & Frebel 2018; Mardini et al. updates)",
+      "pipeline": "literature high-resolution compilation (paper values; Priority kept)",
+      "dependency_group": "literature_highres_compilation",
+      "commit": "e034a8c0bea71b3a657046ae622d75750c661319",
+      "url": "https://raw.githubusercontent.com/Mohammad-Mardini/JINAbase/e034a8c0bea71b3a657046ae622d75750c661319/JINAbase_2021.csv",
+      "quality_policy": "finite Fe/H; Priority==1 marks the compilers' preferred paper"
     }
   },
   "errors": {},
@@ -339,6 +391,32 @@
           "lt_-3.0": 66,
           "lt_-3.5": 0,
           "lt_-4.0": 0
+        }
+      },
+      "jinabase_2021": {
+        "tier": "highres_reference",
+        "dependency_group": "literature_highres_compilation",
+        "rows": 7789,
+        "gaia_linked_rows": 7674,
+        "unique_gaia": 4387,
+        "id_methods": {
+          "positional": 3973,
+          "simbad_dr3": 2829,
+          "positional_ambiguous": 872,
+          "positional_unmatched": 100,
+          "": 15
+        },
+        "quality_unique_gaia": 1615,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -5.9,
+        "metal_poor_unique": {
+          "lt_-1.0": 1486,
+          "lt_-1.5": 1401,
+          "lt_-2.0": 1269,
+          "lt_-2.5": 929,
+          "lt_-3.0": 384,
+          "lt_-3.5": 77,
+          "lt_-4.0": 18
         }
       },
       "lamost_cat_li2025": {
@@ -551,6 +629,32 @@
           "lt_-4.0": 15
         }
       },
+      "saga_mw": {
+        "tier": "highres_reference",
+        "dependency_group": "literature_highres_compilation",
+        "rows": 16117,
+        "gaia_linked_rows": 15611,
+        "unique_gaia": 6188,
+        "id_methods": {
+          "simbad_dr3": 13431,
+          "positional": 2033,
+          "": 459,
+          "positional_ambiguous": 147,
+          "positional_unmatched": 47
+        },
+        "quality_unique_gaia": 6188,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -7.1,
+        "metal_poor_unique": {
+          "lt_-1.0": 3613,
+          "lt_-1.5": 3163,
+          "lt_-2.0": 2511,
+          "lt_-2.5": 1564,
+          "lt_-3.0": 640,
+          "lt_-3.5": 138,
+          "lt_-4.0": 31
+        }
+      },
       "sdss_dr12_sspp": {
         "tier": "survey",
         "dependency_group": "sdss_optical_spectra_sspp",
@@ -717,52 +821,54 @@
       }
     },
     "union": {
-      "unique_gaia": 1549757,
-      "multi_source": 17618,
+      "unique_gaia": 1551640,
+      "multi_source": 22909,
       "metal_poor_unique_any_source_median": {
-        "lt_-1.0": 226874,
-        "lt_-1.5": 122705,
-        "lt_-2.0": 52423,
-        "lt_-2.5": 12670,
-        "lt_-3.0": 3392,
-        "lt_-3.5": 828,
-        "lt_-4.0": 190
+        "lt_-1.0": 228017,
+        "lt_-1.5": 123761,
+        "lt_-2.0": 53245,
+        "lt_-2.5": 13140,
+        "lt_-3.0": 3570,
+        "lt_-3.5": 852,
+        "lt_-4.0": 194
       },
       "metal_poor_unique_highres": {
-        "lt_-1.0": 2591,
-        "lt_-1.5": 1898,
-        "lt_-2.0": 1305,
-        "lt_-2.5": 836,
-        "lt_-3.0": 359,
-        "lt_-3.5": 89,
-        "lt_-4.0": 21
+        "lt_-1.0": 4864,
+        "lt_-1.5": 3941,
+        "lt_-2.0": 2929,
+        "lt_-2.5": 1720,
+        "lt_-3.0": 687,
+        "lt_-3.5": 149,
+        "lt_-4.0": 34
       },
-      "edge_censored_only": 8465,
+      "edge_censored_only": 8448,
       "exclusive_to_source": {
-        "bestbrightest_placco2019": 743,
-        "gaia_eso_dr5_1": 111134,
-        "lamost_cat_li2025": 5392,
-        "lamost_vmp_li2018": 6778,
-        "pastel_2020": 30466,
-        "pigs_aat": 13002,
-        "pristine_aguado2019": 802,
+        "bestbrightest_placco2019": 65,
+        "gaia_eso_dr5_1": 111116,
+        "jinabase_2021": 484,
+        "lamost_cat_li2025": 5321,
+        "lamost_vmp_li2018": 6617,
+        "pastel_2020": 27405,
+        "pigs_aat": 13001,
+        "pristine_aguado2019": 775,
         "roederer2014": 1,
-        "rpa_hansen2018": 65,
-        "rpa_holmbeck2020": 158,
-        "s5_dr1": 28131,
-        "sdss_dr12_sspp": 379715,
-        "sdss_dr19_astra_aspcap": 955588,
-        "smss_dacosta2019_t2": 56,
-        "smss_dacosta2019_t3": 17,
-        "smss_yong2021": 45,
-        "yong2013_literature": 32,
-        "yong2013_program": 14
+        "rpa_hansen2018": 0,
+        "rpa_holmbeck2020": 0,
+        "s5_dr1": 28085,
+        "saga_mw": 828,
+        "sdss_dr12_sspp": 379653,
+        "sdss_dr19_astra_aspcap": 955309,
+        "smss_dacosta2019_t2": 54,
+        "smss_dacosta2019_t3": 16,
+        "smss_yong2021": 0,
+        "yong2013_literature": 0,
+        "yong2013_program": 1
       }
     }
   },
   "existing_sidecars": [],
   "outputs": {
-    "observations.parquet": "4390eec31eeb3f2f4c2171fabc54b0d8b6428cc88b7cb6bc4b44dfaac313d329",
-    "stars.parquet": "dd3e2734408c18c1df4f31d4e54460b9e9480c2c617098d8e1a43230bc828b9e"
+    "observations.parquet": "01463d330190d12dfa170a9025c1261c0ce25ced3b714fbf998337dca46297ce",
+    "stars.parquet": "ba2788018b8deb64e6e67ff8545b90d5b5f141c5efe8677d2f4e197aaa779aee"
   }
 }

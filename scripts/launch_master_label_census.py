@@ -5,10 +5,14 @@ archive), writes the observation/star tables and manifest to ARC, and joins
 against every already staged ``native_observations`` sidecar under the
 stellar-improvement root to report new unique and new metal-poor stars.
 
-Credentials (never committed): either ``CANFAR_TOKEN`` (+ optional
-``CANFAR_URL``), ``CANFAR_CERTIFICATE`` (path to a cadcproxy.pem), or
-``CADC_PROXY_PEM`` holding the PEM text, which is written to
-``~/.ssl/cadcproxy.pem`` with mode 0600 and exported as CANFAR_CERTIFICATE.
+Credentials (never committed), first match wins:
+
+* ``CANFAR_TOKEN`` (+ optional ``CANFAR_URL``): bearer token;
+* ``CANFAR_CERTIFICATE``: path to a cadcproxy.pem;
+* ``CADC_PROXY_PEM``: PEM text, written to ``~/.ssl/cadcproxy.pem`` (0600);
+* ``CADC_USERNAME`` + ``CADC_PASSWORD``: a fresh 10-day proxy certificate is
+  fetched with ``cadc-get-cert`` through a temporary 0600 netrc that is
+  deleted immediately afterwards.
 """
 
 import argparse
@@ -47,6 +51,42 @@ def prepare_credentials() -> str:
         path.chmod(0o600)
         os.environ["CANFAR_CERTIFICATE"] = str(path)
         return "CADC_PROXY_PEM"
+    user, password = os.environ.get("CADC_USERNAME"), os.environ.get("CADC_PASSWORD")
+    if user and password:
+        import subprocess
+        import tempfile
+
+        path = Path.home() / ".ssl" / "cadcproxy.pem"
+        path.parent.mkdir(mode=0o700, exist_ok=True)
+        hosts = (
+            "ws-cadc.canfar.net",
+            "ws-uv.canfar.net",
+            "www.canfar.net",
+            "www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca",
+        )
+        with tempfile.NamedTemporaryFile("w", delete=False) as netrc:
+            os.chmod(netrc.name, 0o600)
+            for host in hosts:
+                netrc.write(f"machine {host} login {user} password {password}\n")
+        try:
+            subprocess.run(
+                [
+                    "cadc-get-cert",
+                    "--netrc-file",
+                    netrc.name,
+                    "--days-valid",
+                    "10",
+                    "--cert-filename",
+                    str(path),
+                    "-q",
+                ],
+                check=True,
+            )
+        finally:
+            os.unlink(netrc.name)
+        path.chmod(0o600)
+        os.environ["CANFAR_CERTIFICATE"] = str(path)
+        return "CADC_USERNAME/CADC_PASSWORD"
     default = Path.home() / ".ssl" / "cadcproxy.pem"
     if default.is_file():
         os.environ["CANFAR_CERTIFICATE"] = str(default)
@@ -55,7 +95,8 @@ def prepare_credentials() -> str:
     if saved.is_file():
         return "saved canfar auth"
     raise SystemExit(
-        "No CANFAR credential: set CANFAR_TOKEN, CANFAR_CERTIFICATE or CADC_PROXY_PEM"
+        "No CANFAR credential: set CANFAR_TOKEN, CANFAR_CERTIFICATE, CADC_PROXY_PEM "
+        "or CADC_USERNAME + CADC_PASSWORD"
     )
 
 
@@ -65,6 +106,11 @@ def main():
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--cpu", type=int, default=4)
     p.add_argument("--ram", type=int, default=32)
+    p.add_argument(
+        "--check-auth",
+        action="store_true",
+        help="prepare credentials and list CANFAR sessions, then exit",
+    )
     a = p.parse_args()
     files = {name: path.read_text() for name, path in FILES.items()}
     files.update({name: "" for name in EMPTY})
@@ -90,6 +136,11 @@ def main():
     if a.dry_run:
         return
     print("credential:", prepare_credentials())
+    if a.check_auth:
+        from canfar.sessions import Session
+
+        print("CANFAR sessions visible:", len(Session(timeout=40).fetch()))
+        return
     from launch_decision_cpu import submit_cpu
 
     submit_cpu(

@@ -165,6 +165,41 @@ def main():
             manifest["errors"][spec.source] = f"{type(error).__name__}: {error}"
             log(f"FAILED {spec.source}: {error}")
         save()
+    for spec, fetch, convert in (
+        (
+            ml.SAGA,
+            lambda: ml.fetch_saga(a.work / "saga", log=log),
+            ml.saga_observations,
+        ),
+        (
+            ml.JINABASE,
+            lambda: ml.fetch_jinabase(a.work / "jinabase"),
+            ml.jinabase_observations,
+        ),
+    ):
+        if not wanted(spec["source"]):
+            continue
+        try:
+            raw, receipt = fetch()
+            manifest["acquisitions"][spec["source"]] = receipt
+            manifest["policies"][spec["source"]] = {
+                k: v for k, v in spec.items() if k not in ("fe_h_bins",)
+            }
+            frame = convert(raw)
+            try:
+                frame = ml.resolve_by_name(frame, a.work / "simbad", log=log)
+            except Exception as error:
+                manifest["errors"]["simbad:" + spec["source"]] = (
+                    f"{type(error).__name__}: {error}"
+                )
+                log(f"FAILED simbad {spec['source']}: {error}")
+            # Literature positions: J2000 at roughly epoch 2000, often low precision
+            frames.append((frame, 3.0, (2000.0,), 30.0))
+            log(f"{spec['source']}: {len(frame)} rows")
+        except Exception as error:
+            manifest["errors"][spec["source"]] = f"{type(error).__name__}: {error}"
+            log(f"FAILED {spec['source']}: {error}")
+        save()
     resolved = []
     for frame, radius, epochs, search in frames:
         name = frame.source.iloc[0] if len(frame) else "empty"

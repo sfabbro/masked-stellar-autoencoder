@@ -49,6 +49,9 @@ epoch.
 
 - SDSS/SSPP and APOGEE rows must keep the same nearest source at both 2000 and
   2008 within 1.5″.
+- SAGA and JINAbase names first go to SIMBAD (CfA mirror) for its Gaia DR3
+  identifier (`id_method = simbad_dr3`). Rows that SIMBAD cannot resolve keep
+  their catalogue (or SIMBAD) position for the positional match.
 - High-resolution literature samples use a 30″ candidate search, because halo
   subdwarfs move several arcsec between epochs, and a 3″ match radius.
 - WISE, SkyMapper and Pristine positions use their own epochs.
@@ -70,13 +73,18 @@ epoch.
 | RPA Hansen+2018, Holmbeck+2020 | high-res reference | positional | |
 | Yong+2021 SkyMapper, Yong+2013, Roederer+2014 | high-res reference | positional | Roederer gives model [M/H] |
 | PASTEL 2020 | high-res reference | positional | Several papers per star |
+| SAGA (Milky Way) | high-res reference | SIMBAD DR3, then positional | Per-paper rows; [Fe/H] on Asplund+2009 scale; fetched in 0.5 dex slices |
+| JINAbase 2021 | high-res reference | SIMBAD DR3, then positional | Pinned GitHub commit; `Priority==1` is quality |
 
 The DR17 APOGEE, DESI DR1, GALAH DR4, LAMOST DR12, Gaia GSP-Spec, RAVE DR6,
 MaStar and BOSSNet products are already staged on ARC. The CANFAR run joins
 every `native_observations/<source>` sidecar under the stellar-improvement root
 (`--existing-root`) and records which file it used for each source.
 
-Still to add: SAGA database and JINAbase compilations, H3 (if released),
+SAGA, JINAbase and the other literature tables share papers, so SAGA and
+JINAbase use one dependency group (`literature_highres_compilation`).
+
+Still to add: the SAGA Local Group (dwarf galaxy) system, H3 (if released),
 Ezzeddine+2020 RPA (its parameters need a join on 2MASS ID), AMBRE, Gaia DR4
 (expected Dec 2026) and 4MOST pDR0.
 
@@ -88,10 +96,11 @@ Locally (needs outbound access to data.sdss.org, VizieR and gea.esac.esa.int):
 pixi run python scripts/run_master_label_census.py --work /path/cache --output /path/out
 ```
 
-On CANFAR, with one of these set: `CANFAR_TOKEN`, `CANFAR_CERTIFICATE`, or
-`CADC_PROXY_PEM` (PEM text):
+On CANFAR, with one of these set: `CADC_USERNAME` + `CADC_PASSWORD`
+(fetches a fresh 10-day proxy certificate), `CADC_PROXY_PEM` (PEM text),
+`CANFAR_CERTIFICATE` (path) or `CANFAR_TOKEN`. Check access with `--check-auth`:
 
 ```bash
-pixi run -e monitor python scripts/launch_master_label_census.py --dry-run
+pixi run -e monitor python scripts/launch_master_label_census.py --check-auth
 pixi run -e monitor python scripts/launch_master_label_census.py
 ```
