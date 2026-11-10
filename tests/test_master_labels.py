@@ -188,3 +188,36 @@ def test_name_resolution_keeps_exact_19_digit_gaia_ids():
     assert out.source_id.tolist() == [4671418400651900544, 0, 0]
     assert out.id_method.tolist() == ["simbad_dr3", "", ""]
     assert out.ra[2] == 2.0 and np.isnan(out.ra[1])
+
+
+def test_fetch_vizier_skips_refused_mirror_and_retries_rate_limited(
+    tmp_path, monkeypatch
+):
+    import io as _io
+    import urllib.error
+
+    calls = []
+    table = (
+        b"#Column\t_RAJ2000\n#Column\t[Fe/H]\n_RAJ2000\t[Fe/H]\ndeg\t \n"
+        b"-------\t-----\n1.0\t-2.0\n"
+    )
+
+    def fake_urlopen(url, timeout):
+        calls.append(url.split("?")[0])
+        if url.startswith("https://blocked"):
+            raise urllib.error.URLError("Tunnel connection failed: 403 Forbidden")
+        if len([c for c in calls if c.startswith("https://slow")]) < 2:
+            return _io.BytesIO(b"<html>busy</html>")
+        return _io.BytesIO(table)
+
+    monkeypatch.setattr(ml.urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(ml.time, "sleep", lambda s: None)
+    spec = ml.VizierSource("t", "J/x", "survey", "r", "p", "d", None, None, "[Fe/H]")
+    frame, receipt = ml.fetch_vizier(
+        spec, tmp_path, mirrors=("https://blocked/a", "https://slow/b")
+    )
+    assert calls.count("https://blocked/a") == 1
+    assert calls.count("https://slow/b") == 2
+    assert frame["[Fe/H]"].tolist() == ["-2.0"] and receipt["url"].startswith(
+        "https://slow"
+    )

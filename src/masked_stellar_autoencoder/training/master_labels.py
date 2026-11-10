@@ -21,6 +21,7 @@ import io
 import json
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import warnings
@@ -627,14 +628,36 @@ def fetch_vizier(
             }
         )
         errors = []
-        for base, attempt in [(m, k) for m in mirrors for k in range(3)]:
+        # A mirror that refuses the tunnel (403) is skipped at once; a mirror
+        # that answers without a table (rate limiting) is retried with backoff.
+        for base in mirrors:
+            for attempt in range(5):
+                try:
+                    if attempt:
+                        time.sleep(min(300, 30 * 2 ** (attempt - 1)))
+                    with urllib.request.urlopen(
+                        base + "?" + query, timeout=timeout
+                    ) as r:
+                        payload = r.read()
+                    if b"#Column" not in payload:
+                        head = payload[:300].decode("utf-8", "replace")
+                        head = " ".join(ln for ln in head.splitlines() if ln.strip())
+                        raise ValueError(f"No table schema in response: {head[:200]}")
+                    break
+                except urllib.error.URLError as error:
+                    errors.append(f"{base}: URLError: {error.reason}")
+                    payload = None
+                    refused = isinstance(error, urllib.error.HTTPError) and (
+                        400 <= error.code < 500
+                    )
+                    if refused or "403" in str(error.reason):
+                        break  # blocked tunnel or missing table: next mirror
+                except Exception as error:
+                    errors.append(f"{base}: {type(error).__name__}: {error}")
+                    payload = None
+            if payload is None:
+                continue
             try:
-                if attempt:
-                    time.sleep(5 * attempt)
-                with urllib.request.urlopen(base + "?" + query, timeout=timeout) as r:
-                    payload = r.read()
-                if b"#Column" not in payload:
-                    raise ValueError("No table schema in response")
                 tmp = path.with_suffix(".part")
                 tmp.write_bytes(payload)
                 tmp.replace(path)
