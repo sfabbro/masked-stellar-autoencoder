@@ -58,3 +58,37 @@ def test_mixed_signed_unsigned_ids_cannot_silently_round_to_float():
     assert int(ids[np_[0]]) == 6000000000000000003
     with pytest.raises(ValueError, match="integer"):
         extension.exact_ids(new.astype("f8"))
+
+
+def test_new_config_source_records_join_by_exact_id_and_keep_three_columns():
+    ids = np.array([11, 22, 33, 44], dtype="i8")
+    sid = np.array([44, 11, 99, 22], dtype="i8")
+    value = np.array(
+        [[5000, 2, -2.5], [6000, 4, -0.2], [5500, 3, -1], [4800, 1.5, np.nan]]
+    )
+    error = np.array([[50, 0.1, 0.1], [np.nan] * 3, [60, 0.2, 0.2], [70, 0.2, np.nan]])
+    observed = np.isfinite(value)
+    observed[3] = [False, False, False]  # star 22 observes nothing -> dropped
+    known = np.isfinite(error) & observed
+    rows, arrays, outside = extension.native_source_records(
+        ids, sid, value, error, observed, known
+    )
+    np.testing.assert_array_equal(rows, [0, 3])  # stars 11 and 44, sorted
+    assert outside == 1  # star 99 is not in the source
+    assert arrays["value"].shape == (2, 6)
+    np.testing.assert_array_equal(arrays["value"][1, :3], [5000, 2, -2.5])
+    assert not arrays["observed"][:, 3:].any() and not arrays["error_known"][0].any()
+
+
+def test_new_config_source_records_reject_duplicate_stars():
+    ids = np.array([11, 22], dtype="i8")
+    value = np.array([[5000, 2, -1.0], [5100, 2, -1.1]])
+    with pytest.raises(ValueError, match="two records"):
+        extension.native_source_records(
+            ids,
+            np.array([11, 11]),
+            value,
+            np.full((2, 3), np.nan),
+            np.ones((2, 3), bool),
+            np.zeros((2, 3), bool),
+        )

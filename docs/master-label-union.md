@@ -104,3 +104,67 @@ On CANFAR, with one of these set: `CADC_USERNAME` + `CADC_PASSWORD`
 pixi run -e monitor python scripts/launch_master_label_census.py --check-auth
 pixi run -e monitor python scripts/launch_master_label_census.py
 ```
+
+## From census to training
+
+The six-target NSF trainer (`scripts/run_expanded_six_training.py`) learns
+one monotone map per source from that survey's coordinate to the common
+coordinate, jointly with the network. The gauge is fixed by the selected
+decision's reference rows (APOGEE Teff/[Fe/H], seismic logg, DESI alpha,
+StarHorse age/distance), so added sources never move it.
+
+### Map complexity follows overlap
+
+`scripts/run_master_label_overlap.py` (`training/label_overlap.py`) scores
+identity, offset, affine and piecewise-linear survey → high-res maps by 5-fold
+CV for every source. Results (`docs/reports/master-label-overlap-20261110/`):
+
+- Small catalogues (fewer than ~100 shared stars) never support more than an
+  offset.
+- LAMOST LASP, BOSSNet, RAVE, SSPP, Gaia-ESO and LAMOST VMP need curvature.
+  LASP and BOSSNet read 0.9–1.2 dex high below [Fe/H] = −3.
+- DESI needs only a +0.2 dex offset.
+
+`training/map_policy.py` turns this into per-source families, using:
+
+- the CV choice;
+- spline only with ≥ 200 shared stars;
+- affine only with ≥ 20;
+- offset otherwise, never identity.
+
+`SixSurveyMap(source_kinds=...)` applies a family per source. Offset and
+affine rows are exact constant-slope splines. The family list is not part of
+the saved state, so old checkpoints load unchanged; the run records it as
+`source_map_kinds`. The trainer reads `source_map_kinds` from its YAML (added
+sources only; the six selected rows keep the decision family).
+
+### Training sidecars
+
+`scripts/write_master_label_sidecars.py` (`training/master_label_sidecars.py`)
+writes one `native_observations` group per training source:
+
+- one record per star;
+- grid-edge [Fe/H] not observed;
+- DR19 ASPCAP restricted to SDSS-V stars without a DR17 row;
+- high-res literature merged into `highres_literature` (per-star median,
+  unknown error);
+- SkyMapper Da Costa tables merged.
+
+Current product: `master_label_sidecars_20261111_v1` on ARC (11 sources,
+sha256 `409a4507…`). It is listed in `configs/master-label-source-20261111.json`.
+
+### Chain (`scripts/launch_master_label_training_chain.py`)
+
+| Step | Script | Output run |
+|---|---|---|
+| `features` | `recover_remaining_survey_inputs.py --parent-run expanded_six_source_20261107_v5` | `master_label_raw_features_20261111_v1` |
+| `source` | `extend_full_raw_source.py --parent-run …v5 --feature-run …` (new config sources become new groups; roles by stable hash; benchmarks and globular members external) | `expanded_six_source_20261111_v6` |
+| `train` | `run_expanded_six_training.py --config configs/master-label-six-nsf-fullfit-20261111.yaml` (GPU) | `master_label_six_nsf_fullfit_20261111_v1` |
+
+Run each step with `--dry-run` first. Each step clones the repository at the
+pushed HEAD, and the launcher refuses unpushed or dirty trees. Only stars with
+recoverable XP inputs are appended (as for v5); admitting no-XP stars is a
+separate change. Records of one star from different sources are scored
+independently. LAMOST VMP/CaT reuse LAMOST spectra, so those records are
+correlated with LAMOST LASP and not independent; treat their weight as an open
+modelling choice.

@@ -15,9 +15,29 @@ class SixSurveyMap(nn.Module):
     instead requires a separately observed physical anchor. A zero-sum target
     fixes the arithmetic mean map to the identity at every spline knot.
     Unsupported edges stay identity and must never receive a scored label.
+
+    ``source_kinds`` optionally gives each source its own map family
+    (``identity``, ``offset``, ``affine`` or ``spline``) instead of the single
+    ``kind``. Complexity can then follow each survey's overlap: a small survey
+    gets an offset, a large low-resolution survey a spline. Affine and offset
+    rows are exact special cases of the spline (constant slopes), so mixed maps
+    share one parameter layout. ``identity`` rows keep their support but no
+    free parameters. The per-source families are a non-persistent buffer: old
+    checkpoints load unchanged, and the caller records ``source_kinds``.
     """
 
-    def __init__(self, support, reference, *, zero_sum=(), kind="affine", bins=8):
+    MODES = {"identity": 0, "offset": 1, "affine": 2, "spline": 3}
+
+    def __init__(
+        self,
+        support,
+        reference,
+        *,
+        zero_sum=(),
+        kind="affine",
+        bins=8,
+        source_kinds=None,
+    ):
         super().__init__()
         support = torch.as_tensor(support, dtype=torch.bool)
         reference = torch.as_tensor(reference, dtype=torch.long)
@@ -41,27 +61,44 @@ class SixSurveyMap(nn.Module):
         zero[list(zero_sum)] = True
         if (zero & (reference >= 0)).any():
             raise ValueError("Choose either a reference source or a zero-sum gauge")
+        if source_kinds is None:
+            source_kinds = [kind] * len(support)
+        source_kinds = list(source_kinds)
+        if len(source_kinds) != len(support) or not set(source_kinds) <= set(
+            self.MODES
+        ):
+            raise ValueError("One known map family per source required")
+        mode = torch.tensor([self.MODES[k] for k in source_kinds], dtype=torch.long)
         free = support.clone()
+        free[mode == 0] = False
         for j, ref in enumerate(reference.tolist()):
             if ref >= 0:
                 free[ref, j] = False
+        if (zero & support[mode == 0].any(0)).any():
+            raise ValueError("Identity rows cannot join a zero-sum gauge target")
+        spline = kind == "spline" or bool((mode == 3).any())
         self.register_buffer("support", support)
         self.register_buffer("free", free)
         self.register_buffer("zero_sum", zero)
         self.register_buffer("reference", reference)
+        self.register_buffer("slope_mode", mode, persistent=False)
         self.bias = nn.Parameter(torch.zeros(support.shape))
         self.raw_slope = nn.Parameter(
-            torch.zeros((*support.shape, bins if kind == "spline" else 1))
+            torch.zeros((*support.shape, bins if spline else 1))
         )
         self.kind = kind
-        self.bins = bins if kind == "spline" else 1
+        self.source_kinds = source_kinds
+        self.bins = bins if spline else 1
+        # Exported coefficient arrays: mixed families are exact as a spline.
+        self.export_kind = "spline" if self.bins > 1 else kind
 
     def coefficients(self):
         bias = 2 * torch.tanh(self.bias) * self.free
         slopes = torch.exp(0.5 * torch.tanh(self.raw_slope))
+        mode = self.slope_mode[:, None, None]
+        slopes = torch.where(mode == 2, slopes[..., :1].expand_as(slopes), slopes)
+        slopes = torch.where(mode <= 1, torch.ones_like(slopes), slopes)
         slopes = torch.where(self.free[:, :, None], slopes, torch.ones_like(slopes))
-        if self.kind == "offset":
-            slopes = torch.ones_like(slopes)
         for j in torch.nonzero(self.zero_sum, as_tuple=False).flatten().tolist():
             active = self.support[:, j]
             bias = bias.clone()
@@ -91,7 +128,7 @@ class SixSurveyMap(nn.Module):
             raise ValueError("Observed label on unsupported source-target edge")
         bias, slopes = self.coefficients()
         bias, slopes = bias[source_index], slopes[source_index]
-        if self.kind != "spline":
+        if self.bins == 1:
             return draws * slopes[:, :, 0][None] + bias[None]
         # Exact continuous piecewise-linear map, including positive tangent tails.
         width = 8 / self.bins

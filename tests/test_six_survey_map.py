@@ -43,3 +43,46 @@ def test_unsupported_target_is_rejected_instead_of_projected():
     model = SixSurveyMap(support, [0] * 6)
     with pytest.raises(ValueError, match="unsupported"):
         model(torch.zeros(4, 2, 6), torch.arange(2), torch.ones(2, 6, dtype=torch.bool))
+
+
+def test_mixed_source_families_are_exact_special_cases_of_the_spline():
+    support = torch.ones((5, 6), dtype=torch.bool)
+    kinds = ["affine", "identity", "offset", "affine", "spline"]
+    model = SixSurveyMap(support, [0] * 6, kind="affine", source_kinds=kinds)
+    assert model.bins == 8 and model.export_kind == "spline"
+    with torch.no_grad():
+        model.bias.normal_()
+        model.raw_slope.normal_()
+    x = torch.linspace(-7, 7, 29)[:, None, None].expand(-1, 5, 6)
+    y = model(x, torch.arange(5))
+    torch.testing.assert_close(y[:, 1], x[:, 1])  # identity row
+    offset = y[:, 2] - x[:, 2]
+    torch.testing.assert_close(offset, offset[:1].expand_as(offset))  # pure shift
+    slope = (y[1:, 3] - y[:-1, 3]) / (x[1:, 3] - x[:-1, 3])
+    torch.testing.assert_close(slope, slope[:1].expand_as(slope))  # one slope
+    _, slopes = model.coefficients()
+    assert not torch.allclose(slopes[4], slopes[4, :, :1].expand_as(slopes[4]))
+
+
+def test_mixed_families_load_legacy_checkpoints_unchanged():
+    support = torch.ones((3, 6), dtype=torch.bool)
+    legacy = SixSurveyMap(support, [0] * 6, kind="affine")
+    with torch.no_grad():
+        legacy.bias.normal_()
+        legacy.raw_slope.normal_()
+    state = legacy.state_dict()
+    assert "slope_mode" not in state
+    same = SixSurveyMap(support, [0] * 6, kind="affine")
+    same.load_state_dict(state, strict=True)
+    x = torch.randn(4, 3, 6)
+    torch.testing.assert_close(same(x, torch.arange(3)), legacy(x, torch.arange(3)))
+
+
+def test_identity_rows_cannot_join_a_zero_sum_target():
+    with pytest.raises(ValueError, match="zero-sum"):
+        SixSurveyMap(
+            torch.ones((2, 6), dtype=torch.bool),
+            [-1] * 6,
+            zero_sum=[0],
+            source_kinds=["identity", "affine"],
+        )

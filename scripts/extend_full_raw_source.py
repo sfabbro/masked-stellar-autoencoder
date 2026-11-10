@@ -74,11 +74,58 @@ def aligned_copy(
         destination[start:end] = values
 
 
+def native_source_records(ids, sid, value, error, observed, known):
+    """Rows and six-column arrays for a sidecar source joined onto source IDs.
+
+    ``value/error/observed/known`` hold the sidecar's three atmospheric columns.
+    Records whose star is absent from ``ids`` or that observe nothing are
+    dropped (and counted). Rows come back sorted with unique star rows.
+    """
+    sid = exact_ids(sid)
+    observed = np.asarray(observed, dtype=bool)
+    known = np.asarray(known, dtype=bool) & observed
+    if np.any(known & (~np.isfinite(error) | (error <= 0))):
+        raise ValueError("Known errors are invalid")
+    pos = np.searchsorted(ids, sid)
+    hit = pos < len(ids)
+    hit[hit] &= ids[pos[hit]] == sid[hit]
+    outside = int((~hit & observed.any(1)).sum())
+    hit &= observed.any(1)
+    rows = pos[hit]
+    order = np.argsort(rows, kind="stable")
+    rows = rows[order]
+    if np.any(np.diff(rows) <= 0):
+        raise ValueError("A source has two records for one star")
+    arrays = {}
+    for key, source, fill in (
+        ("value", value, np.nan),
+        ("error", error, np.nan),
+        ("observed", observed, False),
+        ("error_known", known, False),
+    ):
+        out = np.full((len(rows), 6), fill, dtype=bool if fill is False else "f8")
+        out[:, :3] = np.asarray(source)[hit][order]
+        arrays[key] = out
+    if not np.isfinite(arrays["value"][arrays["observed"]]).all():
+        raise ValueError("Observed native values must be finite")
+    return rows, arrays, outside
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--reuse-waiting-output", action="store_true")
+    p.add_argument(
+        "--parent-run",
+        default="expanded_six_source_20261107_v4",
+        help="complete expanded six-target source run to extend",
+    )
+    p.add_argument(
+        "--feature-run",
+        default="remaining_survey_raw_features_20261107_v1",
+        help="recover_remaining_survey_inputs run holding the appended stars",
+    )
     a = p.parse_args()
     if a.output.exists() and a.reuse_waiting_output:
         previous = json.loads((a.output / "manifest.json").read_text())
@@ -112,7 +159,7 @@ def main():
     try:
         deadline = time.monotonic() + 24 * 3600
         while time.monotonic() < deadline:
-            path = ROOT / "expanded_six_source_20261107_v4/manifest.json"
+            path = ROOT / a.parent_run / "manifest.json"
             pm = json.loads(path.read_text()) if path.exists() else {}
             if pm.get("status") == "failed":
                 raise RuntimeError("Parent astrometry recovery failed")
@@ -124,7 +171,7 @@ def main():
         else:
             raise TimeoutError("Parent source not ready")
         c = json.loads(a.config.read_text())
-        feature_dir = ROOT / "remaining_survey_raw_features_20261107_v1"
+        feature_dir = ROOT / a.feature_run
         fm = json.loads((feature_dir / "manifest.json").read_text())
         features = feature_dir / "additional-star-features.h5"
         if (
@@ -389,6 +436,56 @@ def main():
                     )
                     m["last_source"] = name
                     save()
+                # Config sources absent from the parent registry become new groups.
+                registry = list(pm["source_registry"])
+                for spec in c["additional_sources"]:
+                    name = spec["name"]
+                    if name in registry:
+                        continue
+                    if sha(spec["path"]) != spec["sha256"]:
+                        raise ValueError("Native label sidecar changed " + name)
+                    with h5py.File(spec["path"]) as sf:
+                        g = sf["native_observations/" + name]
+                        e = g["error"][:]
+                        o = g["observed"][:].astype(bool)
+                        known = (
+                            g["error_known"][:].astype(bool)
+                            if "error_known" in g
+                            else (o & np.isfinite(e) & (e > 0))
+                        )
+                        rows, arrays, outside = native_source_records(
+                            ids, g["source_id"][:], g["value"][:], e, o, known
+                        )
+                        definition = dict(
+                            spec,
+                            coordinate="native",
+                            source_group_attributes={
+                                k: str(v) for k, v in g.attrs.items()
+                            },
+                            no_quantity_aliasing=True,
+                        )
+                    if name == "gaia_dr3_gspspec" and arrays["observed"][:, 2].any():
+                        raise ValueError("GSP M/H must not become Fe/H")
+                    dest = f.create_group("native_observations/" + name)
+                    dest["star_row"] = rows
+                    for key, values in arrays.items():
+                        dest.create_dataset(key, data=values, compression="lzf")
+                    dest.attrs["definition_json"] = json.dumps(definition)
+                    union[rows] |= arrays["observed"]
+                    known_union[rows] |= arrays["error_known"]
+                    record_count[rows] += arrays["observed"].any(1)
+                    source_counts[name] = dict(
+                        rows=len(rows),
+                        outside_source_stars=outside,
+                        new_source_group=True,
+                        fit_records=int(
+                            ((roles[rows] == b"fit") & eligible[rows]).sum()
+                        ),
+                        observed_per_target=arrays["observed"].sum(0).tolist(),
+                    )
+                    registry.append(name)
+                    m["last_source"] = name
+                    save()
                 if not union[np_].any(1).all():
                     raise ValueError("A newly admitted star has no native target")
                 f.attrs["complete"] = True
@@ -440,7 +537,7 @@ def main():
             prepared_path=str(output),
             prepared_sha256=sha(output),
             total_stars=n,
-            source_registry=pm["source_registry"],
+            source_registry=registry,
             sources=source_counts,
             roles={r: int((roles == r.encode()).sum()) for r in counts},
             eligible_role_counts={
@@ -454,6 +551,11 @@ def main():
                 additional_stars=len(new_ids),
                 old_roles_inputs_labels_preserved=True,
                 new_roles="75 FIT / 10 TUNE / 7 CAL / 8 DEV by the same stable Gaia-ID hash; benchmark/globular references external",
+                parent_run=a.parent_run,
+                feature_run=a.feature_run,
+                new_source_groups=[
+                    n for n in registry if n not in pm["source_registry"]
+                ],
                 activated_in_running_training=False,
             ),
             census=dict(

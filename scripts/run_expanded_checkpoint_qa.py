@@ -307,6 +307,7 @@ def main():
                     .flatten()
                     .tolist(),
                     kind=state["decision"]["mapping_kind"],
+                    source_kinds=state["decision"].get("source_map_kinds"),
                 ).to(device)
                 maps.load_state_dict(map_state, strict=True)
                 bias, slopes = maps.coefficients()
@@ -314,7 +315,7 @@ def main():
                     a.output / "snapshot-map-coefficients.npz",
                     bias=bias.detach().cpu().numpy(),
                     slopes=slopes.detach().cpu().numpy(),
-                    kind=np.array(state["decision"]["mapping_kind"]),
+                    kind=np.array(maps.export_kind),
                     source_registry=np.asarray(source["source_registry"]),
                     center=center,
                     scale=scale,

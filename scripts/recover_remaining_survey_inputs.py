@@ -29,13 +29,16 @@ def main():
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--feature-config", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument(
+        "--parent-run",
+        default="expanded_six_source_20261107_v2",
+        help="complete source run whose stars are already covered",
+    )
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=False)
     c = json.loads(a.config.read_text())
     feature = json.loads(a.feature_config.read_text())
-    source = json.loads(
-        (ROOT / "expanded_six_source_20261107_v2/manifest.json").read_text()
-    )
+    source = json.loads((ROOT / a.parent_run / "manifest.json").read_text())
     if source.get("status") != "expanded_six_source_complete":
         raise ValueError("Current admitted input union is not ready")
     with h5py.File(source["prepared_path"]) as f:
@@ -57,6 +60,7 @@ def main():
         role_assignment_performed=False,
         training_source_ready=False,
         current_source_sha256=source["prepared_sha256"],
+        parent_run=a.parent_run,
         additional_candidate_stars=len(ids),
         scope="All admitted additional-survey candidates outside current 9.2M-star input union; full raw lookup including cache misses. Source-only, no automatic change to the active training job or its roles.",
     )

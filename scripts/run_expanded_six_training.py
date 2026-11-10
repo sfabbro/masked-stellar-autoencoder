@@ -380,15 +380,39 @@ def main():
                     )
                 )
             support = np.asarray(support)
+            # Optional per-source map families (config ``source_map_kinds``):
+            # the six selected rows keep the decision family; other sources
+            # default to it unless the config names a family for them.
+            kinds_cfg = cfg.get("source_map_kinds") or {}
+            unknown = set(kinds_cfg) - set(source_names[:anchor])
+            if unknown or any(source_names.index(k) < 6 for k in kinds_cfg):
+                raise ValueError(
+                    "source_map_kinds must name only added sources: "
+                    + ", ".join(sorted(unknown) or kinds_cfg)
+                )
+            source_kinds = [
+                decision["mapping_kind"]
+                if si < 6
+                else kinds_cfg.get(name, decision["mapping_kind"])
+                for si, name in enumerate(source_names[:anchor])
+            ]
+            decision["source_map_kinds"] = source_kinds
             maps = SixSurveyMap(
                 support,
                 selected["reference"],
                 zero_sum=selected["zero_sum"],
                 kind=decision["mapping_kind"],
+                source_kinds=source_kinds,
             ).to(device)
             with torch.no_grad():
+                saved_slope = selected["map_state_dict"]["raw_slope"]
+                if saved_slope.shape[-1] == 1 and maps.raw_slope.shape[-1] > 1:
+                    # An affine row is the constant-slope spline: exact copy.
+                    saved_slope = saved_slope.expand(-1, -1, maps.raw_slope.shape[-1])
                 maps.bias[:6].copy_(selected["map_state_dict"]["bias"])
-                maps.raw_slope[:6].copy_(selected["map_state_dict"]["raw_slope"])
+                maps.raw_slope[:6].copy_(saved_slope)
+            m.update(source_map_kinds=dict(zip(source_names[:anchor], source_kinds)))
+            save()
             del selected, parent, reference
             fit = records["fit"]
             if not len(fit[anchor]["rows"]) or not all(
@@ -1033,6 +1057,8 @@ def main():
                             support=support,
                             reference=maps.reference.cpu(),
                             map_kind=decision["mapping_kind"],
+                            map_export_kind=maps.export_kind,
+                            source_map_kinds=source_kinds,
                             epoch=epoch + 1,
                             update=update,
                             prepared_sha256=expanded["prepared_sha256"],
