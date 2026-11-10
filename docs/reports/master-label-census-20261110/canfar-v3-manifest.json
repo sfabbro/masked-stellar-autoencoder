@@ -1,0 +1,1031 @@
+{
+  "status": "complete",
+  "utc": "2026-11-10T21:10:10.754602+00:00",
+  "training_performed": false,
+  "roles_assigned": false,
+  "script_sha256": "9a1da8ad8833c7673a3c5cfbf74091fbae7ffb0ae3cd994dead353d0634eef82",
+  "module_sha256": "58f3d3cbc783d927bf2779835dd0f01e930406c66680b54909ff13fe1d09d8a1",
+  "acquisitions": {
+    "sdss_dr19_astra_aspcap": {
+      "url": "https://data.sdss.org/sas/dr19/spectro/astra/0.6.0/summary/astraAllStarASPCAP-0.6.0.fits.gz",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sources_20261110_v1/sdss/astraAllStarASPCAP-0.6.0.fits.gz",
+      "bytes": 1171102556,
+      "sha256": "5324bf39baeede7553b0a3c8a50bea1760f47eb67a95a8a84e6db303aa2edb04"
+    },
+    "sdss_dr12_sspp": {
+      "url": "https://data.sdss.org/sas/dr12/sdss/sspp/ssppOut-dr12.fits",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sources_20261110_v1/sdss/ssppOut-dr12.fits",
+      "bytes": 1913284800,
+      "sha256": "04628d84a5c817a50def945f9d37a7e273770a75aed9ac20e297ac55b989c586"
+    },
+    "gaia_eso_dr5_1": {
+      "table": "J/A+A/676/A129/catalog",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FA%2BA%2F676%2FA129%2Fcatalog&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "4b68a8ef17c096f16dd47e8668f60e0a87f0f4cca938cffc8092b575736c4d63",
+      "bytes": 395578343,
+      "utc": "2026-11-10T20:52:28Z"
+    },
+    "s5_dr1": {
+      "table": "J/MNRAS/490/3508/s5dr1",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F490%2F3508%2Fs5dr1&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "dabf4b47f4743d3a8bf7cfcd8bcfea2c8131dbdd992e9c9b2c0965790ec0ce8b",
+      "bytes": 27532721,
+      "utc": "2026-11-10T20:57:57Z"
+    },
+    "pigs_aat": {
+      "table": "J/MNRAS/530/3391/tabled2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F530%2F3391%2Ftabled2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "5d9456e9f94d5454e28787adbe6eda61d0a093d4f06b0c7227ef2183962b4762",
+      "bytes": 10173710,
+      "utc": "2026-11-10T20:53:49Z"
+    },
+    "lamost_vmp_li2018": {
+      "table": "J/ApJS/238/16/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F238%2F16%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "debbb9342a64643044cadc971796a06ff6d7b69c2d0051d94e223142dcf7b3a2",
+      "bytes": 6206962,
+      "utc": "2026-11-10T20:54:07Z"
+    },
+    "lamost_cat_li2025": {
+      "table": "J/ApJS/279/53/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F279%2F53%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "8e52d78d5e172ac2b72a5726fbf3d0ae56bbd8fbe471ec7908e1ea4ebcf9c737",
+      "bytes": 3189391,
+      "utc": "2026-11-10T20:54:29Z"
+    },
+    "pristine_aguado2019": {
+      "table": "J/MNRAS/490/2241/table4",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F490%2F2241%2Ftable4&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "e6dacda7423e5983d9b48ff630f1123375c516addb21333005dd159c3e6b41ab",
+      "bytes": 206581,
+      "utc": "2026-11-10T20:58:00Z"
+    },
+    "smss_dacosta2019_t2": {
+      "table": "J/MNRAS/489/5900/table2",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F489%2F5900%2Ftable2&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "413a50e7442fc7841aed67a23c115c58ee947e4e348284cbabfe2136614f26b8",
+      "bytes": 27472,
+      "utc": "2026-11-10T20:55:32Z"
+    },
+    "smss_dacosta2019_t3": {
+      "table": "J/MNRAS/489/5900/table3",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F489%2F5900%2Ftable3&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "1a1ff037cec223a87cf0d6d2204e82a224d149a8277a877adf2a4b63393fa52c",
+      "bytes": 7615,
+      "utc": "2026-11-10T20:56:03Z"
+    },
+    "bestbrightest_placco2019": {
+      "table": "J/ApJ/870/122/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F870%2F122%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "60b1d3e03502ea8edd7cb6289449f2c5f5fdeda49619b2c3839d10c2d304db61",
+      "bytes": 217577,
+      "utc": "2026-11-10T20:58:01Z"
+    },
+    "rpa_hansen2018": {
+      "table": "J/ApJ/858/92/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F858%2F92%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "6053412ca4511e06168a439e1a7928df0023591a31005d3405a4c67b23087e2e",
+      "bytes": 24785,
+      "utc": "2026-11-10T20:58:01Z"
+    },
+    "rpa_holmbeck2020": {
+      "table": "J/ApJS/249/30/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJS%2F249%2F30%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "7f8de69cf852c32973fdaf1230876ae38e93dc353144bbb191bfb74b53e2ab42",
+      "bytes": 44314,
+      "utc": "2026-11-10T20:58:02Z"
+    },
+    "smss_yong2021": {
+      "table": "J/MNRAS/507/4102/sup",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FMNRAS%2F507%2F4102%2Fsup&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "1d2c6a9c32808833e7bb1e3063172b8098ef5148e8adbd618fb6b69bfab84f9a",
+      "bytes": 41702,
+      "utc": "2026-11-10T20:58:02Z"
+    },
+    "yong2013_program": {
+      "table": "J/ApJ/762/26/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F762%2F26%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "5968c0e2addeb2086e3cd41a50d7b432ac0e85d1b005d9d81e472bd727837521",
+      "bytes": 10471,
+      "utc": "2026-11-10T20:58:03Z"
+    },
+    "yong2013_literature": {
+      "table": "J/ApJ/762/26/sample",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FApJ%2F762%2F26%2Fsample&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "50f73ee252440af49f56f729a7fc539dca0d7b3141d62a6d634de7d5847747e3",
+      "bytes": 37609,
+      "utc": "2026-11-10T20:58:03Z"
+    },
+    "roederer2014": {
+      "table": "J/AJ/147/136/stars",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J%2FAJ%2F147%2F136%2Fstars&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "9bfef5e746bdfd167047bdea426d49e9805b9034df6414a468ca40056c6f1078",
+      "bytes": 88510,
+      "utc": "2026-11-10T20:58:05Z"
+    },
+    "pastel_2020": {
+      "table": "B/pastel/pastel",
+      "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=B%2Fpastel%2Fpastel&-out.max=unlimited&-out=%2A%2A&-out.add=_RAJ%2C_DEJ&-oc.form=d",
+      "sha256": "dcae17b76962dc56555656a73b43bcf9b290820fe628a587aac0f20b65c64604",
+      "bytes": 22459723,
+      "utc": "2026-11-10T20:58:18Z"
+    },
+    "saga_mw": {
+      "url": "http://sagadatabase.jp/Retrieval/db.cgi",
+      "query": "x=[Fe/H] (metal), y=Teff, w1=logg; DATA_CHOICE=data_same (all three from the same paper); every paper row kept (DATA_SAME_ONE=0); SOLAR_REF=A09; downloaded in 0.5 dex [Fe/H] slices because the server gateway times out after 60 s; rows repeated at slice edges are dropped",
+      "slices": {
+        "saga-mw--8.0--7.5.tsv": "cc0704917a4792c356dce27f8cbb0f865c19060e868fefa99067b4f35ce3b16e",
+        "saga-mw--7.5--7.0.tsv": "cffc3ae938c2b76b3d9ef67574d82ef900b7aa4b44b6a216ab77856d32de233f",
+        "saga-mw--7.0--6.5.tsv": "485d2cf80951d965a22e2c973bdf31522c9f0405b91b62b9975e58536c8c03c0",
+        "saga-mw--6.5--6.0.tsv": "a0fc41f4a226dbd8f3ff1cc7eeac3ec9099877dad02f74e112a23cec2200be3f",
+        "saga-mw--6.0--5.5.tsv": "5506ca3fa26b13ccb1a97d75e43e233e6fe3e6612761b35bbeb0cf15a9488629",
+        "saga-mw--5.5--5.0.tsv": "a831f17fda0c08899331607db025fd12689e229c1e4b539fd81578ae48c8ee11",
+        "saga-mw--5.0--4.5.tsv": "be5340ef32b6d61e7a6ed20192204175b21e197894c8a347fac0df79f4c34463",
+        "saga-mw--4.5--4.0.tsv": "71c8938cf0fcd34099828415b65fe6de1a1926df709f3b62b36d51cd9b227016",
+        "saga-mw--4.0--3.5.tsv": "2a46dec400d7555203ed63db937d84cf819784353c4fdab0f2dfe2ec86f3aea7",
+        "saga-mw--3.5--3.0.tsv": "66a3501ac733e5582c04887a8b95955890a5f967b43d9d593e4c3f3e99e4f7ea",
+        "saga-mw--3.0--2.5.tsv": "5d3d5545242d3efb2942df75d4f1348fda5ebc9d9485fb184ed80ae57c39fbdb",
+        "saga-mw--2.5--2.0.tsv": "1f49270a30d02362a5cf8131f2e670558fc0f487bb319970ebd9928acde4fe57",
+        "saga-mw--2.0--1.5.tsv": "f7ddae2c9da763e09f85973536f86dac751dedaf200b4a43cfe9bee55aab4218",
+        "saga-mw--1.5--1.0.tsv": "0ca7b8995f106068c629f0c90773e58c2a3e18ffb04f4ab51f875a72f178c55c",
+        "saga-mw--1.0--0.5.tsv": "5b236d5de8a0c5f45ba42463fbc89a1ce2908e63f507f06e0d9deb798d1cb14e",
+        "saga-mw--0.5-+0.0.tsv": "533e7b4d4468e739a0e807c6b10bbefba1b4eb14dfce669f29f8439b1e694f90",
+        "saga-mw-+0.0-+0.5.tsv": "bc3b29d0519040fb888d3b830fe31a594d0e23e76de3e62ff92c7d7b2b508a67",
+        "saga-mw-+0.5-+1.0.tsv": "daa27afd0bc5636d217b53e00ba8f6eaa4ee2ae1d0913d4bd0d11f2ee9b459f8",
+        "saga-mw-+1.0-+1.5.tsv": "cc0704917a4792c356dce27f8cbb0f865c19060e868fefa99067b4f35ce3b16e"
+      },
+      "rows_before_edge_dedup": 17513,
+      "rows": 16117,
+      "utc": "2026-11-10T21:11:19Z"
+    },
+    "jinabase_2021": {
+      "url": "https://raw.githubusercontent.com/Mohammad-Mardini/JINAbase/e034a8c0bea71b3a657046ae622d75750c661319/JINAbase_2021.csv",
+      "commit": "e034a8c0bea71b3a657046ae622d75750c661319",
+      "sha256": "4784c1e29e6a2815408029b03a2e0dc0d28d154b2c4346e881d2d1613361045d",
+      "rows": 7789
+    }
+  },
+  "policies": {
+    "sdss_dr19_astra_aspcap": {
+      "release": "SDSS DR19 Astra 0.6.0 astraAllStarASPCAP",
+      "pipeline": "ASPCAP (FERRE) in Astra; calibrated teff/logg, fe_h abundance, alpha_m_atm",
+      "quality_policy": "flag_bad false; finite calibrated teff/logg; snr>=20",
+      "grid_policy": "fe_h or m_h_atm <= -2.45 marks the lower ASPCAP grid edge (DR19 values pile up at -2.50; censored, not measured)"
+    },
+    "sdss_dr12_sspp": {
+      "release": "SDSS DR12 ssppOut (final SSPP; SEGUE-1/2 + legacy stars)",
+      "pipeline": "SSPP adopted TEFF/LOGG/FEH_ADOP and AFE",
+      "quality_policy": "FEH_ADOP valid; SNR>=10; 4000<=TEFF_ADOP<=10000; FLAG first char 'n'; ZWARNING==0; rows without any adopted label dropped; one row per BESTOBJID kept by quality then highest SNR",
+      "grid_policy": "none flagged; SSPP metallicity estimators extend to about -4"
+    },
+    "gaia_eso_dr5_1": {
+      "release": "Gaia-ESO DR5.1 final (Hourihane+2023)",
+      "pipeline": "GES WG homogenised recommended parameters",
+      "tier": "survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Cluster/benchmark targets must be reserved; positions from 2MASS-based targeting"
+    },
+    "s5_dr1": {
+      "release": "S5 DR1 (Li+2019)",
+      "pipeline": "rvspecfit posterior medians (50th percentile)",
+      "tier": "metal_poor_survey",
+      "quality": {
+        "good_star": [
+          "==",
+          1
+        ],
+        "Prim": [
+          "==",
+          1
+        ]
+      },
+      "fe_h_kind": "fe_h",
+      "notes": "Stream/halo fields; EDR3 IDs are identical to DR3 IDs"
+    },
+    "pigs_aat": {
+      "release": "PIGS VIII AAT (Ardern-Arentsen+2024)",
+      "pipeline": "FERRE on AAOmega blue+CaT",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "ULySS alternative retained natively on ARC; FERRE adopted here"
+    },
+    "lamost_vmp_li2018": {
+      "release": "LAMOST DR3 VMP catalogue (Li+2018)",
+      "pipeline": "Li+2018 VMP template matching on LAMOST LRS",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Same spectra as LASP; separate pipeline extending below the LASP floor"
+    },
+    "lamost_cat_li2025": {
+      "release": "LAMOST DR10 CaT VMP metallicities (Li+2025)",
+      "pipeline": "Ca II triplet calibration",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h_cat",
+      "notes": "Teff/logg columns here are LASP, not this pipeline; not adopted"
+    },
+    "pristine_aguado2019": {
+      "release": "Pristine INT/IDS follow-up (Aguado+2019)",
+      "pipeline": "FERRE",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_dacosta2019_t2": {
+      "release": "SkyMapper EMP 2.3m/WiFeS (Da Costa+2019) table2",
+      "pipeline": "FITTER spectrophotometric",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_dacosta2019_t3": {
+      "release": "SkyMapper EMP 2.3m/WiFeS (Da Costa+2019) table3",
+      "pipeline": "FITTER spectrophotometric",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "bestbrightest_placco2019": {
+      "release": "Best & Brightest medium-res (Placco+2019)",
+      "pipeline": "n-SSPP",
+      "tier": "metal_poor_survey",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "VizieR decimal positions are rounded to 0.001 deg; WISEA name parsed"
+    },
+    "rpa_hansen2018": {
+      "release": "RPA southern pilot (Hansen+2018)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "rpa_holmbeck2020": {
+      "release": "RPA (Holmbeck+2020)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "smss_yong2021": {
+      "release": "SkyMapper high-res follow-up (Yong+2021)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "yong2013_program": {
+      "release": "Most metal-poor stars II program (Yong+2013)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "yong2013_literature": {
+      "release": "Most metal-poor stars II homogenised literature (Yong+2013)",
+      "pipeline": "1D LTE high-res reanalysis",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": ""
+    },
+    "roederer2014": {
+      "release": "Stars of very low metal abundance VI (Roederer+2014)",
+      "pipeline": "1D LTE high-res",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "m_h_model",
+      "notes": ""
+    },
+    "pastel_2020": {
+      "release": "PASTEL 2020-01-30 (Soubiran+2016)",
+      "pipeline": "heterogeneous high-res literature compilation",
+      "tier": "highres_reference",
+      "quality": {},
+      "fe_h_kind": "fe_h",
+      "notes": "Multiple rows per star from different papers; not independent"
+    },
+    "saga_mw": {
+      "source": "saga_mw",
+      "release": "SAGA database, Milky Way retrieval system (database update 2026-01-20)",
+      "pipeline": "literature high-resolution compilation; [Fe/H] on Asplund+2009 solar scale",
+      "dependency_group": "literature_highres_compilation",
+      "url": "http://sagadatabase.jp/Retrieval/db.cgi",
+      "query": "x=[Fe/H] (metal), y=Teff, w1=logg; DATA_CHOICE=data_same (all three from the same paper); every paper row kept (DATA_SAME_ONE=0); SOLAR_REF=A09; downloaded in 0.5 dex [Fe/H] slices because the server gateway times out after 60 s; rows repeated at slice edges are dropped",
+      "notes": "Rows are per (star, paper). Positions missing for a row are filled from another row of the same object, then from a J2000 designation in the name"
+    },
+    "jinabase_2021": {
+      "source": "jinabase_2021",
+      "release": "JINAbase 2021 CSV (Abohalima & Frebel 2018; Mardini et al. updates)",
+      "pipeline": "literature high-resolution compilation (paper values; Priority kept)",
+      "dependency_group": "literature_highres_compilation",
+      "commit": "e034a8c0bea71b3a657046ae622d75750c661319",
+      "url": "https://raw.githubusercontent.com/Mohammad-Mardini/JINAbase/e034a8c0bea71b3a657046ae622d75750c661319/JINAbase_2021.csv",
+      "quality_policy": "finite Fe/H; Priority==1 marks the compilers' preferred paper"
+    }
+  },
+  "errors": {},
+  "census": {
+    "feh_edges": [
+      -1.0,
+      -1.5,
+      -2.0,
+      -2.5,
+      -3.0,
+      -3.5,
+      -4.0
+    ],
+    "sources": {
+      "bestbrightest_placco2019": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "bb_medres",
+        "rows": 857,
+        "gaia_linked_rows": 857,
+        "unique_gaia": 857,
+        "id_methods": {
+          "positional": 819,
+          "positional_ambiguous": 38
+        },
+        "quality_unique_gaia": 796,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.65,
+        "metal_poor_unique": {
+          "lt_-1.0": 549,
+          "lt_-1.5": 454,
+          "lt_-2.0": 311,
+          "lt_-2.5": 121,
+          "lt_-3.0": 17,
+          "lt_-3.5": 1,
+          "lt_-4.0": 0
+        }
+      },
+      "gaia_eso_dr5_1": {
+        "tier": "survey",
+        "dependency_group": "gaia_eso_flames",
+        "rows": 114916,
+        "gaia_linked_rows": 114721,
+        "unique_gaia": 114721,
+        "id_methods": {
+          "positional": 108934,
+          "positional_ambiguous": 5787,
+          "positional_unmatched": 195
+        },
+        "quality_unique_gaia": 94145,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.47,
+        "metal_poor_unique": {
+          "lt_-1.0": 8975,
+          "lt_-1.5": 3506,
+          "lt_-2.0": 1169,
+          "lt_-2.5": 232,
+          "lt_-3.0": 66,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "jinabase_2021": {
+        "tier": "highres_reference",
+        "dependency_group": "literature_highres_compilation",
+        "rows": 7789,
+        "gaia_linked_rows": 7674,
+        "unique_gaia": 4387,
+        "id_methods": {
+          "positional": 3973,
+          "simbad_dr3": 2829,
+          "positional_ambiguous": 872,
+          "positional_unmatched": 100,
+          "": 15
+        },
+        "quality_unique_gaia": 1615,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -5.9,
+        "metal_poor_unique": {
+          "lt_-1.0": 1486,
+          "lt_-1.5": 1401,
+          "lt_-2.0": 1269,
+          "lt_-2.5": 929,
+          "lt_-3.0": 384,
+          "lt_-3.5": 77,
+          "lt_-4.0": 18
+        }
+      },
+      "lamost_cat_li2025": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "lamost_lrs_spectra",
+        "rows": 8440,
+        "gaia_linked_rows": 8440,
+        "unique_gaia": 8378,
+        "id_methods": {
+          "publisher_dr3": 8440
+        },
+        "quality_unique_gaia": 8378,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.36,
+        "metal_poor_unique": {
+          "lt_-1.0": 8378,
+          "lt_-1.5": 8378,
+          "lt_-2.0": 8362,
+          "lt_-2.5": 1070,
+          "lt_-3.0": 24,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "lamost_vmp_li2018": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "lamost_lrs_spectra",
+        "rows": 10011,
+        "gaia_linked_rows": 9980,
+        "unique_gaia": 9674,
+        "id_methods": {
+          "positional": 9920,
+          "positional_ambiguous": 60,
+          "positional_unmatched": 31
+        },
+        "quality_unique_gaia": 9674,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.55,
+        "metal_poor_unique": {
+          "lt_-1.0": 9674,
+          "lt_-1.5": 9674,
+          "lt_-2.0": 9614,
+          "lt_-2.5": 2706,
+          "lt_-3.0": 621,
+          "lt_-3.5": 83,
+          "lt_-4.0": 16
+        }
+      },
+      "pastel_2020": {
+        "tier": "highres_reference",
+        "dependency_group": "pastel_literature",
+        "rows": 81362,
+        "gaia_linked_rows": 79631,
+        "unique_gaia": 36966,
+        "id_methods": {
+          "positional": 72822,
+          "positional_ambiguous": 6809,
+          "positional_unmatched": 1607,
+          "": 124
+        },
+        "quality_unique_gaia": 17943,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.7,
+        "metal_poor_unique": {
+          "lt_-1.0": 2089,
+          "lt_-1.5": 1407,
+          "lt_-2.0": 886,
+          "lt_-2.5": 559,
+          "lt_-3.0": 252,
+          "lt_-3.5": 69,
+          "lt_-4.0": 16
+        }
+      },
+      "pigs_aat": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "pigs_aat",
+        "rows": 13235,
+        "gaia_linked_rows": 13235,
+        "unique_gaia": 13231,
+        "id_methods": {
+          "publisher_dr3": 13235
+        },
+        "quality_unique_gaia": 13231,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.0,
+        "metal_poor_unique": {
+          "lt_-1.0": 11684,
+          "lt_-1.5": 8002,
+          "lt_-2.0": 2349,
+          "lt_-2.5": 315,
+          "lt_-3.0": 49,
+          "lt_-3.5": 21,
+          "lt_-4.0": 0
+        }
+      },
+      "pristine_aguado2019": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "pristine_int_ids",
+        "rows": 1007,
+        "gaia_linked_rows": 990,
+        "unique_gaia": 990,
+        "id_methods": {
+          "positional": 978,
+          "positional_unmatched": 17,
+          "positional_ambiguous": 12
+        },
+        "quality_unique_gaia": 990,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.45,
+        "metal_poor_unique": {
+          "lt_-1.0": 895,
+          "lt_-1.5": 866,
+          "lt_-2.0": 781,
+          "lt_-2.5": 453,
+          "lt_-3.0": 86,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "roederer2014": {
+        "tier": "highres_reference",
+        "dependency_group": "roederer2014",
+        "rows": 313,
+        "gaia_linked_rows": 295,
+        "unique_gaia": 295,
+        "id_methods": {
+          "positional": 272,
+          "positional_ambiguous": 23,
+          "positional_unmatched": 18
+        },
+        "quality_unique_gaia": 295,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.5,
+        "metal_poor_unique": {
+          "lt_-1.0": 295,
+          "lt_-1.5": 285,
+          "lt_-2.0": 249,
+          "lt_-2.5": 194,
+          "lt_-3.0": 76,
+          "lt_-3.5": 15,
+          "lt_-4.0": 4
+        }
+      },
+      "rpa_hansen2018": {
+        "tier": "highres_reference",
+        "dependency_group": "rpa_hansen2018",
+        "rows": 107,
+        "gaia_linked_rows": 107,
+        "unique_gaia": 107,
+        "id_methods": {
+          "positional": 104,
+          "positional_ambiguous": 3
+        },
+        "quality_unique_gaia": 107,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.13,
+        "metal_poor_unique": {
+          "lt_-1.0": 106,
+          "lt_-1.5": 103,
+          "lt_-2.0": 86,
+          "lt_-2.5": 44,
+          "lt_-3.0": 3,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "rpa_holmbeck2020": {
+        "tier": "highres_reference",
+        "dependency_group": "rpa_holmbeck2020",
+        "rows": 233,
+        "gaia_linked_rows": 233,
+        "unique_gaia": 232,
+        "id_methods": {
+          "positional": 230,
+          "positional_ambiguous": 3
+        },
+        "quality_unique_gaia": 232,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 232,
+          "lt_-1.5": 222,
+          "lt_-2.0": 151,
+          "lt_-2.5": 60,
+          "lt_-3.0": 8,
+          "lt_-3.5": 1,
+          "lt_-4.0": 0
+        }
+      },
+      "s5_dr1": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "s5_aat_2df",
+        "rows": 31777,
+        "gaia_linked_rows": 31774,
+        "unique_gaia": 29595,
+        "id_methods": {
+          "publisher_edr3": 31774,
+          "positional_unmatched": 3
+        },
+        "quality_unique_gaia": 29581,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.3995,
+        "metal_poor_unique": {
+          "lt_-1.0": 12427,
+          "lt_-1.5": 5933,
+          "lt_-2.0": 2540,
+          "lt_-2.5": 937,
+          "lt_-3.0": 273,
+          "lt_-3.5": 63,
+          "lt_-4.0": 15
+        }
+      },
+      "saga_mw": {
+        "tier": "highres_reference",
+        "dependency_group": "literature_highres_compilation",
+        "rows": 16117,
+        "gaia_linked_rows": 15611,
+        "unique_gaia": 6188,
+        "id_methods": {
+          "simbad_dr3": 13431,
+          "positional": 2033,
+          "": 459,
+          "positional_ambiguous": 147,
+          "positional_unmatched": 47
+        },
+        "quality_unique_gaia": 6188,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -7.1,
+        "metal_poor_unique": {
+          "lt_-1.0": 3613,
+          "lt_-1.5": 3163,
+          "lt_-2.0": 2511,
+          "lt_-2.5": 1564,
+          "lt_-3.0": 640,
+          "lt_-3.5": 138,
+          "lt_-4.0": 31
+        }
+      },
+      "sdss_dr12_sspp": {
+        "tier": "survey",
+        "dependency_group": "sdss_optical_spectra_sspp",
+        "rows": 386337,
+        "gaia_linked_rows": 384527,
+        "unique_gaia": 384104,
+        "id_methods": {
+          "positional": 374094,
+          "positional_ambiguous": 10433,
+          "positional_unmatched": 1810
+        },
+        "quality_unique_gaia": 370437,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.499392509460449,
+        "metal_poor_unique": {
+          "lt_-1.0": 156224,
+          "lt_-1.5": 81657,
+          "lt_-2.0": 28763,
+          "lt_-2.5": 7038,
+          "lt_-3.0": 2055,
+          "lt_-3.5": 585,
+          "lt_-4.0": 139
+        }
+      },
+      "sdss_dr19_astra_aspcap": {
+        "tier": "survey",
+        "dependency_group": "apogee_spectra_aspcap",
+        "rows": 1095480,
+        "gaia_linked_rows": 1089060,
+        "unique_gaia": 968486,
+        "id_methods": {
+          "publisher_dr3": 1085270,
+          "positional_unmatched": 6419,
+          "positional": 2015,
+          "positional_ambiguous": 1775,
+          "": 1
+        },
+        "quality_unique_gaia": 696330,
+        "grid_edge_unique_gaia": 652,
+        "fe_h_min": -2.449251174926758,
+        "metal_poor_unique": {
+          "lt_-1.0": 20956,
+          "lt_-1.5": 7019,
+          "lt_-2.0": 1218,
+          "lt_-2.5": 0,
+          "lt_-3.0": 0,
+          "lt_-3.5": 0,
+          "lt_-4.0": 0
+        }
+      },
+      "smss_dacosta2019_t2": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "smss_wifes",
+        "rows": 142,
+        "gaia_linked_rows": 142,
+        "unique_gaia": 142,
+        "id_methods": {
+          "positional": 140,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 142,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 142,
+          "lt_-1.5": 142,
+          "lt_-2.0": 142,
+          "lt_-2.5": 142,
+          "lt_-3.0": 142,
+          "lt_-3.5": 28,
+          "lt_-4.0": 4
+        }
+      },
+      "smss_dacosta2019_t3": {
+        "tier": "metal_poor_survey",
+        "dependency_group": "smss_wifes",
+        "rows": 29,
+        "gaia_linked_rows": 29,
+        "unique_gaia": 29,
+        "id_methods": {
+          "positional": 29
+        },
+        "quality_unique_gaia": 29,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -3.75,
+        "metal_poor_unique": {
+          "lt_-1.0": 29,
+          "lt_-1.5": 29,
+          "lt_-2.0": 29,
+          "lt_-2.5": 29,
+          "lt_-3.0": 29,
+          "lt_-3.5": 4,
+          "lt_-4.0": 0
+        }
+      },
+      "smss_yong2021": {
+        "tier": "highres_reference",
+        "dependency_group": "smss_yong2021",
+        "rows": 150,
+        "gaia_linked_rows": 150,
+        "unique_gaia": 150,
+        "id_methods": {
+          "positional": 142,
+          "positional_ambiguous": 8
+        },
+        "quality_unique_gaia": 150,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.09,
+        "metal_poor_unique": {
+          "lt_-1.0": 150,
+          "lt_-1.5": 150,
+          "lt_-2.0": 150,
+          "lt_-2.5": 132,
+          "lt_-3.0": 86,
+          "lt_-3.5": 14,
+          "lt_-4.0": 1
+        }
+      },
+      "yong2013_literature": {
+        "tier": "highres_reference",
+        "dependency_group": "yong2013",
+        "rows": 152,
+        "gaia_linked_rows": 152,
+        "unique_gaia": 152,
+        "id_methods": {
+          "positional": 150,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 152,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -5.76,
+        "metal_poor_unique": {
+          "lt_-1.0": 151,
+          "lt_-1.5": 149,
+          "lt_-2.0": 147,
+          "lt_-2.5": 132,
+          "lt_-3.0": 61,
+          "lt_-3.5": 18,
+          "lt_-4.0": 5
+        }
+      },
+      "yong2013_program": {
+        "tier": "highres_reference",
+        "dependency_group": "yong2013",
+        "rows": 47,
+        "gaia_linked_rows": 47,
+        "unique_gaia": 38,
+        "id_methods": {
+          "positional": 45,
+          "positional_ambiguous": 2
+        },
+        "quality_unique_gaia": 38,
+        "grid_edge_unique_gaia": 0,
+        "fe_h_min": -4.1,
+        "metal_poor_unique": {
+          "lt_-1.0": 38,
+          "lt_-1.5": 38,
+          "lt_-2.0": 38,
+          "lt_-2.5": 38,
+          "lt_-3.0": 23,
+          "lt_-3.5": 13,
+          "lt_-4.0": 4
+        }
+      }
+    },
+    "union": {
+      "unique_gaia": 1551640,
+      "multi_source": 22909,
+      "metal_poor_unique_any_source_median": {
+        "lt_-1.0": 228017,
+        "lt_-1.5": 123761,
+        "lt_-2.0": 53245,
+        "lt_-2.5": 13140,
+        "lt_-3.0": 3570,
+        "lt_-3.5": 852,
+        "lt_-4.0": 194
+      },
+      "metal_poor_unique_highres": {
+        "lt_-1.0": 4864,
+        "lt_-1.5": 3941,
+        "lt_-2.0": 2929,
+        "lt_-2.5": 1720,
+        "lt_-3.0": 687,
+        "lt_-3.5": 149,
+        "lt_-4.0": 34
+      },
+      "edge_censored_only": 8448,
+      "exclusive_to_source": {
+        "bestbrightest_placco2019": 65,
+        "gaia_eso_dr5_1": 111116,
+        "jinabase_2021": 484,
+        "lamost_cat_li2025": 5321,
+        "lamost_vmp_li2018": 6617,
+        "pastel_2020": 27405,
+        "pigs_aat": 13001,
+        "pristine_aguado2019": 775,
+        "roederer2014": 1,
+        "rpa_hansen2018": 0,
+        "rpa_holmbeck2020": 0,
+        "s5_dr1": 28085,
+        "saga_mw": 828,
+        "sdss_dr12_sspp": 379653,
+        "sdss_dr19_astra_aspcap": 955309,
+        "smss_dacosta2019_t2": 54,
+        "smss_dacosta2019_t3": 16,
+        "smss_yong2021": 0,
+        "yong2013_literature": 0,
+        "yong2013_program": 1
+      }
+    },
+    "against_existing": {
+      "existing_sources": {
+        "apogee": 200972,
+        "desi_dr1_rvs_raw": 3681789,
+        "gaia_dr3_gspspec": 5591594,
+        "galah": 631922,
+        "lamost_dr12v2_lrs_lasp": 3265101,
+        "lamost_dr12v2_mrs_lasp": 821991,
+        "lamost_dr8v2_lrs_lasp": 2827370,
+        "rave_dr6_madera_gauguin": 188943,
+        "sdss_dr20_bossnet_081": 929032
+      },
+      "existing_unique": 13280628,
+      "new_unique": 826176,
+      "combined_unique": 14106804,
+      "new_metal_poor_unique": {
+        "lt_-1.0": 164449,
+        "lt_-1.5": 86729,
+        "lt_-2.0": 33854,
+        "lt_-2.5": 9006,
+        "lt_-3.0": 2529,
+        "lt_-3.5": 601,
+        "lt_-4.0": 142
+      }
+    }
+  },
+  "existing_sidecars": [
+    {
+      "source": "apogee",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "rows": 211163,
+      "candidates": [
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+        ]
+      ]
+    },
+    {
+      "source": "desi_dr1_rvs_raw",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5",
+      "rows": 3683136,
+      "candidates": [
+        [
+          3683136,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/desi-selected.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ]
+      ]
+    },
+    {
+      "source": "gaia_dr3_gspspec",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5",
+      "rows": 5591594,
+      "candidates": [
+        [
+          5591594,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5"
+        ],
+        [
+          5591594,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ]
+      ]
+    },
+    {
+      "source": "galah",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "rows": 631922,
+      "candidates": [
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_lrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "rows": 3265101,
+      "candidates": [
+        [
+          3265101,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_mrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "rows": 821991,
+      "candidates": [
+        [
+          821991,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr8v2_lrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
+      "rows": 2827370,
+      "candidates": [
+        [
+          2827370,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "rave_dr6_madera_gauguin",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "rows": 188943,
+      "candidates": [
+        [
+          188943,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "sdss_dr20_bossnet_081",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "rows": 929032,
+      "candidates": [
+        [
+          929032,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5"
+        ]
+      ]
+    }
+  ],
+  "outputs": {
+    "observations.parquet": "2ac3204d29264867e16aa1c1c9d2abcfc799ae00764200c7c43181704efb93e5",
+    "stars.parquet": "ba2788018b8deb64e6e67ff8545b90d5b5f141c5efe8677d2f4e197aaa779aee"
+  }
+}

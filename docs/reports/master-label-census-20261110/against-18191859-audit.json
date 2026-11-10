@@ -1,0 +1,136 @@
+{
+ "audit_union": 18191859,
+ "new_sources_union": 1551640,
+ "overlap_with_audit": 997572,
+ "new_unique": 554068,
+ "combined_unique": 18745927,
+ "mp_new_any": {
+  "<-1.0": 137320,
+  "<-1.5": 72103,
+  "<-2.0": 26681,
+  "<-2.5": 7089,
+  "<-3.0": 1824,
+  "<-3.5": 408,
+  "<-4.0": 83
+ },
+ "mp_all_newsources_any": {
+  "<-1.0": 228017,
+  "<-1.5": 123761,
+  "<-2.0": 53245,
+  "<-2.5": 13140,
+  "<-3.0": 3570,
+  "<-3.5": 852,
+  "<-4.0": 194
+ },
+ "mp_new_highres": {
+  "<-1.0": 1723,
+  "<-1.5": 1505,
+  "<-2.0": 1238,
+  "<-2.5": 854,
+  "<-3.0": 379,
+  "<-3.5": 95,
+  "<-4.0": 20
+ },
+ "per_source": [
+  {
+   "source": "bestbrightest_placco2019",
+   "stars": 857,
+   "not_in_audit": 394
+  },
+  {
+   "source": "gaia_eso_dr5_1",
+   "stars": 114721,
+   "not_in_audit": 103572
+  },
+  {
+   "source": "jinabase_2021",
+   "stars": 4387,
+   "not_in_audit": 1130
+  },
+  {
+   "source": "lamost_cat_li2025",
+   "stars": 8378,
+   "not_in_audit": 463
+  },
+  {
+   "source": "lamost_vmp_li2018",
+   "stars": 9674,
+   "not_in_audit": 634
+  },
+  {
+   "source": "pastel_2020",
+   "stars": 36966,
+   "not_in_audit": 10666
+  },
+  {
+   "source": "pigs_aat",
+   "stars": 13231,
+   "not_in_audit": 12973
+  },
+  {
+   "source": "pristine_aguado2019",
+   "stars": 990,
+   "not_in_audit": 590
+  },
+  {
+   "source": "roederer2014",
+   "stars": 295,
+   "not_in_audit": 160
+  },
+  {
+   "source": "rpa_hansen2018",
+   "stars": 107,
+   "not_in_audit": 5
+  },
+  {
+   "source": "rpa_holmbeck2020",
+   "stars": 232,
+   "not_in_audit": 14
+  },
+  {
+   "source": "s5_dr1",
+   "stars": 29595,
+   "not_in_audit": 27160
+  },
+  {
+   "source": "saga_mw",
+   "stars": 6188,
+   "not_in_audit": 1690
+  },
+  {
+   "source": "sdss_dr12_sspp",
+   "stars": 384104,
+   "not_in_audit": 266822
+  },
+  {
+   "source": "sdss_dr19_astra_aspcap",
+   "stars": 968486,
+   "not_in_audit": 130989
+  },
+  {
+   "source": "smss_dacosta2019_t2",
+   "stars": 142,
+   "not_in_audit": 113
+  },
+  {
+   "source": "smss_dacosta2019_t3",
+   "stars": 29,
+   "not_in_audit": 24
+  },
+  {
+   "source": "smss_yong2021",
+   "stars": 150,
+   "not_in_audit": 102
+  },
+  {
+   "source": "yong2013_literature",
+   "stars": 152,
+   "not_in_audit": 78
+  },
+  {
+   "source": "yong2013_program",
+   "stars": 38,
+   "not_in_audit": 26
+  }
+ ]
+}

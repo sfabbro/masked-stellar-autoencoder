@@ -1,17 +1,71 @@
 # Master label census: new sources, 2026-11-10
 
-This was a local run in a cloud session, not on CANFAR, using
+Run locally in a cloud session and then on CANFAR (v3), both with
 `scripts/run_master_label_census.py`. Native sources came from SDSS SAS (with
 publisher SHA1/size checks), the VizieR CfA mirror, the SAGA retrieval system,
 JINAbase on GitHub (pinned commit), SIMBAD (CfA mirror) and the ESA Gaia archive.
 `manifest.json` holds per-source receipts (sha256), policies and the full
 census. No roles were assigned and no training was performed.
 
-**Scope:** only the sources added by the master-label plan. The join against
-the eight survey groups already staged on ARC (18,191,859 Gaia-linked stars)
-needs the CANFAR job (`scripts/launch_master_label_census.py`). Until it runs,
-"Only here" means exclusive *among these new sources*, not against the
-existing union.
+**Scope:** the 20 sources added by the master-label plan. The CANFAR run
+(below) also compares them with the 18,191,859-star audit union of the
+eight already staged survey groups.
+
+## Combined with the 18,191,859-star audit (CANFAR v3)
+
+CANFAR session `gs2wcw6u` (`master_label_census_20261110_v3`) completed with
+no source errors. It reproduces the local census exactly: 1,551,640 unique
+stars across the new sources. It was compared with
+`spectroscopic_survey_counts_20261110_v2/all-survey-unique-gaia-source-id.npy`,
+the union behind the audit (LAMOST DR12 LRS+MRS, DESI DR1, Gaia GSP-Spec,
+BOSSNet DR20, GALAH DR4, APOGEE DR17, RAVE DR6, MaStar; no quality or XP cuts).
+See `against-18191859-audit.json`.
+
+| | Unique Gaia DR3 stars |
+|---|--:|
+| Audit union (8 groups) | 18,191,859 |
+| New sources, total | 1,551,640 |
+| New sources already in the audit | 997,572 |
+| **New stars added** | **554,068** |
+| **Combined master union** | **18,745,927** |
+
+Metal-poor stars among the 554,068 new stars (quality, grid-edge-free median
+[Fe/H] from the new sources):
+
+| [Fe/H] < | −1.0 | −1.5 | −2.0 | −2.5 | −3.0 | −3.5 | −4.0 |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| New stars, any new source | 137,320 | 72,103 | 26,681 | 7,089 | 1,824 | 408 | 83 |
+| New stars, high-res reference | 1,723 | 1,505 | 1,238 | 854 | 379 | 95 | 20 |
+
+New stars per source (not in the audit union; one star can come from several sources):
+
+| Source | Stars | Not in audit |
+|---|--:|--:|
+| SDSS DR12 SSPP | 384,104 | 266,822 |
+| SDSS DR19 Astra ASPCAP | 968,486 | 130,989 |
+| Gaia-ESO DR5.1 (unresolved in the audit) | 114,721 | 103,572 |
+| S5 DR1 | 29,595 | 27,160 |
+| PIGS | 13,231 | 12,973 |
+| PASTEL | 36,966 | 10,666 |
+| SAGA | 6,188 | 1,690 |
+| JINAbase | 4,387 | 1,130 |
+| LAMOST Li+2018 / Li+2025 | 9,674 / 8,378 | 634 / 463 |
+| Pristine, B&B, SkyMapper, RPA, Yong, Roederer | 2,992 | 1,506 |
+
+Notes:
+
+- The audit IDs carry no [Fe/H], so stars already in the audit are not
+  counted as metal-poor gains even when a new source improves their label.
+  For example, many LAMOST VMP stars already exist in LAMOST LASP with
+  floor-limited metallicities.
+- The automatic `native_observations` discovery in the CANFAR job found only
+  the training-admitted (quality-cut) subsets: 13,280,628 stars, against which
+  the new sources add 826,176. The audit union above is the like-for-like
+  comparison.
+- SAGA cannot be reached from CANFAR workers (HTTP only; the worker tunnel
+  allows listed HTTPS hosts only). Its 19 slices were fetched in the cloud
+  session and uploaded to `master_label_sources_20261110_v1/saga/`; the
+  manifest records the sha256 of each slice.
 
 ## Union of the new sources
 
