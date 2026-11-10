@@ -1,0 +1,2806 @@
+{
+  "reference": {
+    "stars": 21465,
+    "metal_poor": {
+      "lt_-2.0": 2929,
+      "lt_-3.0": 687
+    },
+    "sources": [
+      "jinabase_2021",
+      "pastel_2020",
+      "roederer2014",
+      "rpa_hansen2018",
+      "rpa_holmbeck2020",
+      "saga_mw",
+      "smss_yong2021",
+      "yong2013_literature",
+      "yong2013_program"
+    ]
+  },
+  "staged_surveys": {
+    "apogee": {
+      "stars": 200813,
+      "floor": {
+        "n": 200813,
+        "min": -2.236299991607666,
+        "p001": -1.9417563910484315,
+        "at_min": 3,
+        "at_min_fraction": 1.4939271859889549e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 955,
+        "median_offset": 0.021321999803185464,
+        "robust_sigma": 0.0896854308912903,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 15,
+            "median_offset": 0.19859995841979972,
+            "robust_sigma": 0.0947382157859803
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 41,
+            "median_offset": 0.10040004730224616,
+            "robust_sigma": 0.07650212238979322
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 91,
+            "median_offset": 0.035399980545043785,
+            "robust_sigma": 0.16249306660938279
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 53,
+            "median_offset": 0.03975000381469729,
+            "robust_sigma": 0.09045341997671118
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 755,
+            "median_offset": 0.01266000390052796,
+            "robust_sigma": 0.07897811204588415
+          }
+        ],
+        "maps": {
+          "n": 955,
+          "cv_median_abs_residual": {
+            "identity": 0.060495999827981,
+            "offset": 0.06088143881151728,
+            "affine": 0.060269235104782756,
+            "piecewise_linear": 0.06043435246765689
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 955,
+          "min": -2.2053000926971436,
+          "p001": -2.2023425431251527,
+          "at_min": 3,
+          "at_min_fraction": 0.0031413612565445027,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 1614,
+        "crosses_below_-2.0": 75,
+        "crosses_below_-2.5": 12,
+        "crosses_below_-3.0": 5,
+        "lowered_by_0p5_and_below_-2": 22
+      }
+    },
+    "desi_dr1_rvs_raw": {
+      "stars": 3681789,
+      "floor": {
+        "n": 3681789,
+        "min": -3.9899891490433435,
+        "p001": -3.4011436009781635,
+        "at_min": 250,
+        "at_min_fraction": 6.790177275232231e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 166,
+        "median_offset": 0.2134260838040799,
+        "robust_sigma": 0.24755196985299113,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 48,
+            "median_offset": 0.2586568915768539,
+            "robust_sigma": 0.34396207546796204
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 41,
+            "median_offset": 0.16758771392050198,
+            "robust_sigma": 0.17648495502185538
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 27,
+            "median_offset": 0.24249242558412654,
+            "robust_sigma": 0.28121662096585953
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 19,
+            "median_offset": 0.2045205521776161,
+            "robust_sigma": 0.14042570220177744
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 8,
+            "median_offset": 0.17052152172730062,
+            "robust_sigma": 0.411351157147383
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 8,
+            "median_offset": 0.20417227117755804,
+            "robust_sigma": 0.12095290393289254
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 15,
+            "median_offset": -0.07439049508019738,
+            "robust_sigma": 0.1986467025222517
+          }
+        ],
+        "maps": {
+          "n": 166,
+          "cv_median_abs_residual": {
+            "identity": 0.24483519199299464,
+            "offset": 0.17609074140189707,
+            "affine": 0.2016092496850812
+          },
+          "chosen": "offset",
+          "coefficients": [
+            -0.16601272121485935
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 166,
+          "min": -3.9514099951744206,
+          "p001": -3.9427118990160994,
+          "at_min": 1,
+          "at_min_fraction": 0.006024096385542169,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 2624,
+        "crosses_below_-2.0": 988,
+        "crosses_below_-2.5": 276,
+        "crosses_below_-3.0": 65,
+        "lowered_by_0p5_and_below_-2": 361
+      }
+    },
+    "gaia_dr3_gspspec": {
+      "stars": 0,
+      "floor": {
+        "n": 0
+      },
+      "reference": {
+        "overlap": 0
+      },
+      "metal_poor_gain": {
+        "overlap": 0,
+        "crosses_below_-2.0": 0,
+        "crosses_below_-2.5": 0,
+        "crosses_below_-3.0": 0,
+        "lowered_by_0p5_and_below_-2": 0
+      }
+    },
+    "galah": {
+      "stars": 631917,
+      "floor": {
+        "n": 631917,
+        "min": -3.9124929904937744,
+        "p001": -2.296957010269165,
+        "at_min": 1,
+        "at_min_fraction": 1.582486307537224e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 749,
+        "median_offset": 0.052943916320800755,
+        "robust_sigma": 0.12434061158198115,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 9,
+            "median_offset": 0.4542700004577638,
+            "robust_sigma": 0.15265800465202378
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 40,
+            "median_offset": 0.19614193439483651,
+            "robust_sigma": 0.17234093159008035
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 74,
+            "median_offset": 0.13725380897521977,
+            "robust_sigma": 0.1619928296527862
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 76,
+            "median_offset": 0.04571382284164427,
+            "robust_sigma": 0.15190224098253252
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 88,
+            "median_offset": 0.05842116832733146,
+            "robust_sigma": 0.12889924831295027
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 70,
+            "median_offset": 0.060421823263168306,
+            "robust_sigma": 0.13687524376702304
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 392,
+            "median_offset": 0.032382190227508545,
+            "robust_sigma": 0.09564797120323777
+          }
+        ],
+        "maps": {
+          "n": 749,
+          "cv_median_abs_residual": {
+            "identity": 0.08847117722034455,
+            "offset": 0.08687009426006442,
+            "affine": 0.08020889981820911,
+            "piecewise_linear": 0.0819558250855628
+          },
+          "chosen": "affine",
+          "coefficients": [
+            -0.03859617598501478,
+            0.03139934053710675
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 749,
+          "min": -2.996391773223877,
+          "p001": -2.9727294721603394,
+          "at_min": 1,
+          "at_min_fraction": 0.0013351134846461949,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 1085,
+        "crosses_below_-2.0": 68,
+        "crosses_below_-2.5": 32,
+        "crosses_below_-3.0": 18,
+        "lowered_by_0p5_and_below_-2": 37
+      }
+    },
+    "lamost_dr12v2_lrs_lasp": {
+      "stars": 3265098,
+      "floor": {
+        "n": 3265098,
+        "min": -2.5,
+        "p001": -2.228903075456619,
+        "at_min": 26,
+        "at_min_fraction": 7.96300754219322e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 2370,
+        "median_offset": 0.03500001132488251,
+        "robust_sigma": 0.1334340154647231,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 68,
+            "median_offset": 0.930500020980835,
+            "robust_sigma": 0.16827511272525789
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 134,
+            "median_offset": 0.44699999332427987,
+            "robust_sigma": 0.22535511940670028
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 181,
+            "median_offset": 0.25699988365173354,
+            "robust_sigma": 0.14677723881340046
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 82,
+            "median_offset": 0.1369999599456787,
+            "robust_sigma": 0.19644451060438156
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 55,
+            "median_offset": 0.11899997234344473,
+            "robust_sigma": 0.3543414084835054
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 90,
+            "median_offset": 0.1220000183582306,
+            "robust_sigma": 0.36471958091211315
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 1760,
+            "median_offset": -0.013000004440546047,
+            "robust_sigma": 0.09488640561148526
+          }
+        ],
+        "maps": {
+          "n": 2370,
+          "cv_median_abs_residual": {
+            "identity": 0.08399998784065246,
+            "offset": 0.0951336919014777,
+            "affine": 0.08433159723146706,
+            "piecewise_linear": 0.07599615691708507
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            0.16081234088720325,
+            0.23321448421859262,
+            -0.3574329287807705,
+            -0.13593044679457544,
+            0.13691057551045302
+          ],
+          "knots": [
+            -0.43549998849630356,
+            -0.06949999928474426,
+            0.08575000241398811
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 2370,
+          "min": -2.490000009536743,
+          "p001": -2.473631003856659,
+          "at_min": 2,
+          "at_min_fraction": 0.0008438818565400844,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 12000,
+        "crosses_below_-2.0": 4725,
+        "crosses_below_-2.5": 1894,
+        "crosses_below_-3.0": 291,
+        "lowered_by_0p5_and_below_-2": 2461
+      }
+    },
+    "lamost_dr12v2_mrs_lasp": {
+      "stars": 821991,
+      "floor": {
+        "n": 821991,
+        "min": -2.5,
+        "p001": -2.38700008392334,
+        "at_min": 64,
+        "at_min_fraction": 7.785973325742009e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 718,
+        "median_offset": -0.024000002443790434,
+        "robust_sigma": 0.1556729939908505,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 12,
+            "median_offset": 1.2029999780654907,
+            "robust_sigma": 0.2157183098974227
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 26,
+            "median_offset": 0.6320000886917114,
+            "robust_sigma": 0.42105848624897
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 53,
+            "median_offset": 0.12000008583068844,
+            "robust_sigma": 0.27576380360412567
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 35,
+            "median_offset": 0.031000056266784703,
+            "robust_sigma": 0.2905897682561876
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 18,
+            "median_offset": -0.1889999723434448,
+            "robust_sigma": 0.8702862166135309
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 26,
+            "median_offset": 0.052499989867210384,
+            "robust_sigma": 0.37880425422441955
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 548,
+            "median_offset": -0.04350000217556954,
+            "robust_sigma": 0.12231450574404003
+          }
+        ],
+        "maps": {
+          "n": 718,
+          "cv_median_abs_residual": {
+            "identity": 0.10950003489851945,
+            "offset": 0.10962659147744783,
+            "affine": 0.10645425223532909,
+            "piecewise_linear": 0.09636737987798485
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            0.1306769142326894,
+            0.12153054813301782,
+            -0.19038496093892307,
+            -0.46369716646039344,
+            0.30879716965634507
+          ],
+          "knots": [
+            -0.42774999886751175,
+            -0.06799999997019768,
+            0.06300000101327896
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 718,
+          "min": -2.499000072479248,
+          "p001": -2.498282953500748,
+          "at_min": 3,
+          "at_min_fraction": 0.004178272980501393,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 1404,
+        "crosses_below_-2.0": 298,
+        "crosses_below_-2.5": 160,
+        "crosses_below_-3.0": 31,
+        "lowered_by_0p5_and_below_-2": 231
+      }
+    },
+    "lamost_dr8v2_lrs_lasp": {
+      "stars": 2827369,
+      "floor": {
+        "n": 2827369,
+        "min": -2.5,
+        "p001": -2.1549999713897705,
+        "at_min": 15,
+        "at_min_fraction": 5.305285585291485e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 2284,
+        "median_offset": 0.032000000197440384,
+        "robust_sigma": 0.12602100168455022,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 41,
+            "median_offset": 0.9730000686645508,
+            "robust_sigma": 0.20163333701133715
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 105,
+            "median_offset": 0.40900008201599114,
+            "robust_sigma": 0.2045988876628873
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 175,
+            "median_offset": 0.25300002574920644,
+            "robust_sigma": 0.1408470494871138
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 83,
+            "median_offset": 0.15200001239776606,
+            "robust_sigma": 0.20311628200721735
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 49,
+            "median_offset": 0.053000049591064524,
+            "robust_sigma": 0.33506755263376214
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 90,
+            "median_offset": 0.12400000572204589,
+            "robust_sigma": 0.29726132580399506
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 1741,
+            "median_offset": -0.011000004410743724,
+            "robust_sigma": 0.09488642173898222
+          }
+        ],
+        "maps": {
+          "n": 2284,
+          "cv_median_abs_residual": {
+            "identity": 0.08000000100582838,
+            "offset": 0.08824245860550893,
+            "affine": 0.08187797834289234,
+            "piecewise_linear": 0.07249673537803777
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            0.12523358315383074,
+            0.19598733771877352,
+            -0.3220964384997722,
+            -0.13028676348767504,
+            0.12503972887248516
+          ],
+          "knots": [
+            -0.37599998712539673,
+            -0.057999998331069946,
+            0.09399999678134918
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 2284,
+          "min": -2.490000009536743,
+          "p001": -2.4845850286483766,
+          "at_min": 4,
+          "at_min_fraction": 0.0017513134851138354,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 10493,
+        "crosses_below_-2.0": 4161,
+        "crosses_below_-2.5": 1459,
+        "crosses_below_-3.0": 212,
+        "lowered_by_0p5_and_below_-2": 2050
+      }
+    },
+    "rave_dr6_madera_gauguin": {
+      "stars": 151160,
+      "floor": {
+        "n": 151160,
+        "min": -2.357,
+        "p001": -1.5847228,
+        "at_min": 1,
+        "at_min_fraction": 6.615506747816882e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 253,
+        "median_offset": 0.06791999999999998,
+        "robust_sigma": 0.21754782840000003,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 2,
+            "median_offset": 0.7575249999999997,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 22,
+            "median_offset": 0.2801699999999999,
+            "robust_sigma": 0.17227811999999962
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 42,
+            "median_offset": 0.20933499999999994,
+            "robust_sigma": 0.17771184899999998
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 50,
+            "median_offset": 0.07569000000000004,
+            "robust_sigma": 0.1381486679999999
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 38,
+            "median_offset": -0.041731000000000074,
+            "robust_sigma": 0.17942499330000003
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 99,
+            "median_offset": -0.047685000000000005,
+            "robust_sigma": 0.18275936069999998
+          }
+        ],
+        "maps": {
+          "n": 253,
+          "cv_median_abs_residual": {
+            "identity": 0.15227999999999997,
+            "offset": 0.1478473234118485,
+            "affine": 0.14774283383477993,
+            "piecewise_linear": 0.11625030032288299
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -0.36597955318788117,
+            -0.10789191495494185,
+            0.5727842966128228,
+            -0.3861212662792069,
+            -0.6012118367945899
+          ],
+          "knots": [
+            -1.41025,
+            -0.910132,
+            -0.118516
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 253,
+          "min": -2.357,
+          "p001": -2.3313716,
+          "at_min": 1,
+          "at_min_fraction": 0.003952569169960474,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 260,
+        "crosses_below_-2.0": 19,
+        "crosses_below_-2.5": 3,
+        "crosses_below_-3.0": 0,
+        "lowered_by_0p5_and_below_-2": 10
+      }
+    },
+    "sdss_dr20_bossnet_081": {
+      "stars": 928985,
+      "floor": {
+        "n": 928985,
+        "min": -3.9568638801574707,
+        "p001": -2.868644853591919,
+        "at_min": 3,
+        "at_min_fraction": 3.2293309364521493e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 567,
+        "median_offset": 0.1865359687805177,
+        "robust_sigma": 0.5409828540844919,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 58,
+            "median_offset": 1.073023476600647,
+            "robust_sigma": 0.479292977811813
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 90,
+            "median_offset": 0.8162410950660706,
+            "robust_sigma": 0.46340052697133993
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 75,
+            "median_offset": 0.6021104717254637,
+            "robust_sigma": 0.24266431915855374
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 41,
+            "median_offset": 0.29381229877471915,
+            "robust_sigma": 0.25791778177928953
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 59,
+            "median_offset": 0.1865359687805177,
+            "robust_sigma": 0.17096046733760797
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 35,
+            "median_offset": 0.10737826824188235,
+            "robust_sigma": 0.30264726468801506
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 209,
+            "median_offset": -0.16934731721878052,
+            "robust_sigma": 0.16246272570633885
+          }
+        ],
+        "maps": {
+          "n": 567,
+          "cv_median_abs_residual": {
+            "identity": 0.3199667453765869,
+            "offset": 0.38782735204294183,
+            "affine": 0.2255292546589236,
+            "piecewise_linear": 0.18995578004171665
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -1.8867350122893585,
+            -0.5682562048688904,
+            1.4045026093904476,
+            -0.25876033365939466,
+            -1.1582902620278046
+          ],
+          "knots": [
+            -1.802927315235138,
+            -1.1605592966079712,
+            -0.2288520634174347
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 567,
+          "min": -3.2540438175201416,
+          "p001": -3.210766713142395,
+          "at_min": 1,
+          "at_min_fraction": 0.001763668430335097,
+          "pile_up": false
+        }
+      },
+      "metal_poor_gain": {
+        "overlap": 2092,
+        "crosses_below_-2.0": 1049,
+        "crosses_below_-2.5": 387,
+        "crosses_below_-3.0": 110,
+        "lowered_by_0p5_and_below_-2": 859
+      }
+    }
+  },
+  "master_sources": {
+    "bestbrightest_placco2019": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "bb_medres",
+      "stars": 796,
+      "floor": {
+        "n": 796,
+        "min": -3.65,
+        "p001": -3.4592,
+        "at_min": 1,
+        "at_min_fraction": 0.001256281407035176,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 70,
+        "median_offset": -0.16500000000000004,
+        "robust_sigma": 0.214977,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 3,
+            "median_offset": 0.26000000000000023,
+            "robust_sigma": 0.22238999999999987
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 26,
+            "median_offset": -0.1349999999999998,
+            "robust_sigma": 0.2372160000000002
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 30,
+            "median_offset": -0.17499999999999982,
+            "robust_sigma": 0.19273800000000016
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 8,
+            "median_offset": -0.20499999999999996,
+            "robust_sigma": 0.13343399999999994
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 1,
+            "median_offset": -0.47,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 2,
+            "median_offset": -0.37,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 70,
+          "cv_median_abs_residual": {
+            "identity": 0.19000000000000006,
+            "offset": 0.15268907325000025,
+            "affine": 0.14825658543417986
+          },
+          "chosen": "offset",
+          "coefficients": [
+            0.1506442276415095
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 70,
+          "min": -3.41,
+          "p001": -3.39896,
+          "at_min": 1,
+          "at_min_fraction": 0.014285714285714285,
+          "pile_up": false
+        }
+      }
+    },
+    "gaia_eso_dr5_1": {
+      "tier": "survey",
+      "dependency_group": "gaia_eso_flames",
+      "stars": 94145,
+      "floor": {
+        "n": 94145,
+        "min": -3.47,
+        "p001": -2.78856,
+        "at_min": 1,
+        "at_min_fraction": 1.0621913006532477e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 434,
+        "median_offset": 0.019999999999999997,
+        "robust_sigma": 0.133434,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 5,
+            "median_offset": 0.5099999999999998,
+            "robust_sigma": 0.7857779999999996
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 8,
+            "median_offset": 0.1200000000000001,
+            "robust_sigma": 0.15567299999999964
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 20,
+            "median_offset": 0.125,
+            "robust_sigma": 0.14307090000000003
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 8,
+            "median_offset": 0.13000000000000012,
+            "robust_sigma": 0.05930400000000021
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 34,
+            "median_offset": 0.08599999999999997,
+            "robust_sigma": 0.06819960000000022
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 31,
+            "median_offset": 0.25,
+            "robust_sigma": 0.26686800000000005
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 328,
+            "median_offset": -0.03,
+            "robust_sigma": 0.11860799999999998
+          }
+        ],
+        "maps": {
+          "n": 434,
+          "cv_median_abs_residual": {
+            "identity": 0.09,
+            "offset": 0.08651450097122303,
+            "affine": 0.08343670065403622,
+            "piecewise_linear": 0.07724321532180507
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -0.05661067649233855,
+            0.01202157430132206,
+            0.41802351296877677,
+            -1.2326289959545682,
+            0.7112662905648781
+          ],
+          "knots": [
+            -0.41,
+            -0.08499999999999999,
+            0.02
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 434,
+          "min": -3.38,
+          "p001": -3.1808199999999998,
+          "at_min": 1,
+          "at_min_fraction": 0.002304147465437788,
+          "pile_up": false
+        }
+      }
+    },
+    "jinabase_2021": {
+      "tier": "highres_reference",
+      "dependency_group": "literature_highres_compilation",
+      "stars": 1615,
+      "floor": {
+        "n": 1615,
+        "min": -5.9,
+        "p001": -4.8772,
+        "at_min": 1,
+        "at_min_fraction": 0.0006191950464396285,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 699,
+        "median_offset": 0.040000000000000036,
+        "robust_sigma": 0.17791200000000015,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 165,
+            "median_offset": 0.04999999999999982,
+            "robust_sigma": 0.2372160000000002
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 189,
+            "median_offset": 0.029999999999999805,
+            "robust_sigma": 0.20756400000000017
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 115,
+            "median_offset": 0.02499999999999991,
+            "robust_sigma": 0.185325
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 84,
+            "median_offset": 0.022499999999999964,
+            "robust_sigma": 0.214977
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 45,
+            "median_offset": 0.04999999999999982,
+            "robust_sigma": 0.14825999999999978
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 80,
+            "median_offset": 0.05250000000000005,
+            "robust_sigma": 0.10748849999999993
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 21,
+            "median_offset": 0.019999999999999962,
+            "robust_sigma": 0.11860799999999995
+          }
+        ],
+        "maps": {
+          "n": 699,
+          "cv_median_abs_residual": {
+            "identity": 0.1299999999999999,
+            "offset": 0.12530995617067875,
+            "affine": 0.11958984966083452,
+            "piecewise_linear": 0.1199096547988514
+          },
+          "chosen": "affine",
+          "coefficients": [
+            -0.11950297328101231,
+            -0.043389942166967434
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 699,
+          "min": -5.9,
+          "p001": -4.9228,
+          "at_min": 1,
+          "at_min_fraction": 0.001430615164520744,
+          "pile_up": false
+        }
+      }
+    },
+    "lamost_cat_li2025": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "lamost_lrs_spectra",
+      "stars": 8378,
+      "floor": {
+        "n": 8378,
+        "min": -3.36,
+        "p001": -3.129706,
+        "at_min": 1,
+        "at_min_fraction": 0.00011936022917164001,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 317,
+        "median_offset": 0.1649999999999996,
+        "robust_sigma": 0.1897727999999995,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 50,
+            "median_offset": 0.4635,
+            "robust_sigma": 0.26612669999999966
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 124,
+            "median_offset": 0.19100000000000006,
+            "robust_sigma": 0.15122520000000012
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 133,
+            "median_offset": 0.08199999999999985,
+            "robust_sigma": 0.14529479999999978
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 9,
+            "median_offset": -0.13800000000000012,
+            "robust_sigma": 0.09933420000000025
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 1,
+            "median_offset": -0.8620000000000001,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 317,
+          "cv_median_abs_residual": {
+            "identity": 0.18000000000000016,
+            "offset": 0.13265462232460745,
+            "affine": 0.13278349675179735,
+            "piecewise_linear": 0.1321751420871542
+          },
+          "chosen": "offset",
+          "coefficients": [
+            -0.17075070440677964
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 317,
+          "min": -3.36,
+          "p001": -3.315128,
+          "at_min": 1,
+          "at_min_fraction": 0.0031545741324921135,
+          "pile_up": false
+        }
+      }
+    },
+    "lamost_vmp_li2018": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "lamost_lrs_spectra",
+      "stars": 9674,
+      "floor": {
+        "n": 9674,
+        "min": -4.55,
+        "p001": -4.12327,
+        "at_min": 1,
+        "at_min_fraction": 0.00010336985734959685,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 413,
+        "median_offset": -0.07999999999999963,
+        "robust_sigma": 0.28169400000000056,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 120,
+            "median_offset": 0.06999999999999984,
+            "robust_sigma": 0.2742809999999994
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 140,
+            "median_offset": -0.08000000000000007,
+            "robust_sigma": 0.33358500000000013
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 119,
+            "median_offset": -0.10000000000000009,
+            "robust_sigma": 0.19273799999999983
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 31,
+            "median_offset": -0.2999999999999998,
+            "robust_sigma": 0.11860799999999977
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 2,
+            "median_offset": -0.8024999999999999,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 1,
+            "median_offset": -2.705,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 413,
+          "cv_median_abs_residual": {
+            "identity": 0.20999999999999996,
+            "offset": 0.19370061268656746,
+            "affine": 0.19821961151408596,
+            "piecewise_linear": 0.18134713523109003
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -0.7992535622428617,
+            -0.2964953338370268,
+            -0.15302675181926947,
+            0.48709837794722566,
+            0.388570539961127
+          ],
+          "knots": [
+            -3.15,
+            -2.79,
+            -2.34
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 413,
+          "min": -4.45,
+          "p001": -4.44588,
+          "at_min": 2,
+          "at_min_fraction": 0.004842615012106538,
+          "pile_up": false
+        }
+      }
+    },
+    "pastel_2020": {
+      "tier": "highres_reference",
+      "dependency_group": "pastel_literature",
+      "stars": 17943,
+      "floor": {
+        "n": 17943,
+        "min": -4.7,
+        "p001": -4.0,
+        "at_min": 1,
+        "at_min_fraction": 5.5732040349997216e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 1988,
+        "median_offset": 0.01999999999999999,
+        "robust_sigma": 0.10378199999999972,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 147,
+            "median_offset": -0.029999999999999805,
+            "robust_sigma": 0.18532500000000066
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 186,
+            "median_offset": -0.042500000000000204,
+            "robust_sigma": 0.18903149999999957
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 174,
+            "median_offset": 0.027499999999999858,
+            "robust_sigma": 0.214977
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 174,
+            "median_offset": -0.020000000000000018,
+            "robust_sigma": 0.1186080000000001
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 141,
+            "median_offset": -0.0050000000000001155,
+            "robust_sigma": 0.09636899999999991
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 276,
+            "median_offset": 0.0050000000000000044,
+            "robust_sigma": 0.08154300000000007
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 890,
+            "median_offset": 0.024999999999999994,
+            "robust_sigma": 0.08154299999999999
+          }
+        ],
+        "maps": {
+          "n": 1988,
+          "cv_median_abs_residual": {
+            "identity": 0.06500000000000039,
+            "offset": 0.06532978024186827,
+            "affine": 0.06731625630940752,
+            "piecewise_linear": 0.0653431947955293
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 1988,
+          "min": -4.7,
+          "p001": -4.34416,
+          "at_min": 1,
+          "at_min_fraction": 0.0005030181086519115,
+          "pile_up": false
+        }
+      }
+    },
+    "pigs_aat": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "pigs_aat",
+      "stars": 13231,
+      "floor": {
+        "n": 13231,
+        "min": -4.0,
+        "p001": -3.95262,
+        "at_min": 12,
+        "at_min_fraction": 0.0009069609251001436,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 4,
+        "median_offset": 0.11649999999999994,
+        "robust_sigma": 0.33061980000000013,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 1,
+            "median_offset": 0.5330000000000004,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 2,
+            "median_offset": -0.013000000000000123,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 1,
+            "median_offset": 0.02299999999999991,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 4,
+          "cv_median_abs_residual": {
+            "identity": 0.2230000000000001
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 4,
+          "min": -2.8360000000000003,
+          "p001": -2.835742,
+          "at_min": 1,
+          "at_min_fraction": 0.25,
+          "pile_up": false
+        }
+      }
+    },
+    "pristine_aguado2019": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "pristine_int_ids",
+      "stars": 990,
+      "floor": {
+        "n": 990,
+        "min": -3.45,
+        "p001": -3.42033,
+        "at_min": 1,
+        "at_min_fraction": 0.00101010101010101,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 42,
+        "median_offset": 0.025000000000000133,
+        "robust_sigma": 0.3780629999999995,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 19,
+            "median_offset": 0.25,
+            "robust_sigma": 0.14826000000000011
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 13,
+            "median_offset": -0.08000000000000007,
+            "robust_sigma": 0.25204200000000054
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 5,
+            "median_offset": -0.6299999999999999,
+            "robust_sigma": 0.3558240000000003
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 2,
+            "median_offset": -0.29249999999999987,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 1,
+            "median_offset": -1.49,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 2,
+            "median_offset": -1.1099999999999999,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 42,
+          "cv_median_abs_residual": {
+            "identity": 0.27,
+            "offset": 0.2563530481280196,
+            "affine": 0.2687935961117438
+          },
+          "chosen": "offset",
+          "coefficients": [
+            -0.006435993387096318
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 42,
+          "min": -3.45,
+          "p001": -3.44877,
+          "at_min": 1,
+          "at_min_fraction": 0.023809523809523808,
+          "pile_up": false
+        }
+      }
+    },
+    "roederer2014": {
+      "tier": "highres_reference",
+      "dependency_group": "roederer2014",
+      "stars": 295,
+      "floor": {
+        "n": 295,
+        "min": -4.5,
+        "p001": -4.42944,
+        "at_min": 1,
+        "at_min_fraction": 0.003389830508474576,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 271,
+        "median_offset": -0.08999999999999986,
+        "robust_sigma": 0.2816939999999992,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 59,
+            "median_offset": -0.040000000000000036,
+            "robust_sigma": 0.26686799999999955
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 109,
+            "median_offset": -0.040000000000000036,
+            "robust_sigma": 0.2372160000000002
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 59,
+            "median_offset": -0.14000000000000012,
+            "robust_sigma": 0.415128
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 30,
+            "median_offset": -0.15500000000000003,
+            "robust_sigma": 0.200151
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 13,
+            "median_offset": -0.15999999999999992,
+            "robust_sigma": 0.09636899999999991
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 1,
+            "median_offset": -0.6799999999999999,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 271,
+          "cv_median_abs_residual": {
+            "identity": 0.17499999999999982,
+            "offset": 0.18078598686868697,
+            "affine": 0.1753435929492011,
+            "piecewise_linear": 0.16747933481145516
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -0.23507686892646718,
+            -0.12650561159851728,
+            -0.4239758296707629,
+            0.5451001856871442,
+            0.20041597256545657
+          ],
+          "knots": [
+            -3.03,
+            -2.7,
+            -2.3449999999999998
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 271,
+          "min": -4.5,
+          "p001": -4.4352,
+          "at_min": 1,
+          "at_min_fraction": 0.0036900369003690036,
+          "pile_up": false
+        }
+      }
+    },
+    "rpa_hansen2018": {
+      "tier": "highres_reference",
+      "dependency_group": "rpa_hansen2018",
+      "stars": 107,
+      "floor": {
+        "n": 107,
+        "min": -3.13,
+        "p001": -3.1247,
+        "at_min": 1,
+        "at_min_fraction": 0.009345794392523364,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 55,
+        "median_offset": 0.0900000000000003,
+        "robust_sigma": 0.29651999999999956,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 6,
+            "median_offset": 0.14500000000000002,
+            "robust_sigma": 0.1445535000000002
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 28,
+            "median_offset": 0.13750000000000018,
+            "robust_sigma": 0.27057449999999983
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 13,
+            "median_offset": -0.13999999999999968,
+            "robust_sigma": 0.11860800000000075
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 8,
+            "median_offset": 0.03499999999999992,
+            "robust_sigma": 0.2409224999999998
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 55,
+          "cv_median_abs_residual": {
+            "identity": 0.16999999999999993,
+            "offset": 0.21556818181818205,
+            "affine": 0.1815698808808044
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 55,
+          "min": -3.13,
+          "p001": -3.12406,
+          "at_min": 1,
+          "at_min_fraction": 0.01818181818181818,
+          "pile_up": false
+        }
+      }
+    },
+    "rpa_holmbeck2020": {
+      "tier": "highres_reference",
+      "dependency_group": "rpa_holmbeck2020",
+      "stars": 232,
+      "floor": {
+        "n": 232,
+        "min": -3.75,
+        "p001": -3.69225,
+        "at_min": 1,
+        "at_min_fraction": 0.004310344827586207,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 75,
+        "median_offset": -0.10999999999999988,
+        "robust_sigma": 0.214977,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 9,
+            "median_offset": 0.33999999999999986,
+            "robust_sigma": 0.3854760000000003
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 13,
+            "median_offset": -0.06999999999999984,
+            "robust_sigma": 0.13343400000000044
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 29,
+            "median_offset": -0.14000000000000012,
+            "robust_sigma": 0.19273799999999983
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 20,
+            "median_offset": -0.14500000000000002,
+            "robust_sigma": 0.13343399999999994
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 4,
+            "median_offset": 0.03499999999999992,
+            "robust_sigma": 0.24462899999999987
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 75,
+          "cv_median_abs_residual": {
+            "identity": 0.16000000000000014,
+            "offset": 0.14023034936170187,
+            "affine": 0.14090441530854925
+          },
+          "chosen": "offset",
+          "coefficients": [
+            0.07763047939655165
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 75,
+          "min": -3.75,
+          "p001": -3.7315,
+          "at_min": 1,
+          "at_min_fraction": 0.013333333333333334,
+          "pile_up": false
+        }
+      }
+    },
+    "s5_dr1": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "s5_aat_2df",
+      "stars": 29581,
+      "floor": {
+        "n": 29581,
+        "min": -4.3995,
+        "p001": -3.748302,
+        "at_min": 1,
+        "at_min_fraction": 3.380548324938305e-05,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 18,
+        "median_offset": 0.34255000000000013,
+        "robust_sigma": 0.3553050899999997,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 1,
+            "median_offset": 0.32669999999999977,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 1,
+            "median_offset": -0.2730999999999999,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 16,
+            "median_offset": 0.3537000000000001,
+            "robust_sigma": 0.3387740999999997
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 18,
+          "cv_median_abs_residual": {
+            "identity": 0.34255000000000013,
+            "offset": 0.3567653093621943
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 18,
+          "min": -3.2431,
+          "p001": -3.2385134,
+          "at_min": 1,
+          "at_min_fraction": 0.05555555555555555,
+          "pile_up": false
+        }
+      }
+    },
+    "saga_mw": {
+      "tier": "highres_reference",
+      "dependency_group": "literature_highres_compilation",
+      "stars": 6188,
+      "floor": {
+        "n": 6188,
+        "min": -7.1,
+        "p001": -4.99439,
+        "at_min": 1,
+        "at_min_fraction": 0.00016160310277957336,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 2513,
+        "median_offset": 0.0,
+        "robust_sigma": 0.09636899999999991,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 196,
+            "median_offset": 0.08000000000000007,
+            "robust_sigma": 0.15567300000000028
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 244,
+            "median_offset": 0.04999999999999982,
+            "robust_sigma": 0.14825999999999978
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 167,
+            "median_offset": 0.015000000000000124,
+            "robust_sigma": 0.15567299999999998
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 236,
+            "median_offset": 0.040000000000000036,
+            "robust_sigma": 0.09636899999999991
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 206,
+            "median_offset": 0.0,
+            "robust_sigma": 0.06671699999999989
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 343,
+            "median_offset": 0.019999999999999907,
+            "robust_sigma": 0.07413000000000022
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 1121,
+            "median_offset": -0.03,
+            "robust_sigma": 0.08599080000000003
+          }
+        ],
+        "maps": {
+          "n": 2513,
+          "cv_median_abs_residual": {
+            "identity": 0.06499999999999995,
+            "offset": 0.06385517582274461,
+            "affine": 0.0633155424041448,
+            "piecewise_linear": 0.06331160978775595
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 2513,
+          "min": -5.7,
+          "p001": -4.54716,
+          "at_min": 1,
+          "at_min_fraction": 0.0003979307600477517,
+          "pile_up": false
+        }
+      }
+    },
+    "sdss_dr12_sspp": {
+      "tier": "survey",
+      "dependency_group": "sdss_optical_spectra_sspp",
+      "stars": 370437,
+      "floor": {
+        "n": 370437,
+        "min": -4.499392509460449,
+        "p001": -3.604830813407898,
+        "at_min": 3,
+        "at_min_fraction": 8.09854307210133e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 266,
+        "median_offset": 0.1340575075149537,
+        "robust_sigma": 0.3020563638038636,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 118,
+            "median_offset": 0.3201731967926025,
+            "robust_sigma": 0.24061899553012855
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 74,
+            "median_offset": 0.08023060321807862,
+            "robust_sigma": 0.19984613816928865
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 14,
+            "median_offset": 0.10013341426849376,
+            "robust_sigma": 0.2927507574090958
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 9,
+            "median_offset": 0.06185664176940908,
+            "robust_sigma": 0.24901289375495886
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 9,
+            "median_offset": 0.009778561592101997,
+            "robust_sigma": 0.20873883822441072
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 1,
+            "median_offset": -0.04680932521820069,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 41,
+            "median_offset": -0.08292805612087249,
+            "robust_sigma": 0.09281005267891287
+          }
+        ],
+        "maps": {
+          "n": 266,
+          "cv_median_abs_residual": {
+            "identity": 0.18943350791931146,
+            "offset": 0.2032015476797674,
+            "affine": 0.16468340686416977,
+            "piecewise_linear": 0.15192714410754893
+          },
+          "chosen": "piecewise_linear",
+          "coefficients": [
+            -0.18187031452243804,
+            -0.008789218936624193,
+            -0.32708802131941506,
+            0.36014141627885576,
+            0.11586021269712864
+          ],
+          "knots": [
+            -3.027779221534729,
+            -2.7861216068267822,
+            -2.1213927268981934
+          ]
+        },
+        "survey_floor_on_overlap": {
+          "n": 266,
+          "min": -4.247959136962891,
+          "p001": -4.122501156330109,
+          "at_min": 1,
+          "at_min_fraction": 0.0037593984962406013,
+          "pile_up": false
+        }
+      }
+    },
+    "sdss_dr19_astra_aspcap": {
+      "tier": "survey",
+      "dependency_group": "apogee_spectra_aspcap",
+      "stars": 695688,
+      "floor": {
+        "n": 695688,
+        "min": -2.449251174926758,
+        "p001": -2.128313686132431,
+        "at_min": 3,
+        "at_min_fraction": 4.312277917687239e-06,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 2737,
+        "median_offset": 0.0168129163980484,
+        "robust_sigma": 0.09449203186462819,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 21,
+            "median_offset": 0.365848808288574,
+            "robust_sigma": 0.16960930652618408
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 118,
+            "median_offset": 0.1743989253044127,
+            "robust_sigma": 0.12157334563350672
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 137,
+            "median_offset": 0.09994892120361332,
+            "robust_sigma": 0.12557626284170148
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 201,
+            "median_offset": 0.051953110694885174,
+            "robust_sigma": 0.13225400946006752
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 180,
+            "median_offset": 0.06373891174793245,
+            "robust_sigma": 0.08928834750401966
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 2080,
+            "median_offset": -0.011929006204009052,
+            "robust_sigma": 0.07813078926229476
+          }
+        ],
+        "maps": {
+          "n": 2737,
+          "cv_median_abs_residual": {
+            "identity": 0.06194900035858164,
+            "offset": 0.06352441528212732,
+            "affine": 0.058513144497545834,
+            "piecewise_linear": 0.05991079877748673
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 2737,
+          "min": -2.414151191711426,
+          "p001": -2.379649564743042,
+          "at_min": 3,
+          "at_min_fraction": 0.0010960906101571063,
+          "pile_up": false
+        }
+      }
+    },
+    "smss_dacosta2019_t2": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "smss_wifes",
+      "stars": 142,
+      "floor": {
+        "n": 142,
+        "min": -4.75,
+        "p001": -4.71475,
+        "at_min": 1,
+        "at_min_fraction": 0.007042253521126761,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 87,
+        "median_offset": -0.33999999999999986,
+        "robust_sigma": 0.31134599999999996,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 61,
+            "median_offset": -0.18999999999999995,
+            "robust_sigma": 0.2520419999999999
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 19,
+            "median_offset": -0.6299999999999999,
+            "robust_sigma": 0.37065
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 7,
+            "median_offset": -0.9300000000000002,
+            "robust_sigma": 0.10378199999999976
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 87,
+          "cv_median_abs_residual": {
+            "identity": 0.3500000000000001,
+            "offset": 0.20281464290909046,
+            "affine": 0.20405370238116483
+          },
+          "chosen": "offset",
+          "coefficients": [
+            0.3491675684057973
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 87,
+          "min": -4.75,
+          "p001": -4.7285,
+          "at_min": 1,
+          "at_min_fraction": 0.011494252873563218,
+          "pile_up": false
+        }
+      }
+    },
+    "smss_dacosta2019_t3": {
+      "tier": "metal_poor_survey",
+      "dependency_group": "smss_wifes",
+      "stars": 29,
+      "floor": {
+        "n": 29,
+        "min": -3.75,
+        "p001": -3.75,
+        "at_min": 4,
+        "at_min_fraction": 0.13793103448275862,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 11,
+        "median_offset": -0.20000000000000018,
+        "robust_sigma": 0.400302,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 8,
+            "median_offset": -0.10499999999999998,
+            "robust_sigma": 0.200151
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 2,
+            "median_offset": -0.5150000000000001,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 1,
+            "median_offset": -1.2000000000000002,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 11,
+          "cv_median_abs_residual": {
+            "identity": 0.20000000000000018,
+            "offset": 0.261814241666674
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 11,
+          "min": -3.75,
+          "p001": -3.75,
+          "at_min": 2,
+          "at_min_fraction": 0.18181818181818182,
+          "pile_up": false
+        }
+      }
+    },
+    "smss_yong2021": {
+      "tier": "highres_reference",
+      "dependency_group": "smss_yong2021",
+      "stars": 150,
+      "floor": {
+        "n": 150,
+        "min": -4.09,
+        "p001": -4.05722,
+        "at_min": 1,
+        "at_min_fraction": 0.006666666666666667,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 23,
+        "median_offset": 0.10000000000000009,
+        "robust_sigma": 0.29651999999999956,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 19,
+            "median_offset": 0.13000000000000034,
+            "robust_sigma": 0.355824000000001
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 4,
+            "median_offset": 0.010000000000000009,
+            "robust_sigma": 0.2816939999999999
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 23,
+          "cv_median_abs_residual": {
+            "identity": 0.22999999999999998,
+            "offset": 0.22843663582882456,
+            "affine": 0.18872814795026116
+          },
+          "chosen": "affine",
+          "coefficients": [
+            -1.6029703135829632,
+            -0.4820702855240699
+          ],
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 23,
+          "min": -3.66,
+          "p001": -3.65802,
+          "at_min": 1,
+          "at_min_fraction": 0.043478260869565216,
+          "pile_up": false
+        }
+      }
+    },
+    "yong2013_literature": {
+      "tier": "highres_reference",
+      "dependency_group": "yong2013",
+      "stars": 152,
+      "floor": {
+        "n": 152,
+        "min": -5.76,
+        "p001": -5.72678,
+        "at_min": 1,
+        "at_min_fraction": 0.006578947368421052,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 152,
+        "median_offset": -0.030000000000000027,
+        "robust_sigma": 0.15567299999999998,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 60,
+            "median_offset": -0.029999999999999805,
+            "robust_sigma": 0.14455350000000053
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 64,
+            "median_offset": -0.020000000000000018,
+            "robust_sigma": 0.12231450000000002
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 23,
+            "median_offset": -0.10000000000000009,
+            "robust_sigma": 0.20756400000000017
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 3,
+            "median_offset": -0.42000000000000015,
+            "robust_sigma": 0.007412999999999842
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 2,
+            "median_offset": 0.15249999999999997,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 152,
+          "cv_median_abs_residual": {
+            "identity": 0.10000000000000009,
+            "offset": 0.09898023580580695,
+            "affine": 0.1041638806340337
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 152,
+          "min": -5.76,
+          "p001": -5.72678,
+          "at_min": 1,
+          "at_min_fraction": 0.006578947368421052,
+          "pile_up": false
+        }
+      }
+    },
+    "yong2013_program": {
+      "tier": "highres_reference",
+      "dependency_group": "yong2013",
+      "stars": 38,
+      "floor": {
+        "n": 38,
+        "min": -4.1,
+        "p001": -4.099259999999999,
+        "at_min": 1,
+        "at_min_fraction": 0.02631578947368421,
+        "pile_up": false
+      },
+      "reference": {
+        "overlap": 31,
+        "median_offset": 0.020000000000000018,
+        "robust_sigma": 0.044478000000000364,
+        "bins": [
+          {
+            "ref_lo": null,
+            "ref_hi": -3.0,
+            "n": 17,
+            "median_offset": 0.0,
+            "robust_sigma": 0.05930400000000005
+          },
+          {
+            "ref_lo": -3.0,
+            "ref_hi": -2.5,
+            "n": 14,
+            "median_offset": 0.020000000000000018,
+            "robust_sigma": 0.029652000000000026
+          },
+          {
+            "ref_lo": -2.5,
+            "ref_hi": -2.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -2.0,
+            "ref_hi": -1.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.5,
+            "ref_hi": -1.0,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -1.0,
+            "ref_hi": -0.5,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          },
+          {
+            "ref_lo": -0.5,
+            "ref_hi": null,
+            "n": 0,
+            "median_offset": null,
+            "robust_sigma": null
+          }
+        ],
+        "maps": {
+          "n": 31,
+          "cv_median_abs_residual": {
+            "identity": 0.040000000000000036,
+            "offset": 0.0399650480263154,
+            "affine": 0.038957858174375914
+          },
+          "chosen": "identity",
+          "coefficients": null,
+          "knots": null
+        },
+        "survey_floor_on_overlap": {
+          "n": 31,
+          "min": -4.1,
+          "p001": -4.099399999999999,
+          "at_min": 1,
+          "at_min_fraction": 0.03225806451612903,
+          "pile_up": false
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "utc": "2026-11-10T23:27:06.894481+00:00",
+  "observations": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261110_v3/observations.parquet",
+  "observations_sha256": "2ac3204d29264867e16aa1c1c9d2abcfc799ae00764200c7c43181704efb93e5",
+  "sidecars": [
+    {
+      "source": "apogee",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "rows": 211163,
+      "candidates": [
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          211163,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+        ]
+      ]
+    },
+    {
+      "source": "desi_dr1_rvs_raw",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5",
+      "rows": 3683136,
+      "candidates": [
+        [
+          3683136,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/desi-selected.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          3681789,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ]
+      ]
+    },
+    {
+      "source": "gaia_dr3_gspspec",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5",
+      "rows": 5591594,
+      "candidates": [
+        [
+          5591594,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5"
+        ],
+        [
+          5591594,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ]
+      ]
+    },
+    {
+      "source": "galah",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "rows": 631922,
+      "candidates": [
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+        ],
+        [
+          631922,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_lrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "rows": 3265101,
+      "candidates": [
+        [
+          3265101,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr12v2_mrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "rows": 821991,
+      "candidates": [
+        [
+          821991,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "lamost_dr8v2_lrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
+      "rows": 2827370,
+      "candidates": [
+        [
+          2827370,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "rave_dr6_madera_gauguin",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "rows": 188943,
+      "candidates": [
+        [
+          188943,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5"
+        ]
+      ]
+    },
+    {
+      "source": "sdss_dr20_bossnet_081",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "rows": 929032,
+      "candidates": [
+        [
+          929032,
+          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5"
+        ]
+      ]
+    }
+  ],
+  "training_performed": false,
+  "roles_assigned": false
+}
