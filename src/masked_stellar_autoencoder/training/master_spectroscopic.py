@@ -207,7 +207,9 @@ def star_table(records: pd.DataFrame) -> pd.DataFrame:
     star = s[starts]
     first = order[starts]
     ok = records.fit_ok.to_numpy(bool)
-    feh_ok = ok & (records.fe_h_kind.astype(str).to_numpy() == "fe_h")
+    # [Fe/H] on any solar scale (fe_h, fe_h_a09); not [M/H]-type quantities.
+    kind = records.fe_h_kind.astype(str).to_numpy()
+    feh_ok = ok & np.char.startswith(kind.astype("U"), "fe_h")
 
     def med(values, use):
         v = np.where(use, records[values].to_numpy("f8"), np.nan)

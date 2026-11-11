@@ -63,7 +63,7 @@ def test_star_table_summaries_and_keys():
         native_id=["9", "a", "b", "z"],
         source_id=[9, 9, 0, 0],
         fe_h=[-1.0, -2.0, -3.0, 0.0],
-        fe_h_kind=["m_h", "fe_h", "fe_h", "fe_h"],
+        fe_h_kind=["m_h", "fe_h", "fe_h", "fe_h_a09"],
         tier=["survey", "survey", "survey", "highres_reference"],
         ra=[1.0, 1.0, 2.0, np.nan],
         dec=[0.0, 0.0, 0.0, np.nan],
@@ -77,6 +77,7 @@ def test_star_table_summaries_and_keys():
     assert gaia.fe_h_median == -2.0  # [M/H] record excluded
     assert gaia.label_groups == "v2:g"
     assert stars.loc["nogaia:x:z"].has_highres
+    assert stars.loc["nogaia:x:z"].fe_h_median_highres == 0.0  # fe_h_a09 counts
 
 
 def test_label_groups_are_survey_specific():
