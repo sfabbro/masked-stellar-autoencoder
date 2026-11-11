@@ -15,6 +15,49 @@ It is the union of every spectroscopic record we have staged:
 There is one record per native catalogue row, with no quality cut. Records
 without a Gaia DR3 identity are kept.
 
+**v1** (`master_spectroscopic_labels_20261111_v1`, complete):
+
+| | Count |
+|---|--:|
+| Records | 29,307,497 |
+| Stars | 19,138,656 |
+| Stars with Gaia DR3 identity | 19,093,456 |
+| Stars without Gaia identity | 45,200 |
+| Records without Gaia identity | 57,983 |
+
+Most records without Gaia identity are LAMOST LRS/MRS rows with no Gaia
+source within 1.5″ (35,262 + 5,242). The APOGEE rows (5,564) have no Gaia
+source within 3″; most are cool giants toward the Galactic centre. The 1,030
+RAVE rows have no staged position. Census sources contribute 10,846 records
+without identity.
+
+**v2** (`master_spectroscopic_labels_20261111_v2`) adds:
+
+- **Census v4** (`master_label_census_20261111_v4`):
+  - AMBRE FEROS (Worley+2012);
+  - RPA: Ezzeddine+2020 and Sakari+2018;
+  - Kirby+2010 dSph DEIMOS abundances and its high-res literature table;
+  - LAMOST-Subaru (Li+2022);
+  - SEGUE EMP follow-up (Aoki+2013);
+  - Bensby+2014, with Hipparcos positions joined on HIP;
+  - MaStar parameter VAC v2;
+  - the DR19 Astra APOGEENet, AstroNN and The Payne summaries;
+  - the DR20 Astra SLAM summary.
+- **Other pipelines on staged spectra:** DESI SP (FERRE, `SPTAB`) and LAMOST
+  MRS CNN.
+
+Not available, so not included:
+
+- H3: no public catalogue; the survey site lists only papers.
+- 4MOST: no public release yet.
+- Gaia DR4: expected December 2026.
+- SAGA Local Group and LAMOST-Subaru retrievals: the LG form returns a
+  different layout and LAMSUB returns a server error. Dwarf galaxies are
+  covered by Kirby+2010; LAMOST-Subaru is covered by Li+2022 from VizieR.
+- AMBRE HARPS and UVES: no table found on the VizieR mirror.
+- MaStar's spectral-library parameters are in v2; its raw Gaia identity file
+  is not needed.
+
 ## Files
 
 | File | Content |
@@ -91,5 +134,7 @@ adapters, so `native_row` refers to that parsed table.
   LAMOST, APOGEE, GALAH and BOSSNet. RAVE has no positions in the staged
   files, so RAVE records without the EDR3 crossmatch stay without Gaia
   identity.
-- MaStar is not included: only its identity join is staged, not its
-  parameters.
+- Pipelines run on the same spectra (APOGEE ASPCAP/APOGEENet/AstroNN/The
+  Payne; DESI RVSpecFit/SP; LAMOST LASP/CNN) are separate surveys in the
+  table that share a `dependency_group`. They are not independent
+  measurements.
