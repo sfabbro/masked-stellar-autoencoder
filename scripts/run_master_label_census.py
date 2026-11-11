@@ -166,6 +166,15 @@ def main():
                 notes=spec.notes,
             )
             frame = ml.vizier_observations(spec, raw)
+            if spec.simbad_name:
+                try:
+                    names = [ml.target_name(n) for n in raw[spec.simbad_name]]
+                    frame = ml.resolve_names(frame, names, a.work / "simbad", log=log)
+                except Exception as error:
+                    manifest["errors"]["simbad:" + spec.source] = (
+                        f"{type(error).__name__}: {error}"
+                    )
+                    log(f"FAILED simbad {spec.source}: {error}")
             epochs = (2000.0,) if spec.epoch == 2000.0 else (spec.epoch,)
             frames.append((frame, spec.radius_arcsec, epochs, spec.search_arcsec))
             log(f"{spec.source}: {len(frame)} rows")

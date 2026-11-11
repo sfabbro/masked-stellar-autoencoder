@@ -500,6 +500,8 @@ class VizierSource:
     join_table: str | None = None
     join_key: str | None = None
     join_right_key: str | None = None
+    # Column with target names resolved through SIMBAD before positional matching.
+    simbad_name: str | None = None
 
 
 VIZIER_SOURCES: tuple[VizierSource, ...] = (
@@ -775,10 +777,14 @@ VIZIER_SOURCES: tuple[VizierSource, ...] = (
         alpha="[alpha/Fe]",
         alpha_kind="alpha_fe",
         native_id="Ident",
+        simbad_name="Target",
         snr="SNR",
         radius_arcsec=3.0,
         search_arcsec=30.0,
-        notes="One row per archived spectrum; [M/H] is a global metallicity",
+        notes=(
+            "One row per archived spectrum; [M/H] is a global metallicity. "
+            "Target names go through SIMBAD first: positions are telescope pointings"
+        ),
     ),
     VizierSource(
         "ezzeddine2020_rpa",
@@ -1439,14 +1445,48 @@ def simbad_resolve(names, cache: Path, log=print) -> pd.DataFrame:
     )
 
 
-def apply_name_resolution(obs: pd.DataFrame, resolved: pd.DataFrame) -> pd.DataFrame:
+_CATALOGUE_DASH = re.compile(r"^(HD|HDE|HIP|HR|GJ|NGC|TYC)[ _-]+(\d)", re.I)
+
+
+def target_name(name) -> str:
+    """Observer target name cleaned for SIMBAD (``HD-153747``, ``HD_101189_2``).
+
+    Bare numbers are ambiguous and dropped; a trailing exposure counter after a
+    numbered identifier is removed.
+    """
+    text = str(name).strip()
+    if not text or text.replace(".", "").isdigit():
+        return ""
+    text = _CATALOGUE_DASH.sub(lambda m: f"{m.group(1).upper()} {m.group(2)}", text)
+    text = re.sub(r"\s+", " ", text.replace("_", " ")).strip()
+    return re.sub(r"^((?:HD|HDE|HIP|HR|GJ) \d+) \d{1,2}$", r"\1", text)
+
+
+def resolve_names(obs: pd.DataFrame, names, cache: Path, log=print) -> pd.DataFrame:
+    """SIMBAD Gaia DR3 identity from an explicit per-row name (blank = skip)."""
+    names = np.asarray(names, dtype=object)
+    known = sorted({n for n in names if n})
+    resolved = simbad_resolve(known, cache, log=log)
+    out = apply_name_resolution(obs, resolved, names=names)
+    log(
+        f"simbad: {len(resolved)} of {len(known)} target names known; "
+        f"{int((out.id_method == 'simbad_dr3').sum())} rows given Gaia DR3 IDs"
+    )
+    return out
+
+
+def apply_name_resolution(
+    obs: pd.DataFrame, resolved: pd.DataFrame, names=None
+) -> pd.DataFrame:
     """Give literature rows SIMBAD Gaia DR3 IDs (exact int64, never via float).
 
     Rows whose name SIMBAD maps to exactly one Gaia DR3 source get that ID;
     other rows lacking a position get the SIMBAD J2000 position instead.
     """
     obs = obs.copy()
-    names = obs.native_id.str.split("|").str[0].to_numpy()
+    if names is None:
+        names = obs.native_id.str.split("|").str[0].to_numpy()
+    names = np.asarray(names, dtype=object)
     ids = dict(zip(resolved.name, resolved.gaia_dr3.to_numpy("i8"), strict=True))
     ras = dict(zip(resolved.name, resolved.ra.to_numpy("f8"), strict=True))
     decs = dict(zip(resolved.name, resolved.dec.to_numpy("f8"), strict=True))

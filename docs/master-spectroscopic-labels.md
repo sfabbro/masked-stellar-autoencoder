@@ -33,8 +33,8 @@ without identity.
 
 **v3** (`master_spectroscopic_labels_20261111_v3`; v2 had a wrong Bensby+2014 position epoch) adds:
 
-- **Census v5** (`master_label_census_20261111_v5`):
-  - AMBRE FEROS (Worley+2012);
+- **Census v6** (`master_label_census_20261111_v6`):
+  - AMBRE FEROS (Worley+2012), target names resolved through SIMBAD, then positions;
   - RPA: Ezzeddine+2020 and Sakari+2018;
   - Kirby+2010 dSph DEIMOS abundances and its high-res literature table;
   - LAMOST-Subaru (Li+2022);

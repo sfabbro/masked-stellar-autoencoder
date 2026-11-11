@@ -240,9 +240,10 @@ STEPS["master-v2"] = dict(
 )
 
 
-# v3: census v5 fixes the Bensby+2014 position epoch (VizieR J2000 positions).
+# v3: census v6 fixes the Bensby+2014 position epoch (VizieR J2000 positions)
+# and resolves AMBRE target names through SIMBAD.
 MASTER_V3 = "master_spectroscopic_labels_20261111_v3"
-CENSUS_V5 = "master_label_census_20261111_v5"
+CENSUS_V5 = "master_label_census_20261111_v6"
 STEPS["master-v3"] = dict(
     run_id=MASTER_V3,
     gpu=0,

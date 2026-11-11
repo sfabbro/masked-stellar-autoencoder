@@ -204,3 +204,34 @@ def test_vizier_join_adds_positions_from_a_second_table(tmp_path):
     o = ml.vizier_observations(spec, frame)
     assert o.ra.iloc[0] == 10.5 and np.isnan(o.ra.iloc[1])
     assert o.native_id.tolist() == ["12", "99"] and "join" in meta
+
+
+def test_target_names_are_cleaned_for_simbad():
+    from masked_stellar_autoencoder.training import master_labels as ml
+
+    assert ml.target_name("HD-153747") == "HD 153747"
+    assert ml.target_name("HD_101189_2") == "HD 101189"
+    assert ml.target_name("RS_Cha") == "RS Cha"
+    assert ml.target_name("BD-12_345") == "BD-12 345"
+    assert ml.target_name("94892") == ""
+
+
+def test_name_resolution_uses_explicit_names_and_keeps_existing_ids():
+    from masked_stellar_autoencoder.training import master_labels as ml
+
+    obs = pd.DataFrame(
+        dict(
+            native_id=["a", "b", "c"],
+            source_id=np.array([0, 0, 5], "i8"),
+            id_method=["", "", "publisher_dr3"],
+            ra=[1.0, np.nan, 2.0],
+            dec=[1.0, np.nan, 2.0],
+        )
+    )
+    resolved = pd.DataFrame(
+        dict(name=["HD 1", "HD 2"], gaia_dr3=[11, 0], ra=[9.0, 8.0], dec=[7.0, 6.0])
+    )
+    out = ml.apply_name_resolution(obs, resolved, names=["HD 1", "HD 2", "HD 1"])
+    assert out.source_id.tolist() == [11, 0, 5]
+    assert out.id_method.tolist() == ["simbad_dr3", "", "publisher_dr3"]
+    assert out.ra.tolist()[1] == 8.0
