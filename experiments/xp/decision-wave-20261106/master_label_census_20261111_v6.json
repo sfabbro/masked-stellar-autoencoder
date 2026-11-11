@@ -1,0 +1,24 @@
+{
+  "run_id": "master_label_census_20261111_v6",
+  "utc": "2026-11-11T17:26:28.742180+00:00",
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261111_v6",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_census_20261111_v6",
+  "status": "accepted",
+  "session_ids": [
+    "ktapvkdi"
+  ],
+  "resources": {
+    "cpu": 4,
+    "ram": 48,
+    "gpu": 0
+  },
+  "command": "import runpy,sys;sys.argv=['scripts/run_master_label_census.py', '--work', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sources_20261110_v1', '--output', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261111_v6', '--existing-root', '/arc/projects/k-pop/msa_runs/stellar-improvement-20261015'];runpy.run_path('scripts/run_master_label_census.py',run_name='__main__')",
+  "source_sha256": {
+    "scripts/run_master_label_census.py": "9d107119ae0ab443d5641961272e47dcc1deee0b5374198f5ed6ae7b7da0ec88",
+    "src/masked_stellar_autoencoder/training/master_labels.py": "8d8a943515e81de51738544b7353c21dc23668fce83f7c9c411e29bd12f817fb",
+    "src/masked_stellar_autoencoder/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/masked_stellar_autoencoder/training/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pixi.toml": "c0f75fc0e8f3a804b715c24dfcaae66227aafc1d86acb0dfd62fb9f1750a4811"
+  },
+  "payload_sha256": "b9f2b2eb9aa8e8ebd9ebad7bb511d765c242b51e2f5335b3cdba319ad4a31560"
+}
