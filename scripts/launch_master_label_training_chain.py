@@ -39,6 +39,7 @@ FEATURES = "master_label_raw_features_20261111_v2"
 GAIA_FEATURES = "master_label_raw_features_20261111_v3"
 SOURCE = "expanded_six_source_20261111_v6"
 FULL = "expanded_six_source_20261111_v7"
+POOL = "gaia_noxp_unlabelled_pool_20261111_v1"
 # v1 wrote its admission decision before failing the library pin (no
 # training); its output cannot be reused, so training restarts as v2.
 TRAIN = "master_label_six_nsf_fullfit_20261111_v2"
@@ -85,6 +86,16 @@ STEPS = {
             f"python -u scripts/build_full_input_source.py --parent-run {SOURCE}"
             f" --feature-run {GAIA_FEATURES}"
             f" --extra-gaia-dir {GAIA_FEATURES}/gaia-only --output {ROOT}{FULL}"
+        ),
+        files=[],
+    ),
+    "pool": dict(
+        run_id=POOL,
+        gpu=0,
+        ram=32,
+        command=(
+            "python -u scripts/build_gaia_unlabelled_pool.py --rate 0.125"
+            f" --exclude-source {FULL} --output {ROOT}{POOL}"
         ),
         files=[],
     ),
