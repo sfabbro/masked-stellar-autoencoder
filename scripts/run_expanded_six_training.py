@@ -474,7 +474,39 @@ def main():
                 allowed[:] = True
             noxp_rows = None
             noxp_spec = cfg.get("noxp_reconstruction")
-            if noxp_spec:
+            noxp_pool = None
+            if noxp_spec and noxp_spec.get("pool"):
+                # Full-Gaia no-XP pool (build_gaia_unlabelled_pool.py): raw Gaia
+                # columns, standardized per batch with the encoder scaler.
+                pool_dir = ROOT / noxp_spec["pool"]
+                pool_manifest = json.loads((pool_dir / "manifest.json").read_text())
+                if pool_manifest.get("status") != "complete":
+                    raise ValueError("No-XP pool is not complete")
+                pool_values = np.load(pool_dir / "values.npy", mmap_mode="r")
+                pool_columns = [names.index(c) for c in pool_manifest["columns"]]
+                pool_center = data["scaler_center"][:][pool_columns]
+                pool_scale = data["scaler_scale"][:][pool_columns]
+                noxp_fraction = float(noxp_spec["fraction"])
+                if not (0 < noxp_fraction < 1) or not len(pool_values):
+                    raise ValueError("No-XP pool rows/fraction invalid")
+
+                def noxp_pool(k):
+                    pick = np.sort(reconstruction_rng.choice(len(pool_values), size=k))
+                    out = np.full((k, len(names)), np.nan, dtype="f4")
+                    out[:, pool_columns] = (
+                        (np.asarray(pool_values[pick], dtype="f8") - pool_center)
+                        / pool_scale
+                    ).astype("f4")
+                    return out
+
+                m["noxp_reconstruction"] = dict(
+                    pool=noxp_spec["pool"],
+                    rows=len(pool_values),
+                    fraction=noxp_fraction,
+                    columns=pool_manifest["columns"],
+                    pool_rate=pool_manifest.get("rate"),
+                )
+            elif noxp_spec:
                 import pyarrow.parquet as pq
 
                 frames = []
@@ -502,6 +534,9 @@ def main():
                         if np.isfinite(noxp_rows[:, j]).any()
                     ],
                 )
+            reco_weight = float(cfg.get("reconstruction_loss_weight", 0.03))
+            if not reco_weight > 0:
+                raise ValueError("reconstruction_loss_weight must be positive")
             width = len(model_cfg["data"]["recon_cols"])
             if names[:width] != model_cfg["data"]["recon_cols"]:
                 raise ValueError("Reconstruction feature order differs")
@@ -743,7 +778,10 @@ def main():
                         ]
                     ).copy()
                     raw[(~np.isfinite(raw)) | (raw == -9999)] = np.nan
-                    if noxp_rows is not None:
+                    if noxp_pool is not None:
+                        k = int(round(noxp_fraction * len(raw)))
+                        raw[:k] = noxp_pool(k)
+                    elif noxp_rows is not None:
                         k = int(round(noxp_fraction * len(raw)))
                         pick = reconstruction_rng.choice(len(noxp_rows), size=k)
                         raw[:k] = noxp_rows[pick]
@@ -781,7 +819,7 @@ def main():
                         m.setdefault("startup_encoder_gradient_contract", []).append(
                             dict(update=update, **contract)
                         )
-                    (0.03 * reco).backward()
+                    (reco_weight * reco).backward()
                     if update <= 2:
                         encoder_ids = {id(p) for p in model.encoder.parameters()}
                         if not any(
