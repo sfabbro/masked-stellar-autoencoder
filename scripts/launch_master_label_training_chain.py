@@ -34,6 +34,9 @@ TRAIN_CONFIG = "configs/master-label-six-nsf-fullfit-20261111.yaml"
 PARENT = "expanded_six_source_20261107_v5"
 # v1 (XP-only lookup) was cancelled; v2 keeps photometry-only (no-XP) stars.
 FEATURES = "master_label_raw_features_20261111_v2"
+# v2 recovered only XP stars (the pretraining files hold only XP stars); v3
+# adds the remaining labelled candidates from Gaia DR3 as no-XP stars.
+GAIA_FEATURES = "master_label_raw_features_20261111_v3"
 SOURCE = "expanded_six_source_20261111_v6"
 FULL = "expanded_six_source_20261111_v7"
 TRAIN = "master_label_six_nsf_fullfit_20261111_v1"
@@ -51,13 +54,23 @@ STEPS = {
         ),
         files=[SOURCE_CONFIG, FEATURE_CONFIG],
     ),
+    "gaiaonly": dict(
+        run_id=GAIA_FEATURES,
+        gpu=0,
+        ram=32,
+        command=(
+            f"python -u scripts/add_gaia_only_stars.py --feature-run {FEATURES}"
+            f" --output {ROOT}{GAIA_FEATURES}"
+        ),
+        files=[],
+    ),
     "source": dict(
         run_id=SOURCE,
         gpu=0,
         ram=64,
         command=(
             f"python -u scripts/extend_full_raw_source.py --config {SOURCE_CONFIG}"
-            f" --parent-run {PARENT} --feature-run {FEATURES} --include-no-xp"
+            f" --parent-run {PARENT} --feature-run {GAIA_FEATURES} --include-no-xp"
             f" --output {ROOT}{SOURCE}"
         ),
         files=[SOURCE_CONFIG],
@@ -68,7 +81,8 @@ STEPS = {
         ram=96,
         command=(
             f"python -u scripts/build_full_input_source.py --parent-run {SOURCE}"
-            f" --feature-run {FEATURES} --output {ROOT}{FULL}"
+            f" --feature-run {GAIA_FEATURES}"
+            f" --extra-gaia-dir {GAIA_FEATURES}/gaia-only --output {ROOT}{FULL}"
         ),
         files=[],
     ),

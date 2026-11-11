@@ -71,6 +71,12 @@ def main():
     p.add_argument(
         "--feature-run", help="feature-recovery run with original row pointers"
     )
+    p.add_argument(
+        "--extra-gaia-dir",
+        action="append",
+        default=[],
+        help="more Gaia DR3 parquet directories (e.g. a feature run's gaia-only/)",
+    )
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--root", type=Path, default=ROOT)
     p.add_argument("--original", type=Path, default=ORIGINAL)
@@ -179,6 +185,12 @@ def main():
         agree = {f: [0, 0.0, 0] for f in fia.GAIA_TO_FEATURE.values()}
         gaia = root / a.gaia_stage / "labelled-gaia"
         gfiles = sorted(gaia.glob("*.parquet"))
+        for extra in a.extra_gaia_dir:
+            extra = Path(extra)
+            gfiles += sorted(
+                (extra if extra.is_absolute() else root / extra).glob("*.parquet")
+            )
+        m.update(gaia_files=len(gfiles), extra_gaia_dirs=list(a.extra_gaia_dir))
         gaia_cols = list(fia.GAIA_TO_FEATURE) + list(GAIA_ERRORS) + ["source_id"]
         for i, path in enumerate(gfiles):
             schema = pq.read_schema(path).names
