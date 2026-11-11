@@ -1,0 +1,21 @@
+{
+  "run_id": "chemistry_labels_20261111_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/chemistry_labels_20261111_v1",
+  "source_commit": "5deb2b59301ee8cbcea5cae9885af9d0ef69212d",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_chemistry_sidecars.py --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1",
+  "utc": "2026-11-11T15:29:42.424637+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "ptt3l0b4"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {},
+  "payload_sha256": "2faa253811aa70228cf84906d081db2bd66486c0d987f6716a7f82aa117abe22"
+}
