@@ -240,6 +240,23 @@ STEPS["master-v2"] = dict(
 )
 
 
+# v3: census v5 fixes the Bensby+2014 position epoch (VizieR J2000 positions).
+MASTER_V3 = "master_spectroscopic_labels_20261111_v3"
+CENSUS_V5 = "master_label_census_20261111_v5"
+STEPS["master-v3"] = dict(
+    run_id=MASTER_V3,
+    gpu=0,
+    ram=160,
+    command=(
+        "python -u scripts/build_master_spectroscopic_labels.py"
+        f" --census {ROOT}{CENSUS_V5}/observations.parquet"
+        f" --reuse-stage {ROOT}{MASTER_V2}/work/stage"
+        f" --output {ROOT}{MASTER_V3}"
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(

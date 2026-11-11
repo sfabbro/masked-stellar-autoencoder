@@ -31,7 +31,7 @@ source within 3″; most are cool giants toward the Galactic centre. The 1,030
 RAVE rows have no staged position. Census sources contribute 10,846 records
 without identity.
 
-**v2** (`master_spectroscopic_labels_20261111_v2`) adds:
+**v3** (`master_spectroscopic_labels_20261111_v3`; v2 had a wrong Bensby+2014 position epoch) adds:
 
 - **Census v4** (`master_label_census_20261111_v4`):
   - AMBRE FEROS (Worley+2012);

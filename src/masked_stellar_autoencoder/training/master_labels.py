@@ -900,12 +900,15 @@ VIZIER_SOURCES: tuple[VizierSource, ...] = (
         alpha="Mg/Fe",
         alpha_kind="mg_fe",
         native_id="HIP",
-        epoch=1991.25,
+        epoch=2000.0,
         radius_arcsec=1.5,
         search_arcsec=20.0,
         join_table="I/311/hip2",
         join_key="HIP",
-        notes="Positions from Hipparcos (van Leeuwen 2007) joined on HIP, epoch 1991.25",
+        notes=(
+            "Positions from Hipparcos (van Leeuwen 2007) joined on HIP; VizieR's "
+            "_RAJ2000/_DEJ2000 are propagated to epoch J2000"
+        ),
     ),
 )
 
