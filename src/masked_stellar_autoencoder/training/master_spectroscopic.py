@@ -226,6 +226,16 @@ def star_table(records: pd.DataFrame) -> pd.DataFrame:
                 starts,
             ),
             fe_h_median=pd.Series(feh).groupby(sid).median().to_numpy(),
+            fe_h_median_highres=pd.Series(
+                np.where(
+                    records.tier.astype(str).to_numpy() == "highres_reference",
+                    feh,
+                    np.nan,
+                )
+            )
+            .groupby(sid)
+            .median()
+            .to_numpy(),
             fe_h_min=pd.Series(feh).groupby(sid).min().to_numpy(),
             teff_median=med("teff", ok),
             logg_median=med("logg", ok),

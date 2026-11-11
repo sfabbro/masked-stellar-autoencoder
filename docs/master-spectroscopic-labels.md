@@ -63,7 +63,7 @@ Not available, so not included:
 | File | Content |
 |---|---|
 | `records/<survey>.parquet` | One row per native record (schema below). Read all surveys with `pd.read_parquet(dir / "records")`. |
-| `stars.parquet` | One row per star: `star_id`, `star_key`, `source_id`, `n_records`, `surveys`, `n_surveys`, `has_highres`, `fe_h_median`, `fe_h_min`, `teff_median`, `logg_median`, `ra`, `dec`, `label_groups`, `v2_role`, `has_xp`. |
+| `stars.parquet` | One row per star: `star_id`, `star_key`, `source_id`, `n_records`, `surveys`, `n_surveys`, `has_highres`, `fe_h_median` (all `fit_ok` [Fe/H] records, including low-S/N survey pipelines), `fe_h_median_highres` (high-res references only), `fe_h_min`, `teff_median`, `logg_median`, `ra`, `dec`, `label_groups`, `v2_role`, `has_xp`. |
 | `catalogues.json` | For each `catalogue` key: the native file on ARC, HDU, release, URL, sha256 and native ID definition. |
 | `manifest.json` | Per-survey counts, identity methods, metal-poor star counts and output hashes. |
 | `work/` | Intermediate files: per-survey staging and cached Gaia positional candidates. |
@@ -102,6 +102,7 @@ Not available, so not included:
 | APOGEE DR17 | `ASPCAPFLAG` STAR_BAD unset |
 | GALAH DR4 | `flag_sp == 0` & `flag_sp_fit == 0` |
 | GSP-Spec | finite Teff (flags kept in `flag_text`) |
+| DESI SP (FERRE) | `SUCCESS`, and not a grid-edge fit: [Fe/H] ≤ −9.9 (white-dwarf grid), ≤ −4.95 (grid floor), = −3.5 (edge pile), or logg ≥ 5.95; these are kept with `flag_text` `wd_grid` / `fe_h_grid_edge` / `logg_grid_edge` |
 | BOSSNet | `flag_bad` false |
 | RAVE DR6 | `algo_conv_madera == 0` |
 | census sources | census quality policy (`manifest.json` of `master_label_census_20261110_v3`) |

@@ -470,6 +470,35 @@ def desi_sp():
     return out
 
 
+def flag_desi_sp_edges(records):
+    """DESI SP (FERRE) grid-edge and white-dwarf-grid fits are not valid FGKM fits.
+
+    In DR1 SPTAB, failed or edge solutions pile up at [Fe/H] = -10 (white-dwarf
+    grid, logg ~ 9), at the grid floor (-5.0/-4.99) and at -3.5 with logg ~ 6.
+    They are kept as records but flagged and excluded from ``fit_ok``.
+    """
+    sp = (records.survey == "desi_dr1_sp").to_numpy()
+    if not sp.any():
+        return records
+    feh = records.fe_h.to_numpy("f8")
+    logg = records.logg.to_numpy("f8")
+    wd = sp & (feh <= -9.9)
+    floor = sp & ~wd & (feh <= -4.95)
+    pile = sp & np.isclose(feh, -3.5, atol=0.005)
+    high = sp & (logg >= 5.95)
+    text = np.full(len(records), "", dtype=object)
+    for mask, label in (
+        (wd, "wd_grid"),
+        (floor | pile, "fe_h_grid_edge"),
+        (high, "logg_grid_edge"),
+    ):
+        text[mask] = [f"{t};{label}" if t else label for t in text[mask]]
+    edge = wd | floor | pile | high
+    records.loc[edge, "flag_text"] = text[edge]
+    records.loc[edge, "fit_ok"] = False
+    return records
+
+
 def lamost_mrs_cnn():
     c = CATALOGUES["lamost_dr12_mrs_cnn"]
     cols = ["mobsid", "gaia_source_id", "ra", "dec", "snr"]
@@ -702,6 +731,7 @@ def main():
         frames.append(census)
         records = pd.concat(frames, ignore_index=True)
         del frames
+        records = flag_desi_sp_edges(records)
         blank = (records.id_method == "") & (records.source_id > 0)
         records.loc[blank, "id_method"] = "publisher_dr3"  # LAMOST parts from v1
         log(f"{len(records)} records; assigning star ids")
@@ -754,6 +784,14 @@ def main():
             metal_poor_stars={
                 f"lt_{e}": int((stars.fe_h_median < e).sum()) for e in ml.FEH_EDGES
             },
+            metal_poor_stars_highres={
+                f"lt_{e}": int((stars.fe_h_median_highres < e).sum())
+                for e in ml.FEH_EDGES
+            },
+            metal_poor_note=(
+                "fe_h_median is over all fit_ok [Fe/H] records, including low-S/N "
+                "survey pipelines; fe_h_median_highres uses highres_reference only"
+            ),
             outputs={
                 p.name: sha(p) for p in [out / "stars.parquet", out / "catalogues.json"]
             },

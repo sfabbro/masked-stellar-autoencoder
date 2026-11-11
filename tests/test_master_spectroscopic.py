@@ -235,3 +235,19 @@ def test_name_resolution_uses_explicit_names_and_keeps_existing_ids():
     assert out.source_id.tolist() == [11, 0, 5]
     assert out.id_method.tolist() == ["simbad_dr3", "", "publisher_dr3"]
     assert out.ra.tolist()[1] == 8.0
+
+
+def test_desi_sp_grid_edges_are_flagged_not_dropped():
+    r = records(
+        survey=["desi_dr1_sp"] * 5 + ["desi_dr1"],
+        fe_h=[-10.0, -4.99, -3.5, -1.0, -1.0, -10.0],
+        logg=[9.0, 5.0, 6.0, 4.0, 6.0, 9.0],
+    )
+    out = build.flag_desi_sp_edges(r)
+    assert out.fit_ok.tolist() == [False, False, False, True, False, True]
+    assert out.flag_text.tolist()[:3] == [
+        "wd_grid;logg_grid_edge",
+        "fe_h_grid_edge",
+        "fe_h_grid_edge;logg_grid_edge",
+    ]
+    assert len(out) == 6
