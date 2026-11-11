@@ -1,0 +1,21 @@
+{
+  "run_id": "master_spectroscopic_labels_20261111_v2",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_spectroscopic_labels_20261111_v2",
+  "source_commit": "612179804980a673e410e620f83a4e5399b2d7b7",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_master_spectroscopic_labels.py --census /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261111_v4/observations.parquet --reuse-stage /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v1/work/stage --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v2",
+  "utc": "2026-11-11T17:15:40.810846+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "jwqot2jw"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 160
+  },
+  "source_sha256": {},
+  "payload_sha256": "80cd506877c0977d9c0b5330e9ca10447335eeefb3f2d0754cacb6b52339961c"
+}
