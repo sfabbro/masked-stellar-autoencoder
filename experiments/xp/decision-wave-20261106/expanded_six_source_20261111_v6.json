@@ -1,0 +1,23 @@
+{
+  "run_id": "expanded_six_source_20261111_v6",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261111_v6",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/expanded_six_source_20261111_v6",
+  "source_commit": "d45c1309fa7e25bf18cdc54383596d5865f85691",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/extend_full_raw_source.py --config configs/master-label-source-20261111.json --parent-run expanded_six_source_20261107_v5 --feature-run master_label_raw_features_20261111_v3 --include-no-xp --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261111_v6",
+  "utc": "2026-11-11T02:18:55.637147+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "knf1e26h"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {
+    "configs/master-label-source-20261111.json": "dcd897d8ecf3d24f683b18612cdbbc0a70f56eb282ababcf9d011a372c47d02b"
+  },
+  "payload_sha256": "a844c7ea3656c0cc393dfd5664cb6e683a434c972205774203831c9ef6b1f980"
+}
