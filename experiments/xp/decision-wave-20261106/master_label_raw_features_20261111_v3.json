@@ -1,0 +1,21 @@
+{
+  "run_id": "master_label_raw_features_20261111_v3",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_raw_features_20261111_v3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_raw_features_20261111_v3",
+  "source_commit": "e1dddc262c47f34a089ec780c1fa66fbbb29aaf5",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/add_gaia_only_stars.py --feature-run master_label_raw_features_20261111_v2 --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_raw_features_20261111_v3",
+  "utc": "2026-11-11T02:05:21.750731+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "kwwp6k2r"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {},
+  "payload_sha256": "1ae122b6585902bb1c055b06c66d55de23fa93b21e0a3be5ee789dc8eccbccb7"
+}
