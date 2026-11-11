@@ -7,7 +7,10 @@ Steps, each a headless job that clones this repository at the pushed commit:
 2. ``source``: ``extend_full_raw_source.py``. Appends those stars with
    inherited/hash roles (benchmarks and globular members external) and adds one
    ``native_observations`` group per new master-label source.
-3. ``train``: ``run_expanded_six_training.py`` with
+3. ``fullinputs``: ``build_full_input_source.py``. All 140 encoder slots from
+   the staged catalogues (NaN + visible) and head metadata context
+   (``expanded_six_source_20261111_v7``).
+4. ``train``: ``run_expanded_six_training.py`` with
    ``configs/master-label-six-nsf-fullfit-20261111.yaml`` (GPU). It waits for
    the source run to finish and applies the per-source map families.
 
@@ -32,6 +35,7 @@ PARENT = "expanded_six_source_20261107_v5"
 # v1 (XP-only lookup) was cancelled; v2 keeps photometry-only (no-XP) stars.
 FEATURES = "master_label_raw_features_20261111_v2"
 SOURCE = "expanded_six_source_20261111_v6"
+FULL = "expanded_six_source_20261111_v7"
 TRAIN = "master_label_six_nsf_fullfit_20261111_v1"
 
 STEPS = {
@@ -57,6 +61,16 @@ STEPS = {
             f" --output {ROOT}{SOURCE}"
         ),
         files=[SOURCE_CONFIG],
+    ),
+    "fullinputs": dict(
+        run_id=FULL,
+        gpu=0,
+        ram=96,
+        command=(
+            f"python -u scripts/build_full_input_source.py --parent-run {SOURCE}"
+            f" --feature-run {FEATURES} --output {ROOT}{FULL}"
+        ),
+        files=[],
     ),
     "train": dict(
         run_id=TRAIN,

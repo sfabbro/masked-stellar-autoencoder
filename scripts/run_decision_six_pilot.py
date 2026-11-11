@@ -174,7 +174,10 @@ def profile_batch(h5, rows, profile, source_manifest):
     if np.any(np.diff(rows) <= 0):
         raise ValueError("HDF5 rows must be sorted and unique")
     x = h5["input"][rows].astype("f4")
-    if profile == "phot_xp_measured_parallax":
+    spec = source_manifest.get("feature_profiles", {}).get(profile, {})
+    if spec.get("missing_encoding") == "nan":
+        x[~np.isfinite(x)] = -9999.0
+    if profile in ("phot_xp_measured_parallax", "full_inputs_measured_parallax"):
         spec = source_manifest["feature_profiles"][profile]
         j = spec["feature_index"]
         if h5["feature_names"][j].decode() != "PARALLAX":

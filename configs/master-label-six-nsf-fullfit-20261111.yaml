@@ -177,7 +177,7 @@ confirmation_crps_weight: 0.0
 confirmation_noise_correlation: 0.0
 confirmation_native_student_t: false
 run_id: master_label_six_nsf_fullfit_20261111_v1
-expanded_source_run: expanded_six_source_20261111_v6
+expanded_source_run: expanded_six_source_20261111_v7
 calibration_run: nsf_confirmation_calibration_20261107_v1
 mapping_candidates:
 - sixmap_seismic_affine_20261107_v1
@@ -199,7 +199,7 @@ decision_runs:
 - sixmap_seismic_nodesig_20261107_v1
 - sixmap_seismic_offset_20261107_v1
 - sixmap_seismic_spline_20261107_v1
-- expanded_six_source_20261111_v6
+- expanded_six_source_20261111_v7
 - nsf_confirmation_calibration_20261107_v1
 - native_label_covariance_audit_20261107_v2
 encoder_parent: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_parallax_20261106_v1/selected-checkpoint.pth
@@ -235,3 +235,12 @@ source_map_kinds:
 # views of the same stars.
 supervised_xp_dropout: 0.3
 selection_xp_hidden_weight: 0.5
+# Full encoder inputs (all 140 pretraining slots from the staged catalogues,
+# NaN storage + visible mask), all-column reconstruction including genuine
+# no-XP Gaia rows, and metadata context for the heads (zero-initialised).
+trainer_input_profile: full_inputs_measured_parallax
+reconstruction_columns: all
+noxp_reconstruction:
+  stage: full_gaia_gaia_stage_20261108_v2
+  fraction: 0.25
+head_context: true

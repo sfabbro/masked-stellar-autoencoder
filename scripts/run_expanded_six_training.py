@@ -197,9 +197,14 @@ def main():
 
     from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
     from masked_stellar_autoencoder.training.cached_inputs import cache_natural_inputs
+    from masked_stellar_autoencoder.training.context_latent import ContextLatent
     from masked_stellar_autoencoder.training.decision_pdf_metrics import sample_scores
     from masked_stellar_autoencoder.training.evaluation_feature_lookup import (
         _cache_maps,
+    )
+    from masked_stellar_autoencoder.training.full_input_assembly import (
+        gaia_frame_to_matrix,
+        standardize,
     )
     from masked_stellar_autoencoder.training.fullfit_records import (
         epoch_record_batches,
@@ -297,6 +302,20 @@ def main():
             torch.as_tensor(cfg["unknown_error_floor_normalized"], device=device)
         )
         head.configure_generators(device, cfg["seed"] + 101, cfg["seed"] + 102)
+        # Optional metadata context for the heads (zero-initialised: identical
+        # latent at step 0, so the warm-started head still loads strictly).
+        context_names = None
+        if cfg.get("head_context"):
+            context_names = (expanded.get("full_inputs") or {}).get("context_names")
+            if not context_names:
+                raise ValueError("head_context requires a full-input source")
+        context_module = (
+            ContextLatent(model_cfg["model"]["layer_dims"][-1], len(context_names)).to(
+                device
+            )
+            if context_names
+            else None
+        )
         center, scale = np.asarray(selected["center"]), np.asarray(selected["scale"])
         source_names = list(expanded["source_registry"])
         if source_names[:6] != selected["source_registry"][:6]:
@@ -444,6 +463,44 @@ def main():
                     for j, n in enumerate(names)
                 ]
             )
+            input_profile = cfg.get(
+                "trainer_input_profile", "phot_xp_measured_parallax"
+            )
+            if cfg.get("reconstruction_columns") == "all":
+                # Every pretraining slot the cache carries (all bands, parallax,
+                # EBV, astrometry) is a reconstruction input; targets stay the
+                # decoder's 136 recon columns.
+                allowed[:] = True
+            noxp_rows = None
+            noxp_spec = cfg.get("noxp_reconstruction")
+            if noxp_spec:
+                import pyarrow.parquet as pq
+
+                frames = []
+                for path in sorted(
+                    (ROOT / noxp_spec["stage"] / "ssl-reservoir").glob("*.parquet")
+                ):
+                    frame = pq.read_table(path).to_pandas()
+                    frames.append(frame[~frame["has_xp_continuous"].astype(bool)])
+                frame = pd.concat(frames, ignore_index=True)
+                noxp_rows = standardize(
+                    gaia_frame_to_matrix(frame, names),
+                    data["scaler_center"][:],
+                    data["scaler_scale"][:],
+                )
+                noxp_fraction = float(noxp_spec["fraction"])
+                if not (0 < noxp_fraction < 1) or not len(noxp_rows):
+                    raise ValueError("No-XP reconstruction rows/fraction invalid")
+                m["noxp_reconstruction"] = dict(
+                    stage=noxp_spec["stage"],
+                    rows=len(noxp_rows),
+                    fraction=noxp_fraction,
+                    columns=[
+                        n
+                        for j, n in enumerate(names)
+                        if np.isfinite(noxp_rows[:, j]).any()
+                    ],
+                )
             width = len(model_cfg["data"]["recon_cols"])
             if names[:width] != model_cfg["data"]["recon_cols"]:
                 raise ValueError("Reconstruction feature order differs")
@@ -456,6 +513,11 @@ def main():
                     dict(params=head.parameters(), lr=cfg["head_lr"]),
                     dict(params=maps.parameters(), lr=cfg["survey_lr"]),
                     dict(params=model.parameters(), lr=cfg["encoder_lr"]),
+                    *(
+                        [dict(params=context_module.parameters(), lr=cfg["head_lr"])]
+                        if context_module is not None
+                        else []
+                    ),
                 ]
             )
             m.update(
@@ -488,14 +550,12 @@ def main():
 
             started_loading = time.monotonic()
             natural_inputs = cache_natural_inputs(
-                data, expanded["feature_profiles"]["phot_xp_measured_parallax"]
+                data, expanded["feature_profiles"][input_profile]
             )
             checked = np.linspace(0, len(ids) - 1, min(128, len(ids)), dtype="i8")
             np.testing.assert_array_equal(
                 natural_inputs[checked],
-                prior.profile_batch(
-                    data, checked, "phot_xp_measured_parallax", expanded
-                ),
+                prior.profile_batch(data, checked, input_profile, expanded),
             )
             m["input_loading"] = dict(
                 mode="read_only_RAM",
@@ -506,6 +566,12 @@ def main():
                 scope="Bit-identical admitted input profile; no change to identities, values, masks or normalizations",
             )
             save()
+
+            if context_module is not None:
+                context_values = data["context/values"][:].astype("f4")
+                context_visible = data["context/visible"][:].astype(bool)
+                if context_values.shape != (len(ids), len(context_names)):
+                    raise ValueError("Context layout differs from source manifest")
 
             def collate(sources, positions, auxiliary=False):
                 pieces = []
@@ -582,6 +648,12 @@ def main():
                         )
                     )
                 )
+                if context_module is not None:
+                    z = context_module(
+                        z,
+                        tensor(context_values[unique]),
+                        tensor(context_visible[unique], torch.bool),
+                    )
                 z = z[tensor(inverse, torch.long)]
                 gen = (
                     head.sample_generator
@@ -663,6 +735,10 @@ def main():
                         ]
                     ).copy()
                     raw[(~np.isfinite(raw)) | (raw == -9999)] = np.nan
+                    if noxp_rows is not None:
+                        k = int(round(noxp_fraction * len(raw)))
+                        pick = reconstruction_rng.choice(len(noxp_rows), size=k)
+                        raw[:k] = noxp_rows[pick]
                     raw[:, ~allowed] = np.nan
                     target = tensor(raw)
                     hidden, hm, finite = native.pretrain.training_mask(
@@ -746,6 +822,12 @@ def main():
                 maps={
                     k: v.detach().cpu().clone() for k, v in maps.state_dict().items()
                 },
+                context=None
+                if context_module is None
+                else {
+                    k: v.detach().cpu().clone()
+                    for k, v in context_module.state_dict().items()
+                },
                 rng=rng.bit_generator.state,
                 reconstruction_rng=reconstruction_rng.bit_generator.state,
                 cpu=torch.get_rng_state(),
@@ -766,6 +848,8 @@ def main():
             model.load_state_dict(initial["model"])
             head.load_state_dict(initial["head"])
             maps.load_state_dict(initial["maps"])
+            if context_module is not None:
+                context_module.load_state_dict(initial["context"])
             rng.bit_generator.state = initial["rng"]
             reconstruction_rng.bit_generator.state = initial["reconstruction_rng"]
             torch.set_rng_state(initial["cpu"])
@@ -789,6 +873,8 @@ def main():
             # Warm only newly admitted survey maps against the anchored fixed stellar PDF.
             model.requires_grad_(False)
             head.requires_grad_(False)
+            if context_module is not None:
+                context_module.requires_grad_(False)
             new_sources = [i for i in range(6, anchor) if len(fit[i]["rows"])]
             warm_presentations = np.zeros((anchor + 1, 6), dtype="i8")
             for update in range(1, cfg["warm_map_updates"] + 1):
@@ -814,6 +900,8 @@ def main():
             # EnergyJointSixHead intentionally keeps its unused Gaussian proposal frozen.
             head.requires_grad_(True)
             head.gaussian.requires_grad_(False)
+            if context_module is not None:
+                context_module.requires_grad_(True)
             optimizer.state.clear()
             panels = {}
             for role in ["tune", "cal", "devtest"]:
@@ -1054,6 +1142,9 @@ def main():
                                 model_state_dict=model.state_dict(),
                                 head_state_dict=head.state_dict(),
                                 map_state_dict=maps.state_dict(),
+                                context_state_dict=None
+                                if context_module is None
+                                else context_module.state_dict(),
                                 optimizer_state_dict=optimizer.state_dict(),
                                 pilot_rng_state=capture_pilot_rng_state(
                                     head, mask_rng, rng
@@ -1112,6 +1203,10 @@ def main():
                             model_state_dict=model.state_dict(),
                             head_state_dict=head.state_dict(),
                             map_state_dict=maps.state_dict(),
+                            context_state_dict=None
+                            if context_module is None
+                            else context_module.state_dict(),
+                            context_names=context_names,
                             center=center,
                             scale=scale,
                             source_registry=source_names,
@@ -1140,6 +1235,8 @@ def main():
             model.load_state_dict(state["model_state_dict"])
             head.load_state_dict(state["head_state_dict"])
             maps.load_state_dict(state["map_state_dict"])
+            if context_module is not None:
+                context_module.load_state_dict(state["context_state_dict"])
             m["evaluation"] = {}
             for role in ["tune", "cal", "devtest"]:
                 score, report = evaluate(role, True)
