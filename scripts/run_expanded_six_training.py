@@ -215,6 +215,7 @@ def main():
         xp_input_columns,
     )
     from masked_stellar_autoencoder.training.nsf_confirmation import confirmation_score
+    from masked_stellar_autoencoder.training.quantity_kinds import QuantityKinds
     from masked_stellar_autoencoder.training.remediation_energy6 import (
         EnergyJointSixHead,
         capture_pilot_rng_state,
@@ -349,8 +350,12 @@ def main():
                 )
             records = {role: [] for role in ["fit", "tune", "cal", "devtest"]}
             support = []
+            metal_kinds, alpha_kinds = [], []
             for si, name in enumerate(source_names):
                 g = data["native_observations/" + name]
+                declared = json.loads(g.attrs.get("target_quantities_json", "{}"))
+                metal_kinds.append(declared.get("fe_h", "fe_h"))
+                alpha_kinds.append(declared.get("alpha", "alpha_fe"))
                 rows = g["star_row"][:]
                 y, sigma, obs, known = fixed_coordinates(
                     g["value"][:],
@@ -434,6 +439,22 @@ def main():
                 maps.bias[:6].copy_(selected["map_state_dict"]["bias"])
                 maps.raw_slope[:6].copy_(saved_slope)
             m.update(source_map_kinds=dict(zip(source_names[:anchor], source_kinds)))
+            # Declared measurement quantities ([M/H], [alpha/M], [Mg/Fe]) per source.
+            quantities = QuantityKinds(metal_kinds, alpha_kinds, center, scale).to(
+                device
+            )
+            decision["source_quantity_kinds"] = dict(
+                metal=metal_kinds, alpha=alpha_kinds
+            )
+            m.update(
+                source_quantity_kinds={
+                    n: [mk, ak]
+                    for n, mk, ak in zip(
+                        source_names[:anchor], metal_kinds, alpha_kinds, strict=True
+                    )
+                    if (mk, ak) != ("fe_h", "alpha_fe")
+                }
+            )
             save()
             del selected, parent, reference
             fit = records["fit"]
@@ -705,7 +726,8 @@ def main():
                 )
                 draws = head.sample(z, count, gen)
                 si = tensor(batch["source"][start:stop], torch.long)
-                mapped = maps(draws, si.clamp(max=anchor - 1))
+                clamped = si.clamp(max=anchor - 1)
+                mapped = maps(quantities(draws, clamped), clamped)
                 return torch.where((si == anchor)[None, :, None], draws, mapped)
 
             def step(batch, update, *, warm=False):

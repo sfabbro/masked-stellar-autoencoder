@@ -122,7 +122,8 @@ def native_source_records(ids, sid, value, error, observed, known):
         ("error_known", known, False),
     ):
         out = np.full((len(rows), 6), fill, dtype=bool if fill is False else "f8")
-        out[:, :3] = np.asarray(source)[hit][order]
+        source = np.asarray(source)
+        out[:, : source.shape[1]] = source[hit][order]
         arrays[key] = out
     if not np.isfinite(arrays["value"][arrays["observed"]]).all():
         raise ValueError("Observed native values must be finite")
@@ -490,15 +491,28 @@ def main():
                         raise ValueError("Native label sidecar changed " + name)
                     with h5py.File(spec["path"]) as sf:
                         g = sf["native_observations/" + name]
+                        v = g["value"][:]
                         e = g["error"][:]
                         o = g["observed"][:].astype(bool)
-                        known = (
-                            g["error_known"][:].astype(bool)
-                            if "error_known" in g
-                            else (o & np.isfinite(e) & (e > 0))
-                        )
+                        declared = None
+                        if "chem_value" in g:
+                            # Declared metallicity/alpha quantities fill slots 2-3.
+                            meta = json.loads(g.attrs["registry_json"])
+                            declared = meta["chem_quantities"]
+                            if o[:, 2].any():
+                                raise ValueError(
+                                    "Chemistry group must not also map Fe/H"
+                                )
+                            v = np.column_stack([v[:, :2], g["chem_value"][:]])
+                            e = np.column_stack([e[:, :2], g["chem_error"][:]])
+                            o = np.column_stack(
+                                [o[:, :2], g["chem_observed"][:].astype(bool)]
+                            )
+                        known = o & np.isfinite(e) & (e > 0)
+                        if "error_known" in g and declared is None:
+                            known = g["error_known"][:].astype(bool)
                         rows, arrays, outside = native_source_records(
-                            ids, g["source_id"][:], g["value"][:], e, o, known
+                            ids, g["source_id"][:], v, e, o, known
                         )
                         definition = dict(
                             spec,
@@ -515,6 +529,8 @@ def main():
                     for key, values in arrays.items():
                         dest.create_dataset(key, data=values, compression="lzf")
                     dest.attrs["definition_json"] = json.dumps(definition)
+                    if declared is not None:
+                        dest.attrs["target_quantities_json"] = json.dumps(declared)
                     union[rows] |= arrays["observed"]
                     known_union[rows] |= arrays["error_known"]
                     record_count[rows] += arrays["observed"].any(1)

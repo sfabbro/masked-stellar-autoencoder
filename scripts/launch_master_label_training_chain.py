@@ -41,6 +41,7 @@ SOURCE = "expanded_six_source_20261111_v6"
 FULL = "expanded_six_source_20261111_v7"
 POOL = "gaia_noxp_unlabelled_pool_20261111_v1"
 LOOSE = "loose_survey_labels_20261111_v1"
+CHEM = "chemistry_labels_20261111_v1"
 # v1 wrote its admission decision before failing the library pin (no
 # training); its output cannot be reused, so training restarts as v2.
 TRAIN = "master_label_six_nsf_fullfit_20261111_v2"
@@ -108,6 +109,13 @@ STEPS = {
             "python -u scripts/build_loose_survey_sidecars.py --snr-min 10"
             f" --parent-run {SOURCE} --output {ROOT}{LOOSE}"
         ),
+        files=[],
+    ),
+    "chemistry": dict(
+        run_id=CHEM,
+        gpu=0,
+        ram=64,
+        command=f"python -u scripts/build_chemistry_sidecars.py --output {ROOT}{CHEM}",
         files=[],
     ),
     "train": dict(

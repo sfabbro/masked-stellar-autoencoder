@@ -106,3 +106,17 @@ def test_xp_presence_is_read_from_input_sentinels(tmp_path):
         f["input"] = data
         has = extension.input_has_any(f["input"], cols, chunk=2)
     np.testing.assert_array_equal(has, [True, False, False])
+
+
+def test_native_records_accept_four_columns_for_declared_chemistry():
+    ids = np.array([11, 22], dtype="i8")
+    value = np.array([[np.nan, np.nan, -1.2, 0.3], [np.nan, np.nan, np.nan, 0.1]])
+    error = np.array([[np.nan, np.nan, 0.1, 0.05], [np.nan, np.nan, np.nan, 0.05]])
+    observed = np.isfinite(value)
+    rows, arrays, outside = extension.native_source_records(
+        ids, np.array([22, 11]), value, error, observed, observed
+    )
+    np.testing.assert_array_equal(rows, [0, 1])
+    # rows are sorted by star: row 0 is star 11 (second input), row 1 is star 22
+    np.testing.assert_array_equal(arrays["value"][1, 2:4], [-1.2, 0.3])
+    assert arrays["observed"][0].tolist() == [False, False, False, True, False, False]
