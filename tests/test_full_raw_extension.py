@@ -120,3 +120,11 @@ def test_native_records_accept_four_columns_for_declared_chemistry():
     # rows are sorted by star: row 0 is star 11 (second input), row 1 is star 22
     np.testing.assert_array_equal(arrays["value"][1, 2:4], [-1.2, 0.3])
     assert arrays["observed"][0].tolist() == [False, False, False, True, False, False]
+
+
+def test_parent_extension_flags_survive_a_second_extension():
+    old = {"additional_full_raw_star": np.array([False, True, False])}
+    ids = np.array([1, 2, 3, 4, 5], dtype="i8")
+    op = np.array([0, 1, 3])
+    flag = extension.parent_additional(old, ids, op, np.array([3, 5], dtype="i8"))
+    np.testing.assert_array_equal(flag, [False, True, True, False, True])

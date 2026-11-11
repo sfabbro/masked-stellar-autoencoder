@@ -132,6 +132,82 @@ STEPS = {
 }
 
 
+# Next run (v3): loose-cut survey groups and declared-quantity chemistry groups
+# added to the config; stars new to v6 are recovered, then added from Gaia DR3
+# when outside the XP sample; v9 carries full inputs; training adds the full-Gaia
+# no-XP pool and an encoder-decoder-only phase. v2 stays the baseline.
+SOURCE_CONFIG_V3 = "configs/master-label-source-20261111-v3.json"
+TRAIN_CONFIG_V3 = "configs/master-label-six-nsf-fullfit-20261111-v3.yaml"
+FEATURES_V3 = "master_label_raw_features_20261111_v4"
+GAIA_FEATURES_V3 = "master_label_raw_features_20261111_v5"
+SOURCE_V3 = "expanded_six_source_20261111_v8"
+FULL_V3 = "expanded_six_source_20261111_v9"
+TRAIN_V3 = "master_label_six_nsf_fullfit_20261111_v3"
+STEPS.update(
+    {
+        "features-v3": dict(
+            run_id=FEATURES_V3,
+            gpu=0,
+            ram=48,
+            command=(
+                "python -u scripts/recover_remaining_survey_inputs.py"
+                f" --config {SOURCE_CONFIG_V3} --feature-config {FEATURE_CONFIG}"
+                f" --parent-run {SOURCE} --allow-unknown-photometry"
+                f" --output {ROOT}{FEATURES_V3}"
+            ),
+            files=[SOURCE_CONFIG_V3, FEATURE_CONFIG],
+        ),
+        "gaiaonly-v3": dict(
+            run_id=GAIA_FEATURES_V3,
+            gpu=0,
+            ram=48,
+            command=(
+                f"python -u scripts/add_gaia_only_stars.py --feature-run {FEATURES_V3}"
+                f" --output {ROOT}{GAIA_FEATURES_V3}"
+            ),
+            files=[],
+        ),
+        "source-v3": dict(
+            run_id=SOURCE_V3,
+            gpu=0,
+            ram=96,
+            command=(
+                "python -u scripts/extend_full_raw_source.py"
+                f" --config {SOURCE_CONFIG_V3} --parent-run {SOURCE}"
+                f" --feature-run {GAIA_FEATURES_V3} --include-no-xp"
+                f" --output {ROOT}{SOURCE_V3}"
+            ),
+            files=[SOURCE_CONFIG_V3],
+        ),
+        "fullinputs-v3": dict(
+            run_id=FULL_V3,
+            gpu=0,
+            ram=128,
+            command=(
+                f"python -u scripts/build_full_input_source.py --parent-run {SOURCE_V3}"
+                f" --feature-run {GAIA_FEATURES} --feature-run {GAIA_FEATURES_V3}"
+                f" --extra-gaia-dir {GAIA_FEATURES}/gaia-only"
+                f" --extra-gaia-dir {GAIA_FEATURES_V3}/gaia-only"
+                f" --output {ROOT}{FULL_V3}"
+            ),
+            files=[],
+        ),
+        "train-v3": dict(
+            run_id=TRAIN_V3,
+            gpu=1,
+            ram=64,
+            command=(
+                "python -u scripts/run_expanded_six_training.py"
+                f" --config {TRAIN_CONFIG_V3}"
+                ' --output "$experiment_output" --reuse-waiting-output'
+                " --retry-pre-admission-failure"
+            ),
+            files=[TRAIN_CONFIG_V3],
+        ),
+    }
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(

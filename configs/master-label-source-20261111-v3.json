@@ -1,0 +1,368 @@
+{
+  "base": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+  "base_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
+  "new_features": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_feature_union_dr12_20261106_v1/new-star-features.h5",
+  "new_features_sha256": "d4d8ea8e972625cb040c0fdcf4cc60675c03823b43826cef4b57d6d725e14f23",
+  "benchmark_fit_exclusion_ids": [
+    19316224572460416,
+    60248877811546112,
+    95652018353917056,
+    96331172942614528,
+    140457735662620800,
+    188771135583573504,
+    198558953732674816,
+    378821548641870336,
+    399402894487590144,
+    411220548543503488,
+    411413822074322432,
+    421805237748755968,
+    427322415301550208,
+    436648129327098496,
+    438829629114680704,
+    509342237530006016,
+    512167948043650816,
+    522534933950730240,
+    583588100209595776,
+    615943806835727872,
+    624684408880100992,
+    641662895638787584,
+    643819484617141504,
+    683184784030475520,
+    702343774145932544,
+    704967037090946688,
+    746545172372256384,
+    757565233820538752,
+    779106556394253824,
+    798068905726303232,
+    823773494718931968,
+    841920040781646080,
+    853819947756949120,
+    1018776176872261248,
+    1022456139210632064,
+    1193030490492925824,
+    1243381938292692096,
+    1244946371540479616,
+    1264797229346287744,
+    1265976524286377856,
+    1278391075717325312,
+    1284537517514584704,
+    1297158777130486144,
+    1333760419707327744,
+    1419240920415509376,
+    1460229442589223424,
+    1534011998572555776,
+    1603662211901473408,
+    1604859511344724864,
+    1637110042813188608,
+    1651268660203160448,
+    1676282377934772608,
+    1696798367260229376,
+    1787990525934491776,
+    1821708351374312064,
+    1823067317695766784,
+    1823991938314881152,
+    1872046574983497216,
+    1872046609345556480,
+    1876331990259358976,
+    1876510592179455744,
+    1891598193816300544,
+    1907131544341497600,
+    1982252790090609152,
+    2003961238426647680,
+    2009481748875806976,
+    2029433521248546304,
+    2075067858006232320,
+    2076894387328378240,
+    2103877089862772352,
+    2117279002732678656,
+    2126261703496964096,
+    2127789646700855040,
+    2135110401277424384,
+    2135550755683405952,
+    2135550755683407232,
+    2135864391374790784,
+    2149564787289902848,
+    2156134953382133632,
+    2161275788716592256,
+    2190891581091291520,
+    2195115561168483712,
+    2237040042612803328,
+    2256800156349110528,
+    2261614264931057664,
+    2268048503896398720,
+    2278918344568877056,
+    2348830516542653824,
+    2429415922764859392,
+    2452378776434477184,
+    2462426800883134336,
+    2472524234636869248,
+    2474456351444863744,
+    2494336311948357504,
+    2498460442625153536,
+    2512824943566639232,
+    2552925644460225152,
+    2630155547353593216,
+    2658974606111711488,
+    2661005953843811456,
+    2719475542667772416,
+    2756363608023588864,
+    2802397960855105920,
+    2835207319109249920,
+    2853900872207888768,
+    2858181236614036864,
+    2860924621205256704,
+    2869759781250083200,
+    2981103853463479040,
+    3021524580959406592,
+    3022721124487294848,
+    3023711269067191296,
+    3098404220680931968,
+    3113219383954556416,
+    3195919528989223040,
+    3250477261599098752,
+    3250489115709122560,
+    3256786534197166208,
+    3263836568394170880,
+    3265335443260522112,
+    3269362645115584640,
+    3276860524145383040,
+    3288921720025503360,
+    3342942066329410688,
+    3352485999058854912,
+    3399063235755057792,
+    3478394889483944320,
+    3701693091058501504,
+    3723554268436602240,
+    3736865265441207424,
+    3740176925743994752,
+    3793247534517512064,
+    3796442680948579328,
+    3827873938815011200,
+    3830897080395058048,
+    3879879704937353984,
+    3920615854833203328,
+    4025850731201819392,
+    4034171629042489088,
+    4254220979971917056,
+    4269932382607207040,
+    4281201414717499520,
+    4296708789290712064,
+    4315804351350378496,
+    4345775217221821312,
+    4358031335898505472,
+    4421455530273900032,
+    4423865487962417024,
+    4444057469252265984,
+    4473334474604992384,
+    4530744134231683840,
+    4582680493669880704,
+    4594497769766809216,
+    4609802834185436928,
+    4643560452496180992,
+    4683897617110115200,
+    4697508196671120000,
+    4767368897757788288,
+    4792305954618472960,
+    4808960875719316608,
+    4822128906148720128,
+    4887842970929434880,
+    4929469381645492864,
+    4942522955488925696,
+    4951967794731342464,
+    4979682840735231616,
+    4984231417260290048,
+    5000702410680381824,
+    5010675118584277248,
+    5020586872310485632,
+    5071514326764428544,
+    5127513656557144576,
+    5164120762333028736,
+    5164707970261890560,
+    5168359139139252352,
+    5179627995156977408,
+    5278762854038923008,
+    5358179685572496384,
+    5378451759396269696,
+    5492531416535100672,
+    5536661140353547008,
+    5716535848180090624,
+    5726982995343100928,
+    5922444483103229952,
+    5945941905576552064,
+    6232511606838403968,
+    6268770373590148224,
+    6412595290592307840,
+    6427311635257037056,
+    6498723334930624512,
+    6828451375858909568,
+    6904703228801028864
+  ],
+  "native_prediction_sha256": {
+    "fit": "ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff",
+    "tune": "98ce312df18022146c588d9b94c68bd5e2ea6319376a9eeed26494d356ac0ec5",
+    "cal": "57ed79ae77aec0b832fa328b6baad9cb72c738ad2d37b3fadf7cd50b9745f630",
+    "devtest": "b73bd23c939ec8e36a51abcec29a9a306033e07025940c5cfd5702c644c2ccd9"
+  },
+  "additional_sources": [
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23",
+      "name": "lamost_dr12v2_lrs_lasp"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "sha256": "d18c0d65ee08ed74e7a64b9515e1bead1550aa131c659eccb8136066351fa78a",
+      "name": "rave_dr6_madera_gauguin"
+    },
+    {
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+      "sha256": "3427de9f51b116bcc59817b015b3dc2965ae8de8cf86baeb696b2a127937ac49",
+      "name": "gaia_dr3_gspspec"
+    },
+    {
+      "name": "sdss_dr20_bossnet_081",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "sha256": "5bcc3ed712581e837ec554fb407bd9f30564e4c65666d6950028e9f25c4f06d6"
+    },
+    {
+      "name": "lamost_dr12v2_mrs_lasp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "sha256": "ef157bdbfe612dc7a59ee1df664c465a55cab9eb3c2edba5e23958d89c6ba923"
+    },
+    {
+      "name": "sdss_dr19_aspcap_sdss5",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "sdss_dr12_sspp",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "gaia_eso_dr5_1",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "s5_dr1",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "pigs_aat",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "lamost_vmp_li2018",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "lamost_cat_li2025",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "pristine_aguado2019",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "smss_dacosta2019",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "bestbrightest_placco2019",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "highres_literature",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+      "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
+    },
+    {
+      "name": "lamost_dr12v2_lrs_lasp_ext",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/loose-survey-sidecar.h5",
+      "sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5"
+    },
+    {
+      "name": "lamost_dr12v2_mrs_lasp_ext",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/loose-survey-sidecar.h5",
+      "sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5"
+    },
+    {
+      "name": "sdss_dr20_bossnet_081_ext",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/loose-survey-sidecar.h5",
+      "sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5"
+    },
+    {
+      "name": "desi_rvs_ext_corrected",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/loose-survey-sidecar.h5",
+      "sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5"
+    },
+    {
+      "name": "desi_rvs_ext_uncorrected",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/loose-survey-sidecar.h5",
+      "sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5"
+    },
+    {
+      "name": "gaia_dr3_gspspec_chem",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "apogee_dr17_alpha_m",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "galah_dr4_mg_fe",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "lamost_dr12v2_lrs_alpha_m",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "lamost_dr12v2_mrs_alpha_m",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "sdss_dr12_sspp_alpha_fe",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    },
+    {
+      "name": "sdss_dr19_aspcap_sdss5_alpha_m",
+      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/chemistry-sidecar.h5",
+      "sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61"
+    }
+  ],
+  "master_label_sidecars": {
+    "run": "master_label_sidecars_20261111_v1",
+    "manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/manifest.json",
+    "sidecar_sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0",
+    "observations_sha256": "2ac3204d29264867e16aa1c1c9d2abcfc799ae00764200c7c43181704efb93e5"
+  },
+  "loose_survey_labels": {
+    "run": "loose_survey_labels_20261111_v1",
+    "manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1/manifest.json",
+    "sidecar_sha256": "9182f0bae5cca0dbfa80619686c834d2bf8a5db8439d5e551d45af39d98c57a5",
+    "snr_min": 10.0
+  },
+  "chemistry_labels": {
+    "run": "chemistry_labels_20261111_v1",
+    "manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v1/manifest.json",
+    "sidecar_sha256": "5258c68ecc2f66f350af17ea1eae30045db744681ce2ed0db86c73392d5cfe61",
+    "omitted": {
+      "bestbrightest_placco2019_alpha_fe": "no Gaia DR3 source_id matched (0 stars)"
+    }
+  }
+}

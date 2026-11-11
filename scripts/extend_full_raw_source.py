@@ -92,6 +92,14 @@ def input_has_any(dataset, columns, chunk=65536):
     return out
 
 
+def parent_additional(old, ids, op, new_ids):
+    """Stars added by this or any earlier extension (parent flag kept)."""
+    flag = np.isin(ids, new_ids)
+    if "additional_full_raw_star" in old:
+        flag[op] |= old["additional_full_raw_star"][:].astype(bool)
+    return flag
+
+
 def native_source_records(ids, sid, value, error, observed, known):
     """Rows and six-column arrays for a sidecar source joined onto source IDs.
 
@@ -271,7 +279,7 @@ def main():
                     primary_input_eligible=eligible,
                     reserved_benchmark=bmask,
                     reserved_globular_member=gmask,
-                    additional_full_raw_star=np.isin(ids, new_ids),
+                    additional_full_raw_star=parent_additional(old, ids, op, new_ids),
                 ).items():
                     f[key] = value
                 # Per-star XP availability, so training can tell no-XP stars apart.

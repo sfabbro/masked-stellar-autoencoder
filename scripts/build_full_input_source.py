@@ -69,7 +69,10 @@ def main():
     )
     p.add_argument("--gaia-stage", default="full_gaia_gaia_stage_20261108_v2")
     p.add_argument(
-        "--feature-run", help="feature-recovery run with original row pointers"
+        "--feature-run",
+        action="append",
+        default=[],
+        help="feature-recovery run(s) with original row pointers (repeatable)",
     )
     p.add_argument(
         "--extra-gaia-dir",
@@ -159,8 +162,9 @@ def main():
                 )
                 save()
                 log(f"photometry stage {i + 1}/{len(files)}")
-        if a.feature_run:
-            fpath = root / a.feature_run / "additional-star-features.h5"
+        feature_original_rows = 0
+        for feature_run in a.feature_run:
+            fpath = root / feature_run / "additional-star-features.h5"
             with h5py.File(fpath) as ff, h5py.File(original_path) as orig:
                 fid = ff["source_id"][:].astype("i8")
                 shard = ff["original_shard"][:]
@@ -180,7 +184,8 @@ def main():
                     frame = pd.DataFrame({c: records[c] for c in fields})
                     _, rr = rows_for(ids, fid[sel])
                     absorb_original(rr, frame)
-                m.update(feature_run_original_rows=int(len(todo)))
+                feature_original_rows += int(len(todo))
+                m.update(feature_run_original_rows=feature_original_rows)
                 save()
         agree = {f: [0, 0.0, 0] for f in fia.GAIA_TO_FEATURE.values()}
         gaia = root / a.gaia_stage / "labelled-gaia"

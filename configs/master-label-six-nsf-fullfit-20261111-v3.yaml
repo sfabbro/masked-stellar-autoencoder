@@ -1,0 +1,284 @@
+# torchregress pin of this branch (pixi.lock). 2777b0de descends from the
+# 82ca1996 pin of the 20261107 fullfit: the NSF built by create_flow_model is
+# the same zuko NSF with the same state-dict keys; the newer revision adds
+# stable MAF/RealNVP sampling and frees per-draw transform cycles (NSF memory).
+library_revision: 2777b0de88121768434725ef227893cd35595d2a
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
+reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
+reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
+model_config: configs/pretrain.canfar.yaml
+source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
+input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4/manifest.json
+joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3/manifest.json
+joint_preflight_run_id: remediation_joint6_preflight_v3
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
+reconstruction_training_rows: 150000000
+reconstruction_batch: 256
+updates: 6000
+batch_size: 256
+seed: 20261106
+head_width: 128
+mixture_components: 4
+particles: 256
+head_lr: 0.0003
+encoder_lr: 1.25e-06
+tune_every: 1000
+tune_per_label: 512
+evaluation_per_label: 2048
+evaluation_batch: 4
+evaluation_draws: 512
+corner_draws: 2048
+integration_gate_rows: 128
+integration_gate_particles: 256
+integration_gate:
+  median_relative_ess_min: 0.1
+  minimum_relative_ess_min: 0.01
+  gap_p95_max: 0.1
+scope: 'Expanded six-target NSF candidate with loose-cut survey groups, declared-quantity
+  chemistry groups, a full-Gaia no-XP reconstruction pool and the master-label sources (SSPP, DR19
+  ASPCAP SDSS-V, Gaia-ESO, S5, PIGS, LAMOST VMP/CaT, Pristine, SkyMapper, B&B, pooled high-res
+  literature). Per-source map families follow the high-res overlap (offset unless the overlap
+  supports affine/spline). No automatic publication or physical six-dimensional PDF claim.'
+corner_source_ids:
+- 4185355646116022528
+- 4696862405388526080
+- 656977993104090624
+- 4077588074752670208
+- 3616249836305383296
+- 2609559667340662912
+- 615943806835727872
+- 2438481739732690176
+- 78289217922968576
+- 4926812820427520
+arms:
+- run_id: nsfconfirm_energy_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 0.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_energy_s2_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 0.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261107
+- run_id: nsfconfirm_hybrid_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_s2_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261107
+- run_id: nsfconfirm_crps_s1_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 0.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_floor003_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.03
+    native_error_correlation: 0.0
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_corrpos_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.3
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_corrneg_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: -0.3
+    native_student_t: false
+    seed: 20261106
+- run_id: nsfconfirm_hybrid_studentt_20261106_v1
+  kind: nsf_energy
+  encoder: finetune
+  reconstruction_weight: 0.03
+  input_profile: phot_xp_measured_parallax
+  confirmation:
+    energy_weight: 1.0
+    crps_weight: 1.0
+    unknown_floor: 0.1
+    native_error_correlation: 0.0
+    native_student_t: true
+    seed: 20261106
+integration_chunk_rows: 8
+legacy_preflight_library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
+energy_training_draws: 32
+energy_micro_batch_size: 16
+energy_sample_seed: 2026102801
+energy_noise_seed: 2026102802
+unknown_error_floor_normalized:
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+- 0.1
+energy_noise_assumption: independent_gaussian
+energy_floor_scope: illustrative_not_measured
+evaluation_draw_chunk: 128
+confirmation_energy_weight: 1.0
+confirmation_crps_weight: 0.0
+confirmation_noise_correlation: 0.0
+confirmation_native_student_t: false
+run_id: master_label_six_nsf_fullfit_20261111_v3
+expanded_source_run: expanded_six_source_20261111_v9
+calibration_run: nsf_confirmation_calibration_20261107_v1
+mapping_candidates:
+- sixmap_seismic_affine_20261107_v1
+- sixmap_seismic_offset_20261107_v1
+- sixmap_seismic_spline_20261107_v1
+decision_runs:
+- nsfconfirm_energy_s1_20261106_v1
+- nsfconfirm_energy_s2_20261106_v1
+- nsfconfirm_hybrid_s1_20261106_v1
+- nsfconfirm_hybrid_s2_20261106_v1
+- nsfconfirm_crps_s1_20261106_v1
+- nsfconfirm_hybrid_floor003_20261106_v1
+- nsfconfirm_hybrid_corrpos_20261106_v1
+- nsfconfirm_hybrid_corrneg_20261106_v1
+- nsfconfirm_hybrid_studentt_20261106_v1
+- sixmap_equalweight_affine_20261107_v1
+- sixmap_apogee_affine_20261107_v1
+- sixmap_seismic_affine_20261107_v1
+- sixmap_seismic_nodesig_20261107_v1
+- sixmap_seismic_offset_20261107_v1
+- sixmap_seismic_spline_20261107_v1
+- expanded_six_source_20261111_v9
+- nsf_confirmation_calibration_20261107_v1
+- native_label_covariance_audit_20261107_v2
+encoder_parent: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_parallax_20261106_v1/selected-checkpoint.pth
+encoder_parent_sha256: c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1
+epochs: 2
+warm_map_updates: 1000
+checkpoint_every: 2000
+survey_lr: 0.0003
+evaluation_rows_per_source: 512
+# Map family per added source, from master_label_overlap_20261110_v1 via
+# training/map_policy.py (scripts/write_master_label_sidecars.py manifest).
+source_map_kinds:
+  sdss_dr19_aspcap_sdss5: offset
+  sdss_dr12_sspp: spline
+  gaia_eso_dr5_1: spline
+  s5_dr1: offset
+  pigs_aat: offset
+  lamost_vmp_li2018: spline
+  lamost_cat_li2025: offset
+  pristine_aguado2019: offset
+  smss_dacosta2019: offset
+  bestbrightest_placco2019: offset
+  highres_literature: offset
+  # Staged surveys whose [Fe/H] overlap needs curvature (metal-poor compression).
+  # gaia_dr3_gspspec has no Fe/H overlap and keeps the selected decision family.
+  lamost_dr12v2_lrs_lasp: spline
+  lamost_dr12v2_mrs_lasp: spline
+  sdss_dr20_bossnet_081: spline
+  rave_dr6_madera_gauguin: spline
+  # Loose-cut groups (stars not in the staged groups; S/N >= 10). Millions of
+  # rows each, overlapping the staged and high-res sources: own spline maps,
+  # so lower-S/N systematics are not forced onto the staged survey maps.
+  lamost_dr12v2_lrs_lasp_ext: spline
+  lamost_dr12v2_mrs_lasp_ext: spline
+  sdss_dr20_bossnet_081_ext: spline
+  desi_rvs_ext_corrected: spline
+  desi_rvs_ext_uncorrected: spline
+  # Declared-quantity chemistry groups (training/quantity_kinds.py): the common
+  # [Fe/H]/[alpha/Fe] draws are converted to [M/H]/[alpha/M] (Salaris) before
+  # these maps; [Mg/Fe] is related to [alpha/Fe] by its own map only.
+  gaia_dr3_gspspec_chem: spline
+  apogee_dr17_alpha_m: affine
+  galah_dr4_mg_fe: affine
+  lamost_dr12v2_lrs_alpha_m: affine
+  lamost_dr12v2_mrs_alpha_m: affine
+  sdss_dr12_sspp_alpha_fe: affine
+  sdss_dr19_aspcap_sdss5_alpha_m: affine
+# Full-Gaia readiness: ~88% of Gaia has no XP. Hide all XP for this fraction of
+# labelled stars per step (encoder missing token -9999, as for real no-XP stars)
+# and select checkpoints on TUNE CRPS averaged over XP-visible and XP-hidden
+# views of the same stars.
+supervised_xp_dropout: 0.3
+selection_xp_hidden_weight: 0.5
+# Full encoder inputs (all 140 pretraining slots from the staged catalogues,
+# NaN storage + visible mask), all-column reconstruction including genuine
+# no-XP Gaia rows, and metadata context for the heads (zero-initialised).
+trainer_input_profile: full_inputs_measured_parallax
+reconstruction_columns: all
+# Reconstruction rows: the 150M-row XP cache plus a 1/8 hash sample of all
+# Gaia DR3 stars without XP (build_gaia_unlabelled_pool.py, held-out stars of
+# this source excluded at load).
+noxp_reconstruction:
+  pool: gaia_noxp_unlabelled_pool_20261111_v1
+  fraction: 0.35
+reconstruction_loss_weight: 0.05
+# Encoder-decoder-only phase on the same unlabelled mix before the map warm-up
+# (new: no-XP Gaia rows and all 140 input slots are unseen by the encoder).
+ssl_only_updates: 30000
+ssl_batch: 2048
+ssl_lr: 5.0e-06
+head_context: true
+# XP-hidden views look like real no-XP Gaia stars: only Gaia inputs remain
+# (G, BP, RP, parallax, pm, RA/Dec); BP/RP and astrometry are dropped at the
+# rates seen in the has_xp_continuous=False reservoir (19% / 18%).
+noxp_view:
+  bprp_drop: 0.19
+  astrometry_drop: 0.18

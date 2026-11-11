@@ -504,6 +504,10 @@ def main():
                 if pool_manifest.get("status") != "complete":
                     raise ValueError("No-XP pool is not complete")
                 pool_values = np.load(pool_dir / "values.npy", mmap_mode="r")
+                pool_ids = np.load(pool_dir / "source_id.npy", mmap_mode="r")
+                # Held-out stars of this source (TUNE/CAL/DEV/external) never
+                # enter reconstruction, even when the pool predates the source.
+                heldout_ids = np.sort(np.asarray(ids, dtype="i8")[roles != b"fit"])
                 pool_columns = [names.index(c) for c in pool_manifest["columns"]]
                 pool_center = data["scaler_center"][:][pool_columns]
                 pool_scale = data["scaler_scale"][:][pool_columns]
@@ -512,7 +516,22 @@ def main():
                     raise ValueError("No-XP pool rows/fraction invalid")
 
                 def noxp_pool(k):
-                    pick = np.sort(reconstruction_rng.choice(len(pool_values), size=k))
+                    pick = reconstruction_rng.choice(len(pool_values), size=k)
+                    for _ in range(100):
+                        sid = np.asarray(pool_ids[np.sort(pick)], dtype="i8")
+                        pos = np.searchsorted(heldout_ids, sid).clip(
+                            max=max(len(heldout_ids) - 1, 0)
+                        )
+                        bad = heldout_ids[pos] == sid if len(heldout_ids) else sid < 0
+                        if not bad.any():
+                            break
+                        pick = np.sort(pick)
+                        pick[bad] = reconstruction_rng.choice(
+                            len(pool_values), size=int(bad.sum())
+                        )
+                    else:
+                        raise ValueError("No-XP pool is dominated by held-out stars")
+                    pick = np.sort(pick)
                     out = np.full((k, len(names)), np.nan, dtype="f4")
                     out[:, pool_columns] = (
                         (np.asarray(pool_values[pick], dtype="f8") - pool_center)
