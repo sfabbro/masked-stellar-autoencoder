@@ -222,6 +222,24 @@ STEPS["master"] = dict(
 )
 
 
+# v2 adds the extra census sources (census v4) and the DESI SP / LAMOST MRS
+# CNN pipelines; unchanged staged surveys are copied from v1's work/stage.
+MASTER_V2 = "master_spectroscopic_labels_20261111_v2"
+CENSUS_V4 = "master_label_census_20261111_v4"
+STEPS["master-v2"] = dict(
+    run_id=MASTER_V2,
+    gpu=0,
+    ram=160,
+    command=(
+        "python -u scripts/build_master_spectroscopic_labels.py"
+        f" --census {ROOT}{CENSUS_V4}/observations.parquet"
+        f" --reuse-stage {ROOT}{MASTER}/work/stage"
+        f" --output {ROOT}{MASTER_V2}"
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(

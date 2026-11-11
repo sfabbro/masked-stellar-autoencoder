@@ -120,10 +120,16 @@ def main():
     wanted = (lambda name: True) if not a.only else (lambda name: name in a.only)
     frames = []
     sdss = a.work / "sdss"
-    for spec, reader, kwargs in (
+    readers = [
         (ml.ASTRA_ASPCAP, ml.astra_aspcap, dict(sha1=ml.ASTRA_ASPCAP["sha1"])),
         (ml.SSPP, ml.sdss_sspp, dict(size=ml.SSPP["bytes"])),
-    ):
+        (ml.MASTAR, ml.mastar_params, dict(size=ml.MASTAR["bytes"])),
+    ]
+    readers += [
+        (spec, lambda path, spec=spec: ml.astra_summary(path, spec), {})
+        for spec in ml.ASTRA_SUMMARIES
+    ]
+    for spec, reader, kwargs in readers:
         if not wanted(spec["source"]):
             continue
         try:
@@ -136,8 +142,10 @@ def main():
             manifest["policies"][spec["source"]] = {
                 k: spec[k]
                 for k in ("release", "pipeline", "quality_policy", "grid_policy")
+                if k in spec
             }
-            frames.append((frame, 1.5, (2000.0, 2008.0), 5.0))
+            epochs = (2015.5,) if spec is ml.MASTAR else (2000.0, 2008.0)
+            frames.append((frame, 1.5, epochs, 5.0))
             log(f"{spec['source']}: {len(frame)} rows")
         except Exception as error:
             manifest["errors"][spec["source"]] = f"{type(error).__name__}: {error}"

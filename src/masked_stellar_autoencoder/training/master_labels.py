@@ -227,6 +227,155 @@ def astra_aspcap(path: str | Path) -> pd.DataFrame:
 
 
 # --------------------------------------------------------------------------
+# Other Astra pipelines on the same spectra (DR19 APOGEE; DR20 BOSS SLAM).
+# They add pipelines, not stars; each is its own source and dependency group
+# shared with the spectra (apogee_spectra_* / boss_spectra_*).
+# --------------------------------------------------------------------------
+
+_DR19 = "https://data.sdss.org/sas/dr19/spectro/astra/0.6.0/summary/"
+_DR20 = "https://data.sdss.org/sas/dr20/spectro/astra/0.8.1/summary/"
+ASTRA_SUMMARIES = (
+    dict(
+        source="sdss_dr19_astra_apogeenet",
+        release="SDSS DR19 Astra 0.6.0 astraAllStarApogeeNet",
+        pipeline="APOGEENet (neural network) on APOGEE spectra",
+        dependency_group="apogee_spectra_aspcap",
+        url=_DR19 + "astraAllStarApogeeNet-0.6.0.fits.gz",
+        alpha=None,
+        quality_policy="flag_bad false; finite teff/logg/fe_h",
+    ),
+    dict(
+        source="sdss_dr19_astra_astronn",
+        release="SDSS DR19 Astra 0.6.0 astraAllStarAstroNN",
+        pipeline="AstroNN (Bayesian neural network) on APOGEE spectra",
+        dependency_group="apogee_spectra_aspcap",
+        url=_DR19 + "astraAllStarAstroNN-0.6.0.fits.gz",
+        alpha=("mg_h", "e_mg_h", "mg_h"),
+        quality_policy="flag_bad false; finite teff/logg/fe_h",
+    ),
+    dict(
+        source="sdss_dr19_astra_thepayne",
+        release="SDSS DR19 Astra 0.6.0 astraAllStarThePayne",
+        pipeline="The Payne on APOGEE spectra",
+        dependency_group="apogee_spectra_aspcap",
+        url=_DR19 + "astraAllStarThePayne-0.6.0.fits.gz",
+        alpha=("mg_h", "e_mg_h", "mg_h"),
+        quality_policy="flag_bad false; finite teff/logg/fe_h",
+    ),
+    dict(
+        source="sdss_dr20_astra_slam",
+        release="SDSS DR20 Astra 0.8.1 astraAllStarSlam",
+        pipeline="SLAM on BOSS spectra",
+        dependency_group="boss_spectra_astra",
+        url=_DR20 + "astraAllStarSlam-0.8.1.fits.gz",
+        alpha=("alpha_fe", "e_alpha_fe", "alpha_fe"),
+        quality_policy="flag_bad false; finite teff/logg/fe_h",
+    ),
+)
+
+
+def astra_summary(path: str | Path, spec: dict) -> pd.DataFrame:
+    """Rows of an Astra astraAllStar<Pipeline> summary (first non-empty HDU)."""
+    from astropy.io import fits
+
+    with fits.open(path, memmap=True) as hdus:
+        table = next(h for h in hdus[1:] if h.header.get("NAXIS2", 0) > 0).data
+        names = set(table.columns.names)
+        want = ["sdss_id", "gaia_dr3_source_id", "ra", "dec", "telescope"]
+        want += ["release", "snr", "teff", "e_teff", "logg", "e_logg", "fe_h"]
+        want += ["e_fe_h", "flag_bad", *(spec["alpha"] or ())[:2]]
+        data = {c: np.asarray(table[c]) for c in want if c in names}
+    n = len(data["sdss_id"])
+    out = empty_frame(n, tier="survey", **_meta(spec))
+    out["native_row"] = np.arange(n)
+    tel = data.get("telescope", np.full(n, "")).astype(str)
+    rel = data.get("release", np.full(n, "")).astype(str)
+    out["native_id"] = [
+        f"{int(s)}:{t.strip()}:{r.strip()}"
+        for s, t, r in zip(data["sdss_id"], tel, rel, strict=True)
+    ]
+    gaia = np.asarray(data["gaia_dr3_source_id"]).astype("i8")
+    out["source_id"] = np.where(gaia > 0, gaia, 0)
+    out["id_method"] = np.where(gaia > 0, "publisher_dr3", "")
+    out["ra"], out["dec"], out["position_epoch"] = data["ra"], data["dec"], 2016.0
+    for name in ("teff", "e_teff", "logg", "e_logg", "fe_h", "e_fe_h", "snr"):
+        if name in data:
+            out[name] = _f8(data[name])
+    out["fe_h_kind"] = np.where(np.isfinite(out.fe_h), "fe_h", "")
+    if spec["alpha"]:
+        value, error, kind = spec["alpha"]
+        alpha = _f8(data[value])
+        if kind == "mg_h":  # [Mg/Fe] = [Mg/H] - [Fe/H]
+            alpha = alpha - out.fe_h.to_numpy()
+            kind = "mg_fe"
+        out["alpha"], out["e_alpha"], out["alpha_kind"] = alpha, _f8(data[error]), kind
+    out["quality"] = (
+        ~np.asarray(data["flag_bad"], dtype=bool)
+        & np.isfinite(out.teff)
+        & np.isfinite(out.logg)
+        & np.isfinite(out.fe_h)
+    )
+    return finalize(out)
+
+
+MASTAR = dict(
+    source="sdss_dr17_mastar_params",
+    release="SDSS DR17 MaStar stellar parameters VAC v2 (goodstars, median of 4 methods)",
+    pipeline="MaStar parameter VAC: median of DL/JI/LH/YC; calibrated [Fe/H]",
+    dependency_group="mastar_spectra",
+    url=(
+        "https://data.sdss.org/sas/dr17/manga/spectro/mastar/v3_1_1/v1_7_7/vac/"
+        "parameters/v2/mastar-goodstars-v3_1_1-v1_7_7-params-v2.fits"
+    ),
+    bytes=7888320,
+    quality_policy="finite TEFF_MED, LOGG_MED and FEH_CAL_MED",
+)
+
+
+def mastar_params(path: str | Path) -> pd.DataFrame:
+    from astropy.io import fits
+
+    with fits.open(path, memmap=True) as f:
+        t = f[1].data
+        col = lambda k: np.asarray(t[k])  # noqa: E731
+        n = len(t)
+        out = empty_frame(n, tier="survey", **_meta(MASTAR))
+        out["native_row"] = np.arange(n)
+        out["native_id"] = np.char.strip(col("MANGAID").astype(str))
+        out["ra"], out["dec"] = _f8(col("RA")), _f8(col("DEC"))
+        epoch = _f8(col("EPOCH"))
+        out["position_epoch"] = np.where(
+            np.isfinite(epoch) & (epoch > 0), epoch, 2000.0
+        )
+        out["teff"], out["e_teff"] = _f8(col("TEFF_MED")), _f8(col("TEFF_MED_ERR"))
+        out["logg"], out["e_logg"] = _f8(col("LOGG_MED")), _f8(col("LOGG_MED_ERR"))
+        out["fe_h"], out["e_fe_h"] = (
+            _f8(col("FEH_CAL_MED")),
+            _f8(col("FEH_CAL_MED_ERR")),
+        )
+        out["alpha"], out["e_alpha"] = _f8(col("ALPHA_MED")), _f8(col("ALPHA_MED_ERR"))
+        for name in (
+            "teff",
+            "e_teff",
+            "logg",
+            "e_logg",
+            "fe_h",
+            "e_fe_h",
+            "alpha",
+            "e_alpha",
+        ):
+            v = out[name].to_numpy("f8", copy=True)
+            v[v <= -999] = np.nan  # VAC missing-value sentinel
+            out[name] = v
+    out["fe_h_kind"] = np.where(np.isfinite(out.fe_h), "fe_h", "")
+    out["alpha_kind"] = "alpha_fe"
+    out["quality"] = (
+        np.isfinite(out.teff) & np.isfinite(out.logg) & np.isfinite(out.fe_h)
+    )
+    return finalize(out)
+
+
+# --------------------------------------------------------------------------
 # SDSS legacy + SEGUE SSPP (final DR12 ssppOut). Positions need Gaia matching.
 # --------------------------------------------------------------------------
 
@@ -347,6 +496,10 @@ class VizierSource:
     fe_h_floor: float | None = None
     position_from_name: bool = False
     notes: str = ""
+    # Optional second VizieR table merged on a key (e.g. positions, HIP).
+    join_table: str | None = None
+    join_key: str | None = None
+    join_right_key: str | None = None
 
 
 VIZIER_SOURCES: tuple[VizierSource, ...] = (
@@ -603,6 +756,157 @@ VIZIER_SOURCES: tuple[VizierSource, ...] = (
         search_arcsec=30.0,
         notes="Multiple rows per star from different papers; not independent",
     ),
+    # ---- Added 2026-11-11: AMBRE, RPA, dwarf galaxies, LAMOST-Subaru, SEGUE
+    # high-res follow-up, solar-neighbourhood dwarfs.
+    VizierSource(
+        "ambre_feros",
+        "J/A+A/542/A48/ambredr1",
+        "survey",
+        "AMBRE FEROS archive spectra (Worley+2012)",
+        "MATISSE (AMBRE)",
+        "ambre_feros",
+        "Teff",
+        "logg",
+        "[M/H]",
+        e_teff="e_Teff",
+        e_logg="e_logg",
+        e_fe_h="e_[M/H]",
+        fe_h_kind="m_h",
+        alpha="[alpha/Fe]",
+        alpha_kind="alpha_fe",
+        native_id="Ident",
+        snr="SNR",
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+        notes="One row per archived spectrum; [M/H] is a global metallicity",
+    ),
+    VizierSource(
+        "ezzeddine2020_rpa",
+        "J/ApJ/898/150/abund",
+        "highres_reference",
+        "RPA MIKE metal-poor stars (Ezzeddine+2020)",
+        "1D LTE high-res (corrected LTE parameters)",
+        "rpa_ezzeddine2020",
+        "TeffLTEc",
+        "loggLTEc",
+        "[Fe/H]LTEc",
+        e_fe_h="e_[Fe/H]LTEc",
+        native_id="2MASS",
+        position_from_name=True,
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+        notes="Positions parsed from the 2MASS designation; NLTE values in the native row",
+    ),
+    VizierSource(
+        "sakari2018_rpa",
+        "J/ApJ/868/110/table3",
+        "highres_reference",
+        "RPA first northern/southern halo release (Sakari+2018)",
+        "1D LTE high-res",
+        "rpa_sakari2018",
+        "Teff",
+        "log(g)",
+        "[FeII/H]",
+        e_fe_h="e_[FeII/H]",
+        native_id="ID",
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+        join_table="J/ApJ/868/110/table1",
+        join_key="ID",
+        notes="Positions from table1 joined on ID; [FeI/H] in the native row",
+    ),
+    VizierSource(
+        "kirby2010_dsph",
+        "J/ApJS/191/352/abun",
+        "metal_poor_survey",
+        "Milky Way dSph DEIMOS abundances (Kirby+2010)",
+        "DEIMOS medium-resolution spectral synthesis",
+        "kirby2010_deimos",
+        "Teff",
+        "logg",
+        "[Fe/H]",
+        e_teff="e_Teff",
+        e_logg="e_logg",
+        e_fe_h="e_[Fe/H]",
+        alpha="[Mg/Fe]",
+        alpha_kind="mg_fe",
+        native_id="Name",
+        radius_arcsec=1.5,
+        search_arcsec=10.0,
+        notes="Stars in eight dwarf spheroidal galaxies (dSph column)",
+    ),
+    VizierSource(
+        "kirby2010_highres",
+        "J/ApJS/191/352/table7",
+        "highres_reference",
+        "dSph high-res literature comparison set (Kirby+2010 table 7)",
+        "literature high-resolution",
+        "kirby2010_literature",
+        "TeffH",
+        "loggH",
+        "[Fe/H]H",
+        e_fe_h="e_[Fe/H]H",
+        alpha="[Mg/Fe]H",
+        alpha_kind="mg_fe",
+        native_id="Name",
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+    ),
+    VizierSource(
+        "li2022_lamost_subaru",
+        "J/ApJ/931/147/table2",
+        "highres_reference",
+        "LAMOST VMP stars with Subaru high-res (Li+2022)",
+        "1D LTE high-res",
+        "lamost_subaru",
+        "Teff",
+        "logg",
+        "FeH",
+        e_teff="e_Teff",
+        e_logg="e_logg",
+        e_fe_h="e_FeH",
+        native_id="ID",
+        snr="SNR",
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+    ),
+    VizierSource(
+        "aoki2013_segue",
+        "J/AJ/145/13/stars",
+        "highres_reference",
+        "SEGUE extremely metal-poor follow-up (Aoki+2013)",
+        "1D LTE high-res (Subaru)",
+        "aoki2013",
+        "Teff",
+        "logg",
+        "[Fe/H]",
+        native_id="SDSS",
+        radius_arcsec=3.0,
+        search_arcsec=30.0,
+    ),
+    VizierSource(
+        "bensby2014",
+        "J/A+A/562/A71/tablec3",
+        "highres_reference",
+        "Solar-neighbourhood F/G dwarfs (Bensby+2014)",
+        "1D LTE high-res",
+        "bensby2014",
+        "Teff",
+        "logg",
+        "Fe/H",
+        e_teff="e_Teff",
+        e_logg="e_logg",
+        e_fe_h="e_Fe/H",
+        alpha="Mg/Fe",
+        alpha_kind="mg_fe",
+        native_id="HIP",
+        epoch=1991.25,
+        radius_arcsec=1.5,
+        search_arcsec=20.0,
+        join_table="I/311/hip2",
+        join_key="HIP",
+        notes="Positions from Hipparcos (van Leeuwen 2007) joined on HIP, epoch 1991.25",
+    ),
 )
 
 
@@ -689,7 +993,31 @@ def fetch_vizier(
     frame = frame.map(lambda v: v.strip())
     if spec.expected_rows is not None and len(frame) != spec.expected_rows:
         raise ValueError(f"{spec.source}: {len(frame)} rows != {spec.expected_rows}")
-    return frame, json.loads(receipt.read_text())
+    meta = json.loads(receipt.read_text())
+    if spec.join_table:
+        frame, meta["join"] = _join_vizier(spec, frame, cache, mirrors, timeout)
+    return frame, meta
+
+
+def _join_vizier(spec, frame, cache, mirrors, timeout):
+    """Left-join a second VizieR table on a key (one row per key kept)."""
+    from dataclasses import replace
+
+    side = replace(
+        spec,
+        source=spec.source + "__join",
+        table=spec.join_table,
+        join_table=None,
+        expected_rows=None,
+    )
+    other, meta = fetch_vizier(side, cache, mirrors=mirrors, timeout=timeout)
+    right = spec.join_right_key or spec.join_key
+    other = other.drop_duplicates(right)
+    keep = [c for c in other.columns if c == right or c not in frame.columns]
+    merged = frame.merge(other[keep], how="left", left_on=spec.join_key, right_on=right)
+    if len(merged) != len(frame):
+        raise ValueError(f"{spec.source}: join changed the row count")
+    return merged, meta
 
 
 _DESIGNATION = re.compile(
@@ -751,7 +1079,8 @@ def vizier_observations(spec: VizierSource, frame: pd.DataFrame) -> pd.DataFrame
         out["native_id"] = frame[spec.native_id].to_numpy(str)
     ra_col = "_RAJ2000" if "_RAJ2000" in frame else "RAJ2000"
     de_col = "_DEJ2000" if "_DEJ2000" in frame else "DEJ2000"
-    out["ra"], out["dec"] = _f8(frame[ra_col]), _f8(frame[de_col])
+    if ra_col in frame and de_col in frame:
+        out["ra"], out["dec"] = _f8(frame[ra_col]), _f8(frame[de_col])
     if spec.position_from_name:
         out["ra"], out["dec"] = position_from_designation(frame[spec.native_id])
     out["position_epoch"] = spec.epoch

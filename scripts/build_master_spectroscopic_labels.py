@@ -77,6 +77,24 @@ CATALOGUES = {
         extra=dict(aligned_hdus=["GAIA", "FIBERMAP", "SPTAB"]),
         notes="RVTAB/GAIA/FIBERMAP/SPTAB are row-aligned; SPTAB holds FERRE abundances",
     ),
+    "desi_dr1_sp": ms.Catalogue(
+        "desi_dr1_sp",
+        RUN + "desi_collection_v1/mwsall-pix-iron.fits",
+        "fits",
+        hdu="SPTAB",
+        release="DESI DR1 MWS iron mwsall-pix (SP: FERRE)",
+        native_id="TARGETID",
+        extra=dict(aligned_hdus=["RVTAB", "GAIA", "FIBERMAP"]),
+        notes="Same rows as desi_dr1 (RVTAB); SPTAB is the FERRE SP pipeline",
+    ),
+    "lamost_dr12_mrs_cnn": ms.Catalogue(
+        "lamost_dr12_mrs_cnn",
+        RUN + "multisurvey_lamost_dr12_mrs_source_direct_v2/dr12_mrs_stellar.fits.gz",
+        "fits",
+        release="LAMOST DR12 v2.0 MRS stellar (CNN parameters)",
+        native_id="mobsid",
+        notes="Same rows as lamost_dr12_mrs; *_cnn columns",
+    ),
     "apogee_dr17": ms.Catalogue(
         "apogee_dr17",
         RUN + "apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
@@ -152,6 +170,7 @@ GROUPS["sdss_dr19_astra_aspcap"]["chem"] = ["sdss_dr19_aspcap_sdss5_alpha_m"]
 POSITIONAL = {
     "lamost_dr12_lrs": (1.5, (2015.5,)),
     "lamost_dr12_mrs": (1.5, (2015.5,)),
+    "lamost_dr12_mrs_cnn": (1.5, (2015.5,)),
     "apogee_dr17": (1.5, (2000.0,)),
     "galah_dr4": (1.5, (2000.0,)),
     "sdss_dr20_bossnet": (1.0, (2015.5,)),
@@ -187,7 +206,9 @@ def lamost(key, cols, alpha, snr):
     out["dependency_group"] = key.replace("_dr12_", "-dr12v2-") + "-lasp"
     out["native_row"] = np.arange(n)
     out["native_id"] = text(d[cols[0]])
-    out["source_id"] = ms.exact_ids(d["gaia_source_id"])
+    sid = ms.exact_ids(d["gaia_source_id"])
+    out["source_id"] = sid
+    out["id_method"] = np.where(sid > 0, "publisher_dr3", "")
     out["ra"], out["dec"] = d["ra"], d["dec"]
     for target, (v, e) in zip(
         ("teff", "logg", "fe_h"), zip(cols[1::2], cols[2::2], strict=True), strict=True
@@ -406,6 +427,73 @@ def rave():
     return out
 
 
+def desi_sp():
+    """DESI SP (FERRE) parameters from SPTAB, row-aligned with RVTAB/GAIA."""
+    from astropy.io import fits
+
+    c = CATALOGUES["desi_dr1_sp"]
+    with fits.open(c.path, memmap=True) as f:
+        sp, r, g = f["SPTAB"].data, f["RVTAB"].data, f["GAIA"].data
+        names = set(sp.columns.names)
+        if not {"TEFF", "LOGG", "FEH"} <= names:
+            raise ValueError(f"SPTAB lacks TEFF/LOGG/FEH: {sorted(names)}")
+        n = len(sp)
+        if n != len(r) or not np.array_equal(
+            np.asarray(sp["TARGETID"])
+            if "TARGETID" in names
+            else np.asarray(r["TARGETID"]),
+            np.asarray(r["TARGETID"]),
+        ):
+            raise ValueError("SPTAB is not row-aligned with RVTAB")
+        col = lambda t, k: np.asarray(t[k])  # noqa: E731
+        opt = lambda k: col(sp, k) if k in names else np.full(n, np.nan)  # noqa: E731
+        out = ms.frame(n, survey="desi_dr1_sp", tier="survey", catalogue="desi_dr1_sp")
+        out["native_hdu"], out["release"] = "SPTAB", c.release
+        out["pipeline"] = "FERRE (SPTAB)"
+        out["dependency_group"] = "desi-dr1-rvspecfit"
+        out["native_row"] = np.arange(n)
+        out["native_id"] = col(r, "TARGETID").astype("i8").astype(str)
+        sid = ms.exact_ids(col(g, "SOURCE_ID"))
+        out["source_id"] = sid
+        out["id_method"] = np.where(sid > 0, "publisher_dr3", "")
+        out["ra"], out["dec"] = col(r, "TARGET_RA"), col(r, "TARGET_DEC")
+        for t, k in (("teff", "TEFF"), ("logg", "LOGG"), ("fe_h", "FEH")):
+            out[t], out["e_" + t] = opt(k), opt(k + "_ERR")
+        out["fe_h_kind"] = "fe_h"
+        out["alpha"], out["e_alpha"] = opt("ALPHAFE"), opt("ALPHAFE_ERR")
+        out["alpha_kind"] = "alpha_fe"
+        out["snr"] = col(r, "SN_R")
+        ok = np.isfinite(out.teff.to_numpy("f8"))
+        if "SUCCESS" in names:
+            ok &= col(sp, "SUCCESS").astype(bool)
+        out["fit_ok"] = ok
+    return out
+
+
+def lamost_mrs_cnn():
+    c = CATALOGUES["lamost_dr12_mrs_cnn"]
+    cols = ["mobsid", "gaia_source_id", "ra", "dec", "snr"]
+    cols += ["teff_cnn", "logg_cnn", "feh_cnn", "alpha_m_cnn", "m_h_cnn"]
+    d, n = fits_columns(c.path, cols)
+    out = ms.frame(n, survey="lamost_dr12_mrs_cnn", tier="survey")
+    out["catalogue"], out["native_hdu"] = "lamost_dr12_mrs_cnn", "1"
+    out["release"], out["pipeline"] = c.release, "LAMOST MRS CNN"
+    out["dependency_group"] = "lamost-dr12v2-mrs-lasp"
+    out["native_row"] = np.arange(n)
+    out["native_id"] = text(d["mobsid"])
+    sid = ms.exact_ids(d["gaia_source_id"])
+    out["source_id"] = sid
+    out["id_method"] = np.where(sid > 0, "publisher_dr3", "")
+    out["ra"], out["dec"] = d["ra"], d["dec"]
+    out["teff"], out["logg"], out["fe_h"] = d["teff_cnn"], d["logg_cnn"], d["feh_cnn"]
+    out["fe_h_kind"] = "fe_h"
+    out["alpha"], out["alpha_kind"] = d["alpha_m_cnn"], "alpha_m"
+    out["snr"] = d["snr"]
+    teff = np.asarray(d["teff_cnn"], "f8")
+    out["fit_ok"] = np.isfinite(teff) & (teff != -9999)
+    return out
+
+
 STAGED = {
     "lamost_dr12_lrs": lambda: lamost(
         "lamost_dr12_lrs",
@@ -426,6 +514,17 @@ STAGED = {
     "gaia_dr3_gspspec": gspspec,
     "sdss_dr20_bossnet": bossnet,
     "rave_dr6": rave,
+    "desi_dr1_sp": desi_sp,
+    "lamost_dr12_mrs_cnn": lamost_mrs_cnn,
+}
+
+
+# Census sources read from FITS: HDU ("auto" = first non-empty table).
+FITS_CENSUS = {
+    "sdss_dr19_astra_aspcap": "auto",
+    "sdss_dr12_sspp": "1",
+    "sdss_dr17_mastar_params": "1",
+    **{s["source"]: "auto" for s in ml.ASTRA_SUMMARIES},
 }
 
 
@@ -440,8 +539,8 @@ def census_records(path):
     catalogues = {}
     for name in out.survey.unique():
         a = acq.get(name, {})
-        if name in ("sdss_dr19_astra_aspcap", "sdss_dr12_sspp"):
-            hdu = "auto" if name == "sdss_dr19_astra_aspcap" else "1"
+        if name in FITS_CENSUS:
+            hdu = FITS_CENSUS[name]
             cat = ms.Catalogue(name, a["path"], "fits", hdu=hdu, url=a.get("url", ""))
             out.loc[out.survey == name, "native_hdu"] = hdu
         elif name == "saga_mw":
@@ -525,6 +624,11 @@ def main():
     p.add_argument("--gaia-batch", type=int, default=50000)
     p.add_argument("--only", nargs="*", help="staged surveys to build (smoke tests)")
     p.add_argument("--skip-positional", action="store_true")
+    p.add_argument(
+        "--reuse-stage",
+        type=Path,
+        help="earlier master run's work/stage to copy unchanged survey parts from",
+    )
     a = p.parse_args()
     out = a.output
     (out / "records").mkdir(parents=True, exist_ok=True)
@@ -546,6 +650,13 @@ def main():
         catalogues = dict(CATALOGUES)
         stage = out / "work" / "stage"
         stage.mkdir(exist_ok=True)
+        if a.reuse_stage:
+            import shutil
+
+            for old in sorted(Path(a.reuse_stage).glob("*.parquet")):
+                if old.stem in STAGED and not (stage / old.name).exists():
+                    shutil.copyfile(old, stage / old.name)
+                    m.setdefault("reused_stage", []).append(str(old))
         # 1. Native records per survey (resumable), with positional Gaia identity.
         for name, build in STAGED.items():
             if a.only and name not in a.only:
@@ -554,7 +665,13 @@ def main():
             if part.exists():
                 continue
             log(f"reading {name}")
-            rec = ms.finalize(build())
+            try:
+                rec = ms.finalize(build())
+            except Exception as error:  # one unreadable survey must not stop the rest
+                m.setdefault("errors", {})[name] = f"{type(error).__name__}: {error}"
+                log(f"FAILED {name}: {error}")
+                save()
+                continue
             need = (rec.source_id == 0).sum()
             if name in POSITIONAL and need and not a.skip_positional:
                 radius, epochs = POSITIONAL[name]
@@ -585,6 +702,8 @@ def main():
         frames.append(census)
         records = pd.concat(frames, ignore_index=True)
         del frames
+        blank = (records.id_method == "") & (records.source_id > 0)
+        records.loc[blank, "id_method"] = "publisher_dr3"  # LAMOST parts from v1
         log(f"{len(records)} records; assigning star ids")
         records["star_id"] = ms.assign_star_ids(records)
         # 3. Training/loose/chemistry membership, roles and XP availability.

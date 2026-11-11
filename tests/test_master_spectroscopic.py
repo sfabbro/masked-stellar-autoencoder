@@ -140,3 +140,67 @@ def test_csv_trace_back(tmp_path):
     (tmp_path / "c.json").write_text(json.dumps(cats))
     r = records(native_row=[1], catalogue=["rave_dr6"])
     assert ms.read_native_rows(r, tmp_path / "c.json")["rave_dr6"].loc[1, "mg"] == 2.5
+
+
+def test_astra_summary_reads_first_nonempty_hdu_and_derives_mg_fe(tmp_path):
+    from masked_stellar_autoencoder.training import master_labels as ml
+
+    cols = dict(
+        sdss_id=np.array([1, 2], "i8"),
+        gaia_dr3_source_id=np.array([7, 0], "i8"),
+        ra=np.array([1.0, 2.0]),
+        dec=np.array([3.0, 4.0]),
+        snr=np.array([50.0, 60.0]),
+        teff=np.array([5000.0, 4000.0]),
+        e_teff=np.array([10.0, 10.0]),
+        logg=np.array([4.0, 2.0]),
+        e_logg=np.array([0.1, 0.1]),
+        fe_h=np.array([-1.0, -2.0]),
+        e_fe_h=np.array([0.05, 0.05]),
+        mg_h=np.array([-0.7, -1.6]),
+        e_mg_h=np.array([0.05, 0.05]),
+        flag_bad=np.array([False, True]),
+    )
+    fmt = {"i": "K", "f": "D", "b": "L"}
+    table = fits.BinTableHDU.from_columns(
+        [
+            fits.Column(name=k, array=v, format=fmt[v.dtype.kind])
+            for k, v in cols.items()
+        ]
+    )
+    empty = fits.BinTableHDU.from_columns(table.columns, nrows=0)
+    fits.HDUList([fits.PrimaryHDU(), empty, table]).writeto(tmp_path / "a.fits")
+    spec = next(
+        s for s in ml.ASTRA_SUMMARIES if s["source"] == "sdss_dr19_astra_astronn"
+    )
+    o = ml.astra_summary(tmp_path / "a.fits", spec)
+    assert o.source_id.tolist() == [7, 0] and o.quality.tolist() == [True, False]
+    np.testing.assert_allclose(o.alpha, [0.3, 0.4])
+    assert set(o.alpha_kind) == {"mg_fe"}
+
+
+def test_vizier_join_adds_positions_from_a_second_table(tmp_path):
+    from dataclasses import replace
+
+    from masked_stellar_autoencoder.training import master_labels as ml
+
+    def cached(name, header, rows):
+        body = "\n".join(["#Column x", header, "-", "-", *rows]) + "\n"
+        (tmp_path / f"{name}.tsv").write_text(body)
+        (tmp_path / f"{name}.json").write_text(json.dumps(dict(table=name)))
+
+    spec = next(s for s in ml.VIZIER_SOURCES if s.source == "bensby2014")
+    spec = replace(spec, expected_rows=None)
+    cached(
+        "bensby2014",
+        "HIP\tTeff\te_Teff\tlogg\te_logg\tFe/H\te_Fe/H\tMg/Fe",
+        [
+            "12\t5800\t50\t4.4\t0.1\t-0.1\t0.05\t0.1",
+            "99\t6000\t50\t4.2\t0.1\t-1\t0.05\t0.3",
+        ],
+    )
+    cached("bensby2014__join", "HIP\t_RAJ2000\t_DEJ2000", ["12\t10.5\t-5.0", "7\t1\t1"])
+    frame, meta = ml.fetch_vizier(spec, tmp_path)
+    o = ml.vizier_observations(spec, frame)
+    assert o.ra.iloc[0] == 10.5 and np.isnan(o.ra.iloc[1])
+    assert o.native_id.tolist() == ["12", "99"] and "join" in meta
