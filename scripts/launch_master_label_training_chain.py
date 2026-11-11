@@ -208,6 +208,20 @@ STEPS.update(
 )
 
 
+# Consolidated master spectroscopic label table (all records, traceable).
+MASTER = "master_spectroscopic_labels_20261111_v1"
+STEPS["master"] = dict(
+    run_id=MASTER,
+    gpu=0,
+    ram=128,
+    command=(
+        "python -u scripts/build_master_spectroscopic_labels.py"
+        f" --output {ROOT}{MASTER}"
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
