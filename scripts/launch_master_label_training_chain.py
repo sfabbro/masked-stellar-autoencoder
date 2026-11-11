@@ -29,7 +29,8 @@ SOURCE_CONFIG = "configs/master-label-source-20261111.json"
 FEATURE_CONFIG = "configs/multisurvey-feature-union-dr12-20261106.json"
 TRAIN_CONFIG = "configs/master-label-six-nsf-fullfit-20261111.yaml"
 PARENT = "expanded_six_source_20261107_v5"
-FEATURES = "master_label_raw_features_20261111_v1"
+# v1 (XP-only lookup) was cancelled; v2 keeps photometry-only (no-XP) stars.
+FEATURES = "master_label_raw_features_20261111_v2"
 SOURCE = "expanded_six_source_20261111_v6"
 TRAIN = "master_label_six_nsf_fullfit_20261111_v1"
 
@@ -41,6 +42,7 @@ STEPS = {
         command=(
             f"python -u scripts/recover_remaining_survey_inputs.py --config {SOURCE_CONFIG}"
             f" --feature-config {FEATURE_CONFIG} --parent-run {PARENT}"
+            " --allow-unknown-photometry"
             f" --output {ROOT}{FEATURES}"
         ),
         files=[SOURCE_CONFIG, FEATURE_CONFIG],
@@ -51,7 +53,8 @@ STEPS = {
         ram=64,
         command=(
             f"python -u scripts/extend_full_raw_source.py --config {SOURCE_CONFIG}"
-            f" --parent-run {PARENT} --feature-run {FEATURES} --output {ROOT}{SOURCE}"
+            f" --parent-run {PARENT} --feature-run {FEATURES} --include-no-xp"
+            f" --output {ROOT}{SOURCE}"
         ),
         files=[SOURCE_CONFIG],
     ),

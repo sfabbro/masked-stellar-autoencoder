@@ -34,6 +34,14 @@ def main():
         default="expanded_six_source_20261107_v2",
         help="complete source run whose stars are already covered",
     )
+    p.add_argument(
+        "--allow-unknown-photometry",
+        action="store_true",
+        help=(
+            "keep photometry-only stars (G plus another band, no staged XP) whose "
+            "XP publication status is unknown; they are flagged input_has_xp=False"
+        ),
+    )
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=False)
     c = json.loads(a.config.read_text())
@@ -61,6 +69,7 @@ def main():
         training_source_ready=False,
         current_source_sha256=source["prepared_sha256"],
         parent_run=a.parent_run,
+        allow_unknown_photometry=bool(a.allow_unknown_photometry),
         additional_candidate_stars=len(ids),
         scope="All admitted additional-survey candidates outside current 9.2M-star input union; full raw lookup including cache misses. Source-only, no automatic change to the active training job or its roles.",
     )
@@ -88,7 +97,7 @@ def main():
         output_directory=a.output / "feature-cache",
         expected_cache_request_sha256=feature["cache_request_sha256"],
         scan_original=True,
-        allow_unknown_photometry=False,
+        allow_unknown_photometry=a.allow_unknown_photometry,
         association_rows=128,
     )
     (a.output / "feature-proof.json").write_text(json.dumps(proof, indent=2) + "\n")

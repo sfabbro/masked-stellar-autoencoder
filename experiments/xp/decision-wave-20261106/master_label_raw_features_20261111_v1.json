@@ -7,7 +7,7 @@
   "branch": "wip/intelligent-babbage-778ino",
   "command": "python -u scripts/recover_remaining_survey_inputs.py --config configs/master-label-source-20261111.json --feature-config configs/multisurvey-feature-union-dr12-20261106.json --parent-run expanded_six_source_20261107_v5 --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_raw_features_20261111_v1",
   "utc": "2026-11-10T23:42:47.608914+00:00",
-  "status": "accepted",
+  "status": "cancelled_superseded",
   "session_ids": [
     "bjo4yvfz"
   ],
@@ -20,5 +20,7 @@
     "configs/master-label-source-20261111.json": "dcd897d8ecf3d24f683b18612cdbbc0a70f56eb282ababcf9d011a372c47d02b",
     "configs/multisurvey-feature-union-dr12-20261106.json": "ec8e43bb3c7bd199410fc721e35fa4bfbc67aea53028be7b5f9c056063228b4f"
   },
-  "payload_sha256": "11c2508fa8337d0fa48a04c88e1c2655e80e2f8d75e447a1043c85d9590f0349"
+  "payload_sha256": "11c2508fa8337d0fa48a04c88e1c2655e80e2f8d75e447a1043c85d9590f0349",
+  "cancelled_utc": "2026-11-11",
+  "cancel_reason": "Lookup ran with allow_unknown_photometry=False and no Gaia VAC, so no photometry-only (no-XP) star could be recoverable; user asked for all Gaia stars, not only XP. Superseded by master_label_raw_features_20261111_v2 (--allow-unknown-photometry)."
 }
