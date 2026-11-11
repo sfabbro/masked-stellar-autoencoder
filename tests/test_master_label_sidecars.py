@@ -76,3 +76,18 @@ def test_blocks_dedupe_censor_merge_and_round_trip(tmp_path):
         assert set(f["native_observations"]) == set(blocks)
         g = f["native_observations/sdss_dr12_sspp"]
         assert g["value"].shape == (1, 3) and g["source_id"][0] == 4
+
+
+def test_highres_extra_leaves_out_stars_already_in_compilations():
+    obs = pd.concat(
+        [
+            _obs("saga_mw", "highres_reference", [1], [-3.0]),
+            _obs("li2022_lamost_subaru", "highres_reference", [1, 2], [-3.1, -2.5]),
+            _obs("bensby2014", "highres_reference", [3], [-0.2]),
+        ],
+        ignore_index=True,
+    )
+    blocks, _, counts = mls.build_all(obs, ["highres_literature_extra"])
+    block = blocks["highres_literature_extra"]
+    assert block["source_id"].tolist() == [2, 3]
+    assert counts["highres_literature_extra"]["stars"] == 2

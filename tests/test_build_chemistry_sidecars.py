@@ -6,6 +6,7 @@ import h5py
 import numpy as np
 from astropy.io import fits
 
+from masked_stellar_autoencoder.training import master_labels as ml
 from masked_stellar_autoencoder.training.multisurvey_overlay import (
     write_observation_sidecar,
 )
@@ -62,3 +63,28 @@ def test_gspspec_declares_mh_and_alpha_and_keeps_low_extrapolation(tmp_path):
     with h5py.File(receipt["path"]) as f:
         g = f["native_observations/gsp"]
         assert g["chem_value"].shape == (2, 2) and not g["observed"][:].any()
+
+
+def test_ambre_metallicity_is_declared_m_h():
+    obs = ml.empty_frame(
+        2,
+        source="ambre_feros",
+        tier="survey",
+        release="r",
+        pipeline="p",
+        dependency_group="a",
+    )
+    obs["native_row"] = [0, 1]
+    obs["source_id"] = [5, 6]
+    obs["fe_h"], obs["e_fe_h"] = [-1.2, np.nan], [0.1, np.nan]
+    obs["fe_h_kind"] = ["m_h", ""]
+    obs["alpha"], obs["e_alpha"] = [0.3, 0.2], [0.05, 0.05]
+    obs["quality"] = [True, True]
+    block, rows = chem.master(ml.finalize(obs), "ambre_feros")
+    assert chem.GROUPS["ambre_feros_chem"]["quantities"] == {
+        "fe_h": "m_h",
+        "alpha": "alpha_fe",
+    }
+    np.testing.assert_allclose(
+        block["chem_value"][:, 0][block["source_id"] == 5], [-1.2]
+    )

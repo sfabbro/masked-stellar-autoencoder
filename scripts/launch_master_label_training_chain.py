@@ -132,80 +132,8 @@ STEPS = {
 }
 
 
-# Next run (v3): loose-cut survey groups and declared-quantity chemistry groups
-# added to the config; stars new to v6 are recovered, then added from Gaia DR3
-# when outside the XP sample; v9 carries full inputs; training adds the full-Gaia
-# no-XP pool and an encoder-decoder-only phase. v2 stays the baseline.
-SOURCE_CONFIG_V3 = "configs/master-label-source-20261111-v3.json"
-TRAIN_CONFIG_V3 = "configs/master-label-six-nsf-fullfit-20261111-v3.yaml"
-FEATURES_V3 = "master_label_raw_features_20261111_v4"
-GAIA_FEATURES_V3 = "master_label_raw_features_20261111_v5"
-SOURCE_V3 = "expanded_six_source_20261111_v8"
-FULL_V3 = "expanded_six_source_20261111_v9"
-TRAIN_V3 = "master_label_six_nsf_fullfit_20261111_v3"
-STEPS.update(
-    {
-        "features-v3": dict(
-            run_id=FEATURES_V3,
-            gpu=0,
-            ram=48,
-            command=(
-                "python -u scripts/recover_remaining_survey_inputs.py"
-                f" --config {SOURCE_CONFIG_V3} --feature-config {FEATURE_CONFIG}"
-                f" --parent-run {SOURCE} --allow-unknown-photometry"
-                f" --output {ROOT}{FEATURES_V3}"
-            ),
-            files=[SOURCE_CONFIG_V3, FEATURE_CONFIG],
-        ),
-        "gaiaonly-v3": dict(
-            run_id=GAIA_FEATURES_V3,
-            gpu=0,
-            ram=48,
-            command=(
-                f"python -u scripts/add_gaia_only_stars.py --feature-run {FEATURES_V3}"
-                f" --output {ROOT}{GAIA_FEATURES_V3}"
-            ),
-            files=[],
-        ),
-        "source-v3": dict(
-            run_id=SOURCE_V3,
-            gpu=0,
-            ram=96,
-            command=(
-                "python -u scripts/extend_full_raw_source.py"
-                f" --config {SOURCE_CONFIG_V3} --parent-run {SOURCE}"
-                f" --feature-run {GAIA_FEATURES_V3} --include-no-xp"
-                f" --output {ROOT}{SOURCE_V3}"
-            ),
-            files=[SOURCE_CONFIG_V3],
-        ),
-        "fullinputs-v3": dict(
-            run_id=FULL_V3,
-            gpu=0,
-            ram=128,
-            command=(
-                f"python -u scripts/build_full_input_source.py --parent-run {SOURCE_V3}"
-                f" --feature-run {GAIA_FEATURES} --feature-run {GAIA_FEATURES_V3}"
-                f" --extra-gaia-dir {GAIA_FEATURES}/gaia-only"
-                f" --extra-gaia-dir {GAIA_FEATURES_V3}/gaia-only"
-                f" --output {ROOT}{FULL_V3}"
-            ),
-            files=[],
-        ),
-        "train-v3": dict(
-            run_id=TRAIN_V3,
-            gpu=1,
-            ram=64,
-            command=(
-                "python -u scripts/run_expanded_six_training.py"
-                f" --config {TRAIN_CONFIG_V3}"
-                ' --output "$experiment_output" --reuse-waiting-output'
-                " --retry-pre-admission-failure"
-            ),
-            files=[TRAIN_CONFIG_V3],
-        ),
-    }
-)
+# The no-XP v3 chain (gaia-only stars, full-Gaia pool, SSL phase) was put on
+# hold for an XP-only run; its configs stay in configs/*-v3.* for later.
 
 
 # Consolidated master spectroscopic label table (all records, traceable).
@@ -255,6 +183,95 @@ STEPS["master-v3"] = dict(
         f" --output {ROOT}{MASTER_V3}"
     ),
     files=[],
+)
+
+
+# XP-only v3 run. New label groups from census v6 (master sidecar v2:
+# highres_literature_extra, kirby2010_dsph, mastar_params; chemistry v2:
+# ambre_feros_chem), feature recovery against v6 for every config source,
+# source v8 without no-XP stars, full inputs v9, training with xp_only.
+CENSUS_XP = "master_label_census_20261111_v6"
+SIDECARS_XP = "master_label_sidecars_20261111_v2"
+CHEM_XP = "chemistry_labels_20261111_v2"
+SOURCE_CONFIG_XP = "configs/master-label-source-20261111-xp.json"
+TRAIN_CONFIG_XP = "configs/master-label-six-nsf-fullfit-20261111-xp.yaml"
+FEATURES_XP = "master_label_raw_features_20261111_v6"
+SOURCE_XP = "expanded_six_source_20261111_v8"
+FULL_XP = "expanded_six_source_20261111_v9"
+TRAIN_XP = "master_label_six_nsf_fullfit_20261111_v3"
+STEPS.update(
+    {
+        "sidecars-xp": dict(
+            run_id=SIDECARS_XP,
+            gpu=0,
+            ram=16,
+            command=(
+                "python -u scripts/write_master_label_sidecars.py"
+                f" --observations {ROOT}{CENSUS_XP}/observations.parquet"
+                " --sources highres_literature_extra kirby2010_dsph mastar_params"
+                f" --output {ROOT}{SIDECARS_XP}"
+                f" --arc-path {ROOT}{SIDECARS_XP}/master-label-sidecar.h5"
+            ),
+            files=[],
+        ),
+        "chem-xp": dict(
+            run_id=CHEM_XP,
+            gpu=0,
+            ram=16,
+            command=(
+                "python -u scripts/build_chemistry_sidecars.py"
+                f" --observations {ROOT}{CENSUS_XP}/observations.parquet"
+                f" --only ambre_feros_chem --output {ROOT}{CHEM_XP}"
+            ),
+            files=[],
+        ),
+        "features-xp": dict(
+            run_id=FEATURES_XP,
+            gpu=0,
+            ram=48,
+            command=(
+                "python -u scripts/recover_remaining_survey_inputs.py"
+                f" --config {SOURCE_CONFIG_XP} --feature-config {FEATURE_CONFIG}"
+                f" --parent-run {SOURCE} --output {ROOT}{FEATURES_XP}"
+            ),
+            files=[SOURCE_CONFIG_XP, FEATURE_CONFIG],
+        ),
+        "source-xp": dict(
+            run_id=SOURCE_XP,
+            gpu=0,
+            ram=96,
+            command=(
+                "python -u scripts/extend_full_raw_source.py"
+                f" --config {SOURCE_CONFIG_XP} --parent-run {SOURCE}"
+                f" --feature-run {FEATURES_XP} --output {ROOT}{SOURCE_XP}"
+            ),
+            files=[SOURCE_CONFIG_XP],
+        ),
+        "fullinputs-xp": dict(
+            run_id=FULL_XP,
+            gpu=0,
+            ram=128,
+            command=(
+                f"python -u scripts/build_full_input_source.py --parent-run {SOURCE_XP}"
+                f" --feature-run {GAIA_FEATURES} --feature-run {FEATURES_XP}"
+                f" --extra-gaia-dir {GAIA_FEATURES}/gaia-only"
+                f" --output {ROOT}{FULL_XP}"
+            ),
+            files=[],
+        ),
+        "train-xp": dict(
+            run_id=TRAIN_XP,
+            gpu=1,
+            ram=64,
+            command=(
+                "python -u scripts/run_expanded_six_training.py"
+                f" --config {TRAIN_CONFIG_XP}"
+                ' --output "$experiment_output" --reuse-waiting-output'
+                " --retry-pre-admission-failure"
+            ),
+            files=[TRAIN_CONFIG_XP],
+        ),
+    }
 )
 
 

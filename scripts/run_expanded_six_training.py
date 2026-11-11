@@ -341,6 +341,17 @@ def main():
             ids = data["source_id"][:]
             roles = data["role"][:].astype("S8")
             eligible = data["primary_input_eligible"][:].astype(bool)
+            if cfg.get("xp_only"):
+                # XP-only training: stars without XP inputs take no role in
+                # fitting, selection or evaluation (roles are left unchanged).
+                if "input_has_xp" not in data:
+                    raise ValueError("xp_only needs input_has_xp in the source")
+                has_xp = data["input_has_xp"][:].astype(bool)
+                m["xp_only"] = dict(
+                    stars_without_xp=int((~has_xp).sum()),
+                    eligible_removed=int((eligible & ~has_xp).sum()),
+                )
+                eligible &= has_xp
             names = data["feature_names"][:].astype("U").tolist()
             if names != reference["run_signature"]["feature_cols"]:
                 raise ValueError("Input feature identities differ from encoder")

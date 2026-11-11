@@ -149,11 +149,14 @@ def master(obs, source):
         release = o.native_id.str.split(":").str[2]
         dr17 = o.source_id[release == "dr17"].unique()
         o = o[(release != "dr17") & ~o.source_id.isin(dr17)].reset_index(drop=True)
-    nan = np.full(len(o), np.nan)
+    # [M/H]-type metallicity (AMBRE) goes into the metallicity slot as m_h.
+    m_h = (o.fe_h_kind == "m_h").to_numpy()
+    metal = np.where(m_h, o.fe_h.to_numpy("f8"), np.nan)
+    e_metal = np.where(m_h, o.e_fe_h.to_numpy("f8"), np.nan)
     return chem_block(
         o.source_id.to_numpy("i8"),
-        nan,
-        nan,
+        metal,
+        e_metal,
         o.alpha.to_numpy("f8"),
         o.e_alpha.to_numpy("f8"),
         o.snr.to_numpy("f8"),
@@ -210,6 +213,13 @@ GROUPS = {
         pipeline="ASPCAP",
         dependency="apogee_spectra_aspcap",
         fields=(None, "alpha_m_atm"),
+    ),
+    "ambre_feros_chem": dict(
+        quantities={"fe_h": "m_h", "alpha": "alpha_fe"},
+        release="AMBRE FEROS (Worley+2012)",
+        pipeline="MATISSE (AMBRE)",
+        dependency="ambre_feros",
+        fields=("[M/H]", "[alpha/Fe]"),
     ),
     "bestbrightest_placco2019_alpha_fe": dict(
         quantities={"fe_h": "fe_h", "alpha": "alpha_fe"},
@@ -274,6 +284,7 @@ def main():
             "sdss_dr12_sspp_alpha_fe": "sdss_dr12_sspp",
             "sdss_dr19_aspcap_sdss5_alpha_m": "sdss_dr19_astra_aspcap",
             "bestbrightest_placco2019_alpha_fe": "bestbrightest_placco2019",
+            "ambre_feros_chem": "ambre_feros",
         }
         blocks, registry = {}, {}
         for name, spec in GROUPS.items():

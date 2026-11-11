@@ -36,6 +36,8 @@ class TrainingSource:
     merge: bool
     fields: tuple[str | None, str | None, str | None]
     note: str = ""
+    # Stars already labelled by these census sources are left out of this group.
+    exclude_members: tuple[str, ...] = ()
 
 
 TRAINING_SOURCES: tuple[TrainingSource, ...] = (
@@ -106,6 +108,47 @@ TRAINING_SOURCES: tuple[TrainingSource, ...] = (
         ("Teff", "logg", "[Fe/H]"),
         "per-star median over compiled papers; reference tier, not physical truth",
     ),
+    # ---- Added for the XP-only v3 run (census v6).
+    TrainingSource(
+        "highres_literature_extra",
+        (
+            "ezzeddine2020_rpa",
+            "sakari2018_rpa",
+            "li2022_lamost_subaru",
+            "aoki2013_segue",
+            "kirby2010_highres",
+            "bensby2014",
+        ),
+        True,
+        ("Teff", "logg", "[Fe/H]"),
+        "per-star median; stars already in highres_literature are left out "
+        "(SAGA/JINAbase compile many of these papers)",
+        exclude_members=(
+            "saga_mw",
+            "jinabase_2021",
+            "pastel_2020",
+            "rpa_hansen2018",
+            "rpa_holmbeck2020",
+            "smss_yong2021",
+            "yong2013_program",
+            "yong2013_literature",
+            "roederer2014",
+        ),
+    ),
+    TrainingSource(
+        "kirby2010_dsph",
+        ("kirby2010_dsph",),
+        False,
+        ("Teff", "logg", "[Fe/H]"),
+        "DEIMOS spectral synthesis in eight Milky Way dwarf spheroidals",
+    ),
+    TrainingSource(
+        "mastar_params",
+        ("sdss_dr17_mastar_params",),
+        False,
+        ("TEFF_MED", "LOGG_MED", "FEH_CAL_MED"),
+        "MaStar VAC v2 median of four methods; calibrated [Fe/H]",
+    ),
 )
 
 # Overlap-report entries used to choose each training source's map family.
@@ -118,6 +161,14 @@ OVERLAP_ALIASES = {
 
 def _select_rows(obs: pd.DataFrame, spec: TrainingSource) -> pd.DataFrame:
     rows = obs[obs.source.isin(spec.members) & (obs.source_id > 0) & obs.quality]
+    if spec.exclude_members:
+        other = obs[
+            obs.source.isin(spec.exclude_members)
+            & (obs.source_id > 0)
+            & obs.quality
+            & obs[list(TARGETS)].notna().any(axis=1)
+        ]
+        rows = rows[~rows.source_id.isin(other.source_id)]
     if spec.name == "sdss_dr19_aspcap_sdss5":
         release = rows.native_id.str.split(":").str[2]
         dr17_stars = rows.source_id[release == "dr17"].unique()
@@ -194,7 +245,7 @@ def registry_entry(obs: pd.DataFrame, spec: TrainingSource) -> dict:
         pipeline="; ".join(sorted(members.pipeline.unique())),
         dependency_id=(
             "literature_highres_compilation"
-            if spec.name == "highres_literature"
+            if spec.name in ("highres_literature", "highres_literature_extra")
             else "; ".join(sorted(members.dependency_group.unique()))
         ),
         targets=targets,
