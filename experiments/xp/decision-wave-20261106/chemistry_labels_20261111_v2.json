@@ -1,0 +1,21 @@
+{
+  "run_id": "chemistry_labels_20261111_v2",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/chemistry_labels_20261111_v2",
+  "source_commit": "b88041eaf743364a43211fbacd5b03b6a4770071",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_chemistry_sidecars.py --observations /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261111_v6/observations.parquet --only ambre_feros_chem --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/chemistry_labels_20261111_v2",
+  "utc": "2026-11-11T18:39:18.060676+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "yx9o8yf5"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {},
+  "payload_sha256": "391d42142ee68327cf8e6c0cbe2329c992f9e60eefe21be2178692f50afacd88"
+}
