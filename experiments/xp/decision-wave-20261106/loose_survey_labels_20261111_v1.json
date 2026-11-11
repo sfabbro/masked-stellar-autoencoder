@@ -1,0 +1,21 @@
+{
+  "run_id": "loose_survey_labels_20261111_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/loose_survey_labels_20261111_v1",
+  "source_commit": "d21af23fae906380e10150223c38866e545dfab7",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_loose_survey_sidecars.py --snr-min 10 --parent-run expanded_six_source_20261111_v6 --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/loose_survey_labels_20261111_v1",
+  "utc": "2026-11-11T14:13:29.072319+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "pls2ca1i"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 64
+  },
+  "source_sha256": {},
+  "payload_sha256": "54e05361ae9318c70c5eede8557a4d679456b4914d534dd3639746ecab3aa524"
+}
