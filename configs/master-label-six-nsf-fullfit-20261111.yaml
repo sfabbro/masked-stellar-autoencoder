@@ -180,7 +180,7 @@ confirmation_energy_weight: 1.0
 confirmation_crps_weight: 0.0
 confirmation_noise_correlation: 0.0
 confirmation_native_student_t: false
-run_id: master_label_six_nsf_fullfit_20261111_v1
+run_id: master_label_six_nsf_fullfit_20261111_v2
 expanded_source_run: expanded_six_source_20261111_v7
 calibration_run: nsf_confirmation_calibration_20261107_v1
 mapping_candidates:

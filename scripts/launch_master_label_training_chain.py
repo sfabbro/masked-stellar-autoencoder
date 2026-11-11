@@ -39,7 +39,9 @@ FEATURES = "master_label_raw_features_20261111_v2"
 GAIA_FEATURES = "master_label_raw_features_20261111_v3"
 SOURCE = "expanded_six_source_20261111_v6"
 FULL = "expanded_six_source_20261111_v7"
-TRAIN = "master_label_six_nsf_fullfit_20261111_v1"
+# v1 wrote its admission decision before failing the library pin (no
+# training); its output cannot be reused, so training restarts as v2.
+TRAIN = "master_label_six_nsf_fullfit_20261111_v2"
 
 STEPS = {
     "features": dict(
