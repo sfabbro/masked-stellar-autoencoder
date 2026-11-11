@@ -81,22 +81,65 @@ def xp_input_columns(feature_names):
     return cols
 
 
-def xp_dropout_inputs(inputs, xp_cols, *, hide_all=False, rate=0.0, seed=None):
+# Inputs a genuine no-XP Gaia star actually provides (Gaia DR3 columns only).
+NOXP_GAIA_INPUTS = frozenset(
+    {"G", "BP", "RP", "PARALLAX", "pmra", "pmdec", "RA", "DEC"}
+)
+
+
+def noxp_view_spec(feature_names, *, bprp_drop=0.19, astrometry_drop=0.18):
+    """Columns to hide so an XP-hidden view matches a real no-XP Gaia star.
+
+    Real has_xp_continuous=False reservoir stars carry only Gaia columns; about
+    19% lack BP/RP and 18% lack parallax/proper motions (2-parameter
+    solutions), so those groups are dropped at the same rates.
+    """
+    names = list(feature_names)
+    xp = xp_input_columns(names)
+    always = np.array(
+        [
+            i
+            for i, n in enumerate(names)
+            if n not in NOXP_GAIA_INPUTS and i not in set(xp)
+        ]
+    )
+    groups = [
+        (np.array([names.index(n) for n in ("BP", "RP") if n in names]), bprp_drop),
+        (
+            np.array(
+                [names.index(n) for n in ("PARALLAX", "pmra", "pmdec") if n in names]
+            ),
+            astrometry_drop,
+        ),
+    ]
+    return dict(xp=xp, always=always, groups=groups)
+
+
+def xp_dropout_inputs(
+    inputs, xp_cols, *, hide_all=False, rate=0.0, seed=None, view=None
+):
     """Copy of encoder inputs with whole-XP modality dropout per star.
 
     Hidden XP takes the encoder's missing token, exactly as a genuine no-XP star.
     ``rate`` hides each row's XP independently; ``hide_all`` hides every row.
-    The input array is never modified in place.
+    With ``view`` (``noxp_view_spec``), hidden rows also lose every non-Gaia
+    input and, at the measured rates, BP/RP and astrometry, so they look like
+    real no-XP Gaia inputs. The input array is never modified in place.
     """
     if not (0.0 <= rate < 1.0):
         raise ValueError("XP dropout rate must lie in [0, 1)")
     if not hide_all and rate == 0.0:
         return inputs
     x = np.array(inputs, copy=True)
-    hide = (
-        np.ones(len(x), bool)
-        if hide_all
-        else np.random.default_rng(seed).random(len(x)) < rate
-    )
+    rng = np.random.default_rng(seed)
+    hide = np.ones(len(x), bool) if hide_all else rng.random(len(x)) < rate
     x[np.ix_(hide, xp_cols)] = MISSING_TOKEN
+    if view is not None:
+        rows = np.flatnonzero(hide)
+        if len(view["always"]):
+            x[np.ix_(rows, view["always"])] = MISSING_TOKEN
+        for cols, prob in view["groups"]:
+            if len(cols) and prob > 0:
+                drop = rows[rng.random(len(rows)) < prob]
+                x[np.ix_(drop, cols)] = MISSING_TOKEN
     return x

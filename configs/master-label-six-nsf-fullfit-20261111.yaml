@@ -244,3 +244,9 @@ noxp_reconstruction:
   stage: full_gaia_gaia_stage_20261108_v2
   fraction: 0.25
 head_context: true
+# XP-hidden views look like real no-XP Gaia stars: only Gaia inputs remain
+# (G, BP, RP, parallax, pm, RA/Dec); BP/RP and astrometry are dropped at the
+# rates seen in the has_xp_continuous=False reservoir (19% / 18%).
+noxp_view:
+  bprp_drop: 0.19
+  astrometry_drop: 0.18

@@ -76,3 +76,33 @@ def test_whole_xp_dropout_uses_the_missing_token_and_never_mutates_inputs():
     rows = (a[:, cols] == -9999).all(1)
     assert 0.2 < rows.mean() < 0.4
     assert ((a[:, cols] == -9999).any(1) == rows).all()  # whole-XP, never partial
+
+
+def test_noxp_view_matches_real_no_xp_gaia_inputs():
+    from masked_stellar_autoencoder.training.fullfit_records import (
+        noxp_view_spec,
+        xp_dropout_inputs,
+    )
+
+    names = ["W1", "W2", "G", "BP", "RP"]
+    names += [f"{a}_{j}" for a in ("bp", "rp") for j in range(1, 56)]
+    names += ["J", "G_PS1", "PARALLAX", "EBV", "pmra", "pmdec", "RA", "DEC"]
+    view = noxp_view_spec(names, bprp_drop=0.5, astrometry_drop=0.5)
+    x = np.ones((4000, len(names)), dtype="f4")
+    out = xp_dropout_inputs(x, view["xp"], hide_all=True, seed=[7], view=view)
+    keep = {"G", "BP", "RP", "PARALLAX", "pmra", "pmdec", "RA", "DEC"}
+    for j, n in enumerate(names):
+        if n not in keep:
+            assert (out[:, j] == -9999).all(), n  # XP and non-Gaia inputs hidden
+    assert (out[:, names.index("G")] == 1).all()  # G, RA, DEC always kept
+    assert (out[:, names.index("RA")] == 1).all()
+    bp, rp = names.index("BP"), names.index("RP")
+    assert ((out[:, bp] == -9999) == (out[:, rp] == -9999)).all()  # BP/RP together
+    assert 0.45 < (out[:, bp] == -9999).mean() < 0.55
+    plx = names.index("PARALLAX")
+    assert 0.45 < (out[:, plx] == -9999).mean() < 0.55
+    again = xp_dropout_inputs(x, view["xp"], hide_all=True, seed=[7], view=view)
+    np.testing.assert_array_equal(out, again)  # reproducible views
+    partial = xp_dropout_inputs(x, view["xp"], rate=0.3, seed=[1], view=view)
+    hidden = (partial[:, view["xp"]] == -9999).all(1)
+    assert (partial[~hidden] == 1).all()  # untouched rows keep every input

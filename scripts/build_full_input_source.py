@@ -176,6 +176,7 @@ def main():
                     absorb_original(rr, frame)
                 m.update(feature_run_original_rows=int(len(todo)))
                 save()
+        agree = {f: [0, 0.0, 0] for f in fia.GAIA_TO_FEATURE.values()}
         gaia = root / a.gaia_stage / "labelled-gaia"
         gfiles = sorted(gaia.glob("*.parquet"))
         gaia_cols = list(fia.GAIA_TO_FEATURE) + list(GAIA_ERRORS) + ["source_id"]
@@ -189,9 +190,19 @@ def main():
                 continue
             frame = frame.iloc[hit].reset_index(drop=True)
             raw = fia.gaia_frame_to_matrix(frame, names)
-            inputs[rows] = fia.merge_rows(
-                inputs[rows], fia.standardize(raw, center, scale), overwrite=False
-            )
+            gstd = fia.standardize(raw, center, scale)
+            both = origin[rows] == 1
+            if both.any():
+                # Gaia vs original pretraining values for stars present in both.
+                for feat in fia.GAIA_TO_FEATURE.values():
+                    jj = names.index(feat)
+                    d = np.abs(gstd[both, jj] - inputs[rows[both], jj])
+                    d = d[np.isfinite(d)]
+                    if len(d):
+                        agree[feat][0] += len(d)
+                        agree[feat][1] = max(agree[feat][1], float(d.max()))
+                        agree[feat][2] += int((d > 1e-4).sum())
+            inputs[rows] = fia.merge_rows(inputs[rows], gstd, overwrite=False)
             for gcol, feat in [
                 ("parallax", "PARALLAX"),
                 ("pmra", "pmra"),
@@ -207,6 +218,11 @@ def main():
             origin[rows[origin[rows] == 0]] = 2
             if i % 500 == 0:
                 log(f"gaia stage {i + 1}/{len(gfiles)}")
+        m["gaia_vs_original_standardized"] = {
+            f: dict(compared=v[0], max_abs_diff=v[1], differing_gt_1e4=v[2])
+            for f, v in agree.items()
+        }
+        save()
         # The admitted measured parallax is the head's parallax context too.
         ctx["PARALLAX"][meas_ok] = meas_plx[meas_ok]
         ctx["e_parallax"][meas_ok] = meas_err[meas_ok]
@@ -291,6 +307,7 @@ def main():
                 **{
                     k: m[k]
                     for k in (
+                        "gaia_vs_original_standardized",
                         "input_origin",
                         "context_names",
                         "context_center",

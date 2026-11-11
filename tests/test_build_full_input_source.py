@@ -119,6 +119,9 @@ def test_full_inputs_fill_all_slots_keep_labels_and_store_nan(staged, tmp_path):
     assert manifest["status"] == "expanded_six_source_complete"
     profile = manifest["feature_profiles"]["full_inputs_measured_parallax"]
     assert profile["missing_encoding"] == "nan"
+    agreement = manifest["full_inputs"]["gaia_vs_original_standardized"]
+    assert agreement["G"]["compared"] == 1 and agreement["G"]["differing_gt_1e4"] == 1
+    assert agreement["PARALLAX"]["differing_gt_1e4"] == 0  # 1.4 in both
     assert manifest["full_inputs"]["input_origin"] == dict(
         parent_only=1, original_rows=1, gaia_only=1
     )

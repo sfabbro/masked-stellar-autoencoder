@@ -209,6 +209,7 @@ def main():
     from masked_stellar_autoencoder.training.fullfit_records import (
         epoch_record_batches,
         fixed_coordinates,
+        noxp_view_spec,
         reconstruction_block_start,
         xp_dropout_inputs,
         xp_input_columns,
@@ -613,6 +614,12 @@ def main():
                 return {k: np.concatenate([p[k] for p in pieces]) for k in pieces[0]}
 
             xp_cols = xp_input_columns(names)
+            # XP-hidden views match real no-XP Gaia inputs (config ``noxp_view``).
+            noxp_view = (
+                noxp_view_spec(names, **cfg["noxp_view"])
+                if isinstance(cfg.get("noxp_view"), dict)
+                else None
+            )
             xp_dropout = float(cfg.get("supervised_xp_dropout", 0.0))
             xp_hidden_weight = float(cfg.get("selection_xp_hidden_weight", 0.0))
             if not (0.0 <= xp_dropout < 1.0 and 0.0 <= xp_hidden_weight <= 1.0):
@@ -626,6 +633,7 @@ def main():
                     hide_all=hide_all,
                     rate=rate,
                     seed=seed,
+                    view=noxp_view,
                 )
 
             def forward_draws(
@@ -944,6 +952,7 @@ def main():
                                     cfg["evaluation_draws"],
                                     cfg["seed"] + 11000 + b["source"] * 1000 + start,
                                     hide_xp=hide_xp,
+                                    xp_seed=[cfg["seed"], 41, int(b["source"]), start],
                                 )
                                 .cpu()
                                 .numpy()
