@@ -1,0 +1,23 @@
+{
+  "run_id": "master_label_six_nsf_fullfit_20261111_v1",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_six_nsf_fullfit_20261111_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_six_nsf_fullfit_20261111_v1-attempt-2",
+  "source_commit": "e3f6e28410b76f4b3f6aa8254f24de690c4b705e",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/run_expanded_six_training.py --config configs/master-label-six-nsf-fullfit-20261111.yaml --output \"$experiment_output\" --reuse-waiting-output --retry-pre-admission-failure",
+  "utc": "2026-11-11T03:16:02.141283+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "hxizzjqe"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "configs/master-label-six-nsf-fullfit-20261111.yaml": "f4ffda3e8c97845619542935d1ee8a76597e72229187d2a7b4472bd97adfc02a"
+  },
+  "payload_sha256": "ef3770586ed09270dcebae0650eb107e3d44bff8a12197f3859b4ea06881c4e1"
+}
