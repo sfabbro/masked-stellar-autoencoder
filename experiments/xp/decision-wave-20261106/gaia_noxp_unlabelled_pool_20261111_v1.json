@@ -1,0 +1,21 @@
+{
+  "run_id": "gaia_noxp_unlabelled_pool_20261111_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_noxp_unlabelled_pool_20261111_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/gaia_noxp_unlabelled_pool_20261111_v1",
+  "source_commit": "2ee1a0ae6ddeba10a6abb7b8a65f1e846f5fed12",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_gaia_unlabelled_pool.py --rate 0.125 --exclude-source expanded_six_source_20261111_v7 --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/gaia_noxp_unlabelled_pool_20261111_v1",
+  "utc": "2026-11-11T14:10:18.040479+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "iy0pgeyg"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {},
+  "payload_sha256": "8933a0036e279975852e96e3de3eb293e8a0d702a3198a6dedd810c616d283a1"
+}
