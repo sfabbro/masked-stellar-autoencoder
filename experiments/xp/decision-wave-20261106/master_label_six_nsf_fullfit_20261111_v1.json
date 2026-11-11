@@ -7,7 +7,7 @@
   "branch": "wip/intelligent-babbage-778ino",
   "command": "python -u scripts/run_expanded_six_training.py --config configs/master-label-six-nsf-fullfit-20261111.yaml --output \"$experiment_output\" --reuse-waiting-output",
   "utc": "2026-11-11T03:12:35.687481+00:00",
-  "status": "accepted",
+  "status": "failed_pre_admission",
   "session_ids": [
     "m3s7kr21"
   ],
@@ -19,5 +19,6 @@
   "source_sha256": {
     "configs/master-label-six-nsf-fullfit-20261111.yaml": "253e56791f1a9676ad138d7bde8b3717b16f0b000cdc034733c4d810df665b73"
   },
-  "payload_sha256": "b7aecf2531e7511c4448bd8814939868200cb0d1ad6d50ca7fd060578b5e36a5"
+  "payload_sha256": "b7aecf2531e7511c4448bd8814939868200cb0d1ad6d50ca7fd060578b5e36a5",
+  "failure": "ValueError('Library revision differs'): config pinned torchregress 82ca1996 (20261107 fullfit branch) but this branch installs 2777b0de; no data read, no training. Retried as attempt 2 with the branch pin."
 }

@@ -93,6 +93,7 @@ STEPS = {
         command=(
             f"python -u scripts/run_expanded_six_training.py --config {TRAIN_CONFIG}"
             ' --output "$experiment_output" --reuse-waiting-output'
+            " --retry-pre-admission-failure"
         ),
         files=[TRAIN_CONFIG],
     ),
@@ -118,6 +119,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--step", choices=sorted(STEPS), required=True)
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument(
+        "--attempt",
+        type=int,
+        help="retry attempt number (>=2) after reconciling a failed receipt",
+    )
     a = p.parse_args()
     step = STEPS[a.step]
     files = {name: (HERE.parent / name).read_text() for name in step["files"]}
@@ -139,6 +145,7 @@ def main():
         ram=step["ram"],
         branch=branch,
         commit=head,
+        attempt=a.attempt,
     )
 
 

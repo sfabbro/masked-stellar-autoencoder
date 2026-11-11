@@ -1,4 +1,8 @@
-library_revision: 82ca1996cc4f3ca0be3e730d38a99db482a79378
+# torchregress pin of this branch (pixi.lock). 2777b0de descends from the
+# 82ca1996 pin of the 20261107 fullfit: the NSF built by create_flow_model is
+# the same zuko NSF with the same state-dict keys; the newer revision adds
+# stable MAF/RealNVP sampling and frees per-draw transform cycles (NSF memory).
+library_revision: 2777b0de88121768434725ef227893cd35595d2a
 checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
 checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
 reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
