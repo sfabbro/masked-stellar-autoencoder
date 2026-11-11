@@ -67,3 +67,36 @@ def reconstruction_block_start(length, batch_size, rng):
     if batch_size < 1 or length < batch_size:
         raise ValueError("Reconstruction cache must fit the declared batch")
     return int(rng.integers(0, length - batch_size + 1))
+
+
+XP_INPUT_NAMES = frozenset(f"{arm}_{j}" for arm in ("bp", "rp") for j in range(1, 56))
+MISSING_TOKEN = -9999.0
+
+
+def xp_input_columns(feature_names):
+    """Indices of the 110 Gaia XP coefficient inputs; fail on a partial layout."""
+    cols = np.array([i for i, n in enumerate(feature_names) if n in XP_INPUT_NAMES])
+    if len(cols) != 110:
+        raise ValueError("Complete 110-column XP input layout required")
+    return cols
+
+
+def xp_dropout_inputs(inputs, xp_cols, *, hide_all=False, rate=0.0, seed=None):
+    """Copy of encoder inputs with whole-XP modality dropout per star.
+
+    Hidden XP takes the encoder's missing token, exactly as a genuine no-XP star.
+    ``rate`` hides each row's XP independently; ``hide_all`` hides every row.
+    The input array is never modified in place.
+    """
+    if not (0.0 <= rate < 1.0):
+        raise ValueError("XP dropout rate must lie in [0, 1)")
+    if not hide_all and rate == 0.0:
+        return inputs
+    x = np.array(inputs, copy=True)
+    hide = (
+        np.ones(len(x), bool)
+        if hide_all
+        else np.random.default_rng(seed).random(len(x)) < rate
+    )
+    x[np.ix_(hide, xp_cols)] = MISSING_TOKEN
+    return x

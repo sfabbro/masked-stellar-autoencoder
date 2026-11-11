@@ -229,3 +229,9 @@ source_map_kinds:
   lamost_dr12v2_mrs_lasp: spline
   sdss_dr20_bossnet_081: spline
   rave_dr6_madera_gauguin: spline
+# Full-Gaia readiness: ~88% of Gaia has no XP. Hide all XP for this fraction of
+# labelled stars per step (encoder missing token -9999, as for real no-XP stars)
+# and select checkpoints on TUNE CRPS averaged over XP-visible and XP-hidden
+# views of the same stars.
+supervised_xp_dropout: 0.3
+selection_xp_hidden_weight: 0.5

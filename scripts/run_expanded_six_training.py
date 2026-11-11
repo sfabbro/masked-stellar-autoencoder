@@ -205,6 +205,8 @@ def main():
         epoch_record_batches,
         fixed_coordinates,
         reconstruction_block_start,
+        xp_dropout_inputs,
+        xp_input_columns,
     )
     from masked_stellar_autoencoder.training.nsf_confirmation import confirmation_score
     from masked_stellar_autoencoder.training.remediation_energy6 import (
@@ -544,10 +546,42 @@ def main():
                         )
                 return {k: np.concatenate([p[k] for p in pieces]) for k in pieces[0]}
 
-            def forward_draws(batch, start, stop, count, seed=None):
+            xp_cols = xp_input_columns(names)
+            xp_dropout = float(cfg.get("supervised_xp_dropout", 0.0))
+            xp_hidden_weight = float(cfg.get("selection_xp_hidden_weight", 0.0))
+            if not (0.0 <= xp_dropout < 1.0 and 0.0 <= xp_hidden_weight <= 1.0):
+                raise ValueError("XP dropout/selection weights must lie in [0, 1)")
+
+            def encoder_inputs(unique, *, hide_all=False, rate=0.0, seed=None):
+                # Hidden XP uses the encoder's own missing token (= real no-XP).
+                return xp_dropout_inputs(
+                    natural_inputs[unique],
+                    xp_cols,
+                    hide_all=hide_all,
+                    rate=rate,
+                    seed=seed,
+                )
+
+            def forward_draws(
+                batch,
+                start,
+                stop,
+                count,
+                seed=None,
+                *,
+                hide_xp=False,
+                xp_rate=0.0,
+                xp_seed=None,
+            ):
                 rr = batch["rows"][start:stop]
                 unique, inverse = np.unique(rr, return_inverse=True)
-                z = model.encoder(tensor(natural_inputs[unique]))
+                z = model.encoder(
+                    tensor(
+                        encoder_inputs(
+                            unique, hide_all=hide_xp, rate=xp_rate, seed=xp_seed
+                        )
+                    )
+                )
                 z = z[tensor(inverse, torch.long)]
                 gen = (
                     head.sample_generator
@@ -567,7 +601,14 @@ def main():
                 total = 0.0
                 for start in range(0, len(batch["rows"]), 16):
                     stop = min(start + 16, len(batch["rows"]))
-                    draws = forward_draws(batch, start, stop, 32)
+                    draws = forward_draws(
+                        batch,
+                        start,
+                        stop,
+                        32,
+                        xp_rate=0.0 if warm else xp_dropout,
+                        xp_seed=[cfg["seed"], 31, update, start],
+                    )
                     loss, _ = confirmation_score(
                         draws,
                         tensor(batch["value"][start:stop]),
@@ -787,7 +828,7 @@ def main():
                     for b in records[role]
                 ]
 
-            def evaluate(role, export=False):
+            def evaluate(role, export=False, hide_xp=False):
                 model.eval()
                 head.eval()
                 maps.eval()
@@ -814,6 +855,7 @@ def main():
                                     len(pp),
                                     cfg["evaluation_draws"],
                                     cfg["seed"] + 11000 + b["source"] * 1000 + start,
+                                    hide_xp=hide_xp,
                                 )
                                 .cpu()
                                 .numpy()
@@ -859,7 +901,13 @@ def main():
                     if export:
                         np.savez_compressed(
                             a.output
-                            / (role + "-" + source_names[b["source"]] + ".npz"),
+                            / (
+                                role
+                                + ("-xp-hidden" if hide_xp else "")
+                                + "-"
+                                + source_names[b["source"]]
+                                + ".npz"
+                            ),
                             center=center,
                             scale=scale,
                             **arrays,
@@ -1043,6 +1091,19 @@ def main():
                     tune_macro_source_target_crps=score,
                     tune_report=report,
                 )
+                if xp_hidden_weight > 0:
+                    # Select on both views of the same TUNE stars: most Gaia
+                    # stars have no XP, so an XP-only gain must not win alone.
+                    hidden, hidden_report = evaluate("tune", hide_xp=True)
+                    if not np.isfinite(hidden):
+                        raise FloatingPointError("Nonfinite XP-hidden TUNE score")
+                    m.update(
+                        tune_macro_source_target_crps_xp_visible=score,
+                        tune_macro_source_target_crps_xp_hidden=hidden,
+                        tune_report_xp_hidden=hidden_report,
+                    )
+                    score = (1 - xp_hidden_weight) * score + xp_hidden_weight * hidden
+                    m.update(tune_selection_score=score)
                 if score < best:
                     best = score
                     torch.save(
@@ -1085,6 +1146,12 @@ def main():
                 m["evaluation"][role] = dict(
                     macro_source_target_crps=score, sources=report
                 )
+                if xp_hidden_weight > 0 or xp_dropout > 0:
+                    hidden, hidden_report = evaluate(role, True, hide_xp=True)
+                    m["evaluation"][role].update(
+                        macro_source_target_crps_xp_hidden=hidden,
+                        sources_xp_hidden=hidden_report,
+                    )
                 save()
             export_common("selected")
             m.update(

@@ -51,3 +51,28 @@ def test_reconstruction_blocks_cover_cache_and_replay_independent_rng():
     assert starts == [
         reconstruction_block_start(150000000, 256, restored) for _ in range(100)
     ]
+
+
+def test_whole_xp_dropout_uses_the_missing_token_and_never_mutates_inputs():
+    from masked_stellar_autoencoder.training.fullfit_records import (
+        xp_dropout_inputs,
+        xp_input_columns,
+    )
+
+    names = ["W1", "G"] + [f"{a}_{j}" for a in ("bp", "rp") for j in range(1, 56)]
+    names += ["PARALLAX"]
+    cols = xp_input_columns(names)
+    x = np.arange(4 * len(names), dtype="f4").reshape(4, len(names))
+    original = x.copy()
+    same = xp_dropout_inputs(x, cols)
+    assert same is x
+    hidden = xp_dropout_inputs(x, cols, hide_all=True)
+    assert (hidden[:, cols] == -9999).all()
+    np.testing.assert_array_equal(hidden[:, [0, 1, 112]], x[:, [0, 1, 112]])
+    np.testing.assert_array_equal(x, original)
+    a = xp_dropout_inputs(np.tile(x, (250, 1)), cols, rate=0.3, seed=[1, 2, 3])
+    b = xp_dropout_inputs(np.tile(x, (250, 1)), cols, rate=0.3, seed=[1, 2, 3])
+    np.testing.assert_array_equal(a, b)  # deterministic for resume
+    rows = (a[:, cols] == -9999).all(1)
+    assert 0.2 < rows.mean() < 0.4
+    assert ((a[:, cols] == -9999).any(1) == rows).all()  # whole-XP, never partial
