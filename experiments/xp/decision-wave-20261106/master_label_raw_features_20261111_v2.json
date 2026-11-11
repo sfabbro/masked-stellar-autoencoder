@@ -1,0 +1,24 @@
+{
+  "run_id": "master_label_raw_features_20261111_v2",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_raw_features_20261111_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_raw_features_20261111_v2",
+  "source_commit": "8c88e8c2a61f42cb00ce98fde26c6c5fae30328c",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/recover_remaining_survey_inputs.py --config configs/master-label-source-20261111.json --feature-config configs/multisurvey-feature-union-dr12-20261106.json --parent-run expanded_six_source_20261107_v5 --allow-unknown-photometry --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_raw_features_20261111_v2",
+  "utc": "2026-11-11T00:01:16.646651+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "akd962do"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 32
+  },
+  "source_sha256": {
+    "configs/master-label-source-20261111.json": "dcd897d8ecf3d24f683b18612cdbbc0a70f56eb282ababcf9d011a372c47d02b",
+    "configs/multisurvey-feature-union-dr12-20261106.json": "ec8e43bb3c7bd199410fc721e35fa4bfbc67aea53028be7b5f9c056063228b4f"
+  },
+  "payload_sha256": "2af72c783ac3cf01a289f3defddb9423837dd31a40c49b68a9431ccc6a492934"
+}
