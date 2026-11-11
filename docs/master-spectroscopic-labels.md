@@ -1,6 +1,6 @@
 # Master spectroscopic label table
 
-`master_spectroscopic_labels_20261111_v1` on ARC
+`master_spectroscopic_labels_20261111_v3` on ARC (v1 and v2 are superseded)
 (`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/`), built by
 `scripts/build_master_spectroscopic_labels.py`
 (`training/master_spectroscopic.py`).
@@ -30,6 +30,13 @@ source within 1.5″ (35,262 + 5,242). The APOGEE rows (5,564) have no Gaia
 source within 3″; most are cool giants toward the Galactic centre. The 1,030
 RAVE rows have no staged position. Census sources contribute 10,846 records
 without identity.
+
+**v3 (current), complete:** 44,576,092 records from 43 surveys and
+pipelines; 19,255,342 stars, of which 19,205,652 have a Gaia DR3 identity
+and 49,690 do not (92,139 records). High-res reference stars with median
+[Fe/H] below −2 / −3 / −4: 3,101 / 706 / 37. The all-pipeline medians
+(`fe_h_median`) give 385,801 / 120,724 / 19,658; low-S/N survey pipelines
+(DESI SP, LAMOST) dominate those tails.
 
 **v3** (`master_spectroscopic_labels_20261111_v3`; v2 had a wrong Bensby+2014 position epoch) adds:
 
@@ -113,7 +120,7 @@ Not available, so not included:
 import pandas as pd
 from masked_stellar_autoencoder.training.master_spectroscopic import read_native_rows
 
-root = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v1/"
+root = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v3/"
 rec = pd.read_parquet(root + "records")
 star = rec[rec.star_id == 4185355646116022528]
 native = read_native_rows(star, root + "catalogues.json")
