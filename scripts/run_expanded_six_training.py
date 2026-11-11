@@ -730,6 +730,36 @@ def main():
                 mapped = maps(quantities(draws, clamped), clamped)
                 return torch.where((si == anchor)[None, :, None], draws, mapped)
 
+            def reconstruction_loss(batch_size):
+                """Masked MAE on unlabelled rows: cache (XP) mixed with no-XP rows."""
+                start = reconstruction_block_start(
+                    len(cache), batch_size, reconstruction_rng
+                )
+                raw = np.asarray(
+                    cache[start : min(start + batch_size, len(cache))]
+                ).copy()
+                raw[(~np.isfinite(raw)) | (raw == -9999)] = np.nan
+                if noxp_pool is not None:
+                    k = int(round(noxp_fraction * len(raw)))
+                    raw[:k] = noxp_pool(k)
+                elif noxp_rows is not None:
+                    k = int(round(noxp_fraction * len(raw)))
+                    pick = reconstruction_rng.choice(len(noxp_rows), size=k)
+                    raw[:k] = noxp_rows[pick]
+                raw[:, ~allowed] = np.nan
+                target = tensor(raw)
+                hidden, hm, finite = native.pretrain.training_mask(
+                    target, xp, 0.5, 0.2, mask_rng
+                )
+                pred, _ = model(hidden)
+                seen = (hm & finite)[:, :width]
+                if not seen.any():
+                    raise ValueError("Empty masked reconstruction targets")
+                reco = native.pretrain.experiment_objective(
+                    pred, target[:, :width], seen, xp, {"loss": "mae"}, seen.sum()
+                )
+                return reco, start
+
             def step(batch, update, *, warm=False):
                 model.train(not warm)
                 head.train(not warm)
@@ -790,35 +820,7 @@ def main():
                 reco = torch.zeros((), device=device)
                 cache_start = None
                 if not warm:
-                    start = reconstruction_block_start(
-                        len(cache), cfg["reconstruction_batch"], reconstruction_rng
-                    )
-                    cache_start = start
-                    raw = np.asarray(
-                        cache[
-                            start : min(start + cfg["reconstruction_batch"], len(cache))
-                        ]
-                    ).copy()
-                    raw[(~np.isfinite(raw)) | (raw == -9999)] = np.nan
-                    if noxp_pool is not None:
-                        k = int(round(noxp_fraction * len(raw)))
-                        raw[:k] = noxp_pool(k)
-                    elif noxp_rows is not None:
-                        k = int(round(noxp_fraction * len(raw)))
-                        pick = reconstruction_rng.choice(len(noxp_rows), size=k)
-                        raw[:k] = noxp_rows[pick]
-                    raw[:, ~allowed] = np.nan
-                    target = tensor(raw)
-                    hidden, hm, finite = native.pretrain.training_mask(
-                        target, xp, 0.5, 0.2, mask_rng
-                    )
-                    pred, _ = model(hidden)
-                    seen = (hm & finite)[:, :width]
-                    if not seen.any():
-                        raise ValueError("Empty masked reconstruction targets")
-                    reco = native.pretrain.experiment_objective(
-                        pred, target[:, :width], seen, xp, {"loss": "mae"}, seen.sum()
-                    )
+                    reco, cache_start = reconstruction_loss(cfg["reconstruction_batch"])
                     if (
                         not torch.isfinite(reco)
                         or not np.isfinite(supervised)
@@ -938,6 +940,64 @@ def main():
             )
             if not smoke["observed"].any(0).all():
                 raise ValueError("CUDA smoke test did not exercise all six targets")
+            # Optional encoder-decoder-only phase on the unlabelled pool (cache XP
+            # rows + full-Gaia no-XP rows) before the maps and heads are trained.
+            ssl_updates = int(cfg.get("ssl_only_updates", 0))
+            ssl_path = a.output / "ssl-phase-checkpoint.pth"
+            if ssl_updates > 0 and ssl_path.exists():
+                ssl_saved = torch.load(ssl_path, map_location=device)
+                if ssl_saved["ssl_updates"] != ssl_updates:
+                    raise ValueError("Existing SSL checkpoint has other settings")
+                model.load_state_dict(ssl_saved["model_state_dict"])
+                m.update(ssl_phase="restored", ssl_updates_done=ssl_updates)
+                save()
+            elif ssl_updates > 0:
+                ssl_batch = int(cfg.get("ssl_batch", cfg["reconstruction_batch"]))
+                ssl_optimizer = torch.optim.Adam(
+                    model.parameters(), lr=float(cfg["ssl_lr"])
+                )
+                frozen_flags = [
+                    (q, q.requires_grad)
+                    for mod in (head, maps, context_module)
+                    if mod is not None
+                    for q in mod.parameters()
+                ]
+                for q, _ in frozen_flags:
+                    q.requires_grad_(False)
+                model.requires_grad_(True)
+                model.train()
+                ssl_trace = []
+                for ssl_update in range(1, ssl_updates + 1):
+                    ssl_optimizer.zero_grad(set_to_none=True)
+                    reco, _ = reconstruction_loss(ssl_batch)
+                    if not torch.isfinite(reco):
+                        raise FloatingPointError("Nonfinite SSL reconstruction")
+                    reco.backward()
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 10.0)
+                    ssl_optimizer.step()
+                    if ssl_update <= 2 or ssl_update % 500 == 0:
+                        ssl_trace.append((ssl_update, float(reco.detach())))
+                        m.update(
+                            status="ssl_encoder_decoder",
+                            training_performed=True,
+                            ssl_updates_done=ssl_update,
+                            ssl_reconstruction_mae=ssl_trace[-20:],
+                        )
+                        save()
+                torch.save(
+                    dict(
+                        model_state_dict=model.state_dict(),
+                        ssl_updates=ssl_updates,
+                        ssl_batch=ssl_batch,
+                        ssl_lr=cfg["ssl_lr"],
+                        trace=ssl_trace,
+                    ),
+                    ssl_path,
+                )
+                del ssl_optimizer
+                for q, flag in frozen_flags:
+                    q.requires_grad_(flag)
+                optimizer.state.clear()
             # Warm only newly admitted survey maps against the anchored fixed stellar PDF.
             model.requires_grad_(False)
             head.requires_grad_(False)
