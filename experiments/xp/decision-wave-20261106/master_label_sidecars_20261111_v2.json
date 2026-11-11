@@ -1,0 +1,21 @@
+{
+  "run_id": "master_label_sidecars_20261111_v2",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_label_sidecars_20261111_v2",
+  "source_commit": "f7b78b5794668a8cd1e3ea21b3b42cb6e591a4ce",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/write_master_label_sidecars.py --observations /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_census_20261111_v6/observations.parquet --sources highres_literature_extra kirby2010_dsph mastar_params --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v2 --arc-path /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v2/master-label-sidecar.h5",
+  "utc": "2026-11-11T18:39:07.116499+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "i41p6hri"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {},
+  "payload_sha256": "ce6efc735fbaf4dffc81b8c83bf1199d930cd54e6292445ad7f0c0dbef9c56d3"
+}
