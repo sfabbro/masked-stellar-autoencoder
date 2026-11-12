@@ -790,14 +790,23 @@ def main():
                 )
                 return reco, start
 
+            # Stars per supervised forward/backward chunk; the loss is a
+            # record-weighted mean, so the chunk size changes only speed.
+            micro = int(cfg.get("supervised_micro_batch", 16))
+            timing_updates = int(cfg.get("timing_updates", 0))
+            timing = None
+
             def step(batch, update, *, warm=False):
                 model.train(not warm)
                 head.train(not warm)
                 maps.train()
                 optimizer.zero_grad(set_to_none=True)
                 total = 0.0
-                for start in range(0, len(batch["rows"]), 16):
-                    stop = min(start + 16, len(batch["rows"]))
+                if timing:
+                    torch.cuda.synchronize()
+                    t0 = time.perf_counter()
+                for start in range(0, len(batch["rows"]), micro):
+                    stop = min(start + micro, len(batch["rows"]))
                     draws = forward_draws(
                         batch,
                         start,
@@ -847,6 +856,10 @@ def main():
                     )
                     ** 0.5
                 )
+                if timing:
+                    torch.cuda.synchronize()
+                    timing["supervised"] += time.perf_counter() - t0
+                    t0 = time.perf_counter()
                 reco = torch.zeros((), device=device)
                 cache_start = None
                 if not warm:
@@ -903,6 +916,9 @@ def main():
                     10.0,
                 )
                 optimizer.step()
+                if timing:
+                    torch.cuda.synchronize()
+                    timing["reconstruction_and_update"] += time.perf_counter() - t0
                 return dict(
                     supervised_objective=total,
                     reconstruction_mae=float(reco.detach()),
@@ -1266,7 +1282,33 @@ def main():
                     update += 1
                     epoch_records += len(ss)
                     batch = collate(ss, pp, True)
+                    if timing_updates and update == 21:
+                        # Time updates 21.. (after allocator/cuDNN warmup).
+                        timing = dict(supervised=0.0, reconstruction_and_update=0.0)
+                        timed_from = time.perf_counter()
                     progress = step(batch, update)
+                    if timing_updates and update == 20 + timing_updates:
+                        n = timing_updates
+                        m.update(
+                            status="timing_complete",
+                            timing=dict(
+                                updates=n,
+                                supervised_micro_batch=micro,
+                                batch_size=cfg["batch_size"],
+                                reconstruction_batch=cfg["reconstruction_batch"],
+                                seconds_per_update=(time.perf_counter() - timed_from)
+                                / n,
+                                supervised_seconds_per_update=timing["supervised"] / n,
+                                reconstruction_and_update_seconds_per_update=timing[
+                                    "reconstruction_and_update"
+                                ]
+                                / n,
+                                device=torch.cuda.get_device_name(),
+                            ),
+                        )
+                        save()
+                        print(json.dumps(m["timing"]), flush=True)
+                        return
                     for si in np.unique(batch["source"]):
                         presentations[si] += batch["observed"][
                             batch["source"] == si
