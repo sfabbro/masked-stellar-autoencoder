@@ -309,6 +309,7 @@ def main():
         type=int,
         help="retry attempt number (>=2) after reconciling a failed receipt",
     )
+    p.add_argument("--backend", choices=["gloo", "nccl"], default="gloo")
     a = p.parse_args()
     step = dict(STEPS[a.step])
     if a.slices > 1:
@@ -319,7 +320,7 @@ def main():
             cpu=2 * a.slices,
             ram=max(step["ram"], 24 * a.slices),
             command=f"python -u scripts/run_multi_slice.py --slices {a.slices}"
-            f" --threads-per-rank 2 -- {step['command']}",
+            f" --threads-per-rank 2 --backend {a.backend} -- {step['command']}",
         )
     files = {name: (HERE.parent / name).read_text() for name in step["files"]}
     print(

@@ -1,8 +1,9 @@
 """Data-parallel training across GPU slices (MIG) of one session.
 
-CUDA lets a process see a single MIG slice and NCCL refuses several ranks on
-one physical GPU, so each slice runs its own process and gradients are summed
-over Gloo through host memory. Every rank builds the same global batch from
+CUDA lets a process see a single MIG slice, so each slice runs its own
+process. Gradients are summed over Gloo through host memory (default), or
+over NCCL (``MSA_SLICE_BACKEND=nccl``), which needs
+``NCCL_MULTI_RANK_GPU_ENABLE=1`` to accept several ranks on one physical GPU. Every rank builds the same global batch from
 the same sampler seed and trains on its contiguous shard; summing the shard
 gradients, each weighted by shard size over the global batch, gives the
 single-process gradient. All ranks then apply the same optimizer step, so the
@@ -60,8 +61,13 @@ def init_from_env(timeout_hours: float = 12.0) -> SliceGroup:
         raise ValueError("Invalid RANK/WORLD_SIZE")
     if world == 1:
         return SliceGroup()
+    backend = os.environ.get("MSA_SLICE_BACKEND", "gloo")
+    if backend not in ("gloo", "nccl"):
+        raise ValueError("MSA_SLICE_BACKEND must be gloo or nccl")
+    if backend == "nccl":
+        torch.cuda.set_device(0)  # each rank sees only its own slice
     torch.distributed.init_process_group(
-        "gloo",
+        backend,
         rank=rank,
         world_size=world,
         timeout=dt.timedelta(hours=timeout_hours),
@@ -69,10 +75,12 @@ def init_from_env(timeout_hours: float = 12.0) -> SliceGroup:
     return SliceGroup(rank, world)
 
 
-def _sum_host(buffer: torch.Tensor) -> torch.Tensor:
-    host = buffer.detach().to("cpu", torch.float32)
-    torch.distributed.all_reduce(host)
-    return host.to(buffer.device)
+def _reduce(tensor: torch.Tensor, op=None) -> torch.Tensor:
+    """All-reduce on the backend's device (CUDA for NCCL, host for Gloo)."""
+    on = "cuda" if torch.distributed.get_backend() == "nccl" else "cpu"
+    work = tensor.detach().to(on, copy=True)  # never reduce the caller's tensor
+    torch.distributed.all_reduce(work, op=op or torch.distributed.ReduceOp.SUM)
+    return work.to(tensor.device)
 
 
 def allreduce_gradients(params, group: SliceGroup, extras=()) -> list[float]:
@@ -85,8 +93,9 @@ def allreduce_gradients(params, group: SliceGroup, extras=()) -> list[float]:
     extras = [float(v) for v in extras]
     if not group.active:
         return extras
-    present = torch.tensor([p.grad is not None for p in params], dtype=torch.float32)
-    torch.distributed.all_reduce(present)
+    present = _reduce(
+        torch.tensor([p.grad is not None for p in params], dtype=torch.float32)
+    )
     pieces = []
     for p, seen in zip(params, present.tolist(), strict=True):
         if seen:
@@ -94,7 +103,7 @@ def allreduce_gradients(params, group: SliceGroup, extras=()) -> list[float]:
             pieces.append(g.reshape(-1))
     device = params[0].device if params else torch.device("cpu")
     pieces.append(torch.tensor(extras, dtype=torch.float32, device=device))
-    total = _sum_host(torch.cat([q.to(torch.float32) for q in pieces]))
+    total = _reduce(torch.cat([q.to(torch.float32) for q in pieces]))
     offset = 0
     for p, seen in zip(params, present.tolist(), strict=True):
         if not seen:
@@ -115,8 +124,7 @@ def check_in_sync(params, group: SliceGroup) -> None:
         return
     flat = torch.cat([p.detach().reshape(-1).to("cpu", torch.float64) for p in params])
     digest = torch.stack([flat.sum(), (flat * flat).sum(), flat.abs().max()])
-    high, low = digest.clone(), -digest.clone()
-    torch.distributed.all_reduce(high, op=torch.distributed.ReduceOp.MAX)
-    torch.distributed.all_reduce(low, op=torch.distributed.ReduceOp.MAX)
+    high = _reduce(digest, torch.distributed.ReduceOp.MAX)
+    low = _reduce(-digest, torch.distributed.ReduceOp.MAX)
     if not torch.equal(high, -low):
         raise RuntimeError("Slice ranks hold different parameters")

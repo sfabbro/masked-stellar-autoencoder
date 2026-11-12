@@ -19,9 +19,10 @@ BASE = "configs/master-label-six-nsf-fullfit-20261111-xp.yaml"
 TAG = "20261112"
 
 
-def timing_config(micro, updates, slices=1):
+def timing_config(micro, updates, slices=1, backend="gloo"):
     cfg = yaml.safe_load((HERE.parent / BASE).read_text())
     suffix = "" if slices == 1 else f"_slices{slices}"
+    suffix += "" if backend == "gloo" else f"_{backend}"
     cfg.update(
         run_id=f"timing_xp_micro{micro}{suffix}_{TAG}",
         supervised_micro_batch=micro,
@@ -41,13 +42,14 @@ def main():
         default=1,
         help="GPU slices per timing run (>1 runs one rank per slice)",
     )
+    p.add_argument("--backend", choices=["gloo", "nccl"], default="gloo")
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args()
     from launch_master_label_training_chain import pushed_head
 
     jobs = []
     for micro in a.micro:
-        run_id, text = timing_config(micro, a.updates, a.slices)
+        run_id, text = timing_config(micro, a.updates, a.slices, a.backend)
         name = f"configs/{run_id}.yaml"
         train = (
             "python -u scripts/run_expanded_six_training.py"
@@ -64,7 +66,7 @@ def main():
                 command=train
                 if a.slices == 1
                 else f"python -u scripts/run_multi_slice.py --slices {a.slices}"
-                f" --threads-per-rank 2 -- {train}",
+                f" --threads-per-rank 2 --backend {a.backend} -- {train}",
             )
         )
     if a.probe_gpus:

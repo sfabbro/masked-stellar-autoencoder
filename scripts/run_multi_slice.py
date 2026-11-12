@@ -58,6 +58,12 @@ def main():
         help="torch/OpenMP threads per rank (0 = visible cores / slices; the "
         "session's core quota can be lower than the visible cores)",
     )
+    p.add_argument(
+        "--backend",
+        choices=["gloo", "nccl"],
+        default="gloo",
+        help="gradient all-reduce backend (nccl sets NCCL_MULTI_RANK_GPU_ENABLE=1)",
+    )
     p.add_argument("command", nargs=argparse.REMAINDER)
     a = p.parse_args()
     command = a.command[1:] if a.command[:1] == ["--"] else a.command
@@ -70,7 +76,8 @@ def main():
     threads = a.threads_per_rank or max(1, len(os.sched_getaffinity(0)) // world)
     port = str(free_port())
     print(
-        f"multi-slice: world={world} threads_per_rank={threads} slices={uuids[:world]}",
+        f"multi-slice: world={world} backend={a.backend} threads_per_rank={threads}"
+        f" slices={uuids[:world]}",
         flush=True,
     )
     procs = []
@@ -84,7 +91,10 @@ def main():
             MASTER_PORT=port,
             OMP_NUM_THREADS=str(threads),
             MSA_THREADS_PER_RANK=str(threads),
+            MSA_SLICE_BACKEND=a.backend,
         )
+        if a.backend == "nccl":
+            env["NCCL_MULTI_RANK_GPU_ENABLE"] = "1"
         proc = subprocess.Popen(
             command,
             env=env,

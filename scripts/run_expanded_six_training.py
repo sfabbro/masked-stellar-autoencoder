@@ -280,7 +280,7 @@ def main():
         if slices.active:
             m["slices"] = dict(
                 world=slices.world,
-                backend="gloo",
+                backend=os.environ.get("MSA_SLICE_BACKEND", "gloo"),
                 threads_per_rank=torch.get_num_threads(),
                 scope="Same global batch on every rank; contiguous shards; summed gradients; rank-offset draw/noise/mask seeds; rank 0 evaluates and writes",
             )
@@ -637,6 +637,10 @@ def main():
             optimizer_parameters = [
                 p for g in optimizer.param_groups for p in g["params"]
             ]
+            if slices.active:
+                m["slices"]["gradient_values"] = sum(
+                    p.numel() for p in optimizer_parameters
+                )
             m.update(
                 status="cuda_preflight",
                 prepared_sha256=expanded["prepared_sha256"],
