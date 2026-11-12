@@ -19,10 +19,11 @@ BASE = "configs/master-label-six-nsf-fullfit-20261111-xp.yaml"
 TAG = "20261112"
 
 
-def timing_config(micro, updates):
+def timing_config(micro, updates, slices=1):
     cfg = yaml.safe_load((HERE.parent / BASE).read_text())
+    suffix = "" if slices == 1 else f"_slices{slices}"
     cfg.update(
-        run_id=f"timing_xp_micro{micro}_{TAG}",
+        run_id=f"timing_xp_micro{micro}{suffix}_{TAG}",
         supervised_micro_batch=micro,
         timing_updates=updates,
     )
@@ -34,25 +35,36 @@ def main():
     p.add_argument("--micro", type=int, nargs="*", default=[16, 64, 256])
     p.add_argument("--updates", type=int, default=100)
     p.add_argument("--probe-gpus", type=int, default=2)
+    p.add_argument(
+        "--slices",
+        type=int,
+        default=1,
+        help="GPU slices per timing run (>1 runs one rank per slice)",
+    )
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args()
     from launch_master_label_training_chain import pushed_head
 
     jobs = []
     for micro in a.micro:
-        run_id, text = timing_config(micro, a.updates)
+        run_id, text = timing_config(micro, a.updates, a.slices)
         name = f"configs/{run_id}.yaml"
+        train = (
+            "python -u scripts/run_expanded_six_training.py"
+            f' --config {name} --output "$experiment_output"'
+            " --reuse-waiting-output --retry-pre-admission-failure"
+        )
         jobs.append(
             dict(
                 run_id=run_id,
                 files={name: text},
-                gpu=1,
-                ram=64,
-                command=(
-                    "python -u scripts/run_expanded_six_training.py"
-                    f' --config {name} --output "$experiment_output"'
-                    " --reuse-waiting-output --retry-pre-admission-failure"
-                ),
+                gpu=a.slices,
+                cpu=4 if a.slices == 1 else 2 * a.slices,
+                ram=64 if a.slices == 1 else 24 * a.slices,
+                command=train
+                if a.slices == 1
+                else f"python -u scripts/run_multi_slice.py --slices {a.slices}"
+                f" --threads-per-rank 2 -- {train}",
             )
         )
     if a.probe_gpus:
@@ -61,6 +73,7 @@ def main():
                 run_id=f"probe_multi_gpu_{a.probe_gpus}_{TAG}",
                 files={},
                 gpu=a.probe_gpus,
+                cpu=4,
                 ram=16,
                 command='python -u scripts/probe_multi_gpu.py --output "$experiment_output"',
             )
@@ -80,7 +93,7 @@ def main():
             job["files"],
             job["command"],
             gpu=job["gpu"],
-            cpu=4,
+            cpu=job["cpu"],
             ram=job["ram"],
             branch=branch,
             commit=head,

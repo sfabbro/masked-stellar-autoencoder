@@ -7,6 +7,7 @@ No publication or absolute physical-calibration claim is made by this job.
 import argparse
 import importlib.metadata
 import json
+import os
 import time
 from pathlib import Path
 
@@ -190,10 +191,22 @@ def main():
     p.add_argument("--reuse-waiting-output", action="store_true")
     p.add_argument("--retry-pre-admission-failure", action="store_true")
     a = p.parse_args()
-    prepare_output(a.output, a.reuse_waiting_output, a.retry_pre_admission_failure)
     import run_decision_six_pilot as prior
     import run_multilabel_screen as native
     import torch
+
+    from masked_stellar_autoencoder.training.slice_parallel import (
+        allreduce_gradients,
+        check_in_sync,
+        init_from_env,
+    )
+
+    # One process per GPU slice when launched by scripts/run_multi_slice.py.
+    slices = init_from_env()
+    if slices.leader:
+        prepare_output(a.output, a.reuse_waiting_output, a.retry_pre_admission_failure)
+    slices.barrier()
+    write = prior.atomic if slices.leader else (lambda *_a, **_k: None)
 
     from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
     from masked_stellar_autoencoder.training.cached_inputs import cache_natural_inputs
@@ -235,11 +248,11 @@ def main():
     )
 
     def save():
-        prior.atomic(a.output / "manifest.json", m)
+        write(a.output / "manifest.json", m)
 
     save()
     try:
-        decision, expanded = wait_decision(cfg, a.output, prior.atomic)
+        decision, expanded = wait_decision(cfg, a.output, write)
         cfg["unknown_error_floor_normalized"] = [
             decision["noise_choice"]["unknown_floor"]
         ] * 6
@@ -263,7 +276,14 @@ def main():
         mapping_path = ROOT / decision["mapping_run"] / "selected-checkpoint.pth"
         if prior.sha(mapping_path) != decision["mapping_checkpoint_sha256"]:
             raise ValueError("Selected map checkpoint changed")
-        torch.set_num_threads(4)
+        torch.set_num_threads(int(os.environ.get("MSA_THREADS_PER_RANK", "4")))
+        if slices.active:
+            m["slices"] = dict(
+                world=slices.world,
+                backend="gloo",
+                threads_per_rank=torch.get_num_threads(),
+                scope="Same global batch on every rank; contiguous shards; summed gradients; rank-offset draw/noise/mask seeds; rank 0 evaluates and writes",
+            )
         torch.manual_seed(cfg["seed"])
         torch.cuda.manual_seed_all(cfg["seed"])
         rng = np.random.default_rng(cfg["seed"])
@@ -303,7 +323,12 @@ def main():
         head.unknown_error_floor_normalized.copy_(
             torch.as_tensor(cfg["unknown_error_floor_normalized"], device=device)
         )
-        head.configure_generators(device, cfg["seed"] + 101, cfg["seed"] + 102)
+        # Rank-offset score draws (rank 0 keeps the single-process seeds).
+        head.configure_generators(
+            device,
+            cfg["seed"] + 101 + 1000 * slices.rank,
+            cfg["seed"] + 102 + 1000 * slices.rank,
+        )
         # Optional metadata context for the heads (zero-initialised: identical
         # latent at step 0, so the warm-started head still loads strictly).
         context_names = None
@@ -591,7 +616,9 @@ def main():
             width = len(model_cfg["data"]["recon_cols"])
             if names[:width] != model_cfg["data"]["recon_cols"]:
                 raise ValueError("Reconstruction feature order differs")
-            mask_rng = torch.Generator(device=device).manual_seed(cfg["seed"] + 1701)
+            mask_rng = torch.Generator(device=device).manual_seed(
+                cfg["seed"] + 1701 + 1000 * slices.rank
+            )
             tensor = lambda v, dtype=torch.float32: torch.as_tensor(
                 v, device=device, dtype=dtype
             )
@@ -607,6 +634,9 @@ def main():
                     ),
                 ]
             )
+            optimizer_parameters = [
+                p for g in optimizer.param_groups for p in g["params"]
+            ]
             m.update(
                 status="cuda_preflight",
                 prepared_sha256=expanded["prepared_sha256"],
@@ -636,9 +666,27 @@ def main():
             save()
 
             started_loading = time.monotonic()
-            natural_inputs = cache_natural_inputs(
-                data, expanded["feature_profiles"][input_profile]
-            )
+            if slices.active:
+                # One copy of the inputs for every rank: the leader writes
+                # them to local scratch and all ranks map that file.
+                shared = Path(
+                    os.environ.get("MSA_SHARED_SCRATCH", "/scratch/msa-shared")
+                )
+                shared_inputs = shared / (cfg["run_id"] + "-natural-inputs.npy")
+                if slices.leader:
+                    shared.mkdir(parents=True, exist_ok=True)
+                    np.save(
+                        shared_inputs,
+                        cache_natural_inputs(
+                            data, expanded["feature_profiles"][input_profile]
+                        ),
+                    )
+                slices.barrier()
+                natural_inputs = np.load(shared_inputs, mmap_mode="r")
+            else:
+                natural_inputs = cache_natural_inputs(
+                    data, expanded["feature_profiles"][input_profile]
+                )
             checked = np.linspace(0, len(ids) - 1, min(128, len(ids)), dtype="i8")
             np.testing.assert_array_equal(
                 natural_inputs[checked],
@@ -777,7 +825,9 @@ def main():
                     pick = reconstruction_rng.choice(len(noxp_rows), size=k)
                     raw[:k] = noxp_rows[pick]
                 raw[:, ~allowed] = np.nan
-                target = tensor(raw)
+                # Every rank draws the same block and keeps its own shard.
+                lo, hi = slices.shard(len(raw))
+                target = tensor(raw[lo:hi])
                 hidden, hm, finite = native.pretrain.training_mask(
                     target, xp, 0.5, 0.2, mask_rng
                 )
@@ -805,8 +855,11 @@ def main():
                 if timing:
                     torch.cuda.synchronize()
                     t0 = time.perf_counter()
-                for start in range(0, len(batch["rows"]), micro):
-                    stop = min(start + micro, len(batch["rows"]))
+                # This rank's contiguous shard of the global batch; weights
+                # below stay relative to the global batch.
+                shard_lo, shard_hi = slices.shard(len(batch["rows"]))
+                for start in range(shard_lo, shard_hi, micro):
+                    stop = min(start + micro, shard_hi)
                     draws = forward_draws(
                         batch,
                         start,
@@ -841,7 +894,7 @@ def main():
                     weight = (stop - start) / len(batch["rows"])
                     (loss * weight).backward()
                     total += float(loss.detach()) * weight
-                reg = 1e-3 * maps.regularization()
+                reg = 1e-3 * maps.regularization() / slices.world
                 reg.backward()
                 if warm:
                     if maps.bias.grad is not None:
@@ -886,7 +939,7 @@ def main():
                         m.setdefault("startup_encoder_gradient_contract", []).append(
                             dict(update=update, **contract)
                         )
-                    (reco_weight * reco).backward()
+                    (reco_weight / slices.world * reco).backward()
                     if update <= 2:
                         encoder_ids = {id(p) for p in model.encoder.parameters()}
                         if not any(
@@ -897,6 +950,13 @@ def main():
                             raise FloatingPointError(
                                 "Reconstruction did not reach decoder parameters"
                             )
+                if slices.active:
+                    total, reco_sum = allreduce_gradients(
+                        [p for g in optimizer.param_groups for p in g["params"]],
+                        slices,
+                        extras=[total, float(reco.detach())],
+                    )
+                    reco = torch.as_tensor(reco_sum / slices.world)
                 gradients = [
                     p.grad
                     for group in optimizer.param_groups
@@ -974,7 +1034,7 @@ def main():
             mask_rng.set_state(initial["mask"])
             optimizer.state.clear()
             del initial
-            prior.atomic(
+            write(
                 a.output / "device-preflight.json",
                 dict(
                     status="pass",
@@ -990,6 +1050,8 @@ def main():
             # rows + full-Gaia no-XP rows) before the maps and heads are trained.
             ssl_updates = int(cfg.get("ssl_only_updates", 0))
             ssl_path = a.output / "ssl-phase-checkpoint.pth"
+            if ssl_updates > 0 and slices.active:
+                raise ValueError("The SSL phase is single-slice only")
             if ssl_updates > 0 and ssl_path.exists():
                 ssl_saved = torch.load(ssl_path, map_location=device)
                 if ssl_saved["ssl_updates"] != ssl_updates:
@@ -1324,7 +1386,7 @@ def main():
                         elapsed_training_seconds=time.monotonic() - started,
                         last_progress=progress,
                     )
-                    if update <= 2 or update % 100 == 0:
+                    if slices.leader and (update <= 2 or update % 100 == 0):
                         save()
                         print(
                             json.dumps(
@@ -1337,7 +1399,9 @@ def main():
                             ),
                             flush=True,
                         )
-                    if update % cfg["checkpoint_every"] == 0:
+                    if slices.active and update % cfg["checkpoint_every"] == 0:
+                        check_in_sync(optimizer_parameters, slices)
+                    if update % cfg["checkpoint_every"] == 0 and slices.leader:
                         torch.save(
                             dict(
                                 model_state_dict=model.state_dict(),
@@ -1375,6 +1439,12 @@ def main():
                             export_common("first-checkpoint")
                 if epoch_records != fit_records:
                     raise ValueError("Full FIT epoch omitted or duplicated a record")
+                if slices.active:
+                    check_in_sync(optimizer_parameters, slices)
+                if not slices.leader:
+                    # Wait while the leader evaluates and writes this epoch.
+                    slices.barrier()
+                    continue
                 score, report = evaluate("tune")
                 if not np.isfinite(score):
                     raise FloatingPointError("Nonfinite TUNE selection score")
@@ -1428,6 +1498,9 @@ def main():
                         a.output / "selected-checkpoint.pth"
                     )
                 save()
+                slices.barrier()
+            if not slices.leader:
+                return
             state = torch_load_trusted(
                 a.output / "selected-checkpoint.pth",
                 map_location=device,
@@ -1466,6 +1539,11 @@ def main():
     except Exception as exc:
         m.update(status="failed", error=repr(exc))
         save()
+        if not slices.leader:
+            prior.atomic(
+                a.output / f"rank{slices.rank}-failure.json",
+                dict(rank=slices.rank, error=repr(exc)),
+            )
         raise
 
 
