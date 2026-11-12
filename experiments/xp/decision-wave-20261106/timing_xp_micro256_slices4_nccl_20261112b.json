@@ -1,0 +1,23 @@
+{
+  "run_id": "timing_xp_micro256_slices4_nccl_20261112b",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/timing_xp_micro256_slices4_nccl_20261112b",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/timing_xp_micro256_slices4_nccl_20261112b",
+  "source_commit": "351e1eadb67922ebffa1e1120867ef96f06a45d7",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/run_multi_slice.py --slices 4 --threads-per-rank 2 --backend nccl -- python -u scripts/run_expanded_six_training.py --config configs/timing_xp_micro256_slices4_nccl_20261112b.yaml --output \"$experiment_output\" --reuse-waiting-output --retry-pre-admission-failure",
+  "utc": "2026-11-12T05:33:45.278945+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "p03zpnri"
+  ],
+  "resources": {
+    "gpu": 4,
+    "cores": 8,
+    "ram": 96
+  },
+  "source_sha256": {
+    "configs/timing_xp_micro256_slices4_nccl_20261112b.yaml": "d2b4c214609490368f65f8f559c062d010567a818586d6a1ecb3441c2be71d3b"
+  },
+  "payload_sha256": "498d869ff776f370873bad99bd00da37f1b39c235bef497eed67a8caf9223c47"
+}
