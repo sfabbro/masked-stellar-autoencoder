@@ -1374,6 +1374,7 @@ def main():
                         )
                         save()
                         print(json.dumps(m["timing"]), flush=True)
+                        slices.close(sync=True)
                         return
                     for si in np.unique(batch["source"]):
                         presentations[si] += batch["observed"][
@@ -1504,6 +1505,7 @@ def main():
                 save()
                 slices.barrier()
             if not slices.leader:
+                slices.close()
                 return
             state = torch_load_trusted(
                 a.output / "selected-checkpoint.pth",
@@ -1540,6 +1542,7 @@ def main():
                 remaining="Post-training PDF/calibration, native versus common benchmark/cluster and complete per-star corner QA; no automatic catalogue publication.",
             )
             save()
+            slices.close()
     except Exception as exc:
         m.update(status="failed", error=repr(exc))
         save()

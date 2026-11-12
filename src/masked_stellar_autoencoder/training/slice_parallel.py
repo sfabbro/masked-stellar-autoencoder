@@ -41,6 +41,13 @@ class SliceGroup:
         if self.active:
             torch.distributed.barrier()
 
+    def close(self, *, sync: bool = False) -> None:
+        """Leave the group; ``sync`` first waits for every rank to get here."""
+        if self.active and torch.distributed.is_initialized():
+            if sync:
+                torch.distributed.barrier()
+            torch.distributed.destroy_process_group()
+
 
 def shard_bounds(n: int, rank: int, world: int) -> tuple[int, int]:
     if not (0 <= rank < world) or n < 0:
@@ -64,13 +71,17 @@ def init_from_env(timeout_hours: float = 12.0) -> SliceGroup:
     backend = os.environ.get("MSA_SLICE_BACKEND", "gloo")
     if backend not in ("gloo", "nccl"):
         raise ValueError("MSA_SLICE_BACKEND must be gloo or nccl")
+    options = {}
     if backend == "nccl":
-        torch.cuda.set_device(0)  # each rank sees only its own slice
+        # Each rank sees only its own slice, as device 0.
+        torch.cuda.set_device(0)
+        options["device_id"] = torch.device("cuda", 0)
     torch.distributed.init_process_group(
         backend,
         rank=rank,
         world_size=world,
         timeout=dt.timedelta(hours=timeout_hours),
+        **options,
     )
     return SliceGroup(rank, world)
 

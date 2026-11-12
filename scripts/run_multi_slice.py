@@ -61,7 +61,7 @@ def main():
     p.add_argument(
         "--backend",
         choices=["gloo", "nccl"],
-        default="gloo",
+        default="nccl",
         help="gradient all-reduce backend (nccl sets NCCL_MULTI_RANK_GPU_ENABLE=1)",
     )
     p.add_argument("command", nargs=argparse.REMAINDER)

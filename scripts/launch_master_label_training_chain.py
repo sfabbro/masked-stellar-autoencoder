@@ -309,7 +309,7 @@ def main():
         type=int,
         help="retry attempt number (>=2) after reconciling a failed receipt",
     )
-    p.add_argument("--backend", choices=["gloo", "nccl"], default="gloo")
+    p.add_argument("--backend", choices=["gloo", "nccl"], default="nccl")
     a = p.parse_args()
     step = dict(STEPS[a.step])
     if a.slices > 1:
