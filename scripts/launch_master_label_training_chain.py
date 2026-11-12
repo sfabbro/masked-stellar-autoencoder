@@ -44,7 +44,8 @@ LOOSE = "loose_survey_labels_20261111_v1"
 CHEM = "chemistry_labels_20261111_v1"
 # v1 wrote its admission decision before failing the library pin (no
 # training); its output cannot be reused, so training restarts as v2.
-TRAIN = "master_label_six_nsf_fullfit_20261111_v2"
+# v2 (20261111) ran 16-star chunks; v2b is the same run with 256-star chunks.
+TRAIN = "master_label_six_nsf_fullfit_20261112_v2b"
 
 STEPS = {
     "features": dict(
