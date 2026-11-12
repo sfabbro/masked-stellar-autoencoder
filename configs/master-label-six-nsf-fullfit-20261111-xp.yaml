@@ -16,6 +16,10 @@ reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/
 reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
 reconstruction_training_rows: 150000000
 reconstruction_batch: 1024
+# One 256-star supervised chunk per update: 0.47 s/update versus 2.53 s with
+# 16-star chunks on a 1g.12gb MIG slice (timing_xp_micro*_20261112). The loss
+# is a record-weighted mean, so only speed and draw streams change.
+supervised_micro_batch: 256
 updates: 6000
 batch_size: 256
 seed: 20261106
@@ -181,7 +185,7 @@ confirmation_energy_weight: 1.0
 confirmation_crps_weight: 0.0
 confirmation_noise_correlation: 0.0
 confirmation_native_student_t: false
-run_id: master_label_six_nsf_fullfit_20261111_v3
+run_id: master_label_six_nsf_fullfit_20261112_v4
 expanded_source_run: expanded_six_source_20261111_v9
 calibration_run: nsf_confirmation_calibration_20261107_v1
 mapping_candidates:

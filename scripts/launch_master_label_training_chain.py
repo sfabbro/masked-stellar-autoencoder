@@ -198,7 +198,9 @@ TRAIN_CONFIG_XP = "configs/master-label-six-nsf-fullfit-20261111-xp.yaml"
 FEATURES_XP = "master_label_raw_features_20261111_v6"
 SOURCE_XP = "expanded_six_source_20261111_v8"
 FULL_XP = "expanded_six_source_20261111_v9"
-TRAIN_XP = "master_label_six_nsf_fullfit_20261111_v3"
+# v3 (20261111) ran 16-star chunks at 2.5 s/update; v4 is the same run with
+# 256-star chunks.
+TRAIN_XP = "master_label_six_nsf_fullfit_20261112_v4"
 STEPS.update(
     {
         "sidecars-xp": dict(
