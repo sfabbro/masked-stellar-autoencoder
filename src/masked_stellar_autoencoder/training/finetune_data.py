@@ -46,6 +46,29 @@ def _filter_metal_poor(
     return data, errordata
 
 
+def test_row_positions(n_rows: int, mp: dict[str, Any]) -> np.ndarray:
+    """Positions (in the filtered table) of the rows ``_split_data`` puts in test.
+
+    train_test_split shuffles by ``n`` and ``random_state`` only, so splitting
+    an index array reproduces the split of the data arrays.
+    """
+    if mp.get("stratify_feh"):
+        raise ValueError("Test positions are not reproducible for a stratified split")
+    index = np.arange(n_rows)
+    _, valid = train_test_split(index, test_size=0.2, random_state=42)
+    _, test = train_test_split(valid, test_size=0.33, random_state=42)
+    return test
+
+
+def kept_rows(path: str, config: dict[str, Any]) -> np.ndarray:
+    """Rows of the fine-tune table that survive ``_filter_metal_poor``."""
+    columns = ["fe_h", "e_fe_h", "teff"]
+    frame = _read_selected_fits(path, columns)
+    mp = config["finetuning"].get("metal_poor") or {}
+    kept, _ = _filter_metal_poor(frame, frame, mp)
+    return kept.index.to_numpy()
+
+
 def _split_data(
     data: pd.DataFrame, errordata: pd.DataFrame, mp: dict[str, Any]
 ) -> tuple[np.ndarray, ...]:

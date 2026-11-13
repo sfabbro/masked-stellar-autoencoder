@@ -347,6 +347,37 @@ def write_latex_metrics_table(rows_xp_on: dict, rows_xp_off: dict, path: str) ->
         f.write("\n".join(lines) + "\n")
 
 
+def _save_test_predictions(out, config, label_names, truth, median, median_off, q):
+    """Test-set truth and predictions keyed by the table's source_id."""
+    from astropy.io import fits
+
+    from .finetune_data import kept_rows, test_row_positions
+
+    path = config["data"]["ft_datafile"]
+    mp = config["finetuning"].get("metal_poor") or {}
+    rows = kept_rows(path, config)[test_row_positions(len(kept_rows(path, config)), mp)]
+    if len(rows) != len(truth):
+        raise ValueError("Recomputed test rows do not match the evaluated test set")
+    extra = {}
+    with fits.open(path, memmap=True) as hdul:
+        data = hdul[1].data
+        if "source_id" in data.columns.names:
+            extra["source_id"] = np.asarray(data["source_id"][rows], dtype="i8")
+        for name in data.columns.names:
+            if name.startswith("src_"):
+                extra[name] = np.asarray(data[name][rows]).astype("U40")
+    np.savez_compressed(
+        os.path.join(out, "predictions.npz"),
+        table_row=rows,
+        label_names=np.asarray(label_names),
+        truth=truth,
+        median=median,
+        median_xp_off=median_off,
+        quantiles=q if q is not None else np.empty(0),
+        **extra,
+    )
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
@@ -363,6 +394,11 @@ def main():
         "--conformal-json",
         default=None,
         help="Optional CQR offsets JSON (scaled space); widens q16/q84 and reports interval coverage",
+    )
+    ap.add_argument(
+        "--save-predictions",
+        action="store_true",
+        help="also write test-set predictions with source_id (predictions.npz)",
     )
     args = ap.parse_args()
 
@@ -613,6 +649,11 @@ def main():
                 "method": calib_doc.get("method"),
             }
 
+    if args.save_predictions:
+        _save_test_predictions(
+            args.out, config, label_names, y_phys, y_pred_phys, y_pred_off_phys,
+            phys_q_on if not ensemble_linear else None,
+        )  # fmt: skip
     with open(os.path.join(args.out, "metrics.json"), "w") as f:
         json.dump(out, f, indent=2)
 

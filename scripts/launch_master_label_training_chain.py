@@ -242,6 +242,21 @@ STEPS["stopgap-finetune"] = dict(
     files=[STOPGAP_CONFIG],
 )
 
+STOPGAP_EVAL = "stopgap_eval_20261113_v1"
+STEPS["stopgap-eval"] = dict(
+    run_id=STOPGAP_EVAL,
+    gpu=1,
+    ram=96,
+    command=(
+        "python -u -m masked_stellar_autoencoder.training.eval_ensemble"
+        f" --config {STOPGAP_CONFIG}"
+        # Best validation loss (0.2382) of the 30 epochs.
+        f" --checkpoints {ROOT}{STOPGAP_FT}/finetune_checkpoint_28.pth"
+        ' --out "$experiment_output" --save-predictions'
+    ),
+    files=[STOPGAP_CONFIG],
+)
+
 
 # XP-only v3 run. New label groups from census v6 (master sidecar v2:
 # highres_literature_extra, kirby2010_dsph, mastar_params; chemistry v2:
