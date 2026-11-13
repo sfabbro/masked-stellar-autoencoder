@@ -214,6 +214,35 @@ STEPS["master-r"] = dict(
 )
 
 
+# Stopgap: fine-tune table from the rebuilt master (labels + raw MSA inputs),
+# then finetune_msa from the July pretrain checkpoint.
+STOPGAP_TABLE = "stopgap_finetune_table_20261113_v1"
+STOPGAP_FT = "stopgap_finetune_20261113_v1"
+STOPGAP_CONFIG = "configs/finetune-stopgap-20261113.yaml"
+STEPS["stopgap-table"] = dict(
+    run_id=STOPGAP_TABLE,
+    gpu=0,
+    ram=96,
+    cpu=8,
+    command=(
+        "python -u scripts/build_stopgap_finetune_table.py"
+        f" --master {ROOT}{MASTER_R} --config {STOPGAP_CONFIG}"
+        f" --output {ROOT}{STOPGAP_TABLE} --workers 8"
+    ),
+    files=[STOPGAP_CONFIG],
+)
+STEPS["stopgap-finetune"] = dict(
+    run_id=STOPGAP_FT,
+    gpu=1,
+    ram=96,
+    command=(
+        "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+        f" --config {STOPGAP_CONFIG}"
+    ),
+    files=[STOPGAP_CONFIG],
+)
+
+
 # XP-only v3 run. New label groups from census v6 (master sidecar v2:
 # highres_literature_extra, kirby2010_dsph, mastar_params; chemistry v2:
 # ambre_feros_chem), feature recovery against v6 for every config source,
