@@ -1,0 +1,23 @@
+{
+  "run_id": "stopgap_finetune_20261113_v3",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_finetune_20261113_v3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/stopgap_finetune_20261113_v3",
+  "source_commit": "3421d4eb19d27876bcdc2902a62a55d43646c012",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-stopgap-20261113-v3.yaml",
+  "utc": "2026-11-13T18:48:09.325555+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "idp689wl"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 96
+  },
+  "source_sha256": {
+    "configs/finetune-stopgap-20261113-v3.yaml": "24ae76270d4130ecfe0bda1d09ef3e7221f1ee9433cc8ee5ebe8710d56cea0a6"
+  },
+  "payload_sha256": "f59ae8ce01d81ae90c1394c279850ffb2cf7cc557eebea96b812ddcda0099a05"
+}
