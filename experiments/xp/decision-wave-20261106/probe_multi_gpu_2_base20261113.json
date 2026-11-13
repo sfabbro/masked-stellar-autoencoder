@@ -1,0 +1,22 @@
+{
+  "run_id": "probe_multi_gpu_2_base20261113",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/probe_multi_gpu_2_base20261113",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/probe_multi_gpu_2_base20261113",
+  "source_commit": "94f11089e132df2c73d83a788271d7208b93b947",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/probe_multi_gpu.py --output \"$experiment_output\"",
+  "utc": "2026-11-13T19:29:20.684432+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "if5oh3k3"
+  ],
+  "resources": {
+    "gpu": 2,
+    "cores": 4,
+    "ram": 16
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "fb7fc3e56d0a7a83e33cd5df00016603f603a1b141074efecc8ea8dde153fdf3"
+}
