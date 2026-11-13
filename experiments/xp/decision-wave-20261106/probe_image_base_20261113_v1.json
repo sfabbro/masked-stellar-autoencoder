@@ -1,0 +1,22 @@
+{
+  "run_id": "probe_image_base_20261113_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/probe_image_base_20261113_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/probe_image_base_20261113_v1",
+  "source_commit": "5cfe7cdf7dadf4a8ad676544636a4f2602e915c4",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -c \"import sys,subprocess;print(sys.version);print(subprocess.run(['git','--version'],capture_output=True,text=True).stdout)\"",
+  "utc": "2026-11-13T19:27:34.023895+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "pq7vphap"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 8
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "655073f73713c77f7488c18d772efefae6a80d041d3ae82405f01d64d64761ff"
+}
