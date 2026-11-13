@@ -16,7 +16,7 @@ from launch_stellar_improvement import create_form_session, submission_error_evi
 
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
 # Headless image; the entrypoint installs pixi and the job's environment itself.
-IMAGE = os.environ.get("MSA_CANFAR_IMAGE", "images.canfar.net/astroai/terminal:latest")
+IMAGE = os.environ.get("MSA_CANFAR_IMAGE", "images.canfar.net/astroai/base:latest")
 
 
 def addresses():
