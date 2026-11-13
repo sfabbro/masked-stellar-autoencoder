@@ -245,7 +245,7 @@ STEPS["stopgap-finetune"] = dict(
 
 STOPGAP_EVAL = "stopgap_eval_20261113_v2"
 # Best-validation epoch of the fine-tune (v1: 28); set after the run.
-STOPGAP_EPOCH = 30
+STOPGAP_EPOCH = 26
 STEPS["stopgap-eval"] = dict(
     run_id=STOPGAP_EVAL,
     gpu=1,
