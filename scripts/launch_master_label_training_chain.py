@@ -274,6 +274,16 @@ MS_PAIR = {
 }
 # Best-validation epoch of each fine-tune; set after the runs.
 MS_EPOCH = {"ms-stopgap": 30, "ms-multi": 30}
+STEPS["probe-image"] = dict(
+    run_id="probe_image_base_20261113_v1",
+    gpu=0,
+    ram=8,
+    command=(
+        'python -u -c "import sys,subprocess;print(sys.version);'
+        "print(subprocess.run(['git','--version'],capture_output=True,text=True).stdout)\""
+    ),
+    files=[],
+)
 STEPS["ms-table"] = dict(
     run_id=MS_TABLE,
     gpu=0,

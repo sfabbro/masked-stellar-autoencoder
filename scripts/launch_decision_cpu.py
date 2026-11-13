@@ -7,7 +7,7 @@ import json
 import zlib
 from pathlib import Path
 
-from launch_decision_wave import ROOT, addresses
+from launch_decision_wave import IMAGE, ROOT, addresses
 from launch_stellar_improvement import create_form_session, submission_error_evidence
 
 
@@ -83,7 +83,7 @@ def submit_cpu(run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None
         r["session_ids"] = create_form_session(
             Session(timeout=40),
             name="msa-" + run_id.replace("_", "-"),
-            image="images.canfar.net/astroai/terminal:latest",
+            image=IMAGE,
             kind="headless",
             cmd="python",
             args=payload,

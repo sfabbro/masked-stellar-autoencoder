@@ -5,6 +5,7 @@ import base64
 import datetime as dt
 import hashlib
 import json
+import os
 import socket
 import urllib.parse
 import urllib.request
@@ -14,6 +15,8 @@ from pathlib import Path
 from launch_stellar_improvement import create_form_session, submission_error_evidence
 
 ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+# Headless image; the entrypoint installs pixi and the job's environment itself.
+IMAGE = os.environ.get("MSA_CANFAR_IMAGE", "images.canfar.net/astroai/terminal:latest")
 
 
 def addresses():
@@ -147,6 +150,7 @@ def submit(
         status="submission_pending",
         session_ids=[],
         resources=dict(gpu=gpu, cores=cpu, ram=ram),
+        image=IMAGE,
         source_sha256={
             name: hashlib.sha256(content.encode()).hexdigest()
             for name, content in files.items()
@@ -170,7 +174,7 @@ def submit(
         r["session_ids"] = create_form_session(
             Session(timeout=40),
             name="msa-" + run_id.replace("_", "-"),
-            image="images.canfar.net/astroai/terminal:latest",
+            image=IMAGE,
             kind="headless",
             cmd="python",
             args=payload,
