@@ -191,7 +191,7 @@ STEPS["master-v3"] = dict(
 # rerun the census (master_label_census_20261113_v1, own launcher) and rebuild
 # the master table without training-source annotations (those runs are gone).
 STAGE_R = "master_survey_stage_20261113_v1"
-CENSUS_R = "master_label_census_20261113_v1"
+CENSUS_R = "master_label_census_20261113_v2"  # v1 lacked SAGA (http-only host)
 MASTER_R = "master_spectroscopic_labels_20261113_v1"
 STEPS["stage-surveys"] = dict(
     run_id=STAGE_R,
