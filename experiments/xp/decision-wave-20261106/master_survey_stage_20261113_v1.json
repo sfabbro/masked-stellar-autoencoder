@@ -1,0 +1,21 @@
+{
+  "run_id": "master_survey_stage_20261113_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_survey_stage_20261113_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/master_survey_stage_20261113_v1",
+  "source_commit": "8cb31ed408d0d46cf1a102eeb0277a4cf8ff0f1a",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/stage_master_survey_files.py --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_survey_stage_20261113_v1",
+  "utc": "2026-11-13T04:05:28.414708+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "j2yo39nr"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 16
+  },
+  "source_sha256": {},
+  "payload_sha256": "4227859c7d37b8f1329e078b6d93d84a6fb041edd09913f340d019b5c7b9a6ac"
+}
