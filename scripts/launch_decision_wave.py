@@ -35,6 +35,10 @@ def addresses():
         "gea.esac.esa.int",
         "sagadatabase.jp",
         "simbad.cfa.harvard.edu",
+        # Public survey catalogues staged by stage_master_survey_files.py.
+        "www.lamost.org",
+        "data.desi.lbl.gov",
+        "www.rave-survey.org",
     ]:
         try:
             result[host] = socket.gethostbyname(host)
