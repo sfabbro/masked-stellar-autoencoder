@@ -100,3 +100,42 @@ def choose_stars(labels: pd.DataFrame, max_stars: int, seed: int = 42) -> pd.Ind
             np.sort(np.random.default_rng(seed).choice(rest.to_numpy(), room, False))
         )
     return chosen.append(rest).sort_values()
+
+
+def survey_records(
+    records: pd.DataFrame, references: pd.DataFrame, ids: np.ndarray
+) -> dict[str, np.ndarray]:
+    """Every usable label of the table's stars, one row per survey record.
+
+    ``ids`` are the table's source_ids in row order. Master records pass the
+    same rules as ``select_labels`` (fit_ok, no duplicate pipelines, [Fe/H]
+    kinds, DESI correction); reference rows with ``role == "anchor"`` are
+    appended as their own surveys. Returns arrays for ``records.npz``.
+    """
+    ids = np.asarray(ids, dtype="i8")
+    anchors = references[references["role"] == "anchor"]
+    keep = (
+        records["fit_ok"].fillna(False).to_numpy(bool)
+        & ~records["survey"].astype(str).isin(DUPLICATE_PIPELINES).to_numpy()
+    )
+    parts = [records.loc[keep], anchors]
+    frame = pd.concat(parts, ignore_index=True)
+    sid = frame["source_id"].to_numpy("i8")
+    pos = np.searchsorted(ids, sid).clip(max=len(ids) - 1)
+    hit = (ids[pos] == sid) & (sid > 0)
+    frame, pos = frame.loc[hit].reset_index(drop=True), pos[hit]
+    value = np.column_stack([_values(frame, name)[0] for name in PARAMETERS])
+    error = np.column_stack([_values(frame, name)[1] for name in PARAMETERS])
+    some = np.isfinite(value).any(axis=1)
+    names = np.array(sorted(frame["survey"].astype(str).unique()))
+    code = np.searchsorted(names, frame["survey"].astype(str).to_numpy())
+    anchor_names = set(anchors["survey"].astype(str))
+    return dict(
+        row=pos[some].astype("i8"),
+        survey=code[some].astype("i4"),
+        value=value[some].astype("f4"),
+        error=error[some].astype("f4"),
+        survey_names=names.astype("U40"),
+        survey_is_anchor=np.isin(names, list(anchor_names)),
+        parameters=np.array(PARAMETERS, dtype="U8"),
+    )

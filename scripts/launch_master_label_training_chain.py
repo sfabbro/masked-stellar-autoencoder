@@ -260,6 +260,58 @@ STEPS["stopgap-eval"] = dict(
 )
 
 
+# Stopgap versus multi-survey on one table (same stars, inputs and split).
+MS_TABLE = "multisurvey_table_20261113_v1"
+MS_PAIR = {
+    "ms-stopgap": (
+        "stopgap_finetune_20261113_v3",
+        "configs/finetune-stopgap-20261113-v3.yaml",
+    ),
+    "ms-multi": (
+        "multisurvey_finetune_20261113_v1",
+        "configs/finetune-multisurvey-20261113.yaml",
+    ),
+}
+# Best-validation epoch of each fine-tune; set after the runs.
+MS_EPOCH = {"ms-stopgap": 30, "ms-multi": 30}
+STEPS["ms-table"] = dict(
+    run_id=MS_TABLE,
+    gpu=0,
+    ram=128,
+    cpu=8,
+    command=(
+        "python -u scripts/build_stopgap_finetune_table.py"
+        f" --master {ROOT}{MASTER_R} --config {STOPGAP_CONFIG}"
+        " --references /arc/projects/k-pop/catalogues"
+        f" --output {ROOT}{MS_TABLE} --workers 8"
+    ),
+    files=[STOPGAP_CONFIG],
+)
+for _name, (_run, _config) in MS_PAIR.items():
+    STEPS[_name] = dict(
+        run_id=_run,
+        gpu=1,
+        ram=96,
+        command=(
+            "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+            f" --config {_config}"
+        ),
+        files=[_config],
+    )
+    STEPS[_name + "-eval"] = dict(
+        run_id=_run.replace("finetune", "eval"),
+        gpu=1,
+        ram=96,
+        command=(
+            "python -u -m masked_stellar_autoencoder.training.eval_ensemble"
+            f" --config {_config}"
+            f" --checkpoints {ROOT}{_run}/finetune_checkpoint_{MS_EPOCH[_name]}.pth"
+            ' --out "$experiment_output" --save-predictions'
+        ),
+        files=[_config],
+    )
+
+
 # XP-only v3 run. New label groups from census v6 (master sidecar v2:
 # highres_literature_extra, kirby2010_dsph, mastar_params; chemistry v2:
 # ambre_feros_chem), feature recovery against v6 for every config source,

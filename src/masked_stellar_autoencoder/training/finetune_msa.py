@@ -78,6 +78,8 @@ def _finetune_one_seed(
     cols,
     error_cols,
     recon_cols,
+    wrapper_cls=TabResnetWrapper,
+    configure=None,
 ) -> None:
     random.seed(int(seed))
     torch.manual_seed(int(seed))
@@ -108,7 +110,7 @@ def _finetune_one_seed(
     m_ratio = config["finetuning"].get("m_masking_ratio", 0.3)
     ft_save_file, ft_log_file = ft_checkpoint_paths(config, seed)
 
-    wrapper = TabResnetWrapper(
+    wrapper = wrapper_cls(
         model=model,
         datafile=config["data"]["datafile"],
         scaler=pack["featurescaler"],
@@ -145,6 +147,8 @@ def _finetune_one_seed(
     )
 
     _print_parallax_consistency(pack, cols, scalers)
+    if configure is not None:
+        configure(wrapper)
 
     wrapper.fit(
         trainset,
@@ -262,6 +266,12 @@ def main():
     error_cols = pack["error_cols"]
     recon_cols = pack["recon_cols"]
 
+    wrapper_cls, configure = TabResnetWrapper, None
+    if config.get("multisurvey"):
+        wrapper_cls, configure, labelled_set, vlabelled_set = _multisurvey_setup(
+            config, pack, labelled_set, vlabelled_set, args
+        )
+
     for seed in seeds:
         _finetune_one_seed(
             seed,
@@ -279,7 +289,46 @@ def main():
             cols,
             error_cols,
             recon_cols,
+            wrapper_cls=wrapper_cls,
+            configure=configure,
         )
+
+
+def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
+    """Append table rows to the label arrays and load the survey records."""
+    from .finetune_data import kept_rows, split_row_positions
+    from .multisurvey_finetune import MultiSurveyWrapper, SurveyRecords
+
+    ms = config["multisurvey"]
+    path = config["data"]["ft_datafile"]
+    rows = kept_rows(path, config)
+    mp = config["finetuning"].get("metal_poor") or {}
+    train, valid, _ = split_row_positions(len(rows), mp)
+    train, valid = rows[train], rows[valid]
+    if args.max_train_rows is not None:
+        train = train[: args.max_train_rows]
+    if args.max_valid_rows is not None:
+        valid = valid[: args.max_valid_rows]
+    if len(train) != len(labelled_set) or len(valid) != len(vlabelled_set):
+        raise ValueError("Split rows do not match the prepared label arrays")
+    labelled_set = np.concatenate([labelled_set, train[:, None]], axis=1)
+    vlabelled_set = np.concatenate([vlabelled_set, valid[:, None]], axis=1)
+    rec = dict(np.load(ms["records"], allow_pickle=False))
+    n_table = int(rows.max()) + 1
+
+    def configure(wrapper):
+        records = SurveyRecords(rec, pack["scalers"], n_table, wrapper.device)
+        wrapper.configure_multisurvey(
+            records,
+            consensus_weight=float(ms.get("consensus_weight", 1.0)),
+            map_reg_weight=float(ms.get("map_reg_weight", 1e-3)),
+        )
+        print(
+            f"multi-survey: {records.n} records, {len(records.mapped_names)} mapped "
+            f"surveys, anchors {[n for n, a in zip(records.names, records.is_anchor, strict=True) if a]}"
+        )
+
+    return MultiSurveyWrapper, configure, labelled_set, vlabelled_set
 
 
 if __name__ == "__main__":

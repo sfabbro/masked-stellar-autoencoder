@@ -52,12 +52,19 @@ def test_row_positions(n_rows: int, mp: dict[str, Any]) -> np.ndarray:
     train_test_split shuffles by ``n`` and ``random_state`` only, so splitting
     an index array reproduces the split of the data arrays.
     """
+    return split_row_positions(n_rows, mp)[2]
+
+
+def split_row_positions(
+    n_rows: int, mp: dict[str, Any]
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """(train, valid, test) positions in the order ``_split_data`` returns rows."""
     if mp.get("stratify_feh"):
-        raise ValueError("Test positions are not reproducible for a stratified split")
+        raise ValueError("Split positions are not reproducible for a stratified split")
     index = np.arange(n_rows)
-    _, valid = train_test_split(index, test_size=0.2, random_state=42)
-    _, test = train_test_split(valid, test_size=0.33, random_state=42)
-    return test
+    train, valid = train_test_split(index, test_size=0.2, random_state=42)
+    valid, test = train_test_split(valid, test_size=0.33, random_state=42)
+    return train, valid, test
 
 
 def kept_rows(path: str, config: dict[str, Any]) -> np.ndarray:

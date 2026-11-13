@@ -58,6 +58,13 @@ def main():
     p.add_argument("--raw", default=RAW)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--max-stars", type=int, default=3_000_000)
+    p.add_argument(
+        "--references",
+        type=Path,
+        help="catalogue folder for seismic anchors and Gaia benchmark stars "
+        "(training.anchor_labels); anchors are forced into the table and written "
+        "to records.npz, benchmarks go to validation.fits only",
+    )
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--chunk", type=int, default=262_144)
     a = p.parse_args()
@@ -72,6 +79,7 @@ def main():
         PARAMETERS,
         choose_stars,
         select_labels,
+        survey_records,
     )
 
     try:
@@ -83,9 +91,29 @@ def main():
         records = pd.read_parquet(a.master / "records", columns=cols)
         log(f"{len(records)} master records")
         labels = select_labels(records)
-        del records
         stars = choose_stars(labels, a.max_stars)
-        labels = labels.loc[stars]
+        benchmark_ids = np.empty(0, "i8")
+        references = None
+        if a.references:
+            from masked_stellar_autoencoder.training.anchor_labels import (
+                load_reference_labels,
+            )
+
+            references = load_reference_labels(a.references)
+            anchor_ids = references.loc[references.role == "anchor", "source_id"]
+            benchmark_ids = np.unique(
+                references.loc[references.role == "validation", "source_id"]
+            )
+            stars = stars.union(pd.Index(anchor_ids.unique())).difference(
+                pd.Index(benchmark_ids)
+            )
+            m.update(
+                reference_records=references.groupby("survey").size().to_dict(),
+                benchmark_stars=int(len(benchmark_ids)),
+            )
+        else:
+            del records
+        labels = labels.reindex(stars)
         m.update(labelled_gaia_stars=int(len(stars)))
         log(f"{len(labels)} stars chosen")
 
@@ -93,7 +121,7 @@ def main():
         features = cfg["feature_cols"]
         errors = [e for e in cfg["error_cols"] if e is not None]
         fields = list(dict.fromkeys([*features, *errors]))
-        wanted = np.sort(labels.index.to_numpy("i8"))
+        wanted = np.union1d(labels.index.to_numpy("i8"), benchmark_ids)
         import h5py
 
         with h5py.File(a.raw, "r") as f:
@@ -114,6 +142,9 @@ def main():
         matrix = np.concatenate(found)
         ids, first = np.unique(ids, return_index=True)  # duplicate raw rows
         matrix = matrix[first]
+        bench = np.isin(ids, benchmark_ids)
+        bench_ids, bench_matrix = ids[bench], matrix[bench]
+        ids, matrix = ids[~bench], matrix[~bench]
         labels = labels.loc[ids]
         m.update(stars_with_inputs=int(len(ids)), stars_without_inputs=int(
             len(wanted) - len(ids)))  # fmt: skip
@@ -134,6 +165,39 @@ def main():
                 labels["src_" + name].fillna("").astype(str).tolist(), dtype="U40"
             )
         t.write(a.output / "finetune.fits", overwrite=True)
+        if references is not None:
+            rec = survey_records(records, references, ids)
+            np.savez_compressed(a.output / "records.npz", **rec)
+            names = rec["survey_names"]
+            m.update(
+                records=int(len(rec["row"])),
+                records_per_survey={
+                    str(n): int(c)
+                    for n, c in zip(
+                        names,
+                        np.bincount(rec["survey"], minlength=len(names)),
+                        strict=True,
+                    )
+                },
+                anchor_surveys=[str(n) for n in names[rec["survey_is_anchor"]]],
+            )
+            b = (
+                references[references.role == "validation"]
+                .drop_duplicates("source_id")
+                .set_index("source_id")
+                .loc[bench_ids]
+            )
+            v = Table()
+            v["source_id"] = bench_ids
+            for name in PARAMETERS:
+                v[name] = b[name].to_numpy("f4")
+                v["e_" + name] = b["e_" + name].to_numpy("f4")
+            v["age"] = np.full(len(bench_ids), np.nan, "f4")
+            v["e_age"] = np.full(len(bench_ids), np.nan, "f4")
+            for j, name in enumerate(fields):
+                v[name] = bench_matrix[:, j]
+            v.write(a.output / "validation.fits", overwrite=True)
+            m.update(benchmark_stars_with_inputs=int(len(bench_ids)))
         counts = {
             name: labels["src_" + name].value_counts().to_dict() for name in PARAMETERS
         }
