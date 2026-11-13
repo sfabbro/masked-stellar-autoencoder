@@ -137,6 +137,23 @@ CATALOGUES = {
         notes="native_row indexes madera.csv.gz; GAUGUIN and crossmatch join on rave_obs_id",
     ),
 }
+
+
+def use_stage(stage):
+    """Point every downloaded catalogue at ``stage`` (stage_master_survey_files.py).
+
+    The stage keeps the original file names, so only the folder changes.
+    GALAH and GSP-Spec stay in /arc/projects/k-pop/catalogues.
+    """
+    stage = str(stage).rstrip("/") + "/"
+    for c in CATALOGUES.values():
+        if c.path.startswith(RUN):
+            c.path = stage + Path(c.path).name
+        for key, value in list(c.extra.items()):
+            if isinstance(value, str) and value.startswith(RUN):
+                c.extra[key] = stage + Path(value).name
+
+
 # Staged survey -> {groups holding this survey's stars} in the training source
 # (v7, run master_label_six_nsf_fullfit_20261111_v2), loose and chemistry sidecars.
 GROUPS = {
@@ -645,11 +662,42 @@ def label_groups(records, survey, groups):
     return out
 
 
+def annotate_training(records, training_source):
+    """Star-level roles, label groups and XP flags from a training source run."""
+    ids, roles, has_xp, groups = training_groups(RUN + training_source)
+    groups |= group_ids(
+        LOOSE, "loose", [g for v in GROUPS.values() for g in v.get("loose", [])]
+    )
+    groups |= group_ids(
+        CHEM, "chem", [g for v in GROUPS.values() for g in v.get("chem", [])]
+    )
+    pos = np.searchsorted(ids, records.source_id.to_numpy("i8"))
+    pos = pos.clip(max=len(ids) - 1)
+    hit = (ids[pos] == records.source_id.to_numpy("i8")) & (records.source_id > 0)
+    records["v2_role"] = np.where(hit, roles[pos], "")
+    records["has_xp"] = pd.array(np.where(hit, has_xp[pos], False), dtype="boolean")
+    records.loc[~hit, "has_xp"] = pd.NA
+    records["has_xp_source"] = np.where(hit, "v2_training_inputs", "")
+    records["label_groups"] = ""
+    for name, idx in records.groupby("survey").indices.items():
+        records.loc[records.index[idx], "label_groups"] = label_groups(
+            records.iloc[idx], name, groups
+        )
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--census", default=CENSUS + "observations.parquet")
-    p.add_argument("--training-source", default=TRAINING_SOURCE)
+    p.add_argument(
+        "--training-source",
+        default=TRAINING_SOURCE,
+        help="training source run for roles/groups/XP flags; empty string skips them",
+    )
+    p.add_argument(
+        "--stage",
+        help="folder of downloaded survey catalogues (stage_master_survey_files.py)",
+    )
     p.add_argument("--gaia-batch", type=int, default=50000)
     p.add_argument("--only", nargs="*", help="staged surveys to build (smoke tests)")
     p.add_argument("--skip-positional", action="store_true")
@@ -659,6 +707,8 @@ def main():
         help="earlier master run's work/stage to copy unchanged survey parts from",
     )
     a = p.parse_args()
+    if a.stage:
+        use_stage(a.stage)
     out = a.output
     (out / "records").mkdir(parents=True, exist_ok=True)
     (out / "work").mkdir(exist_ok=True)
@@ -737,25 +787,14 @@ def main():
         log(f"{len(records)} records; assigning star ids")
         records["star_id"] = ms.assign_star_ids(records)
         # 3. Training/loose/chemistry membership, roles and XP availability.
-        ids, roles, has_xp, groups = training_groups(RUN + a.training_source)
-        groups |= group_ids(
-            LOOSE, "loose", [g for v in GROUPS.values() for g in v.get("loose", [])]
-        )
-        groups |= group_ids(
-            CHEM, "chem", [g for v in GROUPS.values() for g in v.get("chem", [])]
-        )
-        pos = np.searchsorted(ids, records.source_id.to_numpy("i8"))
-        pos = pos.clip(max=len(ids) - 1)
-        hit = (ids[pos] == records.source_id.to_numpy("i8")) & (records.source_id > 0)
-        records["v2_role"] = np.where(hit, roles[pos], "")
-        records["has_xp"] = pd.array(np.where(hit, has_xp[pos], False), dtype="boolean")
-        records.loc[~hit, "has_xp"] = pd.NA
-        records["has_xp_source"] = np.where(hit, "v2_training_inputs", "")
-        records["label_groups"] = ""
-        for name, idx in records.groupby("survey").indices.items():
-            records.loc[records.index[idx], "label_groups"] = label_groups(
-                records.iloc[idx], name, groups
-            )
+        if not a.training_source:
+            records["v2_role"] = ""
+            records["has_xp"] = pd.array([pd.NA] * len(records), dtype="boolean")
+            records["has_xp_source"] = ""
+            records["label_groups"] = ""
+            m["training_annotations"] = "skipped (no training source)"
+        else:
+            annotate_training(records, a.training_source)
         # 4. Outputs.
         for name, block in records.groupby("survey"):
             block.to_parquet(out / "records" / f"{name}.parquet", index=False)

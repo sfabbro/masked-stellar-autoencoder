@@ -187,6 +187,33 @@ STEPS["master-v3"] = dict(
 )
 
 
+# Rebuild after the msa_runs loss (2026-11-13): re-download the staged surveys,
+# rerun the census (master_label_census_20261113_v1, own launcher) and rebuild
+# the master table without training-source annotations (those runs are gone).
+STAGE_R = "master_survey_stage_20261113_v1"
+CENSUS_R = "master_label_census_20261113_v1"
+MASTER_R = "master_spectroscopic_labels_20261113_v1"
+STEPS["stage-surveys"] = dict(
+    run_id=STAGE_R,
+    gpu=0,
+    ram=16,
+    command=f"python -u scripts/stage_master_survey_files.py --output {ROOT}{STAGE_R}",
+    files=[],
+)
+STEPS["master-r"] = dict(
+    run_id=MASTER_R,
+    gpu=0,
+    ram=160,
+    command=(
+        "python -u scripts/build_master_spectroscopic_labels.py"
+        f" --census {ROOT}{CENSUS_R}/observations.parquet"
+        f" --stage {ROOT}{STAGE_R} --training-source ''"
+        f" --output {ROOT}{MASTER_R}"
+    ),
+    files=[],
+)
+
+
 # XP-only v3 run. New label groups from census v6 (master sidecar v2:
 # highres_literature_extra, kirby2010_dsph, mastar_params; chemistry v2:
 # ambre_feros_chem), feature recovery against v6 for every config source,
