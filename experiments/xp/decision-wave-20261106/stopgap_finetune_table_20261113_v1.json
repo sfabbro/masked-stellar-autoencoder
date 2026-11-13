@@ -1,0 +1,23 @@
+{
+  "run_id": "stopgap_finetune_table_20261113_v1",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_finetune_table_20261113_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/stopgap_finetune_table_20261113_v1",
+  "source_commit": "4fe0bf88a4e32e5ec6d663ac6723478b069317d7",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_stopgap_finetune_table.py --master /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261113_v1 --config configs/finetune-stopgap-20261113.yaml --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_finetune_table_20261113_v1 --workers 8",
+  "utc": "2026-11-13T11:59:31.254574+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "jebgmbtf"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 96
+  },
+  "source_sha256": {
+    "configs/finetune-stopgap-20261113.yaml": "73a44a5d269eb121cd009672e0b0952e012a879ab0a671cc07419cbbb444d7ba"
+  },
+  "payload_sha256": "692e72f17b2b7cffc83451b9e39454f25efc086d6cb80dce9eed891f90240cbb"
+}
