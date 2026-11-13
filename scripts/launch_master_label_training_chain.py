@@ -216,9 +216,10 @@ STEPS["master-r"] = dict(
 
 # Stopgap: fine-tune table from the rebuilt master (labels + raw MSA inputs),
 # then finetune_msa from the July pretrain checkpoint.
-STOPGAP_TABLE = "stopgap_finetune_table_20261113_v1"
-STOPGAP_FT = "stopgap_finetune_20261113_v1"
-STOPGAP_CONFIG = "configs/finetune-stopgap-20261113.yaml"
+# v2 drops the duplicate-pipeline labels (DESI SP grid-floor artefact in v1).
+STOPGAP_TABLE = "stopgap_finetune_table_20261113_v2"
+STOPGAP_FT = "stopgap_finetune_20261113_v2"
+STOPGAP_CONFIG = "configs/finetune-stopgap-20261113-v2.yaml"
 STEPS["stopgap-table"] = dict(
     run_id=STOPGAP_TABLE,
     gpu=0,
@@ -242,7 +243,9 @@ STEPS["stopgap-finetune"] = dict(
     files=[STOPGAP_CONFIG],
 )
 
-STOPGAP_EVAL = "stopgap_eval_20261113_v1"
+STOPGAP_EVAL = "stopgap_eval_20261113_v2"
+# Best-validation epoch of the fine-tune (v1: 28); set after the run.
+STOPGAP_EPOCH = 30
 STEPS["stopgap-eval"] = dict(
     run_id=STOPGAP_EVAL,
     gpu=1,
@@ -250,8 +253,7 @@ STEPS["stopgap-eval"] = dict(
     command=(
         "python -u -m masked_stellar_autoencoder.training.eval_ensemble"
         f" --config {STOPGAP_CONFIG}"
-        # Best validation loss (0.2382) of the 30 epochs.
-        f" --checkpoints {ROOT}{STOPGAP_FT}/finetune_checkpoint_28.pth"
+        f" --checkpoints {ROOT}{STOPGAP_FT}/finetune_checkpoint_{STOPGAP_EPOCH}.pth"
         ' --out "$experiment_output" --save-predictions'
     ),
     files=[STOPGAP_CONFIG],

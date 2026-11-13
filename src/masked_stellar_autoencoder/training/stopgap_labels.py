@@ -16,7 +16,9 @@ import pandas as pd
 
 PARAMETERS = ("teff", "logg", "fe_h", "alpha")
 TOP_SURVEYS = {"apogee_dr17", "galah_dr4"}
-# Second pipelines on the same spectra, used only when nothing else exists.
+# Second pipelines on the same spectra are not used: the first stopgap run
+# learned the DESI SP (FERRE) grid-floor pile at [Fe/H] ~ -3.5, Teff ~ 4600 K
+# from stars whose only label was DESI SP.
 DUPLICATE_PIPELINES = {"desi_dr1_sp", "lamost_dr12_mrs_cnn"}
 ALPHA_KINDS = {"alpha_fe", "alpha_m"}
 
@@ -52,9 +54,11 @@ def _values(records: pd.DataFrame, name: str) -> tuple[np.ndarray, np.ndarray]:
 
 def select_labels(records: pd.DataFrame) -> pd.DataFrame:
     """Per Gaia star: best value, error and survey for each parameter."""
-    ok = (records["source_id"].to_numpy("i8") > 0) & records["fit_ok"].fillna(
-        False
-    ).to_numpy(bool)
+    ok = (
+        (records["source_id"].to_numpy("i8") > 0)
+        & records["fit_ok"].fillna(False).to_numpy(bool)
+        & ~records["survey"].astype(str).isin(DUPLICATE_PIPELINES).to_numpy()
+    )
     r = records.loc[ok].reset_index(drop=True)
     prio = record_priority(r)
     sid = r["source_id"].to_numpy("i8")

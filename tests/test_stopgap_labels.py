@@ -40,6 +40,7 @@ def test_priority_error_and_kinds():
             rec(source_id=2, survey="gaia_dr3_gspspec", fe_h=-1.0, fe_h_kind="m_h"),
             rec(source_id=2, teff=6000.0, fe_h=-0.2, fit_ok=False),
             rec(source_id=3, survey="desi_dr1", fe_h=-1.2, fe_h_corrected=-1.1),
+            rec(source_id=4, survey="desi_dr1_sp", fe_h=-3.49),
             rec(source_id=0, survey="x", fe_h=-3.0),
         ]
     )  # fmt: skip
