@@ -42,6 +42,9 @@ def addresses():
         "www.lamost.org",
         "data.desi.lbl.gov",
         "www.rave-survey.org",
+        # Pixi release downloads (entrypoint installs Pixi when the image lacks it).
+        "release-assets.githubusercontent.com",
+        "objects.githubusercontent.com",
     ]:
         try:
             result[host] = socket.gethostbyname(host)

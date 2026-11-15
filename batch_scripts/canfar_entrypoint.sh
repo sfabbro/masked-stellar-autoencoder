@@ -62,8 +62,18 @@ if [[ "$stage" == pretrain-experiments && "${MSA_XP_EXPERIMENTS:-0}" == 1 ]]; th
   pixi_environment=default
 fi
 
+# Use the image's Pixi when it is new enough (has `pixi lock`); otherwise install
+# the pinned release into $PIXI_HOME (e.g. skaha/base-notebook ships an old one).
+pixi_version="${MSA_PIXI_VERSION:-0.84.2}"
+if ! command -v pixi >/dev/null 2>&1 || ! pixi lock --help >/dev/null 2>&1; then
+  mkdir -p "$PIXI_HOME/bin"
+  curl -fsSL "https://github.com/prefix-dev/pixi/releases/download/v${pixi_version}/pixi-x86_64-unknown-linux-musl.tar.gz" \
+    | tar -xz -C "$PIXI_HOME/bin" pixi
+  export PATH="$PIXI_HOME/bin:$PATH"
+  echo "Installed Pixi $(pixi --version) into $PIXI_HOME/bin"
+fi
 if ! command -v pixi >/dev/null 2>&1; then
-  echo "Pixi is required in the CANFAR image but was not found on PATH." >&2
+  echo "Pixi is required but could not be installed." >&2
   exit 2
 fi
 
