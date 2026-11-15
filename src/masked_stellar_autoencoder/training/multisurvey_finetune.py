@@ -66,6 +66,10 @@ class SurveyRecords:
         for s_all, s_map in zip(mapped, range(len(mapped)), strict=True):
             support[s_map, :SURVEY_LABELS] = finite[survey == s_all].any(axis=0)
         self.support = support
+        # Finite records per (mapped survey, label): decides consensus members.
+        self.counts = np.zeros((len(mapped), 6), dtype="i8")
+        for s_all, s_map in zip(mapped, range(len(mapped)), strict=True):
+            self.counts[s_map, :SURVEY_LABELS] = finite[survey == s_all].sum(axis=0)
         counts = np.bincount(row, minlength=n_rows)
         ptr = np.concatenate([[0], np.cumsum(counts)])
         t = lambda a, dtype: torch.as_tensor(a, device=device, dtype=dtype)  # noqa: E731
@@ -87,22 +91,91 @@ class SurveyRecords:
         return start[pos] + offset, pos
 
 
-def build_survey_maps(records: SurveyRecords, bins: int = 8) -> SixSurveyMap:
-    reference = torch.full((6,), -1, dtype=torch.long)  # no reference survey
-    zero_sum = [j for j in range(SURVEY_LABELS) if j != LOGG]
-    return SixSurveyMap(
-        records.support, reference, zero_sum=zero_sum, kind="spline", bins=bins
+class ConsensusSurveyMap(SixSurveyMap):
+    """Survey maps whose consensus runs over ``members`` only.
+
+    ``members[s, j]`` marks the surveys that define target j's common scale
+    (the large surveys). For each target in ``consensus`` their arithmetic mean
+    offset is zero and mean bin slope one; other surveys keep free maps,
+    pulled toward the identity by ``regularization``. With every supported
+    survey as a member this is SixSurveyMap's ``zero_sum`` gauge.
+    """
+
+    def __init__(self, support, members, consensus, *, bins=8, groups=None):
+        reference = torch.full((6,), -1, dtype=torch.long)  # no reference survey
+        super().__init__(support, reference, kind="spline", bins=bins)
+        members = torch.as_tensor(members, dtype=torch.bool) & self.support
+        hard = torch.zeros(6, dtype=torch.bool)
+        hard[list(consensus)] = True
+        # A target no survey reaches the threshold for uses all its surveys.
+        empty = ~members.any(0)
+        members[:, empty] = self.support[:, empty]
+        # Member weights: each spectra group (e.g. all pipelines run on APOGEE
+        # spectra) counts once per target, shared by its member surveys.
+        groups = (
+            torch.arange(len(members))
+            if groups is None
+            else torch.as_tensor(np.asarray(groups), dtype=torch.long)
+        )
+        weight = torch.zeros(members.shape)
+        for j in range(6):
+            m = members[:, j]
+            if not m.any():
+                continue
+            g = groups[m]
+            share = torch.stack([(g == x).sum() for x in g]).float()
+            n_groups = len(torch.unique(g))
+            weight[m, j] = 1.0 / (share * n_groups)
+        self.register_buffer("member_weight", weight)
+        self.register_buffer("members", members)
+        self.register_buffer("consensus", hard)
+
+    def coefficients(self):
+        bias, slopes = super().coefficients()
+        bias, slopes = bias.clone(), slopes.clone()
+        for j in torch.nonzero(self.consensus, as_tuple=False).flatten().tolist():
+            m = self.members[:, j]
+            if m.any():
+                w = self.member_weight[m, j]
+                bias[m, j] = bias[m, j] - (w * bias[m, j]).sum()
+                mean_slope = (w[:, None] * slopes[m, j]).sum(0, keepdim=True)
+                slopes[m, j] = slopes[m, j] / mean_slope
+        return bias, slopes
+
+
+def survey_groups(names, prefixes=None) -> np.ndarray:
+    """Group index per survey; ``prefixes`` maps a group name to name prefixes."""
+    labels = []
+    for name in names:
+        hit = [g for g, pre in (prefixes or {}).items() if name.startswith(tuple(pre))]
+        labels.append(hit[0] if hit else name)
+    _, index = np.unique(labels, return_inverse=True)
+    return index
+
+
+def build_survey_maps(
+    records: SurveyRecords, bins: int = 8, min_records: int = 0, groups=None
+) -> ConsensusSurveyMap:
+    """Teff/[Fe/H]/alpha consensus over surveys with >= ``min_records``."""
+    members = records.support & (records.counts >= min_records)
+    consensus = [j for j in range(SURVEY_LABELS) if j != LOGG]
+    return ConsensusSurveyMap(
+        records.support, members, consensus, bins=bins, groups=groups
     )
 
 
 def soft_consensus(maps: SixSurveyMap, target: int = LOGG) -> torch.Tensor:
-    """Squared mean (over surveys) offset and log bin slope of one target."""
+    """Squared mean (over member surveys) offset and log bin slope of a target."""
     bias, slopes = maps.coefficients()
-    active = maps.support[:, target]
+    active = getattr(maps, "members", maps.support)[:, target]
     if not active.any():
         return bias.sum() * 0
-    mean_bias = bias[active, target].mean()
-    mean_log_slope = torch.log(slopes[active, target]).mean(0)
+    w = getattr(maps, "member_weight", None)
+    if w is None:
+        w = active.float() / active.sum()
+    w = w[active, target]
+    mean_bias = (w * bias[active, target]).sum()
+    mean_log_slope = (w[:, None] * torch.log(slopes[active, target])).sum(0)
     return mean_bias.square() + mean_log_slope.square().mean()
 
 
@@ -114,12 +187,26 @@ class MultiSurveyWrapper(TabResnetWrapper):
     """
 
     def configure_multisurvey(
-        self, records: SurveyRecords, *, consensus_weight=1.0, map_reg_weight=1e-3
+        self,
+        records: SurveyRecords,
+        *,
+        consensus_weight=1.0,
+        map_reg_weight=1e-3,
+        consensus_min_records=0,
+        anchor_weight=None,
+        consensus_groups=None,
     ):
+        """``anchor_weight=None`` shares weight 1 across all records (v1);
+        a number gives each anchor record that full weight instead."""
         self.records = records
-        self.survey_maps = build_survey_maps(records).to(self.device)
+        self.survey_maps = build_survey_maps(
+            records,
+            min_records=int(consensus_min_records),
+            groups=survey_groups(records.mapped_names, consensus_groups),
+        ).to(self.device)
         self.consensus_weight = float(consensus_weight)
         self.map_reg_weight = float(map_reg_weight)
+        self.anchor_weight = None if anchor_weight is None else float(anchor_weight)
 
     # The loss -------------------------------------------------------------
     def _survey_label_loss(self, y_head, y_rest, rows):
@@ -137,14 +224,24 @@ class MultiSurveyWrapper(TabResnetWrapper):
             pred = pred.clone()
             pred[mapped] = out.permute(1, 2, 0)
         valid = torch.isfinite(target)
-        # Each (star, label) shares weight 1 across its records.
+        if self.anchor_weight is None:
+            # Each (star, label) shares weight 1 across all its records.
+            shared = valid
+        else:
+            # Survey records share weight 1; each anchor record has its own.
+            shared = valid & mapped[:, None]
         per_star = torch.zeros(len(rows), SURVEY_LABELS, device=pred.device)
-        per_star.index_add_(0, pos, valid.to(pred.dtype))
-        weight = valid.to(pred.dtype) / per_star[pos].clamp_min(1.0)
+        per_star.index_add_(0, pos, shared.to(pred.dtype))
+        weight = shared.to(pred.dtype) / per_star[pos].clamp_min(1.0)
+        n_anchor = pred.new_zeros(())
+        if self.anchor_weight is not None:
+            own = valid & ~mapped[:, None]
+            weight = weight + self.anchor_weight * own.to(pred.dtype)
+            n_anchor = self.anchor_weight * own.sum().to(pred.dtype)
         err = target.nan_to_num(0.0).unsqueeze(2) - pred
         pin = (err * q - err.clamp_max(0.0)).sum(2)  # (R, 4)
         num = (pin * weight).sum()
-        den = (per_star > 0).sum().to(pred.dtype)
+        den = (per_star > 0).sum().to(pred.dtype) + n_anchor
         # Age and parallax keep their own labels (parallax from the input).
         own = y_rest[:, SURVEY_LABELS:]
         own_valid = ~torch.isnan(own)

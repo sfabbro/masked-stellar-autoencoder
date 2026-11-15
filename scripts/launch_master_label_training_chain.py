@@ -271,9 +271,13 @@ MS_PAIR = {
         "multisurvey_finetune_20261113_v1",
         "configs/finetune-multisurvey-20261113.yaml",
     ),
+    "ms-multi-v2": (
+        "multisurvey_finetune_20261115_v2",
+        "configs/finetune-multisurvey-20261115-v2.yaml",
+    ),
 }
 # Best-validation epoch of each fine-tune; set after the runs.
-MS_EPOCH = {"ms-stopgap": 23, "ms-multi": 23}
+MS_EPOCH = {"ms-stopgap": 23, "ms-multi": 23, "ms-multi-v2": 30}
 STEPS["probe-image"] = dict(
     run_id="probe_image_base_20261113_v1",
     gpu=0,

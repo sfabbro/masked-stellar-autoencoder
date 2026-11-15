@@ -322,6 +322,9 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
             records,
             consensus_weight=float(ms.get("consensus_weight", 1.0)),
             map_reg_weight=float(ms.get("map_reg_weight", 1e-3)),
+            consensus_min_records=int(ms.get("consensus_min_records", 0)),
+            anchor_weight=ms.get("anchor_weight"),
+            consensus_groups=ms.get("consensus_groups"),
         )
         print(
             f"multi-survey: {records.n} records, {len(records.mapped_names)} mapped "

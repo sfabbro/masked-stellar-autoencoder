@@ -67,3 +67,37 @@ def test_maps_start_at_identity_and_zero_sum_holds():
         assert abs(float(bias[:, j].mean())) < 1e-6
         torch.testing.assert_close(slopes[:, j].mean(0), torch.ones(8))
     assert float(soft_consensus(maps)) > 0  # log g is free, penalised softly
+
+
+def test_consensus_runs_over_member_surveys_only():
+    r = SurveyRecords(records(), scalers(), n_rows=4, device="cpu")
+    maps = build_survey_maps(r, min_records=3)  # a has 2 Teff records, b has 3
+    assert maps.members[:, 0].tolist() == [False, True]
+    with torch.no_grad():
+        maps.bias.uniform_(-1, 1)
+        maps.raw_slope.uniform_(-1, 1)
+    bias, slopes = maps.coefficients()
+    assert abs(float(bias[1, 0])) < 1e-6  # the single member is the identity
+    torch.testing.assert_close(slopes[1, 0], torch.ones(8))
+    assert abs(float(bias[0, 0])) > 1e-4  # the non-member stays free
+
+
+def test_spectra_groups_count_once():
+    from masked_stellar_autoencoder.training.multisurvey_finetune import (
+        ConsensusSurveyMap,
+        survey_groups,
+    )
+
+    names = ["apogee_dr17", "sdss_dr19_astra_x", "galah_dr4"]
+    g = survey_groups(names, {"apogee": ["apogee_", "sdss_dr19_astra_"]})
+    assert g[0] == g[1] != g[2]
+    support = torch.zeros(3, 6, dtype=torch.bool)
+    support[:, 0] = True
+    maps = ConsensusSurveyMap(support, support, [0], groups=g)
+    torch.testing.assert_close(
+        maps.member_weight[:, 0], torch.tensor([0.25, 0.25, 0.5])
+    )
+    with torch.no_grad():
+        maps.bias.uniform_(-1, 1)
+    bias, _ = maps.coefficients()
+    assert abs(float((maps.member_weight[:, 0] * bias[:, 0]).sum())) < 1e-6
