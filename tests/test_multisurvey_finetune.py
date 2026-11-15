@@ -101,3 +101,29 @@ def test_spectra_groups_count_once():
         maps.bias.uniform_(-1, 1)
     bias, _ = maps.coefficients()
     assert abs(float((maps.member_weight[:, 0] * bias[:, 0]).sum())) < 1e-6
+
+
+def test_label_loss_runs_with_both_map_kinds():
+    from masked_stellar_autoencoder.training.multisurvey_finetune import (
+        MultiSurveyWrapper,
+    )
+
+    r = SurveyRecords(records(), scalers(), n_rows=4, device="cpu")
+    assert r.coverage.shape == (2, 4, 16**3)
+    for kind in ("spline", "conditional"):
+        w = MultiSurveyWrapper.__new__(MultiSurveyWrapper)
+        w.device = "cpu"
+        w.configure_multisurvey(
+            r,
+            map_kind=kind,
+            anchor_weight=1.0,
+            trust={"factor": 10, "prefixes": ["a"], "targets": ["fe_h"]},
+        )
+        y_head = torch.randn(4, 6, 3).sort(-1).values.requires_grad_()
+        y_rest = torch.full((4, 6), float("nan"))
+        loss = w._survey_label_loss(y_head, y_rest, torch.arange(4))
+        loss.backward()
+        assert torch.isfinite(loss) and y_head.grad.abs().sum() > 0
+        if kind == "conditional":
+            assert w.survey_maps.static_weight[0, 2] == 10.0
+            assert (w.survey_maps.precision[:, :3] > 0).all()  # seen this batch

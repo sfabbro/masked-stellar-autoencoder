@@ -325,6 +325,12 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
             consensus_min_records=int(ms.get("consensus_min_records", 0)),
             anchor_weight=ms.get("anchor_weight"),
             consensus_groups=ms.get("consensus_groups"),
+            map_kind=ms.get("map_kind", "spline"),
+            gauge_weight=float(ms.get("gauge_weight", 0.01)),
+            monotone_weight=float(ms.get("monotone_weight", 1.0)),
+            trust=ms.get("trust"),
+            basis=int(ms.get("basis", 8)),
+            hidden=int(ms.get("hidden", 64)),
         )
         print(
             f"multi-survey: {records.n} records, {len(records.mapped_names)} mapped "
