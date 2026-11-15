@@ -1,0 +1,27 @@
+{
+  "run_id": "multisurvey_finetune_20261115_v2",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261115_v2",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_finetune_20261115_v2",
+  "source_commit": "b830ff75b493992a4ee74ae6541ba90721c2b2d8",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261115-v2.yaml",
+  "utc": "2026-11-15T02:49:54.604317+00:00",
+  "status": "submission_ambiguous",
+  "session_ids": [],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261115-v2.yaml": "55a41c90617e67df925d4e43c835d49167eca4ae8bafdcb7491717e8f362cc22"
+  },
+  "payload_sha256": "aab39e6e71e2f9da92a138b7857efc0f612b78d8764d2f97f5751f0dde777b9e",
+  "error": "Client error '400 Bad Request' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+  "error_type": "HTTPStatusError",
+  "http_status": 400,
+  "response_body": "No authentication provided for unknown or private image.  Use x-skaha-registry-auth request header with base64Encode(username:secret).\n",
+  "response_body_truncated": false
+}
