@@ -277,7 +277,7 @@ MS_PAIR = {
     ),
 }
 # Best-validation epoch of each fine-tune; set after the runs.
-MS_EPOCH = {"ms-stopgap": 23, "ms-multi": 23, "ms-multi-v2": 30}
+MS_EPOCH = {"ms-stopgap": 23, "ms-multi": 23, "ms-multi-v2": 23}
 STEPS["probe-image"] = dict(
     run_id="probe_image_base_20261113_v1",
     gpu=0,
