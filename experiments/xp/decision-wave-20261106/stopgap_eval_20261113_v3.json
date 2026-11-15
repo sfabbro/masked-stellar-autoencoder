@@ -1,0 +1,24 @@
+{
+  "run_id": "stopgap_eval_20261113_v3",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_eval_20261113_v3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/stopgap_eval_20261113_v3",
+  "source_commit": "ac4ab7585da4795c9bb63d6211de57cdf9cabb77",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.eval_ensemble --config configs/finetune-stopgap-20261113-v3.yaml --checkpoints /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_finetune_20261113_v3/finetune_checkpoint_23.pth --out \"$experiment_output\" --save-predictions",
+  "utc": "2026-11-15T02:30:56.653641+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "qnck6ryi"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-stopgap-20261113-v3.yaml": "24ae76270d4130ecfe0bda1d09ef3e7221f1ee9433cc8ee5ebe8710d56cea0a6"
+  },
+  "payload_sha256": "918f060a6ad4ad72ead66e9214c088c578651a20023d524471032bf15cecfcfd"
+}
