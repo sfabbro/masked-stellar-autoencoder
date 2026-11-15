@@ -47,6 +47,39 @@ def prepare_credentials() -> str:
     return source
 
 
+CRED_URL = "https://cadc-west-01.canfar.net/cred/generate"
+
+
+def _valid_pem(text: str, margin_s: int = 3600) -> bool:
+    """True when the PEM's certificate is still valid ``margin_s`` from now."""
+    import subprocess
+
+    result = subprocess.run(
+        ["openssl", "x509", "-noout", "-checkend", str(margin_s)],
+        input=text,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def _generate_pem(user: str, password: str, days: int = 10) -> str:
+    """Proxy certificate from the CADC credential service (basic auth).
+
+    Uses ``requests``, which follows the environment's HTTPS proxy and CA
+    bundle; ``cadc-get-cert`` does not in sandboxed sessions.
+    """
+    import requests
+
+    r = requests.get(
+        CRED_URL, params={"daysValid": days}, auth=(user, password), timeout=60
+    )
+    r.raise_for_status()
+    if "BEGIN" not in r.text:
+        raise SystemExit("CADC credential service returned no certificate")
+    return r.text
+
+
 def _credential_source() -> str:
     if os.environ.get("CANFAR_TOKEN"):
         return "CANFAR_TOKEN"
@@ -54,54 +87,27 @@ def _credential_source() -> str:
         if not Path(os.environ["CANFAR_CERTIFICATE"]).is_file():
             raise SystemExit("CANFAR_CERTIFICATE does not name a file")
         return "CANFAR_CERTIFICATE"
-    pem = os.environ.get("CADC_PROXY_PEM")
-    if pem:
-        path = Path.home() / ".ssl" / "cadcproxy.pem"
-        path.parent.mkdir(mode=0o700, exist_ok=True)
-        path.write_text(pem if pem.endswith("\n") else pem + "\n")
+    path = Path.home() / ".ssl" / "cadcproxy.pem"
+    path.parent.mkdir(mode=0o700, exist_ok=True)
+
+    def use(text, source):
+        path.write_text(text if text.endswith("\n") else text + "\n")
         path.chmod(0o600)
         os.environ["CANFAR_CERTIFICATE"] = str(path)
-        return "CADC_PROXY_PEM"
+        return source
+
+    # An expired CADC_PROXY_PEM is skipped, never written over a newer file.
+    pem = os.environ.get("CADC_PROXY_PEM")
+    if pem and _valid_pem(pem):
+        return use(pem, "CADC_PROXY_PEM")
+    if path.is_file() and _valid_pem(path.read_text()):
+        os.environ["CANFAR_CERTIFICATE"] = str(path)
+        return "~/.ssl/cadcproxy.pem"
     user, password = os.environ.get("CADC_USERNAME"), os.environ.get("CADC_PASSWORD")
     if user and password:
-        import subprocess
-        import tempfile
-
-        path = Path.home() / ".ssl" / "cadcproxy.pem"
-        path.parent.mkdir(mode=0o700, exist_ok=True)
-        hosts = (
-            "ws-cadc.canfar.net",
-            "ws-uv.canfar.net",
-            "www.canfar.net",
-            "www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca",
-        )
-        with tempfile.NamedTemporaryFile("w", delete=False) as netrc:
-            os.chmod(netrc.name, 0o600)
-            for host in hosts:
-                netrc.write(f"machine {host} login {user} password {password}\n")
-        try:
-            subprocess.run(
-                [
-                    "cadc-get-cert",
-                    "--netrc-file",
-                    netrc.name,
-                    "--days-valid",
-                    "10",
-                    "--cert-filename",
-                    str(path),
-                    "-q",
-                ],
-                check=True,
-            )
-        finally:
-            os.unlink(netrc.name)
-        path.chmod(0o600)
-        os.environ["CANFAR_CERTIFICATE"] = str(path)
-        return "CADC_USERNAME/CADC_PASSWORD"
-    default = Path.home() / ".ssl" / "cadcproxy.pem"
-    if default.is_file():
-        os.environ["CANFAR_CERTIFICATE"] = str(default)
-        return "~/.ssl/cadcproxy.pem"
+        return use(_generate_pem(user, password), "CADC_USERNAME/CADC_PASSWORD")
+    if pem:
+        raise SystemExit("CADC_PROXY_PEM has expired; replace it in the environment")
     saved = Path.home() / ".config" / "canfar" / "config.yaml"
     if saved.is_file():
         return "saved canfar auth"
