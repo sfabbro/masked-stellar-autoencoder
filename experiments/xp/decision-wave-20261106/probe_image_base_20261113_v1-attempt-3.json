@@ -1,0 +1,22 @@
+{
+  "run_id": "probe_image_base_20261113_v1",
+  "attempt": 3,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/probe_image_base_20261113_v1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/probe_image_base_20261113_v1-attempt-3",
+  "source_commit": "60be1a50a4cc8cebf2d004d40837a5dfbcf873c1",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -c \"import sys,subprocess;print(sys.version);print(subprocess.run(['git','--version'],capture_output=True,text=True).stdout)\"",
+  "utc": "2026-11-15T03:00:54.509368+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "vjwv7el9"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 8
+  },
+  "image": "images.canfar.net/skaha/base-notebook:latest",
+  "source_sha256": {},
+  "payload_sha256": "c591a39cf60ee6da1c12559c56e083c34c9b6197842c14a0d5395bdbd83ed282"
+}
