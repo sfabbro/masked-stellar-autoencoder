@@ -290,7 +290,7 @@ MS_EPOCH = {
     "ms-multi": 23,
     "ms-multi-v2": 23,
     "ms-multi-v3": 23,
-    "ms-multi-v4": 30,
+    "ms-multi-v4": 23,
 }
 STEPS["probe-image"] = dict(
     run_id="probe_image_base_20261113_v1",
