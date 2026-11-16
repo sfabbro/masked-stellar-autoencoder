@@ -331,6 +331,8 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
             trust=ms.get("trust"),
             basis=int(ms.get("basis", 8)),
             hidden=int(ms.get("hidden", 64)),
+            hard_targets=ms.get("hard_targets", ()),
+            precision=ms.get("precision", "running"),
         )
         print(
             f"multi-survey: {records.n} records, {len(records.mapped_names)} mapped "

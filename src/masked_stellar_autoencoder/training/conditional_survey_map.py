@@ -17,7 +17,8 @@ Each survey s reports, for common-scale parameters x = (Teff, log g, [Fe/H],
 * Each map should stay increasing in its own parameter: a penalty holds
   1 + d delta_j / d x_j above ``min_slope``.
 
-Gauge (what makes the common scale physical). The maps alone leave any
+Gauge (what makes the common scale physical; v4 adds ``hard_targets`` and a
+fixed ``precision``, see the end of this docstring). The maps alone leave any
 smooth redefinition of the common scale free. It is fixed locally, at every
 point x the batch predicts, by a weak penalty on the weighted mean
 correction over surveys:
@@ -34,6 +35,15 @@ up-weights high-resolution references, and ``group`` makes pipelines run on
 the same spectra count once. Records of anchor surveys (asteroseismic log g)
 bypass the maps entirely; because the gauge penalty is weak it only breaks
 the otherwise flat direction and lets anchors set the scale where they exist.
+
+``hard_targets`` (v4): for parameters without physical anchors (Teff,
+[Fe/H], [alpha]) the weighted mean correction is subtracted from every
+survey's correction, so the condition holds exactly at every point instead
+of as a penalty; a weak penalty cannot hold the common scale once maps have
+cross terms (v3: Teff scatter doubled). ``precision`` (v4) fixes the weights
+before training from survey overlaps (``overlap_scatter``, three-cornered
+hat) instead of from residuals after each survey's own flexible map, which
+rewarded small surveys that overfit their few stars.
 """
 
 from __future__ import annotations
@@ -103,6 +113,8 @@ class ConditionalSurveyMaps(nn.Module):
         hi: float = 4.0,
         min_slope: float = 0.25,
         precision_momentum: float = 0.99,
+        hard_targets=(),
+        precision=None,
     ):
         super().__init__()
         support = torch.as_tensor(np.asarray(support), dtype=torch.bool)
@@ -130,7 +142,17 @@ class ConditionalSurveyMaps(nn.Module):
         self.register_buffer("support", support)
         self.register_buffer("coverage", coverage * support[:, :, None])
         self.register_buffer("static_weight", trust * support / share)
-        self.register_buffer("precision", torch.zeros(m, N_PARAM))  # 0 = unseen
+        # Fixed precision (e.g. from overlap_scatter) or a running estimate.
+        self.fixed_precision = precision is not None
+        self.register_buffer(
+            "precision",
+            torch.zeros(m, N_PARAM)  # 0 = unseen
+            if precision is None
+            else torch.as_tensor(np.asarray(precision), dtype=torch.float32),
+        )
+        hard = torch.zeros(N_PARAM, dtype=torch.bool)
+        hard[list(hard_targets)] = True
+        self.register_buffer("hard", hard)
         self.bins, self.lo, self.hi = bins, lo, hi
         self.min_slope = float(min_slope)
         self.momentum = float(precision_momentum)
@@ -147,23 +169,49 @@ class ConditionalSurveyMaps(nn.Module):
         )
 
     # Corrections ------------------------------------------------------------
-    def delta(self, x: torch.Tensor, survey: torch.Tensor) -> torch.Tensor:
-        """delta_s(x) for points ``x`` (N, 4) observed by ``survey`` (N,)."""
-        out = (
-            self.bias[survey]
-            + torch.einsum("njk,nk->nj", self.linear[survey], x)
-            + torch.einsum("njk,nk->nj", self.mix[survey], self.phi(x))
-        )
-        return out * self.support[survey]
-
-    def delta_all(self, x: torch.Tensor) -> torch.Tensor:
-        """delta of every survey at points ``x`` (N, 4): (surveys, 4, N)."""
+    def _raw_all(self, x: torch.Tensor, phi: torch.Tensor) -> torch.Tensor:
         out = (
             self.bias[:, :, None]
             + torch.einsum("mjk,nk->mjn", self.linear, x)
-            + torch.einsum("mjk,nk->mjn", self.mix, self.phi(x))
+            + torch.einsum("mjk,nk->mjn", self.mix, phi)
         )
         return out * self.support[:, :, None]
+
+    def _weights(self, x: torch.Tensor) -> torch.Tensor:
+        """Gauge weight of each survey at points ``x``: (surveys, 4, N)."""
+        w = self.static_weight * self.precision
+        return self.coverage_at(x.detach()) * w[:, :, None]
+
+    def _consensus(self, raw_all: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        """Weighted mean raw correction over surveys at ``x``: (4, N)."""
+        w = self._weights(x)
+        total = w.sum(0)
+        return (w * raw_all).sum(0) / total.clamp_min(1e-12) * (total > 0)
+
+    def delta(self, x: torch.Tensor, survey: torch.Tensor) -> torch.Tensor:
+        """delta_s(x) for points ``x`` (N, 4) observed by ``survey`` (N,).
+
+        For ``hard_targets`` the weighted mean correction over surveys at x
+        is subtracted, so that mean is exactly zero everywhere.
+        """
+        phi = self.phi(x)
+        out = (
+            self.bias[survey]
+            + torch.einsum("njk,nk->nj", self.linear[survey], x)
+            + torch.einsum("njk,nk->nj", self.mix[survey], phi)
+        ) * self.support[survey]
+        if self.hard.any():
+            mean = self._consensus(self._raw_all(x, phi), x).T  # (N, 4)
+            out = out - mean * (self.hard[None] & self.support[survey])
+        return out
+
+    def delta_all(self, x: torch.Tensor) -> torch.Tensor:
+        """delta of every survey at points ``x`` (N, 4): (surveys, 4, N)."""
+        raw = self._raw_all(x, self.phi(x))
+        if self.hard.any():
+            mean = self._consensus(raw, x)
+            raw = raw - mean[None] * (self.hard[:, None] & self.support[:, :, None])
+        return raw
 
     def forward(self, quantiles: torch.Tensor, survey: torch.Tensor) -> torch.Tensor:
         """Map common-scale quantiles (R, 4, Q) to each record's survey scale.
@@ -206,14 +254,15 @@ class ConditionalSurveyMaps(nn.Module):
         return self.coverage[:, :, flat]
 
     def gauge_penalty(self, x: torch.Tensor) -> torch.Tensor:
-        """Mean squared weighted-mean correction at points ``x`` (N, 4)."""
+        """Mean squared weighted-mean correction at points ``x`` (N, 4).
+
+        Only for targets not in ``hard_targets`` (those hold exactly).
+        """
         x = x.detach()
-        w = self.coverage_at(x) * (self.static_weight * self.precision)[:, :, None]
-        total = w.sum(0)  # (4, N)
-        covered = total > 0
+        covered = (self._weights(x).sum(0) > 0) & ~self.hard[:, None]
         if not covered.any():
             return self.bias.sum() * 0
-        mean = (w * self.delta_all(x)).sum(0) / total.clamp_min(1e-12)
+        mean = self._consensus(self._raw_all(x, self.phi(x)), x)
         return mean[covered].square().mean()
 
     def regularization(self) -> torch.Tensor:
@@ -245,6 +294,8 @@ class ConditionalSurveyMaps(nn.Module):
         self, residual: torch.Tensor, survey: torch.Tensor, valid: torch.Tensor
     ) -> None:
         """Running 1 / (1.25 mean |residual|)^2 per (survey, parameter)."""
+        if self.fixed_precision:
+            return
         m = len(self.support)
         a = residual.abs().nan_to_num(0.0) * valid
         total = torch.zeros(m, N_PARAM, device=a.device).index_add_(0, survey, a)
@@ -258,3 +309,80 @@ class ConditionalSurveyMaps(nn.Module):
         self.precision[first] = prec[first]
         mix = self.momentum
         self.precision[later] = mix * self.precision[later] + (1 - mix) * prec[later]
+
+
+def overlap_scatter(
+    value: np.ndarray,
+    survey: np.ndarray,
+    row: np.ndarray,
+    n_surveys: int,
+    groups=None,
+    min_overlap: int = 50,
+) -> np.ndarray:
+    """Per-survey scatter sigma (surveys, 4) from overlaps (three-cornered hat).
+
+    For each pair of surveys with >= ``min_overlap`` common stars, the robust
+    variance of their difference is sigma_a^2 + sigma_b^2. The sigma^2 solve
+    all pairs at once (non-negative least squares on relative residuals).
+    Pairs in the same ``group`` (pipelines on the same spectra, whose errors
+    correlate) are skipped. A survey with no usable pair gets NaN.
+    """
+    from scipy.optimize import nnls
+
+    groups = np.arange(n_surveys) if groups is None else np.asarray(groups)
+    out = np.full((n_surveys, N_PARAM), np.nan)
+    for j in range(N_PARAM):
+        per = {}
+        for s in range(n_surveys):
+            k = (survey == s) & np.isfinite(value[:, j])
+            if k.sum() >= min_overlap:
+                r, first = np.unique(row[k], return_index=True)
+                per[s] = (r, value[k, j][first])
+        rows, rhs, weight = [], [], []
+        keys = sorted(per)
+        for i, a in enumerate(keys):
+            for b in keys[i + 1 :]:
+                if groups[a] == groups[b]:
+                    continue
+                _, ia, ib = np.intersect1d(
+                    per[a][0], per[b][0], assume_unique=True, return_indices=True
+                )
+                if len(ia) < min_overlap:
+                    continue
+                d = per[a][1][ia] - per[b][1][ib]
+                v = (1.4826 * np.median(np.abs(d - np.median(d)))) ** 2
+                if v <= 0:
+                    continue
+                e = np.zeros(n_surveys)
+                e[[a, b]] = 1.0
+                rows.append(e)
+                rhs.append(v)
+                weight.append(np.sqrt(len(ia)) / v)
+        if not rows:
+            continue
+        A = np.array(rows) * np.array(weight)[:, None]
+        used = A.any(axis=0)
+        var, _ = nnls(A[:, used], np.array(rhs) * np.array(weight))
+        out[np.flatnonzero(used), j] = np.sqrt(var)
+    return out
+
+
+def overlap_precision(sigma: np.ndarray, support, floor_quantile: float = 0.25):
+    """1 / sigma^2 per (survey, parameter) from ``overlap_scatter``.
+
+    sigma is floored at the ``floor_quantile`` of that parameter's positive
+    estimates: the solve drives poorly constrained surveys to ~0, and the
+    best surveys should count equally, so only clearly noisier ones lose
+    weight. Unmeasured surveys get the largest measured sigma.
+    """
+    sigma = np.asarray(sigma, dtype="f8").copy()
+    for j in range(sigma.shape[1]):
+        known = np.isfinite(sigma[:, j])
+        positive = sigma[known, j][sigma[known, j] > 0]
+        if not len(positive):
+            sigma[:, j] = 1.0
+            continue
+        sigma[~known, j] = positive.max()
+        sigma[:, j] = np.maximum(sigma[:, j], np.quantile(positive, floor_quantile))
+    prec = 1.0 / sigma**2
+    return (prec * np.asarray(support)[:, :N_PARAM]).astype("f4")

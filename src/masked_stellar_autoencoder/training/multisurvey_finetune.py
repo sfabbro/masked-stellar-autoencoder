@@ -37,11 +37,17 @@ from masked_stellar_autoencoder.models.model import (
     _capture_rng_state,
 )
 
-from .conditional_survey_map import ConditionalSurveyMaps, coverage_grid
+from .conditional_survey_map import (
+    ConditionalSurveyMaps,
+    coverage_grid,
+    overlap_precision,
+    overlap_scatter,
+)
 from .six_survey_map import SixSurveyMap
 
 SURVEY_LABELS = 4  # Teff, log g, [Fe/H], [alpha]; age and parallax are not mapped
 LOGG = 1
+LABEL_INDEX = {"teff": 0, "logg": 1, "fe_h": 2, "alpha": 3}
 
 
 def scale_records(value: np.ndarray, scalers) -> np.ndarray:
@@ -84,6 +90,7 @@ class SurveyRecords:
         self.n = len(row)
         # Where each mapped survey has stars (for the conditional maps' gauge).
         self.coverage = coverage_grid(value, map_index[survey], row, len(mapped))
+        self._host = (row, value, map_index[survey])  # for overlap_scatter
 
     def gather(self, rows: torch.Tensor):
         """Record indices and their batch positions for table rows ``rows``."""
@@ -176,8 +183,7 @@ def trust_matrix(names, trust) -> np.ndarray | None:
     if not trust:
         return None
     out = np.ones((len(names), SURVEY_LABELS), dtype="f4")
-    columns = {"teff": 0, "logg": 1, "fe_h": 2, "alpha": 3}
-    cols = [columns[t] for t in trust.get("targets", list(columns))]
+    cols = [LABEL_INDEX[t] for t in trust.get("targets", list(LABEL_INDEX))]
     hit = np.array([n.startswith(tuple(trust["prefixes"])) for n in names])
     out[np.ix_(hit, cols)] = float(trust["factor"])
     return out
@@ -220,6 +226,8 @@ class MultiSurveyWrapper(TabResnetWrapper):
         trust=None,
         basis=8,
         hidden=64,
+        hard_targets=(),
+        precision="running",
     ):
         """``anchor_weight=None`` shares weight 1 across all records (v1);
         a number gives each anchor record that full weight instead.
@@ -228,11 +236,26 @@ class MultiSurveyWrapper(TabResnetWrapper):
         consensus (v1, v2). ``"conditional"``: maps on all four parameters
         with the local precision-weighted gauge (ConditionalSurveyMaps);
         ``trust`` is ``{"factor": f, "prefixes": [...], "targets": [...]}``.
+        ``hard_targets`` (names) hold the consensus exactly; ``precision`` is
+        ``"running"`` (from residuals, v3) or ``"overlap"`` (fixed, v4).
         """
         self.records = records
         self.map_kind = map_kind
         groups = survey_groups(records.mapped_names, consensus_groups)
         if map_kind == "conditional":
+            fixed = None
+            if precision == "overlap":
+                row, value, smap = records._host
+                sigma = overlap_scatter(
+                    value, smap, row, len(records.mapped_names), groups=groups
+                )
+                fixed = overlap_precision(sigma, records.support)
+                self.overlap_sigma = sigma
+                print("overlap scatter (scaled units): teff logg fe_h alpha")
+                for name, sg in zip(records.mapped_names, sigma, strict=True):
+                    print(f"  {name:30s} " + " ".join(f"{x:6.3f}" for x in sg))
+            elif precision != "running":
+                raise ValueError(f"unknown precision {precision!r}")
             self.survey_maps = ConditionalSurveyMaps(
                 records.support,
                 records.coverage,
@@ -240,6 +263,8 @@ class MultiSurveyWrapper(TabResnetWrapper):
                 groups=groups,
                 basis=int(basis),
                 hidden=int(hidden),
+                hard_targets=[LABEL_INDEX[t] for t in hard_targets],
+                precision=fixed,
             ).to(self.device)
         elif map_kind == "spline":
             self.survey_maps = build_survey_maps(
