@@ -1,0 +1,24 @@
+{
+  "run_id": "multisurvey_finetune_20261115_v4",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261115_v4",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_finetune_20261115_v4",
+  "source_commit": "b6df4c03fc0bdc0127c2971e3cadef6f6595c3ea",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261115-v4.yaml",
+  "utc": "2026-11-16T02:57:39.192473+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "y9jdyz1j"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 4,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261115-v4.yaml": "d88d5b93d91f94f94101dec798cc8f58818882a7ca87bd04e44f2f081a7eef75"
+  },
+  "payload_sha256": "3c8a9328bd61f192b3922c95e56f36f8f580b133a4d029c49b9c755f0b93f623"
+}
