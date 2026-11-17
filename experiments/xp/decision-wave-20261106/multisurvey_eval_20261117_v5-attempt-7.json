@@ -1,0 +1,26 @@
+{
+  "run_id": "multisurvey_eval_20261117_v5",
+  "attempt": 7,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_eval_20261117_v5",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_eval_20261117_v5-attempt-7",
+  "source_commit": "81872f95e1865c28a647d0333832559e86c479a0",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/predict_fits_rows.py --config configs/finetune-stopgap-20261113-v3.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/stopgap_finetune_20261113_v3/finetune_checkpoint_23.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --out \"$experiment_output/stopgap_test.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261115-v4.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261115_v4/finetune_checkpoint_23.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --out \"$experiment_output/multi_v4_test.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261117-v5.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261117_v5/finetune_checkpoint_11.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --out \"$experiment_output/multi_v5_test.npz\"",
+  "utc": "2026-11-17T09:01:20.998875+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "t95q5e8z"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261117-v5.yaml": "edf44b3e1a16e50e8acd69da661ce5175c93d12c6808d7fe1b2b7012b029f1b0",
+    "configs/finetune-multisurvey-20261115-v4.yaml": "d88d5b93d91f94f94101dec798cc8f58818882a7ca87bd04e44f2f081a7eef75",
+    "configs/finetune-stopgap-20261113-v3.yaml": "24ae76270d4130ecfe0bda1d09ef3e7221f1ee9433cc8ee5ebe8710d56cea0a6"
+  },
+  "payload_sha256": "084ad988ee7fc86399d7059f19c099c2f7cc8c4736e81524c88c779afcfe770e"
+}
