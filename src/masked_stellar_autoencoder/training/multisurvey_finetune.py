@@ -278,6 +278,50 @@ class MultiSurveyWrapper(TabResnetWrapper):
         self.map_reg_weight = float(map_reg_weight)
         self.anchor_weight = None if anchor_weight is None else float(anchor_weight)
 
+    def configure_semisupervised(
+        self, X, E, *, ratio=1.0, rec_weight=0.2, consistency_weight=0.1
+    ):
+        """Unlabelled stars (scaled like the training features) for each step.
+
+        Every training step also draws ``ratio`` x batch unlabelled stars:
+        masked reconstruction (``rec_weight``) keeps the encoder fitting the
+        whole Gaia population, not only the labelled sample, and a
+        consistency term (``consistency_weight``) asks two independent
+        maskings of a star for the same common-scale Teff, log g, [Fe/H] and
+        [alpha], which regularises the head where no label exists.
+        """
+        self.unl_X = torch.as_tensor(np.asarray(X), dtype=torch.float32)
+        self.unl_E = torch.as_tensor(np.asarray(E), dtype=torch.float32)
+        if self.unl_X.device.type == "cpu" and torch.cuda.is_available():
+            self.unl_X, self.unl_E = self.unl_X.pin_memory(), self.unl_E.pin_memory()
+        self.unl_ratio = float(ratio)
+        self.unl_rec_weight = float(rec_weight)
+        self.unl_cons_weight = float(consistency_weight)
+        self._unl_steps = 0
+        self._unl_sums = np.zeros(2)
+
+    def _unlabelled_loss(self, n, ctx):
+        """(reconstruction, consistency) on ``n`` random unlabelled stars."""
+        idx = torch.randint(len(self.unl_X), (n,))
+        xu = self.unl_X[idx].to(self.device, non_blocking=True)
+        eu = self.unl_E[idx].to(self.device, non_blocking=True)
+        xm1, mask1, nan1 = self._apply_batch_masking(xu, eu, ctx)
+        xm2, _, _ = self._apply_batch_masking(xu, eu, ctx)
+        if ctx.multitask:
+            recon, enc1 = self.model(xm1)
+            keep = mask1[:, : -self.diff] & nan1[:, : -self.diff]
+            e = eu[:, : -self.diff]
+            rec = self._rec_loss_fn(
+                xu[:, : -self.diff], recon, keep, 1.0 / (e * e + 1e-8)
+            )
+        else:
+            enc1 = self.model.encoder(xm1)
+            rec = xu.new_zeros(())
+        y1, y2 = self.ft(enc1), self.ft(self.model.encoder(xm2))
+        mid = y1.shape[-1] // 2
+        cons = (y1[:, :SURVEY_LABELS, mid] - y2[:, :SURVEY_LABELS, mid]).abs().mean()
+        return rec, cons
+
     # The loss -------------------------------------------------------------
     def _survey_label_loss(self, y_head, y_rest, rows):
         """Pinball over survey records (labels 0-3) and own labels (4-5)."""
@@ -373,6 +417,18 @@ class MultiSurveyWrapper(TabResnetWrapper):
                 reconstruction_w,
             )
             loss = ctx.ft_lambda_pred * loss + ctx.ft_lambda_rec * rec
+        if getattr(self, "unl_X", None) is not None and torch.is_grad_enabled():
+            n = max(1, int(round(self.unl_ratio * len(X_batch))))
+            rec_u, cons = self._unlabelled_loss(n, ctx)
+            loss = loss + self.unl_rec_weight * rec_u + self.unl_cons_weight * cons
+            self._unl_steps += 1
+            self._unl_sums += [float(rec_u.detach()), float(cons.detach())]
+            if self._unl_steps % 1000 == 0:
+                import logging
+
+                rec_m, cons_m = self._unl_sums / 1000
+                logging.info(f"Unlabelled: recon {rec_m:.4f} consistency {cons_m:.4f}")
+                self._unl_sums[:] = 0
         return loss
 
     # Maps join the optimizer, clipping and checkpoints ---------------------

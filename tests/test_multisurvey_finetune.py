@@ -127,3 +127,42 @@ def test_label_loss_runs_with_both_map_kinds():
         if kind == "conditional":
             assert w.survey_maps.static_weight[0, 2] == 10.0
             assert (w.survey_maps.precision[:, :3] > 0).all()  # seen this batch
+
+
+def test_unlabelled_stream_adds_reconstruction_and_consistency(tmp_path):
+    import h5py
+    from sklearn.preprocessing import RobustScaler
+
+    from masked_stellar_autoencoder.models.model import (
+        FinetuneContext,
+        PredictionHead,
+        make_model,
+    )
+    from masked_stellar_autoencoder.training.multisurvey_finetune import (
+        MultiSurveyWrapper,
+    )
+
+    cols = ["bp_1", "bp_2", "rp_1", "G", "BP", "PARALLAX"]
+    torch.manual_seed(0)
+    model = make_model(6, [16, 16], 4, "elu", 4, "layer")
+    with h5py.File(tmp_path / "d.h5", "w") as f:
+        f.create_dataset("train", data=np.zeros(2, [("G", "f4")]))
+        w = MultiSurveyWrapper(
+            model=model,
+            datafile=f,
+            scaler=RobustScaler().fit(np.random.rand(10, 6)),
+            feature_cols=cols,
+            error_cols=[None] * 6,
+            recon_cols=cols[:4],
+        )
+    w.device = "cpu"
+    w.ft = PredictionHead(16, 6, torch.nn.ReLU())
+    X = np.random.default_rng(0).normal(size=(50, 6)).astype("f4")
+    w.configure_semisupervised(X, np.ones_like(X), ratio=1.0)
+    names = FinetuneContext.__dataclass_fields__
+    ctx = FinetuneContext(**{k: None for k in names})
+    ctx.maskft, ctx.multitask, ctx.pert_features = True, True, False
+    rec, cons = w._unlabelled_loss(8, ctx)
+    (rec + cons).backward()
+    assert torch.isfinite(rec) and float(cons) > 0  # two maskings disagree a bit
+    assert any(p.grad is not None for p in w.ft.parameters())

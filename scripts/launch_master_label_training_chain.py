@@ -315,6 +315,58 @@ STEPS["ms-table"] = dict(
     ),
     files=[STOPGAP_CONFIG],
 )
+# v5: semi-supervised on a larger table with IRFM Teff anchors; the v1 table's
+# test stars are left out so every model is scored on them (ms-v5-eval).
+MS_TABLE_V5 = "multisurvey_table_20261117_v5"
+MS_V5 = (
+    "multisurvey_finetune_20261117_v5",
+    "configs/finetune-multisurvey-20261117-v5.yaml",
+)
+MS_V5_EPOCH = 12
+STEPS["ms-table-v5"] = dict(
+    run_id=MS_TABLE_V5,
+    gpu=0,
+    ram=192,
+    cpu=8,
+    command=(
+        "python -u scripts/build_stopgap_finetune_table.py"
+        f" --master {ROOT}{MASTER_R} --config {STOPGAP_CONFIG}"
+        " --references /arc/projects/k-pop/catalogues --irfm-anchors"
+        f" --exclude-test-of {ROOT}{MS_TABLE} --unlabelled-fraction 0.03"
+        f" --max-stars 8000000 --output {ROOT}{MS_TABLE_V5} --workers 8"
+    ),
+    files=[STOPGAP_CONFIG],
+)
+STEPS["ms-multi-v5"] = dict(
+    run_id=MS_V5[0],
+    gpu=1,
+    ram=192,
+    cpu=8,
+    command=(
+        "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+        f" --config {MS_V5[1]}"
+    ),
+    files=[MS_V5[1]],
+)
+_V5_EVAL = [
+    ("stopgap", MS_PAIR["ms-stopgap"], 23),
+    ("multi_v4", MS_PAIR["ms-multi-v4"], 23),
+    ("multi_v5", MS_V5, MS_V5_EPOCH),
+]
+STEPS["ms-v5-eval"] = dict(
+    run_id="multisurvey_eval_20261117_v5",
+    gpu=1,
+    ram=64,
+    command=" && ".join(
+        "python -u scripts/predict_fits_rows.py"
+        f" --config {_cfg} --checkpoint {ROOT}{_run}/finetune_checkpoint_{_ep}.pth"
+        f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --device cuda"
+        f' --out "$experiment_output/{_tag}_test.npz"'
+        for _tag, (_run, _cfg), _ep in _V5_EVAL
+    ),
+    files=[MS_V5[1], MS_PAIR["ms-multi-v4"][1], MS_PAIR["ms-stopgap"][1]],
+)
 for _name, (_run, _config) in MS_PAIR.items():
     STEPS[_name] = dict(
         run_id=_run,

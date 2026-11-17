@@ -5,6 +5,12 @@ in ``validation.fits``. Preprocessing matches finetune_data: non-finite
 features become NaN, the parallax column follows the config's astrometry
 policy, then the checkpoint's own feature scaler; labels are inverted with
 the checkpoint's label scalers.
+
+``--test-split CONFIG`` predicts only the test split that finetune_data
+gives the table under CONFIG (with table_row, as eval_ensemble's
+predictions.npz), so models trained on different tables are compared on
+the same stars with their own scalers. ``--irfm`` adds the photometric
+IRFM-scale Teff of each star (training.irfm_teff) for the Teff check.
 """
 
 import argparse
@@ -22,6 +28,8 @@ def main():
     p.add_argument("--fits", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--device", default="cpu")
+    p.add_argument("--test-split", type=Path, help="config whose test split to use")
+    p.add_argument("--irfm", action="store_true", help="also store IRFM-scale Teff")
     a = p.parse_args()
 
     from astropy.io import fits
@@ -43,19 +51,44 @@ def main():
     cols = config["data"]["feature_cols"]
     error_cols = config["data"]["error_cols"]
     pproc = config.get("preprocessing") or {}
+    rows = None
+    if a.test_split:
+        from masked_stellar_autoencoder.training.finetune_data import (
+            kept_rows,
+            split_row_positions,
+        )
+
+        split_cfg = yaml.safe_load(a.test_split.read_text())
+        kept = kept_rows(str(a.fits), split_cfg)
+        mp = split_cfg["finetuning"].get("metal_poor") or {}
+        rows = kept[split_row_positions(len(kept), mp)[2]]
     with fits.open(a.fits, memmap=True) as hdul:
         d = hdul[1].data
-        X = np.column_stack([np.asarray(d[c], dtype="f8") for c in cols])
+        take = slice(None) if rows is None else rows
+
+        def col(name):
+            return np.asarray(d[name][take], dtype="f8")
+
+        X = np.column_stack([col(c) for c in cols])
         E = np.column_stack(
-            [
-                np.asarray(d[e], dtype="f8") if e else np.full(len(d), np.nan)
-                for e in error_cols
-            ]
+            [col(e) if e else np.full(len(X), np.nan) for e in error_cols]
         )
-        source_id = np.asarray(d["source_id"], dtype="i8")
-        truth = np.column_stack(
-            [np.asarray(d[n], dtype="f8") for n in ("teff", "logg", "fe_h")]
-        )
+        source_id = np.asarray(d["source_id"][take], dtype="i8")
+        names = [n for n in ("teff", "logg", "fe_h", "alpha") if n in d.names]
+        truth = np.column_stack([col(n) for n in names])
+        extra = {}
+        if a.irfm:
+            from masked_stellar_autoencoder.training.irfm_teff import (
+                photometric_teff,
+            )
+
+            extra["teff_irfm"], extra["e_teff_irfm"] = photometric_teff(
+                *(col(n) for n in ("G", "BP", "RP", "J", "H", "KS", "EBV")),
+                col("logg"), col("fe_h"),
+            )  # fmt: skip
+        extra["G"], extra["EBV"] = col("G"), col("EBV")
+        if rows is not None:
+            extra["table_row"] = rows
     X[~np.isfinite(X)] = np.nan
     empty = np.empty((0, X.shape[1]))
     apply_parallax_input_policy(
@@ -96,6 +129,8 @@ def main():
         truth=truth,
         median=_inverse_labels(med, scalers, pack),
         quantiles=_inverse_quantile_block(q, scalers, pack),
+        truth_names=np.array(names),
+        **extra,
     )
     print("wrote", a.out, len(source_id), "stars")
 

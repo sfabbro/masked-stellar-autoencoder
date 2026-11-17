@@ -3,8 +3,10 @@
 usage: compare_multisurvey_pair.py DIR CENSUS_MANIFEST TAG=EVAL [TAG=EVAL ...]
        [--records NAME] [--gbs TAG=FILE ...]
 
-DIR holds each ``<EVAL>_predictions.npz`` and ``<EVAL>_metrics.json`` and the
-table's ``<NAME>_records.npz``. Reports held-out seismic log g (all seismic
+DIR holds each ``<EVAL>_predictions.npz`` (eval_ensemble) and the table's
+``<NAME>_records.npz``; an EVAL ending in ``.npz`` is a path to
+predict_fits_rows.py output with ``--test-split`` instead. All metrics are
+computed from the predictions, so both kinds compare alike. Reports held-out seismic log g (all seismic
 anchors together, no giant/dwarf split), [Fe/H] against high-resolution
 references by metallicity bin, metrics against the chosen label, each large
 survey's median offset from the common-scale prediction, and, with ``--gbs``,
@@ -46,7 +48,10 @@ def main():
     a = p.parse_args()
     D = a.dir
     models = pairs(a.models)
-    P = {t: np.load(f"{D}/{e}_predictions.npz") for t, e in models}
+    P = {
+        t: np.load(e if e.endswith(".npz") else f"{D}/{e}_predictions.npz")
+        for t, e in models
+    }
     R = np.load(f"{D}/{a.records}_records.npz")
     rows = next(iter(P.values()))["table_row"]
     for t, x in P.items():
@@ -79,13 +84,39 @@ def main():
         for t, x in P.items():
             print(f"  {lab:7s} {t:{w}s}", stats(x["median"][i[k], 2] - truth[k]))
 
+    if all("teff_irfm" in x for x in P.values()):
+        print("Teff vs photometric IRFM scale (low-reddening test stars):")
+        for t, x in P.items():
+            print(f"  {t:{w}s}", stats(x["median"][:, 0] - x["teff_irfm"]))
+
+    names4 = ("teff", "logg", "fe_h", "alpha")
     print("NMAD vs the one chosen label per star (the stopgap's training target):")
-    for t, e in models:
-        g = json.load(open(f"{D}/{e}_metrics.json"))
-        nm = {k: round(g["global_xp_on"][k]["NMAD"], 3) for k in ("teff", "logg", "fe_h", "alpha")}  # fmt: skip
-        mp = round(g["bins_feh_xp_on"]["feh_lt_m2"]["fe_h"]["NMAD"], 3)
-        cov = round(g["calibration_xp_on"]["fe_h"]["coverage_1sigma"], 3)
-        print(f"  {t:{w}s}", nm, "feh<-2:", mp, "cov:", cov)
+    for t, x in P.items():
+        tr, md, q = x["truth"][:, :4], x["median"][:, :4], x["quantiles"]
+        nm = {n: round(float(nmad(md[:, j] - tr[:, j])), 3) for j, n in enumerate(names4)}  # fmt: skip
+        mp = tr[:, 2] < -2
+        cov = (
+            np.isfinite(tr[:, 2]) & (q[:, 2, 0] <= tr[:, 2]) & (tr[:, 2] <= q[:, 2, 2])
+        )
+        cov = cov.sum() / np.isfinite(tr[:, 2]).sum()
+        print(f"  {t:{w}s}", nm, "feh<-2:", round(float(nmad(md[mp, 2] - tr[mp, 2])), 3), "cov:", round(float(cov), 3))  # fmt: skip
+
+    if all("G" in x for x in P.values()):
+        for key, edges in (
+            ("G", (0, 12, 14, 15.5, 17, 30)),
+            ("EBV", (0, 0.05, 0.2, 0.5, 9)),
+        ):
+            print(f"NMAD vs chosen label by {key} bin: Teff | log g | [Fe/H]")
+            for lo, hi in zip(edges[:-1], edges[1:], strict=True):
+                cells = []
+                for t, x in P.items():
+                    k = (x[key] >= lo) & (x[key] < hi)
+                    d = x["median"][k, :3] - x["truth"][k, :3]
+                    cells.append(
+                        f"{t} {nmad(d[:, 0]):4.0f} {nmad(d[:, 1]):.3f} {nmad(d[:, 2]):.3f}"
+                    )
+                n = int(((x[key] >= lo) & (x[key] < hi)).sum())
+                print(f"  {lo:>5}-{hi:<5} n={n:6d}  " + " | ".join(cells))
 
     print("Median (survey record - prediction), test stars: Teff | log g | [Fe/H]")
     for n in test[~test.anchor].name.value_counts().head(14).index:

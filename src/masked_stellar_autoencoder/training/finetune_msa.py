@@ -294,6 +294,52 @@ def main():
         )
 
 
+def unlabelled_arrays(semi, config, pack):
+    """Scaled (X, E) for the unlabelled pool, preprocessed like the trainset.
+
+    Mirrors prepare_finetune_arrays: non-finite to NaN, the parallax input
+    policy on raw values, missing errors filled with the training maximum,
+    then the training feature scaler.
+    """
+    from .astrometry_features import apply_parallax_input_policy
+
+    u = np.load(semi["path"], allow_pickle=False)
+    fields = [str(f) for f in u["fields"]]
+    data = u["features"]
+    cap = semi.get("max_stars")
+    if cap is not None and len(data) > int(cap):
+        keep = np.sort(np.random.default_rng(0).choice(len(data), int(cap), False))
+        data = data[keep]
+    cols = config["data"]["feature_cols"]
+    error_cols = config["data"]["error_cols"]
+    X = data[:, [fields.index(c) for c in cols]].astype("f8")
+    E = np.column_stack(
+        [
+            data[:, fields.index(e)].astype("f8") if e else np.full(len(data), np.nan)
+            for e in error_cols
+        ]
+    )
+    del data
+    X[~np.isfinite(X)] = np.nan
+    E[~np.isfinite(E)] = np.nan
+    pproc = config.get("preprocessing") or {}
+    empty = np.empty((0, X.shape[1]))
+    apply_parallax_input_policy(
+        X, empty.copy(), empty.copy(), E, empty.copy(), empty.copy(),
+        cols.index("PARALLAX"), pproc.get("astrometry_input_policy", "legacy_raw"),
+        snr_cap=float(pproc.get("astrometry_snr_cap", 10.0)),
+    )  # fmt: skip
+    scaler = pack["featurescaler"]
+    scale = np.where(scaler.scale_ <= 0, 1.0, scaler.scale_)
+    max_scaled = np.nanmax(pack["etrainset"], axis=0)  # training max / scale
+    E = E / scale
+    bad = ~np.isfinite(E) | (E <= 0)
+    E[bad] = np.broadcast_to(max_scaled, E.shape)[bad]
+    E[:, [e is None for e in error_cols]] = 1.0
+    X = scaler.transform(X)
+    return X.astype("f4"), E.astype("f4")
+
+
 def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
     """Append table rows to the label arrays and load the survey records."""
     from .finetune_data import kept_rows, split_row_positions
@@ -315,6 +361,8 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
     vlabelled_set = np.concatenate([vlabelled_set, valid[:, None]], axis=1)
     rec = dict(np.load(ms["records"], allow_pickle=False))
     n_table = int(rows.max()) + 1
+    semi = ms.get("unlabelled") or {}
+    unlabelled = unlabelled_arrays(semi, config, pack) if semi else None
 
     def configure(wrapper):
         records = SurveyRecords(rec, pack["scalers"], n_table, wrapper.device)
@@ -334,6 +382,14 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
             hard_targets=ms.get("hard_targets", ()),
             precision=ms.get("precision", "running"),
         )
+        if unlabelled is not None:
+            wrapper.configure_semisupervised(
+                *unlabelled,
+                ratio=float(semi.get("ratio", 1.0)),
+                rec_weight=float(semi.get("rec_weight", 0.2)),
+                consistency_weight=float(semi.get("consistency_weight", 0.1)),
+            )
+            print(f"semi-supervised: {len(unlabelled[0])} unlabelled stars")
         print(
             f"multi-survey: {records.n} records, {len(records.mapped_names)} mapped "
             f"surveys, anchors {[n for n, a in zip(records.names, records.is_anchor, strict=True) if a]}"
