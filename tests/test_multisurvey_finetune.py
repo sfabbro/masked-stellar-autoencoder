@@ -166,3 +166,14 @@ def test_unlabelled_stream_adds_reconstruction_and_consistency(tmp_path):
     (rec + cons).backward()
     assert torch.isfinite(rec) and float(cons) > 0  # two maskings disagree a bit
     assert any(p.grad is not None for p in w.ft.parameters())
+    # shrinking the common scale (which the survey maps could undo) must not
+    # lower the consistency term
+    head = w.ft
+    for k in (0.5, 0.1):
+        w.ft = lambda z, k=k: k * head(z)
+        torch.manual_seed(1)
+        _, c = w._unlabelled_loss(64, ctx)
+        torch.manual_seed(1)
+        w.ft = head
+        _, c1 = w._unlabelled_loss(64, ctx)
+        torch.testing.assert_close(c, c1, rtol=0.05, atol=0)

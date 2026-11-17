@@ -319,7 +319,13 @@ class MultiSurveyWrapper(TabResnetWrapper):
             rec = xu.new_zeros(())
         y1, y2 = self.ft(enc1), self.ft(self.model.encoder(xm2))
         mid = y1.shape[-1] // 2
-        cons = (y1[:, :SURVEY_LABELS, mid] - y2[:, :SURVEY_LABELS, mid]).abs().mean()
+        m1, m2 = y1[:, :SURVEY_LABELS, mid], y2[:, :SURVEY_LABELS, mid]
+        # Scale-invariant: the survey maps can stretch the common scale at no
+        # cost to the label loss, so a raw |m1 - m2| would be lowered by
+        # shrinking the common scale (seen in v5: [Fe/H] squeezed 2x, maps
+        # slope ~2). Dividing by the batch spread removes that incentive.
+        spread = 0.5 * (m1.std(0) + m2.std(0)) + 1e-6
+        cons = ((m1 - m2).abs().mean(0) / spread).mean()
         return rec, cons
 
     # The loss -------------------------------------------------------------

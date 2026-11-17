@@ -371,6 +371,38 @@ STEPS["ms-v5-eval"] = dict(
     ),
     files=[MS_V5[1], MS_PAIR["ms-multi-v4"][1], MS_PAIR["ms-stopgap"][1]],
 )
+# v6: v5 with the scale-invariant consistency term (see its config).
+MS_V6 = (
+    "multisurvey_finetune_20261117_v6",
+    "configs/finetune-multisurvey-20261117-v6.yaml",
+)
+MS_V6_EPOCH = 12
+STEPS["ms-multi-v6"] = dict(
+    run_id=MS_V6[0],
+    gpu=1,
+    ram=192,
+    cpu=8,
+    command=(
+        "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+        f" --config {MS_V6[1]}"
+    ),
+    files=[MS_V6[1]],
+)
+STEPS["ms-v6-eval"] = dict(
+    run_id="multisurvey_eval_20261117_v6",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=(
+        "python -u scripts/predict_fits_rows.py"
+        f" --config {MS_V6[1]}"
+        f" --checkpoint {ROOT}{MS_V6[0]}/finetune_checkpoint_{MS_V6_EPOCH}.pth"
+        f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm"
+        ' --out "$experiment_output/multi_v6_test.npz"'
+    ),
+    files=[MS_V6[1], MS_PAIR["ms-multi-v4"][1]],
+)
 for _name, (_run, _config) in MS_PAIR.items():
     STEPS[_name] = dict(
         run_id=_run,

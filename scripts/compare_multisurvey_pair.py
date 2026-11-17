@@ -135,7 +135,7 @@ def main():
         print("Gaia benchmark stars (prediction - reference): Teff | log g | [Fe/H]")
         for t, f in pairs(a.gbs):
             b = np.load(f)
-            d = b["median"][:, :3] - b["truth"]
+            d = b["median"][:, :3] - b["truth"][:, :3]
             cells = [stats(d[:, j]) for j in range(3)]
             print(f"  {t:{w}s} " + " | ".join(cells))
 
