@@ -1,0 +1,24 @@
+{
+  "run_id": "multisurvey_table_20261117_v5",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_table_20261117_v5",
+  "source_commit": "6bdbc9b78a0cfdf3bbf56be2bb7101ed46c98dad",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_stopgap_finetune_table.py --master /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261113_v1 --config configs/finetune-stopgap-20261113-v2.yaml --references /arc/projects/k-pop/catalogues --irfm-anchors --exclude-test-of /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1 --unlabelled-fraction 0.03 --max-stars 8000000 --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5 --workers 8",
+  "utc": "2026-11-17T00:04:30.540451+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "g4lvae7m"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-stopgap-20261113-v2.yaml": "392292a6cef44202ad6d3e272623337c23ecd922f4f678283b608752b08d7b0a"
+  },
+  "payload_sha256": "31474e43566ff8e3820e8d17addd102973e2f2a4cf9d98f5d5c84dc40dfa3707"
+}
