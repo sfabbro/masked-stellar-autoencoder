@@ -322,7 +322,7 @@ MS_V5 = (
     "multisurvey_finetune_20261117_v5",
     "configs/finetune-multisurvey-20261117-v5.yaml",
 )
-MS_V5_EPOCH = 12
+MS_V5_EPOCH = 11
 STEPS["ms-table-v5"] = dict(
     run_id=MS_TABLE_V5,
     gpu=0,
