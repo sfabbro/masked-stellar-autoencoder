@@ -1,0 +1,27 @@
+{
+  "run_id": "multisurvey_finetune_20261117_v5",
+  "attempt": 3,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261117_v5",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_finetune_20261117_v5-attempt-3",
+  "source_commit": "44ad2cd7ce9cd209efa2a1b28a663f89931ce253",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261117-v5.yaml",
+  "utc": "2026-11-17T01:40:24.071713+00:00",
+  "status": "submission_ambiguous",
+  "session_ids": [],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261117-v5.yaml": "edf44b3e1a16e50e8acd69da661ce5175c93d12c6808d7fe1b2b7012b029f1b0"
+  },
+  "payload_sha256": "801150db650d35b240032cd902c8a7df60cb4155881342704fcf270d34a9c209",
+  "error": "Server error '500 Internal Server Error' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+  "error_type": "HTTPStatusError",
+  "http_status": 500,
+  "response_body": "unexpected exception: java.lang.RuntimeException: io.kubernetes.client.openapi.ApiException: Message: \nHTTP response code: 404\nHTTP response body: {\"kind\":\"Status\",\"apiVersion\":\"v1\",\"metadata\":{},\"status\":\"Failure\",\"message\":\"jobs.batch \\\"skaha-headless-sfabbro-ze21jmpk\\\" not found\",\"reason\":\"NotFound\",\"details\":{\"name\":\"skaha-headless-sfabbro-ze21jmpk\",\"group\":\"batch\",\"kind\":\"jobs\"},\"code\":404}\n\nHTTP response headers: {audit-id=[7dbe4c23-0587-4828-932b-22e5257a9d4c], cache-control=[no-cache, private], content-length=[252], content-type=[application/json], date=[Tue, 17 Nov 2026 01:40:43 GMT], x-kubernetes-pf-flowschema-uid=[5261d138-8ed7-49d3-b604-d1ea13ab4d85], x-kubernetes-pf-prioritylevel-uid=[a5ff1007-00ce-4c87-9747-29b273b8a19a]}",
+  "response_body_truncated": false
+}
