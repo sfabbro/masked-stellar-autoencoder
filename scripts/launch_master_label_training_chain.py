@@ -360,7 +360,8 @@ STEPS["ms-v5-eval"] = dict(
     gpu=0,
     cpu=8,
     ram=64,
-    command=" && ".join(
+    # The entrypoint wraps only the first command in pixi run; wrap the rest.
+    command=' && "${pixi_run[@]}" '.join(
         "python -u scripts/predict_fits_rows.py"
         f" --config {_cfg} --checkpoint {ROOT}{_run}/finetune_checkpoint_{_ep}.pth"
         f" --fits {ROOT}{MS_TABLE}/finetune.fits"
