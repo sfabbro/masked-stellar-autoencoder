@@ -353,15 +353,18 @@ _V5_EVAL = [
     ("multi_v4", MS_PAIR["ms-multi-v4"], 23),
     ("multi_v5", MS_V5, MS_V5_EPOCH),
 ]
+# CPU: prediction on ~130k test stars needs no GPU, and the GPU node
+# keel-prod-g0123 fails with an NVML driver/library mismatch.
 STEPS["ms-v5-eval"] = dict(
     run_id="multisurvey_eval_20261117_v5",
-    gpu=1,
+    gpu=0,
+    cpu=8,
     ram=64,
     command=" && ".join(
         "python -u scripts/predict_fits_rows.py"
         f" --config {_cfg} --checkpoint {ROOT}{_run}/finetune_checkpoint_{_ep}.pth"
         f" --fits {ROOT}{MS_TABLE}/finetune.fits"
-        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --device cuda"
+        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm"
         f' --out "$experiment_output/{_tag}_test.npz"'
         for _tag, (_run, _cfg), _ep in _V5_EVAL
     ),
