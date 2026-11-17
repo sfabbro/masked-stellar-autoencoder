@@ -123,6 +123,7 @@ def main():
         model, head, [state], Xs, torch.device(a.device), 256,
         linear_probe=False, return_full_quantiles=True,
     )  # fmt: skip
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         a.out,
         source_id=source_id,
