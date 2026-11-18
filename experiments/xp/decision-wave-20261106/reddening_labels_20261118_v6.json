@@ -1,0 +1,24 @@
+{
+  "run_id": "reddening_labels_20261118_v6",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/reddening_labels_20261118_v6",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/reddening_labels_20261118_v6",
+  "source_commit": "24d6a9cc8a893f6e1287a99b308bdcc716b773bc",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_reddening_labels.py --fit-table /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits --split-config configs/finetune-multisurvey-20261118-v6.yaml --apply v5=/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits v1=/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --out \"$experiment_output\"",
+  "utc": "2026-11-18T01:13:30.822857+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "rrwfaenh"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261118-v6.yaml": "f9c7dc06463f0c74b15c76e1b8509c0a0f8295af33900cf7f8f1da4ec3fa3906"
+  },
+  "payload_sha256": "d126d7b4ec66fb2f91701c0514892e423af354738ba019a7fab92e378710c107"
+}
