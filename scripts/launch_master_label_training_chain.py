@@ -471,6 +471,7 @@ for _g, _names in GROUPS.items():
             + [
                 "python -u -m masked_stellar_autoencoder.training.finetune_msa"
                 f" --config {c} --max-train-rows {ABL_TRAIN_ROWS}"
+                f" > {ROOT}{ABL_RUN}/{n}/stdout.log 2>&1"
                 f" || echo ABLATION_FAILED {n}"
                 for c, n in zip(_cfgs, _names, strict=True)
             ]
