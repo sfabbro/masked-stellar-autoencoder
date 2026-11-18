@@ -427,7 +427,7 @@ MS_V7 = (
     "multisurvey_finetune_20261118_v7",
     "configs/finetune-multisurvey-20261118-v7.yaml",
 )
-MS_V7_EPOCH = 12  # set from anchor_metrics.jsonl (lowest score) before eval
+MS_V7_EPOCH = 9  # set from anchor_metrics.jsonl (lowest score) before eval
 STEPS["ms-multi-v7"] = dict(
     run_id=MS_V7[0],
     gpu=1,
