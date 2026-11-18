@@ -378,7 +378,7 @@ MS_V6 = (
     "multisurvey_finetune_20261118_v6",
     "configs/finetune-multisurvey-20261118-v6.yaml",
 )
-MS_V6_EPOCH = 12  # set from anchor_metrics.jsonl (lowest score) before eval
+MS_V6_EPOCH = 10  # set from anchor_metrics.jsonl (lowest score) before eval
 REDDENING_V6 = "reddening_labels_20261118_v6"
 STEPS["ms-reddening-v6"] = dict(
     run_id=REDDENING_V6,
