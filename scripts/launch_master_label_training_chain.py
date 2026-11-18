@@ -455,6 +455,27 @@ STEPS["ms-v7-eval"] = dict(
     ),
     files=[MS_V7[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# Label-free [Fe/H] consistency diagnostic: wide-binary (El-Badry+2021, MSMS,
+# R_chance < 0.1, both G < 17.65) and cluster members (Hunt & Reffert 2023,
+# p > 0.5, incl. globulars); targets in ROOT/consistency_targets_20261118.npz.
+CONSIST = "consistency_table_20261118"
+for _tag, (_run, _cfg), _ep in (("v6", MS_V6, MS_V6_EPOCH), ("v7", MS_V7, MS_V7_EPOCH)):
+    STEPS[f"ms-consist-{_tag}"] = dict(
+        run_id=f"consistency_pred_20261118_{_tag}",
+        gpu=0,
+        cpu=8,
+        ram=64,
+        command=(
+            "python -u scripts/build_consistency_table.py"
+            f" --targets {ROOT}consistency_targets_20261118.npz --config {MS_V6[1]}"
+            f" --output {ROOT}{CONSIST} --workers 8"
+            " && python -u scripts/predict_fits_rows.py"
+            f" --config {_cfg} --checkpoint {ROOT}{_run}/finetune_checkpoint_{_ep}.pth"
+            f" --fits {ROOT}{CONSIST}/stars.fits --condition-parallax 5"
+            f' --out "$experiment_output/consistency_{_tag}.npz"'
+        ),
+        files=[MS_V6[1], _cfg],
+    )
 # v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402
