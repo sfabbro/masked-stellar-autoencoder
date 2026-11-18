@@ -16,6 +16,7 @@ trainer (``multisurvey_finetune``):
 
 v7 options (all off by default, so v6 configs behave as before):
 
+* ``exclude_surveys``: drop sources entirely (e.g. redundant pipelines);
 * ``record_cuts``: drop records outside a survey's valid domain (e.g. SLAM,
   an M-dwarf model, above 3800 K);
 * ``censor``: a survey that cannot report [Fe/H] below its grid edge gives
@@ -105,7 +106,7 @@ class AnchoredRecords:
     def __init__(
         self, rec, scalers, label_names, n_rows, device, *, core=(),
         spectra_groups=None, linear_min=5000, full_min=50000, cuts=None,
-        censor=None, min_records=0, min_records_keep_core=True,
+        censor=None, min_records=0, min_records_keep_core=True, exclude=(),
     ):  # fmt: skip
         params = [str(p) for p in rec["parameters"]]
         cols = [params.index(p) for p in MAPPED]
@@ -118,6 +119,8 @@ class AnchoredRecords:
         is_anchor = np.asarray(rec["survey_is_anchor"], dtype=bool)
         is_core = np.array([_starts(n, core) for n in self.names])
         value = self._apply_cuts(survey, value, cuts)
+        gone = [self.names.index(n) for n in exclude or () if n in self.names]
+        value[np.isin(survey, gone)] = np.nan
         value = dedupe_spectra_groups(row, survey, value, self.names, spectra_groups)
         self.dropped = []
         if min_records:

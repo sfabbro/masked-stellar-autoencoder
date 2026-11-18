@@ -52,6 +52,31 @@ V7_MS = dict(
 POSENC = dict(scales=[1.0, 4.0, 16.0, 64.0], n=16, seed=0)
 DUST = dict(scales=[1.0, 4.0, 16.0, 64.0], n=32, hidden=128, seed=1)
 SMALL = dict(min_records=1000, min_records_keep_core=True)
+# The literature sources repeat the same measurements: SAGA holds 82-92 % of
+# Bensby+2014, Placco+2019, Li+2022, Yong+2021 and Aoki+2013 values
+# identically, JINAbase and PASTEL overlap SAGA and each other. One value per
+# star and parameter: the original paper first, compilations last.
+LITERATURE = [
+    "bensby2014", "aoki2013_segue", "li2022_lamost_subaru", "smss_yong2021",
+    "yong2013_program", "yong2013_literature", "rpa_hansen2018",
+    "rpa_holmbeck2020", "sakari2018_rpa", "ezzeddine2020_rpa", "roederer2014",
+    "kirby2010_highres", "kirby2010_dsph", "bestbrightest_placco2019",
+    "pristine_aguado2019", "smss_dacosta2019_t2", "smss_dacosta2019_t3",
+    "jinabase_2021", "saga_mw", "pastel_2020",
+]  # fmt: skip
+# APOGEE pipelines on the same spectra are already deduplicated (ASPCAP
+# first); the remaining fallbacks of The Payne are hot stars at its [Fe/H]
+# grid floor (learned noise 330 K), ApogeeNet adds 264 records, astroNN is a
+# network trained on ASPCAP labels.
+LEAN = ["sdss_dr19_astra_thepayne", "sdss_dr19_astra_apogeenet"]
+
+
+def _groups_plus_literature(v6):
+    g = copy.deepcopy(v6["multisurvey"]["spectra_groups"])
+    g["literature"] = list(LITERATURE)
+    return g
+
+
 # name: (base, multisurvey overrides, finetuning overrides)
 VARIANTS = {
     "a01_v6": ("v6", {}, {}),
@@ -72,12 +97,23 @@ VARIANTS = {
     "b05_v7_posenc": ("v7", {"context": {"features": ["EBV"], "posenc": POSENC}}, {}),
     "b06_v7_dust": ("v7", {"context": {"features": ["EBV"], "dust": DUST}}, {}),
     "b07_v7_noperturb": ("v7", {}, {"pert_features": False}),
+    "c01_v7_apogee_lean": ("v7", {"exclude_surveys": LEAN}, {}),
+    "c02_v7_litdedupe": ("v7", {"spectra_groups": "LIT"}, {}),
+    "c03_v7_lean_lit_noastronn": (
+        "v7",
+        {
+            "exclude_surveys": [*LEAN, "sdss_dr19_astra_astronn"],
+            "spectra_groups": "LIT",
+        },
+        {},
+    ),
 }
 GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
     "1": ["a01_v6", "a02_clean", "a03_censor", "a04_nopm"],
     "2": ["a05_nosky", "a06_small_noncore", "a07_small_all"],
     "3": ["b01_v7", "b02_v7_small", "b03_v7_ctx_ebv", "b04_v7_ctx_plx"],
     "4": ["b05_v7_posenc", "b06_v7_dust", "b07_v7_noperturb"],
+    "5": ["c01_v7_apogee_lean", "c02_v7_litdedupe", "c03_v7_lean_lit_noastronn"],
 }
 ABL_EPOCHS = 6
 ABL_TRAIN_ROWS = 1_200_000  # about 25 % of the v5 table's training split
@@ -107,7 +143,10 @@ def main():
     ABL.mkdir(exist_ok=True)
     for name, (base, ms, ft) in VARIANTS.items():
         c = copy.deepcopy(v6 if base == "v6" else v7)
-        c["multisurvey"].update(copy.deepcopy(ms))
+        ms = copy.deepcopy(ms)
+        if ms.get("spectra_groups") == "LIT":
+            ms["spectra_groups"] = _groups_plus_literature(v6)
+        c["multisurvey"].update(ms)
         c["finetuning"].update(ft)
         c["finetuning"]["num_epochs"] = ABL_EPOCHS
         c["finetuning"]["lr_scheduler_head_step_epochs"] = 4

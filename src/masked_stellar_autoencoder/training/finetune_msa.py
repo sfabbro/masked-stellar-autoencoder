@@ -384,6 +384,7 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                 cuts=ms.get("record_cuts"), censor=ms.get("censor"),
                 min_records=int(ms.get("min_records", 0)),
                 min_records_keep_core=bool(ms.get("min_records_keep_core", True)),
+                exclude=ms.get("exclude_surveys") or (),
             )  # fmt: skip
             context = None
             if ms.get("context"):

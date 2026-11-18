@@ -356,6 +356,9 @@ def test_record_cuts_and_min_records():
     _, r_all = _wrapper(rec, 600, min_records=250, min_records_keep_core=False)
     assert set(r_all.dropped) == {"core_a", "core_b"}
     assert r_all.counts[2].sum() == 0 and r_all.counts[0, 1] == 300
+    # exclude drops a source entirely.
+    _, r_ex = _wrapper(rec, 600, exclude=["big"])
+    assert r_ex.counts[4].sum() == 0 and r_ex.counts[2].sum() > 0
 
 
 def test_condition_on_observation_matches_gaussian_conditioning():
