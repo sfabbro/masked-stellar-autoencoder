@@ -1,0 +1,26 @@
+{
+  "run_id": "multisurvey_ablation_20261118_v7_g1",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7_g1",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_ablation_20261118_v7_g1-attempt-2",
+  "source_commit": "7d98173ea99c513022c9a9f5ced0d201b83d4f76",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "mkdir -p /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a02_clean /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a03_censor /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a04_nopm && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/a02_clean.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a02_clean/stdout.log 2>&1 || echo ABLATION_FAILED a02_clean && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/a03_censor.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a03_censor/stdout.log 2>&1 || echo ABLATION_FAILED a03_censor && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/a04_nopm.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/a04_nopm/stdout.log 2>&1 || echo ABLATION_FAILED a04_nopm",
+  "utc": "2026-11-18T19:02:11.809774+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "kwj00rr0"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/a02_clean.yaml": "15db9d3cd9f0666d452131ab266433f661f91ffc760525dca19f5deb7dd12acc",
+    "configs/ablation-20261118-v7/a03_censor.yaml": "a05326d9b7f81a84477236e14aa3e5c2bc38b8653a21cb8e398a034f26c4f53a",
+    "configs/ablation-20261118-v7/a04_nopm.yaml": "793cbe0a0491a5c5a7c13aa45dc4e6a317e3f7e8774d4cd08b4e959c177117d3"
+  },
+  "payload_sha256": "ef5fe7a1a71a3acc07f8b40c12ee48252057883207b92805058339c3b115ef00"
+}
