@@ -16,6 +16,7 @@ from masked_stellar_autoencoder.training.anchored_survey_map import (
     AnchoredSurveyMaps,
     StudentTHead,
     assign_tiers,
+    condition_on_observation,
     student_t_nll,
 )
 
@@ -159,7 +160,7 @@ def _synthetic_records(rng, n=600):
     return x, rec
 
 
-def _wrapper(rec, n):
+def _wrapper(rec, n, **record_kw):
     scalers = [StandardScaler().fit(np.array([[-1.0], [1.0]])) for _ in range(3)]
     for s in scalers:
         s.mean_[:] = 0.0
@@ -167,11 +168,12 @@ def _wrapper(rec, n):
     names = ["teff", "logg", "fe_h"]
     records = AnchoredRecords(
         rec, scalers, names, n, "cpu", core=("core_",), linear_min=100,
-        full_min=10**6,
+        full_min=10**6, **record_kw,
     )  # fmt: skip
     w = AnchoredMultiSurveyWrapper.__new__(AnchoredMultiSurveyWrapper)
     torch.nn.Module.__init__(w) if isinstance(w, torch.nn.Module) else None
     w.device = "cpu"
+    w.feature_cols = []
     w.label_scalers = scalers
     w.configure_anchored(records, names, map_reg_weight=1e-4)
     return w, records
@@ -286,3 +288,160 @@ def test_unlabelled_loss_is_finite_for_tiny_batches(n):
     ctx.multitask = False
     _, cons = w._unlabelled_loss(n, ctx)
     assert torch.isfinite(cons)
+
+
+def _fit_proxy(w, x, rng, steps=2000, degree=1):
+    """Fit a polynomial proxy "network" of a noisy truth; return its estimates."""
+    n = len(x)
+    u = torch.as_tensor(x + rng.normal(scale=0.1, size=x.shape), dtype=torch.float32)
+    feats = torch.cat([u**k for k in range(1, degree + 1)], dim=1)
+    W = torch.nn.Parameter(torch.zeros(3, feats.shape[1]))
+    with torch.no_grad():
+        W[:, :3] = 0.5 * torch.eye(3)
+    c = torch.nn.Parameter(torch.zeros(3))
+    raw = torch.nn.Parameter(torch.full((3,), -2.0))
+    opt = torch.optim.Adam([W, c, raw, *w.survey_maps.parameters()], lr=0.02)
+    rows = torch.arange(n)
+    for _ in range(steps):
+        opt.zero_grad()
+        mu = feats @ W.T + c
+        L = torch.diag_embed(torch.nn.functional.softplus(raw)).expand(n, 3, 3)
+        w._joint_loss(mu, L, torch.zeros(n, 0), None, rows).backward()
+        opt.step()
+    return (feats @ W.T + c).detach().numpy()
+
+
+def test_censoring_a_survey_floor_removes_the_metal_poor_bias():
+    """A big survey that cannot report [Fe/H] below a floor biases the scale's
+    low end upward when its floored values are taken at face value; treating
+    them as upper limits recovers the core references' scale. (Flexible proxy
+    network, few core stars, as for the real metal-poor tail.)"""
+    floor = -0.8
+    bias = {}
+    for censor in (None, {"big": {"fe_h": floor + 0.2}}):
+        torch.manual_seed(0)
+        rng = np.random.default_rng(1)
+        n = 600
+        x, rec = _synthetic_records(rng, n)
+        core = np.isin(rec["survey"], [2, 3])
+        keep = ~core | (np.cumsum(core) % 5 == 0)  # 40 stars per core survey
+        rec = {k: (v[keep] if k in ("row", "survey", "value", "error") else v)
+               for k, v in rec.items()}  # fmt: skip
+        big = rec["survey"] == 4
+        v = rec["value"][big, 2]
+        rec["value"][big, 2] = np.maximum(
+            v, floor + rng.normal(scale=0.05, size=v.shape)
+        )
+        w, records = _wrapper(rec, n, censor=censor)
+        assert records.n_censored == (0 if censor is None else int(
+            (rec["value"][big, 2] < floor + 0.2).sum()))  # fmt: skip
+        est = _fit_proxy(w, x, rng, steps=3000, degree=3)
+        low = x[:, 2] < -1.0
+        bias[censor is None] = float(np.median(est[low, 2] - x[low, 2]))
+    print("bias at the low end (face value, censored):", bias)
+    assert bias[True] > 0.15  # face value: low end pulled up
+    assert abs(bias[False]) < 0.05  # censored: unbiased
+
+
+def test_record_cuts_and_min_records():
+    rng = np.random.default_rng(0)
+    _, rec = _synthetic_records(rng, 600)
+    # A cut on the big survey's Teff drops whole records outside [lo, hi).
+    w_cut, r_cut = _wrapper(rec, 600, cuts={"big": {"teff": [None, 0.0]}})
+    big_t = rec["value"][rec["survey"] == 4, 0]
+    assert r_cut.counts[4, 2] == int((big_t < 0.0).sum())
+    # min_records drops small non-anchor surveys, keeping the core by default.
+    _, r_keep = _wrapper(rec, 600, min_records=250)
+    assert r_keep.dropped == []  # core_a/core_b (200) are core; anchors kept
+    _, r_all = _wrapper(rec, 600, min_records=250, min_records_keep_core=False)
+    assert set(r_all.dropped) == {"core_a", "core_b"}
+    assert r_all.counts[2].sum() == 0 and r_all.counts[0, 1] == 300
+
+
+def test_condition_on_observation_matches_gaussian_conditioning():
+    torch.manual_seed(0)
+    B, P = 4, 3
+    mu = torch.randn(B, P, dtype=torch.float64)
+    L = torch.tril(torch.randn(B, P, P, dtype=torch.float64)) + 2 * torch.eye(P)
+    z = torch.randn(B, dtype=torch.float64)
+    var = torch.full((B,), 0.3, dtype=torch.float64)
+    z[3] = float("nan")
+    loc, sd = condition_on_observation(mu, L, 2, z, var, nu=1e9)
+    for b in range(3):
+        S = (L[b] @ L[b].T).numpy()
+        m = mu[b].numpy()
+        s22 = S[2, 2] + 0.3
+        ref_loc = m + S[:, 2] * (z[b].item() - m[2]) / s22
+        ref_cov = S - np.outer(S[:, 2], S[:, 2]) / s22
+        np.testing.assert_allclose(loc[b].numpy(), ref_loc, rtol=1e-6)
+        np.testing.assert_allclose(sd[b].numpy() ** 2, np.diag(ref_cov), rtol=1e-5)
+    # No observation: unchanged location and marginal scale.
+    np.testing.assert_allclose(loc[3].numpy(), mu[3].numpy())
+    np.testing.assert_allclose(
+        sd[3].numpy(), (L[3] @ L[3].T).diagonal().sqrt().numpy(), rtol=1e-12
+    )
+    # Student-t: a surprising observation widens the conditional scale.
+    _, sd_t = condition_on_observation(mu, L, 2, mu[:, 2] + 10.0, var, nu=5.0)
+    _, sd_n = condition_on_observation(mu, L, 2, mu[:, 2] + 10.0, var, nu=1e9)
+    assert (sd_t[:, :2] > sd_n[:, :2]).all()
+
+
+def test_galactic_unit_vector_matches_astropy():
+    from astropy import units as u
+    from astropy.coordinates import SkyCoord
+
+    from masked_stellar_autoencoder.training.context_inputs import (
+        galactic_unit_vector,
+    )
+
+    rng = np.random.default_rng(0)
+    ra, dec = rng.uniform(0, 360, 50), np.degrees(np.arcsin(rng.uniform(-1, 1, 50)))
+    g = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame="icrs").galactic
+    ref = g.cartesian.xyz.value.T
+    got = galactic_unit_vector(
+        torch.as_tensor(ra, dtype=torch.float64),
+        torch.as_tensor(dec, dtype=torch.float64),
+    ).numpy()
+    np.testing.assert_allclose(got, ref, atol=1e-6)  # astropy matrix: 1e-7 apart
+
+
+def test_context_head_starts_identical_and_context_is_finite():
+    from sklearn.preprocessing import RobustScaler
+
+    from masked_stellar_autoencoder.training.context_inputs import ContextInputs
+
+    torch.manual_seed(0)
+    cols = ["G", "PARALLAX", "EBV", "RA", "DEC"]
+    raw = np.column_stack([
+        np.random.default_rng(0).normal(15, 1, 64),
+        np.random.default_rng(1).normal(3, 2, 64),
+        np.random.default_rng(2).uniform(0, 1, 64),
+        np.random.default_rng(3).uniform(0, 360, 64),
+        np.random.default_rng(4).uniform(-80, 80, 64),
+    ])  # fmt: skip
+    raw[0, 2] = np.nan
+    scaler = RobustScaler().fit(raw)
+    X = torch.as_tensor(scaler.transform(raw), dtype=torch.float32)
+    labels = ["teff", "logg", "fe_h", "ebv_star", "parallax"]
+    lsc = [StandardScaler().fit(np.array([[0.0], [1.0]])) for _ in labels]
+    y = torch.randn(64, 5)
+    spec = dict(features=["EBV"], posenc=dict(n=4), dust=dict(n=4, hidden=16))
+    ctx = ContextInputs(spec, cols, scaler, labels, lsc)
+    (values, visible), dust = ctx(X, None, y, torch.full((64, 5), 0.1))
+    assert values.shape == (64, ctx.dim) and visible.shape == values.shape
+    assert not bool(visible[0, 0]) and bool(visible[1, 0])
+    assert torch.isfinite(values[visible]).all()
+    assert torch.isnan(dust[0][0]) and torch.isfinite(dust[0][1:]).all()
+    loss = ctx.dust_loss(dust, y, torch.full((64, 5), 0.1))
+    loss.backward()
+    assert ctx.dust.net[0].weight.grad is not None
+    # The context starts as a no-op on the head.
+    act = torch.nn.ReLU()
+    h0 = StudentTHead(8, 5, act)
+    h1 = StudentTHead(8, 5, act, context_dim=ctx.dim)
+    h1.load_state_dict(h0.state_dict(), strict=False)
+    z = torch.randn(64, 8)
+    with torch.no_grad():
+        np.testing.assert_allclose(
+            h0(z).numpy(), h1(z, (values.detach(), visible)).numpy(), rtol=1e-6
+        )

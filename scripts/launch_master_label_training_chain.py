@@ -420,6 +420,63 @@ STEPS["ms-v6-eval"] = dict(
     ),
     files=[MS_V6[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# v7: v6 + clean label input, censored survey [Fe/H] floors, SLAM domain cut,
+# no proper motions / RA / Dec in the encoder (scripts/make_v7_configs.py).
+# Evaluation conditions the head on the measured Gaia parallax.
+MS_V7 = (
+    "multisurvey_finetune_20261118_v7",
+    "configs/finetune-multisurvey-20261118-v7.yaml",
+)
+MS_V7_EPOCH = 12  # set from anchor_metrics.jsonl (lowest score) before eval
+STEPS["ms-multi-v7"] = dict(
+    run_id=MS_V7[0],
+    gpu=1,
+    ram=192,
+    cpu=8,
+    command=(
+        "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+        f" --config {MS_V7[1]}"
+    ),
+    files=[MS_V7[1]],
+)
+STEPS["ms-v7-eval"] = dict(
+    run_id="multisurvey_eval_20261118_v7",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=(
+        "python -u scripts/predict_fits_rows.py"
+        f" --config {MS_V7[1]}"
+        f" --checkpoint {ROOT}{MS_V7[0]}/finetune_checkpoint_{MS_V7_EPOCH}.pth"
+        f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --condition-parallax 5"
+        f" --extra-labels {ROOT}{REDDENING_V6}/v1_reddening.npz"
+        ' --out "$experiment_output/multi_v7_test.npz"'
+    ),
+    files=[MS_V7[1], MS_PAIR["ms-multi-v4"][1]],
+)
+# v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
+# sessions run their variants in sequence (a failure does not stop the rest).
+from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402
+
+for _g, _names in GROUPS.items():
+    _cfgs = [f"configs/ablation-20261118-v7/{n}.yaml" for n in _names]
+    STEPS[f"ms-ablate-v7-{_g}"] = dict(
+        run_id=f"{ABL_RUN}_g{_g}",
+        gpu=1,
+        ram=192,
+        cpu=8,
+        command=' && "${pixi_run[@]}" '.join(
+            ["mkdir -p " + " ".join(f"{ROOT}{ABL_RUN}/{n}" for n in _names)]
+            + [
+                "python -u -m masked_stellar_autoencoder.training.finetune_msa"
+                f" --config {c} --max-train-rows {ABL_TRAIN_ROWS}"
+                f" || echo ABLATION_FAILED {n}"
+                for c, n in zip(_cfgs, _names, strict=True)
+            ]
+        ),
+        files=_cfgs,
+    )
 for _name, (_run, _config) in MS_PAIR.items():
     STEPS[_name] = dict(
         run_id=_run,

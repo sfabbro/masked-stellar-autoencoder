@@ -135,11 +135,23 @@ class StudentTHead(nn.Module):
     ``forward`` returns (N, P, 3) marginal 16/50/84 % quantiles, so code that
     expects the quantile head (evaluation, prediction) works unchanged;
     ``params`` returns (mu, L) for the likelihood.
+
+    With ``context_dim`` > 0, per-star metadata (``ctx`` = (values, visible),
+    see ``context_inputs``) conditions the latent additively through a
+    zero-initialised ``ContextLatent``, so the head is unchanged at step 0.
     """
 
-    def __init__(self, latent_size: int, n_labels: int, activation, nu: float = 5.0):
+    def __init__(
+        self, latent_size: int, n_labels: int, activation, nu: float = 5.0,
+        context_dim: int = 0,
+    ):  # fmt: skip
         super().__init__()
         self.n_labels, self.nu = n_labels, float(nu)
+        self.context = None
+        if context_dim:
+            from .context_latent import ContextLatent
+
+            self.context = ContextLatent(latent_size, context_dim)
         self.shared = nn.Sequential(
             nn.Linear(latent_size, 2048), activation,
             nn.Linear(2048, 2048), activation,
@@ -158,7 +170,11 @@ class StudentTHead(nn.Module):
 
         self.q84 = float(student_t.ppf(0.84, self.nu))
 
-    def params(self, z: torch.Tensor):
+    def params(self, z: torch.Tensor, ctx=None):
+        if self.context is not None:
+            if ctx is None:
+                raise ValueError("This head needs its metadata context")
+            z = self.context(z, *ctx)
         h = self.shared(z)
         mu = self.loc(h)
         scale = nn.functional.softplus(self.log_scale(h)) + 1e-3
@@ -170,8 +186,8 @@ class StudentTHead(nn.Module):
             )
         return mu, L
 
-    def forward(self, z: torch.Tensor) -> torch.Tensor:
-        mu, L = self.params(z)
+    def forward(self, z: torch.Tensor, ctx=None) -> torch.Tensor:
+        mu, L = self.params(z, ctx)
         sd = L.square().sum(-1).sqrt()
         return torch.stack([mu - self.q84 * sd, mu, mu + self.q84 * sd], dim=2)
 
@@ -203,3 +219,49 @@ def student_t_nll(resid, A, L, noise_var, valid, nu):
         - (nu + d) / 2 * torch.log1p(q / nu)
     )  # fmt: skip
     return -logp, d
+
+
+def censored_upper_nll(upper, mean, var):
+    """-log P(y <= upper) for y ~ N(mean, var): a record at a survey's floor.
+
+    A survey that cannot report [Fe/H] below its grid edge says only that the
+    star is at or below ``upper`` (floor + margin). The Gaussian CDF stands in
+    for the Student-t one (torch has no t CDF); the term only bites when the
+    prediction sits above the limit, where the two agree to first order.
+    """
+    return -torch.special.log_ndtr((upper - mean) / var.clamp_min(1e-12).sqrt())
+
+
+def condition_on_observation(mu, L, j, z, var, nu):
+    """Condition the head's joint Student-t on a noisy observation of label j.
+
+    The head gives x ~ t_nu(mu, S = L L^T) per star. An independent
+    measurement z = x_j + e, e ~ N(0, var) (approximated as part of the same
+    t), updates every label: the conditional of a multivariate t is a t with
+    nu + 1 degrees of freedom, location mu + S[:, j] (z - mu_j) / s_jj and
+    scale (S - S[:, j] S[j, :] / s_jj) (nu + q) / (nu + 1), with
+    s_jj = S_jj + var and q = (z - mu_j)^2 / s_jj. Rows where z or var is not
+    finite are returned unchanged. Returns (location, marginal scale) per row;
+    the conditional t has nu + 1 degrees of freedom (unconditioned rows: nu).
+
+    Used at inference with Gaia parallax: the head is trained with parallax as
+    an own label, so its covariance links parallax to log g and Teff without
+    any stellar model, and conditioning uses the measurement without letting
+    the network copy it.
+    """
+    S = L @ L.transpose(1, 2)
+    ok = torch.isfinite(z) & torch.isfinite(var) & (var >= 0)
+    zj = torch.where(ok, z, mu[:, j])
+    vj = torch.where(ok, var, torch.zeros_like(var))
+    s_col = S[:, :, j]
+    s_jj = S[:, j, j] + vj
+    r = zj - mu[:, j]
+    loc = mu + s_col * (r / s_jj)[:, None]
+    q = r * r / s_jj
+    cond = S - s_col[:, :, None] * s_col[:, None, :] / s_jj[:, None, None]
+    factor = (nu + q) / (nu + 1)
+    sd_c = (torch.diagonal(cond, dim1=1, dim2=2).clamp_min(0) * factor[:, None]).sqrt()
+    sd_0 = torch.diagonal(S, dim1=1, dim2=2).sqrt()
+    loc = torch.where(ok[:, None], loc, mu)
+    sd = torch.where(ok[:, None], sd_c, sd_0)
+    return loc, sd

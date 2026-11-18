@@ -370,13 +370,29 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
     if ms.get("formulation") == "anchored":
         from .anchored_multisurvey import AnchoredMultiSurveyWrapper, AnchoredRecords
 
+        drop = list(ms.get("drop_input_features") or [])
+        if unlabelled is not None and drop:
+            cols = config["data"]["feature_cols"]
+            unlabelled[0][:, [cols.index(c) for c in drop]] = np.nan
+
         def configure_anchored(wrapper):
             records = AnchoredRecords(
                 rec, pack["scalers"], pack["label_names"], n_table, wrapper.device,
                 core=ms.get("fe_h_core", ()), spectra_groups=ms.get("spectra_groups"),
                 linear_min=int(ms.get("linear_min", 5000)),
                 full_min=int(ms.get("full_min", 50000)),
+                cuts=ms.get("record_cuts"), censor=ms.get("censor"),
+                min_records=int(ms.get("min_records", 0)),
+                min_records_keep_core=bool(ms.get("min_records_keep_core", True)),
             )  # fmt: skip
+            context = None
+            if ms.get("context"):
+                from .context_inputs import ContextInputs
+
+                context = ContextInputs(
+                    ms["context"], config["data"]["feature_cols"],
+                    pack["featurescaler"], pack["label_names"], pack["scalers"],
+                )  # fmt: skip
             wrapper.configure_anchored(
                 records, pack["label_names"], nu=float(ms.get("nu", 5.0)),
                 basis=int(ms.get("basis", 8)), hidden=int(ms.get("hidden", 64)),
@@ -384,6 +400,9 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                 slope_weight=float(ms.get("slope_weight", 0.01)),
                 monotone_weight=float(ms.get("monotone_weight", 1.0)),
                 error_fill=pack.get("error_fill"),
+                label_input=ms.get("label_input", "masked"),
+                drop_input_features=drop, context=context,
+                dust_weight=float(ms.get("dust_weight", 1.0)),
             )  # fmt: skip
             if unlabelled is not None:
                 wrapper.configure_semisupervised(
