@@ -36,6 +36,9 @@ from __future__ import annotations
 import json
 import logging
 import math
+import resource
+import time
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -516,10 +519,18 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
             kw["X_val"], kw["y_val"], kw.get("eX_val"), kw.get("e_y_val")
         )
         m["epoch"] = self._val_epoch
+        # Peak resident memory of this process (diagnoses killed sessions).
+        m["max_rss_gb"] = round(
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e6, 1
+        )
         logging.info("Anchor metrics: " + json.dumps(m))
         print("Anchor metrics:", json.dumps(m), flush=True)
         base = self.ft_save_str.rsplit(".", 1)[0]
-        with open(f"{base}_anchor_metrics.jsonl", "a") as f:
+        path = Path(f"{base}_anchor_metrics.jsonl")
+        if self._val_epoch == 1 and path.exists():
+            # A rerun starts from scratch: keep the old epochs aside, unmixed.
+            path.rename(path.with_name(f"{path.name}.{int(time.time())}.old"))
+        with open(path, "a") as f:
             f.write(json.dumps(m) + "\n")
 
     # Checkpoints ------------------------------------------------------------------

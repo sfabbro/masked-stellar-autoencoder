@@ -109,9 +109,10 @@ VARIANTS = {
     ),
 }
 GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
-    "1": ["a01_v6", "a02_clean", "a03_censor", "a04_nopm"],
+    # a01_v6 and b01_v7 finished before the 18:30-18:55 UTC session losses.
+    "1": ["a02_clean", "a03_censor", "a04_nopm"],
     "2": ["a05_nosky", "a06_small_noncore", "a07_small_all"],
-    "3": ["b01_v7", "b02_v7_small", "b03_v7_ctx_ebv", "b04_v7_ctx_plx"],
+    "3": ["b02_v7_small", "b03_v7_ctx_ebv", "b04_v7_ctx_plx"],
     "4": ["b05_v7_posenc", "b06_v7_dust", "b07_v7_noperturb"],
     "5": ["c01_v7_apogee_lean", "c02_v7_litdedupe", "c03_v7_lean_lit_noastronn"],
 }
