@@ -43,18 +43,19 @@ from .finetune_data import prepare_finetune_arrays
 def _inverse_labels(
     y_scaled: np.ndarray, scalers, pack: dict[str, Any] | None = None
 ) -> np.ndarray:
-    """y_scaled: (N, 6) in training label space; inverse to physical units for metrics."""
+    """y_scaled: (N, L) in training label space (parallax last); physical units."""
     out = np.zeros_like(y_scaled, dtype=np.float64)
+    last = y_scaled.shape[1] - 1
     parallax_space = "linear_mas"
     teff_space = "linear"
     if pack is not None:
         parallax_space = pack.get("parallax_target_space", "linear_mas")
         teff_space = pack.get("teff_target_space", "linear")
-    for i in range(6):
+    for i in range(y_scaled.shape[1]):
         col = scalers[i].inverse_transform(y_scaled[:, i].reshape(-1, 1)).ravel()
-        if i == 5 and parallax_space == "log10_mas":
+        if i == last and parallax_space == "log10_mas":
             out[:, i] = np.power(10.0, col)
-        elif i == 5 and parallax_space == "asinh_mas":
+        elif i == last and parallax_space == "asinh_mas":
             out[:, i] = np.sinh(col)
         elif i == 0 and teff_space == "log10":
             out[:, i] = np.power(10.0, col)
@@ -80,9 +81,9 @@ def _inverse_quantile_block(
     for j in range(ell):
         for k in range(3):
             col = scalers[j].inverse_transform(y_q[:, j, k].reshape(-1, 1)).ravel()
-            if j == 5 and parallax_space == "log10_mas":
+            if j == ell - 1 and parallax_space == "log10_mas":
                 out[:, j, k] = np.power(10.0, col)
-            elif j == 5 and parallax_space == "asinh_mas":
+            elif j == ell - 1 and parallax_space == "asinh_mas":
                 out[:, j, k] = np.sinh(col)
             elif j == 0 and teff_space == "log10":
                 out[:, j, k] = np.power(10.0, col)

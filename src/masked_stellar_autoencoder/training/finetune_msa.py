@@ -322,6 +322,9 @@ def unlabelled_arrays(semi, config, pack):
     del data
     X[~np.isfinite(X)] = np.nan
     E[~np.isfinite(E)] = np.nan
+    if pack.get("error_fill") is not None:  # as _split_data, before the policy
+        fill = np.broadcast_to(np.asarray(pack["error_fill"]), E.shape)
+        E = np.where(np.isfinite(E), E, fill)
     pproc = config.get("preprocessing") or {}
     empty = np.empty((0, X.shape[1]))
     apply_parallax_input_policy(
@@ -363,6 +366,41 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
     n_table = int(rows.max()) + 1
     semi = ms.get("unlabelled") or {}
     unlabelled = unlabelled_arrays(semi, config, pack) if semi else None
+
+    if ms.get("formulation") == "anchored":
+        from .anchored_multisurvey import AnchoredMultiSurveyWrapper, AnchoredRecords
+
+        def configure_anchored(wrapper):
+            records = AnchoredRecords(
+                rec, pack["scalers"], pack["label_names"], n_table, wrapper.device,
+                core=ms.get("fe_h_core", ()), spectra_groups=ms.get("spectra_groups"),
+                linear_min=int(ms.get("linear_min", 5000)),
+                full_min=int(ms.get("full_min", 50000)),
+            )  # fmt: skip
+            wrapper.configure_anchored(
+                records, pack["label_names"], nu=float(ms.get("nu", 5.0)),
+                basis=int(ms.get("basis", 8)), hidden=int(ms.get("hidden", 64)),
+                map_reg_weight=float(ms.get("map_reg_weight", 1e-3)),
+                slope_weight=float(ms.get("slope_weight", 0.01)),
+                monotone_weight=float(ms.get("monotone_weight", 1.0)),
+                error_fill=pack.get("error_fill"),
+            )  # fmt: skip
+            if unlabelled is not None:
+                wrapper.configure_semisupervised(
+                    *unlabelled,
+                    ratio=float(semi.get("ratio", 1.0)),
+                    rec_weight=float(semi.get("rec_weight", 0.2)),
+                    consistency_weight=float(semi.get("consistency_weight", 0.0)),
+                )
+                print(f"semi-supervised: {len(unlabelled[0])} unlabelled stars")
+            print(f"anchored multi-survey: {records.n} records")
+
+        return (
+            AnchoredMultiSurveyWrapper,
+            configure_anchored,
+            labelled_set,
+            vlabelled_set,
+        )
 
     def configure(wrapper):
         records = SurveyRecords(rec, pack["scalers"], n_table, wrapper.device)

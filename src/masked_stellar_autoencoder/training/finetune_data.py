@@ -71,16 +71,23 @@ def kept_rows(path: str, config: dict[str, Any]) -> np.ndarray:
     """Rows of the fine-tune table that survive ``_filter_metal_poor``."""
     columns = ["fe_h", "e_fe_h", "teff"]
     frame = _read_selected_fits(path, columns)
+    frame["_row"] = np.arange(len(frame))
     mp = config["finetuning"].get("metal_poor") or {}
     kept, _ = _filter_metal_poor(frame, frame, mp)
-    return kept.index.to_numpy()
+    # _filter_metal_poor resets the index, so carry the table row explicitly.
+    return kept["_row"].to_numpy()
+
+
+def error_fill_values(errordata: pd.DataFrame) -> pd.Series:
+    """Per-feature value for missing errors: 90th percentile, else median, else 1."""
+    q90 = errordata.quantile(0.9)
+    return q90.fillna(errordata.median()).fillna(1.0)
 
 
 def _split_data(
     data: pd.DataFrame, errordata: pd.DataFrame, mp: dict[str, Any]
 ) -> tuple[np.ndarray, ...]:
-    err_safe = errordata.fillna(errordata.quantile(0.9))
-    errordata = err_safe.fillna(err_safe.median()).fillna(1.0)
+    errordata = errordata.fillna(error_fill_values(errordata))
 
     stratify_labels = None
     if mp.get("stratify_feh"):
@@ -148,6 +155,29 @@ def _get_scaler_cls(label_scaler_kind: str) -> Any:
         raise ValueError(
             f"preprocessing.label_scaler must be 'standard', 'robust', or 'power', got {label_scaler_kind!r}"
         )
+
+
+def _extra_columns(config: dict[str, Any]) -> dict[str, np.ndarray]:
+    """Label columns kept outside the FITS table (``data.extra_columns``).
+
+    Each entry is an npz with ``source_id`` in table row order plus columns
+    (e.g. build_reddening_labels.py output); its source_id must match the
+    table's.
+    """
+    out = {}
+    paths = config["data"].get("extra_columns") or []
+    if not paths:
+        return out
+    sid = _read_selected_fits(config["data"]["ft_datafile"], ["source_id"])
+    sid = sid["source_id"].to_numpy("i8")
+    for path in paths:
+        with np.load(path, allow_pickle=False) as z:
+            if not np.array_equal(z["source_id"], sid):
+                raise ValueError(f"{path}: source_id does not match the table rows")
+            for name in z.files:
+                if name != "source_id":
+                    out[name] = np.asarray(z[name], dtype="f8")
+    return out
 
 
 def _read_selected_fits(path: str, columns: list[str]) -> pd.DataFrame:
@@ -432,7 +462,13 @@ def prepare_finetune_arrays(
             [*classes, *cols, *(error for error in error_cols if error is not None)]
         )
     )
+    extra = _extra_columns(config)
+    required_columns = [c for c in required_columns if c not in extra]
     source_data = _read_selected_fits(config["data"]["ft_datafile"], required_columns)
+    for name, values in extra.items():
+        if len(values) != len(source_data):
+            raise ValueError(f"extra column {name!r} does not match the table rows")
+        source_data[name] = values
     data = source_data[classes + cols]
     errordata = pd.DataFrame(
         {
@@ -446,6 +482,7 @@ def prepare_finetune_arrays(
 
     mp = config["finetuning"].get("metal_poor") or {}
     data, errordata = _filter_metal_poor(data, errordata, mp)
+    error_fill = error_fill_values(errordata)
 
     trainset, validset, testset, etrainset, evalidset, etestset = _split_data(
         data, errordata, mp
@@ -553,7 +590,7 @@ def prepare_finetune_arrays(
     target_set = np.concatenate(
         [target_set, target_parallax_phys.reshape(-1, 1)], axis=1
     )
-    label_names = ["teff", "logg", "fe_h", "alpha", "age", "parallax"]
+    label_names = [*classes[::2], "parallax"]
 
     vlabelled_set = np.concatenate(
         [vlabelled_set, np.asarray(vlabel, dtype=np.float32).reshape(-1, 1)], axis=1
@@ -605,4 +642,5 @@ def prepare_finetune_arrays(
         "target_e_parallax_mas": target_e_parallax_mas,
         "test_G_mag": test_G_mag,
         "test_ebv": test_ebv,
+        "error_fill": error_fill.to_numpy("f8"),
     }

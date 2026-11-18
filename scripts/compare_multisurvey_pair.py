@@ -11,6 +11,8 @@ anchors together, no giant/dwarf split), [Fe/H] against high-resolution
 references by metallicity bin, metrics against the chosen label, each large
 survey's median offset from the common-scale prediction, and, with ``--gbs``,
 residuals on the Gaia benchmark stars (predict_fits_rows.py output).
+Labels follow each file's ``truth_names`` (v6 has E(B-V) and no alpha);
+``cov`` is the fraction of reference values inside the 16-84 % interval.
 """
 
 import argparse
@@ -32,6 +34,14 @@ def stats(d):
     if not len(d):
         return "n=     0"
     return f"n={len(d):6d} bias={np.median(d):+.3f} nmad={nmad(d):.3f}"
+
+
+def cover(x, j, truth, idx=None):
+    """Fraction of ``truth`` inside the model's 16-84 % interval of label j."""
+    q = x["quantiles"] if idx is None else x["quantiles"][idx]
+    ok = np.isfinite(truth)
+    inside = (q[ok, j, 0] <= truth[ok]) & (truth[ok] <= q[ok, j, 2])
+    return f"cov={inside.mean():.2f}" if ok.any() else ""
 
 
 def pairs(items):
@@ -74,7 +84,11 @@ def main():
     i = pos[seis.index].to_numpy()
     print("Held-out seismic log g (test stars with a seismic record):")
     for t, x in P.items():
-        print(f"  {t:{w}s}", stats(x["median"][i, 1] - seis.to_numpy()))
+        print(
+            f"  {t:{w}s}",
+            stats(x["median"][i, 1] - seis.to_numpy()),
+            cover(x, 1, seis.to_numpy(), i),
+        )
 
     hr = test[test.name.isin(highres)].groupby("row").feh.median().dropna()
     i, truth = pos[hr.index].to_numpy(), hr.to_numpy()
@@ -87,12 +101,16 @@ def main():
     if all("teff_irfm" in x for x in P.values()):
         print("Teff vs photometric IRFM scale (low-reddening test stars):")
         for t, x in P.items():
-            print(f"  {t:{w}s}", stats(x["median"][:, 0] - x["teff_irfm"]))
+            print(
+                f"  {t:{w}s}",
+                stats(x["median"][:, 0] - x["teff_irfm"]),
+                cover(x, 0, x["teff_irfm"]),
+            )
 
-    names4 = ("teff", "logg", "fe_h", "alpha")
     print("NMAD vs the one chosen label per star (the stopgap's training target):")
     for t, x in P.items():
-        tr, md, q = x["truth"][:, :4], x["median"][:, :4], x["quantiles"]
+        names4 = [str(n) for n in x["truth_names"]]
+        tr, md, q = x["truth"], x["median"][:, : len(names4)], x["quantiles"]
         nm = {n: round(float(nmad(md[:, j] - tr[:, j])), 3) for j, n in enumerate(names4)}  # fmt: skip
         mp = tr[:, 2] < -2
         cov = (
@@ -117,6 +135,18 @@ def main():
                     )
                 n = int(((x[key] >= lo) & (x[key] < hi)).sum())
                 print(f"  {lo:>5}-{hi:<5} n={n:6d}  " + " | ".join(cells))
+
+    red = {t: x for t, x in P.items() if "ebv_star" in list(x["truth_names"])}
+    if red:
+        print("E(B-V) vs empirical-colour labels (test stars): all | map E(B-V) bins")
+        for t, x in red.items():
+            j = list(x["truth_names"]).index("ebv_star")
+            d = x["median"][:, j] - x["truth"][:, j]
+            cells = [stats(d), cover(x, j, x["truth"][:, j])]
+            for lo, hi in ((0, 0.05), (0.05, 0.3), (0.3, 9)):
+                k = (x["EBV"] >= lo) & (x["EBV"] < hi)
+                cells.append(f"[{lo}-{hi}] " + stats(d[k]))
+            print(f"  {t:{w}s} " + " | ".join(cells))
 
     print("Median (survey record - prediction), test stars: Teff | log g | [Fe/H]")
     for n in test[~test.anchor].name.value_counts().head(14).index:

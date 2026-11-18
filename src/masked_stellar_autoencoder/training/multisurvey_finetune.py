@@ -300,8 +300,19 @@ class MultiSurveyWrapper(TabResnetWrapper):
         self._unl_steps = 0
         self._unl_sums = np.zeros(2)
 
-    def _unlabelled_loss(self, n, ctx):
-        """(reconstruction, consistency) on ``n`` random unlabelled stars."""
+    def _log_unlabelled(self, rec_u, cons):
+        self._unl_steps += 1
+        self._unl_sums += [float(rec_u.detach()), float(cons.detach())]
+        if self._unl_steps % 1000 == 0:
+            import logging
+
+            rec_m, cons_m = self._unl_sums / 1000
+            logging.info(f"Unlabelled: recon {rec_m:.4f} consistency {cons_m:.4f}")
+            self._unl_sums[:] = 0
+
+    def _unlabelled_loss(self, n, ctx, consistency=True):
+        """(reconstruction, consistency) on ``n`` (>= 2) random unlabelled stars."""
+        n = max(2, int(n))  # the consistency spread needs two stars
         idx = torch.randint(len(self.unl_X), (n,))
         xu = self.unl_X[idx].to(self.device, non_blocking=True)
         eu = self.unl_E[idx].to(self.device, non_blocking=True)
@@ -317,6 +328,8 @@ class MultiSurveyWrapper(TabResnetWrapper):
         else:
             enc1 = self.model.encoder(xm1)
             rec = xu.new_zeros(())
+        if not consistency:
+            return rec, rec.new_zeros(())
         y1, y2 = self.ft(enc1), self.ft(self.model.encoder(xm2))
         mid = y1.shape[-1] // 2
         m1, m2 = y1[:, :SURVEY_LABELS, mid], y2[:, :SURVEY_LABELS, mid]
@@ -427,14 +440,7 @@ class MultiSurveyWrapper(TabResnetWrapper):
             n = max(1, int(round(self.unl_ratio * len(X_batch))))
             rec_u, cons = self._unlabelled_loss(n, ctx)
             loss = loss + self.unl_rec_weight * rec_u + self.unl_cons_weight * cons
-            self._unl_steps += 1
-            self._unl_sums += [float(rec_u.detach()), float(cons.detach())]
-            if self._unl_steps % 1000 == 0:
-                import logging
-
-                rec_m, cons_m = self._unl_sums / 1000
-                logging.info(f"Unlabelled: recon {rec_m:.4f} consistency {cons_m:.4f}")
-                self._unl_sums[:] = 0
+            self._log_unlabelled(rec_u, cons)
         return loss
 
     # Maps join the optimizer, clipping and checkpoints ---------------------

@@ -371,12 +371,28 @@ STEPS["ms-v5-eval"] = dict(
     ),
     files=[MS_V5[1], MS_PAIR["ms-multi-v4"][1], MS_PAIR["ms-stopgap"][1]],
 )
-# v6: v5 with the scale-invariant consistency term (see its config).
+# v6: anchored formulation (see its config). Reddening labels first (CPU):
+# intrinsic colours fitted on the v5 table's training split, applied to the
+# v5 table (training) and the v1 table (evaluation on its test stars).
 MS_V6 = (
-    "multisurvey_finetune_20261117_v6",
-    "configs/finetune-multisurvey-20261117-v6.yaml",
+    "multisurvey_finetune_20261118_v6",
+    "configs/finetune-multisurvey-20261118-v6.yaml",
 )
-MS_V6_EPOCH = 12
+MS_V6_EPOCH = 12  # set from anchor_metrics.jsonl (lowest score) before eval
+REDDENING_V6 = "reddening_labels_20261118_v6"
+STEPS["ms-reddening-v6"] = dict(
+    run_id=REDDENING_V6,
+    gpu=0,
+    cpu=8,
+    ram=128,
+    command=(
+        "python -u scripts/build_reddening_labels.py"
+        f" --fit-table {ROOT}{MS_TABLE_V5}/finetune.fits --split-config {MS_V6[1]}"
+        f" --apply v5={ROOT}{MS_TABLE_V5}/finetune.fits v1={ROOT}{MS_TABLE}/finetune.fits"
+        ' --out "$experiment_output"'
+    ),
+    files=[MS_V6[1]],
+)
 STEPS["ms-multi-v6"] = dict(
     run_id=MS_V6[0],
     gpu=1,
@@ -389,7 +405,7 @@ STEPS["ms-multi-v6"] = dict(
     files=[MS_V6[1]],
 )
 STEPS["ms-v6-eval"] = dict(
-    run_id="multisurvey_eval_20261117_v6",
+    run_id="multisurvey_eval_20261118_v6",
     gpu=0,
     cpu=8,
     ram=64,
@@ -399,6 +415,7 @@ STEPS["ms-v6-eval"] = dict(
         f" --checkpoint {ROOT}{MS_V6[0]}/finetune_checkpoint_{MS_V6_EPOCH}.pth"
         f" --fits {ROOT}{MS_TABLE}/finetune.fits"
         f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm"
+        f" --extra-labels {ROOT}{REDDENING_V6}/v1_reddening.npz"
         ' --out "$experiment_output/multi_v6_test.npz"'
     ),
     files=[MS_V6[1], MS_PAIR["ms-multi-v4"][1]],

@@ -11,6 +11,10 @@ gives the table under CONFIG (with table_row, as eval_ensemble's
 predictions.npz), so models trained on different tables are compared on
 the same stars with their own scalers. ``--irfm`` adds the photometric
 IRFM-scale Teff of each star (training.irfm_teff) for the Teff check.
+
+Anchored (v6) checkpoints carry their label names and Student-t head;
+``--extra-labels`` supplies truth columns kept outside the table (E(B-V)).
+Missing feature errors take the checkpoint's training fill values.
 """
 
 import argparse
@@ -30,6 +34,11 @@ def main():
     p.add_argument("--device", default="cpu")
     p.add_argument("--test-split", type=Path, help="config whose test split to use")
     p.add_argument("--irfm", action="store_true", help="also store IRFM-scale Teff")
+    p.add_argument(
+        "--extra-labels",
+        type=Path,
+        help="npz of label columns per table row (e.g. NAME_reddening.npz)",
+    )
     a = p.parse_args()
 
     from astropy.io import fits
@@ -47,6 +56,8 @@ def main():
         _inverse_quantile_block,
     )
 
+    state = torch_load_finetune_checkpoint(a.checkpoint, map_location="cpu")
+    anchored = state.get("head") == "student_t"
     config = yaml.safe_load(a.config.read_text())
     cols = config["data"]["feature_cols"]
     error_cols = config["data"]["error_cols"]
@@ -74,8 +85,21 @@ def main():
             [col(e) if e else np.full(len(X), np.nan) for e in error_cols]
         )
         source_id = np.asarray(d["source_id"][take], dtype="i8")
-        names = [n for n in ("teff", "logg", "fe_h", "alpha") if n in d.names]
-        truth = np.column_stack([col(n) for n in names])
+        if anchored:
+            names = [n for n in state["label_names"] if n != "parallax"]
+        else:
+            names = [n for n in ("teff", "logg", "fe_h", "alpha") if n in d.names]
+        side = {}
+        if a.extra_labels:
+            with np.load(a.extra_labels) as z:
+                sid_all = np.asarray(d["source_id"], dtype="i8")
+                if not np.array_equal(z["source_id"], sid_all):
+                    raise ValueError("--extra-labels does not match the table rows")
+                side = {k: np.asarray(z[k][take], "f8") for k in z.files}
+        nan = np.full(len(X), np.nan)
+        truth = np.column_stack(
+            [col(n) if n in d.names else side.get(n, nan) for n in names]
+        )
         extra = {}
         if a.irfm:
             from masked_stellar_autoencoder.training.irfm_teff import (
@@ -90,6 +114,9 @@ def main():
         if rows is not None:
             extra["table_row"] = rows
     X[~np.isfinite(X)] = np.nan
+    if state.get("error_fill") is not None:  # training's fill, before the policy
+        fill = np.broadcast_to(np.asarray(state["error_fill"]), E.shape)
+        E = np.where(np.isfinite(E), E, fill)
     empty = np.empty((0, X.shape[1]))
     apply_parallax_input_policy(
         X, empty.copy(), empty.copy(), E, empty.copy(), empty.copy(),
@@ -97,7 +124,6 @@ def main():
         snr_cap=float(pproc.get("astrometry_snr_cap", 10.0)),
     )  # fmt: skip
 
-    state = torch_load_finetune_checkpoint(a.checkpoint, map_location="cpu")
     scaler = state["featurescaler"]
     Xs = scaler.transform(X).astype(np.float32)
     m = config["model"]
@@ -109,7 +135,19 @@ def main():
         cosine_latent=m.get("cosine_latent", False),
         heteroscedastic=config["training"].get("heteroscedastic", False),
     ).to(a.device)  # fmt: skip
-    head = PredictionHead(m["layer_dims"][-1], 6, torch.nn.ReLU()).to(a.device)
+    act = {"relu": torch.nn.ReLU(), "elu": torch.nn.ELU(), "gelu": torch.nn.GELU()}[
+        config["finetuning"].get("active", "relu")
+    ]
+    if anchored:
+        from masked_stellar_autoencoder.training.anchored_survey_map import (
+            StudentTHead,
+        )
+
+        n_labels = len(state["label_names"])
+        head = StudentTHead(m["layer_dims"][-1], n_labels, act, state["nu"])
+    else:
+        head = PredictionHead(m["layer_dims"][-1], 6, act)
+    head = head.to(a.device)
     pack = dict(
         parallax_target_space=pproc.get("parallax_target_space", "linear_mas"),
         teff_target_space=pproc.get("teff_target_space", "linear"),
