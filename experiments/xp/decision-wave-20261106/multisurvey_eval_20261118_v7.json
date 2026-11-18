@@ -1,0 +1,25 @@
+{
+  "run_id": "multisurvey_eval_20261118_v7",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_eval_20261118_v7",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_eval_20261118_v7",
+  "source_commit": "d3a7f364f0ec3f0f3fbe3c5fcd103e4c749a24a2",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261118-v7.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261118_v7/finetune_checkpoint_9.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --condition-parallax 5 --extra-labels /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/reddening_labels_20261118_v6/v1_reddening.npz --out \"$experiment_output/multi_v7_test.npz\"",
+  "utc": "2026-11-18T23:51:25.695264+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "aau4oz0c"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261118-v7.yaml": "d8b275eca323ff8fcc64cd466fee422da5c360cca492fe06bbb07d41fbcba6b5",
+    "configs/finetune-multisurvey-20261115-v4.yaml": "d88d5b93d91f94f94101dec798cc8f58818882a7ca87bd04e44f2f081a7eef75"
+  },
+  "payload_sha256": "d29f455b6c3977761f68f237d31361bc84786e293293932a75839eece0636761"
+}
