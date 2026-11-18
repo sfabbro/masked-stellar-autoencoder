@@ -54,6 +54,13 @@ def main():
     p.add_argument("--apply", nargs="+", required=True, help="NAME=FITS")
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--max-map-ebv", type=float, default=0.02)
+    p.add_argument(
+        "--colours",
+        nargs="+",
+        default=["bp_rp"],
+        choices=["bp_rp", "rp_ks"],
+        help="colours combined (rp_ks only once 2MASS is matched correctly)",
+    )
     a = p.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
 
@@ -70,7 +77,7 @@ def main():
     )  # fmt: skip
     np.savez(a.out / "intrinsic_colours.npz", **model.to_dict())
     diag = {"fit_table": a.fit_table, "train_rows": int(len(train)),
-            "max_map_ebv": a.max_map_ebv, "scatter_bp_rp": model.scatter[0].tolist(),
+            "max_map_ebv": a.max_map_ebv, "colours": a.colours, "scatter_bp_rp": model.scatter[0].tolist(),
             "scatter_rp_ks": model.scatter[1].tolist(),
             "scatter_teff_edges": model.scatter_edges.tolist(), "tables": {}}  # fmt: skip
     for item in a.apply:
@@ -79,7 +86,7 @@ def main():
         c = observed_colours(t["BP"], t["RP"], t["KS"], t["E_KS"])
         ebv, err = reddening_labels(
             model, t["teff"], t["logg"], t["fe_h"], c, e_teff=t["e_teff"],
-            e_logg=t["e_logg"], e_feh=t["e_fe_h"], e_ks=t["E_KS"],
+            e_logg=t["e_logg"], e_feh=t["e_fe_h"], e_ks=t["E_KS"], use=a.colours,
         )  # fmt: skip
         np.savez(
             a.out / f"{name}_reddening.npz", source_id=t["source_id"],

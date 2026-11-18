@@ -14,6 +14,10 @@ No stellar model is involved: the intrinsic colours come from the data.
    colours are combined by inverse variance; when 2MASS disagrees with Gaia
    by more than ``max_disagreement`` sigma, only BP-RP is used.
 
+The fine-tune tables' 2MASS J/H/Ks are not matched to the right stars (Ks
+is uncorrelated with G; found 2026-11-18), so build_reddening_labels.py uses
+BP-RP alone by default (``--colours``).
+
 Values are E(B-V) on the Schlegel et al. (1998) scale used by that law, so
 they compare directly with the usual dust maps. They are left NaN where the
 calibration stars do not cover the star's (Teff, log g) cell, and may be
@@ -176,9 +180,12 @@ def fit_intrinsic_colours(
 
 def reddening_labels(
     model: IntrinsicColours, teff, logg, feh, colours, *, e_teff=None, e_logg=None,
-    e_feh=None, e_ks=None, max_disagreement=4.0,
+    e_feh=None, e_ks=None, max_disagreement=4.0, use=COLOURS,
 ) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
-    """E(B-V) and its error per star (NaN where not covered)."""
+    """E(B-V) and its error per star (NaN where not covered).
+
+    ``use`` names the colours combined (default both).
+    """
     teff, logg, feh = (np.asarray(a, dtype="f8") for a in (teff, logg, feh))
     colours = np.asarray(colours, dtype="f8")
     n = len(teff)
@@ -200,6 +207,7 @@ def reddening_labels(
     est = (colours - c0) / ratio
     sig = np.sqrt(var) / ratio
     ok = np.isfinite(est) & np.isfinite(sig) & (sig > 0)
+    ok &= np.isin(COLOURS, list(use))[None, :]
     both = ok[:, 0] & ok[:, 1]
     disagree = both & (
         np.abs(est[:, 0] - est[:, 1])
