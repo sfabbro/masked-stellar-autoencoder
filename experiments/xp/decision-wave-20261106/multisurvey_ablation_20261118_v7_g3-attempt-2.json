@@ -1,0 +1,26 @@
+{
+  "run_id": "multisurvey_ablation_20261118_v7_g3",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7_g3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_ablation_20261118_v7_g3-attempt-2",
+  "source_commit": "ebcaefe82b0ff4761681b3959c96d430f8dc5046",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "mkdir -p /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b02_v7_small /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b03_v7_ctx_ebv /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/b02_v7_small.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b02_v7_small/stdout.log 2>&1 || echo ABLATION_FAILED b02_v7_small && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/b03_v7_ctx_ebv.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b03_v7_ctx_ebv/stdout.log 2>&1 || echo ABLATION_FAILED b03_v7_ctx_ebv && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/b04_v7_ctx_plx.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx/stdout.log 2>&1 || echo ABLATION_FAILED b04_v7_ctx_plx",
+  "utc": "2026-11-18T19:02:29.403742+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "qzbexizs"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/b02_v7_small.yaml": "ee3cda7f7752e6b2dc21ce8859f511c1a0cc7b5d4c69d557415cfe1856675694",
+    "configs/ablation-20261118-v7/b03_v7_ctx_ebv.yaml": "65f65b9d9067a263bbc9593a7e0451288f8613643003c0fc432efadb9b8efd16",
+    "configs/ablation-20261118-v7/b04_v7_ctx_plx.yaml": "1a403a3575272e65e325cb386be2a7bcb8da224aa1ad88dcf64a1845cc928459"
+  },
+  "payload_sha256": "00ae7a3d420618dd6cc8bbfe33e379471e1b6ebf0891f5779ab0fdc65c949c85"
+}
