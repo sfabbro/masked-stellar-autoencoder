@@ -1,0 +1,26 @@
+{
+  "run_id": "multisurvey_ablation_20261118_v7_g5",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7_g5",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_ablation_20261118_v7_g5",
+  "source_commit": "07f67b73a9823d90a8782a9b23ddd5e2d8beac7e",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "mkdir -p /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/c01_v7_apogee_lean /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/c02_v7_litdedupe /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/c03_v7_lean_lit_noastronn && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/c01_v7_apogee_lean.yaml --max-train-rows 1200000 || echo ABLATION_FAILED c01_v7_apogee_lean && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/c02_v7_litdedupe.yaml --max-train-rows 1200000 || echo ABLATION_FAILED c02_v7_litdedupe && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/c03_v7_lean_lit_noastronn.yaml --max-train-rows 1200000 || echo ABLATION_FAILED c03_v7_lean_lit_noastronn",
+  "utc": "2026-11-18T18:32:28.940655+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "u61kfcgo"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/c01_v7_apogee_lean.yaml": "8196e436c7ec824b312dbdeb5d4abe57af3df913316caba14c6f89ef3bab9dad",
+    "configs/ablation-20261118-v7/c02_v7_litdedupe.yaml": "80b292f5c3b4f0238c381fa9029281f7a62ae80ec0551a757b0b700ddc45c15d",
+    "configs/ablation-20261118-v7/c03_v7_lean_lit_noastronn.yaml": "09e0cfe2e766a03164f345c5a4afaa6aa86b7aa6031bf3b2caaa6cdd4917e474"
+  },
+  "payload_sha256": "b2b02161a0cd6de06d9b5b14f54dc81b1f2579f2aac405078f112cefd7837d2a"
+}
