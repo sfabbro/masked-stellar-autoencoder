@@ -8,6 +8,8 @@ share [Fe/H]. ``T.npz`` holds ``source_id``; the star inputs are copied from
 the raw pretraining HDF5 exactly as build_stopgap_finetune_table does (same
 fields, same cleaning), and written to ``DIR/stars.fits`` with NaN labels, so
 predict_fits_rows predicts them like the benchmark stars.
+``--labelled-table`` also lists the targets that are in a fine-tune table
+(``labelled.npz``), whose labels the model has seen.
 """
 
 import argparse
@@ -34,8 +36,21 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--chunk", type=int, default=262_144)
+    p.add_argument(
+        "--labelled-table",
+        type=Path,
+        help="fine-tune table; writes labelled.npz (its targets, by source_id)",
+    )
     a = p.parse_args()
     out = a.output / "stars.fits"
+    if a.labelled_table and not (a.output / "labelled.npz").exists():
+        from astropy.io import fits
+
+        with fits.open(a.labelled_table, memmap=True) as h:
+            sid = np.asarray(h[1].data["source_id"], dtype="i8")
+        wanted = np.load(a.targets)["source_id"].astype("i8")
+        a.output.mkdir(parents=True, exist_ok=True)
+        np.savez(a.output / "labelled.npz", source_id=np.intersect1d(sid, wanted))
     if out.exists():
         print(out, "exists")
         return
