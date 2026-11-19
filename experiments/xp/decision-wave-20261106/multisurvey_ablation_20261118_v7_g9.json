@@ -1,0 +1,24 @@
+{
+  "run_id": "multisurvey_ablation_20261118_v7_g9",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7_g9",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_ablation_20261118_v7_g9",
+  "source_commit": "4ab20bbf814c9bbc4ab11468ce11275d8c78f701",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "mkdir -p /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/e02_c03_mix3_gauss && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/e02_c03_mix3_gauss.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/e02_c03_mix3_gauss/stdout.log 2>&1 || echo ABLATION_FAILED e02_c03_mix3_gauss",
+  "utc": "2026-11-19T05:23:17.146549+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "uhyr77ta"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/e02_c03_mix3_gauss.yaml": "02b47002b634a0105b0999dfc1338667078876a18227ca71f6699aeb64f17720"
+  },
+  "payload_sha256": "87afd33332cfbfdf00910f81c212b4836ba8c26461d469c3722abbf0a52cc2d8"
+}
