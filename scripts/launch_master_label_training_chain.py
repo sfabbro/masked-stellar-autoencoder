@@ -470,7 +470,7 @@ for _tag, (_run, _cfg), _ep in (("v6", MS_V6, MS_V6_EPOCH), ("v7", MS_V7, MS_V7_
             f" --targets {ROOT}consistency_targets_20261118.npz --config {MS_V6[1]}"
             f" --output {ROOT}{CONSIST} --workers 8"
             f" --labelled-table {ROOT}{MS_TABLE_V5}/finetune.fits"
-            " && python -u scripts/predict_fits_rows.py"
+            ' && "${pixi_run[@]}" python -u scripts/predict_fits_rows.py'
             f" --config {_cfg} --checkpoint {ROOT}{_run}/finetune_checkpoint_{_ep}.pth"
             f" --fits {ROOT}{CONSIST}/stars.fits --condition-parallax 5"
             f' --out "$experiment_output/consistency_{_tag}.npz"'
