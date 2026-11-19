@@ -262,8 +262,9 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         map_reg_weight=1e-3, slope_weight=0.01, monotone_weight=1.0,
         error_fill=None, label_input="masked", drop_input_features=(),
         context=None, dust_weight=1.0, n_components=1, min_scale=None,
-        mix_prior=1e-3,
+        mix_prior=1e-3, full_covariance=True,
     ):  # fmt: skip
+        self.full_covariance = bool(full_covariance)
         self.n_components = int(n_components)
         self.min_scale = float(
             min_scale
@@ -412,6 +413,7 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
             self.latent_size, ftlabeldim, act, self.nu, context_dim=dim,
             n_components=getattr(self, "n_components", 1),
             min_scale=getattr(self, "min_scale", 1e-3),
+            full_covariance=getattr(self, "full_covariance", True),
         ).to(self.device)  # fmt: skip
 
     # Loss ---------------------------------------------------------------------
@@ -732,6 +734,7 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
             "dropped_surveys": recs.dropped,
             "sampling_ratio": getattr(self, "sampling_ratio", None),
             "n_components": self.n_components,
+            "full_covariance": self.full_covariance,
             "min_scale": self.min_scale,
             "gauge": "identity anchors (seismic log g, IRFM Teff) + [Fe/H] core",
         }

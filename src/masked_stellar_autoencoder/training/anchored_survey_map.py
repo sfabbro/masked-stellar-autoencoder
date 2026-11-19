@@ -140,7 +140,8 @@ class StudentTHead(nn.Module):
     head (survey maps linearised per component, censoring, parallax
     conditioning) stays in closed form. ``min_scale`` floors each component's
     diagonal scale (scaled units) so a component cannot collapse onto
-    repeated label values.
+    repeated label values. ``full_covariance=False`` keeps each component
+    diagonal (independent labels; no cross-label conditioning).
 
     ``forward`` returns (N, P, 3) marginal 16/50/84 % quantiles (for a
     mixture: moment-matched, symmetric; prediction uses the exact mixture
@@ -154,6 +155,7 @@ class StudentTHead(nn.Module):
     def __init__(
         self, latent_size: int, n_labels: int, activation, nu: float = 5.0,
         context_dim: int = 0, n_components: int = 1, min_scale: float = 1e-3,
+        full_covariance: bool = True,
     ):  # fmt: skip
         super().__init__()
         self.n_labels, self.nu = n_labels, float(nu)
@@ -173,8 +175,12 @@ class StudentTHead(nn.Module):
         )  # fmt: skip
         self.loc = nn.Linear(256, K * n_labels)
         self.log_scale = nn.Linear(256, K * n_labels)
-        self.n_off = n_labels * (n_labels - 1) // 2
-        self.off = nn.Linear(256, K * max(self.n_off, 1))
+        self.full_covariance = bool(full_covariance)
+        n_off = n_labels * (n_labels - 1) // 2
+        self.off = nn.Linear(256, K * max(n_off, 1))
+        # Diagonal covariance: independent labels (the off-diagonal layer stays
+        # for a uniform parameter layout but is not used).
+        self.n_off = n_off if self.full_covariance else 0
         self.logit = nn.Linear(256, K) if K > 1 else None
         rows, cols = torch.tril_indices(n_labels, n_labels, offset=-1)
         self.register_buffer("rows", rows)

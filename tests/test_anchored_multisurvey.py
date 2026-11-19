@@ -620,3 +620,10 @@ def test_feh_extras_mixture_of_copies_equals_single():
     )  # fmt: skip
     np.testing.assert_allclose(qk, q1)
     np.testing.assert_allclose(pk, p1)
+
+
+def test_diagonal_mixture_head_has_no_cross_terms():
+    head = StudentTHead(4, 3, torch.nn.ReLU(), n_components=2, full_covariance=False)
+    _, _, L = head.mixture(torch.randn(5, 4))
+    off = L - torch.diag_embed(torch.diagonal(L, dim1=-2, dim2=-1))
+    assert torch.count_nonzero(off) == 0

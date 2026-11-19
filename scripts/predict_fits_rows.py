@@ -184,6 +184,7 @@ def main():
             context_dim=int(state.get("context_dim", 0)),
             n_components=int(state.get("n_components", 1)),
             min_scale=float(state.get("min_scale", 1e-3)),
+            full_covariance=bool(state.get("full_covariance", True)),
         )  # fmt: skip
     else:
         head = PredictionHead(m["layer_dims"][-1], 6, act)
