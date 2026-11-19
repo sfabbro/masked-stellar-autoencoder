@@ -1,0 +1,24 @@
+{
+  "run_id": "multisurvey_finetune_20261119_v8_nopool",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nopool",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_finetune_20261119_v8_nopool",
+  "source_commit": "a027af70f1df64c87ce69ec041130280615a083d",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261119-v8-nopool.yaml && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8-nopool.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nopool/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits --rows /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_20261119/rows.npy --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v8_nopool_core.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8-nopool.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nopool/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/consistency_v8_nopool.npz\"",
+  "utc": "2026-11-19T21:11:53.053371+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "hvam17s1"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261119-v8-nopool.yaml": "9a1ad77c52458b952144b26415897af871b536977464a7082f1c2d1843489fbd"
+  },
+  "payload_sha256": "c81a2958722bb9de841487495e7306824adb9f4042f71e13084a10d998d14322"
+}
