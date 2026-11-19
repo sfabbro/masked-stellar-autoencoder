@@ -639,6 +639,6 @@ def test_feh_population_undoes_the_sampling_ratio():
     loc, scale = np.array([-2.4]), np.array([0.3])
     q_flat, _ = feh_population(loc, scale, 30.0, CENTRES, np.ones(len(CENTRES)))
     assert abs(q_flat[0, 1] + 2.4) < 0.03
-    ratio = np.where(CENTRES < -1.5, 10.0, 1.0)
+    ratio = np.exp(np.clip(-1.5 * (CENTRES + 0.5), 0.0, None))  # rises below -0.5
     q_tail, p = feh_population(loc, scale, 30.0, CENTRES, ratio)
     assert q_tail[0, 1] > q_flat[0, 1] + 0.1 and 0.0 <= p[0] <= 1.0
