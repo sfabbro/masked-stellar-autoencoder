@@ -549,6 +549,31 @@ STEPS["ms-rescore-2"] = dict(
     ),
     files=sorted({c for c, _ in _models_2.values()}),
 )
+
+
+def _rescore_step(run_id, best):
+    models = {
+        n: (
+            f"configs/ablation-20261118-v7/{n}.yaml",
+            f"{ROOT}multisurvey_ablation_20261118_v7/{n}/finetune_checkpoint_{ep}.pth",
+        )
+        for n, ep in best.items()
+    }
+    return dict(
+        run_id=run_id,
+        gpu=0,
+        cpu=8,
+        ram=64,
+        command=_rescore(models).replace(
+            " --condition-parallax 5",
+            " --condition-parallax 5"
+            " --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz",
+        ),
+        files=sorted({c for c, _ in models.values()}),
+    )
+
+
+STEPS["ms-rescore-3"] = _rescore_step("rescore_pred_20261119_3", {"d02_c03_balance": 6})
 # Binary/cluster consistency predictions of selected ablation checkpoints.
 _CONSIST_ABL = ("d00_c03_seed43", "d03_c03_binary")
 STEPS["ms-consist-abl"] = dict(
