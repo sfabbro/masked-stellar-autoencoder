@@ -1,0 +1,25 @@
+{
+  "run_id": "consistency_pred_20261119_abl",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_pred_20261119_abl",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/consistency_pred_20261119_abl",
+  "source_commit": "7d0146e0422a8e9c4d1aa781208267ebecfed9e8",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/predict_fits_rows.py --config configs/ablation-20261118-v7/d00_c03_seed43.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d00_c03_seed43/finetune_checkpoint_6.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --out \"$experiment_output/consistency_d00_c03_seed43.npz\" || echo CONSIST_FAILED d00_c03_seed43 && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/ablation-20261118-v7/d03_c03_binary.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d03_c03_binary/finetune_checkpoint_4.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --out \"$experiment_output/consistency_d03_c03_binary.npz\" || echo CONSIST_FAILED d03_c03_binary",
+  "utc": "2026-11-19T05:31:53.547276+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "j4atzewk"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/d00_c03_seed43.yaml": "4b62f09e402f0b100a09a629c3b254f8306bbbd96bceb862bd9222ddf65e2e3b",
+    "configs/ablation-20261118-v7/d03_c03_binary.yaml": "897a1d9aee5b5cd3689531565d391410a9977d468d5eb4062c10f9a2c3cf68f8"
+  },
+  "payload_sha256": "eb41e27ebaf14dec82688d1bd54f1702bf1e05853da29a551362c035bd473cb3"
+}
