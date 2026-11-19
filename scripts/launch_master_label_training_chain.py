@@ -477,6 +477,54 @@ for _tag, (_run, _cfg), _ep in (("v6", MS_V6, MS_V6_EPOCH), ("v7", MS_V7, MS_V7_
         ),
         files=[MS_V6[1], _cfg],
     )
+# Frozen re-scoring: every checkpoint predicts the same stars (all table rows
+# with an [Fe/H] core record, any split), with parallax conditioning, so
+# variants that exclude or deduplicate sources are compared on one set.
+RESCORE = "rescore_20261119"
+_ABL_BEST = {
+    "a01_v6": 6, "a02_clean": 5, "a03_censor": 6, "a04_nopm": 6, "a05_nosky": 6,
+    "a06_small_noncore": 6, "a07_small_all": 6, "b01_v7": 6, "b02_v7_small": 6,
+    "b03_v7_ctx_ebv": 6, "b04_v7_ctx_plx": 6, "b05_v7_posenc": 6, "b06_v7_dust": 6,
+    "b07_v7_noperturb": 5, "c01_v7_apogee_lean": 6, "c02_v7_litdedupe": 6,
+    "c03_v7_lean_lit_noastronn": 6,
+}  # fmt: skip
+_LATENT = ("multi_v7", "c03_v7_lean_lit_noastronn", "a01_v6")
+
+
+def _rescore(models):
+    rows = f"{ROOT}{RESCORE}/rows.npy"
+    cmds = [
+        f"python -u scripts/core_eval_rows.py --config {MS_V7[1]}"
+        f" --output {ROOT}{RESCORE}"
+    ]
+    for name, (cfg, ckpt) in models.items():
+        latent = " --save-latent" if name in _LATENT else ""
+        cmds.append(
+            f"python -u scripts/predict_fits_rows.py --config {cfg}"
+            f" --checkpoint {ckpt} --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+            f" --rows {rows} --condition-parallax 5{latent}"
+            f' --out "$experiment_output/{name}.npz" || echo RESCORE_FAILED {name}'
+        )
+    return ' && "${pixi_run[@]}" '.join(cmds)
+
+
+_models = {
+    "multi_v6": (MS_V6[1], f"{ROOT}{MS_V6[0]}/finetune_checkpoint_{MS_V6_EPOCH}.pth"),
+    "multi_v7": (MS_V7[1], f"{ROOT}{MS_V7[0]}/finetune_checkpoint_{MS_V7_EPOCH}.pth"),
+}
+for _n, _ep in _ABL_BEST.items():
+    _models[_n] = (
+        f"configs/ablation-20261118-v7/{_n}.yaml",
+        f"{ROOT}multisurvey_ablation_20261118_v7/{_n}/finetune_checkpoint_{_ep}.pth",
+    )
+STEPS["ms-rescore"] = dict(
+    run_id="rescore_pred_20261119",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=_rescore(_models),
+    files=sorted({c for c, _ in _models.values()}),
+)
 # v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402

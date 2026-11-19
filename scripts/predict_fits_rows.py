@@ -17,7 +17,9 @@ Anchored (v6) checkpoints carry their label names and Student-t head;
 Missing feature errors take the checkpoint's training fill values.
 Anchored checkpoints may hide input features from the encoder
 (``drop_input_features``) and carry a head context; both are applied as in
-training. ``--condition-parallax SNR`` conditions the joint Student-t on the
+training. ``--rows ROWS.npy`` predicts those table rows (``table_row`` in the
+output); ``--save-latent`` stores the encoder latent (float16).
+``--condition-parallax SNR`` conditions the joint Student-t on the
 measured Gaia parallax of stars with parallax/error >= SNR (log10 space;
 ``anchored_survey_map.condition_on_observation``); the unconditioned
 prediction is kept as ``median_prior``/``quantiles_prior``.
@@ -50,6 +52,12 @@ def main():
         "--extra-labels",
         type=Path,
         help="npz of label columns per table row (e.g. NAME_reddening.npz)",
+    )
+    p.add_argument(
+        "--rows", type=Path, help="npy of table rows to predict (instead of a split)"
+    )
+    p.add_argument(
+        "--save-latent", action="store_true", help="anchored: also store the latent"
     )
     a = p.parse_args()
 
@@ -85,6 +93,8 @@ def main():
         kept = kept_rows(str(a.fits), split_cfg)
         mp = split_cfg["finetuning"].get("metal_poor") or {}
         rows = kept[split_row_positions(len(kept), mp)[2]]
+    if a.rows:
+        rows = np.unique(np.load(a.rows).astype("i8"))
     with fits.open(a.fits, memmap=True) as hdul:
         d = hdul[1].data
         take = slice(None) if rows is None else rows
@@ -237,6 +247,17 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
     mu, sd = anchored_predict(model, head, Xs, **kw)
     med, quant = block(mu, sd, q84)
     out = dict(median=med, quantiles=quant)
+    if a.save_latent:
+        from masked_stellar_autoencoder.training.anchored_predict import encoder_input
+
+        model.eval()
+        with torch.no_grad():
+            out["latent"] = np.concatenate([
+                model.encoder(encoder_input(
+                    torch.as_tensor(Xs[i : i + 4096], device=device), drop
+                )).cpu().numpy().astype("f2")
+                for i in range(0, len(Xs), 4096)
+            ])  # fmt: skip
     if a.condition_parallax is not None:
         j = list(state["label_names"]).index("parallax")
         if pack["parallax_target_space"] != "log10_mas":
@@ -251,7 +272,7 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
         mu_c, sd_c = anchored_predict(model, head, Xs, condition=(j, z, var), **kw)
         q85 = float(student_t.ppf(0.84, state["nu"] + 1))
         qrow = np.where(ok, q85, q84)[:, None]
-        out = dict(median_prior=med, quantiles_prior=quant)
+        out = dict(out, median_prior=med, quantiles_prior=quant)
         out["median"], out["quantiles"] = block(mu_c, sd_c, qrow)
         out["parallax_conditioned"] = ok
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
