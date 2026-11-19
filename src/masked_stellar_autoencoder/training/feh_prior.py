@@ -97,3 +97,47 @@ def feh_extras(loc, scale, nu, prior, *, logw=None, limit=-2.5, batch=50_000):
         )
         q[j] = _quantiles(free)
     return q, pb
+
+
+def feh_population(loc, scale, nu, centres, ratio, *, logw=None, limit=-2.5,
+                   batch=50_000):  # fmt: skip
+    """Population [Fe/H] of a head trained with balanced sampling.
+
+    The head was trained under the sampling prior = training prior x
+    ``ratio`` (``anchored_multisurvey.balance_weights``, saved in the
+    checkpoint as ``sampling_ratio``); dividing its [Fe/H] marginal by the
+    ratio gives the posterior under the training population. Returns
+    (16/50/84 quantiles (N, 3), P([Fe/H] < limit) (N,)), like ``feh_extras``.
+    """
+    r = np.interp(CENTRES, np.asarray(centres, float), np.asarray(ratio, float))
+    r = r / r.sum()
+    flat = np.full(len(r), 1.0 / len(r))
+    return _reweighted(loc, scale, nu, logw, r, flat, limit, batch)
+
+
+def _reweighted(loc, scale, nu, logw, source, target, limit, batch):
+    loc, scale = np.asarray(loc, float), np.asarray(scale, float)
+    if loc.ndim == 1:
+        loc, scale = loc[:, None], scale[:, None]
+    logw = np.zeros(loc.shape) if logw is None else np.asarray(logw, float)
+    nu = np.broadcast_to(np.asarray(nu, float), loc.shape[:1])
+    ok = (np.isfinite(loc) & np.isfinite(scale) & (scale > 0)).all(1)
+    q = np.full((len(loc), 3), np.nan)
+    pb = np.full(len(loc), np.nan)
+    centres = CENTRES
+    below = centres < limit
+    idx = np.flatnonzero(ok)
+    for i in range(0, len(idx), batch):
+        j = idx[i : i + batch]
+        w = np.exp(logw[j] - logw[j].max(1, keepdims=True))
+        w /= w.sum(1, keepdims=True)
+        post = sum(
+            w[:, k, None] * gridded_posterior(loc[j, k], scale[j, k], nu[j])
+            for k in range(loc.shape[1])
+        )
+        post = apply_label_shift_correction(
+            post, source_prior=source, target_prior=target, eps=1e-300
+        )
+        pb[j] = post[:, below].sum(1)
+        q[j] = _quantiles(post)
+    return q, pb

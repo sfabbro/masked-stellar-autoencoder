@@ -627,3 +627,18 @@ def test_diagonal_mixture_head_has_no_cross_terms():
     _, _, L = head.mixture(torch.randn(5, 4))
     off = L - torch.diag_embed(torch.diagonal(L, dim1=-2, dim2=-1))
     assert torch.count_nonzero(off) == 0
+
+
+def test_feh_population_undoes_the_sampling_ratio():
+    from masked_stellar_autoencoder.training.feh_prior import (
+        CENTRES,
+        feh_population,
+    )
+
+    # A flat ratio changes nothing; an up-weighted tail moves stars back up.
+    loc, scale = np.array([-2.4]), np.array([0.3])
+    q_flat, _ = feh_population(loc, scale, 30.0, CENTRES, np.ones(len(CENTRES)))
+    assert abs(q_flat[0, 1] + 2.4) < 0.03
+    ratio = np.where(CENTRES < -1.5, 10.0, 1.0)
+    q_tail, p = feh_population(loc, scale, 30.0, CENTRES, ratio)
+    assert q_tail[0, 1] > q_flat[0, 1] + 0.1 and 0.0 <= p[0] <= 1.0

@@ -19,6 +19,9 @@ Anchored checkpoints may hide input features from the encoder
 (``drop_input_features``) and carry a head context; both are applied as in
 training. Mixture heads (``n_components`` > 1) give exact (skewed) mixture
 quantiles and also store the [Fe/H] mixture (``feh_mix_*``).
+Checkpoints trained with balanced sampling also get ``feh_population``
+(16/50/84 %) and ``p_feh_below_m2p5_population``: the [Fe/H] posterior
+moved back from the sampling prior to the training population.
 ``--feh-prior PRIOR.npz`` (make_feh_prior.py) adds the prior-free
 [Fe/H] quantiles (``feh_prior_free``) and P([Fe/H] < -2.5)
 (``p_feh_below_m2p5``), see ``training.feh_prior``.
@@ -298,6 +301,13 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
             f_scale.astype("f4"),
         )
         out["feh_mix_nu"] = final["nu"].astype("f4")
+    if state.get("sampling_ratio") is not None:  # balanced training: back to
+        from masked_stellar_autoencoder.training.feh_prior import feh_population
+
+        sr = state["sampling_ratio"]  # the population [Fe/H] posterior
+        out["feh_population"], out["p_feh_below_m2p5_population"] = feh_population(
+            f_loc, f_scale, final["nu"], sr["centres"], sr["ratio"], logw=final["logw"]
+        )
     if a.feh_prior is not None:
         from masked_stellar_autoencoder.training.feh_prior import feh_extras
 
