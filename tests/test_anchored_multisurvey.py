@@ -448,3 +448,45 @@ def test_context_head_starts_identical_and_context_is_finite():
         np.testing.assert_allclose(
             h0(z).numpy(), h1(z, (values.detach(), visible)).numpy(), rtol=1e-6
         )
+
+
+def test_balance_weights_upweight_the_tail_within_the_cap():
+    from masked_stellar_autoencoder.training.anchored_multisurvey import (
+        balance_weights,
+    )
+
+    rng = np.random.default_rng(0)
+    feh = np.concatenate(
+        [rng.normal(-0.25, 0.3, 50_000), rng.uniform(-4, -2, 300), [np.nan]]
+    )
+    w, centres, ratio = balance_weights(feh, power=0.5, cap=10.0)
+    assert w[-1] == 1.0 and np.all(w >= 1.0) and np.all(w <= 10.0)
+    tail = feh < -2
+    assert w[tail].mean() > 5 * np.median(w[~tail & np.isfinite(feh)])
+    assert ratio.shape == centres.shape and np.all(ratio >= 1.0 - 1e-9)
+
+
+def test_balanced_loader_oversamples_and_reference_pool_trains():
+    rng = np.random.default_rng(1)
+    x, rec = _synthetic_records(rng)
+    w, _ = _wrapper(rec, len(x))
+    # Loader: rows with weight 9 are drawn about 9x as often.
+    weights = np.ones(400)
+    weights[:40] = 9.0
+    w.configure_balance(weights, np.zeros(2), np.ones(2))
+    X = np.arange(400, dtype="f4")[:, None]
+    loader = w._prepare_finetune_loader(X, X, X, X, 400)
+    drawn = torch.cat([b[0][:, 0] for _ in range(20) for b in loader])
+    share = float((drawn < 40).float().mean())
+    assert 0.45 < share < 0.55  # 360 / (360 + 360)
+    # Reference pool: finite loss, gradients reach the head and the pool map.
+    w.drop_idx, w.nu = [], 5.0
+    w.ft = StudentTHead(3, 3, torch.nn.ReLU())
+    w.model = type("M", (), {"encoder": staticmethod(lambda x: x)})()
+    xr = rng.normal(size=(50, 3)).astype("f4")
+    w.configure_reference_pool(xr, xr, xr[:, 2] + 0.3, np.full(50, 0.05))
+    loss = w._reference_pool_loss(16)
+    loss.backward()
+    assert torch.isfinite(loss)
+    assert w.survey_maps.ref_bias.grad is not None
+    assert w.ft.loc.weight.grad is not None

@@ -413,6 +413,28 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                     consistency_weight=float(semi.get("consistency_weight", 0.0)),
                 )
                 print(f"semi-supervised: {len(unlabelled[0])} unlabelled stars")
+            names = list(pack["label_names"])
+            if ms.get("balance"):
+                from .anchored_multisurvey import balance_weights
+
+                j = names.index("fe_h")
+                sc = pack["scalers"][j]
+                feh = labelled_set[:, j] * float(sc.scale_[0]) + float(sc.mean_[0])
+                wrapper.configure_balance(*balance_weights(feh, **ms["balance"]))
+            if ms.get("reference_pool"):
+                ref = dict(ms["reference_pool"])
+                with np.load(ref["path"], allow_pickle=False) as z:
+                    keep = ~z["heldout"].astype(bool)
+                    value, error = z["value"][keep], z["error"][keep]
+                Xr, Er = unlabelled_arrays({"path": ref["path"]}, config, pack)
+                label = ref.get("label", "fe_h")
+                sc = pack["scalers"][names.index(label)]
+                wrapper.configure_reference_pool(
+                    Xr[keep], Er[keep], value, error, label=label,
+                    mean=float(sc.mean_[0]), scale=float(sc.scale_[0]),
+                    ratio=float(ref.get("ratio", 0.25)),
+                    weight=float(ref.get("weight", 1.0)),
+                )  # fmt: skip
             print(f"anchored multi-survey: {records.n} records")
 
         return (

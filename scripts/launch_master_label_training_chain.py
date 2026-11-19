@@ -481,8 +481,17 @@ for _tag, (_run, _cfg), _ep in (("v6", MS_V6, MS_V6_EPOCH), ("v7", MS_V7, MS_V7_
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402
 
+# d03: the wide-binary reference pool is built (once) before training.
+_POOL = (
+    "python -u scripts/build_binary_pool.py"
+    f" --stars {ROOT}{CONSIST}/stars.fits"
+    f" --teacher {ROOT}consistency_pred_20261118_v7/consistency_v7.npz"
+    f" --targets {ROOT}consistency_targets_20261118.npz --config {MS_V6[1]}"
+    f" --output {ROOT}binary_pool_20261119/pool.npz || echo POOL_FAILED"
+)
 for _g, _names in GROUPS.items():
     _cfgs = [f"configs/ablation-20261118-v7/{n}.yaml" for n in _names]
+    _pre = [_POOL] if any(n.startswith("d03") for n in _names) else []
     STEPS[f"ms-ablate-v7-{_g}"] = dict(
         run_id=f"{ABL_RUN}_g{_g}",
         gpu=1,
@@ -490,6 +499,7 @@ for _g, _names in GROUPS.items():
         cpu=8,
         command=' && "${pixi_run[@]}" '.join(
             ["mkdir -p " + " ".join(f"{ROOT}{ABL_RUN}/{n}" for n in _names)]
+            + _pre
             + [
                 "python -u -m masked_stellar_autoencoder.training.finetune_msa"
                 f" --config {c} --max-train-rows {ABL_TRAIN_ROWS}"

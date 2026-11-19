@@ -29,6 +29,17 @@ v7 options (all off by default, so v6 configs behave as before):
 * ``drop_input_features``: hide inputs (e.g. proper motions, RA/Dec) from
   the encoder;
 * ``context``: per-star metadata for the head (``context_inputs``).
+
+Metal-poor / scale experiments (off by default):
+
+* ``balance``: oversample training rows by their table [Fe/H] (weights
+  ``balance_weights``); the head then learns under the sampling prior, whose
+  ratio to the training prior is saved (``sampling_ratio``) so predictions
+  can be moved back to the training prior;
+* ``reference_pool``: extra stars outside the table (inputs plus one
+  reference value per star, e.g. a wide-binary companion inheriting its FGK
+  primary's [Fe/H]) that enter through an offset-only map with a learned
+  noise, so the common scale cannot depend on the stellar type there.
 """
 
 from __future__ import annotations
@@ -70,6 +81,32 @@ SCORE_UNITS = {
     "fe_h_core_mp": 0.1,  # core references below [Fe/H] = -2
 }
 MP, VMP = -2.0, -2.5
+
+
+def balance_weights(feh, *, bin=0.1, smooth=0.2, power=0.5, cap=10.0, lo=-5.0, hi=1.0):
+    """Per-row sampling weights (max density / density)**power, capped.
+
+    ``feh``: physical [Fe/H] proxy per training row (NaN: weight 1). Returns
+    (weights, bin centres, ratio): ``ratio`` is the sampling-prior over
+    training-prior factor at each centre (the binned weight, smoothed by
+    ``smooth`` dex), used to move a prediction back to the training prior.
+    """
+
+    def smooth_bins(h, width):
+        k = np.exp(-0.5 * (np.arange(-4 * width, 4 * width + 1) / width) ** 2)
+        return np.convolve(h, k / k.sum(), mode="same")
+
+    feh = np.asarray(feh, float)
+    ok = np.isfinite(feh)
+    edges = np.arange(lo, hi + 1e-9, bin)
+    width = max(1, int(round(smooth / bin)))
+    dens = smooth_bins(np.histogram(feh[ok], bins=edges)[0].astype(float), width)
+    w_bin = np.clip((dens.max() / (dens + 1e-9)) ** power, 1.0, cap)
+    idx = np.clip(np.digitize(feh[ok], edges) - 1, 0, len(w_bin) - 1)
+    w = np.ones(len(feh))
+    w[ok] = w_bin[idx]
+    centres = 0.5 * (edges[1:] + edges[:-1])
+    return w, centres, smooth_bins(w_bin, width)
 
 
 def _starts(name, prefixes):
@@ -265,6 +302,89 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         for n, c, tr in zip(records.names, records.counts, records.tier, strict=True):
             print(f"  {n:30s} stars {c.tolist()} tier {tr.tolist()}")
 
+    # Balance and reference pool --------------------------------------------------
+    def configure_balance(self, weights, centres, ratio):
+        """Sample training rows with ``weights`` (``balance_weights``)."""
+        self.balance_w = torch.as_tensor(np.asarray(weights), dtype=torch.double)
+        self.sampling_ratio = {
+            "centres": np.asarray(centres, "f8"),
+            "ratio": np.asarray(ratio, "f8"),
+        }
+        ess = float(self.balance_w.sum() ** 2 / self.balance_w.square().sum())
+        print(f"balance: effective sample size {ess / len(self.balance_w):.2f} N")
+
+    def _prepare_finetune_loader(
+        self, X_train, eX_train, y_train, e_y_train, mini_batch
+    ):
+        w = getattr(self, "balance_w", None)
+        if w is None:
+            return super()._prepare_finetune_loader(
+                X_train, eX_train, y_train, e_y_train, mini_batch
+            )
+        if len(w) != len(X_train):
+            raise ValueError("Balance weights do not match the training rows")
+        from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
+
+        tensors = [
+            torch.as_tensor(arr, device=self.device, dtype=torch.float32)
+            for arr in (X_train, eX_train, y_train, e_y_train)
+        ]
+        sampler = WeightedRandomSampler(w, num_samples=len(w), replacement=True)
+        return DataLoader(
+            TensorDataset(*tensors), batch_size=mini_batch, sampler=sampler
+        )
+
+    def configure_reference_pool(
+        self, X, E, value, error, *, label="fe_h", mean=0.0, scale=1.0, ratio=0.25,
+        weight=1.0, sigma_init=0.05,
+    ):  # fmt: skip
+        """Stars outside the table with one reference value each (physical).
+
+        Their likelihood uses an offset-only map (one learned offset and
+        noise for the whole pool), so it constrains the common scale the
+        same way for every stellar type the pool covers.
+        """
+        if getattr(self, "context", None) is not None:
+            raise ValueError("The reference pool does not support a head context")
+        self.ref_X = torch.as_tensor(np.asarray(X), dtype=torch.float32)
+        self.ref_value = torch.as_tensor((np.asarray(value) - mean) / scale).float()
+        self.ref_error = torch.as_tensor(np.asarray(error) / scale).float()
+        self.ref_j = self.label_names.index(label)
+        self.ref_ratio, self.ref_weight = float(ratio), float(weight)
+        self.ref_scale = float(scale)
+        maps = self.survey_maps
+        maps.ref_bias = nn.Parameter(torch.zeros((), device=self.device))
+        maps.ref_log_sigma = nn.Parameter(
+            torch.tensor(math.log(sigma_init / scale), device=self.device)
+        )
+        self._ref_steps, self._ref_sum = 0, 0.0
+        print(f"reference pool: {len(self.ref_X)} stars ({label})")
+
+    def _reference_pool_loss(self, n):
+        idx = torch.randint(len(self.ref_X), (max(1, int(n)),))
+        x = self.ref_X[idx].to(self.device, non_blocking=True)
+        v = self.ref_value[idx].to(self.device)
+        e = self.ref_error[idx].to(self.device)
+        mu, L = self.ft.params(self.model.encoder(encoder_input(x, self.drop_idx)))
+        maps = self.survey_maps
+        resid = (v - mu[:, self.ref_j] - maps.ref_bias)[:, None]
+        A = torch.zeros(len(x), 1, mu.shape[1], device=self.device)
+        A[:, 0, self.ref_j] = 1.0
+        noise = (maps.ref_log_sigma.exp() ** 2 + e * e)[:, None]
+        valid = torch.isfinite(resid)
+        nll, _ = student_t_nll(torch.nan_to_num(resid), A, L, noise, valid, self.nu)
+        loss = nll.mean()
+        self._ref_steps += 1
+        self._ref_sum += float(loss.detach())
+        if self._ref_steps % 1000 == 0:
+            logging.info(
+                f"Reference pool: nll {self._ref_sum / 1000:.4f} offset "
+                f"{float(maps.ref_bias) * self.ref_scale:+.4f} sigma "
+                f"{float(maps.ref_log_sigma.exp()) * self.ref_scale:.4f}"
+            )
+            self._ref_sum = 0.0
+        return loss
+
     # Head ---------------------------------------------------------------------
     def _init_finetune_head(self, linearprobe, ftlabeldim, ftact):
         if linearprobe:
@@ -380,6 +500,9 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
             )
             loss = loss + self.unl_rec_weight * rec_u + self.unl_cons_weight * cons
             self._log_unlabelled(rec_u, cons)
+        if getattr(self, "ref_X", None) is not None and torch.is_grad_enabled():
+            n = round(self.ref_ratio * len(X_batch))
+            loss = loss + self.ref_weight * self._reference_pool_loss(n)
         return loss
 
     # Per-epoch checks of the common scale ---------------------------------------
@@ -564,6 +687,7 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
                 self.context.state_dict() if self.context is not None else None
             ),
             "dropped_surveys": recs.dropped,
+            "sampling_ratio": getattr(self, "sampling_ratio", None),
             "gauge": "identity anchors (seismic log g, IRFM Teff) + [Fe/H] core",
         }
         _atomic_torch_save(payload, self.ft_save_str)

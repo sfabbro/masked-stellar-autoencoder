@@ -108,6 +108,34 @@ VARIANTS = {
         {},
     ),
 }
+# Metal-poor / scale experiments on c03 (see scratchpad proposal): a seed
+# control, a wider censoring band above the survey floors, [Fe/H]-balanced
+# sampling, and wide-binary companions inheriting their primary's [Fe/H].
+C03 = {
+    "exclude_surveys": [*LEAN, "sdss_dr19_astra_astronn"],
+    "spectra_groups": "LIT",
+}
+CENSOR_BAND = {
+    **CENSOR,
+    **{s: {"fe_h": -1.8} for s in ("lamost_dr12_lrs", "lamost_dr12_mrs",
+                                   "sdss_dr19_astra_aspcap", "apogee_dr17")},
+    "rave_dr6": {"fe_h": -1.4},
+}  # fmt: skip
+BINARY_POOL = ROOT + "binary_pool_20261119/pool.npz"
+VARIANTS.update(
+    {
+        "d00_c03_seed43": ("v7", C03, {"seed": 43, "pert_seed": 43}),
+        "d01_c03_censorband": ("v7", {**C03, "censor": CENSOR_BAND}, {}),
+        "d02_c03_balance": (
+            "v7", {**C03, "balance": {"power": 0.5, "cap": 10.0}}, {},
+        ),
+        "d03_c03_binary": (
+            "v7",
+            {**C03, "reference_pool": {"path": BINARY_POOL, "ratio": 0.25}},
+            {},
+        ),
+    }
+)  # fmt: skip
 GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
     # a01_v6 and b01_v7 finished before the 18:30-18:55 UTC session losses.
     "1": ["a02_clean", "a03_censor", "a04_nopm"],
@@ -115,6 +143,8 @@ GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
     "3": ["b02_v7_small", "b03_v7_ctx_ebv", "b04_v7_ctx_plx"],
     "4": ["b05_v7_posenc", "b06_v7_dust", "b07_v7_noperturb"],
     "5": ["c01_v7_apogee_lean", "c02_v7_litdedupe", "c03_v7_lean_lit_noastronn"],
+    "6": ["d00_c03_seed43", "d01_c03_censorband"],
+    "7": ["d03_c03_binary", "d02_c03_balance"],
 }
 ABL_EPOCHS = 6
 ABL_TRAIN_ROWS = 1_200_000  # about 25 % of the v5 table's training split
