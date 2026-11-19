@@ -1,0 +1,24 @@
+{
+  "run_id": "multisurvey_finetune_20261119_v8_nobalance",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nobalance",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_finetune_20261119_v8_nobalance",
+  "source_commit": "4a6fed55dac7f791594683a95507034ca0347c07",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261119-v8-nobalance.yaml && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8-nobalance.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nobalance/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits --rows /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_20261119/rows.npy --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v8_nobalance_core.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8-nobalance.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8_nobalance/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/consistency_v8_nobalance.npz\"",
+  "utc": "2026-11-19T21:12:00.787588+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "xy1spkdn"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261119-v8-nobalance.yaml": "085d5f46a1d2c8c7664ebc10e1f9fe194b6436ba909830d23d68e09fbda47517"
+  },
+  "payload_sha256": "cce7e61f0c0231d26793d98340b00dd96d6eead4c3ac441e16f6d336ec6b3fa9"
+}
