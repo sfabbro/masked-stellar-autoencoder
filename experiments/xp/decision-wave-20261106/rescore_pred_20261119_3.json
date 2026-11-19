@@ -1,0 +1,24 @@
+{
+  "run_id": "rescore_pred_20261119_3",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_pred_20261119_3",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/rescore_pred_20261119_3",
+  "source_commit": "a7fb21a34cf16294bab2ece72dd9e44e996adf4b",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/core_eval_rows.py --config configs/finetune-multisurvey-20261118-v7.yaml --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_20261119 && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/ablation-20261118-v7/d02_c03_balance.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d02_c03_balance/finetune_checkpoint_6.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits --rows /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_20261119/rows.npy --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/d02_c03_balance.npz\" || echo RESCORE_FAILED d02_c03_balance",
+  "utc": "2026-11-19T05:59:58.722743+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "bc0g9dqh"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/d02_c03_balance.yaml": "3352d83a158466c9dc9804de5a2ee4b125a515f8e2e563f13ba40448c5708985"
+  },
+  "payload_sha256": "d8ca5b4b6926af565e61a2007b56d8f98dfd077a122fc6376887d8de5af77eb9"
+}
