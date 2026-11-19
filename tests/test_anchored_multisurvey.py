@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 import torch
@@ -521,3 +523,100 @@ def test_prior_free_feh_recovers_the_likelihood():
     # Near-solar stars are left alone (flat prior above its peak).
     qs, _ = feh_extras(np.array([0.3]), np.array([0.07]), 30.0, prior)
     assert abs(qs[0, 1] - 0.3) < 0.03
+
+
+def test_mixture_of_identical_components_equals_the_single_student_t():
+    rng = np.random.default_rng(2)
+    x, rec = _synthetic_records(rng)
+    w, _ = _wrapper(rec, len(x))
+    B = 64
+    rows = torch.as_tensor(rng.choice(len(x), B, replace=False))
+    mu = torch.randn(B, 3)
+    L = torch.diag_embed(0.3 + torch.rand(B, 3))
+    y = torch.full((B, 3), float("nan"))
+    single = w._joint_loss(mu, L, y, None, rows)
+    K = 3
+    mix = w._joint_loss(
+        mu[:, None].expand(B, K, 3), L[:, None].expand(B, K, 3, 3), y, None, rows,
+        logw=torch.full((B, K), -math.log(K)),
+    )  # fmt: skip
+    # The weak weight prior adds mix_prior * log K for uniform weights.
+    torch.testing.assert_close(mix, single + w.mix_prior * math.log(K))
+    # A mixture head (K > 1) runs through the same loss and gives gradients.
+    head = StudentTHead(4, 3, torch.nn.ReLU(), n_components=3, min_scale=1e-2)
+    logw, m, Lh = head.mixture(torch.randn(B, 4))
+    assert logw.shape == (B, 3) and m.shape == (B, 3, 3) and Lh.shape == (B, 3, 3, 3)
+    loss = w._joint_loss(m, Lh, y, None, rows, logw=logw)
+    loss.backward()
+    assert torch.isfinite(loss) and head.logit.weight.grad is not None
+    with pytest.raises(ValueError):
+        head.params(torch.randn(2, 4))
+
+
+def test_mixture_quantiles_match_sampling():
+    from scipy.stats import t as student_t
+
+    from masked_stellar_autoencoder.training.anchored_predict import (
+        mixture_quantiles,
+    )
+
+    logw = np.log(np.array([[0.8, 0.2]]))
+    loc = np.array([[[0.0], [-2.0]]])
+    scale = np.array([[[0.2], [0.4]]])
+    q = mixture_quantiles(logw, loc, scale, np.array([5.0]))[0, 0]
+    rng = np.random.default_rng(0)
+    n = 400_000
+    comp = rng.random(n) < 0.2
+    s = np.where(comp, -2.0 + 0.4 * rng.standard_t(5, n), 0.2 * rng.standard_t(5, n))
+    np.testing.assert_allclose(q, np.quantile(s, [0.16, 0.5, 0.84]), atol=0.01)
+    # One component: the closed form.
+    q1 = mixture_quantiles(np.zeros((1, 1)), loc[:, :1], scale[:, :1], np.array([5.0]))
+    np.testing.assert_allclose(q1[0, 0, 2], 0.2 * student_t.ppf(0.84, 5), rtol=1e-9)
+
+
+def test_condition_mixture_moves_weight_to_the_matching_component():
+    from masked_stellar_autoencoder.training.anchored_survey_map import (
+        condition_mixture,
+    )
+
+    # Two components that differ in label 1 (e.g. parallax: giant vs dwarf).
+    mu = torch.tensor([[[0.0, -1.0], [0.5, 1.0]]])
+    L = torch.tensor([[[0.3, 0.0], [0.2, 0.3]]]).expand(1, 2, 2, 2).contiguous()
+    logw = torch.log(torch.tensor([[0.5, 0.5]]))
+    lw, loc, sd = condition_mixture(
+        logw, mu, L, 1, torch.tensor([1.0]), torch.tensor([0.01]), 5.0
+    )
+    assert lw.exp()[0, 1] > 0.99
+    # K = 1 reduces to condition_on_observation.
+    loc1, sd1 = condition_on_observation(
+        mu[:, 0], L[:, 0], 1, torch.tensor([0.2]), torch.tensor([0.01]), 5.0
+    )
+    lw1, locm, sdm = condition_mixture(
+        torch.zeros(1, 1), mu[:, :1], L[:, :1], 1, torch.tensor([0.2]),
+        torch.tensor([0.01]), 5.0,
+    )  # fmt: skip
+    torch.testing.assert_close(locm[:, 0], loc1)
+    torch.testing.assert_close(sdm[:, 0], sd1)
+    # Unobserved rows keep their weights.
+    lw2, _, _ = condition_mixture(
+        logw, mu, L, 1, torch.tensor([float("nan")]), torch.tensor([0.01]), 5.0
+    )
+    torch.testing.assert_close(lw2, logw)
+
+
+def test_feh_extras_mixture_of_copies_equals_single():
+    from masked_stellar_autoencoder.training.feh_prior import (
+        feh_extras,
+        smoothed_histogram,
+    )
+
+    rng = np.random.default_rng(0)
+    prior = smoothed_histogram(rng.normal(-0.3, 0.4, 100_000))
+    loc, scale = np.array([-1.8, 0.1]), np.array([0.3, 0.1])
+    q1, p1 = feh_extras(loc, scale, 5.0, prior)
+    qk, pk = feh_extras(
+        np.repeat(loc[:, None], 3, 1), np.repeat(scale[:, None], 3, 1), 5.0, prior,
+        logw=np.log(np.full((2, 3), 1 / 3)),
+    )  # fmt: skip
+    np.testing.assert_allclose(qk, q1)
+    np.testing.assert_allclose(pk, p1)

@@ -404,6 +404,9 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                 label_input=ms.get("label_input", "masked"),
                 drop_input_features=drop, context=context,
                 dust_weight=float(ms.get("dust_weight", 1.0)),
+                n_components=int(ms.get("n_components", 1)),
+                min_scale=ms.get("min_scale"),
+                mix_prior=float(ms.get("mix_prior", 1e-3)),
             )  # fmt: skip
             if unlabelled is not None:
                 wrapper.configure_semisupervised(

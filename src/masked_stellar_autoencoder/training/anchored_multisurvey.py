@@ -67,6 +67,7 @@ from .anchored_survey_map import (
     StudentTHead,
     assign_tiers,
     censored_upper_nll,
+    mixture_t_nll,
     student_t_nll,
 )
 from .multisurvey_finetune import MultiSurveyWrapper
@@ -260,8 +261,16 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         self, records: AnchoredRecords, label_names, *, nu=5.0, basis=8, hidden=64,
         map_reg_weight=1e-3, slope_weight=0.01, monotone_weight=1.0,
         error_fill=None, label_input="masked", drop_input_features=(),
-        context=None, dust_weight=1.0,
+        context=None, dust_weight=1.0, n_components=1, min_scale=None,
+        mix_prior=1e-3,
     ):  # fmt: skip
+        self.n_components = int(n_components)
+        self.min_scale = float(
+            min_scale
+            if min_scale is not None
+            else (1e-3 if n_components == 1 else 1e-2)
+        )
+        self.mix_prior = float(mix_prior)
         if label_input not in ("masked", "clean"):
             raise ValueError(
                 f"label_input must be masked or clean, not {label_input!r}"
@@ -365,15 +374,22 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         x = self.ref_X[idx].to(self.device, non_blocking=True)
         v = self.ref_value[idx].to(self.device)
         e = self.ref_error[idx].to(self.device)
-        mu, L = self.ft.params(self.model.encoder(encoder_input(x, self.drop_idx)))
+        logw, mu, L = self.ft.mixture(
+            self.model.encoder(encoder_input(x, self.drop_idx))
+        )
         maps = self.survey_maps
-        resid = (v - mu[:, self.ref_j] - maps.ref_bias)[:, None]
-        A = torch.zeros(len(x), 1, mu.shape[1], device=self.device)
+        A = torch.zeros(len(x), 1, mu.shape[-1], device=self.device)
         A[:, 0, self.ref_j] = 1.0
         noise = (maps.ref_log_sigma.exp() ** 2 + e * e)[:, None]
-        valid = torch.isfinite(resid)
-        nll, _ = student_t_nll(torch.nan_to_num(resid), A, L, noise, valid, self.nu)
-        loss = nll.mean()
+        comp = []
+        for k in range(mu.shape[1]):
+            resid = (v - mu[:, k, self.ref_j] - maps.ref_bias)[:, None]
+            valid = torch.isfinite(resid)
+            nll, _ = student_t_nll(
+                torch.nan_to_num(resid), A, L[:, k], noise, valid, self.nu
+            )
+            comp.append(nll)
+        loss = mixture_t_nll(logw, torch.stack(comp, dim=-1)).mean()
         self._ref_steps += 1
         self._ref_sum += float(loss.detach())
         if self._ref_steps % 1000 == 0:
@@ -393,12 +409,26 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         self.lp = None
         dim = self.context.dim if getattr(self, "context", None) is not None else 0
         self.ft = StudentTHead(
-            self.latent_size, ftlabeldim, act, self.nu, context_dim=dim
-        ).to(self.device)
+            self.latent_size, ftlabeldim, act, self.nu, context_dim=dim,
+            n_components=getattr(self, "n_components", 1),
+            min_scale=getattr(self, "min_scale", 1e-3),
+        ).to(self.device)  # fmt: skip
 
     # Loss ---------------------------------------------------------------------
-    def _joint_loss(self, mu, L, y, e_y, rows):
-        B, P = mu.shape
+    def _joint_loss(self, mu, L, y, e_y, rows, logw=None):
+        """Mean per-star NLL of all records and own labels (+ map penalties).
+
+        ``mu`` (B, P) and ``L`` (B, P, P) for a single Student-t, or (B, K, P)
+        and (B, K, P, P) with ``logw`` (B, K) for a mixture: each component
+        gives the closed-form joint likelihood with the maps linearised at its
+        own location (censored records included), and the star's likelihood
+        is their weighted sum.
+        """
+        if mu.dim() == 2:
+            mu, L = mu[:, None], L[:, None]
+        B, K, P = mu.shape
+        if logw is None:
+            logw = mu.new_zeros(B, K) - math.log(K)
         dev = mu.device
         recs = self.records
         rec, pos, slot = recs.gather(rows)
@@ -407,26 +437,12 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         n_own = len(self.own)
         k_max = int(slot.max()) + 1 if len(slot) else 0
         D = n_own + len(self.mapped) * k_max
-        resid = mu.new_zeros(B, D)
-        A = mu.new_zeros(B, D, P)
-        noise = mu.new_ones(B, D)
-        valid = torch.zeros(B, D, dtype=torch.bool, device=dev)
         own_sigma = maps.own_log_sigma.exp()
-        for o, li in enumerate(self.own):
-            z = y[:, li]
-            ok = torch.isfinite(z)
-            resid[:, o] = torch.where(ok, z - mu[:, li], 0.0)
-            A[:, o, li] = 1.0
-            e = torch.nan_to_num(e_y[:, li], nan=0.0) if e_y is not None else 0.0
-            noise[:, o] = e * e + own_sigma[o] ** 2
-            valid[:, o] = ok
-        jac = None
         if len(rec):
             s = recs.survey[rec]
-            ym, jac = maps(mu[pos][:, mapped], s)
             v = recs.value[rec]
             cens = recs.censored[rec]
-            ok = torch.isfinite(v) & ~cens
+            ok_rec = torch.isfinite(v) & ~cens
             sig = maps.sigma(s)
             err = recs.error[rec]
             d = (
@@ -435,32 +451,59 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
                 + torch.arange(len(self.mapped), device=dev)
             )  # (R, 3)
             b = pos[:, None].expand_as(d)
-            resid = resid.index_put((b, d), torch.where(ok, v - ym, 0.0))
-            noise = noise.index_put((b, d), sig * sig + err * err)
-            valid = valid.index_put((b, d), ok)
-            A = A.index_put(
-                (b[:, :, None].expand(-1, -1, len(self.mapped)),
-                 d[:, :, None].expand(-1, -1, len(self.mapped)),
-                 mapped[None, None, :].expand(len(rec), len(self.mapped), -1)),
-                jac,
-            )  # fmt: skip
-        nll, dims = student_t_nll(resid, A, L, noise, valid, self.nu)
-        per_star = torch.where(dims > 0, nll, torch.zeros_like(nll))
-        has = dims > 0
-        if jac is not None and bool(cens.any()):
-            # Censored records: P(mapped value <= upper limit), marginal of the
-            # linearised joint (head scale through the map, plus survey noise).
-            jl = torch.einsum("rjk,rkp->rjp", jac, L[pos][:, mapped, :])
-            var = jl.square().sum(-1) + sig * sig + err * err
-            term = censored_upper_nll(recs.upper[rec], ym, var)
-            term = torch.where(cens, term, torch.zeros_like(term)).sum(-1)
-            per_star = per_star.index_add(0, pos, term)
-            has = has.index_fill(0, pos[cens.any(-1)], True)
+        comp_nll, jacs, has = [], [], None
+        for k in range(K):
+            mk, Lk = mu[:, k], L[:, k]
+            resid = mk.new_zeros(B, D)
+            A = mk.new_zeros(B, D, P)
+            noise = mk.new_ones(B, D)
+            valid = torch.zeros(B, D, dtype=torch.bool, device=dev)
+            for o, li in enumerate(self.own):
+                z = y[:, li]
+                ok = torch.isfinite(z)
+                resid[:, o] = torch.where(ok, z - mk[:, li], 0.0)
+                A[:, o, li] = 1.0
+                e = torch.nan_to_num(e_y[:, li], nan=0.0) if e_y is not None else 0.0
+                noise[:, o] = e * e + own_sigma[o] ** 2
+                valid[:, o] = ok
+            jac = None
+            if len(rec):
+                ym, jac = maps(mk[pos][:, mapped], s)
+                resid = resid.index_put((b, d), torch.where(ok_rec, v - ym, 0.0))
+                noise = noise.index_put((b, d), sig * sig + err * err)
+                valid = valid.index_put((b, d), ok_rec)
+                A = A.index_put(
+                    (b[:, :, None].expand(-1, -1, len(self.mapped)),
+                     d[:, :, None].expand(-1, -1, len(self.mapped)),
+                     mapped[None, None, :].expand(len(rec), len(self.mapped), -1)),
+                    jac,
+                )  # fmt: skip
+                jacs.append(jac)
+            nll, dims = student_t_nll(resid, A, Lk, noise, valid, self.nu)
+            per_star = torch.where(dims > 0, nll, torch.zeros_like(nll))
+            has_k = dims > 0
+            if jac is not None and bool(cens.any()):
+                # Censored records: P(mapped value <= upper limit), marginal of
+                # the linearised joint (head scale through the map + noise).
+                jl = torch.einsum("rjk,rkp->rjp", jac, Lk[pos][:, mapped, :])
+                var = jl.square().sum(-1) + sig * sig + err * err
+                term = censored_upper_nll(recs.upper[rec], ym, var)
+                term = torch.where(cens, term, torch.zeros_like(term)).sum(-1)
+                per_star = per_star.index_add(0, pos, term)
+                has_k = has_k.index_fill(0, pos[cens.any(-1)], True)
+            comp_nll.append(per_star)
+            has = has_k
+        per_star = mixture_t_nll(logw, torch.stack(comp_nll, dim=-1))
         loss = per_star[has].sum() / has.sum().clamp_min(1)
         loss = loss + self.map_reg_weight * maps.regularization()
-        if jac is not None:
-            log_slope, short = maps.slope_penalties(jac)
+        if jacs:
+            pens = [maps.slope_penalties(j) for j in jacs]
+            log_slope = sum(p[0] for p in pens) / len(pens)
+            short = sum(p[1] for p in pens) / len(pens)
             loss = loss + self.slope_weight * log_slope + self.monotone_weight * short
+        if K > 1 and getattr(self, "mix_prior", 0.0) > 0:
+            # Weak Dirichlet-like prior: no component's weight collapses to 0.
+            loss = loss - self.mix_prior * logw.mean()
         return loss
 
     def _compute_finetune_batch_loss(self, batch, ctx):
@@ -482,8 +525,8 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         context, dust = None, None
         if self.context is not None:
             context, dust = self.context(X_batch, eX_batch, y_batch, e_y)
-        mu, L = self.ft.params(encoded, context)
-        loss = self._joint_loss(mu, L, y_batch, e_y, rows)
+        logw, mu, L = self.ft.mixture(encoded, context)
+        loss = self._joint_loss(mu, L, y_batch, e_y, rows, logw=logw)
         if dust is not None:
             loss = loss + self.dust_weight * self.context.dust_loss(dust, y_batch, e_y)
         if ctx.multitask:
@@ -688,6 +731,8 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
             ),
             "dropped_surveys": recs.dropped,
             "sampling_ratio": getattr(self, "sampling_ratio", None),
+            "n_components": self.n_components,
+            "min_scale": self.min_scale,
             "gauge": "identity anchors (seismic log g, IRFM Teff) + [Fe/H] core",
         }
         _atomic_torch_save(payload, self.ft_save_str)

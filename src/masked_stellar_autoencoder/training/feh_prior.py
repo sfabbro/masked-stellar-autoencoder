@@ -58,16 +58,20 @@ def _quantiles(p, qs=(0.16, 0.5, 0.84), centres=CENTRES):
     return np.stack([centres[np.argmax(cdf >= q, axis=1)] for q in qs], axis=1)
 
 
-def feh_extras(loc, scale, nu, prior, *, limit=-2.5, batch=50_000):
+def feh_extras(loc, scale, nu, prior, *, logw=None, limit=-2.5, batch=50_000):
     """(prior-free 16/50/84 quantiles (N, 3), P([Fe/H] < limit) (N,)).
 
     ``loc``/``scale``: physical [Fe/H] location and Student-t scale (not the
-    standard deviation); ``nu``: scalar or per row. Rows with a non-finite
+    standard deviation), (N,) or (N, K) for a mixture with log weights
+    ``logw`` (N, K); ``nu``: scalar or per row. Rows with a non-finite
     location give NaN.
     """
     loc, scale = np.asarray(loc, float), np.asarray(scale, float)
-    nu = np.broadcast_to(np.asarray(nu, float), loc.shape)
-    ok = np.isfinite(loc) & np.isfinite(scale) & (scale > 0)
+    if loc.ndim == 1:
+        loc, scale = loc[:, None], scale[:, None]
+    logw = np.zeros(loc.shape) if logw is None else np.asarray(logw, float)
+    nu = np.broadcast_to(np.asarray(nu, float), loc.shape[:1])
+    ok = (np.isfinite(loc) & np.isfinite(scale) & (scale > 0)).all(1)
     q = np.full((len(loc), 3), np.nan)
     pb = np.full(len(loc), np.nan)
     centres = CENTRES
@@ -79,7 +83,12 @@ def feh_extras(loc, scale, nu, prior, *, limit=-2.5, batch=50_000):
     idx = np.flatnonzero(ok)
     for i in range(0, len(idx), batch):
         j = idx[i : i + batch]
-        post = gridded_posterior(loc[j], scale[j], nu[j])
+        w = np.exp(logw[j] - logw[j].max(1, keepdims=True))
+        w /= w.sum(1, keepdims=True)
+        post = sum(
+            w[:, k, None] * gridded_posterior(loc[j, k], scale[j, k], nu[j])
+            for k in range(loc.shape[1])
+        )
         pb[j] = post[:, below].sum(1)
         # eps far below the grid's probability floor (1e-12): the default
         # 1e-8 clip would put spurious mass in empty tail bins.

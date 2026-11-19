@@ -130,11 +130,21 @@ class AnchoredSurveyMaps(nn.Module):
 
 
 class StudentTHead(nn.Module):
-    """Multivariate Student-t over the labels: location and Cholesky scale.
+    """Multivariate Student-t (or a mixture of them) over the labels.
 
-    ``forward`` returns (N, P, 3) marginal 16/50/84 % quantiles, so code that
-    expects the quantile head (evaluation, prediction) works unchanged;
-    ``params`` returns (mu, L) for the likelihood.
+    ``mixture`` returns (log weights (B, K), locations (B, K, P), Cholesky
+    scales (B, K, P, P)); with ``n_components`` = 1 (default, the v6/v7 head,
+    same parameters) ``params`` returns the single (mu, L). A mixture
+    (MDN-style, full covariance per component) can represent skewed,
+    heavy-tailed or bimodal posteriors while every likelihood that uses the
+    head (survey maps linearised per component, censoring, parallax
+    conditioning) stays in closed form. ``min_scale`` floors each component's
+    diagonal scale (scaled units) so a component cannot collapse onto
+    repeated label values.
+
+    ``forward`` returns (N, P, 3) marginal 16/50/84 % quantiles (for a
+    mixture: moment-matched, symmetric; prediction uses the exact mixture
+    quantiles, ``anchored_predict``).
 
     With ``context_dim`` > 0, per-star metadata (``ctx`` = (values, visible),
     see ``context_inputs``) conditions the latent additively through a
@@ -143,10 +153,12 @@ class StudentTHead(nn.Module):
 
     def __init__(
         self, latent_size: int, n_labels: int, activation, nu: float = 5.0,
-        context_dim: int = 0,
+        context_dim: int = 0, n_components: int = 1, min_scale: float = 1e-3,
     ):  # fmt: skip
         super().__init__()
         self.n_labels, self.nu = n_labels, float(nu)
+        self.n_components, self.min_scale = int(n_components), float(min_scale)
+        K = self.n_components
         self.context = None
         if context_dim:
             from .context_latent import ContextLatent
@@ -159,10 +171,11 @@ class StudentTHead(nn.Module):
             nn.Linear(1024, 512), activation,
             nn.Linear(512, 256), activation,
         )  # fmt: skip
-        self.loc = nn.Linear(256, n_labels)
-        self.log_scale = nn.Linear(256, n_labels)
+        self.loc = nn.Linear(256, K * n_labels)
+        self.log_scale = nn.Linear(256, K * n_labels)
         self.n_off = n_labels * (n_labels - 1) // 2
-        self.off = nn.Linear(256, max(self.n_off, 1))
+        self.off = nn.Linear(256, K * max(self.n_off, 1))
+        self.logit = nn.Linear(256, K) if K > 1 else None
         rows, cols = torch.tril_indices(n_labels, n_labels, offset=-1)
         self.register_buffer("rows", rows)
         self.register_buffer("cols", cols)
@@ -170,26 +183,63 @@ class StudentTHead(nn.Module):
 
         self.q84 = float(student_t.ppf(0.84, self.nu))
 
-    def params(self, z: torch.Tensor, ctx=None):
+    def mixture(self, z: torch.Tensor, ctx=None):
         if self.context is not None:
             if ctx is None:
                 raise ValueError("This head needs its metadata context")
             z = self.context(z, *ctx)
         h = self.shared(z)
-        mu = self.loc(h)
-        scale = nn.functional.softplus(self.log_scale(h)) + 1e-3
+        B, K, P = len(z), self.n_components, self.n_labels
+        mu = self.loc(h).view(B, K, P)
+        scale = nn.functional.softplus(self.log_scale(h)).view(B, K, P) + self.min_scale
         L = torch.diag_embed(scale)
         if self.n_off:
+            off = self.off(h).view(B, K, -1)[:, :, : self.n_off]
             L = L.index_put(
-                (torch.arange(len(z), device=z.device)[:, None], self.rows, self.cols),
-                self.off(h)[:, : self.n_off],
-            )
-        return mu, L
+                (torch.arange(B, device=z.device)[:, None, None],
+                 torch.arange(K, device=z.device)[None, :, None],
+                 self.rows, self.cols),
+                off,
+            )  # fmt: skip
+        if self.logit is None:
+            logw = mu.new_zeros(B, 1)
+        else:
+            logw = torch.log_softmax(self.logit(h), dim=-1)
+        return logw, mu, L
+
+    def params(self, z: torch.Tensor, ctx=None):
+        if self.n_components != 1:
+            raise ValueError("A mixture head has no single (mu, L); use mixture()")
+        _, mu, L = self.mixture(z, ctx)
+        return mu[:, 0], L[:, 0]
 
     def forward(self, z: torch.Tensor, ctx=None) -> torch.Tensor:
-        mu, L = self.params(z, ctx)
-        sd = L.square().sum(-1).sqrt()
-        return torch.stack([mu - self.q84 * sd, mu, mu + self.q84 * sd], dim=2)
+        logw, mu, L = self.mixture(z, ctx)
+        w = logw.exp()[:, :, None]
+        sd = L.square().sum(-1).sqrt()  # (B, K, P) t scales
+        m = (w * mu).sum(1)
+        if self.n_components == 1:
+            s = sd[:, 0]
+        else:  # moment-matched scale of the mixture marginal
+            v = self.nu / (self.nu - 2)
+            var = (w * (sd.square() * v + mu.square())).sum(1) - m.square()
+            s = (var.clamp_min(1e-12) / v).sqrt()
+        return torch.stack([m - self.q84 * s, m, m + self.q84 * s], dim=2)
+
+
+def mixture_t_nll(logw, per_component_nll):
+    """-log sum_k w_k exp(-nll_k): (B, K) log weights and component NLLs."""
+    return -torch.logsumexp(logw - per_component_nll, dim=-1)
+
+
+def t_logpdf(x, loc, scale, nu):
+    """Univariate Student-t log density (torch, broadcasting)."""
+    r = (x - loc) / scale
+    return (
+        torch.lgamma(torch.as_tensor((nu + 1) / 2)) - math.lgamma(nu / 2)
+        - 0.5 * math.log(nu * math.pi) - torch.log(scale)
+        - (nu + 1) / 2 * torch.log1p(r * r / nu)
+    )  # fmt: skip
 
 
 def student_t_nll(resid, A, L, noise_var, valid, nu):
@@ -265,3 +315,25 @@ def condition_on_observation(mu, L, j, z, var, nu):
     loc = torch.where(ok[:, None], loc, mu)
     sd = torch.where(ok[:, None], sd_c, sd_0)
     return loc, sd
+
+
+def condition_mixture(logw, mu, L, j, z, var, nu):
+    """``condition_on_observation`` for a mixture head.
+
+    Each component is conditioned on the observation of label j; its weight
+    is multiplied by that component's predictive density of the observation,
+    t_nu(z; mu_kj, sqrt(S_kjj + var)), and renormalised. Rows with a
+    non-finite z or var keep their weights. Returns (log weights (B, K),
+    locations (B, K, P), marginal scales (B, K, P)).
+    """
+    B, K, P = mu.shape
+    loc, sd = condition_on_observation(
+        mu.reshape(B * K, P), L.reshape(B * K, P, P), j,
+        z.repeat_interleave(K), var.repeat_interleave(K), nu,
+    )  # fmt: skip
+    ok = torch.isfinite(z) & torch.isfinite(var) & (var >= 0)
+    s = (L[:, :, j, :].square().sum(-1) + torch.where(ok, var, 0.0)[:, None]).sqrt()
+    lp = t_logpdf(torch.where(ok, z, 0.0)[:, None], mu[:, :, j], s, nu)
+    new = torch.log_softmax(logw + lp, dim=-1)
+    logw = torch.where(ok[:, None], new, logw)
+    return logw, loc.view(B, K, P), sd.view(B, K, P)

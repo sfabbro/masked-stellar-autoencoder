@@ -136,6 +136,9 @@ VARIANTS.update(
         ),
     }
 )  # fmt: skip
+# Mixture-of-multivariate-Student-t head (3 components, full covariance each):
+# stability and like-for-like check against c03 / d00 before the full run.
+VARIANTS["e01_c03_mix3"] = ("v7", {**C03, "n_components": 3}, {})
 GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
     # a01_v6 and b01_v7 finished before the 18:30-18:55 UTC session losses.
     "1": ["a02_clean", "a03_censor", "a04_nopm"],
@@ -145,6 +148,7 @@ GROUPS = {  # one GPU session each, run in sequence (about 50 min per variant)
     "5": ["c01_v7_apogee_lean", "c02_v7_litdedupe", "c03_v7_lean_lit_noastronn"],
     "6": ["d00_c03_seed43", "d01_c03_censorband"],
     "7": ["d03_c03_binary", "d02_c03_balance"],
+    "8": ["e01_c03_mix3"],
 }
 ABL_EPOCHS = 6
 ABL_TRAIN_ROWS = 1_200_000  # about 25 % of the v5 table's training split

@@ -17,7 +17,9 @@ Anchored (v6) checkpoints carry their label names and Student-t head;
 Missing feature errors take the checkpoint's training fill values.
 Anchored checkpoints may hide input features from the encoder
 (``drop_input_features``) and carry a head context; both are applied as in
-training. ``--feh-prior PRIOR.npz`` (make_feh_prior.py) adds the prior-free
+training. Mixture heads (``n_components`` > 1) give exact (skewed) mixture
+quantiles and also store the [Fe/H] mixture (``feh_mix_*``).
+``--feh-prior PRIOR.npz`` (make_feh_prior.py) adds the prior-free
 [Fe/H] quantiles (``feh_prior_free``) and P([Fe/H] < -2.5)
 (``p_feh_below_m2p5``), see ``training.feh_prior``.
 ``--rows ROWS.npy`` predicts those table rows (``table_row`` in the
@@ -180,6 +182,8 @@ def main():
         head = StudentTHead(
             m["layer_dims"][-1], n_labels, act, state["nu"],
             context_dim=int(state.get("context_dim", 0)),
+            n_components=int(state.get("n_components", 1)),
+            min_scale=float(state.get("min_scale", 1e-3)),
         )  # fmt: skip
     else:
         head = PredictionHead(m["layer_dims"][-1], 6, act)
@@ -216,7 +220,6 @@ def main():
 
 def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
               plx_mas, e_plx_mas, source_id, truth, names):  # fmt: skip
-    from scipy.stats import t as student_t
 
     from masked_stellar_autoencoder.training.anchored_predict import (
         anchored_predict,
@@ -245,16 +248,14 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
         scale = np.where(scaler.scale_ <= 0, 1.0, scaler.scale_)
         Es = (E / scale).astype("f4")
     kw = dict(device=device, E=Es, context=context, drop_idx=drop)
-    q84 = float(student_t.ppf(0.84, state["nu"]))
 
-    def block(mu, sd, q):
-        quant = np.stack([mu - q * sd, mu, mu + q * sd], axis=2)
-        return _inverse_labels(mu, scalers, pack), _inverse_quantile_block(
-            quant, scalers, pack
+    def block(q):  # exact marginal 16/50/84 % quantiles, scaled -> physical
+        return _inverse_labels(q[..., 1], scalers, pack), _inverse_quantile_block(
+            q, scalers, pack
         )
 
-    mu, sd = anchored_predict(model, head, Xs, **kw)
-    med, quant = block(mu, sd, q84)
+    final = anchored_predict(model, head, Xs, full=True, **kw)
+    med, quant = block(final["q"])
     out = dict(median=med, quantiles=quant)
     if a.save_latent:
         from masked_stellar_autoencoder.training.anchored_predict import encoder_input
@@ -278,25 +279,31 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
         m, s = float(scalers[j].mean_[0]), float(scalers[j].scale_[0])
         z = np.where(ok, (zl - m) / s, np.nan).astype("f4")
         var = np.where(ok, (el / s) ** 2, np.nan).astype("f4")
-        mu_c, sd_c = anchored_predict(model, head, Xs, condition=(j, z, var), **kw)
-        q85 = float(student_t.ppf(0.84, state["nu"] + 1))
-        qrow = np.where(ok, q85, q84)[:, None]
+        final = anchored_predict(
+            model, head, Xs, condition=(j, z, var), full=True, **kw
+        )
         out = dict(out, median_prior=med, quantiles_prior=quant)
-        out["median"], out["quantiles"] = block(mu_c, sd_c, qrow)
+        out["median"], out["quantiles"] = block(final["q"])
         out["parallax_conditioned"] = ok
+    # [Fe/H] marginal of the final (conditioned) prediction, physical units.
+    jf = list(state["label_names"]).index("fe_h")
+    sf = scalers[jf]
+    f_loc = final["loc"][:, :, jf] * float(sf.scale_[0]) + float(sf.mean_[0])
+    f_scale = final["scale"][:, :, jf] * float(sf.scale_[0])
+    if f_loc.shape[1] > 1:  # the mixture itself, for population work
+        out["feh_mix_logw"] = final["logw"].astype("f4")
+        out["feh_mix_loc"], out["feh_mix_scale"] = (
+            f_loc.astype("f4"),
+            f_scale.astype("f4"),
+        )
+        out["feh_mix_nu"] = final["nu"].astype("f4")
     if a.feh_prior is not None:
         from masked_stellar_autoencoder.training.feh_prior import feh_extras
 
-        j = list(names).index("fe_h")
-        qf = out["quantiles"][:, j]
-        nu = np.full(len(qf), float(state["nu"]))
-        if "parallax_conditioned" in out:
-            nu[out["parallax_conditioned"]] += 1.0  # conditioned on one value
-        scale = 0.5 * (qf[:, 2] - qf[:, 0]) / student_t.ppf(0.84, nu)
         with np.load(a.feh_prior) as pz:
             prior = pz["prior"]
         out["feh_prior_free"], out["p_feh_below_m2p5"] = feh_extras(
-            qf[:, 1], scale, nu, prior, limit=-2.5
+            f_loc, f_scale, final["nu"], prior, logw=final["logw"], limit=-2.5
         )
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
