@@ -645,6 +645,32 @@ STEPS["ms-v8-eval"] = dict(
     ),
     files=[MS_V8[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# Full-data v8 ablations (scripts/make_v8_config.py --variant): v8 without the
+# cool binary pool, and v8 without balanced sampling. Each trains 12 epochs,
+# then predicts the frozen [Fe/H] core and the consistency stars at epoch 12.
+for _v in ("nopool", "nobalance"):
+    _run = f"{MS_V8[0]}_{_v}"
+    _cfg = f"configs/finetune-multisurvey-20261119-v8-{_v}.yaml"
+    _ck = f"{ROOT}{_run}/finetune_checkpoint_12.pth"
+    STEPS[f"ms-multi-v8-{_v}"] = dict(
+        run_id=_run,
+        gpu=1,
+        ram=192,
+        cpu=8,
+        command=' && "${pixi_run[@]}" '.join(
+            [
+                f"python -u -m masked_stellar_autoencoder.training.finetune_msa --config {_cfg}",
+                f"python -u scripts/predict_fits_rows.py --config {_cfg} --checkpoint {_ck}"
+                f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+                f" --rows {ROOT}{RESCORE}/rows.npy --condition-parallax 5{_PRIOR}"
+                f' --out "$experiment_output/multi_v8_{_v}_core.npz"',
+                f"python -u scripts/predict_fits_rows.py --config {_cfg} --checkpoint {_ck}"
+                f" --fits {ROOT}{CONSIST}/stars.fits --condition-parallax 5{_PRIOR}"
+                f' --out "$experiment_output/consistency_v8_{_v}.npz"',
+            ]
+        ),
+        files=[_cfg],
+    )
 # v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402
