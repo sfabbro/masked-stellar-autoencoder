@@ -525,6 +525,46 @@ STEPS["ms-rescore"] = dict(
     command=_rescore(_models),
     files=sorted({c for c, _ in _models.values()}),
 )
+# Second wave (c03 setup): metal-poor/scale experiments and mixture heads.
+# Best epochs by anchor score (set from each variant's anchor_metrics.jsonl).
+_ABL_BEST_2 = {
+    "d00_c03_seed43": 6, "d01_c03_censorband": 6, "d03_c03_binary": 4,
+}  # fmt: skip
+_models_2 = {
+    _n: (
+        f"configs/ablation-20261118-v7/{_n}.yaml",
+        f"{ROOT}multisurvey_ablation_20261118_v7/{_n}/finetune_checkpoint_{_ep}.pth",
+    )
+    for _n, _ep in _ABL_BEST_2.items()
+}
+STEPS["ms-rescore-2"] = dict(
+    run_id="rescore_pred_20261119_2",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=_rescore(_models_2).replace(
+        " --condition-parallax 5",
+        " --condition-parallax 5"
+        " --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz",
+    ),
+    files=sorted({c for c, _ in _models_2.values()}),
+)
+# Binary/cluster consistency predictions of selected ablation checkpoints.
+_CONSIST_ABL = ("d00_c03_seed43", "d03_c03_binary")
+STEPS["ms-consist-abl"] = dict(
+    run_id="consistency_pred_20261119_abl",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=' && "${pixi_run[@]}" '.join(
+        f"python -u scripts/predict_fits_rows.py --config {_models_2[n][0]}"
+        f" --checkpoint {_models_2[n][1]} --fits {ROOT}{CONSIST}/stars.fits"
+        f' --condition-parallax 5 --out "$experiment_output/consistency_{n}.npz"'
+        f" || echo CONSIST_FAILED {n}"
+        for n in _CONSIST_ABL
+    ),
+    files=sorted({_models_2[n][0] for n in _CONSIST_ABL}),
+)
 # v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402
