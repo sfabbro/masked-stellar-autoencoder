@@ -17,7 +17,10 @@ Anchored (v6) checkpoints carry their label names and Student-t head;
 Missing feature errors take the checkpoint's training fill values.
 Anchored checkpoints may hide input features from the encoder
 (``drop_input_features``) and carry a head context; both are applied as in
-training. ``--rows ROWS.npy`` predicts those table rows (``table_row`` in the
+training. ``--feh-prior PRIOR.npz`` (make_feh_prior.py) adds the prior-free
+[Fe/H] quantiles (``feh_prior_free``) and P([Fe/H] < -2.5)
+(``p_feh_below_m2p5``), see ``training.feh_prior``.
+``--rows ROWS.npy`` predicts those table rows (``table_row`` in the
 output); ``--save-latent`` stores the encoder latent (float16).
 ``--condition-parallax SNR`` conditions the joint Student-t on the
 measured Gaia parallax of stars with parallax/error >= SNR (log10 space;
@@ -58,6 +61,12 @@ def main():
     )
     p.add_argument(
         "--save-latent", action="store_true", help="anchored: also store the latent"
+    )
+    p.add_argument(
+        "--feh-prior",
+        type=Path,
+        help="anchored: training [Fe/H] prior (make_feh_prior.py); adds "
+        "feh_prior_free (16/50/84) and p_feh_below_m2p5",
     )
     a = p.parse_args()
 
@@ -275,6 +284,20 @@ def _anchored(a, state, model, head, Xs, E, scaler, cols, scalers, pack, extra,
         out = dict(out, median_prior=med, quantiles_prior=quant)
         out["median"], out["quantiles"] = block(mu_c, sd_c, qrow)
         out["parallax_conditioned"] = ok
+    if a.feh_prior is not None:
+        from masked_stellar_autoencoder.training.feh_prior import feh_extras
+
+        j = list(names).index("fe_h")
+        qf = out["quantiles"][:, j]
+        nu = np.full(len(qf), float(state["nu"]))
+        if "parallax_conditioned" in out:
+            nu[out["parallax_conditioned"]] += 1.0  # conditioned on one value
+        scale = 0.5 * (qf[:, 2] - qf[:, 0]) / student_t.ppf(0.84, nu)
+        with np.load(a.feh_prior) as pz:
+            prior = pz["prior"]
+        out["feh_prior_free"], out["p_feh_below_m2p5"] = feh_extras(
+            qf[:, 1], scale, nu, prior, limit=-2.5
+        )
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         a.out, source_id=source_id, truth=truth, truth_names=np.array(names),

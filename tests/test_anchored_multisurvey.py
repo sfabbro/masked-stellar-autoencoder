@@ -490,3 +490,34 @@ def test_balanced_loader_oversamples_and_reference_pool_trains():
     assert torch.isfinite(loss)
     assert w.survey_maps.ref_bias.grad is not None
     assert w.ft.loc.weight.grad is not None
+
+
+def test_prior_free_feh_recovers_the_likelihood():
+    from scipy.stats import norm
+
+    from masked_stellar_autoencoder.training.feh_prior import (
+        CENTRES,
+        feh_extras,
+        smoothed_histogram,
+    )
+
+    rng = np.random.default_rng(0)
+    prior = smoothed_histogram(
+        np.concatenate([rng.normal(-0.3, 0.3, 200_000), rng.normal(-1.2, 0.5, 5_000)])
+    )
+    # A star at -2.8 measured with 0.45 dex: the posterior median sits higher;
+    # dividing the (t-approximated) posterior by the prior moves it back.
+    like = norm.pdf(CENTRES, -2.8, 0.45)
+    post = like * prior
+    post /= post.sum()
+    cdf = np.cumsum(post)
+    med = CENTRES[np.argmax(cdf >= 0.5)]
+    sd = 0.5 * (CENTRES[np.argmax(cdf >= 0.84)] - CENTRES[np.argmax(cdf >= 0.16)])
+    q, pb = feh_extras(np.array([med, np.nan]), np.array([sd, 0.1]), 30.0, prior)
+    assert med > -2.6  # shrunk toward the bulk
+    assert abs(q[0, 1] - (-2.8)) < abs(med - (-2.8))
+    assert q[0, 0] < q[0, 1] < q[0, 2]
+    assert 0.0 < pb[0] < 1.0 and np.isnan(pb[1]) and np.isnan(q[1]).all()
+    # Near-solar stars are left alone (flat prior above its peak).
+    qs, _ = feh_extras(np.array([0.3]), np.array([0.07]), 30.0, prior)
+    assert abs(qs[0, 1] - 0.3) < 0.03
