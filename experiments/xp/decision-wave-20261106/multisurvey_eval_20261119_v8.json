@@ -1,0 +1,25 @@
+{
+  "run_id": "multisurvey_eval_20261119_v8",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_eval_20261119_v8",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_eval_20261119_v8",
+  "source_commit": "7de90a729b68148dfd600c500b7a0a376d96e3b3",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --condition-parallax 5 --extra-labels /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/reddening_labels_20261118_v6/v1_reddening.npz --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v8_test.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits --rows /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rescore_20261119/rows.npy --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v8_core.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261119_v8/finetune_checkpoint_12.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/consistency_v8.npz\"",
+  "utc": "2026-11-19T20:30:14.806670+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "fbk9rml9"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261119-v8.yaml": "e1e2d20fc70803d315ad4a4076308b733ccf18ca5fad72cfcc60d2e17d8a5d79",
+    "configs/finetune-multisurvey-20261115-v4.yaml": "d88d5b93d91f94f94101dec798cc8f58818882a7ca87bd04e44f2f081a7eef75"
+  },
+  "payload_sha256": "f931534555b175a1ecbf65f9e331d7130430bc24b7dcee75c87da8065c2ae597"
+}
