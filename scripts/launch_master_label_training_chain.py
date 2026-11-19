@@ -574,6 +574,10 @@ def _rescore_step(run_id, best):
 
 
 STEPS["ms-rescore-3"] = _rescore_step("rescore_pred_20261119_3", {"d02_c03_balance": 6})
+STEPS["ms-rescore-4"] = _rescore_step(
+    "rescore_pred_20261119_4",
+    {"e01_c03_mix3": 6, "e02_c03_mix3_gauss": 6, "e03_c03_mix3_gauss_diag": 5},
+)
 # Binary/cluster consistency predictions of selected ablation checkpoints.
 _CONSIST_ABL = ("d00_c03_seed43", "d03_c03_binary")
 STEPS["ms-consist-abl"] = dict(
