@@ -1,0 +1,24 @@
+{
+  "run_id": "consistency_pred_20261118_v6",
+  "attempt": 2,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_pred_20261118_v6",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/consistency_pred_20261118_v6-attempt-2",
+  "source_commit": "7d74edd00d365f19466b9062338d294e650ec471",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_consistency_table.py --targets /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_targets_20261118.npz --config configs/finetune-multisurvey-20261118-v6.yaml --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118 --workers 8 --labelled-table /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261118-v6.yaml --checkpoint /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261118_v6/finetune_checkpoint_10.pth --fits /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --condition-parallax 5 --out \"$experiment_output/consistency_v6.npz\"",
+  "utc": "2026-11-19T00:03:53.894526+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "yetyj1v8"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261118-v6.yaml": "f9c7dc06463f0c74b15c76e1b8509c0a0f8295af33900cf7f8f1da4ec3fa3906"
+  },
+  "payload_sha256": "1b0ac16c9298068e0eacb1b65acae728f5304fb96452922a02fb94cd53eb77c1"
+}
