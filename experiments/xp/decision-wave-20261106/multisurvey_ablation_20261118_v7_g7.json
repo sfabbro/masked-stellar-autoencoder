@@ -1,0 +1,25 @@
+{
+  "run_id": "multisurvey_ablation_20261118_v7_g7",
+  "attempt": 1,
+  "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7_g7",
+  "source_bundle": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_wave_source_bundles_20261106_v1/multisurvey_ablation_20261118_v7_g7",
+  "source_commit": "fcf147705642a6a5859b24aebf46e8cb2ac72f08",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "mkdir -p /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d03_c03_binary /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d02_c03_balance && \"${pixi_run[@]}\" python -u scripts/build_binary_pool.py --stars /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_table_20261118/stars.fits --teacher /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_pred_20261118_v7/consistency_v7.npz --targets /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/consistency_targets_20261118.npz --config configs/finetune-multisurvey-20261118-v6.yaml --output /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/binary_pool_20261119/pool.npz || echo POOL_FAILED && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/d03_c03_binary.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d03_c03_binary/stdout.log 2>&1 || echo ABLATION_FAILED d03_c03_binary && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/ablation-20261118-v7/d02_c03_balance.yaml --max-train-rows 1200000 > /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/d02_c03_balance/stdout.log 2>&1 || echo ABLATION_FAILED d02_c03_balance",
+  "utc": "2026-11-19T04:02:16.080503+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "ywazqwln"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/ablation-20261118-v7/d03_c03_binary.yaml": "897a1d9aee5b5cd3689531565d391410a9977d468d5eb4062c10f9a2c3cf68f8",
+    "configs/ablation-20261118-v7/d02_c03_balance.yaml": "3352d83a158466c9dc9804de5a2ee4b125a515f8e2e563f13ba40448c5708985"
+  },
+  "payload_sha256": "3e4beb6063361fbefbc83f4e70d9f8dd60f2e700e30459f5a175b58e9a681c4e"
+}
