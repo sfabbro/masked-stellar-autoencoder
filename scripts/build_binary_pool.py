@@ -38,6 +38,11 @@ def main():
     p.add_argument("--max-g", type=float, default=15.0)
     p.add_argument("--max-sd", type=float, default=0.15)
     p.add_argument("--floor", type=float, default=0.05)
+    p.add_argument(
+        "--max-companion-teff",
+        type=float,
+        help="keep companions cooler than this (teacher Teff, K)",
+    )
     a = p.parse_args()
     if a.output.exists():
         print(a.output, "exists")
@@ -67,6 +72,9 @@ def main():
     use = primary_ok[prim]
     prim, comp = prim[use], comp[use]
     hold = heldout(sid[prim], sid[comp])
+    if a.max_companion_teff is not None:
+        cool = teff[comp] < a.max_companion_teff
+        prim, comp, hold = prim[cool], comp[cool], hold[cool]
     # One record per companion: the brightest qualifying primary.
     order = np.lexsort((gmag[prim], comp))
     prim, comp, hold = prim[order], comp[order], hold[order]
