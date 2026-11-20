@@ -726,6 +726,26 @@ STEPS["ms-multi-v9"] = dict(
     ),
     files=[MS_V9[1], MS_V6[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# S1 (docs/design-20261120-likelihood-inference.md): likelihood (ratio) heads on
+# the frozen latents of v8 without the pool (all v5 table rows), common-scale
+# labels from the checkpoint's survey maps, MLE / profile / Neyman inference
+# and the fixed validation table against the posterior head.
+STEPS["ms-s1-likelihood-head"] = dict(
+    run_id="likelihood_head_s1_20261120",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        f"python -u scripts/s1_likelihood_head.py --config {_NP[1]}"
+        f" --checkpoint {ROOT}{_NP[0]}/finetune_checkpoint_12.pth"
+        f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+        f" --records {ROOT}{MS_TABLE_V5}/records.npz"
+        f" --core-split {ROOT}{RESCORE}/rows_split.npz"
+        " --device cuda --threads 8 --chunk-size 262144"
+        ' --output "$experiment_output"'
+    ),
+    files=[_NP[1]],
+)
 # Move the MSA data from k-pop to /arc/projects/astroai/msa (copy + verify
 # first; delete only after the verify report shows no mismatch).
 for _mode in ("copy", "delete"):
