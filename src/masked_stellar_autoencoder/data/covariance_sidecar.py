@@ -255,7 +255,7 @@ def to_table_units(
     if coefficients_table is not None:
         x = np.asarray(coefficients_table, np.float64)
         rel = 1.0 / np.asarray(g_flux_over_error, np.float64)
-        out = out + (rel**2)[..., None, None] * x[..., :, None] * x[..., None, :]
+        out = out + (rel**2)[..., None, None] * (x[..., :, None] * x[..., None, :])
     return out
 
 

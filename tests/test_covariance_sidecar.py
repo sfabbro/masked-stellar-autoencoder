@@ -325,7 +325,8 @@ def test_build_end_to_end(tmp_path, workers):
     out = tmp_path / "out"
     argv = ["--input", f"table={tmp_path / 'table.fits'}", "--input", f"unl={tmp_path / 'unl.npz'}",
             "--sample", "unl=3", "--xp-hats", str(roots["xp"]), "--gaia-hats", str(roots["gaia"]),
-            "--output", str(out), "--workers", str(workers), "--batch-size", "2"]  # fmt: skip
+            "--output", str(out), "--workers", str(workers), "--batch-size", "2",
+            "--compression", "gzip" if workers == 1 else "none"]  # fmt: skip
     manifest = bcs.build(bcs.parse_args(argv))
     assert manifest["status"] == "complete"
     assert (
@@ -388,6 +389,9 @@ def test_build_end_to_end(tmp_path, workers):
         np.testing.assert_array_equal(f["source_id"][:], picked)
         assert f["found_xp"][:].all()
         assert f["bp_coefficient_correlations"].dtype == np.float32
+        assert f["bp_coefficient_correlations"].compression == (
+            "gzip" if workers == 1 else None
+        )
         assert f["bp_coefficient_correlations"].attrs["description"].startswith("BP")
     with pytest.raises(SystemExit):
         bcs.build(bcs.parse_args(argv))

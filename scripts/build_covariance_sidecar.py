@@ -339,8 +339,19 @@ def process_partition(task: dict) -> dict:
 class SidecarWriter:
     """HDF5 file with every :data:`cs.SCHEMA` column for ``n`` rows."""
 
+    FILTERS = {
+        "gzip": dict(compression="gzip", compression_opts=1, shuffle=True),
+        "lzf": dict(compression="lzf", shuffle=True),
+        "none": {},
+    }
+
     def __init__(
-        self, path: Path, source_id: np.ndarray, row_index: np.ndarray, attrs: dict
+        self,
+        path: Path,
+        source_id: np.ndarray,
+        row_index: np.ndarray,
+        attrs: dict,
+        compression: str = "gzip",
     ):
         import h5py
 
@@ -354,8 +365,8 @@ class SidecarWriter:
                 # small chunks: partitions finish in any order, so a chunk shared by
                 # two partitions is re-compressed; keep that cheap
                 rows = 64 if c.width > 256 else 1024 if c.width else 8192
-                kw = dict(chunks=(min(rows, self.n),) + shape[1:], compression="gzip",
-                          compression_opts=1, shuffle=True)  # fmt: skip
+                kw = dict(chunks=(min(rows, self.n),) + shape[1:])
+                kw.update(self.FILTERS[compression])
             ds = self.f.create_dataset(
                 c.name,
                 shape,
@@ -525,6 +536,7 @@ def build(args) -> dict:
         },  # fmt: skip
         inputs={},
         workers=args.workers,
+        compression=args.compression,
     )
 
     def save():
@@ -586,7 +598,7 @@ def build(args) -> dict:
             code=json.dumps(manifest["code"]),
         )  # fmt: skip
         writers[name] = SidecarWriter(
-            path, ids_per_input[name], rows_per_input[name], attrs
+            path, ids_per_input[name], rows_per_input[name], attrs, args.compression
         )
 
     xp_fields = [c.name for c in cs.XP_COLUMNS]
@@ -764,6 +776,13 @@ def parse_args(argv=None):
     )
     p.add_argument(
         "--no-neighbours", action="store_true", help="skip the neighbour-partition pass"
+    )
+    p.add_argument(
+        "--compression",
+        choices=sorted(SidecarWriter.FILTERS),
+        default="gzip",
+        help="HDF5 filter: gzip-1+shuffle (default, ~0.87 of raw, ~40 MB/s write), "
+        "lzf+shuffle (~0.94, ~200 MB/s, h5py-only filter) or none",
     )
     p.add_argument("--log-every", type=int, default=25)
     p.add_argument("--overwrite", action="store_true")
