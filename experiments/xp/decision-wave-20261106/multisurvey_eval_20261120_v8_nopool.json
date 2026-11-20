@@ -1,0 +1,25 @@
+{
+  "run_id": "multisurvey_eval_20261120_v8_nopool",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/multisurvey_eval_20261120_v8_nopool",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/multisurvey_eval_20261120_v8_nopool",
+  "source_commit": "c95bbc1672d4a422d031fe940e140ac9a860946f",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261119-v8-nopool.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261119_v8_nopool/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --condition-parallax 5 --extra-labels /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v1_reddening.npz --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v8_nopool_test.npz\"",
+  "utc": "2026-11-20T05:43:42.392829+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "xyjbf35o"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261119-v8-nopool.yaml": "c5c8e97bd3678f2bebcfc33843bc1da864811fb27814399e673a5973dc92833f",
+    "configs/finetune-multisurvey-20261115-v4.yaml": "71b62f6f002fe51cf1d34fb9f542020831a8814530c890a5b26d446c32b33f0d"
+  },
+  "payload_sha256": "ae9b638ad33049059168a6979eff6c9a5891e04c729fff371bdd06e84896bc9b"
+}
