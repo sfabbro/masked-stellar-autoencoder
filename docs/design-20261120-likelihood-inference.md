@@ -111,6 +111,77 @@ L = L_CNRE(labelled, natural population) + λ_rec · L_rec(unlabelled and labell
 - **λ_rec** is chosen on the representation tests of §5 (latent invariance under degradation,
   faint-end metrics), not on training loss.
 
+### 4.1 Why the earlier covariance experiments did not help, and where the covariance belongs
+
+What was run (records: `docs/xp-covariance-experiments.md`, `experiments/xp/monitor/
+compare_covariance.py`, progress log 2026-10-22; the run outputs were lost with the old
+`msa_runs` tree, only the verdicts survive):
+
+- **XP reconstruction** (epoch-27 continuation, 20M presentations, 612 steps, single seed): a
+  diagonal Gaussian NLL with `v = 0.1 + σ²` and a per-band full covariance
+  `V = diag(σ) R diag(σ) + 0.1 I`, against the MAE control. "Neither improves XP coefficient MAE."
+- **Label heads** (W1): full-covariance Gaussian 71.5 K / 0.147 / 0.098 dex, held-out NLL −4.16;
+  rank-2 low-rank Gaussian 69.8 K / 0.145 / 0.097, NLL −4.72, tail 0.86; diagonal 70.3 K /
+  0.143 / 0.097, NLL −4.69, tail 0.79. Noise-aware NSF and corrected-score EIV: worse point MAE.
+
+Reasons, from implementation to fundamentals:
+
+1. **The variance floor erased the noise model.** `0.1` (variance, RobustScaler units) is added
+   to every coefficient. Wherever σ² ≪ 0.1, i.e. most coefficients of all but the faintest
+   stars, the diagonal and full-covariance losses are a constant-weight squared error. The
+   experiment mostly compared MSE with MAE, not "with noise model" with "without". The floor
+   should be fractional (proportional to the coefficient amplitude: calibration errors scale
+   with flux) and learned (a model-scatter term, as in the scatter-VAE of Laroche & Speagle),
+   not an absolute constant.
+2. **The metric was the control's own loss on noisy targets.** MAE against noisy hidden
+   coefficients rewards the MAE-trained control by construction, and rewards reproducing
+   noise. A noise-aware objective that down-weights noisy entries *should* score worse there.
+   The right metrics are downstream (labels, especially faint), whitened-residual calibration
+   (χ²/dof per G bin), or MAE on high-S/N entries only.
+3. **Optimiser state and length.** Switching objective while inheriting the MAE run's AdamW
+   moments mis-scales every step (MAE gradients are bounded, Gaussian-NLL gradients are not);
+   612 steps barely move a 34M-parameter encoder.
+4. **Correlated noise leaks through partial masking.** With independent 20 % masking, visible
+   coefficients carry noise correlated with the hidden targets; the network can predict part
+   of the hidden *noise* from the visible inputs, and the marginal `V_SS` is then the wrong
+   covariance (the conditional is `V_SS − V_SV V_VV⁻¹ V_VS`). Whole-band masking avoids it.
+5. **The full-covariance label head was parameterised in the slow form.** It predicted the
+   covariance Cholesky factor (exp diagonal). torchregress later found that this form does not
+   even fit the training data on a 16-target benchmark and switched the default to the
+   precision factor (log-density linear in the factor). A full covariance nests the diagonal,
+   so a fitted one cannot lose 0.5 nats to it on held-out data: −4.16 vs −4.69 is an
+   optimisation failure, not evidence against covariance.
+6. **Fundamentals (expected, not bugs).**
+   - With a correct model, weighting by the true noise covariance is efficient
+     (Gauss–Markov / Cramér–Rao). With model error larger than the noise (bright stars: the
+     decoder cannot reproduce XP to the precision of their errors), inverse-noise weighting
+     concentrates the loss on the stars and directions the model fits worst. GLS with a
+     misspecified covariance can be worse than unweighted least squares.
+   - Published XP covariances describe random errors, not calibration systematics, which
+     dominate for bright stars; hence a fractional floor.
+   - In a *representation* loss, inverse-variance weighting moves capacity toward bright stars
+     and low-order coefficients, the opposite of what the faint end needs.
+   - Low-rank approximations keep the largest-variance directions, but a Mahalanobis or
+     likelihood term is governed by the *smallest* eigenvalues (the precision). Truncating the
+     covariance approximates the precision worst exactly where it matters; approximate the
+     precision directly (or low-rank plus a well-chosen diagonal, in precision form).
+   - Point estimates (means) barely depend on how residual correlations among a few labels
+     are weighted; covariance heads were never expected to improve point MAE, only calibrated
+     joint regions.
+
+Where the covariance belongs:
+
+- **In the likelihood, with model scatter:** `Σ_tot = Σ_XP + Σ_model`, Σ_model learned and
+  fractional (low-rank plus diagonal, precision-parameterised), as in a forward model of XP or
+  a scatter-VAE. That is where a noise model can only help.
+- **In S/N degradation augmentation (§4):** inject noise with the *full* covariance difference
+  to simulate a fainter version of a bright star. Correlated noise is part of what makes
+  faint XP faint; diagonal injection under-represents it. Cheap to test inside S2
+  (diagonal vs full injection).
+- **Not as an inverse-variance weight in the encoder's reconstruction loss**, unless the loss
+  has a learned fractional scatter term, fresh optimiser state, whole-band masking and
+  downstream metrics.
+
 ## 5. Validation protocol (fixed before any run)
 
 One script, `scripts/evaluate_model.py` (to consolidate the scratch tools), producing one table:
@@ -140,8 +211,8 @@ Decision rules are written next to each step below and not changed after seeing 
 
 | step | what | cost | decision rule |
 |---|---|---|---|
-| S1 | 3-parameter ratio head (Teff, log g, [Fe/H]) on **frozen v8-without-pool latents** of all labelled table rows (core + mapped survey labels); MLE, profile and Neyman via `torchregress.inference`; full §5 table | one CPU job for the latents, then local CPU | adopt the likelihood product if, up to G = 16, \|bias\| ≤ 0.10 in every [Fe/H] bin, Neyman coverage 0.68 ± 0.08 per θ and G bin, bulk NMAD ≤ posterior + 0.01; Teff/log g no worse than the head on the anchors |
-| S2 | **S/N degradation** of bright labelled stars to G = 16–17.6 noise, through the frozen encoder, scored with the S1 head and compared with real faint labelled stars | one CPU/GPU job, frozen encoder | degraded-bright ≈ real faint ⇒ information or representation limit ⇒ S3b. Degraded fine but real faint biased ⇒ domain mismatch (extinction, distance, selection) ⇒ add nuisance parameters, S3a |
+| S1 | 3-parameter ratio head (Teff, log g, [Fe/H]) on **frozen v8-without-pool latents** of all labelled table rows (core + mapped survey labels, ~5.9M stars); MLE, profile and Neyman via `torchregress.inference`; full §5 table | one GPU job (encoder pass over ~6M rows, head training, batched MLE/profile; CPU would take hours to days) | adopt the likelihood product if, up to G = 16, \|bias\| ≤ 0.10 in every [Fe/H] bin, Neyman coverage 0.68 ± 0.08 per θ and G bin, bulk NMAD ≤ posterior + 0.01; Teff/log g no worse than the head on the anchors |
+| S2 | **S/N degradation** of bright labelled stars to G = 16–17.6 noise (diagonal and full XP covariance injection), through the frozen encoder, scored with the S1 head and compared with real faint labelled stars | one GPU job, frozen encoder | degraded-bright ≈ real faint ⇒ information or representation limit ⇒ S3b. Degraded fine but real faint biased ⇒ domain mismatch (extinction, distance, selection) ⇒ add nuisance parameters, S3a |
 | S3a | one fine-tune: CNRE head end-to-end + degradation augmentation, encoder recon on the current unlabelled pool | 1 GPU run | G > 16 metal-poor bias halved without loss elsewhere |
 | S3b | covariance-aware reconstruction on a magnitude-stratified XP sample, or the XP forward model (§3) | design first | as S3a |
 
