@@ -916,6 +916,41 @@ STEPS.update(
 )
 
 
+# F2: data-driven XP forward model (docs/design-20261120-likelihood-inference.md, section 3):
+# emulator of XP coefficients + absolute magnitudes from (Teff, log g, [Fe/H], E(B-V)),
+# likelihood with the per-star Gaia XP covariances (sidecar) plus learned fractional
+# scatter, parallax term with the Lindegren+2021 zero point; then MLE and profile
+# intervals for the held-out test rows and the frozen-core rows. Needs the pinned
+# torchregress to provide losses.KnownCovarianceGaussianNLL.
+XPFM_RUN = "xp_forward_model_20261120"
+XPFM_SIDECAR = "covariance_sidecar_20261120/sidecar_table.h5"
+# labels.npz contract (S1 common-scale labels). Until it exists the job uses the table's
+# own labels with the v8-nopool fine-tune split; set the path here once it is written.
+XPFM_LABELS: str | None = None
+_XPFM_SPLIT = "configs/finetune-multisurvey-20261119-v8-nopool.yaml"
+_xpfm_labels = (
+    f" --labels {XPFM_LABELS}"
+    if XPFM_LABELS
+    else f" --labels-from-table --split-config {_XPFM_SPLIT}"
+)
+STEPS["ms-xp-forward-model"] = dict(
+    run_id=XPFM_RUN,
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        "python -u scripts/run_xp_forward_model.py"
+        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits{_xpfm_labels}"
+        f" --covariance-sidecar {ROOT}{XPFM_SIDECAR}"
+        f" --core-rows {ROOT}{RESCORE}/rows.npy"
+        " --max-train-stars 1000000 --max-heldout-stars 50000 --epochs 20"
+        " --infer-chunk-size 4096"
+        ' --output "$experiment_output"'
+    ),
+    files=[] if XPFM_LABELS else [_XPFM_SPLIT],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
