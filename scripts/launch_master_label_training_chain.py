@@ -726,6 +726,36 @@ STEPS["ms-multi-v9"] = dict(
     ),
     files=[MS_V9[1], MS_V6[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# Likelihood inputs (docs/design-20261120-likelihood-inference.md, sec. 4.1):
+# per-star Gaia DR3 XP coefficient covariances (coefficients, errors, packed
+# correlations) and astrometric covariances + L21 parallax zero point, from the
+# HATS xp_continuous_mean_spectrum and gaia_source catalogues, for every v5
+# table row (table order) and a 1M source_id-hash subset of its unlabelled
+# stars; one pass over the partitions, then validation (packing, PD,
+# table-vs-HATS normalisation). Outputs sidecar_table.h5,
+# sidecar_unlabelled.h5, manifest.json, validation.json.
+_V5_DIR = f"{ROOT}{MS_TABLE_V5}"
+STEPS["covariance-sidecar"] = dict(
+    run_id="covariance_sidecar_20261120",
+    gpu=0,
+    cpu=16,
+    ram=64,
+    command=' && "${pixi_run[@]}" '.join(
+        [
+            "python -u scripts/build_covariance_sidecar.py"
+            f" --input table={_V5_DIR}/finetune.fits"
+            f" --input unlabelled={_V5_DIR}/unlabelled.npz"
+            " --sample unlabelled=1000000 --workers 16"
+            ' --output "$experiment_output"',
+            "python -u scripts/validate_covariance_sidecar.py"
+            ' --sidecar table="$experiment_output/sidecar_table.h5"'
+            ' --sidecar unlabelled="$experiment_output/sidecar_unlabelled.h5"'
+            f" --table-fits {_V5_DIR}/finetune.fits"
+            ' --out "$experiment_output/validation.json"',
+        ]
+    ),
+    files=[],
+)
 # Move the MSA data from k-pop to /arc/projects/astroai/msa (copy + verify
 # first; delete only after the verify report shows no mismatch).
 for _mode in ("copy", "delete"):
