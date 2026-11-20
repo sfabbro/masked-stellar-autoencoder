@@ -1,0 +1,22 @@
+{
+  "run_id": "covariance_sidecar_20261120",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/covariance_sidecar_20261120",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/covariance_sidecar_20261120",
+  "source_commit": "a85668e40d3dca5d83b2baa266fd9b4157645c63",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_covariance_sidecar.py --input table=/arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --input unlabelled=/arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/unlabelled.npz --sample unlabelled=1000000 --workers 16 --output \"$experiment_output\" && \"${pixi_run[@]}\" python -u scripts/validate_covariance_sidecar.py --sidecar table=\"$experiment_output/sidecar_table.h5\" --sidecar unlabelled=\"$experiment_output/sidecar_unlabelled.h5\" --table-fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --out \"$experiment_output/validation.json\"",
+  "utc": "2026-11-20T21:52:23.628403+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "d4ez9445"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "cf68a5aac7b61323381e0852fd6596ae3a5c480cc9a231a505ec4dec062ece57"
+}
