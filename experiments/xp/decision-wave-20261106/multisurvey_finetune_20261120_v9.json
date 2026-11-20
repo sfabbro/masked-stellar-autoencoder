@@ -1,0 +1,26 @@
+{
+  "run_id": "multisurvey_finetune_20261120_v9",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/multisurvey_finetune_20261120_v9",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/multisurvey_finetune_20261120_v9",
+  "source_commit": "286e00fc9269d9e5e01f5ea4039bbfa8392c7d37",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_binary_pool.py --stars /arc/projects/astroai/msa/runs/consistency_table_20261118/stars.fits --teacher /arc/projects/astroai/msa/runs/consistency_pred_20261118_v7/consistency_v7.npz --targets /arc/projects/astroai/msa/runs/consistency_targets_20261118.npz --config configs/finetune-multisurvey-20261118-v6.yaml --output /arc/projects/astroai/msa/runs/binary_pool_20261120_pairs/pool.npz --max-companion-teff 5000 && \"${pixi_run[@]}\" python -u -m masked_stellar_autoencoder.training.finetune_msa --config configs/finetune-multisurvey-20261120-v9.yaml && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261120-v9.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261120_v9/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261113_v1/finetune.fits --test-split configs/finetune-multisurvey-20261115-v4.yaml --irfm --condition-parallax 5 --extra-labels /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v1_reddening.npz --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v9_test.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261120-v9.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261120_v9/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/multi_v9_core.npz\" && \"${pixi_run[@]}\" python -u scripts/predict_fits_rows.py --config configs/finetune-multisurvey-20261120-v9.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261120_v9/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/consistency_table_20261118/stars.fits --condition-parallax 5 --feh-prior configs/feh_prior_multisurvey_table_20261117_v5.npz --out \"$experiment_output/consistency_v9.npz\"",
+  "utc": "2026-11-20T05:43:25.082808+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "w2aul1fz"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 192
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261120-v9.yaml": "f1f10dacfb6c405c8e405a4cae9edb272d0a9b4369b748d24e11ef3434322eee",
+    "configs/finetune-multisurvey-20261118-v6.yaml": "b9972c1e838fd0cd1036f0851ff14d179d486167b1e3a880fee1acfd61a4d4df",
+    "configs/finetune-multisurvey-20261115-v4.yaml": "71b62f6f002fe51cf1d34fb9f542020831a8814530c890a5b26d446c32b33f0d"
+  },
+  "payload_sha256": "0dee2ea80dc4c9f04f4eff37b7dbba4a4cbbe95118f271a68ef9c1de64e481b9"
+}
