@@ -671,6 +671,23 @@ for _v in ("nopool", "nobalance"):
         ),
         files=[_cfg],
     )
+# Test-split evaluation of the current best model (v8 without the pool).
+_NP = (f"{MS_V8[0]}_nopool", "configs/finetune-multisurvey-20261119-v8-nopool.yaml")
+STEPS["ms-v8-nopool-eval"] = dict(
+    run_id="multisurvey_eval_20261120_v8_nopool",
+    gpu=0,
+    cpu=8,
+    ram=64,
+    command=(
+        f"python -u scripts/predict_fits_rows.py --config {_NP[1]}"
+        f" --checkpoint {ROOT}{_NP[0]}/finetune_checkpoint_12.pth"
+        f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+        f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --condition-parallax 5"
+        f" --extra-labels {ROOT}{REDDENING_V6}/v1_reddening.npz{_PRIOR}"
+        ' --out "$experiment_output/multi_v8_nopool_test.npz"'
+    ),
+    files=[_NP[1], MS_PAIR["ms-multi-v4"][1]],
+)
 # v9: v8 without the fixed pool + wide-binary self-consistency (pairs pool:
 # companions < 5000 K tied to the model's own primary prediction). The pair
 # pool is built first (primaries' inputs included); predictions at epoch 12.
