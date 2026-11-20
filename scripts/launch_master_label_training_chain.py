@@ -946,7 +946,7 @@ XPFM_RUN = "xp_forward_model_20261120"
 XPFM_SIDECAR = "covariance_sidecar_20261120/sidecar_table.h5"
 # labels.npz contract (S1 common-scale labels). Until it exists the job uses the table's
 # own labels with the v8-nopool fine-tune split; set the path here once it is written.
-XPFM_LABELS: str | None = None
+XPFM_LABELS: str | None = f"{ROOT}likelihood_head_s1_20261120/labels.npz"  # S1 labels
 _XPFM_SPLIT = "configs/finetune-multisurvey-20261119-v8-nopool.yaml"
 _xpfm_labels = (
     f" --labels {XPFM_LABELS}"
