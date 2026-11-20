@@ -1,0 +1,22 @@
+{
+  "run_id": "arc_migration_delete_20261120",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/arc_migration_delete_20261120",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/arc_migration_delete_20261120",
+  "source_commit": "9984f6af12c0e48fd64158ff67095c4e0314677c",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "bash scripts/migrate_arc_to_astroai.sh delete",
+  "utc": "2026-11-20T05:43:08.970409+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "xsqanm5z"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 16
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "f5359da903c91e835cf9207df01f2c6d2147f7f8f2f902d79022fc45570ea389"
+}
