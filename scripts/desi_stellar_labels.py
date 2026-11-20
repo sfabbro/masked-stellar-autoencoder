@@ -13,9 +13,7 @@ from astropy.io import fits
 
 REFERENCE = "https://github.com/desimilkyway/dr1_vac_code/blob/10b6ab6f409397dde646184c42bc9dddfb452971/feh_correct.py"
 RAW_SHA = "eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5"
-ROOT = Path(
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1"
-)
+ROOT = Path("/arc/projects/astroai/msa/runs/desi_collection_v1")
 
 
 def corrected_feh(raw, teff, logg):

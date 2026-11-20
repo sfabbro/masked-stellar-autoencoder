@@ -23,7 +23,7 @@ from masked_stellar_autoencoder.training.export_mixture_diagnostics import (
     summarize_scores,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 PRED = ROOT + "multisurvey_joint_fullfit_20261105_v1/"
 MAPPED = ROOT + "frozen_survey_qa_20261105_v2/"
 APO = ROOT + "apokasc3_collection_v1/apokasc3-table4.dat.gz"

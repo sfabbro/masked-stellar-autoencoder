@@ -1,6 +1,6 @@
 # Provisional spectroscopic quality masks
 
-These masks are stored separately from the unmodified RAVE DR6 and Gaia-ESO DR5.1 measurements. They are **not** training selection, match certification, physical truth, or the full RAVE published recommended sample. The same observations may appear multiple times; counts are rows, not independent stars. The existing HDF5 sidecar and receipt are in the private project directory `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/`, and all files were SHA-checked by remote readback. Inputs are pinned by SHA in the sidecar. Code: `scripts/spectroscopic_survey_quality.py`; exact results: `experiments/xp/spectroscopic-quality-v1-completion-20261029.json`.
+These masks are stored separately from the unmodified RAVE DR6 and Gaia-ESO DR5.1 measurements. They are **not** training selection, match certification, physical truth, or the full RAVE published recommended sample. The same observations may appear multiple times; counts are rows, not independent stars. The existing HDF5 sidecar and receipt are in the private project directory `/arc/projects/astroai/msa/runs/rave_dr6_cnn_recovery_sources_20261028_v1/`, and all files were SHA-checked by remote readback. Inputs are pinned by SHA in the sidecar. Code: `scripts/spectroscopic_survey_quality.py`; exact results: `experiments/xp/spectroscopic-quality-v1-completion-20261029.json`.
 
 ## Policy
 

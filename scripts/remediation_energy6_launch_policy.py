@@ -3,7 +3,7 @@
 import hashlib
 from pathlib import Path
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 CONFIG = Path("configs/remediation-nsf6-energy-20261028.yaml")
 CONFIG_SHA256 = "059f996a9c91e8faacd73f0cc8983814632e31ce9f4e930f42ab0def5509e3f0"
 RUNS = {

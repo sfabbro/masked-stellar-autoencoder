@@ -3,7 +3,7 @@
   "training_performed": false,
   "status": "verified_native_source",
   "publisher_checksum_verified": false,
-  "reused_archive": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
+  "reused_archive": "/arc/projects/astroai/msa/runs/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
   "recorded_archive_sha256_verified": true,
   "compressed_bytes": 1221786815,
   "compressed_sha256": "6b7d367535b34605a117f59d1e6bb1b35ebb77fb4ece6efe6da4609bd6dfb210",
@@ -237,6 +237,6 @@
   ],
   "native_bytes": 2864658240,
   "native_sha256": "e58d4b9878e56c1c2ffea97f6395d8f3e65d0c2fc397265652790ddb4817763a",
-  "native_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
+  "native_path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
   "gzip_crc_verified": true
 }

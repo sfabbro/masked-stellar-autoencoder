@@ -16,7 +16,7 @@ from masked_stellar_autoencoder.training.evaluation_feature_lookup import (
     lookup_evaluation_features,
 )
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def sha(path):

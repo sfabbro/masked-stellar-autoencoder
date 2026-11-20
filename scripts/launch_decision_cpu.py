@@ -24,7 +24,7 @@ def submit_cpu(run_id, files, command, *, cpu=4, ram=32, extra_dependencies=None
         manifest += extra_dependencies
     files = dict(files, **{"pixi.toml": manifest})
     output = ROOT + run_id
-    bundle = ROOT + "decision_wave_source_bundles_20261106_v1/" + run_id
+    bundle = "/arc/projects/astroai/msa/launcher/source_bundles/" + run_id
     entry = (
         Path("scripts/canfar_dns_proxy.py").read_text()
         + "\nimport pathlib,subprocess,json,hashlib,shutil\n"

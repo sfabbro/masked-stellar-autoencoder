@@ -1,5 +1,5 @@
 run_id: test_time_reconstruction_screen_v1
-checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_huber_10m_v1/checkpoint.pth
+checkpoint: /arc/projects/astroai/msa/runs/prediction_e72_residual_huber_10m_v1/checkpoint.pth
 checkpoint_sha256: 558a317ec8d2101d9caae7fe4a29db5a67ba6124dac27daaaf3ce14b624453ac
 views: 8
 steps: 3

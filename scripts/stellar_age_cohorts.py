@@ -12,7 +12,7 @@ from pristine_quality_views import exact_rows
 from stellar_catalog_jobs import atomic_json, identity_split
 from stellar_dataset_views import EXPECTED_IDS, publish
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 POSTERIOR_SHA = "0d24f9a748b9664d6ae6888cb38ec0ca50fe91b1d685cd8f377fa09378e2ae36"
 
 

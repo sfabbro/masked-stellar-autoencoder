@@ -146,7 +146,7 @@
   "chunk_rows": 65536,
   "full_cache_feature_sha_recomputed": false,
   "no_reconstruction_restaging": true,
-  "legacy_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+  "legacy_path": "/arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
   "legacy_source_sha256": "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120",
   "cache_request_sha256": "8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c",
   "cache_manifest_sha256": "9dd25d4bf8563b486c67e8854f3f46274ed4c32c2e4ac246c6befaed4dd4c574",

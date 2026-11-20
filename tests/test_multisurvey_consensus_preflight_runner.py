@@ -85,7 +85,7 @@ def test_launch_policy_blocks_cpu_and_output_override():
             ).read_text()
         )["jobs"][0]
         good = {
-            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_consensus_cuda_preflight_v1"
+            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/astroai/msa/runs/multisurvey_consensus_cuda_preflight_v1"
         }
         assert (
             bind_consensus_preflight_policy(plan, dict(good))[

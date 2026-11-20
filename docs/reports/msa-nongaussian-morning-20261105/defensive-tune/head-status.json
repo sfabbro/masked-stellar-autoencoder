@@ -2,7 +2,7 @@
   "copula": {
     "best_nll": 5.386074242385268,
     "best_step": 600,
-    "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/copula-selected.pth",
+    "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_rescore_20261105_v1/copula-selected.pth",
     "checkpoint_sha256": "92069527ecaab6c13d24ae71ac88aee5597fdb1318c2b44115d8e11a878daf15",
     "evaluation": {
       "nll": 5.385203831728308,
@@ -682,7 +682,7 @@
     },
     "snapshots": [
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/copula-step-0100.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/copula-step-0100.pth",
         "checkpoint_sha256": "6e4543f349c1436e783270a60eb57c439c790a51196fdd5f17e9a5360a6960a0",
         "gate": {
           "exact": false,
@@ -1358,7 +1358,7 @@
         "step": 100
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/copula-step-0300.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/copula-step-0300.pth",
         "checkpoint_sha256": "7bc36f502b76e0cb5fc39564f3f003ba902f4881da42ca12b608bbd715344341",
         "gate": {
           "exact": false,
@@ -2034,7 +2034,7 @@
         "step": 300
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/copula-step-0600.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/copula-step-0600.pth",
         "checkpoint_sha256": "92069527ecaab6c13d24ae71ac88aee5597fdb1318c2b44115d8e11a878daf15",
         "gate": {
           "exact": false,
@@ -2710,7 +2710,7 @@
         "step": 600
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/copula-step-1000.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/copula-step-1000.pth",
         "checkpoint_sha256": "0c75ef93ec45529c5de15340485b3b688be2da024a624b6d307a9b9fa1b768eb",
         "gate": {
           "exact": false,
@@ -3386,7 +3386,7 @@
   "gaussian": {
     "best_nll": 5.396401542415397,
     "best_step": 1000,
-    "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/gaussian-selected.pth",
+    "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/gaussian-selected.pth",
     "checkpoint_sha256": "0cd6d9f84c9b8ff4eddf97194c6690622e3f7d940593ab44207b744cb57caaf5",
     "evaluation": {
       "nll": 5.396401542415397,
@@ -3463,7 +3463,7 @@
   "mixture": {
     "best_nll": 5.2874340345007305,
     "best_step": 1000,
-    "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth",
+    "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth",
     "checkpoint_sha256": "448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184",
     "evaluation": {
       "nll": 5.2874340345007305,
@@ -3540,7 +3540,7 @@
   "nsf": {
     "best_nll": 5.411778981427923,
     "best_step": 300,
-    "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_rescore_20261105_v1/nsf-selected.pth",
+    "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_rescore_20261105_v1/nsf-selected.pth",
     "checkpoint_sha256": "fb834829ba3c5fc45ebeee486f9882cb9f2d2286338993250deca0e2af70ffa6",
     "evaluation": {
       "nll": 5.411989824816969,
@@ -4220,7 +4220,7 @@
     },
     "snapshots": [
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/nsf-step-0100.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/nsf-step-0100.pth",
         "checkpoint_sha256": "b44729501d5511bc9f81d04f15bb0770e8091a9365c792e396d2cb01eadca960",
         "gate": {
           "exact": false,
@@ -4896,7 +4896,7 @@
         "step": 100
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/nsf-step-0300.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/nsf-step-0300.pth",
         "checkpoint_sha256": "fb834829ba3c5fc45ebeee486f9882cb9f2d2286338993250deca0e2af70ffa6",
         "gate": {
           "exact": false,
@@ -5572,7 +5572,7 @@
         "step": 300
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/nsf-step-0600.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/nsf-step-0600.pth",
         "checkpoint_sha256": "c18c36f353bd1b88efd84eeeaee44ee03cf2a1bd768df937ea87520e8e2dbe9a",
         "gate": {
           "exact": false,
@@ -6243,7 +6243,7 @@
         "step": 600
       },
       {
-        "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/nsf-step-1000.pth",
+        "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/nsf-step-1000.pth",
         "checkpoint_sha256": "1889f2fec76a5c50ebeeb174f6715515b374d6b4e16c85281338d3c60219b860",
         "gate": {
           "exact": false,

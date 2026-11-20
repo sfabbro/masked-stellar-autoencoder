@@ -27,7 +27,7 @@ from masked_stellar_autoencoder.training.multisurvey_overlay import (
     sparse_dataset_from_manifest,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = ROOT + "multisurvey_joint_fullfit_20261105_v1/"
 SELECTED = RUN + "checkpoint-00005088.pth"
 SELECTED_SHA = "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7"

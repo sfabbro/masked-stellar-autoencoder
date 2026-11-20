@@ -8,7 +8,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 BASE = ROOT + "remediation_source_v3/prepared.h5"
 FEATURE = ROOT + "multisurvey_feature_union_dr12_20261106_v1/new-star-features.h5"
 FEATURE_SHA = "d4d8ea8e972625cb040c0fdcf4cc60675c03823b43826cef4b57d6d725e14f23"

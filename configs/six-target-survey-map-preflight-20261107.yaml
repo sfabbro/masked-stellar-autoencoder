@@ -1,14 +1,14 @@
 library_revision: 82ca1996cc4f3ca0be3e730d38a99db482a79378
-checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint: /arc/projects/astroai/msa/runs/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
 checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
 reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
 reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
 model_config: configs/pretrain.canfar.yaml
-source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
-input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4/manifest.json
-joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3/manifest.json
+source_manifest: /arc/projects/astroai/msa/runs/remediation_source_v3/manifest.json
+input_audit_manifest: /arc/projects/astroai/msa/runs/remediation_inputs_v4/manifest.json
+joint_preflight_manifest: /arc/projects/astroai/msa/runs/remediation_joint6_preflight_v3/manifest.json
 joint_preflight_run_id: remediation_joint6_preflight_v3
-reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_cache: /arc/projects/astroai/msa/runs/residual-huber-e86-150m-cache-v1
 reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
 reconstruction_training_rows: 150000000
 reconstruction_batch: 256
@@ -175,7 +175,7 @@ confirmation_energy_weight: 1.0
 confirmation_crps_weight: 0.0
 confirmation_noise_correlation: 0.0
 confirmation_native_student_t: false
-mapping_parent: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision6_nsf_energy_parallax_20261106_v1/selected-checkpoint.pth
+mapping_parent: /arc/projects/astroai/msa/runs/decision6_nsf_energy_parallax_20261106_v1/selected-checkpoint.pth
 mapping_parent_sha256: c59ea40759bfe8f16e0f5553fdb6f7e99796fd2d146eac6f452d151daf0adff1
 mapping_native_sha256:
   fit: ea54924fd609c40de18e2cd6a5324d28bf400ad4d1c297146ec5d13ba98480ff

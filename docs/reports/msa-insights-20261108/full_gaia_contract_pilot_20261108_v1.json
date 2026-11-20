@@ -161,14 +161,14 @@
   ],
   "real_no_xp_ssl_rows": 164,
   "raw_parts": [
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000000000.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000131072.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000262144.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000393216.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000524288.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000655360.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000786432.parquet",
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000917504.parquet"
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000000000.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000131072.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000262144.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000393216.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000524288.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000655360.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000786432.parquet",
+    "/arc/projects/astroai/msa/runs/full_gaia_photometry_stage_20261108_v1/raw-observations/0000-0000917504.parquet"
   ],
   "scope_limit": "New ages/alpha still pending admission. Small fresh network, bounded current native records. Additional catalogue joins and cluster exclusions beyond inherited roles remain production requirements."
 }

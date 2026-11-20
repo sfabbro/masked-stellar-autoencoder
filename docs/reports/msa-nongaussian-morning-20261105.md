@@ -67,14 +67,14 @@ The failed gates mean no CAL flow NLL is published. The planned all-star 8,192-p
 Recommended head:
 
 ```
-/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth
+/arc/projects/astroai/msa/runs/multisurvey_flexible_refinement_20261105_v2/mixture-selected.pth
 SHA256 448b7e00332b5133c55148ff2ed543df82c0e6822c764b3381ca3008e8b47184
 ```
 
 This is a residual density head, not a standalone encoder checkpoint. Use it with the fine-tuned Gaussian reference:
 
 ```
-/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth
+/arc/projects/astroai/msa/runs/multisurvey_gaussian_finetune_20261104_v1/final.pth
 SHA256 efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d
 ```
 

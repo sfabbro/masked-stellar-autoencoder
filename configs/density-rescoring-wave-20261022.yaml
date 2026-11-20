@@ -1,5 +1,5 @@
 library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
-base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+base: /arc/projects/astroai/msa/runs
 parent: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
 model_config: configs/pretrain.canfar.yaml
 training_updates: 0

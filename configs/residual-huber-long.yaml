@@ -17,5 +17,5 @@ arms:
 checkpoint_interval_presentations: 9000000
 continuation_seed: 1042
 continuation_previous_updates: 306
-continuation_checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/prediction_e72_residual_huber_10m_v1/checkpoint.pth
+continuation_checkpoint: /arc/projects/astroai/msa/runs/prediction_e72_residual_huber_10m_v1/checkpoint.pth
 continuation_sha256: 558a317ec8d2101d9caae7fe4a29db5a67ba6124dac27daaaf3ce14b624453ac

@@ -1,6 +1,6 @@
 """Fixed source-only Gaia Fe I/M exact-ID join launch contract."""
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_gaia_gspspec_fem_join_v1"
 TASK = "multisurvey-gaia-gspspec-fem-join"
 

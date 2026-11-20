@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def paired_mean_ci(values, seed=2026110771):

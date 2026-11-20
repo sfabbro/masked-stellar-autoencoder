@@ -1,4 +1,4 @@
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_lamost_dr12_network_probe_v1"
 TASK = "multisurvey-lamost-dr12-network-probe"
 

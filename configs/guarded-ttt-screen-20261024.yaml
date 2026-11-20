@@ -1,7 +1,7 @@
 library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
-checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/checkpoint.pth
-paired: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/paired-cohort.npz
-predictions: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_gaussian_noise_recon_30e_v1/predictions.npz
+checkpoint: /arc/projects/astroai/msa/runs/multi_gaussian_noise_recon_30e_v1/checkpoint.pth
+paired: /arc/projects/astroai/msa/runs/multi_gaussian_noise_recon_30e_v1/paired-cohort.npz
+predictions: /arc/projects/astroai/msa/runs/multi_gaussian_noise_recon_30e_v1/predictions.npz
 checkpoint_sha256: f59b424e3e01ac697ce12f9f8bf19c3cee6234f01ca8e6daeba1205dec99c936
 paired_sha256: 5699846680cd2fe698d987d5c5b58dac6f8a8a6088440ae5e5540fd8b5fbe298
 predictions_sha256: 276b5cfac70b6894d263b95420f783c60b0fa09a0afdcebbc0b2e04f54b19b8f

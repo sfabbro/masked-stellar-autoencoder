@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from plot_decision_six_corners import corner, display_coordinates
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 KINDS = [
     "equalweight_affine",
     "apogee_affine",

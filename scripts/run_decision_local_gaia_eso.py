@@ -12,7 +12,7 @@ from scipy.spatial import cKDTree
 from xmatcher import CrossMatch, MatchRequest, MatchSpec, SideOverrides
 
 RAW = "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5"
-GES = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/gaia_eso_dr51_raw.h5"
+GES = "/arc/projects/astroai/msa/runs/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/gaia_eso_dr51_raw.h5"
 
 
 def directions(ra, dec, pmra=None, pmdec=None, dt=0.0):

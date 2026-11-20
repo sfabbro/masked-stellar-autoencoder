@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def prepare_output(output, reuse_waiting=False, retry_failed=False):

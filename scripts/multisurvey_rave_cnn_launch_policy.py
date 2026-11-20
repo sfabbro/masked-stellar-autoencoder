@@ -1,6 +1,6 @@
 """Fixed source-only RAVE CNN plus Gaia EDR3 launch contract."""
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_rave_cnn_edr3_source_v1"
 TASK = "multisurvey-rave-cnn-edr3-source"
 

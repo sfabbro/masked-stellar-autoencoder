@@ -1,6 +1,6 @@
 """Fixed distinct LAMOST DR12 source-only jobs."""
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 TASK = "multisurvey-lamost-dr12-source"
 RUNS = {
     "multisurvey_lamost_dr12_lrs_source_v1",

@@ -12,7 +12,7 @@ import yaml
 from launch_xp_followup import atomic_json, bootstrap, dns_addresses
 from targeted_policy import resolve_policy
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
+ROOT = "/arc/projects/astroai/msa/runs"
 PARENT = "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_57.pth"
 BENCH = "/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5"
 
@@ -752,7 +752,7 @@ def main():
                     "20",
                     "--cert",
                     "/Users/fabbros/.ssl/cadcproxy.pem",
-                    "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+                    "https://ws-uv.canfar.net/arc/files/projects/astroai/msa/runs/"
                     + name
                     + "/manifest.json",
                 ],

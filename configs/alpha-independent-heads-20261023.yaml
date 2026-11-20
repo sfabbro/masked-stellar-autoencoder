@@ -1,6 +1,6 @@
 run_id: alpha_frozen_heads_independent_v1
-base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
-prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_feature_preparation_v2/prepared.npz
+base: /arc/projects/astroai/msa/runs
+prepared: /arc/projects/astroai/msa/runs/alpha_desi_feature_preparation_v2/prepared.npz
 input_sha256: 359037802f93f70ce99fffc16d1568bb6eeada37f616fbe4e8b27dc55fcbcea8
 library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
 scope: head numerics and calibration only; frozen encoder derivation not replayed

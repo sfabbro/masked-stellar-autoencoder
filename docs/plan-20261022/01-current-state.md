@@ -157,7 +157,7 @@ run has been done for Teff/logg joint densities, and no all-Gaia inference store
 | enriched feature cohort | `.../enriched_feature_cohort_v1/enriched-feature-cohort.h5` 663,449,752 B, sha `321f2723…120` `[V]` | ARC same name | **production cohort for every 10M run**, preserved |
 | distance · age cohorts | `distance_feature_cohort_v1/` (27,809,808 B) · `age_feature_cohort_v1/age-feature-cohort.h5` 23,711,055 B sha `20ee3749…14f` `[V]` | ARC same names | preserved |
 | 10M benchmark | **absent locally** | `/arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5` (`configs/multilabel-screen-20261020.yaml:7`) | ARC-only `[R]` |
-| 150M unique-train cache | **absent locally** | `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1` (~87 GB, `configs/residual-huber-150m.yaml:8`) | ARC-only `[R]`, **required for refits of the long arm** |
+| 150M unique-train cache | **absent locally** | `/arc/projects/astroai/msa/runs/residual-huber-e86-150m-cache-v1` (~87 GB, `configs/residual-huber-150m.yaml:8`) | ARC-only `[R]`, **required for refits of the long arm** |
 
 Not preserved / lost: 29 of 32 `dd27e718` full states locally (ARC only); parent57 locally; no
 aggregate checkpoint for the 3-seed Gaussian ensemble (`configs/multilabel-screen-20261020.yaml:27`

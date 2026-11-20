@@ -20,7 +20,7 @@ from masked_stellar_autoencoder.training.export_mixture_diagnostics import (
     summarize_scores,
 )
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 SOURCE = ROOT / "seismic_gravity_qa_20261106_v1"
 
 

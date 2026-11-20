@@ -151,7 +151,7 @@ def report(root, output):
                 checkpoint_sha256=state["checkpoint_sha256"],
                 checkpoint_path=state.get("checkpoint_path")
                 or (
-                    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+                    "/arc/projects/astroai/msa/runs/"
                     + manifest["run_id"]
                     + "/"
                     + kind

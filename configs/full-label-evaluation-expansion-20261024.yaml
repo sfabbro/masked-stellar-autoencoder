@@ -29,7 +29,7 @@ sources:
     preserve_each_target_quality_and_error_flags: true
   alpha:
     primary: DESI_RVSpecFit_alpha_fe
-    source_projection: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1/desi-alpha-native.h5
+    source_projection: /arc/projects/astroai/msa/runs/alpha_desi_source_projection_v1/desi-alpha-native.h5
     sha256: 506fa09d4de88230ba2fee4ae2b23bbaa639c5bedd55b47b86c750c8df6f627a
     quality_eligible_source_rows_before_dedup_and_overlap: 3682449
     apogee_alpha_m_is_not_alias: true

@@ -3,7 +3,7 @@
   "training_performed": false,
   "scope": "Full usable source registry, not a tiny QA sample. First snapshot, not final selected model. Marginal quantiles are finite-draw estimates; no CAL interval correction applied. Mapped observations retain noisy survey labels; no physical ground truth claim.",
   "checkpoint_sha256": "5333dfe148194f44e3adcc02cb9e7ee975b277d0fdc88b2c7fdc899e385f6a39",
-  "source_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/manifest.json",
+  "source_manifest_path": "/arc/projects/astroai/msa/runs/expanded_six_source_20261107_v5/manifest.json",
   "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
   "checkpoint_update": 2000,
   "checkpoint_epoch": 0,

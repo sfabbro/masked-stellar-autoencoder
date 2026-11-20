@@ -30,5 +30,5 @@ scope: CUDA CANFAR synthetic head-only fit; no MSA weights or physical-label cer
   64 and 128 independent-scramble QMC diagnostics are finite-particle admission gates,
   not numerical-parity tolerances
 reuse_preflight:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v1
+  path: /arc/projects/astroai/msa/runs/remediation_joint6_preflight_v1
   source_commit: 4849f477c5476cfd5bb21069c6e017a42a3107b5

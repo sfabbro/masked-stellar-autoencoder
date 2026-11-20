@@ -21,7 +21,7 @@
     }
   },
   "receipt": {
-    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+    "path": "/arc/projects/astroai/msa/runs/rave_native_admission_20261105_v1/rave-candidate.h5",
     "sha256": "d18c0d65ee08ed74e7a64b9515e1bead1550aa131c659eccb8136066351fa78a"
   },
   "selected_unique_stars": 188943,

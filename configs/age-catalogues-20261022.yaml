@@ -1,7 +1,7 @@
 # A0 age-catalogue pins. Local paths for the audit; ARC paths used by the CANFAR job.
 apokasc3:
   local: experiments/xp/results-stellar-improvement/apokasc3_collection_v1/table4.dat
-  arc: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
+  arc: /arc/projects/astroai/msa/runs/apokasc3_collection_v1/apokasc3-table4.dat.gz
   url: https://cdsarc.cds.unistra.fr/ftp/J/ApJS/276/69/table4.dat.gz
   gzip_sha256: af151751c7dee1fee007b5703b9c252f68ba0736b3ed46a684e6ebe80ae4031d
   role: APOKASC-3 Kepler giant ages (RGB/RC); model-dependent, not truth
@@ -16,6 +16,6 @@ willett:
     cat_TESS_APG.csv: 61170dbac20c9c391d51f478dfb9c4a605e31b361afb50f28f130e1d72d641afaf
   caveat: GAIADR3_ID is constant in the current release; crossmatch via KIC/TESS/APOGEE IDs
 current:
-  age_cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_feature_cohort_v1/age-feature-cohort.h5
-  dataset_view: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/dataset_view_v2/dataset-view.h5
-  posterior_labels: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5
+  age_cohort: /arc/projects/astroai/msa/runs/age_feature_cohort_v1/age-feature-cohort.h5
+  dataset_view: /arc/projects/astroai/msa/runs/dataset_view_v2/dataset-view.h5
+  posterior_labels: /arc/projects/astroai/msa/runs/posterior_labels_v2/posterior-labels.h5

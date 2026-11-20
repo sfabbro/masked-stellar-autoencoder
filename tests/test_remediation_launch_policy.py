@@ -213,7 +213,7 @@ def test_nsf_startupfix_v3_recovers_exactly_two_failed_arms():
         )
         bad = copy.deepcopy(job)
         bad["env"] = {
-            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_ft_qmc256_v2"
+            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/astroai/msa/runs/remediation_nsf6_ft_qmc256_v2"
         }
         with pytest.raises(ValueError, match="output must be distinct"):
             policy.bind_remediation_policy(bad, {})
@@ -310,9 +310,7 @@ def test_copula_spline_policy_binds_new_library_and_preserved_gate_failure():
     plan = yaml.safe_load(
         Path("configs/remediation-copula6-launch-20261027.yaml").read_text()
     )["jobs"][0]
-    output = (
-        "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/" + plan["run_id"]
-    )
+    output = "/arc/projects/astroai/msa/runs/" + plan["run_id"]
     env = policy.bind_remediation_policy(plan, {"MSA_EXPERIMENT_OUTPUT": output})
     assert env["MSA_REMEDIATION_POLICY"] == str(policy.COPULA_CONFIG)
     with pytest.raises(ValueError, match="output must be distinct"):

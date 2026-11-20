@@ -1,5 +1,5 @@
 schema: forward-optimizer-wave-v1
-original: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multi_forward_xp_s42_v1
+original: /arc/projects/astroai/msa/runs/multi_forward_xp_s42_v1
 entrypoint: scripts/run_forward_optimizer_wave.py
 policy:
   original_decoder_training: reused_immutable_40_epoch_fit

@@ -6,7 +6,7 @@ jobs:
     ram: 32
   env:
     MSA_EXPERIMENT_CPU_ONLY: '1'
-    MSA_AGE_APOKASC3: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc3_collection_v1/apokasc3-table4.dat.gz
-    MSA_AGE_COHORT: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/age_feature_cohort_v1/age-feature-cohort.h5
-    MSA_AGE_DATASET_VIEW: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/dataset_view_v2/dataset-view.h5
-    MSA_AGE_POSTERIOR: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior_labels_v2/posterior-labels.h5
+    MSA_AGE_APOKASC3: /arc/projects/astroai/msa/runs/apokasc3_collection_v1/apokasc3-table4.dat.gz
+    MSA_AGE_COHORT: /arc/projects/astroai/msa/runs/age_feature_cohort_v1/age-feature-cohort.h5
+    MSA_AGE_DATASET_VIEW: /arc/projects/astroai/msa/runs/dataset_view_v2/dataset-view.h5
+    MSA_AGE_POSTERIOR: /arc/projects/astroai/msa/runs/posterior_labels_v2/posterior-labels.h5

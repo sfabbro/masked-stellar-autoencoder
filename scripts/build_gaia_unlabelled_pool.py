@@ -27,7 +27,7 @@ import h5py
 import numpy as np
 
 GAIA_ROOT = Path("/arc/projects/k-pop/gaia/GaiaSource")
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 COLUMNS = (
     ("phot_g_mean_mag", "G"),
     ("phot_bp_mean_mag", "BP"),

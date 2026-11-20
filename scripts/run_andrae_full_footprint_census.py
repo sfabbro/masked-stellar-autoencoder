@@ -15,7 +15,7 @@ import h5py
 import numpy as np
 from astropy.io import fits
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 SOURCE = ROOT + "decision_xp_catalogue_qa_20261106_v1/table_1_catwise.fits.gz"
 RAW = "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5"
 CACHE = ROOT + "residual-huber-e86-150m-cache-v1/source_id.npy"

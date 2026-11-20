@@ -27,7 +27,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 SOURCE_CONFIG = "configs/master-label-source-20261111.json"
 FEATURE_CONFIG = "configs/multisurvey-feature-union-dr12-20261106.json"
 TRAIN_CONFIG = "configs/master-label-six-nsf-fullfit-20261111.yaml"

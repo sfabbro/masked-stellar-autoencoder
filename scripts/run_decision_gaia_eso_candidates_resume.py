@@ -15,7 +15,7 @@ import requests
 from astropy.table import Table
 from xmatcher import CrossMatch, MatchRequest, MatchSpec, SideOverrides
 
-SOURCE = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/gaia_eso_dr51_raw.h5"
+SOURCE = "/arc/projects/astroai/msa/runs/rave_dr6_cnn_recovery_sources_20261028_v1/gaia_eso_dr51_raw_source_20261029_v1/gaia_eso_dr51_raw.h5"
 SOURCE_SHA = "9932d63fc89278425ace2ee9f44507990d0efc7ece0750028c27c28eaf0992e4"
 
 

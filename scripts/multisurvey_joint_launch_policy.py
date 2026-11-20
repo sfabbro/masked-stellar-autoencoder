@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 
 CONFIG = Path("configs/multisurvey-joint-20261105.yaml")
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 
 
 def bind_joint_policy(plan, env):

@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from prepare_expanded_six_source import role_buckets, sha
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def exact_ids(values):

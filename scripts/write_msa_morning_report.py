@@ -6,8 +6,8 @@ import json
 import time
 from pathlib import Path
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
-PUBLIC = "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = Path("/arc/projects/astroai/msa/runs")
+PUBLIC = "https://ws-uv.canfar.net/arc/files/projects/astroai/msa/runs/"
 
 
 def read(run):

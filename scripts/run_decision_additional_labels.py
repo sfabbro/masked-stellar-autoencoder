@@ -14,7 +14,7 @@ from masked_stellar_autoencoder.training.multisurvey_overlay import (
     write_observation_sidecar,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 SOURCES = [
     dict(
         name="sdss_dr20_bossnet_081",

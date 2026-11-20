@@ -1,8 +1,8 @@
 library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
-checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint: /arc/projects/astroai/msa/runs/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
 checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
-prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/prepared.npz
-preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/six_target_source_preparation_v3/manifest.json
+prepared: /arc/projects/astroai/msa/runs/six_target_source_preparation_v3/prepared.npz
+preparation_manifest: /arc/projects/astroai/msa/runs/six_target_source_preparation_v3/manifest.json
 preparation_source_sha: 8edbf713579013477d5a284120bec8443167d70f
 preparation_policy: configs/six-target-preparation-20261024-v3.yaml
 benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5

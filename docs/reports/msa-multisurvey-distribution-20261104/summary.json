@@ -541,12 +541,12 @@
   },
   "checkpoints": {
     "frozen": {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_frozen_20261104_v1/final.pth",
+      "path": "/arc/projects/astroai/msa/runs/multisurvey_gaussian_frozen_20261104_v1/final.pth",
       "sha256": "6d5e04b2aa93a3c08d58da2893a82e84d1064ef1674c297bd1729fc10b7ea3fd",
       "reload": "pass"
     },
     "finetune": {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth",
+      "path": "/arc/projects/astroai/msa/runs/multisurvey_gaussian_finetune_20261104_v1/final.pth",
       "sha256": "efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d",
       "reload": "pass"
     }

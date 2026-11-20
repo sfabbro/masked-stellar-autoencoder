@@ -33,7 +33,7 @@ import pyarrow.parquet as pq
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from masked_stellar_autoencoder.training import full_input_assembly as fia  # noqa: E402
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 ORIGINAL = Path(
     "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5"
 )

@@ -16,7 +16,7 @@ from masked_stellar_autoencoder.training.export_mixture_diagnostics import (
     summarize_scores,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 PRED = ROOT + "multisurvey_joint_fullfit_20261105_v1/"
 CENTER = np.array([5500.0, 3.0, -0.5])
 SCALE = np.array([1000.0, 1.0, 1.0])

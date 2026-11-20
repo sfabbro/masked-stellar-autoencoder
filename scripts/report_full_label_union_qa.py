@@ -19,7 +19,7 @@ from matplotlib.lines import Line2D
 
 from masked_stellar_autoencoder.training.survey_map_arrays import inverse_map_axis
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 NAMES = [
     "Teff [K]",
     "log g [dex]",

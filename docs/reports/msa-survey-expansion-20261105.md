@@ -288,7 +288,7 @@ stable tie-break. It does not use agreement with model predictions.
 
 The source-only LRS sidecar is persisted at:
 
-`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5`
+`/arc/projects/astroai/msa/runs/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5`
 
 SHA256: `95d252e5f89d2a1db45edb172693167384a37b7ab72f4b0d12f533aea747fcd0`.
 The full raw mounted-file SHA256 is recorded in the
@@ -321,7 +321,7 @@ The output `new-star-features.h5` retains all new candidate IDs and explicit
 recoverability flags, with SHA256
 `9865254eeaadf37f1bd214519aa0c4e6d3d2993de1b3a7dfcc9cff974ebd9370`.
 Its native directory is
-`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_feature_union_20261105_v1/`.
+`/arc/projects/astroai/msa/runs/multisurvey_feature_union_20261105_v1/`.
 The current base is untouched. **No new FIT/test roles were assigned and no
 predictions or training were run on these new stars.** The benchmark exclusion
 list and group-aware evaluation split still need binding into the training

@@ -13,7 +13,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RAW = Path("/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5")
 
 

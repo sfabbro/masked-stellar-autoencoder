@@ -14,7 +14,7 @@ import h5py
 import numpy as np
 import pandas as pd
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RUN = ROOT / "multisurvey_joint_fullfit_20261105_v1"
 SELECTED_SHA = "9328ab102a54fae7fb541f08f4b478128f327834c4398bebccfff07112205fd7"
 MAPPED = ROOT / "frozen_survey_qa_20261105_v2/mapped-devtest.h5"

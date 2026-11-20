@@ -89,7 +89,7 @@
             "parallax_error": "mas"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/000-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/000-01",
           "finite_not_quality_selected": {
             "mg_fe": 898029,
             "e_mg_fe": 899045,
@@ -146,7 +146,7 @@
             "teff_error_cnn": "K"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/001-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/001-01",
           "finite_not_quality_selected": {
             "alpha_m_cnn": 426574,
             "alpha_m_error_cnn": 426574,
@@ -290,7 +290,7 @@
             "alphafe_gspspec_upper": "'dex'"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/004-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/004-01",
           "finite_not_quality_selected": {
             "alphafe_gspspec": 4957718,
             "alphafe_gspspec_lower": 4957718,
@@ -584,7 +584,7 @@
           ],
           "units": {},
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/006-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/006-01",
           "finite_not_quality_selected": {
             "alpha_m_atm": 708174,
             "e_alpha_m_atm": 706538
@@ -612,7 +612,7 @@
             "VSINI": "km s-1"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/007-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/007-01",
           "finite_not_quality_selected": {
             "ALPHAFE": 6372607,
             "ALPHAFE_ERR": 6316629
@@ -633,7 +633,7 @@
             "RV_ERR": "km s-1"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/007-02",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/007-02",
           "finite_not_quality_selected": {
             "ALPHAFE": 5983260
           }
@@ -712,7 +712,7 @@
       ]
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+      "path": "/arc/projects/astroai/msa/runs/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
       "exists": true,
       "tables": [
         {
@@ -803,7 +803,7 @@
           ],
           "units": {},
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/008-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/008-01",
           "finite_not_quality_selected": {
             "RV_ALPHA": 733901,
             "ALPHA_M": 646591,
@@ -939,7 +939,7 @@
             "rv_err": "km/s"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/011-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/011-01",
           "finite_not_quality_selected": {
             "alpha_m": 3812860,
             "alpha_m_err": 3812860
@@ -1031,7 +1031,7 @@
             "cu_fe": "dex"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_alpha_stage_20261108_v1/013-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_alpha_stage_20261108_v1/013-01",
           "finite_not_quality_selected": {
             "alpha_m_cnn": 1033783,
             "mg_fe": 1033783,

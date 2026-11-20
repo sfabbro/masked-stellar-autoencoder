@@ -40,7 +40,7 @@ from masked_stellar_autoencoder.training.five_wave_heads import (
 )
 from masked_stellar_autoencoder.training.input_measurement import xp_indices
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
+ROOT = "/arc/projects/astroai/msa/runs"
 POINT_KEYS = {"point_native", "quantiles_native", "mean_native", "variance_native"}
 METADATA_KEYS = {
     "source_id",

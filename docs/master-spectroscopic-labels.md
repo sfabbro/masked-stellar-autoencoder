@@ -1,7 +1,7 @@
 # Master spectroscopic label table
 
 `master_spectroscopic_labels_20261111_v3` on ARC (v1 and v2 are superseded)
-(`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/`), built by
+(`/arc/projects/astroai/msa/runs/`), built by
 `scripts/build_master_spectroscopic_labels.py`
 (`training/master_spectroscopic.py`).
 
@@ -120,7 +120,7 @@ Not available, so not included:
 import pandas as pd
 from masked_stellar_autoencoder.training.master_spectroscopic import read_native_rows
 
-root = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_spectroscopic_labels_20261111_v3/"
+root = "/arc/projects/astroai/msa/runs/master_spectroscopic_labels_20261111_v3/"
 rec = pd.read_parquet(root + "records")
 star = rec[rec.star_id == 4185355646116022528]
 native = read_native_rows(star, root + "catalogues.json")

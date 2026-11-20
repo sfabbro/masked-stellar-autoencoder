@@ -1,9 +1,9 @@
 checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
 checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
 library_revision: d94a969483e5abba120ac7e306cc1240d7a47f92
-cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
-sidecar: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
-native_qa: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
+cohort: /arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+sidecar: /arc/projects/astroai/msa/runs/joint-native-preparation-v2/joint-native-labels.h5
+native_qa: /arc/projects/astroai/msa/runs/joint-native-preparation-v2-quality-v1/native-label-quality-independent-verification.json
 benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
 reconstruction_presentations: 10000000
 effective_batch: 32768

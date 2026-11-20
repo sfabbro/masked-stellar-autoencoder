@@ -1,5 +1,5 @@
-input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-age-native-pilot-input-v3/pilot.npz
-manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-age-native-pilot-input-v3/manifest.json
+input: /arc/projects/astroai/msa/runs/joint-age-native-pilot-input-v3/pilot.npz
+manifest: /arc/projects/astroai/msa/runs/joint-age-native-pilot-input-v3/manifest.json
 arms:
 - run_id: age_joint_validation_joint_s42_v1
   objective: joint

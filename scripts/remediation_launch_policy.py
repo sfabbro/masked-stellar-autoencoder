@@ -17,7 +17,7 @@ CONFIGS = {
     "remediation-pilot": Path("configs/remediation-pilots-20261026.yaml"),
 }
 LIBRARY = "6bd8b93b35fe4fe216319870e72e94eb78429106"
-PARENT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth"
+PARENT = "/arc/projects/astroai/msa/runs/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth"
 
 NSF_STARTUP_CONFIG = Path("configs/remediation-nsf-qmc256-startupfix-20261027.yaml")
 NSF_QMC256_CONFIG = Path("configs/remediation-nsf-qmc256-recovery-20261026.yaml")
@@ -222,10 +222,7 @@ def bind_remediation_policy(plan, env):
         }
         if set(plan.get("depends_on", [])) != required:
             raise ValueError("NSF startup recovery dependencies differ")
-        expected_output = (
-            "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
-            + plan["run_id"]
-        )
+        expected_output = "/arc/projects/astroai/msa/runs/" + plan["run_id"]
         if any(
             str(source["MSA_EXPERIMENT_OUTPUT"]) != expected_output
             for source in (env, plan.get("env", {}))
@@ -242,10 +239,7 @@ def bind_remediation_policy(plan, env):
             "remediation_joint6_preflight_v3",
         }:
             raise ValueError("Copula pilot dependencies differ")
-        expected_output = (
-            "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
-            + plan["run_id"]
-        )
+        expected_output = "/arc/projects/astroai/msa/runs/" + plan["run_id"]
         if env.get("MSA_EXPERIMENT_OUTPUT") != expected_output or (
             "MSA_EXPERIMENT_OUTPUT" in plan.get("env", {})
             and str(plan["env"]["MSA_EXPERIMENT_OUTPUT"]) != expected_output

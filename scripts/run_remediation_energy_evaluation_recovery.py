@@ -14,7 +14,7 @@ import numpy as np
 import run_remediation_energy_pilot as prior
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 
 
 def whole_draws(head, z, count, chunk, generator):

@@ -14,7 +14,7 @@ from pathlib import Path
 
 from launch_stellar_improvement import create_form_session, submission_error_evidence
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 # Headless image; the entrypoint installs pixi and the job's environment itself.
 IMAGE = os.environ.get("MSA_CANFAR_IMAGE", "images.canfar.net/astroai/base:latest")
 
@@ -85,7 +85,7 @@ def submit(
             "Reconcile existing receipt; never resubmit: " + str(receipt)
         )
     output = ROOT + run_id
-    bundle = ROOT + "decision_wave_source_bundles_20261106_v1/" + attempt_name
+    bundle = "/arc/projects/astroai/msa/launcher/source_bundles/" + attempt_name
     resolved = addresses()
     entry = (
         Path("scripts/canfar_dns_proxy.py").read_text()

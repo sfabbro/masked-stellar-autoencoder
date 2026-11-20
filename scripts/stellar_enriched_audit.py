@@ -14,7 +14,7 @@ import h5py
 import numpy as np
 from astropy.io import fits
 
-BASE = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+BASE = Path("/arc/projects/astroai/msa/runs")
 LAYERS = ("native", "PIGS", "Li2025_CaT_silver")
 
 

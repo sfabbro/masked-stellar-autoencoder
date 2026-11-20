@@ -1,6 +1,6 @@
 {
   "cache": {
-    "cache_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/frozen-contexts.h5",
+    "cache_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_suite_20261105_v1/frozen-contexts.h5",
     "cache_sha256": "99f9e8697c549474867e9f889974e9a5170284a5efb75fa503a4590abf54c5ed",
     "device": "cuda",
     "head_precision": "float64",
@@ -45,7 +45,7 @@
   },
   "config": {
     "batch_size": 64,
-    "density_reference": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth",
+    "density_reference": "/arc/projects/astroai/msa/runs/multisurvey_gaussian_finetune_20261104_v1/final.pth",
     "density_reference_sha256": "efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d",
     "draws": 2048,
     "evaluation_particles": 1024,
@@ -53,14 +53,14 @@
     "head_lr": 0.0003,
     "micro_batch": 8,
     "parent": {
-      "base_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
-      "checkpoint": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
+      "base_path": "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5",
+      "checkpoint": "/arc/projects/astroai/msa/runs/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth",
       "checkpoint_sha256": "c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9",
       "library_revision": "2777b0de88121768434725ef227893cd35595d2a",
       "model_config": "configs/pretrain.canfar.yaml",
-      "overlay_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
+      "overlay_manifest": "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/bundle/overlay-manifest.json",
       "overlay_manifest_sha256": "09488a33f21307f3152ce1a6a70a76489b88e55a1b790a44d83e11245955d0ff",
-      "overlay_producer_manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/manifest.json",
+      "overlay_producer_manifest": "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/manifest.json",
       "reference_checkpoint": "/arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth",
       "reference_checkpoint_sha256": "d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3",
       "run_id": "multisurvey_flexible_parent_20261105",

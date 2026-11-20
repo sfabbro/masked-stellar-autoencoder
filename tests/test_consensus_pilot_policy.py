@@ -18,10 +18,7 @@ def test_frozen_and_finetuned_plans_are_distinct_and_fail_closed():
     assert len(plans) == 2
     assert plans[0]["run_id"] != plans[1]["run_id"]
     for plan in plans:
-        output = (
-            "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
-            + plan["run_id"]
-        )
+        output = "/arc/projects/astroai/msa/runs/" + plan["run_id"]
         result = bind_consensus_pilot_policy(plan, {"MSA_EXPERIMENT_OUTPUT": output})
         config = yaml.safe_load((ROOT / result["MSA_MULTISURVEY_POLICY"]).read_text())
         assert config["run_id"] == plan["run_id"] and config["updates"] == 1000

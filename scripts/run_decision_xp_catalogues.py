@@ -14,7 +14,7 @@ import numpy as np
 import pyarrow.parquet as pq
 from astropy.io import fits
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 PRED = ROOT + "multisurvey_joint_fullfit_20261105_v1/"
 MAPPED = ROOT + "frozen_survey_qa_20261105_v2/"
 BASE = ROOT + "remediation_source_v3/prepared.h5"

@@ -312,7 +312,7 @@ def main():
     parser.add_argument(
         "--base",
         type=Path,
-        default=Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"),
+        default=Path("/arc/projects/astroai/msa/runs"),
     )
     args = parser.parse_args()
     config = yaml.safe_load(args.config.read_text())

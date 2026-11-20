@@ -12,8 +12,8 @@ from pathlib import Path
 from rave_cnn_source import build_rave_cnn_source
 
 RUN = "multisurvey_rave_cnn_edr3_source_recovery_v2"
-CNN = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/rave_dr6_cnn.fits"
-CROSS = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_dr6_cnn_recovery_sources_20261028_v1/rave_dr6_x_gaiaedr3.fits"
+CNN = "/arc/projects/astroai/msa/runs/rave_dr6_cnn_recovery_sources_20261028_v1/rave_dr6_cnn.fits"
+CROSS = "/arc/projects/astroai/msa/runs/rave_dr6_cnn_recovery_sources_20261028_v1/rave_dr6_x_gaiaedr3.fits"
 CNN_SHA = "8a0232e77e4fa06db6b039509227a95e11b2aeb5014f5653e65dbdbda832d495"
 CROSS_SHA = "05b81d2a1f56ee3d4be3da21c70481b983fd779843fbd8973671d9ce16d912b8"
 

@@ -325,9 +325,7 @@ def report(root, output):
         tail_quicklook=tails,
         checkpoints={
             arm: dict(
-                path="/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
-                + m["run_id"]
-                + "/final.pth",
+                path="/arc/projects/astroai/msa/runs/" + m["run_id"] + "/final.pth",
                 sha256=m["result"]["checkpoint_sha256"],
                 reload=m["result"]["checkpoint_reload"],
             )

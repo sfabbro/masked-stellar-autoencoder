@@ -39293,37 +39293,37 @@
   "candidate_stars": 13592882,
   "candidate_provenance": [
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/prepared.h5",
+      "path": "/arc/projects/astroai/msa/runs/expanded_six_source_20261107_v5/prepared.h5",
       "key": "source_id",
       "rows": 12386195,
       "scope": "existing registry, including ineligible rows"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
       "source": "lamost_dr12v2_lrs_lasp",
       "rows": 3265101,
       "scope": "native sidecar before feature intersection"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/rave_native_admission_20261105_v1/rave-candidate.h5",
       "source": "rave_dr6_madera_gauguin",
       "rows": 188943,
       "scope": "native sidecar before feature intersection"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+      "path": "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
       "source": "gaia_dr3_gspspec",
       "rows": 5591594,
       "scope": "native sidecar before feature intersection"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
       "source": "sdss_dr20_bossnet_081",
       "rows": 929032,
       "scope": "native sidecar before feature intersection"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
       "source": "lamost_dr12v2_mrs_lasp",
       "rows": 821991,
       "scope": "native sidecar before feature intersection"
@@ -39335,7 +39335,7 @@
       "scope": "native release, no XP selection"
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+      "path": "/arc/projects/astroai/msa/runs/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
       "column": "GAIAEDR3_SOURCE_ID",
       "rows": 733901,
       "scope": "native release, no XP selection"

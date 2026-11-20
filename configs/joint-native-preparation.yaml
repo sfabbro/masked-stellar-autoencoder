@@ -6,10 +6,10 @@ requested_resources:
   gpus: 0
   maximum_runtime_seconds: 3600
 cohort:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  path: /arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5
   sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
 references:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/distance_feature_cohort_v1/distance-feature-cohort.h5
+  path: /arc/projects/astroai/msa/runs/distance_feature_cohort_v1/distance-feature-cohort.h5
   sha256: fe377385e9a5a26a1d3f14ca15ea6c56904d73c34233fb9e17da1b944b76b1ad
   dataset: ALL_reference_holdout_source_ids
   count: 99574
@@ -22,12 +22,12 @@ sources:
     sha256: 97911d4436a42c77eb6d8c2116eecfb28fa927be83302aa66bbeb58d95889693
     pin_status: existing ARC raw hash recorded and independently verified by sk17i01q (joint-native-preparation-v2)
   apogee:
-    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
+    path: /arc/projects/astroai/msa/runs/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
     bytes: 3970621440
     rows: 733901
     sha256: d2f1500a9c8cc7280a0dc6a2b14fe01eddf9387f9aa83f64b21d80d5fdad4007
     pin_status: accepted full raw acquisition checksum
-output_directory: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v1
+output_directory: /arc/projects/astroai/msa/runs/joint-native-preparation-v1
 sidecar_filename: joint-native-labels.h5
 training_launch_ready: false
 notes:

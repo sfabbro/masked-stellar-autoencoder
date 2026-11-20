@@ -6,7 +6,7 @@ import yaml
 
 CONFIG = Path("configs/multisurvey-desi-source-20261027.yaml")
 RUN = "multisurvey_desi_dr1_raw_source_v1"
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RAW = ROOT + "desi_collection_v1/"
 EXPECTED = {
     "run_id": RUN,

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 CONFIG = Path("configs/remediation-nsf6-energy-eval-recovery-20261029.yaml")
 CONFIG_SHA256 = "5131bd8ab99b1e9c06b16c17e0df027909c01b24bc29b266a75a0b20fe554842"
 TASK = "remediation-energy-evaluation-recovery"

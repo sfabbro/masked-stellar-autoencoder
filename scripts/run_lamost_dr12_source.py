@@ -10,7 +10,7 @@ from pathlib import Path
 
 from lamost_dr12_source import PRODUCTS, download, produce
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 BASE = ROOT + "remediation_source_v3/prepared.h5"
 BASE_SHA = "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c"
 CACHE = ROOT + "residual-huber-e86-150m-cache-v1"

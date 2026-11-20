@@ -39,7 +39,7 @@
   "tess_candidate_sha256": "3e1289326e242960d0370fed2fe8d7a1b2201a59d19a0bb0f98998d83464e540",
   "stars": 21561,
   "source_sha256": "a117ebc33bfd5d06a771eab6db1d4242d01e87b826b55c9dc8dc459da9ad3ec2",
-  "source_manifest_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v5/manifest.json",
+  "source_manifest_path": "/arc/projects/astroai/msa/runs/expanded_six_source_20261107_v5/manifest.json",
   "large_snapshot_sha256": "1cb3ebae5fa64f5f89fb47b9ec4e4713f57e4225d499a3081737267c1241071b",
   "cached_inputs_verified_rows": 128,
   "tess_devtest_stars": 12017,

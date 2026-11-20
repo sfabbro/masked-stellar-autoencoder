@@ -27,7 +27,7 @@ from masked_stellar_autoencoder.training.full_gaia_inputs import (
 from masked_stellar_autoencoder.training.remediation_joint6 import JointSixHead
 from masked_stellar_autoencoder.training.six_survey_map import SixSurveyMap
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def main():

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_desi_unique_overlay_v1"
 CONFIG = Path("configs/multisurvey-desi-overlay-20261027.yaml")
 EXPECTED = {

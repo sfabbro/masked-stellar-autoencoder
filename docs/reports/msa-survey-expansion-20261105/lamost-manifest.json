@@ -73,7 +73,7 @@
   "outside_existing_base": 2642086,
   "outside_base_scope": "feature availability and roles unresolved; not promoted to FIT",
   "receipt": {
-    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
+    "path": "/arc/projects/astroai/msa/runs/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
     "sha256": "95d252e5f89d2a1db45edb172693167384a37b7ab72f4b0d12f533aea747fcd0"
   },
   "benchmark_input_audit_sha256": "9440063865b5814652c17ca04072c1a9fd8793aed2434c80259d9e995709d48f",

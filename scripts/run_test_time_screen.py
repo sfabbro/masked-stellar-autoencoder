@@ -199,7 +199,7 @@ def main():
     p.add_argument("--config", default="configs/test-time-screen.yaml")
     p.add_argument(
         "--cohort",
-        default="/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+        default="/arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
     )
     p.add_argument("--checkpoint")
     p.add_argument("--benchmark", default=BENCH)

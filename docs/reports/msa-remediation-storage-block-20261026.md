@@ -13,10 +13,10 @@ To resume: either obtain project quota/additional storage, or approve an archive
 
 Recorded sizes from the read-only inventory on 2026-10-26. Sizes below use decimal GB. These four directories are candidates for **archival outside the `/arc/projects/k-pop` quota**, followed by removal of the verified originals only after approval. Moving them elsewhere inside the same project does not free its quota. No deletion-only candidates have been certified.
 
-- `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_quantile3_s51_v2/batch-cache` — **1.209 GB** (1,209,261,006 bytes).
-- `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_gaussian_noise_s51_v2/batch-cache` — **9.052 GB** (9,052,200,935 bytes).
-- `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_s51_v2/batch-cache` — **9.035 GB** (9,035,417,666 bytes).
-- `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache` — **9.044 GB** (9,044,413,307 bytes).
+- `/arc/projects/astroai/msa/runs/expanded_eval_quantile3_s51_v2/batch-cache` — **1.209 GB** (1,209,261,006 bytes).
+- `/arc/projects/astroai/msa/runs/expanded_eval_gaussian_noise_s51_v2/batch-cache` — **9.052 GB** (9,052,200,935 bytes).
+- `/arc/projects/astroai/msa/runs/expanded_eval_nsf_noise_s51_v2/batch-cache` — **9.035 GB** (9,035,417,666 bytes).
+- `/arc/projects/astroai/msa/runs/expanded_eval_nsf_noise_mixed01_s51_v2/batch-cache` — **9.044 GB** (9,044,413,307 bytes).
 
 Total potentially released after verified archival: **28.341 GB** (28,341,292,914 bytes). Archiving only the three density-model caches would release **27.132 GB**; the quantile cache can stay in place if preferred.
 

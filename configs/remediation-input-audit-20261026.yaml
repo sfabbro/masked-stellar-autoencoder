@@ -14,18 +14,18 @@ source_ids:
   - 78289217922968576
   - 4926812820427520
 prepared:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5
+  path: /arc/projects/astroai/msa/runs/full_label_evaluation_preparation_v2/prepared.h5
   sha256: 6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9
 native:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
+  path: /arc/projects/astroai/msa/runs/joint-native-preparation-v2/joint-native-labels.h5
   sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
 legacy:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+  path: /arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5
   sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
 frozen:
-  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz
+  path: /arc/projects/astroai/msa/runs/five_job_broad_test_preparation_v1/prepared.npz
   sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
-cache_path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+cache_path: /arc/projects/astroai/msa/runs/residual-huber-e86-150m-cache-v1
 cache_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
 original_path: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
 policy:

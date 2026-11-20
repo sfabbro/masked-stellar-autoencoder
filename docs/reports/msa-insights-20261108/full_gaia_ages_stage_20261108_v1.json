@@ -44,7 +44,7 @@
             "parallax_error_bdasp": "mas"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/002-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_ages_stage_20261108_v1/002-01",
           "finite_not_quality_selected": {
             "age_bdasp": 494695,
             "age_error_bdasp": 494695
@@ -125,7 +125,7 @@
             "parallax_error": "mas"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/003-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_ages_stage_20261108_v1/003-01",
           "finite_not_quality_selected": {
             "age": 904016
           }
@@ -199,7 +199,7 @@
             "PW_BINARY_K": "km s-1"
           },
           "training_admitted": false,
-          "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/004-01",
+          "output": "/arc/projects/astroai/msa/runs/full_gaia_ages_stage_20261108_v1/004-01",
           "finite_not_quality_selected": {
             "TAU_GRAN_SSI": 7433,
             "TAU_GRAN_SSI_PERR": 7433,
@@ -243,7 +243,7 @@
     },
     {
       "path": "/arc/projects/k-pop/catalogues/nn_latent_age_dr17.csv.gz",
-      "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_gaia_ages_stage_20261108_v1/apogee-latent-age",
+      "output": "/arc/projects/astroai/msa/runs/full_gaia_ages_stage_20261108_v1/apogee-latent-age",
       "rows": 733901,
       "finite_age_before_quality": 142257,
       "training_admitted": false,

@@ -11,7 +11,7 @@ import h5py
 import numpy as np
 import yaml
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def select_panel(ids, roles, eligible, stress_ids, size=1024, seed=2026110642):

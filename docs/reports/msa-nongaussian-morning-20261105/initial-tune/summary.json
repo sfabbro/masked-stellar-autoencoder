@@ -11,7 +11,7 @@
       "training_error": null,
       "score_refinement": {},
       "checkpoint_sha256": "65100171ed396b898f2766cedd529a7161242677b762295815f30e58848da96d",
-      "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/mixture-selected.pth"
+      "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_suite_20261105_v1/mixture-selected.pth"
     },
     {
       "head": "gaussian",
@@ -22,7 +22,7 @@
       "training_error": null,
       "score_refinement": {},
       "checkpoint_sha256": "f5eb5cb5a06ad21d031774155f8e8e754718f85dc402bc2bee051f4e3e459d3d",
-      "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/gaussian-selected.pth"
+      "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_suite_20261105_v1/gaussian-selected.pth"
     },
     {
       "head": "copula",
@@ -33,7 +33,7 @@
       "training_error": null,
       "score_refinement": {},
       "checkpoint_sha256": "a6c076b798cc15b4ac89f85fcc8356e2018a53fde2bce5305b730fbf3d916b2a",
-      "checkpoint_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_flexible_suite_20261105_v1/copula-selected.pth"
+      "checkpoint_path": "/arc/projects/astroai/msa/runs/multisurvey_flexible_suite_20261105_v1/copula-selected.pth"
     }
   ],
   "paired_vs_gaussian": {

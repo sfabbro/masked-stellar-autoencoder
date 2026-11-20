@@ -8,11 +8,11 @@ parent: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram1
 parent_sha256: fdbee7bafc505e2c030a1e568c0699030ce7b26d15aceeb0bf52eb377789d7c6
 benchmark: /arc/projects/k-pop/msa_runs/xp-benchmark-10m-20261012-hdf5-r3/benchmark.h5
 benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
-cohort: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5
+cohort: /arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5
 cohort_sha256: 321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120
-joint_labels: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v1/joint-native-labels.h5
+joint_labels: /arc/projects/astroai/msa/runs/joint-native-preparation-v1/joint-native-labels.h5
 joint_labels_sha256: null
-readiness_report: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v1/launch-readiness.json
+readiness_report: /arc/projects/astroai/msa/runs/joint-native-preparation-v1/launch-readiness.json
 output: /arc/projects/k-pop/msa_runs/joint-native-30e-v1
 scratch: /scratch/msa-joint-native-30e-v1
 qa_remote: vos:sfabbro/msa/joint_native_30e_v1/qa

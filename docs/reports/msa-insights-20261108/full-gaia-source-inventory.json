@@ -1146,7 +1146,7 @@
       "header_only": true
     },
     {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
+      "path": "/arc/projects/astroai/msa/runs/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits",
       "bytes": 3970621440,
       "format": "fits",
       "tables": [

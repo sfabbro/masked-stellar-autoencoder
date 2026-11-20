@@ -19,7 +19,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 HERE = Path(__file__).resolve().parent.parent
 V6 = HERE / "configs/finetune-multisurvey-20261118-v6.yaml"
 V7 = HERE / "configs/finetune-multisurvey-20261118-v7.yaml"

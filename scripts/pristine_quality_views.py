@@ -9,7 +9,7 @@ import h5py
 import numpy as np
 from astropy.io import fits
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RAW_SHA = "0001ee6b67ddf0073d39e32fc7d809c0f6cbab7079586facc3b75e678853f713"
 BENCH_SHA = "41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2"
 REFERENCE = "https://arxiv.org/abs/2308.01344; sections6.3,7.3,7.5; CDS J/A+A/692/A115 ReadMe noteG1"

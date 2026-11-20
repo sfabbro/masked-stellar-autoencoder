@@ -222,7 +222,7 @@
   "protected_globular_members": 2418,
   "prior_fit_moved_to_external": 847,
   "feature_rows_written": 9183232,
-  "prepared_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/expanded_six_source_20261107_v2/prepared.h5",
+  "prepared_path": "/arc/projects/astroai/msa/runs/expanded_six_source_20261107_v2/prepared.h5",
   "prepared_sha256": "c5e68ed0b8b0c01030e5dd69cd99afc0faf18d930635a9277fbf630187d0956f",
   "source_registry": [
     "apogee",

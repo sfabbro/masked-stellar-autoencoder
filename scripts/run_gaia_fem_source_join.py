@@ -11,7 +11,7 @@ from pathlib import Path
 
 from gaia_fem_source_join import build
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_gaia_gspspec_fem_join_v1"
 SIDECAR = ROOT + "multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5"
 ARCHIVE = ROOT + "gaia_gspspec_fem_archive_20261028/gaia-fem-sorted.npz"

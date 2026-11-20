@@ -14,7 +14,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = "https://ws-uv.canfar.net/arc/files/projects/k-pop/msa_runs/stellar-improvement-20261015"
+ROOT = "https://ws-uv.canfar.net/arc/files/projects/astroai/msa/runs"
 REQUIRED = {
     "remediation_inputs_v4": "remediation_input_audit_complete",
     "remediation_source_v3": "remediation_source_complete",

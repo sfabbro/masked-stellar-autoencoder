@@ -10,9 +10,7 @@ import h5py
 import numpy as np
 from astropy.table import Table
 
-ROOT = Path(
-    "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/candidate_collection_v2"
-)
+ROOT = Path("/arc/projects/astroai/msa/runs/candidate_collection_v2")
 
 
 def numeric(table, name, integer=False):

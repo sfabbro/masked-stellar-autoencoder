@@ -99,7 +99,7 @@ Component target order is **Teff [K], logg [dex], Fe/H [dex]**; survey order is
 All files are under:
 
 ```
-/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_joint_fullfit_20261105_v1/
+/arc/projects/astroai/msa/runs/multisurvey_joint_fullfit_20261105_v1/
 ```
 
 Selected full joint checkpoint:

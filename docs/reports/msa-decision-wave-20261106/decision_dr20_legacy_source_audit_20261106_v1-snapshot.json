@@ -4,7 +4,7 @@
   "model_loaded": false,
   "sources": {
     "dr20_bossnet": {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1/dr20_bossnet.fits.gz",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_legacy_source_audit_20261106_v1/dr20_bossnet.fits.gz",
       "sha256": "c525696af3b217f81bc7ebc51c21cd6a2e09f2d2459b92feb80c326d1dbc9883",
       "bytes": 849231687,
       "url": "https://data.sdss.org/sas/dr20/spectro/astra/0.8.1/summary/astraAllStarBossNet-0.8.1.fits.gz",
@@ -1923,7 +1923,7 @@
       ]
     },
     "legacy_sspp": {
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_legacy_source_audit_20261106_v1/legacy_sspp.fits",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_legacy_source_audit_20261106_v1/legacy_sspp.fits",
       "sha256": "04628d84a5c817a50def945f9d37a7e273770a75aed9ac20e297ac55b989c586",
       "bytes": 1913284800,
       "url": "https://data.sdss.org/sas/dr9/sdss/sspp/ssppOut-dr9.fits",

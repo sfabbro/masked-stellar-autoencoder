@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 RUN = "multisurvey_gaia_gspspec_overlay_v1"
 CONFIG = Path("configs/multisurvey-gaia-gspspec-overlay-20261028.yaml")
 EXPECTED = {

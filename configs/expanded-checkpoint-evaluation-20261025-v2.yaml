@@ -2,9 +2,9 @@ library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
 producer_source_sha: 7552253630fe22bcd680a91ee9fa658893218d43
 large_parent_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
 original_prepared_sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
-output_root: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
-prepared: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5
-preparation_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/manifest.json
+output_root: /arc/projects/astroai/msa/runs
+prepared: /arc/projects/astroai/msa/runs/full_label_evaluation_preparation_v2/prepared.h5
+preparation_manifest: /arc/projects/astroai/msa/runs/full_label_evaluation_preparation_v2/manifest.json
 preparation_policy: configs/full-label-source-preparation-20261025-v2.yaml
 preparation_source_sha: same_as_runner_source
 batch_size: 128

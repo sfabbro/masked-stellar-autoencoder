@@ -8,13 +8,13 @@
   "acquisitions": {
     "sdss_dr19_astra_aspcap": {
       "url": "https://data.sdss.org/sas/dr19/spectro/astra/0.6.0/summary/astraAllStarASPCAP-0.6.0.fits.gz",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sources_20261110_v1/sdss/astraAllStarASPCAP-0.6.0.fits.gz",
+      "path": "/arc/projects/astroai/msa/runs/master_label_sources_20261110_v1/sdss/astraAllStarASPCAP-0.6.0.fits.gz",
       "bytes": 1171102556,
       "sha256": "5324bf39baeede7553b0a3c8a50bea1760f47eb67a95a8a84e6db303aa2edb04"
     },
     "sdss_dr12_sspp": {
       "url": "https://data.sdss.org/sas/dr12/sdss/sspp/ssppOut-dr12.fits",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sources_20261110_v1/sdss/ssppOut-dr12.fits",
+      "path": "/arc/projects/astroai/msa/runs/master_label_sources_20261110_v1/sdss/ssppOut-dr12.fits",
       "bytes": 1913284800,
       "sha256": "04628d84a5c817a50def945f9d37a7e273770a75aed9ac20e297ac55b989c586"
     },
@@ -894,132 +894,132 @@
   "existing_sidecars": [
     {
       "source": "apogee",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "path": "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5",
       "rows": 211163,
       "candidates": [
         [
           211163,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
         ],
         [
           211163,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
         ],
         [
           211163,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+          "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5"
         ]
       ]
     },
     {
       "source": "desi_dr1_rvs_raw",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5",
+      "path": "/arc/projects/astroai/msa/runs/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5",
       "rows": 3683136,
       "candidates": [
         [
           3683136,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_desi_dr1_raw_source_v1/desi-raw-observations.h5"
         ],
         [
           3681789,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/desi-selected.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/bundle/desi-selected.h5"
         ],
         [
           3681789,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
         ],
         [
           3681789,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
         ]
       ]
     },
     {
       "source": "gaia_dr3_gspspec",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5",
+      "path": "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5",
       "rows": 5591594,
       "candidates": [
         [
           5591594,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5"
         ],
         [
           5591594,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
         ]
       ]
     },
     {
       "source": "galah",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+      "path": "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5",
       "rows": 631922,
       "candidates": [
         [
           631922,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1/bundle/overlay.h5"
         ],
         [
           631922,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
+          "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/overlay.h5"
         ],
         [
           631922,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5"
+          "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5"
         ]
       ]
     },
     {
       "source": "lamost_dr12v2_lrs_lasp",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
       "rows": 3265101,
       "candidates": [
         [
           3265101,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5"
+          "/arc/projects/astroai/msa/runs/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5"
         ]
       ]
     },
     {
       "source": "lamost_dr12v2_mrs_lasp",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
       "rows": 821991,
       "candidates": [
         [
           821991,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5"
+          "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5"
         ]
       ]
     },
     {
       "source": "lamost_dr8v2_lrs_lasp",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5",
       "rows": 2827370,
       "candidates": [
         [
           2827370,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5"
+          "/arc/projects/astroai/msa/runs/lamost_dr8v2_lrs_admission_20261105_v1/lamost-dr8v2-lrs-candidate.h5"
         ]
       ]
     },
     {
       "source": "rave_dr6_madera_gauguin",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/rave_native_admission_20261105_v1/rave-candidate.h5",
       "rows": 188943,
       "candidates": [
         [
           188943,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5"
+          "/arc/projects/astroai/msa/runs/rave_native_admission_20261105_v1/rave-candidate.h5"
         ]
       ]
     },
     {
       "source": "sdss_dr20_bossnet_081",
-      "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+      "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
       "rows": 929032,
       "candidates": [
         [
           929032,
-          "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5"
+          "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5"
         ]
       ]
     }

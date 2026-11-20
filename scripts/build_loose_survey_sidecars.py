@@ -36,7 +36,7 @@ from masked_stellar_autoencoder.training.multisurvey_overlay import (  # noqa: E
     write_observation_sidecar,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 TABLES = [
     dict(
         name="lamost_dr12v2_lrs_lasp_ext",

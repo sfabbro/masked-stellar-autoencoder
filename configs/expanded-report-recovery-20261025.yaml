@@ -1,4 +1,4 @@
-output_root: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+output_root: /arc/projects/astroai/msa/runs
 expected_rows: 4412982
 producer_source_sha: 2ce384c49e3569ef4fd9a273bad2bedf12687a49
 prepared_sha256: 6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9

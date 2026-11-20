@@ -79,7 +79,7 @@ def test_launch_policy_rejects_mutated_resources_and_output():
             Path("configs/multisurvey-desi-census-launch-20261027.yaml").read_text()
         )["jobs"][0]
         good = {
-            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_cache_census_v1"
+            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/astroai/msa/runs/multisurvey_desi_cache_census_v1"
         }
         env = bind_desi_census_policy(plan, dict(good))
         assert env["MSA_EXPERIMENT_PRESENTATIONS"] == "0"

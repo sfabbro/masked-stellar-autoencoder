@@ -142,7 +142,7 @@ A full source, target-availability and feature union is still needed.
 - **DESI:** the public
   [DR1 stellar VAC](https://data.desi.lbl.gov/doc/releases/dr1/vac/mws/)
   is currently the latest linked release and is already staged as
-  `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits`.
+  `/arc/projects/astroai/msa/runs/desi_collection_v1/mwsall-pix-iron.fits`.
   It lists 6,372,607 fitted coadded spectra, 4,920,596 unique Gaia sources and
   4,586,247 unique spectroscopically classified DESI stars; these populations
   overlap and are not billions of unique labelled stars. DESI says

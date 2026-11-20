@@ -428,7 +428,7 @@ data:
   - KS
   - PARALLAX
   - EBV
-  ft_datafile: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/finetune.fits
+  ft_datafile: /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits
   classes:
   - teff
   - e_teff
@@ -439,7 +439,7 @@ data:
   - ebv_star
   - e_ebv_star
   extra_columns:
-  - /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/reddening_labels_20261118_v6/v5_reddening.npz
+  - /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v5_reddening.npz
 model:
   layer_dims:
   - 2048
@@ -453,7 +453,7 @@ model:
   pt_activ_func: elu
   norm: layer
   rtdl_embed: 16
-  saved_weights: /arc/projects/k-pop/msa_pretrain/checkpoints/msa_pretrain_checkpoint_26.pth
+  saved_weights: /arc/projects/astroai/msa/pretrain/checkpoints/msa_pretrain_checkpoint_26.pth
   decoder_dims:
   - 256
   - 512
@@ -521,12 +521,12 @@ finetuning:
     augment_below_feh: null
     augment_fraction: 0.0
 saving:
-  model_str: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx/finetune.pth
-  log_file: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx/finetune.log
+  model_str: /arc/projects/astroai/msa/runs/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx/finetune.pth
+  log_file: /arc/projects/astroai/msa/runs/multisurvey_ablation_20261118_v7/b04_v7_ctx_plx/finetune.log
   checkpoint_interval: 1
 multisurvey:
   formulation: anchored
-  records: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/records.npz
+  records: /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/records.npz
   nu: 5.0
   basis: 8
   hidden: 64
@@ -565,7 +565,7 @@ multisurvey:
     - lamost_cat_li2025
     - lamost_dr12_lrs
   unlabelled:
-    path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261117_v5/unlabelled.npz
+    path: /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/unlabelled.npz
     max_stars: 5000000
     ratio: 1.0
     rec_weight: 0.2

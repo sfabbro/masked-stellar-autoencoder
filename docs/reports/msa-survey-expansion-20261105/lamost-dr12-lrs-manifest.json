@@ -2,7 +2,7 @@
   "status": "source_candidate_complete",
   "training_performed": false,
   "model_loaded": false,
-  "source_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
+  "source_path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_source_reuse_20261106_v2/dr12_v2.0_LRS_stellar.fits",
   "source_sha256": "e58d4b9878e56c1c2ffea97f6395d8f3e65d0c2fc397265652790ddb4817763a",
   "raw_rows": 8376135,
   "valid_gaia_id_rows": 8226110,
@@ -73,7 +73,7 @@
   "outside_existing_base": 3054344,
   "outside_base_scope": "feature availability and roles unresolved; not promoted to FIT",
   "receipt": {
-    "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+    "path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
     "sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23"
   },
   "benchmark_input_audit_sha256": "9440063865b5814652c17ca04072c1a9fd8793aed2434c80259d9e995709d48f",

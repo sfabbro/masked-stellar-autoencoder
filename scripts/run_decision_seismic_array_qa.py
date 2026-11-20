@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 REFERENCE = (
     ROOT / "seismic_gravity_qa_20261106_v1/apokasc3-gravity-qa-reference.parquet"
 )

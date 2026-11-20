@@ -13,7 +13,7 @@ from masked_stellar_autoencoder.training.multisurvey_overlay import (
     write_observation_sidecar,
 )
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 SOURCE = "/arc/projects/k-pop/catalogues/lamost-param/dr8_v2_LRS_stellar.fits"
 RELEASE_ROWS = {"dr8v2": 6684413, "dr12v2": 8376135}
 BASE = ROOT + "remediation_source_v3/prepared.h5"

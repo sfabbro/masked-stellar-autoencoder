@@ -34,7 +34,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from masked_stellar_autoencoder.training import master_labels as ml  # noqa: E402
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 GAIA_COLUMNS = (
     "source_id",
     "ra",

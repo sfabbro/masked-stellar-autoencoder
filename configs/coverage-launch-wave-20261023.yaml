@@ -140,8 +140,8 @@ jobs:
 - run_id: posterior_age_distance_gaussian_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: gaussian
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -152,8 +152,8 @@ jobs:
 - run_id: posterior_age_distance_mdn_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: mdn
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -164,8 +164,8 @@ jobs:
 - run_id: posterior_age_distance_nsf_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: nsf
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -176,8 +176,8 @@ jobs:
 - run_id: posterior_age_distance_gaussian_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: gaussian
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'
@@ -188,8 +188,8 @@ jobs:
 - run_id: posterior_age_distance_mdn_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: mdn
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'
@@ -200,8 +200,8 @@ jobs:
 - run_id: posterior_age_distance_nsf_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/posterior-age-distance-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/posterior-age-distance-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: nsf
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'
@@ -212,8 +212,8 @@ jobs:
 - run_id: apokasc_age_gaussian_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: gaussian
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -224,8 +224,8 @@ jobs:
 - run_id: apokasc_age_mdn_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: mdn
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -236,8 +236,8 @@ jobs:
 - run_id: apokasc_age_nsf_s45_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: nsf
     MSA_TARGET_SEED: '45'
     MSA_TARGET_STEPS: '1000'
@@ -248,8 +248,8 @@ jobs:
 - run_id: apokasc_age_gaussian_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: gaussian
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'
@@ -260,8 +260,8 @@ jobs:
 - run_id: apokasc_age_mdn_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: mdn
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'
@@ -272,8 +272,8 @@ jobs:
 - run_id: apokasc_age_nsf_s46_v1
   task: target-predictions
   env:
-    MSA_TARGET_PREPARED: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/prepared.npz
-    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apokasc-age-preparation-20261023-v1/manifest.json
+    MSA_TARGET_PREPARED: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/prepared.npz
+    MSA_TARGET_PREPARATION_MANIFEST: /arc/projects/astroai/msa/runs/apokasc-age-preparation-20261023-v1/manifest.json
     MSA_TARGET_KIND: nsf
     MSA_TARGET_SEED: '46'
     MSA_TARGET_STEPS: '1000'

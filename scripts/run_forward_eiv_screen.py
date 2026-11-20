@@ -127,7 +127,7 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument(
         "--cohort",
-        default="/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
+        default="/arc/projects/astroai/msa/runs/enriched_feature_cohort_v1/enriched-feature-cohort.h5",
     )
     parser.add_argument("--checkpoint")
     parser.add_argument("--benchmark", default=BENCH)

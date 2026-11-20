@@ -16,7 +16,7 @@ preparation:
 source_projection:
   run_id: alpha_desi_source_projection_v1
   script: scripts/prepare_alpha_source_evidence.py
-  raw: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/desi_collection_v1/mwsall-pix-iron.fits
+  raw: /arc/projects/astroai/msa/runs/desi_collection_v1/mwsall-pix-iron.fits
   raw_sha256: eae3b31807c58ac340c257e06f66935d01bb81698a08108e6ca57a372cab76b5
   resources: {cores: 4, ram_gib: 32, gpus: 0, runtime_seconds: 3600}
   training_ready: false

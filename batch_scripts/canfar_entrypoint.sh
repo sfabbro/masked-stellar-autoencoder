@@ -341,7 +341,7 @@ case "$stage" in
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-feature-preparation ]]; then
-      "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --checkpoint "$MSA_PRETRAIN_RESUME" --projection-directory /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/alpha_desi_source_projection_v1 --base /arc/projects/k-pop/msa_runs/stellar-improvement-20261015 --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
+      "${pixi_run[@]}" python -u scripts/prepare_alpha_target_wave.py --checkpoint "$MSA_PRETRAIN_RESUME" --projection-directory /arc/projects/astroai/msa/runs/alpha_desi_source_projection_v1 --base /arc/projects/astroai/msa/runs --output "$experiment_output" --unit-evidence configs/desi-alpha-source-policy-20261023.json
       exit 0
     fi
     if [[ "${MSA_EXPERIMENT_TASK:-training}" == alpha-target-predictions ]]; then

@@ -332,7 +332,7 @@ def main():
     p.add_argument(
         "--base",
         type=Path,
-        default=Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"),
+        default=Path("/arc/projects/astroai/msa/runs"),
     )
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--checkpoint", type=Path, required=True)

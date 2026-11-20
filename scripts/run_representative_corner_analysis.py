@@ -14,7 +14,7 @@ import numpy as np
 from audit_corner_bimodality import gravity_modes
 from plot_decision_six_corners import corner
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 UPSTREAM = ROOT / "representative_corner_draws_20261106_v1"
 
 

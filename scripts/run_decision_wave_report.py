@@ -11,7 +11,7 @@ import numpy as np
 from scipy.stats import kstest
 
 TARGETS = ["teff", "logg", "feh", "alpha", "age", "distance"]
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def sha(path):

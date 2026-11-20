@@ -11,7 +11,7 @@ from pristine_quality_views import exact_rows
 from stellar_catalog_jobs import atomic_json, identity_split
 from stellar_dataset_views import EXPECTED_IDS, publish
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def fit_masks(ids, benchmark_train, benchmark_validation):

@@ -1,6 +1,6 @@
 run_id: density_fp64_precision_certificate_v1
 library_revision: 1d735c6a94456e5edbb4fd53f404121598c85830
-base: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015
+base: /arc/projects/astroai/msa/runs
 checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
 checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
 cases:

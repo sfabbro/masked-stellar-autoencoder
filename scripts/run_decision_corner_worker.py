@@ -11,7 +11,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 
 
 def sha(path):

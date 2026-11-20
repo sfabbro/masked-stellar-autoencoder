@@ -434,7 +434,7 @@ data:
   - KS
   - PARALLAX
   - EBV
-  ft_datafile: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/finetune.fits
+  ft_datafile: /arc/projects/astroai/msa/runs/multisurvey_table_20261113_v1/finetune.fits
   classes:
   - teff
   - e_teff
@@ -459,7 +459,7 @@ model:
   pt_activ_func: elu
   norm: layer
   rtdl_embed: 16
-  saved_weights: /arc/projects/k-pop/msa_pretrain/checkpoints/msa_pretrain_checkpoint_26.pth
+  saved_weights: /arc/projects/astroai/msa/pretrain/checkpoints/msa_pretrain_checkpoint_26.pth
   decoder_dims:
   - 256
   - 512
@@ -527,11 +527,11 @@ finetuning:
     augment_below_feh: null
     augment_fraction: 0.0
 saving:
-  model_str: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261115_v3/finetune.pth
-  log_file: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_finetune_20261115_v3/finetune.log
+  model_str: /arc/projects/astroai/msa/runs/multisurvey_finetune_20261115_v3/finetune.pth
+  log_file: /arc/projects/astroai/msa/runs/multisurvey_finetune_20261115_v3/finetune.log
   checkpoint_interval: 1
 multisurvey:
-  records: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_table_20261113_v1/records.npz
+  records: /arc/projects/astroai/msa/runs/multisurvey_table_20261113_v1/records.npz
   map_kind: conditional
   basis: 8
   hidden: 64

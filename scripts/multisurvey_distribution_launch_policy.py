@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 
 CONFIG = Path("configs/multisurvey-distribution-20261104.yaml")
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 
 
 def bind_distribution_policy(plan, env):

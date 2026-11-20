@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 ARMS = [
     dict(name="off", kind="identity", weight=0.0, extra_dex=0.0),
     dict(name="identity", kind="identity", weight=1.0, extra_dex=0.0),

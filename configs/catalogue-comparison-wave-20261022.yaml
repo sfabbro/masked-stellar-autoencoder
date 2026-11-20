@@ -2,7 +2,7 @@ scope: paired_catalogue_evaluation_zero_training
 cases:
 - run_id: catalogue_comparison_andrae175m_v1
   task: catalogue-comparison
-  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/andrae175m.npz
+  input: /arc/projects/astroai/msa/runs/catalogue-comparison-input-v1/andrae175m.npz
   targets:
   - Teff_K
   - logg_dex
@@ -15,7 +15,7 @@ cases:
   n_rows: 95245
 - run_id: catalogue_comparison_gspphot_v1
   task: catalogue-comparison
-  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/gspphot.npz
+  input: /arc/projects/astroai/msa/runs/catalogue-comparison-input-v1/gspphot.npz
   targets:
   - Teff_K
   - logg_dex
@@ -28,7 +28,7 @@ cases:
   n_rows: 67667
 - run_id: catalogue_comparison_srivastava_v1
   task: catalogue-comparison
-  input: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/catalogue-comparison-input-v1/srivastava.npz
+  input: /arc/projects/astroai/msa/runs/catalogue-comparison-input-v1/srivastava.npz
   targets:
   - FeH_dex
   target_caveat: Native measured FeH comparison only; overlap selection and training

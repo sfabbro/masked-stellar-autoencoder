@@ -20,7 +20,7 @@ FILES = {
     "legacy_sspp": dict(url="https://data.sdss.org/sas/dr9/sdss/sspp/ssppOut-dr9.fits"),
 }
 CHECKSUM_URL = "https://data.sdss.org/sas/dr20/spectro/astra/0.8.1/summary/spectro_astra_0.8.1_summary.sha1sum"
-MRS = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_mrs_source_direct_v2/dr12_mrs_stellar.fits.gz"
+MRS = "/arc/projects/astroai/msa/runs/multisurvey_lamost_dr12_mrs_source_direct_v2/dr12_mrs_stellar.fits.gz"
 
 
 def digest(path, algorithm="sha256"):

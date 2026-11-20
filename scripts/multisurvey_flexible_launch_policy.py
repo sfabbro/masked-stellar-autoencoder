@@ -6,7 +6,7 @@ import yaml
 
 CONFIG = Path("configs/multisurvey-flexible-20261105.yaml")
 CAL_CONFIG = Path("configs/multisurvey-flexible-calibration-20261105.yaml")
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/"
+ROOT = "/arc/projects/astroai/msa/runs/"
 
 
 def bind_flexible_rescore_policy(plan, env):

@@ -18,7 +18,7 @@ The status script is read-only. No job submission is needed simply because you c
 
 ## Durable sources and execution provenance
 
-ARC root: `/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/`.
+ARC root: `/arc/projects/astroai/msa/runs/`.
 
 Authenticated laptop access: `from canfar.storage import filesystem; fs=filesystem('arc')`; paths start `projects/k-pop/...`. In a CANFAR container use `/arc/projects/k-pop/...`. Large catalogues, reconstructed data, full prediction tables and checkpoints remain on ARC. This commit includes code, configs, submission receipts, reports, plots and bounded diagnostic arrays; it does not copy the training catalogues or checkpoints into Git.
 

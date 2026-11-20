@@ -5,7 +5,8 @@ import json
 import time
 from pathlib import Path
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+BUNDLES = Path("/arc/projects/astroai/msa/launcher/source_bundles")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RUN = "nsfconfirm_device_preflight_20261106_v1"
 
 
@@ -38,7 +39,7 @@ def main():
         except (FileNotFoundError, json.JSONDecodeError):
             manifest = {}
         if validate(manifest, expected):
-            bundle = ROOT / "decision_wave_source_bundles_20261106_v1" / RUN
+            bundle = BUNDLES / RUN
             hashes = json.loads((bundle / "source-hashes.json").read_text())
             for name in hashes:
                 if (

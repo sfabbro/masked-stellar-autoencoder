@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015"
+ROOT = "/arc/projects/astroai/msa/runs"
 SOURCE_RUN = "full_label_evaluation_preparation_v2"
 SOURCE_CONFIG = Path("configs/full-label-source-preparation-20261025-v2.yaml")
 EVALUATION_CONFIG = Path("configs/expanded-checkpoint-evaluation-20261025-v2.yaml")

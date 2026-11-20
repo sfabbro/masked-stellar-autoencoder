@@ -17,7 +17,7 @@ width; they do not certify population tail accuracy. Attractive joint samples
 do not resolve these source-scale, error-model and extrapolation limitations.
 
 The next usable baseline checkpoint is
-`/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaussian_finetune_20261104_v1/final.pth`,
+`/arc/projects/astroai/msa/runs/multisurvey_gaussian_finetune_20261104_v1/final.pth`,
 SHA256 `efd575285789928d2e445d7c11429a7809a35a12e6be29424bd26c48e154c26d`.
 The frozen checkpoint and all source pins are in the results summary. All four
 prediction NPZ hashes match producer receipts; CRC, exact integer-ID pairing,

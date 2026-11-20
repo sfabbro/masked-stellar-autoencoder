@@ -1,5 +1,5 @@
 {
-  "archive_path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
+  "archive_path": "/arc/projects/astroai/msa/runs/multisurvey_lamost_dr12_lrs_source_direct_v2/dr12_lrs_stellar.fits.gz",
   "archive_sha256": "6b7d367535b34605a117f59d1e6bb1b35ebb77fb4ece6efe6da4609bd6dfb210",
   "expected_source_bytes": 1221786815,
   "model_loaded": false,
@@ -13,7 +13,7 @@
     "complete_xp_in_cache": 3334358,
     "matched_base": 402291,
     "matched_cache": 3334358,
-    "output": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_lamost_dr12_lrs_source_direct_v2/source.h5",
+    "output": "/arc/projects/astroai/msa/runs/multisurvey_lamost_dr12_lrs_source_direct_v2/source.h5",
     "output_bytes": 296580091,
     "output_sha256": "889c90553e71a681ddee05f97fc6dcffb7933a338253e3e57912460be8d58fb9",
     "outside_base_ancestry_unknown": 5427411,

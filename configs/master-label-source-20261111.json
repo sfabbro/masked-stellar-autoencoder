@@ -1,7 +1,7 @@
 {
- "base": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/prepared.h5",
+ "base": "/arc/projects/astroai/msa/runs/remediation_source_v3/prepared.h5",
  "base_sha256": "112fb4b5708c6073ffd2388012a6a9dc7e5bd3eca540db15acbac0fe235f0a1c",
- "new_features": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_feature_union_dr12_20261106_v1/new-star-features.h5",
+ "new_features": "/arc/projects/astroai/msa/runs/multisurvey_feature_union_dr12_20261106_v1/new-star-features.h5",
  "new_features_sha256": "d4d8ea8e972625cb040c0fdcf4cc60675c03823b43826cef4b57d6d725e14f23",
  "benchmark_fit_exclusion_ids": [
   19316224572460416,
@@ -205,89 +205,89 @@
  },
  "additional_sources": [
   {
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
+   "path": "/arc/projects/astroai/msa/runs/lamost_dr12v2_lrs_admission_20261106_v2/lamost-dr12v2-lrs-candidate.h5",
    "sha256": "b30c05056ac154a3a8bd3f0d72ca70d5833e5693f321ec400f5b63a9d67fca23",
    "name": "lamost_dr12v2_lrs_lasp"
   },
   {
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/rave_native_admission_20261105_v1/rave-candidate.h5",
+   "path": "/arc/projects/astroai/msa/runs/rave_native_admission_20261105_v1/rave-candidate.h5",
    "sha256": "d18c0d65ee08ed74e7a64b9515e1bead1550aa131c659eccb8136066351fa78a",
    "name": "rave_dr6_madera_gauguin"
   },
   {
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
+   "path": "/arc/projects/astroai/msa/runs/multisurvey_gaia_gspspec_overlay_v1/bundle/gaia-gspspec.h5",
    "sha256": "3427de9f51b116bcc59817b015b3dc2965ae8de8cf86baeb696b2a127937ac49",
    "name": "gaia_dr3_gspspec"
   },
   {
    "name": "sdss_dr20_bossnet_081",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
+   "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/sdss_dr20_bossnet_081-candidate.h5",
    "sha256": "5bcc3ed712581e837ec554fb407bd9f30564e4c65666d6950028e9f25c4f06d6"
   },
   {
    "name": "lamost_dr12v2_mrs_lasp",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
+   "path": "/arc/projects/astroai/msa/runs/decision_dr20_mrs_label_admission_20261106_v1/lamost_dr12v2_mrs_lasp-candidate.h5",
    "sha256": "ef157bdbfe612dc7a59ee1df664c465a55cab9eb3c2edba5e23958d89c6ba923"
   },
   {
    "name": "sdss_dr19_aspcap_sdss5",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "sdss_dr12_sspp",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "gaia_eso_dr5_1",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "s5_dr1",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "pigs_aat",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "lamost_vmp_li2018",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "lamost_cat_li2025",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "pristine_aguado2019",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "smss_dacosta2019",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "bestbrightest_placco2019",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   },
   {
    "name": "highres_literature",
-   "path": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
+   "path": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/master-label-sidecar.h5",
    "sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0"
   }
  ],
  "master_label_sidecars": {
   "run": "master_label_sidecars_20261111_v1",
-  "manifest": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/master_label_sidecars_20261111_v1/manifest.json",
+  "manifest": "/arc/projects/astroai/msa/runs/master_label_sidecars_20261111_v1/manifest.json",
   "sidecar_sha256": "409a4507f6a967117a3fc6c49e33fdf61903a9568f0f6ba21c3d14904a54bbb0",
   "observations_sha256": "2ac3204d29264867e16aa1c1c9d2abcfc799ae00764200c7c43181704efb93e5"
  }

@@ -19,7 +19,7 @@ from scipy.spatial import cKDTree
 
 from masked_stellar_autoencoder.training.astrometric_vectors import directions
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RAW = Path("/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5")
 
 

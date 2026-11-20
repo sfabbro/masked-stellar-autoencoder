@@ -82,7 +82,7 @@ def test_launch_policy_rejects_gpu_and_output_changes():
             Path("configs/multisurvey-desi-overlay-launch-20261027.yaml").read_text()
         )["jobs"][0]
         good = {
-            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/k-pop/msa_runs/stellar-improvement-20261015/multisurvey_desi_unique_overlay_v1"
+            "MSA_EXPERIMENT_OUTPUT": "/arc/projects/astroai/msa/runs/multisurvey_desi_unique_overlay_v1"
         }
         assert (
             bind_desi_overlay_policy(plan, dict(good))["MSA_EXPERIMENT_PRESENTATIONS"]

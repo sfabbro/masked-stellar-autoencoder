@@ -5,7 +5,7 @@ checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040
 benchmark_ordered_id_sha256: 41c459bd0db60ca2312eb8b2f0e8c3366387ae2d98276f16a87bfb2972baabc2
 reconstruction_source: original_sample
 reconstruction_original: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5
-reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
+reconstruction_cache: /arc/projects/astroai/msa/runs/residual-huber-e86-150m-cache-v1
 reconstruction_training_rows: 150000000
 reconstruction_validation_keys: [sslset11_part0, sslset14_part0, sslset2_part0, sslset5_part0, sslset20_part0]
 reconstruction_sample_seed: 42

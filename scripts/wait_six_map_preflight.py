@@ -5,7 +5,8 @@ import json
 import time
 from pathlib import Path
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+BUNDLES = Path("/arc/projects/astroai/msa/launcher/source_bundles")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 RUN = "sixmap_device_preflight_20261107_v1"
 
 
@@ -33,14 +34,7 @@ def main():
                 or len(m.get("source_registry", [])) != 7
             ):
                 raise ValueError("Source-map smoke-test completion contract differs")
-            hashes = json.loads(
-                (
-                    ROOT
-                    / "decision_wave_source_bundles_20261106_v1"
-                    / RUN
-                    / "source-hashes.json"
-                ).read_text()
-            )
+            hashes = json.loads((BUNDLES / RUN / "source-hashes.json").read_text())
             for name, sha in hashes.items():
                 if (
                     name.endswith(".py")

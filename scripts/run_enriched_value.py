@@ -27,7 +27,7 @@ from stellar_dataset_views import EXPECTED_IDS
 
 from masked_stellar_autoencoder.models.checkpoint_load import torch_load_trusted
 
-ROOT = Path("/arc/projects/k-pop/msa_runs/stellar-improvement-20261015")
+ROOT = Path("/arc/projects/astroai/msa/runs")
 COHORT_SHA = "321f27234bc306f64ef1a942fef981663f3c50df84990359b9943a1979262120"
 CONTENT = "947e79c4aa27913b9b2693095ed806c9494c0fad85bcfd6b203a2e9edde53e94"
 LAYERS = ("native", "PIGS", "Li2025_CaT_silver")
