@@ -305,7 +305,7 @@ def unlabelled_arrays(semi, config, pack):
 
     u = np.load(semi["path"], allow_pickle=False)
     fields = [str(f) for f in u["fields"]]
-    data = u["features"]
+    data = u[semi.get("features_key", "features")]
     cap = semi.get("max_stars")
     if cap is not None and len(data) > int(cap):
         keep = np.sort(np.random.default_rng(0).choice(len(data), int(cap), False))
@@ -427,17 +427,24 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                 wrapper.configure_balance(*balance_weights(feh, **ms["balance"]))
             if ms.get("reference_pool"):
                 ref = dict(ms["reference_pool"])
+                pairs = ref.get("mode", "fixed") == "pairs"
                 with np.load(ref["path"], allow_pickle=False) as z:
                     keep = ~z["heldout"].astype(bool)
                     value, error = z["value"][keep], z["error"][keep]
                 Xr, Er = unlabelled_arrays({"path": ref["path"]}, config, pack)
+                Xp = None
+                if pairs:  # wide binaries: companion tied to its primary
+                    Xp = unlabelled_arrays(
+                        {"path": ref["path"], "features_key": "features_primary"},
+                        config, pack,
+                    )[0][keep]  # fmt: skip
                 label = ref.get("label", "fe_h")
                 sc = pack["scalers"][names.index(label)]
                 wrapper.configure_reference_pool(
                     Xr[keep], Er[keep], value, error, label=label,
                     mean=float(sc.mean_[0]), scale=float(sc.scale_[0]),
                     ratio=float(ref.get("ratio", 0.25)),
-                    weight=float(ref.get("weight", 1.0)),
+                    weight=float(ref.get("weight", 1.0)), X_primary=Xp,
                 )  # fmt: skip
             print(f"anchored multi-survey: {records.n} records")
 

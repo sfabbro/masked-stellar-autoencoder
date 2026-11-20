@@ -494,6 +494,48 @@ def test_balanced_loader_oversamples_and_reference_pool_trains():
     assert w.ft.loc.weight.grad is not None
 
 
+def test_pair_pool_ties_companion_to_the_model_primary():
+    rng = np.random.default_rng(2)
+    x, rec = _synthetic_records(rng)
+    w, _ = _wrapper(rec, len(x))
+    w.drop_idx, w.nu = [], 5.0
+    w.ft = StudentTHead(3, 3, torch.nn.ReLU())
+    w.model = type("M", (), {"encoder": staticmethod(lambda x: x)})()
+    xc = rng.normal(size=(64, 3)).astype("f4")
+    xp = rng.normal(size=(64, 3)).astype("f4")
+    w.configure_reference_pool(xc, xc, None, None, X_primary=xp)
+    assert not hasattr(w.survey_maps, "ref_bias")  # no offset: same scale
+    loss = w._reference_pool_loss(64)
+    loss.backward()
+    assert torch.isfinite(loss) and w.ft.loc.weight.grad is not None
+    # The target is the primary's predicted mean, with its predicted spread
+    # added to the noise and no offset: recompute the loss by hand.
+    from masked_stellar_autoencoder.training.anchored_survey_map import (
+        mixture_t_nll,
+        student_t_nll,
+    )
+
+    torch.manual_seed(0)
+    got = w._reference_pool_loss(64)
+    torch.manual_seed(0)
+    idx = torch.randint(64, (64,))
+    with torch.no_grad():
+        _, mp, Lp = w.ft.mixture(torch.as_tensor(xp)[idx])
+        logw, mu, L = w.ft.mixture(torch.as_tensor(xc)[idx])
+        v, e2 = mp[:, 0, 2], Lp[:, 0, 2, :].pow(2).sum(-1)
+        A = torch.zeros(64, 1, 3)
+        A[:, 0, 2] = 1.0
+        noise = (w.survey_maps.ref_log_sigma.exp() ** 2 + e2)[:, None]
+        resid = (v - mu[:, 0, 2])[:, None]
+        nll, _ = student_t_nll(
+            resid, A, L[:, 0], noise, torch.ones_like(resid, dtype=bool), 5.0
+        )
+        expected = mixture_t_nll(logw, nll[:, None]).mean()
+    torch.testing.assert_close(got.detach(), expected, rtol=1e-5, atol=1e-6)
+    with pytest.raises(ValueError, match="X_primary"):
+        w.configure_reference_pool(xc, xc, None, None, X_primary=xp[:10])
+
+
 def test_prior_free_feh_recovers_the_likelihood():
     from scipy.stats import norm
 

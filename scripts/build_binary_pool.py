@@ -11,7 +11,8 @@ core) with error sd_primary (+) ``--floor`` dex. Used as a reference pool
 (``multisurvey.reference_pool``), it ties cool or faint companions to the
 FGK scale. 20 % of the pairs (hash of the smaller source_id) are held out
 for evaluation (``heldout``). Writes the pool in the unlabelled layout
-(``features``, ``fields``) plus ``value``, ``error``, ``heldout``,
+(``features``, ``fields``) plus the primaries' inputs (``features_primary``,
+for ``reference_pool.mode: pairs``), ``value``, ``error``, ``heldout``,
 ``source_id``, ``primary_id``, ``teff_companion``.
 """
 
@@ -98,9 +99,19 @@ def main():
         else:
             pos = comp
         features = np.column_stack([np.asarray(d[f][pos], dtype="f4") for f in fields])
+        if pos is comp:  # the star table is the teacher's row order
+            ppos = prim
+        else:
+            ppos = np.searchsorted(star_sid, sid[prim])
+            if not np.array_equal(star_sid[ppos], sid[prim]):
+                raise ValueError("Primaries missing from the star table")
+        features_primary = np.column_stack(
+            [np.asarray(d[f][ppos], dtype="f4") for f in fields]
+        )
     a.output.parent.mkdir(parents=True, exist_ok=True)
     np.savez(
-        a.output, features=features, fields=np.array(fields, dtype="U40"),
+        a.output, features=features, features_primary=features_primary,
+        fields=np.array(fields, dtype="U40"),
         value=feh[prim], error=np.hypot(sd[prim], a.floor), heldout=hold,
         source_id=sid[comp], primary_id=sid[prim], teff_companion=teff[comp],
         g_companion=gmag[comp],

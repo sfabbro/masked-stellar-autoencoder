@@ -671,6 +671,44 @@ for _v in ("nopool", "nobalance"):
         ),
         files=[_cfg],
     )
+# v9: v8 without the fixed pool + wide-binary self-consistency (pairs pool:
+# companions < 5000 K tied to the model's own primary prediction). The pair
+# pool is built first (primaries' inputs included); predictions at epoch 12.
+MS_V9 = (
+    "multisurvey_finetune_20261120_v9",
+    "configs/finetune-multisurvey-20261120-v9.yaml",
+)
+_V9_CK = f"{ROOT}{MS_V9[0]}/finetune_checkpoint_12.pth"
+STEPS["ms-multi-v9"] = dict(
+    run_id=MS_V9[0],
+    gpu=1,
+    ram=192,
+    cpu=8,
+    command=' && "${pixi_run[@]}" '.join(
+        [
+            "python -u scripts/build_binary_pool.py"
+            f" --stars {ROOT}{CONSIST}/stars.fits"
+            f" --teacher {ROOT}consistency_pred_20261118_v7/consistency_v7.npz"
+            f" --targets {ROOT}consistency_targets_20261118.npz --config {MS_V6[1]}"
+            f" --output {ROOT}binary_pool_20261120_pairs/pool.npz"
+            " --max-companion-teff 5000",
+            f"python -u -m masked_stellar_autoencoder.training.finetune_msa --config {MS_V9[1]}",
+            f"python -u scripts/predict_fits_rows.py --config {MS_V9[1]} --checkpoint {_V9_CK}"
+            f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+            f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --condition-parallax 5"
+            f" --extra-labels {ROOT}{REDDENING_V6}/v1_reddening.npz{_PRIOR}"
+            ' --out "$experiment_output/multi_v9_test.npz"',
+            f"python -u scripts/predict_fits_rows.py --config {MS_V9[1]} --checkpoint {_V9_CK}"
+            f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+            f" --rows {ROOT}{RESCORE}/rows.npy --condition-parallax 5{_PRIOR}"
+            ' --out "$experiment_output/multi_v9_core.npz"',
+            f"python -u scripts/predict_fits_rows.py --config {MS_V9[1]} --checkpoint {_V9_CK}"
+            f" --fits {ROOT}{CONSIST}/stars.fits --condition-parallax 5{_PRIOR}"
+            ' --out "$experiment_output/consistency_v9.npz"',
+        ]
+    ),
+    files=[MS_V9[1], MS_V6[1], MS_PAIR["ms-multi-v4"][1]],
+)
 # Move the MSA data from k-pop to /arc/projects/astroai/msa (copy + verify
 # first; delete only after the verify report shows no mismatch).
 for _mode in ("copy", "delete"):

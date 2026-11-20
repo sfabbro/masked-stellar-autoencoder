@@ -346,35 +346,66 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
 
     def configure_reference_pool(
         self, X, E, value, error, *, label="fe_h", mean=0.0, scale=1.0, ratio=0.25,
-        weight=1.0, sigma_init=0.05,
+        weight=1.0, sigma_init=0.05, X_primary=None,
     ):  # fmt: skip
         """Stars outside the table with one reference value each (physical).
 
-        Their likelihood uses an offset-only map (one learned offset and
-        noise for the whole pool), so it constrains the common scale the
-        same way for every stellar type the pool covers.
+        Fixed references (``value``, ``error``): the likelihood uses an
+        offset-only map (one learned offset and noise for the whole pool),
+        so it constrains the common scale the same way for every stellar
+        type the pool covers.
+
+        Pairs (``X_primary`` given, ``value``/``error`` ignored): each pool
+        star is a wide-binary companion and ``X_primary`` its primary. The
+        reference is the model's own current prediction for the primary
+        (mean and variance of its marginal, without gradient), with no
+        offset, so the companion follows the scale the rest of the training
+        sets instead of a fixed teacher's (a fixed v7 teacher pinned v8's
+        companions while its primaries moved, shifting the bulk scale).
         """
         if getattr(self, "context", None) is not None:
             raise ValueError("The reference pool does not support a head context")
         self.ref_X = torch.as_tensor(np.asarray(X), dtype=torch.float32)
-        self.ref_value = torch.as_tensor((np.asarray(value) - mean) / scale).float()
-        self.ref_error = torch.as_tensor(np.asarray(error) / scale).float()
+        self.ref_pairs = X_primary is not None
+        if self.ref_pairs:
+            self.ref_Xp = torch.as_tensor(np.asarray(X_primary), dtype=torch.float32)
+            if self.ref_Xp.shape != self.ref_X.shape:
+                raise ValueError("X_primary must match X")
+        else:
+            self.ref_value = torch.as_tensor((np.asarray(value) - mean) / scale).float()
+            self.ref_error = torch.as_tensor(np.asarray(error) / scale).float()
         self.ref_j = self.label_names.index(label)
         self.ref_ratio, self.ref_weight = float(ratio), float(weight)
         self.ref_scale = float(scale)
         maps = self.survey_maps
-        maps.ref_bias = nn.Parameter(torch.zeros((), device=self.device))
+        if not self.ref_pairs:
+            maps.ref_bias = nn.Parameter(torch.zeros((), device=self.device))
         maps.ref_log_sigma = nn.Parameter(
             torch.tensor(math.log(sigma_init / scale), device=self.device)
         )
         self._ref_steps, self._ref_sum = 0, 0.0
-        print(f"reference pool: {len(self.ref_X)} stars ({label})")
+        kind = "binary pairs" if self.ref_pairs else "stars"
+        print(f"reference pool: {len(self.ref_X)} {kind} ({label})")
 
     def _reference_pool_loss(self, n):
         idx = torch.randint(len(self.ref_X), (max(1, int(n)),))
         x = self.ref_X[idx].to(self.device, non_blocking=True)
-        v = self.ref_value[idx].to(self.device)
-        e = self.ref_error[idx].to(self.device)
+        j = self.ref_j
+        if self.ref_pairs:
+            with torch.no_grad():
+                xp = self.ref_Xp[idx].to(self.device, non_blocking=True)
+                lw, mp, Lp = self.ft.mixture(
+                    self.model.encoder(encoder_input(xp, self.drop_idx))
+                )
+                w = lw.exp()
+                var_k = Lp[..., j, :].pow(2).sum(-1)  # scale^2 of the marginal
+                v = (w * mp[..., j]).sum(-1)
+                e = ((w * (var_k + mp[..., j] ** 2)).sum(-1) - v**2).clamp_min(0).sqrt()
+            bias = 0.0
+        else:
+            v = self.ref_value[idx].to(self.device)
+            e = self.ref_error[idx].to(self.device)
+            bias = self.survey_maps.ref_bias
         logw, mu, L = self.ft.mixture(
             self.model.encoder(encoder_input(x, self.drop_idx))
         )
@@ -384,7 +415,7 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         noise = (maps.ref_log_sigma.exp() ** 2 + e * e)[:, None]
         comp = []
         for k in range(mu.shape[1]):
-            resid = (v - mu[:, k, self.ref_j] - maps.ref_bias)[:, None]
+            resid = (v - mu[:, k, j] - bias)[:, None]
             valid = torch.isfinite(resid)
             nll, _ = student_t_nll(
                 torch.nan_to_num(resid), A, L[:, k], noise, valid, self.nu
@@ -394,9 +425,10 @@ class AnchoredMultiSurveyWrapper(MultiSurveyWrapper):
         self._ref_steps += 1
         self._ref_sum += float(loss.detach())
         if self._ref_steps % 1000 == 0:
+            offset = 0.0 if self.ref_pairs else float(maps.ref_bias)
             logging.info(
                 f"Reference pool: nll {self._ref_sum / 1000:.4f} offset "
-                f"{float(maps.ref_bias) * self.ref_scale:+.4f} sigma "
+                f"{offset * self.ref_scale:+.4f} sigma "
                 f"{float(maps.ref_log_sigma.exp()) * self.ref_scale:.4f}"
             )
             self._ref_sum = 0.0
