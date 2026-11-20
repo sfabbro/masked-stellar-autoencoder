@@ -1,0 +1,22 @@
+{
+  "run_id": "arc_migration_copy_20261120",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/arc_migration_copy_20261120",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/arc_migration_copy_20261120",
+  "source_commit": "6b34847332b35de79921255f9694e13b3938da80",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "bash scripts/migrate_arc_to_astroai.sh copy",
+  "utc": "2026-11-20T04:55:08.256263+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "lm39vdz7"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 16
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "b139c58b97198bf735671a5dcbd9fe68113a781af9c2364f567799edb3ab06cf"
+}
