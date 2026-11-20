@@ -44,12 +44,28 @@ stats() {  # files<TAB>bytes of a file or directory
   fi
 }
 
+sync() {  # sync SRC/ DST/ [exclude...]: rsync, or cp -a if the image has no rsync
+  local src=$1 dst=$2; shift 2
+  if command -v rsync >/dev/null; then
+    local ex=(); for e in "$@"; do ex+=(--exclude "/$e"); done
+    rsync -a "${ex[@]}" "$src" "$dst"
+  else
+    shopt -s nullglob dotglob
+    for e in "$src"*; do
+      n=$(basename "$e")
+      for x in "$@"; do [ "$n" = "$x" ] && continue 2; done
+      cp -a "$e" "$dst"
+    done
+    shopt -u nullglob dotglob
+  fi
+}
+
 case "${1:-}" in
   copy)
     mkdir -p "$DST/runs" "$DST/launcher/source_bundles" "$DST/pretrain" "$DST/analysis"
-    rsync -a --exclude "/$BUNDLES" --exclude /puttest.txt "$SRC/" "$DST/runs/"
-    rsync -a "$SRC/$BUNDLES/" "$DST/launcher/source_bundles/"
-    rsync -a "$PRE/" "$DST/pretrain/"
+    sync "$SRC/" "$DST/runs/" "$BUNDLES" puttest.txt
+    sync "$SRC/$BUNDLES/" "$DST/launcher/source_bundles/"
+    sync "$PRE/" "$DST/pretrain/"
     "$0" verify
     ;;
   verify)

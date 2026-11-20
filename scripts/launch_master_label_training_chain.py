@@ -671,6 +671,17 @@ for _v in ("nopool", "nobalance"):
         ),
         files=[_cfg],
     )
+# Move the MSA data from k-pop to /arc/projects/astroai/msa (copy + verify
+# first; delete only after the verify report shows no mismatch).
+for _mode in ("copy", "delete"):
+    STEPS[f"arc-migrate-{_mode}"] = dict(
+        run_id=f"arc_migration_{_mode}_20261120",
+        gpu=0,
+        cpu=4,
+        ram=16,
+        command=f"bash scripts/migrate_arc_to_astroai.sh {_mode}",
+        files=[],
+    )
 # v7 ablations: 25 % training subsample, 6 epochs, one change each; four GPU
 # sessions run their variants in sequence (a failure does not stop the rest).
 from make_v7_configs import ABL_RUN, ABL_TRAIN_ROWS, GROUPS  # noqa: E402

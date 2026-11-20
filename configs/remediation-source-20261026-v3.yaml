@@ -4,25 +4,25 @@ training_performed: false
 chunk_rows: 32768
 minimum_fit_per_target: 1000
 expanded:
-  path: /arc/projects/astroai/msa/runs/full_label_evaluation_preparation_v2/prepared.h5
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/full_label_evaluation_preparation_v2/prepared.h5
   sha256: 6c44673726977803d5b13ef0277173c00477e541cd2b909ff391cf94d7c76de9
 frozen:
-  path: /arc/projects/astroai/msa/runs/five_job_broad_test_preparation_v1/prepared.npz
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/five_job_broad_test_preparation_v1/prepared.npz
   sha256: 01bb0b412d81859d42fabbce4c4e64cf2092e77ee06df33d6caafae87d6a5882
 galah:
   path: /arc/projects/k-pop/catalogues/galah_dr4_allstar_240705.fits
   sha256: 97911d4436a42c77eb6d8c2116eecfb28fa927be83302aa66bbeb58d95889693
 apogee:
-  path: /arc/projects/astroai/msa/runs/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/apogee_native_fetch_v1/allStar-dr17-synspec_rev1.fits
   sha256: d2f1500a9c8cc7280a0dc6a2b14fe01eddf9387f9aa83f64b21d80d5fdad4007
 ancestry:
-  path: /arc/projects/astroai/msa/runs/final_six_large_feh_ancestry_v1/ancestry-masks.npz
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/final_six_large_feh_ancestry_v1/ancestry-masks.npz
   sha256: e209f6383ec1bf1108c524b40b51663f6b05aaaead063e6a05a775b2b8166ad2
 references:
-  path: /arc/projects/astroai/msa/runs/distance_feature_cohort_v1/distance-feature-cohort.h5
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/distance_feature_cohort_v1/distance-feature-cohort.h5
   sha256: fe377385e9a5a26a1d3f14ca15ea6c56904d73c34233fb9e17da1b944b76b1ad
 native_astrometry:
-  path: /arc/projects/astroai/msa/runs/joint-native-preparation-v2/joint-native-labels.h5
+  path: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/joint-native-preparation-v2/joint-native-labels.h5
   sha256: 3998fe216ed89b23dc450fbeec3c04462d2d8def35dafe9e4ec2679b7deba85b
 policy:
   per_target_missingness: true

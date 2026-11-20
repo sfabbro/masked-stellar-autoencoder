@@ -1,14 +1,14 @@
 library_revision: 6bd8b93b35fe4fe216319870e72e94eb78429106
-checkpoint: /arc/projects/astroai/msa/runs/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
+checkpoint: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual_huber_e86_150m_30e_v1/checkpoints/checkpoint-004500000000.pth
 checkpoint_sha256: c544548ba203f249e11509d0e0f9832df0e8366e6f7b0c7a639460752061a2f9
 reference_checkpoint: /arc/projects/k-pop/msa_runs/pretrain-e21-full100-maskhalf-20261010-ram128-mb16k/pretrain/checkpoints/msa_pretrain_checkpoint_86.pth
 reference_checkpoint_sha256: d1ed550e3650817df1e1337b4e405fd50fefa43010866b828faa1aedf5040fb3
 model_config: configs/pretrain.canfar.yaml
-source_manifest: /arc/projects/astroai/msa/runs/remediation_source_v3/manifest.json
-input_audit_manifest: /arc/projects/astroai/msa/runs/remediation_inputs_v4/manifest.json
-joint_preflight_manifest: /arc/projects/astroai/msa/runs/remediation_joint6_preflight_v3/manifest.json
+source_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_source_v3/manifest.json
+input_audit_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_inputs_v4/manifest.json
+joint_preflight_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_joint6_preflight_v3/manifest.json
 joint_preflight_run_id: remediation_joint6_preflight_v3
-reconstruction_cache: /arc/projects/astroai/msa/runs/residual-huber-e86-150m-cache-v1
+reconstruction_cache: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/residual-huber-e86-150m-cache-v1
 reconstruction_request_sha256: 8d14aa3f741946e8fa220fd0d9f8d74bb44f5949e2f9d2ff0449d21cfa5e5b9c
 reconstruction_training_rows: 150000000
 reconstruction_batch: 256
@@ -75,6 +75,6 @@ arms:
     completed_updates: 0
 nsf_micro_batch_size: 16
 integration_chunk_rows: 8
-integration_probe_manifest: /arc/projects/astroai/msa/runs/remediation_nsf6_qmc_probe_v1/manifest.json
+integration_probe_manifest: /arc/projects/k-pop/msa_runs/stellar-improvement-20261015/remediation_nsf6_qmc_probe_v1/manifest.json
 integration_probe_source_commit: 07fb40a39a0e2c891bb790c629b3137a1468dd3b
 integration_probe_manifest_sha256: 461fd4f72e0f0eb2ac4dd797d29b9bc6d724c8b3909924a1c81a0bb621d76ae4
