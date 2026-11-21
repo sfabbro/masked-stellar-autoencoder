@@ -776,6 +776,21 @@ STEPS["ms-s1-likelihood-head"] = dict(
     ),
     files=[_NP[1]],
 )
+# S1 diagnostics: separate the S1 failure causes on the frozen latents
+# (latents vs label mapping vs dimension; MLE restricted to label support).
+STEPS["ms-s1-diagnostics"] = dict(
+    run_id="likelihood_head_s1_diagnostics_20261121",
+    gpu=1,
+    ram=64,
+    cpu=8,
+    command=(
+        "python -u scripts/s1_diagnostics.py"
+        f" --s1-dir {ROOT}likelihood_head_s1_20261120"
+        f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits --device cuda --seeds 3"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
 # Move the MSA data from k-pop to /arc/projects/astroai/msa (copy + verify
 # first; delete only after the verify report shows no mismatch).
 for _mode in ("copy", "delete"):
