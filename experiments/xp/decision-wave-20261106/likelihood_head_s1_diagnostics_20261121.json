@@ -1,0 +1,22 @@
+{
+  "run_id": "likelihood_head_s1_diagnostics_20261121",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/likelihood_head_s1_diagnostics_20261121",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/likelihood_head_s1_diagnostics_20261121",
+  "source_commit": "179334dc2d1ff5467890ecf01bb75d9aed132ed5",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s1_diagnostics.py --s1-dir /arc/projects/astroai/msa/runs/likelihood_head_s1_20261120 --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --device cuda --seeds 3 --output \"$experiment_output\"",
+  "utc": "2026-11-21T02:08:05.998410+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "ftscfp5w"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "13ba4ed9b97e0e5c04d5ab152583437a16315a2d63f890f6a7e914643c14c3f5"
+}
