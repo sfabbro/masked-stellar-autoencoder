@@ -1,0 +1,24 @@
+{
+  "run_id": "likelihood_head_s1_v10_20261121",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/likelihood_head_s1_v10_20261121",
+  "source_commit": "a56f72d8af64a64dfad6db498df61f18306df88c",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s1_likelihood_head.py --config configs/finetune-multisurvey-20261121-v10.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --records /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/records.npz --core-split /arc/projects/astroai/msa/runs/rescore_20261119/rows_split.npz --device cuda --threads 8 --chunk-size 262144 --output \"$experiment_output\"",
+  "utc": "2026-11-21T08:29:37.582347+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "ofcclrsl"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261121-v10.yaml": "7e57eebf11267bebfd9d9777b7f746352f6e1cb0c7806d5311110678ccadc70c"
+  },
+  "payload_sha256": "1eb18c49283f3e2b0832e1dffb4afa5cda8c6a5008544662eec4d518be9fda24"
+}
