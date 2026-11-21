@@ -25,7 +25,7 @@ dependencies = [
     "tqdm>=4.66.0",
     "pyyaml>=6.0.1",
     "wandb>=0.16.0",
-    "torchregress @ git+https://github.com/sfabbro/torchregress.git@a605d0c0d16a17e2f64c2905c99964d8219af6a8",
+    "torchregress @ git+https://github.com/sfabbro/torchregress.git@edab00440c8ae424a70b441e4a187b68e37176af",
 ]
 
 [tool.setuptools.packages.find]
