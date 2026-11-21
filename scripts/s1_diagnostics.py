@@ -37,6 +37,7 @@ from astropy.io import fits
 
 from masked_stellar_autoencoder.training.likelihood_head import (
     RatioHead,
+    Support,
     embed_rows,
     load_head,
     train_ratio_head,
@@ -55,38 +56,6 @@ def nmad(x):
     x = np.asarray(x)
     x = x[np.isfinite(x)]
     return float(1.4826 * np.median(np.abs(x - np.median(x)))) if len(x) else np.nan
-
-
-class Support:
-    """Dilated occupancy grid of training labels: ``inside(theta)`` -> bool."""
-
-    def __init__(self, theta, bounds, widths, device, dilate=1, min_count=1):
-        self.lo = torch.tensor(
-            [b[0] for b in bounds], dtype=torch.float64, device=device
-        )
-        self.w = torch.tensor(widths, dtype=torch.float64, device=device)
-        self.n = [
-            int(np.ceil((b[1] - b[0]) / w)) for b, w in zip(bounds, widths, strict=True)
-        ]
-        idx = np.floor((theta - self.lo.cpu().numpy()) / np.asarray(widths)).astype(int)
-        idx = np.clip(idx, 0, np.asarray(self.n) - 1)
-        counts = np.zeros(self.n, dtype=np.int64)
-        np.add.at(counts, tuple(idx.T), 1)
-        occ = counts >= min_count
-        for _ in range(dilate):  # max filter over the 3^P neighbourhood
-            grown = occ.copy()
-            for ax in range(occ.ndim):
-                grown |= np.roll(occ, 1, axis=ax) | np.roll(occ, -1, axis=ax)
-            occ = grown
-        self.grid = torch.as_tensor(occ, device=device)
-        self.fraction = float(occ.mean())
-
-    def inside(self, theta):
-        idx = torch.floor((theta.double() - self.lo) / self.w).long()
-        n = torch.tensor(self.n, device=theta.device)
-        ok = ((idx >= 0) & (idx < n)).all(-1)
-        idx = torch.minimum(idx.clamp_min(0), n - 1)
-        return ok & self.grid[tuple(idx.T)]
 
 
 def grid_mle_1d(head, emb, support, lo=-4.5, hi=1.0, step=0.01, chunk=2048):

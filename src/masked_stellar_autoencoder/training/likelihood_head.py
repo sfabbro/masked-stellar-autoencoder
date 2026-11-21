@@ -25,6 +25,51 @@ import torch
 from torch import nn
 
 
+class Support:
+    """Support of the training labels: a dilated occupancy grid in theta.
+
+    A ratio estimator learns log p(z | theta) only where training labels
+    exist; outside, its score is unconstrained (in S1 ~11 % of MLEs ran to
+    the upper [Fe/H] edge of the box). ``inside(theta)`` marks grid cells
+    holding at least ``min_count`` training labels, grown by ``dilate``
+    cells in every direction. A hard, data-defined constraint, not a prior.
+    """
+
+    def __init__(self, theta, bounds, widths, device="cpu", *, dilate=1, min_count=1):
+        theta = np.asarray(theta, dtype="f8")
+        self.lo = torch.tensor(
+            [b[0] for b in bounds], dtype=torch.float64, device=device
+        )
+        self.w = torch.tensor(widths, dtype=torch.float64, device=device)
+        self.n = [
+            int(np.ceil((b[1] - b[0]) / w)) for b, w in zip(bounds, widths, strict=True)
+        ]
+        idx = np.floor((theta - self.lo.cpu().numpy()) / np.asarray(widths)).astype(int)
+        idx = np.clip(idx, 0, np.asarray(self.n) - 1)
+        counts = np.zeros(self.n, dtype=np.int64)
+        np.add.at(counts, tuple(idx.T), 1)
+        occ = counts >= min_count
+        if dilate:
+            from scipy.ndimage import binary_dilation
+
+            # Full 3^P neighbourhood, no wrap-around at the box edges.
+            occ = binary_dilation(occ, structure=np.ones((3,) * occ.ndim, bool),
+                                  iterations=int(dilate))  # fmt: skip
+        self.grid = torch.as_tensor(occ, device=device)
+        self.fraction = float(occ.mean())
+
+    def inside(self, theta):
+        idx = torch.floor((theta.double() - self.lo) / self.w).long()
+        n = torch.tensor(self.n, device=theta.device)
+        ok = ((idx >= 0) & (idx < n)).all(-1)
+        idx = torch.minimum(idx.clamp_min(0), n - 1)
+        return ok & self.grid[tuple(idx.T)]
+
+    def mask(self, theta, score):
+        """``score`` where ``theta`` is inside the support, NaN elsewhere."""
+        return torch.where(self.inside(theta), score, torch.full_like(score, torch.nan))
+
+
 class RatioHead(nn.Module):
     """s(theta, z) = score_net([(theta - c) / s, E((z - m) / sd)])."""
 
@@ -51,6 +96,7 @@ class RatioHead(nn.Module):
         self.score_net = build_ratio_classifier(
             int(n_params), int(embed_out), hidden_dims=tuple(hidden), activation="silu"
         )
+        self.support = None  # optional Support: searches stay inside it
 
     def set_standardisation(self, z_mean, z_scale, theta_center, theta_scale):
         for name, v in (("z_mean", z_mean), ("z_scale", z_scale),
@@ -75,11 +121,18 @@ class RatioHead(nn.Module):
     def forward(self, theta, z):
         return self.score_embedded(theta, self.embed(z))
 
-    def score_fn(self):
-        """``score(theta, e)`` for ``torchregress.inference`` (x = embeddings)."""
+    def score_fn(self, masked=True):
+        """``score(theta, e)`` for ``torchregress.inference`` (x = embeddings).
+
+        With a ``support`` set (and ``masked``), the score is NaN outside it,
+        so maximisation and profiles stay where the ratio was learned.
+        """
 
         def score(theta, e):
-            return self.score_embedded(theta, e)
+            s = self.score_embedded(theta, e)
+            if masked and self.support is not None:
+                s = self.support.mask(theta, s)
+            return s
 
         return score
 
@@ -301,10 +354,12 @@ def profile_statistic(head, emb, index, value, s_max, theta_init, bounds, *,
     keep = [k for k in range(P) if k != j]
     box = torch.as_tensor(bounds, dtype=dt, device=dev)[keep]
 
+    base = head.score_fn()
+
     def score(free, xa):
         t = xa[:, -1:]
         theta = torch.cat([free[:, :j], t, free[:, j:]], dim=1)
-        return head.score_embedded(theta, xa[:, :-1])
+        return base(theta, xa[:, :-1])
 
     out = []
     for i in range(0, len(emb), block):
@@ -329,7 +384,7 @@ def lr_statistic(head, emb, theta, s_max, *, chunk_size=None):
 
     dt, dev = emb.dtype, emb.device
     lam = likelihood_ratio_statistic(
-        head.score_fn(), emb, torch.as_tensor(theta, dtype=dt, device=dev),
+        head.score_fn(masked=False), emb, torch.as_tensor(theta, dtype=dt, device=dev),
         torch.as_tensor(s_max, dtype=dt, device=dev), chunk_size=chunk_size,
     )  # fmt: skip
     return lam.double().cpu().numpy()

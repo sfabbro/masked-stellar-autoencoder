@@ -46,6 +46,7 @@ import yaml
 
 ARMS = ("core", "all")
 BOUNDS = ((3000.0, 8000.0), (-0.5, 5.5), (-4.5, 1.0))
+SUPPORT_WIDTHS = (100.0, 0.1, 0.1)  # occupancy-grid cells of the label support
 LEVELS = (("68", 0.5, 0.32), ("95", 1.92, 0.05))  # Wilks threshold, Neyman alpha
 
 
@@ -179,6 +180,13 @@ def stage_infer(a, config, out):
             continue
         head, _ = lh.load_head(path, device=dev)
         theta, ok = arm_theta(lab, arm)
+        if a.support:
+            head.support = lh.Support(
+                theta[ok & (split == 0)], BOUNDS, SUPPORT_WIDTHS, dev
+            )
+            log(
+                f"infer {arm}: label support covers {head.support.fraction:.3f} of the box"
+            )
         th_t, g_t, sp_t = theta[target], G[target], split[target]
         t0 = time.time()
         emb = lh.embed_rows(head, lat, target, device=dev)
@@ -187,7 +195,11 @@ def stage_infer(a, config, out):
             n_candidates=a.n_candidates, seed=a.seed, log=log, **kw,
         )  # fmt: skip
         t_mle = time.time() - t0
-        has = ok[target]
+        found = np.isfinite(smax)
+        if not found.all():
+            log(f"infer {arm}: {int((~found).sum())} rows found no score inside the "
+                "label support; left out of statistics and profiles")  # fmt: skip
+        has = ok[target] & found
         # Calibration (valid) and coverage (test) rows with the arm's label.
         cal = np.flatnonzero(has & (sp_t == 1))
         if len(cal) > a.max_calib:
@@ -212,7 +224,7 @@ def stage_infer(a, config, out):
                    profiled=profiled, n_calib=len(cal), t_mle=t_mle)  # fmt: skip
         clab = np.full((len(target), len(LEVELS)), np.nan)
         clab[has] = _predict_critical(reg, th_t[has], g_t[has])
-        p = np.flatnonzero(profiled)
+        p = np.flatnonzero(profiled & found)
         cmle = np.full((len(target), len(LEVELS)), np.nan)
         cmle[p] = _predict_critical(reg, mle[p], g_t[p])
         for k, (name, _, _) in enumerate(LEVELS):
@@ -458,6 +470,10 @@ def main():
     p.add_argument("--stages", default=",".join(STAGES))
     p.add_argument("--arms", default=",".join(ARMS))
     p.add_argument("--force", action="store_true")
+    p.add_argument(
+        "--no-support", dest="support", action="store_false",
+        help="do not restrict MLE/profiles to the training labels' support",
+    )  # fmt: skip
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--threads", type=int, default=None)
     p.add_argument("--seed", type=int, default=0)

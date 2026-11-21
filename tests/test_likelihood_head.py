@@ -95,3 +95,31 @@ def test_offset_selection_and_decision_tables():
                            "posterior": dict(n=100, bias=0.0, nmad=40.0)}}  # fmt: skip
     assert not V.decide(tg, tg, cov, bad, "mle")["criteria"]["anchors"]["passed"]
     assert math.isfinite(V.nmad(good - ref))
+
+
+def test_support_masks_scores_outside_the_training_labels():
+    import torch
+
+    from masked_stellar_autoencoder.training.likelihood_head import RatioHead, Support
+
+    bounds = ((3000.0, 8000.0), (-0.5, 5.5), (-4.5, 1.0))
+    labels = np.array([[5000.0, 4.0, 0.0], [5100.0, 4.1, -0.2], [4800.0, 2.5, -1.0]])
+    sup = Support(labels, bounds, (100.0, 0.1, 0.1), dilate=1)
+    inside = sup.inside(
+        torch.tensor(
+            [
+                [5000.0, 4.0, 0.0],  # a label
+                [5150.0, 4.15, -0.15],  # neighbouring cell
+                [5000.0, 4.0, 0.95],  # empty corner
+                [9000.0, 4.0, 0.0],
+            ]
+        )
+    )  # outside the box
+    assert inside.tolist() == [True, True, False, False]
+    head = RatioHead(4, n_params=3)
+    e = head.embed(torch.zeros(4, 4))
+    theta = torch.tensor([[5000.0, 4.0, 0.0]] * 2 + [[5000.0, 4.0, 0.95]] * 2)
+    head.support = sup
+    s = head.score_fn()(theta, e)
+    assert torch.isfinite(s[:2]).all() and torch.isnan(s[2:]).all()
+    assert torch.isfinite(head.score_fn(masked=False)(theta, e)).all()

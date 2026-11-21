@@ -808,6 +808,25 @@ STEPS["ms-multi-v10"] = dict(
     ),
     files=[MS_V10[1], MS_PAIR["ms-multi-v4"][1]],
 )
+# S1 on v10 (identity [Fe/H] core): likelihood heads on the frozen v10
+# latents, labels mapped by v10's maps, MLE/profiles restricted to the label
+# support, Neyman sets, same validation table and decision rule as S1.
+STEPS["ms-s1-v10"] = dict(
+    run_id="likelihood_head_s1_v10_20261121",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        f"python -u scripts/s1_likelihood_head.py --config {MS_V10[1]}"
+        f" --checkpoint {_V10_CK}"
+        f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+        f" --records {ROOT}{MS_TABLE_V5}/records.npz"
+        f" --core-split {ROOT}{RESCORE}/rows_split.npz"
+        " --device cuda --threads 8 --chunk-size 262144"
+        ' --output "$experiment_output"'
+    ),
+    files=[MS_V10[1]],
+)
 # S1 diagnostics: separate the S1 failure causes on the frozen latents
 # (latents vs label mapping vs dimension; MLE restricted to label support).
 STEPS["ms-s1-diagnostics"] = dict(

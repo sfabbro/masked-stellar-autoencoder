@@ -137,7 +137,9 @@ def test_s1_pipeline_end_to_end(tmp_path, monkeypatch):
               "at_bound", "post_median", "post_q16", "post_q84"):  # fmt: skip
         assert k in s1.files, k
     assert s1["mle"].shape[1] == 3 and set(s1["split"]) <= {0, 1, 2}
-    prof = s1["split"] == 2
+    # Rows with no score inside the label support are left out (NaN).
+    prof = (s1["split"] == 2) & np.isfinite(s1["lo68"]).all(1)
+    assert prof.sum() >= 0.5 * (s1["split"] == 2).sum()
     assert np.all(s1["lo95"][prof] <= s1["lo68"][prof] + 1e-6)
     assert np.isfinite(s1["neyman68_lo"][prof]).all()  # 'all' arm: calibrated
     assert s1["in_neyman68_param"].shape == s1["mle"].shape
