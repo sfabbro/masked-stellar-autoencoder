@@ -385,6 +385,7 @@ def _multisurvey_setup(config, pack, labelled_set, vlabelled_set, args):
                 min_records=int(ms.get("min_records", 0)),
                 min_records_keep_core=bool(ms.get("min_records_keep_core", True)),
                 exclude=ms.get("exclude_surveys") or (),
+                core_mode=ms.get("fe_h_core_mode", "offset"),
             )  # fmt: skip
             context = None
             if ms.get("context"):

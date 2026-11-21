@@ -223,6 +223,7 @@ def build_common_scale_labels(config, state, rec, head_scaled, *, iterations=5,
         min_records=int(ms.get("min_records", 0)),
         min_records_keep_core=bool(ms.get("min_records_keep_core", True)),
         exclude=ms.get("exclude_surveys") or (),
+        core_mode=ms.get("fe_h_core_mode", "offset"),
     )  # fmt: skip
     index = _survey_index(records.names, state["survey_names"])
     ptr = records.ptr.numpy()

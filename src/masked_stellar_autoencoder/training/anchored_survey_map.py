@@ -11,8 +11,14 @@ The common scale is fixed by construction, not by weights:
 
 * anchor surveys (seismic log g, IRFM Teff) use the identity map;
 * [Fe/H] "core" references (high-resolution) get offsets only, summing to
-  zero over the core (weighted by stars), so the core fixes the [Fe/H] slope
-  and zero point;
+  zero over the core (weighted by stars), so the core fixes the [Fe/H] zero
+  point (``core_mode="offset"``, v6-v9) -- or the identity map
+  (``core_mode="identity"``): the high-resolution references then define the
+  [Fe/H] scale directly. Offsets are not identifiable for a survey that covers
+  one metallicity range only (an offset of a metal-poor-only catalogue is
+  indistinguishable from a metallicity-dependent model bias): in v8 the
+  metal-poor literature catalogues took +0.1 to +0.33 dex offsets, absorbing
+  the head's pull toward solar and lifting the common scale below -2.5;
 * every other survey's map capacity follows its data: offset only, offset +
   linear (with cross terms), or offset + linear + a shared learned basis
   (``tier``), so a small survey cannot absorb a distortion of the scale.
@@ -36,13 +42,19 @@ from torch import nn
 IDENTITY, OFFSET, LINEAR, FULL = 0, 1, 2, 3
 
 
-def assign_tiers(counts, anchor, core, *, linear_min=5000, full_min=50000):
-    """(surveys, params) tier from record counts; anchors identity, core offset."""
+def assign_tiers(counts, anchor, core, *, linear_min=5000, full_min=50000,
+                 core_mode="offset"):  # fmt: skip
+    """(surveys, params) tier from record counts; anchors identity, core offset
+    (or identity with ``core_mode="identity"``)."""
+    if core_mode not in ("offset", "identity"):
+        raise ValueError(f"core_mode must be 'offset' or 'identity', got {core_mode!r}")
     counts = np.asarray(counts)
     tier = np.where(
         counts >= full_min, FULL, np.where(counts >= linear_min, LINEAR, OFFSET)
     )
-    tier = np.where(np.asarray(core), OFFSET, tier)
+    tier = np.where(
+        np.asarray(core), OFFSET if core_mode == "offset" else IDENTITY, tier
+    )
     tier = np.where(np.asarray(anchor), IDENTITY, tier)
     return np.where(counts > 0, tier, IDENTITY).astype("i8")
 

@@ -148,6 +148,7 @@ class AnchoredRecords:
         self, rec, scalers, label_names, n_rows, device, *, core=(),
         spectra_groups=None, linear_min=5000, full_min=50000, cuts=None,
         censor=None, min_records=0, min_records_keep_core=True, exclude=(),
+        core_mode="offset",
     ):  # fmt: skip
         params = [str(p) for p in rec["parameters"]]
         cols = [params.index(p) for p in MAPPED]
@@ -212,7 +213,7 @@ class AnchoredRecords:
         self.core &= self.counts > 0
         self.tier = assign_tiers(
             self.counts, self.anchor, self.core, linear_min=linear_min,
-            full_min=full_min,
+            full_min=full_min, core_mode=core_mode,
         )  # fmt: skip
         ptr = np.concatenate([[0], np.cumsum(np.bincount(row, minlength=n_rows))])
         t = lambda a, dt: torch.as_tensor(a, device=device, dtype=dt)  # noqa: E731

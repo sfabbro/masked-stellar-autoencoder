@@ -66,6 +66,33 @@ def test_assign_tiers():
     assert t[2].tolist() == [FULL, FULL, OFFSET]
 
 
+def test_identity_core_mode_pins_the_feh_scale():
+    from masked_stellar_autoencoder.training.anchored_survey_map import (
+        IDENTITY,
+        OFFSET,
+        AnchoredSurveyMaps,
+        assign_tiers,
+    )
+
+    counts = np.array([[100, 100, 100], [200_000, 200_000, 200_000], [50, 50, 50]])
+    anchor = np.zeros((3, 3), bool)
+    core = np.zeros((3, 3), bool)
+    core[[0, 2], 2] = True  # two [Fe/H] core catalogues
+    off = assign_tiers(counts, anchor, core)
+    ident = assign_tiers(counts, anchor, core, core_mode="identity")
+    assert (off[[0, 2], 2] == OFFSET).all() and (ident[[0, 2], 2] == IDENTITY).all()
+    assert (off[1] == ident[1]).all() and (off[:, :2] == ident[:, :2]).all()
+    maps = AnchoredSurveyMaps(ident, core, counts[:, 2])
+    with torch.no_grad():
+        maps.bias.fill_(0.3)  # any learned offset is ignored for the core
+    y, jac = maps(torch.zeros(2, 3), torch.tensor([0, 2]))
+    assert torch.equal(y[:, 2], torch.zeros(2)) and torch.equal(
+        jac[:, 2, 2], torch.ones(2)
+    )
+    with pytest.raises(ValueError, match="core_mode"):
+        assign_tiers(counts, anchor, core, core_mode="free")
+
+
 def test_maps_respect_tiers_core_and_jacobian():
     torch.manual_seed(0)
     tier = np.array([[IDENTITY] * 3, [OFFSET] * 3, [FULL] * 3, [OFFSET] * 3])

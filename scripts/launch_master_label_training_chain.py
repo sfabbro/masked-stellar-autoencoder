@@ -776,6 +776,38 @@ STEPS["ms-s1-likelihood-head"] = dict(
     ),
     files=[_NP[1]],
 )
+# v10: v8 without the pool + [Fe/H] core references on the identity map
+# (scripts/make_v10_config.py). Predictions at epoch 12: test split (IRFM,
+# extra labels), frozen core rows, consistency stars.
+MS_V10 = (
+    "multisurvey_finetune_20261121_v10",
+    "configs/finetune-multisurvey-20261121-v10.yaml",
+)
+_V10_CK = f"{ROOT}{MS_V10[0]}/finetune_checkpoint_12.pth"
+STEPS["ms-multi-v10"] = dict(
+    run_id=MS_V10[0],
+    gpu=1,
+    ram=192,
+    cpu=8,
+    command=' && "${pixi_run[@]}" '.join(
+        [
+            f"python -u -m masked_stellar_autoencoder.training.finetune_msa --config {MS_V10[1]}",
+            f"python -u scripts/predict_fits_rows.py --config {MS_V10[1]} --checkpoint {_V10_CK}"
+            f" --fits {ROOT}{MS_TABLE}/finetune.fits"
+            f" --test-split {MS_PAIR['ms-multi-v4'][1]} --irfm --condition-parallax 5"
+            f" --extra-labels {ROOT}{REDDENING_V6}/v1_reddening.npz{_PRIOR}"
+            ' --out "$experiment_output/multi_v10_test.npz"',
+            f"python -u scripts/predict_fits_rows.py --config {MS_V10[1]} --checkpoint {_V10_CK}"
+            f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+            f" --rows {ROOT}{RESCORE}/rows.npy --condition-parallax 5{_PRIOR}"
+            ' --out "$experiment_output/multi_v10_core.npz"',
+            f"python -u scripts/predict_fits_rows.py --config {MS_V10[1]} --checkpoint {_V10_CK}"
+            f" --fits {ROOT}{CONSIST}/stars.fits --condition-parallax 5{_PRIOR}"
+            ' --out "$experiment_output/consistency_v10.npz"',
+        ]
+    ),
+    files=[MS_V10[1], MS_PAIR["ms-multi-v4"][1]],
+)
 # S1 diagnostics: separate the S1 failure causes on the frozen latents
 # (latents vs label mapping vs dimension; MLE restricted to label support).
 STEPS["ms-s1-diagnostics"] = dict(
