@@ -1121,6 +1121,34 @@ STEPS["ms-s1-v10-plx-ens"] = dict(
     ),
     files=[MS_V10[1]],
 )
+# S2 (product B, docs/design-20261122-data-driven-inference.md section 6, plan step
+# 4, B0): distributional heads on the frozen v10 latents of S1 v10 (latent.npy,
+# predictions.npz, labels.npz): conditional spline flow, Student-t mixture and
+# single Student-t, all with errors-in-variables training, plus the flow without
+# EIV; 5-member ensembles; natural training distribution (2M split-0 stars, no
+# balanced sampling); early stopping and split/Mondrian conformal calibration on
+# disjoint halves of split 1; scored against the posterior head and the S1 v10
+# (and S1 plx-ensemble) MLEs on the test split and the held-out frozen core.
+# Expected ~1.5 h (1-3 h) on a 12 GB GPU slice, peak ~5 GiB GPU, ~10 GB RAM.
+S2_RUN = "distributional_heads_s2_v10_20261122"
+STEPS["ms-s2-distributional-heads"] = dict(
+    run_id=S2_RUN,
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        "python -u scripts/s2_distributional_heads.py"
+        f" --inputs {ROOT}{S1_V10}"
+        f" --records {ROOT}{MS_TABLE_V5}/records.npz"
+        f" --core-rows {ROOT}{RESCORE}/rows.npy"
+        f" --baseline {ROOT}{S1_V10}"
+        f" --baseline {ROOT}likelihood_head_s1_v10_plx_ens_20261122 --baseline-arms all,plx"
+        " --heads flow,tmix,t,flow_noeiv --ensemble 5 --max-train 2000000"
+        " --device cuda --threads 8"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
 
 
 def pushed_head() -> tuple[str, str]:
