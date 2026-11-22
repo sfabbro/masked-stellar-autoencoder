@@ -1,0 +1,22 @@
+{
+  "run_id": "distributional_heads_s2_v10_20261122",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/distributional_heads_s2_v10_20261122",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/distributional_heads_s2_v10_20261122-attempt-2",
+  "source_commit": "b6c94bfb67fc290d108eab7bfbac0a587d2271ff",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s2_distributional_heads.py --inputs /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121 --records /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/records.npz --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --baseline /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121 --baseline /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_plx_ens_20261122 --baseline-arms all,plx --heads flow,tmix,gmix,t,flow_noeiv --ensemble 5 --max-train 2000000 --device cuda --threads 8 --output \"$experiment_output\"",
+  "utc": "2026-11-22T17:09:54.264868+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "kfvqstl0"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "8b419e8795bd1a436ab3186d1cea039d0075c95d2ba920aa055e274a01c2fb53"
+}
