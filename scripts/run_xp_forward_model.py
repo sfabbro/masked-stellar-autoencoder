@@ -88,6 +88,12 @@ def parse_args(argv=None):
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--nuisance-steps", type=int, default=3,
                    help="Gauss-Newton steps of the per-star (E, mu) per batch")  # fmt: skip
+    p.add_argument("--ebv-mode", choices=("label", "anchor"), default="label",
+                   help="labelled stars' E in training: held at the label (fixes the "
+                   "E gauge exactly) or fitted with the label as a Gaussian term")  # fmt: skip
+    p.add_argument("--mean-gradient", choices=("full", "quasi"), default="full",
+                   help="emulator mean gradient: full Gaussian likelihood or "
+                   "quasi-likelihood (covariance at the detached prediction)")  # fmt: skip
     p.add_argument("--no-anchor", action="store_true",
                    help="ignore the reddening labels in training (E gauge unfixed)")  # fmt: skip
     p.add_argument("--hidden", type=int, default=512)
@@ -197,6 +203,7 @@ def main(argv=None) -> dict:
         )
         tcfg = xf.TrainConfig(epochs=a.epochs, batch_size=a.batch_size, lr=a.lr,
                               nuisance_steps=a.nuisance_steps, anchor=not a.no_anchor,
+                              ebv_mode=a.ebv_mode, mean_gradient=a.mean_gradient,
                               label_noise=a.label_noise, label_noise_samples=a.label_noise_samples,
                               valid_rows=a.valid_rows, seed=a.seed)  # fmt: skip
         history = xf.train_forward_model(

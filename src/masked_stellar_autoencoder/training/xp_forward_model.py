@@ -120,9 +120,19 @@ exactly 0 would put about half of the unreddened stars on the bound and bias the
 
 Per-star nuisances in training
 ------------------------------
-Training maximises the profile likelihood of the emulator,
-``sum_i min_{E_i, mu_i} [-log L_i(theta_i, E_i, mu_i) + anchor_i(E_i)]``, by block
-coordinate descent. During the first ``nuisance_warmup_epochs`` (default 1) ``E_i``
+The data likelihood is invariant under ``E -> g(theta, E)`` for any monotone ``g``
+(the emulator absorbs it), so the labels are the only information on the scale and
+zero point of ``E``. With ``ebv_mode="label"`` (default) the ``E_i`` of every labelled
+training star is held at its label (unclipped), which fixes that gauge exactly; only
+the distance modulus and the unlabelled stars' ``E_i`` are fitted. The label noise
+then attenuates the learned ``dc/dE`` by ``var(E) / (var(E) + e_label^2)`` (a few per
+cent; the validation slope of ``E`` against the labels reports it). With
+``ebv_mode="anchor"`` the labels enter as the Gaussian term above and training
+maximises ``sum_i min_{E_i, mu_i} [-log L_i(theta_i, E_i, mu_i) + anchor_i(E_i)]`` by
+block coordinate descent; the anchor is then only a weak restoring force along the
+flat gauge direction (the XP term pins each bright star's ``E_i`` to ~0.005 mag, the
+label to ~0.03), and run 2 of 20261122 drifted to ``E = 2 x label + 0.05`` within six
+epochs. During the first ``nuisance_warmup_epochs`` (default 1) ``E_i``
 stays at its start (the reddening label, else the SFD value) while the emulator learns
 a first approximation; then each batch first refines the batch stars' ``(E_i, mu_i)``
 (:func:`fit_nuisances`: ``nuisance_steps`` projected Gauss-Newton steps with the
@@ -1483,13 +1493,14 @@ def fit_nuisances(
     *,
     steps: int = 3,
     anchor: bool = True,
-    hold_ebv: bool = False,
+    hold_ebv: bool | Tensor = False,
     max_backtracks: int = 6,
 ) -> tuple[Tensor, Tensor, Tensor]:
     """Projected Gauss-Newton refinement of ``(E, mu)`` per star with ``theta`` fixed.
 
-    Box: ``E`` in ``[e_min, e_max]``, ``mu`` in the parallax box (``hold_ebv``: only
-    ``mu`` moves). Coordinates on a
+    Box: ``E`` in ``[e_min, e_max]``, ``mu`` in the parallax box. ``hold_ebv`` (a
+    bool, or one per star): only ``mu`` moves, and a held ``E`` is kept as given
+    (not clipped to the box). Coordinates on a
     bound whose gradient points out of the box are held; the step is capped
     (0.5 mag in ``E``, 2 mag in ``mu``) and accepted by Armijo backtracking along the
     projection arc (monotone decrease). Returns ``(E, mu, objective)``; the objective
@@ -1498,6 +1509,13 @@ def fit_nuisances(
     mu_lo, mu_hi = prep.mu_bounds()
     lo = torch.stack([prep.e_min, mu_lo], dim=1)
     hi = torch.stack([prep.e_max, mu_hi], dim=1)
+    if isinstance(hold_ebv, Tensor):
+        hold = hold_ebv.to(device=ebv.device, dtype=torch.bool)
+    else:
+        hold = torch.full_like(ebv, bool(hold_ebv), dtype=torch.bool)
+    if bool(hold.any()):
+        lo[:, 0] = torch.where(hold, torch.full_like(ebv, -math.inf), lo[:, 0])
+        hi[:, 0] = torch.where(hold, torch.full_like(ebv, math.inf), hi[:, 0])
     cap = torch.tensor([0.5, 2.0], dtype=ebv.dtype, device=ebv.device)
     v = torch.minimum(torch.maximum(torch.stack([ebv, mu], dim=1), lo), hi)
     tiny = torch.finfo(v.dtype).tiny
@@ -1509,8 +1527,7 @@ def fit_nuisances(
             )
             assert g is not None and h is not None
             free = ~(((v <= lo) & (g > 0)) | ((v >= hi) & (g < 0)))
-            if hold_ebv:
-                free[:, 0] = False
+            free[:, 0] &= ~hold
             freef = free.to(v.dtype)
             gf = g * freef
             hf = h * freef.unsqueeze(2) * freef.unsqueeze(1)
@@ -1640,6 +1657,15 @@ class TrainConfig:
     # the covariance's dependence on the prediction too); "quasi": the
     # quasi-likelihood gradient (covariance at the detached prediction).
     mean_gradient: str = "full"
+    # How the reddening labels fix the E scale and zero point in training. The
+    # data likelihood is invariant under E -> g(theta, E) (the emulator absorbs
+    # it), so only the labels set the gauge. "label": E of every labelled star is
+    # held at its label (the gauge is fixed exactly; label noise attenuates the
+    # learned dc/dE by var(E) / (var(E) + e_label^2), a few per cent). "anchor":
+    # E fitted with the labels as a Gaussian term; under alternating updates the
+    # term is a weak restoring force along the flat gauge direction, and run 2 of
+    # 20261122 drifted to E = 2 x label (slope) + 0.05 within 6 epochs.
+    ebv_mode: str = "label"
 
 
 def _theta_draws(
@@ -1687,8 +1713,13 @@ def batch_loss(
     return -(torch.logsumexp(-nlls, dim=0) - math.log(nlls.shape[0]))
 
 
-def initial_ebv(data: StarData, anchor: bool = True) -> np.ndarray:
-    """Training start of ``E``: the reddening label (or SFD without one), in the box."""
+def initial_ebv(
+    data: StarData, anchor: bool = True, hold_labels: bool = False
+) -> np.ndarray:
+    """Training start of ``E``: the reddening label (or SFD without one), in the box.
+
+    ``hold_labels``: labelled stars keep their label unclipped (it is held there).
+    """
     lo, hi, e_max = nuisance_box(
         data.ebv_sfd, data.parallax - data.parallax_zp, data.parallax_err
     )
@@ -1697,7 +1728,10 @@ def initial_ebv(data: StarData, anchor: bool = True) -> np.ndarray:
     if anchor and data.ebv_label is not None:
         ok = data.anchored()
         start[ok] = data.ebv_label[ok]
-    return np.clip(start, E_MIN, e_max)
+    clipped = np.clip(start, E_MIN, e_max)
+    if anchor and hold_labels and data.ebv_label is not None:
+        clipped = np.where(data.anchored(), start, clipped)
+    return clipped
 
 
 def train_forward_model(
@@ -1727,10 +1761,15 @@ def train_forward_model(
     torch.manual_seed(cfg.seed)
     gen = torch.Generator().manual_seed(cfg.seed)
     rng = np.random.default_rng(cfg.seed)
+    if cfg.ebv_mode not in ("label", "anchor"):
+        raise ValueError(f"unknown ebv_mode {cfg.ebv_mode!r}")
+    hold_labels = cfg.anchor and cfg.ebv_mode == "label"
     model.to(device=device, dtype=dtype)
     n = len(train)
     ebv_store = torch.as_tensor(
-        initial_ebv(train, cfg.anchor), device=device, dtype=dtype
+        initial_ebv(train, cfg.anchor, hold_labels=hold_labels),
+        device=device,
+        dtype=dtype,
     )
     mu_store = torch.zeros(n, device=device, dtype=dtype)
     visited = torch.zeros(n, device=device, dtype=torch.bool)
@@ -1789,9 +1828,15 @@ def train_forward_model(
                 mu0 = torch.where(
                     new, distance_modulus_start(model, theta, ebv0, prep), mu0
                 )
+            if epoch < cfg.nuisance_warmup_epochs:
+                held = torch.ones_like(ebv0, dtype=torch.bool)
+            elif hold_labels:
+                held = torch.isfinite(batch["ebv_label_err"])
+            else:
+                held = torch.zeros_like(ebv0, dtype=torch.bool)
             ebv, mu, _ = fit_nuisances(
                 model, theta, prep, ebv0, mu0, steps=cfg.nuisance_steps,
-                anchor=cfg.anchor, hold_ebv=epoch < cfg.nuisance_warmup_epochs,
+                anchor=cfg.anchor, hold_ebv=held,
             )  # fmt: skip
             ebv_store[idx_t] = ebv
             mu_store[idx_t] = mu

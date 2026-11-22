@@ -860,3 +860,47 @@ def test_prepared_covariance_does_not_depend_on_the_observation() -> None:
     ref = xf.star_nll(model, theta, ebv, plx, shifted, parts=True)
     fast = xf.star_nll_prepared(model, theta, ebv, plx, b, parts=True)
     torch.testing.assert_close(fast["chi2_xp"], ref["chi2_xp"], rtol=1e-9, atol=1e-8)
+
+
+def test_per_star_hold_keeps_held_extinction_unclipped() -> None:
+    """Held stars keep their given E (even below the box), the others are fitted."""
+    model = _true_model()
+    data, truth = _simulate(model, 50, seed=12)
+    batch = data.batch(np.arange(50), CPU, torch.float64)
+    theta = batch["theta"]
+    e_true = torch.as_tensor(truth["ebv"])
+    prep = xf.prepare_stars(
+        model, batch, reference=xf.model_reference(model, theta, e_true)
+    )
+    ebv0 = e_true.clone()
+    ebv0[:10] = -0.2  # below E_MIN
+    ebv0[25:] = prep.e_max[25:]
+    hold = torch.zeros(50, dtype=torch.bool)
+    hold[:25] = True
+    mu0 = xf.distance_modulus_start(model, theta, ebv0, prep)
+    ebv, _, _ = xf.fit_nuisances(
+        model, theta, prep, ebv0, mu0, steps=10, anchor=False, hold_ebv=hold
+    )
+    assert torch.equal(ebv[:25], ebv0[:25])
+    assert bool((ebv[25:] >= prep.e_min[25:]).all())
+    assert np.median(np.abs(ebv[25:].numpy() - truth["ebv"][25:])) < 0.03
+
+
+def test_label_mode_holds_labelled_extinction_in_training() -> None:
+    """ebv_mode="label": labelled stars' E stays at the (unclipped) label; the
+    unlabelled stars' E is fitted after the warm-up."""
+    truth_model = _true_model()
+    train, truth = _simulate(truth_model, 300, seed=13, sfd_factor=2.0)
+    train.ebv_label = train.ebv_label.copy()
+    train.ebv_label[:3] = -0.12  # a noisy label below E_MIN
+    torch.manual_seed(0)
+    model = xf.build_model(train, xf.ModelConfig(hidden=32, depth=2, rank=1))
+    cfg = xf.TrainConfig(epochs=2, batch_size=100, valid_rows=0, log_every=0)
+    hist = xf.train_forward_model(
+        model, train, None, cfg, device=CPU, log=lambda s: None
+    )
+    e = hist["train_nuisance"]["ebv"]
+    lab = train.anchored()
+    np.testing.assert_allclose(e[lab], train.ebv_label[lab], atol=1e-6)
+    start = xf.initial_ebv(train)
+    assert np.abs(e[~lab] - start[~lab]).max() > 1e-3  # fitted, not held
