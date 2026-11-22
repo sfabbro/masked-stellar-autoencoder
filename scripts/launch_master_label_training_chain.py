@@ -1054,6 +1054,25 @@ STEPS["ms-xp-forward-diagnose"] = dict(
     ),
     files=[],
 )
+# Likelihood scans around the labels of 300 held-out stars (1-D Teff and [Fe/H] scans
+# under the exact and the known-only covariance; 2-D (Teff, E) grid): why the start
+# ranking fails on real stars, and whether a spurious optimum at low E exists.
+STEPS["ms-xp-forward-scan"] = dict(
+    run_id="xp_forward_scan_20261122",
+    gpu=1,
+    ram=64,
+    cpu=8,
+    command=(
+        "python -u scripts/scan_xp_forward_likelihood.py"
+        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits --labels {XPFM_LABELS}"
+        f" --checkpoint {ROOT}{XPFM_RUN}/model.pt"
+        f" --covariance-sidecar {ROOT}{XPFM_SIDECAR}"
+        f" --reddening-labels {XPFM_REDDENING}"
+        f" --core-rows {ROOT}{RESCORE}/rows.npy --n 300"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
 # P1 (S1 precision): parallax as a parameter with its measurement likelihood
 # (latents without the PARALLAX input; heads on theta' = (Teff, log g, [Fe/H],
 # log10 parallax) trained on parallax/error >= 10; score + log N(parallax -

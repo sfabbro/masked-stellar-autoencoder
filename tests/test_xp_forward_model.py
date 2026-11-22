@@ -808,6 +808,28 @@ def test_cli_end_to_end(tmp_path) -> None:
     for key in ("standard", "exact_nll", "oracle", "loose_e"):
         assert key in rep, key
     assert (dout / "diagnosis.md").exists()
+    # Likelihood scans around the labels on the same checkpoint.
+    spec = importlib.util.spec_from_file_location(
+        "scan_xp_forward_likelihood",
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "scan_xp_forward_likelihood.py",
+    )
+    scan = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scan)
+    sout = tmp_path / "scan"
+    scan.main([
+        "--table", str(tmp_path / "t.fits"), "--labels", str(tmp_path / "labels.npz"),
+        "--core-rows", str(tmp_path / "core.npy"), "--checkpoint", str(out / "model.pt"),
+        "--bands", "G,W1,G_PS1,R_PS1", "--n", "3", "--output", str(sout),
+        "--teff-span", "200", "--teff-step", "100", "--feh-lo", "-0.2", "--feh-hi", "0.2",
+        "--feh-step", "0.2", "--grid-teff-span", "100", "--grid-teff-step", "100",
+        "--e-lo", "-0.1", "--e-step", "0.2",
+    ])  # fmt: skip
+    srep = json.loads((sout / "scan.json").read_text())
+    assert srep["n"] == 3 and {"teff", "fe_h", "grid"} <= set(srep)
+    z = np.load(sout / "scans.npz")
+    assert z["teff_exact_nll"].shape == (3, 5) and z["grid_nll"].shape[0] == 3
     report = json.loads((out / "report.json").read_text())
     assert {"heldout", "core_heldout", "core_train"} <= set(report["recovery"])
     assert report["recovery"]["core_heldout"]["n_fe_h_ref"] == 2
