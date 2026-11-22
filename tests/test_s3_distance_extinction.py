@@ -387,3 +387,21 @@ def test_s3_refuses_latents_with_parallax_input(tmp_path, monkeypatch):
     )
     with pytest.raises(SystemExit, match="PARALLAX hidden"):
         mod.main()
+
+
+def test_micro_batch_accumulation_matches_the_full_batch_step():
+    """Gradient accumulation over micro-batches is the same optimisation step."""
+    rng = np.random.default_rng(5)
+    st = _stars(600, rng)
+    z = torch.as_tensor(st["z"], dtype=torch.float32)
+    std = _std(st["z"])
+    tr, sr = np.arange(500), np.arange(500, 600)
+    params = []
+    for micro in (None, 64):
+        torch.manual_seed(0)
+        member = _member("gmix", z.shape[1])
+        de.train_member(member, std, z[tr], _obs(st, tr), z[sr], _obs(st, sr), n_s=16,
+                        n_e=8, batch=256, max_epochs=1, patience=3, lr=3e-3,
+                        micro_batch=micro, log=lambda *_: None)  # fmt: skip
+        params.append(torch.cat([p.detach().reshape(-1) for p in member.parameters()]))
+    torch.testing.assert_close(params[0], params[1], rtol=1e-4, atol=1e-5)

@@ -540,7 +540,8 @@ def parallax_pit(member, p, ob, *, n_s=96, zp_sigma=0.0):
 
 def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n_e=24,
                  zp_sigma=0.0, batch=2048, max_epochs=20, patience=3, lr=1e-3,
-                 weight_decay=1e-4, seed=0, eval_batch=2048, log=print):  # fmt: skip
+                 weight_decay=1e-4, seed=0, eval_batch=2048, micro_batch=None,
+                 log=print):  # fmt: skip
     """Fit one member by maximum marginal likelihood; early stopping on the stop set.
 
     ``z_*``: raw latents (torch, e.g. float16, on the training device);
@@ -592,18 +593,29 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         t0 = time.time()
         perm = use_tr[torch.randperm(len(use_tr), generator=gen)].to(dev)
         tot, cnt, skipped = 0.0, 0, 0
+        micro = int(micro_batch or batch)
         for i in range(0, len(perm), batch):
             idx = perm[i : i + batch]
-            nll = rows_nll(z_train[idx], subset(obs_train, idx))
-            loss = nll.mean()
-            if not torch.isfinite(loss):
+            # Gradient accumulation over micro-batches: the same step as one
+            # batch-mean loss, with peak memory set by the micro-batch (the
+            # quadrature multiplies each row by n_s x n_e flow evaluations).
+            opt.zero_grad(set_to_none=True)
+            loss_val, finite = 0.0, True
+            for j in range(0, len(idx), micro):
+                sub = idx[j : j + micro]
+                part = rows_nll(z_train[sub], subset(obs_train, sub)).sum() / len(idx)
+                if not torch.isfinite(part):
+                    finite = False
+                    break
+                part.backward()
+                loss_val += float(part.detach())
+            if not finite:
+                opt.zero_grad(set_to_none=True)
                 skipped += 1
                 continue
-            opt.zero_grad(set_to_none=True)
-            loss.backward()
             nn.utils.clip_grad_norm_(member.parameters(), 5.0)
             opt.step()
-            tot += float(loss.detach()) * len(idx)
+            tot += loss_val * len(idx)
             cnt += len(idx)
         v = stop_loss()
         sched.step(v)

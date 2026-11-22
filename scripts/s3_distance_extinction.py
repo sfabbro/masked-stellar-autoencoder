@@ -469,7 +469,7 @@ def stage_train(a, config, out):
             hist = de.train_member(
                 member, std, z_tr, o_tr, z_st, o_st, n_s=a.train_ns, n_e=a.train_ne,
                 zp_sigma=a.zp_sigma, batch=a.batch, max_epochs=a.epochs, patience=a.patience,
-                lr=a.lr, seed=a.seed + k, log=log,
+                lr=a.lr, seed=a.seed + k, micro_batch=a.micro_batch, log=log,
             )  # fmt: skip
             de.save_member(member, head_paths(a, family)[k], std, family=family, member=k,
                            history=hist)  # fmt: skip
@@ -1615,6 +1615,8 @@ def main():
     )
     p.add_argument("--components", type=int, default=4)
     p.add_argument("--batch", type=int, default=2048)
+    p.add_argument("--micro-batch", type=int, default=512,
+                   help="rows per forward/backward pass (gradients accumulated to --batch)")  # fmt: skip
     p.add_argument("--epochs", type=int, default=15)
     p.add_argument("--patience", type=int, default=3)
     p.add_argument("--lr", type=float, default=1e-3)
