@@ -111,7 +111,7 @@ of [Fe/H], small against the labels' 0.03 mag errors except for the stars whose
 labels; with 72 % of the rows labelled it is redundant, and it would impose the
 extinction law in one colour.
 
-``E`` has the support ``[E_MIN, 1.2 * max(EBV_SFD, 0) + 0.05]``, ``E_MIN = -0.05``,
+``E`` has the support ``[E_MIN, 1.2 * max(EBV_SFD, 0) + 0.05]``, ``E_MIN = -0.15``,
 in training and at inference: the zero point is known to ~0.03 mag (the labels'
 scatter at low SFD reddening; 11 % of the labels are negative), and a hard bound at
 exactly 0 would put about half of the unreddened stars on the bound and bias their
@@ -231,7 +231,7 @@ LN10_OVER_5 = math.log(10.0) / 5.0
 E_MAX_SCALE = 1.2
 E_MAX_OFFSET = 0.05
 #: Lower bound of E(B-V): the zero point's uncertainty (see the module docstring).
-E_MIN = -0.05
+E_MIN = -0.15
 PARALLAX_MIN_MAS = 0.005
 PARALLAX_MAX_MAS = 100.0
 PARALLAX_BOX_SIGMA = 6.0
@@ -2043,11 +2043,17 @@ def coarse_init(
     ``bank`` ``[K, >= 3]``: candidate ``theta`` (any further column is ignored).
     For each star and candidate, ``E`` and the distance modulus are profiled in
     closed form: the emulator is linearised in ``E`` (``c = h0 + E g``, ``M_b = M0_b
-    + E A_b``, secant slopes over ``[0, e_ref]``), which makes the XP term (with
-    ``prep``'s fixed covariance factor), the photometry and the parallax (delta
-    method in the distance modulus) jointly quadratic in ``(E, mu)``; the 2 x 2
-    normal equations are solved, ``E`` clipped to the star's box and ``mu``
-    re-solved given it, then clipped. A fixed ``E`` grid does not work on real
+    + E A_b``, secant slopes over ``[0, e_ref]``), which makes the XP term, the
+    photometry and the parallax (delta method in the distance modulus) jointly
+    quadratic in ``(E, mu)``; the 2 x 2 normal equations are solved, ``E`` clipped
+    to the star's box and ``mu`` re-solved given it, then clipped. The XP
+    covariance is the known *diagonal* (``prep`` built with ``reference=None``)
+    plus the learned terms at each candidate's own prediction ``h0`` (diagonal +
+    low rank, by Woodbury), and its log-determinant enters the ranking, so the
+    score approximates the exact likelihood up to the known correlations.
+    On real stars the known covariance alone is useless for ranking: their XP
+    spectra deviate from the emulator by far more than the published errors
+    (chi^2 ~ 10^6 at the labels), which drives ``E`` to its bound. A fixed ``E`` grid does not work on real
     stars: their XP spectra pin ``E`` to ~0.005 mag, so a grid's ``E`` mismatch
     dominates the ranking and selects ``theta`` that compensates along the
     ``E``-``Teff``-``[Fe/H]`` degeneracy.
@@ -2064,24 +2070,54 @@ def coarse_init(
         rr = torch.zeros(n, kk, dtype=f64, device=device)
         rs = torch.zeros_like(rr)
         ss = torch.zeros_like(rr)
-        for k in range(2):
+        log_det = torch.zeros_like(rr)
+        for k, loss in enumerate(model.xp_losses):
             sl = slice(k * nc, (k + 1) * nc)
+            # Learned terms at each candidate's own prediction (E = 0).
+            var_k, fac_k = loss.model_covariance_terms(xp0[:, sl])
+            var_k = var_k.to(f64)  # [K, nc]
+            fac_k = (
+                None if fac_k is None else fac_k.to(f64).expand(kk, -1, -1)
+            )  # [K, nc, r]
+            h0, g = xp0[:, sl].to(f64), g_xp[:, sl].to(f64)
             for start in range(0, n, star_block):
                 rs_ = slice(start, min(start + star_block, n))
-                q = prep.xp_q[rs_, sl].unsqueeze(-1)
-                resid = (
-                    prep.xp_y[rs_, sl].unsqueeze(-1) - xp0[:, sl].T.unsqueeze(0)
-                ) * q
-                slope = g_xp[:, sl].T.unsqueeze(0) * q
-                w = torch.linalg.solve_triangular(
-                    prep.xp_factor[rs_, k],
-                    torch.cat([resid, slope], dim=-1),
-                    upper=False,
-                ).to(f64)
-                wr, ws = w[..., :kk], w[..., kk:]
-                rr[rs_] += wr.square().sum(1)
-                rs[rs_] += (wr * ws).sum(1)
-                ss[rs_] += ws.square().sum(1)
+                q = prep.xp_q[rs_, sl].to(f64)  # [b, nc], 0 where masked
+                obs = q > 0
+                known = torch.where(
+                    obs, 1.0 / q.clamp_min(1e-300).square(), torch.ones_like(q)
+                )
+                delta = known.unsqueeze(1) + var_k.unsqueeze(0)  # [b, K, nc]
+                w = torch.where(obs.unsqueeze(1), 1.0 / delta, torch.zeros_like(delta))
+                resid = prep.xp_y[rs_, sl].to(f64).unsqueeze(1) - h0.unsqueeze(
+                    0
+                )  # [b, K, nc]
+                wr, wg = w * resid, w * g.unsqueeze(0)
+                a_rr = (wr * resid).sum(-1)
+                a_rg = (wr * g.unsqueeze(0)).sum(-1)
+                a_gg = (wg * g.unsqueeze(0)).sum(-1)
+                ld = torch.where(
+                    obs.unsqueeze(1), torch.log(delta), torch.zeros_like(delta)
+                ).sum(-1)
+                if fac_k is not None:
+                    # Woodbury for diag + F F^T: Q(v, u) = v W u - (F^T W v)^T M^-1 (F^T W u).
+                    u_r = torch.einsum("bkn,knr->bkr", wr, fac_k)
+                    u_g = torch.einsum("bkn,knr->bkr", wg, fac_k)
+                    m = torch.einsum("bkn,knr,kns->bkrs", w, fac_k, fac_k)
+                    m = m + torch.eye(m.shape[-1], dtype=f64, device=device)
+                    chol = torch.linalg.cholesky(m)
+                    v_r = torch.cholesky_solve(u_r.unsqueeze(-1), chol).squeeze(-1)
+                    v_g = torch.cholesky_solve(u_g.unsqueeze(-1), chol).squeeze(-1)
+                    a_rr = a_rr - (u_r * v_r).sum(-1)
+                    a_rg = a_rg - (u_g * v_r).sum(-1)
+                    a_gg = a_gg - (u_g * v_g).sum(-1)
+                    ld = ld + 2.0 * torch.log(
+                        torch.diagonal(chol, dim1=-2, dim2=-1)
+                    ).sum(-1)
+                rr[rs_] += a_rr
+                rs[rs_] += a_rg
+                ss[rs_] += a_gg
+                log_det[rs_] += ld
         # Photometry and parallax as [n, K] matrix products (no [n, K, bands] tensor).
         w_m = prep.mag_mask.to(f64) / prep.mag_var.to(f64)  # [n, nb]
         mag = prep.mag.to(f64)
@@ -2121,7 +2157,7 @@ def coarse_init(
             + 2.0 * ebv * mu * swa + mu.square() * sw
         ).clamp_min(0.0)  # fmt: skip
         chi2_plx = w_plx * (mu - mu_plx).square()
-        total = torch.nan_to_num(chi2_xp + chi2_phot + chi2_plx, nan=math.inf)
+        total = torch.nan_to_num(chi2_xp + log_det + chi2_phot + chi2_plx, nan=math.inf)
         k = max(1, min(int(top), kk))
         best = total.topk(k, dim=1, largest=False).indices  # [n, k]
         theta = theta_bank[best]  # [n, k, 3]
