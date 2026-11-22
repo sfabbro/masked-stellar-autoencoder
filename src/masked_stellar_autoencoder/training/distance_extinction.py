@@ -540,7 +540,7 @@ def parallax_pit(member, p, ob, *, n_s=96, zp_sigma=0.0):
 
 def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n_e=24,
                  zp_sigma=0.0, batch=2048, max_epochs=20, patience=3, lr=1e-3,
-                 weight_decay=1e-4, seed=0, eval_batch=8192, log=print):  # fmt: skip
+                 weight_decay=1e-4, seed=0, eval_batch=2048, log=print):  # fmt: skip
     """Fit one member by maximum marginal likelihood; early stopping on the stop set.
 
     ``z_*``: raw latents (torch, e.g. float16, on the training device);
@@ -578,6 +578,10 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
                 tot += float(nll[ok].sum())
                 cnt += int(ok.sum())
         member.train()
+        if torch.cuda.is_available():
+            # The stop-set pass allocates (rows x quadrature nodes) blocks unlike the
+            # training batches; release them so training does not hit fragmentation.
+            torch.cuda.empty_cache()
         return tot / max(cnt, 1)
 
     best, best_state, bad = math.inf, None, 0
