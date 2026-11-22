@@ -30,21 +30,22 @@ Likelihood per star
 ``-log L = NLL_XP + NLL_phot + NLL_parallax`` with
 
 * XP, per band (BP and RP are independent: Gaia publishes no cross covariance):
-  ``c_obs - c(theta, E) ~ N(0, C_known + diag((a * c_obs)^2 + b^2) +
-  (c_obs * V)(c_obs * V)^T)``, ``C_known`` the per-star Gaia covariance in table units
+  ``c_obs - c(theta, E) ~ N(0, C_known + diag((a * c)^2 + b^2) + (c * V)(c * V)^T)``,
+  ``c = c(theta, E)``, ``C_known`` the per-star Gaia covariance in table units
   (sidecar) or its diagonal from the table's errors (fallback), ``a`` (fractional),
   ``b`` (floor) and the fractional rank-``k`` factor ``V`` learned
   (:class:`torchregress.losses.KnownCovarianceGaussianNLL` holds them;
   :func:`torchregress.losses.known_covariance_gaussian_nll` evaluates the training
-  loss). The learned fractional terms are evaluated at the *observed* coefficients,
-  not at the emulator's prediction: a flux-proportional calibration error is a
-  property of the measured flux; the covariance is then fixed per star (one
-  factorisation per star instead of one per likelihood evaluation, which is what
-  makes inference fast, see :class:`PreparedStars`); and the likelihood no longer
-  rewards predictions of smaller amplitude through ``log|C(c_pred)|`` (a mean-variance
-  coupling that acts exactly on bright stars, where the model term dominates). For
-  faint stars, where ``c_obs`` is noisy, the model term is negligible against the
-  published covariance. The XP term is conditional on the observed G used for the
+  loss). The learned terms are evaluated at the emulator's prediction ``c``, never
+  at the observed coefficients: a covariance that depends on the observation is not
+  a likelihood (its factor ``c_obs * V`` aligns with the residual ``c_obs - c`` and
+  explains it away; run 2 of 20261122 collapsed to XP chi^2/dof 0.05 and lost the
+  ``E`` constraint that way). The training loss evaluates them at ``c`` exactly.
+  The nuisance fits and inference hold the covariance fixed at a reference
+  prediction ``c(theta_ref, E_ref)`` and refresh it (iteratively reweighted: the
+  previous visit's ``E`` in training, the coarse start then the first MLE at
+  inference), so each star's covariance is factorised once per pass
+  (:class:`PreparedStars`). published covariance. The XP term is conditional on the observed G used for the
   normalisation; the G-flux error adds a rank-one ``x x^T / (flux_over_error)^2``
   term (``< 1e-5`` relative for G < 17), which the learned fractional factor absorbs.
 * photometry: ``m_b = M_b(theta, E) + mu``, ``mu = 5 log10(100 / parallax[mas])``,
@@ -151,8 +152,10 @@ Inference
 ---------
 Per star, ``maximize_score`` over ``(Teff, log g, [Fe/H], u_E, u_p)`` in a box (the
 labels' range for ``theta``), started from the best point of a candidate bank
-(training-population ``theta`` x an ``E`` grid, scored with the same fixed XP
-covariance and the distance modulus profiled analytically), then ``profile_interval``
+(training-population ``theta`` x an ``E`` grid, ranked with the XP covariance at
+the observation and the distance modulus profiled analytically), re-maximised in
+``covariance_passes`` passes with the covariance fixed at the previous point's
+prediction (the coarse start, then the previous MLE), then ``profile_interval``
 (Wilks 68.27 % and 95 %) for the three atmospheric parameters with the other four
 profiled. Every evaluation reuses the star's covariance factor (:class:`PreparedStars`),
 so a candidate costs one emulator pass and two 55 x 55 triangular solves. Outputs:
@@ -1069,7 +1072,7 @@ def star_nll(
     dof_xp = torch.zeros_like(ebv)
     for k, loss in enumerate(model.xp_losses):
         sl = slice(k * nc, (k + 1) * nc)
-        var, factor = loss.model_covariance_terms(xp_obs[:, sl])
+        var, factor = loss.model_covariance_terms(xp_hat[:, sl])
         assert var is not None
         res = known_covariance_gaussian_nll(
             xp_obs[:, sl] - xp_hat[:, sl],
@@ -1121,7 +1124,7 @@ def anchor_nll(ebv: Tensor, label: Tensor, label_err: Tensor) -> Tensor:
 class PreparedStars:
     """Per-star tensors for repeated likelihood evaluations at a fixed covariance.
 
-    The XP covariance (known + learned model terms at the observed coefficients) is
+    The XP covariance (known + learned model terms at a reference prediction) is
     equilibrated, ``C = D^{1/2} R D^{1/2}``, and ``R = L L^T`` is factorised once per
     star and band (as in :func:`torchregress.losses.known_covariance_gaussian_nll`;
     masked coefficients get unit variance and ``q = 0``). A likelihood evaluation is
@@ -1179,14 +1182,38 @@ def _jittered_cholesky(
     return factor
 
 
+def model_reference(model: XPForwardModel, theta: Tensor, ebv: Tensor) -> Tensor:
+    """Standardised emulator prediction ``c(theta, E)`` ``[n, 110]`` (no gradient).
+
+    The point at which :func:`prepare_stars` evaluates the learned XP covariance.
+    """
+    with torch.no_grad():
+        return model(theta, ebv)[0].detach()
+
+
+def observed_reference(model: XPForwardModel, batch: dict[str, Tensor]) -> Tensor:
+    """Observed coefficients in standardised units, as a :func:`prepare_stars` reference.
+
+    Only for ranking start candidates (:func:`coarse_init`): a covariance evaluated
+    at the observation is not a likelihood (see the module docstring).
+    """
+    return batch["xp"] / model.xp_scale.to(batch["xp"].dtype)
+
+
 def prepare_stars(
     model: XPForwardModel,
     batch: dict[str, Tensor],
     *,
+    reference: Tensor,
     dtype: torch.dtype | None = None,
     factor_dtype: torch.dtype = torch.float64,
 ) -> PreparedStars:
-    """Factorise each star's XP covariance once (``factor_dtype``), cast to ``dtype``."""
+    """Factorise each star's XP covariance once (``factor_dtype``), cast to ``dtype``.
+
+    ``reference`` ``[n, 110]`` (standardised units): the prediction at which the
+    learned model covariance is evaluated, usually :func:`model_reference` at the
+    current ``(theta, E)``; the known covariance does not depend on it.
+    """
     work = dtype or batch["xp"].dtype
     fd = factor_dtype
     nc = model.n_coeff
@@ -1200,7 +1227,7 @@ def prepare_stars(
             sl = slice(k * nc, (k + 1) * nc)
             m = mask[:, sl]
             cov = _known_xp(batch, k, scale[sl], nc)
-            var, factor = loss.model_covariance_terms(y[:, sl])
+            var, factor = loss.model_covariance_terms(reference[:, sl].to(fd))
             assert var is not None
             cov = cov + torch.diag_embed(var)
             if factor is not None:
@@ -1734,8 +1761,11 @@ def train_forward_model(
             batch = train.batch(idx, device, dtype)
             idx_t = torch.as_tensor(idx, device=device)
             theta = batch["theta"]
-            prep = prepare_stars(model, batch, dtype=dtype, factor_dtype=dtype)
             ebv0 = ebv_store[idx_t]
+            prep = prepare_stars(
+                model, batch, reference=model_reference(model, theta, ebv0),
+                dtype=dtype, factor_dtype=dtype,
+            )  # fmt: skip
             new = ~visited[idx_t]
             mu0 = mu_store[idx_t]
             if bool(new.any()):
@@ -1886,25 +1916,34 @@ def profile_nuisance_at_labels(
     for start in range(0, len(data), chunk_rows):
         idx = np.arange(start, min(start + chunk_rows, len(data)))
         batch = data.batch(idx, device, dtype)
-        prep = prepare_stars(model_d, batch, dtype=dtype)
         theta = batch["theta"]
         n = len(idx)
+        e_min, e_max = batch["e_min"], batch["e_max"]
         starts = torch.stack(
-            [
-                torch.zeros_like(prep.e_max).clamp(prep.e_min, prep.e_max),
-                0.5 * (prep.e_min + prep.e_max),
-                prep.e_max,
-            ]
+            [torch.zeros_like(e_max).clamp(e_min, e_max), 0.5 * (e_min + e_max), e_max]
         )
         rows = torch.arange(n, device=device).repeat(3)
-        prep3, theta3, ebv0 = prep.take(rows), theta[rows], starts.reshape(-1)
+        batch3 = {k: v[rows] for k, v in batch.items()}
+        theta3, ebv0 = theta[rows], starts.reshape(-1)
+        prep3 = prepare_stars(
+            model_d, batch3, reference=model_reference(model_d, theta3, ebv0),
+            dtype=dtype,
+        )  # fmt: skip
         mu0 = distance_modulus_start(model_d, theta3, ebv0, prep3)
         ebv, mu, f = fit_nuisances(
             model_d, theta3, prep3, ebv0, mu0, steps=steps, anchor=anchor
         )
+        del prep3, batch3
         best = torch.nan_to_num(f.view(3, n), nan=math.inf).argmin(0)
         pick = best * n + torch.arange(n, device=device)
         ebv, mu = ebv[pick], mu[pick]
+        # Refresh the covariance at the best end point and refine (one IRLS pass).
+        prep = prepare_stars(
+            model_d, batch, reference=model_reference(model_d, theta, ebv), dtype=dtype
+        )
+        ebv, mu, _ = fit_nuisances(
+            model_d, theta, prep, ebv, mu, steps=steps, anchor=anchor
+        )
         parallax = 100.0 * torch.pow(10.0, -mu / 5.0)
         with torch.no_grad():
             parts = star_nll_prepared(model_d, theta, ebv, parallax, prep, parts=True)
@@ -2128,6 +2167,9 @@ class InferenceConfig:
     n_candidates: int = 8
     n_starts: int = 1
     steps: int = 30
+    # MLE passes, each with the XP covariance fixed at the previous point's
+    # prediction (coarse start, then the previous MLE); the intervals use the last.
+    covariance_passes: int = 2
     profile_steps: int = 10
     profile_scan: int = 4
     profile_scan_local: int = 2
@@ -2195,14 +2237,26 @@ def infer_stars(
     for start in range(0, len(data), cfg.chunk_rows):
         idx = np.arange(start, min(start + cfg.chunk_rows, len(data)))
         batch = data.batch(idx, device, dtype)
-        prep = prepare_stars(model_d, batch, dtype=dtype)
+        # Candidates are ranked with the covariance at the observation (ranking only),
+        # then each pass fixes the covariance at the previous point's prediction.
+        prep = prepare_stars(
+            model_d, batch, reference=observed_reference(model_d, batch), dtype=dtype
+        )
         init = coarse_init(model_d, prep, bank)
         x = torch.arange(len(idx), device=device, dtype=dtype).unsqueeze(1)
-        score = _score_fn(model_d, prep)
-        res = maximize_score(
-            score, x, bounds, n_candidates=cfg.n_candidates, n_starts=cfg.n_starts,
-            steps=cfg.steps, init=init, chunk_size=cfg.chunk_size, generator=gen,
-        )  # fmt: skip
+        point = init
+        for _ in range(max(1, cfg.covariance_passes)):
+            ebv_ref, _ = unit_to_nuisance(point[:, 3:5], prep)
+            prep = prepare_stars(
+                model_d, batch, reference=model_reference(model_d, point[:, :3], ebv_ref),
+                dtype=dtype,
+            )  # fmt: skip
+            score = _score_fn(model_d, prep)
+            res = maximize_score(
+                score, x, bounds, n_candidates=cfg.n_candidates, n_starts=cfg.n_starts,
+                steps=cfg.steps, init=point, chunk_size=cfg.chunk_size, generator=gen,
+            )  # fmt: skip
+            point = res.theta
         cov = inverse_information(
             observed_information(score, res.theta, x, cfg.chunk_size)
         )

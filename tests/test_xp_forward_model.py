@@ -282,11 +282,12 @@ def test_prepared_likelihood_matches_torchregress() -> None:
     ebv = torch.as_tensor(truth["ebv"]) + 0.03
     plx = torch.as_tensor(truth["parallax"]) * 1.05
     ref = xf.star_nll(model, theta, ebv, plx, batch, parts=True)
-    prep = xf.prepare_stars(model, batch)
+    reference = xf.model_reference(model, theta, ebv)
+    prep = xf.prepare_stars(model, batch, reference=reference)
     fast = xf.star_nll_prepared(model, theta, ebv, plx, prep, parts=True)
     for key in ("nll", "chi2_xp", "dof_xp", "nll_phot", "nll_parallax"):
         torch.testing.assert_close(fast[key], ref[key], rtol=1e-9, atol=1e-8)
-    prep32 = xf.prepare_stars(model, batch, dtype=torch.float32)
+    prep32 = xf.prepare_stars(model, batch, reference=reference, dtype=torch.float32)
     m32 = copy.deepcopy(model).float()
     fast32 = xf.star_nll_prepared(m32, theta.float(), ebv.float(), plx.float(), prep32)
     torch.testing.assert_close(fast32.double(), ref["nll"], rtol=1e-4, atol=1e-2)
@@ -298,8 +299,11 @@ def test_fit_nuisances_recovers_extinction_and_distance() -> None:
     model = _true_model()
     data, truth = _simulate(model, 200, seed=7)
     batch = data.batch(np.arange(200), CPU, torch.float64)
-    prep = xf.prepare_stars(model, batch)
     theta = batch["theta"]
+    ref_e = torch.as_tensor(truth["ebv"])
+    prep = xf.prepare_stars(
+        model, batch, reference=xf.model_reference(model, theta, ref_e)
+    )
     ebv0 = prep.e_max.clone()  # deliberately poor start: the upper bound
     mu0 = xf.distance_modulus_start(model, theta, ebv0, prep)
     ebv, mu, f = xf.fit_nuisances(model, theta, prep, ebv0, mu0, steps=12, anchor=False)
@@ -308,13 +312,21 @@ def test_fit_nuisances_recovers_extinction_and_distance() -> None:
     assert np.median(np.abs(err_e)) < 0.02, np.median(np.abs(err_e))
     assert abs(np.median(err_e)) < 0.01
     assert np.median(np.abs(plx / truth["parallax"] - 1)) < 0.05
-    # Same optimum as torchregress' multistart projected Newton on the exact score.
-    prof = xf.profile_nuisance_at_labels(model, data, device=CPU, steps=12)
+    # Same optimum as torchregress' multistart projected Newton on the same score
+    # (same fixed covariance), from the poor start.
     x = torch.arange(200, dtype=torch.float64).unsqueeze(1)
     res = xf.maximize_score(xf._score_fn(model, prep, fixed_theta=theta), x,
                             [[0.0, 1.0], [0.0, 1.0]], n_candidates=32, n_starts=3, steps=50)  # fmt: skip
-    gap = prof["nll"] - (-res.score.numpy())
+    with torch.no_grad():
+        nll_gn = xf.star_nll_prepared(
+            model, theta, ebv, 100.0 * torch.pow(10.0, -mu / 5.0), prep
+        )
+    gap = nll_gn.numpy() - (-res.score.numpy())
     assert np.quantile(gap, 0.95) < 1e-3, np.sort(gap)[-5:]
+    # The validation profile (three starts, covariance refreshed at its end point)
+    # recovers E as well.
+    prof = xf.profile_nuisance_at_labels(model, data, device=CPU, steps=12)
+    assert np.median(np.abs(prof["ebv"] - truth["ebv"])) < 0.02
     # The anchor pulls E toward the labels, by their weight only.
     ea, _, _ = xf.fit_nuisances(model, theta, prep, ebv0, mu0, steps=12, anchor=True)
     lab = data.anchored()
@@ -501,7 +513,7 @@ def test_local_profile_intervals_match_the_global_box() -> None:
     model = _true_model()
     data, truth = _simulate(model, 24, seed=9)
     batch = data.batch(np.arange(24), CPU, torch.float64)
-    prep = xf.prepare_stars(model, batch)
+    prep = xf.prepare_stars(model, batch, reference=xf.observed_reference(model, batch))
     score = xf._score_fn(model, prep)
     x = torch.arange(24, dtype=torch.float64).unsqueeze(1)
     bounds = np.concatenate([BOUNDS, [[0.0, 1.0], [0.0, 1.0]]])
@@ -821,3 +833,30 @@ def test_smoke_rows_cpu(tmp_path) -> None:
         log=lambda s: None,
     )
     assert np.isfinite(res["mle"]).all() and np.isfinite(res["chi2_xp"]).all()
+
+
+def test_prepared_covariance_does_not_depend_on_the_observation() -> None:
+    """At a fixed reference the prepared XP covariance is the same whatever the
+    observed coefficients are (a covariance that follows the observation can
+    explain the residual away), and the training loss evaluates the learned terms
+    at the prediction (its chi^2 equals the prepared one at that reference)."""
+    model = _true_model()
+    with torch.no_grad():
+        for loss in model.xp_losses:
+            for p in loss.parameters():
+                p.add_(0.05 * torch.randn_like(p))  # non-trivial learned terms
+    data, truth = _simulate(model, 16, seed=11)
+    batch = data.batch(np.arange(16), CPU, torch.float64)
+    theta = torch.as_tensor(truth["theta"])
+    ebv = torch.as_tensor(truth["ebv"])
+    reference = xf.model_reference(model, theta, ebv)
+    a = xf.prepare_stars(model, batch, reference=reference)
+    shifted = dict(batch, xp=batch["xp"] * 1.3 + 0.1 * batch["xp"].abs().mean())
+    b = xf.prepare_stars(model, shifted, reference=reference)
+    torch.testing.assert_close(a.xp_factor, b.xp_factor)
+    torch.testing.assert_close(a.xp_q, b.xp_q)
+    torch.testing.assert_close(a.xp_log_det, b.xp_log_det)
+    plx = torch.as_tensor(truth["parallax"])
+    ref = xf.star_nll(model, theta, ebv, plx, shifted, parts=True)
+    fast = xf.star_nll_prepared(model, theta, ebv, plx, b, parts=True)
+    torch.testing.assert_close(fast["chi2_xp"], ref["chi2_xp"], rtol=1e-9, atol=1e-8)
