@@ -59,6 +59,17 @@ What counts as "no prior physics", operationally:
 | population distributions *estimated* from the data, nonparametrically, with stated sampling assumptions | using a predictive distribution as if it were a measurement |
 | geometric frame changes (equatorial to Galactic, heliocentric velocities); solar motion constants enter only as measured offsets | dust-map priors (SFD is used today only as an upper bound on E; flagged) |
 
+**No label is ground truth; every label is fitted.**
+- Every catalogue value, survey label, reference measurement or literature age is a
+  noisy, possibly biased measurement of a latent quantity. It has its own fitted
+  measurement map and fitted noise: quoted errors times a learned inflation, with heavy
+  tails.
+- Anchors fix the gauge through an identity map, but their noise is still fitted.
+- Clusters and co-natal groups enter as fitted latent quantities: members share one
+  latent, and any literature cluster value is one more mapped source or a weak prior.
+- Validation reports residuals against the fitted latent and co-natal consistency. It
+  never scores a catalogue as if it were truth.
+
 The spectroscopic labels themselves are the one external input. They come from
 model atmospheres, but we use them only as noisy, survey-calibrated
 measurements on a common scale. They are never a functional form.

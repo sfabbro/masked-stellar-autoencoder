@@ -285,6 +285,15 @@ What the co-natal tests say:
 
 ## 3. The consensus measurement model
 
+> **Rule (user, 22 Nov):** no label is ground truth; every label is fitted.
+> - **Anchors** (APOKASC-3; Xiang in the variant) are identity-mapped, with fitted noise.
+> - **Every other source** enters through its fitted map and noise.
+> - **Clusters** are fitted latents with weak priors from their least model-dependent
+>   method.
+> - **Wide binaries** are equality constraints on fitted latents.
+> - **Observables that are not ages** (ln P_rot, Li equivalent width, activity indices)
+>   enter through their own fitted maps in age.
+
 ### 3.1 Latent and coordinates
 
 - Each star *i* has a latent age τ_i = ln(age/Gyr), as in `multi_teacher_age.py`. All
