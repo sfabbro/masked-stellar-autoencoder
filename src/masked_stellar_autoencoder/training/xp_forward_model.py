@@ -18,9 +18,9 @@ and ``E = E(B-V)``:
   ``c(theta, E) = h0(theta) + E * h1(theta, E)``;
 * ``M_b`` are absolute magnitudes in the photometric bands:
   ``M_b(theta, E) = mu_b + sigma_b * h0_b(theta) + E * softplus(h1_b(theta, E))``,
-  so the extinction ``A_b = E * softplus(.) >= 0`` but its wavelength dependence
-  (the extinction law) and its dependence on the spectrum are learned from the data:
-  no stellar-atmosphere grid and no fixed extinction law.
+  so the extinction ``A_b = E * softplus(.) >= 0`` for ``E >= 0``; its wavelength
+  dependence (the extinction law) and its dependence on the spectrum are learned from
+  the data: no stellar-atmosphere grid and no fixed extinction law.
 
 ``h0`` and ``h1`` are SiLU MLPs (smooth, so exact Hessians exist for Newton
 inference).
@@ -30,19 +30,31 @@ Likelihood per star
 ``-log L = NLL_XP + NLL_phot + NLL_parallax`` with
 
 * XP, per band (BP and RP are independent: Gaia publishes no cross covariance):
-  ``c_obs - c(theta, E) ~ N(0, C_known + diag((a * c)^2 + b^2) + (c * V)(c * V)^T)``,
-  ``C_known`` the per-star Gaia covariance in table units (sidecar) or its diagonal
-  from the table's errors (fallback), ``a`` (fractional), ``b`` (floor) and the
-  fractional rank-``k`` factor ``V`` learned
-  (:class:`torchregress.losses.KnownCovarianceGaussianNLL`). The XP term is
-  conditional on the observed G used for the normalisation; the G-flux error adds a
-  rank-one ``x x^T / (flux_over_error)^2`` term (``< 1e-5`` relative for G < 17),
-  which the learned fractional factor absorbs.
-* photometry: ``m_b = M_b(theta, E) + 5 log10(100 / parallax[mas])``,
+  ``c_obs - c(theta, E) ~ N(0, C_known + diag((a * c_obs)^2 + b^2) +
+  (c_obs * V)(c_obs * V)^T)``, ``C_known`` the per-star Gaia covariance in table units
+  (sidecar) or its diagonal from the table's errors (fallback), ``a`` (fractional),
+  ``b`` (floor) and the fractional rank-``k`` factor ``V`` learned
+  (:class:`torchregress.losses.KnownCovarianceGaussianNLL` holds them;
+  :func:`torchregress.losses.known_covariance_gaussian_nll` evaluates the training
+  loss). The learned fractional terms are evaluated at the *observed* coefficients,
+  not at the emulator's prediction: a flux-proportional calibration error is a
+  property of the measured flux; the covariance is then fixed per star (one
+  factorisation per star instead of one per likelihood evaluation, which is what
+  makes inference fast, see :class:`PreparedStars`); and the likelihood no longer
+  rewards predictions of smaller amplitude through ``log|C(c_pred)|`` (a mean-variance
+  coupling that acts exactly on bright stars, where the model term dominates). For
+  faint stars, where ``c_obs`` is noisy, the model term is negligible against the
+  published covariance. The XP term is conditional on the observed G used for the
+  normalisation; the G-flux error adds a rank-one ``x x^T / (flux_over_error)^2``
+  term (``< 1e-5`` relative for G < 17), which the learned fractional factor absorbs.
+* photometry: ``m_b = M_b(theta, E) + mu``, ``mu = 5 log10(100 / parallax[mas])``,
   ``m_obs - m ~ N(0, sigma_b^2 + s_b^2)`` per band, ``sigma_b`` the quoted error (0
   where the table has none: G, W1, W2) and ``s_b`` a learned per-band scatter (in
   magnitudes, i.e. a fractional flux scatter). BP and RP magnitudes are left out by
-  default: they are integrals of the XP spectra and would double count them.
+  default: they are integrals of the XP spectra and would double count them. 2MASS
+  J/H/Ks are left out of :data:`LIKELIHOOD_BANDS`: the fine-tune tables' 2MASS
+  columns are matched to the wrong stars (``training.reddening_labels``; the first
+  run learned a 1.0 mag scatter for them against 0.37 mag for every other band).
 * parallax: ``parallax_obs - zp ~ N(parallax, sigma_parallax^2)``, ``zp`` from
   Lindegren et al. (2021) via the covariance sidecar, else a constant placeholder
   (``--parallax-zero-point constant``, -0.017 mas, the L21 quasar median), else 0.
@@ -56,43 +68,100 @@ motions are *not* part of this likelihood: a kinematic term would be a populatio
 prior on the stellar parameters (velocity distributions differ between populations of
 different [Fe/H] and age), which this per-star measurement must not contain.
 
-Nuisance parameters
--------------------
-``E`` and the parallax are nuisance parameters of every star, mapped to the unit box
-so training and inference share one parametrisation:
-``E = u_E * E_max``, ``E_max = 1.2 * max(EBV_SFD, 0) + 0.05``, and
-``log10 parallax = lo + u_p * (hi - lo)`` with ``[lo, hi]`` = the corrected parallax
-+- 6 sigma clipped to ``[0.005 mas, ...]`` (``[0.005, 100]`` mas without a parallax).
-During training they are free per-star parameters (``nn.Embedding`` tables in logit
-space, initialised at SFD and at the observed parallax, sparse Adam), constrained by
-the parallax likelihood and the box. At inference they are profiled.
+Extinction: units, zero point and identifiability
+-------------------------------------------------
+With a learned extinction term, ``E`` is defined only up to a gauge of the emulator:
+``E -> a E`` together with ``h1 -> h1 / a`` leaves every likelihood unchanged, and
+per-star ``E_i`` fitted freely absorb any misfit along the extinction direction
+(label noise in Teff, emulator error). The first run (``xp_forward_model_20261120``)
+showed the consequences: ``E`` on a bound for 42-54 % of the held-out stars, and an
+extinction direction mixed with Teff and [Fe/H].
+
+The scale and the zero point are fixed with data, not with a stellar model: training
+stars carry the empirical reddening labels (``training.reddening_labels``,
+``build_reddening_labels.py``: ``ebv_star``, ``e_ebv_star``; observed BP-RP minus an
+intrinsic colour fitted on low-extinction stars as a function of the star's labels,
+divided by the Casagrande et al. 2021 ratio ``R_BP - R_RP``; E(B-V) on the SFD scale)
+as a Gaussian measurement of their nuisance ``E_i``:
+
+``-log L_i += 1/2 ((E_i - ebv_star_i) / e_ebv_star_i)^2 + log e_ebv_star_i + 1/2 log 2 pi``.
+
+The learned extinction coefficients (``dc/dE``, ``dM_b/dE = A_b / E``) are then in
+E(B-V) units and ``E = 0`` sits at the intrinsic colours of the labels'
+low-extinction calibration stars. No extinction law is imposed: the wavelength and
+spectral-type dependence of the extinction remain learned; only one number per star
+anchors the scale. Stars without a label (outside the calibration's (Teff, log g)
+cover, 28 % of the table rows) get their ``E_i`` from the data within the box.
+
+The label is a function of the star's spectroscopic labels and of its BP-RP colour
+(an integral of the XP spectrum). It is therefore a *training-only* term: at
+inference the spectroscopic labels are what is being measured (using them would be
+circular) and the colour is already in the XP term (double counting). Within training
+the label repeats the colour information that the XP term carries about ``E_i`` at
+the plugged-in ``theta``; that tightens each anchored ``E_i`` by at most a factor of
+order sqrt(2), while its purpose, the population-level scale and zero point of ``E``,
+is information that only the labels' calibration provides. A normalisation convention
+(e.g. fixing ``dE(BP-RP)/dE`` to the Casagrande ratio) would be the minimum without
+labels; with 72 % of the rows labelled it is redundant, and it would impose the
+extinction law in one colour.
+
+``E`` has the support ``[E_MIN, 1.2 * max(EBV_SFD, 0) + 0.05]``, ``E_MIN = -0.05``,
+in training and at inference: the zero point is known to ~0.03 mag (the labels'
+scatter at low SFD reddening; 11 % of the labels are negative), and a hard bound at
+exactly 0 would put about half of the unreddened stars on the bound and bias their
+``theta``. The upper bound allows the SFD calibration error (SFD over-predicts by
+~14 %, Schlafly & Finkbeiner 2011) and stars behind all of the dust.
+
+Per-star nuisances in training
+------------------------------
+Training maximises the profile likelihood of the emulator,
+``sum_i min_{E_i, mu_i} [-log L_i(theta_i, E_i, mu_i) + anchor_i(E_i)]``, by block
+coordinate descent. During the first ``nuisance_warmup_epochs`` (default 1) ``E_i``
+stays at its start (the reddening label, else the SFD value) while the emulator learns
+a first approximation; then each batch first refines the batch stars' ``(E_i, mu_i)``
+(:func:`fit_nuisances`: ``nuisance_steps`` projected Gauss-Newton steps with the
+emulator fixed, warm-started from the values stored at the star's previous visit,
+exact Jacobians in ``E`` by forward-mode differentiation, Armijo backtracking; the
+distance modulus starts from the photometric/parallax estimate on the first visit),
+then takes one gradient step of the emulator and the scatter terms at the refined
+nuisances. At a nuisance optimum the gradient of the profiled objective equals the
+partial gradient (envelope theorem), so nothing is differentiated through the inner
+solve. Gauss-Newton is exact for the fixed-covariance XP term, the photometry and the
+anchor (quadratic in their residuals); the parallax term enters with its exact
+gradient and Gauss-Newton curvature. (The first run took one sparse optimiser step
+per star and epoch, so the nuisances stayed near their starts: ``E_i`` at the SFD
+value of the full line of sight, the distance at the observed parallax.)
 
 Training and label noise
 ------------------------
-Training maximises the joint likelihood of the labelled stars over the emulator, the
-scatter terms and the per-star nuisances with the labels plugged in
-(``label_noise="plugin"``). ``label_noise="marginal"`` is the documented hook for
-integrating ``theta`` over its label error: ``-log mean_k L(theta_k)``,
-``theta_k ~ N(label, e_label^2)`` (an importance-weighted lower bound of the marginal
-likelihood that tightens with ``k``; it deconvolves the emulator from label noise).
+The labels are plugged in (``label_noise="plugin"``). ``label_noise="marginal"`` is
+the documented hook for integrating ``theta`` over its label error:
+``-log mean_k L(theta_k)``, ``theta_k ~ N(label, e_label^2)`` (an importance-weighted
+lower bound of the marginal likelihood that tightens with ``k``; it deconvolves the
+emulator from label noise); the nuisances are then refined at the plugged-in labels.
 The learned scatter terms are frozen for ``scatter_warmup_epochs`` epochs with fresh
 optimiser state (a variance learned against an untrained mean absorbs the misfit).
 
 Inference
 ---------
 Per star, ``maximize_score`` over ``(Teff, log g, [Fe/H], u_E, u_p)`` in a box (the
-labels' range for ``theta``), started from the best point of a coarse candidate bank
-(labelled population ``theta`` x an ``E`` grid, scored with the covariance fixed at
-the observed coefficients and the distance modulus profiled analytically), then
-``profile_interval`` (Wilks 68.27 % and 95 %) for the three atmospheric parameters
-with the other four profiled. Outputs: MLE, intervals, ``E`` and parallax at the
-MLE, XP chi^2 and dof at the MLE, bound flags.
+labels' range for ``theta``), started from the best point of a candidate bank
+(training-population ``theta`` x an ``E`` grid, scored with the same fixed XP
+covariance and the distance modulus profiled analytically), then ``profile_interval``
+(Wilks 68.27 % and 95 %) for the three atmospheric parameters with the other four
+profiled. Every evaluation reuses the star's covariance factor (:class:`PreparedStars`),
+so a candidate costs one emulator pass and two 55 x 55 triangular solves. Outputs:
+MLE, intervals, ``E`` and parallax at the MLE (with the side of any ``E`` bound),
+XP chi^2 and dof at the MLE, bound flags.
 
 Data contracts
 --------------
 * ``labels.npz``: ``source_id, table_row, teff, e_teff, logg, e_logg, fe_h, e_fe_h,
   has_core_feh, split`` (split 0/1/2 = train/valid/test, -1 not kept; strings
-  accepted). :func:`labels_from_table` builds an equivalent from the table.
+  accepted), optionally ``fe_h_ref`` (raw high-resolution reference, report only).
+  :func:`labels_from_table` builds an equivalent from the table.
+* Reddening labels (``build_reddening_labels.py``): ``source_id, ebv_star,
+  e_ebv_star`` (NaN where not covered), matched by ``source_id``.
 * Covariance sidecar (``masked_stellar_autoencoder.data.covariance_sidecar``):
   ``CovarianceSidecar(path).xp_covariance(rows, band, units="table")`` ``[n, 55, 55]``,
   ``.parallax_zero_point(rows) -> (zp_mas, in_range)``, ``.read(["parallax",
@@ -109,7 +178,7 @@ import math
 import time
 import warnings
 from collections.abc import Callable, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Any
 
@@ -135,8 +204,11 @@ G_REF = 8.5
 PARAMS = ("teff", "logg", "fe_h")
 PARAM_NAMES = ("teff", "logg", "fe_h", "ebv", "parallax")
 LOG_2PI = math.log(2.0 * math.pi)
+LN10_OVER_5 = math.log(10.0) / 5.0
 E_MAX_SCALE = 1.2
 E_MAX_OFFSET = 0.05
+#: Lower bound of E(B-V): the zero point's uncertainty (see the module docstring).
+E_MIN = -0.05
 PARALLAX_MIN_MAS = 0.005
 PARALLAX_MAX_MAS = 100.0
 PARALLAX_BOX_SIGMA = 6.0
@@ -181,6 +253,10 @@ DEFAULT_BANDS: tuple[PhotBand, ...] = (
     PhotBand("R_SMSS", "E_R_SMSS"),
     PhotBand("I_SMSS", "E_I_SMSS"),
     PhotBand("Z_SMSS", "E_Z_SMSS"),
+)
+#: Bands used by default: all of :data:`DEFAULT_BANDS` except the mismatched 2MASS.
+LIKELIHOOD_BANDS: tuple[str, ...] = tuple(
+    b.name for b in DEFAULT_BANDS if b.name not in ("J", "H", "KS")
 )
 
 
@@ -266,6 +342,8 @@ class StarData:
     ``[N, 2, 1540]`` (dense sidecar covariance) or ``None`` with ``xp_var`` ``[N, 110]``
     (diagonal fallback). Magnitudes and errors ``[N, n_bands]`` (``mag_err = 0``:
     no quoted error). Labels ``theta``/``theta_err`` ``[N, 3]`` (NaN if unlabelled).
+    ``ebv_label``/``ebv_label_err`` are the empirical reddening labels (training
+    anchor; NaN where none); ``fe_h_ref`` and ``split`` are carried for the report.
     """
 
     rows: np.ndarray
@@ -285,6 +363,10 @@ class StarData:
     theta: np.ndarray
     theta_err: np.ndarray
     band_names: tuple[str, ...] = ()
+    ebv_label: np.ndarray | None = None
+    ebv_label_err: np.ndarray | None = None
+    fe_h_ref: np.ndarray | None = None
+    split: np.ndarray | None = None
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -296,6 +378,17 @@ class StarData:
             kw[name] = value[index] if isinstance(value, np.ndarray) else value
         return StarData(**kw)
 
+    def anchored(self) -> np.ndarray:
+        """Bool ``[N]``: rows with a usable reddening label."""
+        if self.ebv_label is None or self.ebv_label_err is None:
+            return np.zeros(len(self), dtype=bool)
+        with np.errstate(invalid="ignore"):
+            return (
+                np.isfinite(self.ebv_label)
+                & np.isfinite(self.ebv_label_err)
+                & (self.ebv_label_err > 0)
+            )
+
     def batch(
         self, index: np.ndarray, device: torch.device, dtype: torch.dtype
     ) -> dict[str, Tensor]:
@@ -304,6 +397,9 @@ class StarData:
 
         def t(a: np.ndarray, dt: torch.dtype = dtype) -> Tensor:
             return torch.as_tensor(np.ascontiguousarray(a[index]), device=device).to(dt)
+
+        def full(a: np.ndarray) -> Tensor:
+            return torch.as_tensor(a, device=device, dtype=dtype)
 
         out = {
             "xp": t(self.xp),
@@ -327,16 +423,30 @@ class StarData:
             self.parallax[index] - self.parallax_zp[index],
             self.parallax_err[index],
         )
-        out["e_max"] = torch.as_tensor(e_max, device=device, dtype=dtype)
-        out["log_plx_lo"] = torch.as_tensor(lo, device=device, dtype=dtype)
-        out["log_plx_hi"] = torch.as_tensor(hi, device=device, dtype=dtype)
+        out["e_min"] = full(np.full(len(index), E_MIN))
+        out["e_max"] = full(e_max)
+        out["log_plx_lo"] = full(lo)
+        out["log_plx_hi"] = full(hi)
+        ok = self.anchored()[index]
+        lab = self.ebv_label[index] if self.ebv_label is not None else None
+        err = self.ebv_label_err[index] if self.ebv_label_err is not None else None
+        # Unanchored rows: label 0 with infinite error (zero weight in the anchor).
+        out["ebv_label"] = full(np.where(ok, lab, 0.0) if lab is not None else 0.0 * lo)
+        out["ebv_label_err"] = full(
+            np.where(ok, err, np.inf)
+            if err is not None
+            else np.full(len(index), np.inf)
+        )
         return out
 
 
 def nuisance_box(
     ebv_sfd: np.ndarray, parallax_corrected: np.ndarray, parallax_err: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """``(log10 parallax lo, hi, E_max)`` per star (see the module docstring)."""
+    """``(log10 parallax lo, hi, E_max)`` per star (see the module docstring).
+
+    The lower bound of ``E`` is :data:`E_MIN` for every star.
+    """
     sfd = np.where(np.isfinite(ebv_sfd), np.maximum(ebv_sfd, 0.0), 0.0)
     e_max = E_MAX_SCALE * sfd + E_MAX_OFFSET
     plx = np.asarray(parallax_corrected, dtype=np.float64)
@@ -427,6 +537,51 @@ class SidecarXPCovariance:
         }
 
 
+class ReddeningLabels:
+    """Empirical E(B-V) labels by Gaia ``source_id`` (``build_reddening_labels.py``).
+
+    The npz holds ``source_id``, ``ebv_star`` and ``e_ebv_star`` (NaN where the
+    intrinsic-colour calibration does not cover the star). Units: E(B-V) on the SFD
+    scale of the Casagrande et al. (2021) Gaia extinction coefficients.
+    """
+
+    def __init__(self, path: str | Path) -> None:
+        self.path = Path(path)
+        with np.load(self.path, allow_pickle=False) as z:
+            missing = [k for k in ("source_id", "ebv_star", "e_ebv_star") if k not in z]
+            if missing:
+                raise ValueError(f"{path}: reddening label fields missing: {missing}")
+            sid = np.asarray(z["source_id"], dtype=np.int64)
+            ebv = np.asarray(z["ebv_star"], dtype=np.float64)
+            err = np.asarray(z["e_ebv_star"], dtype=np.float64)
+        order = np.argsort(sid, kind="stable")
+        self.source_id, self.ebv, self.err = sid[order], ebv[order], err[order]
+        if len(sid) > 1 and bool((np.diff(self.source_id) == 0).any()):
+            raise ValueError(f"{path}: duplicate source_id in the reddening labels")
+
+    def lookup(self, source_id: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """``(ebv, err)`` for ``source_id`` (NaN where absent or unusable)."""
+        sid = np.asarray(source_id, dtype=np.int64)
+        if not len(self.source_id):
+            nan = np.full(len(sid), np.nan)
+            return nan, nan.copy()
+        pos = np.clip(np.searchsorted(self.source_id, sid), 0, len(self.source_id) - 1)
+        found = self.source_id[pos] == sid
+        ebv, err = self.ebv[pos], self.err[pos]
+        with np.errstate(invalid="ignore"):
+            ok = found & np.isfinite(ebv) & np.isfinite(err) & (err > 0)
+        return np.where(ok, ebv, np.nan), np.where(ok, err, np.nan)
+
+    def summary(self) -> dict[str, Any]:
+        ok = np.isfinite(self.ebv) & np.isfinite(self.err) & (self.err > 0)
+        return {
+            "path": str(self.path),
+            "rows": int(len(self.ebv)),
+            "labelled": int(ok.sum()),
+            "median_error": float(np.median(self.err[ok])) if ok.any() else None,
+        }
+
+
 def load_star_data(
     table: str | Path,
     rows: np.ndarray,
@@ -434,6 +589,7 @@ def load_star_data(
     labels: dict[str, np.ndarray] | None = None,
     bands: Sequence[PhotBand] = DEFAULT_BANDS,
     sidecar: SidecarXPCovariance | None = None,
+    reddening: ReddeningLabels | None = None,
     xp_error_convention: str = "raw_xp",
     zero_point: str = "sidecar",
     zero_point_constant: float = L21_CONSTANT_ZP,
@@ -444,7 +600,8 @@ def load_star_data(
     ``zero_point``: ``"sidecar"`` (Lindegren+2021 from the sidecar; requires one),
     ``"constant"`` (``zero_point_constant`` for every star) or ``"none"``. With a
     sidecar, parallaxes and their errors come from the sidecar (raw Gaia values)
-    where the star was found, else from the table. Returns the data and a
+    where the star was found, else from the table. ``reddening``: empirical E(B-V)
+    labels matched by ``source_id`` (training anchor). Returns the data and a
     diagnostics dict.
     """
     rows = np.asarray(rows, dtype=np.int64)
@@ -535,14 +692,25 @@ def load_star_data(
     diag["zero_point"] = zero_point
     theta = np.full((len(rows), 3), np.nan)
     theta_err = np.full((len(rows), 3), np.nan)
+    fe_h_ref = split = None
     if labels is not None:
         pos = _label_positions(labels, rows)
         for k, name in enumerate(PARAMS):
             theta[:, k] = np.asarray(labels[name], dtype=np.float64)[pos]
             theta_err[:, k] = np.asarray(labels[f"e_{name}"], dtype=np.float64)[pos]
+        split = np.asarray(labels["split"])[pos].astype(np.int8)
+        if "fe_h_ref" in labels:
+            fe_h_ref = np.asarray(labels["fe_h_ref"], dtype=np.float64)[pos]
+    source_id = raw["source_id"].astype(np.int64)
+    ebv_label = ebv_label_err = None
+    if reddening is not None:
+        ebv_label, ebv_label_err = reddening.lookup(source_id)
+        diag["ebv_label_fraction"] = (
+            float(np.isfinite(ebv_label).mean()) if len(rows) else 0.0
+        )
     data = StarData(
         rows=rows,
-        source_id=raw["source_id"].astype(np.int64),
+        source_id=source_id,
         xp=np.where(xp_mask, xp, 0.0).astype(np.float32),
         xp_mask=xp_mask,
         xp_cov=xp_cov,
@@ -560,6 +728,10 @@ def load_star_data(
         theta=theta,
         theta_err=theta_err,
         band_names=tuple(b.name for b in bands),
+        ebv_label=ebv_label,
+        ebv_label_err=ebv_label_err,
+        fe_h_ref=fe_h_ref,
+        split=split,
     )
     diag["xp_observed_fraction"] = float(xp_mask.mean()) if len(rows) else 0.0
     diag["band_observed_fraction"] = {
@@ -576,6 +748,7 @@ LABEL_FIELDS = (
     "source_id", "table_row", "teff", "e_teff", "logg", "e_logg", "fe_h", "e_fe_h",
     "has_core_feh", "split",
 )  # fmt: skip
+OPTIONAL_LABEL_FIELDS = ("fe_h_ref", "e_fe_h_ref")
 SPLIT_CODES = {"train": 0, "valid": 1, "test": 2}
 
 
@@ -586,6 +759,7 @@ def load_labels(path: str | Path) -> dict[str, np.ndarray]:
         if missing:
             raise ValueError(f"{path}: labels contract fields missing: {missing}")
         out = {f: np.asarray(z[f]) for f in LABEL_FIELDS}
+        out.update({f: np.asarray(z[f]) for f in OPTIONAL_LABEL_FIELDS if f in z.files})
     out["split"] = split_codes(out["split"])
     return out
 
@@ -648,6 +822,55 @@ def labels_from_table(
         out[p] = raw[p]
         out[f"e_{p}"] = raw[f"e_{p}"]
     return out
+
+
+def _pick(rows: np.ndarray, n: int, rng: np.random.Generator) -> np.ndarray:
+    rows = np.asarray(rows, dtype=np.int64)
+    if len(rows) > n:
+        return np.sort(rng.choice(rows, size=max(n, 0), replace=False))
+    return np.sort(rows)
+
+
+def select_rows(
+    labels: dict[str, np.ndarray],
+    core_rows: np.ndarray,
+    *,
+    max_train: int,
+    max_valid: int,
+    max_heldout: int,
+    seed: int = 0,
+) -> dict[str, np.ndarray]:
+    """Table rows of each role (sorted).
+
+    A row is *core* if it is in ``core_rows`` (the frozen high-resolution core) or
+    has ``has_core_feh``. ``train``: every labelled train-split core row, topped up
+    to ``max_train`` with a random draw of the other labelled train-split rows (the
+    core carries most of the metal-poor and giant coverage, so it is never
+    sub-sampled). ``valid`` (model selection) and ``heldout`` (inference) are random
+    labelled valid/test-split rows *outside* the core, so the held-out core (core
+    rows of the valid and test splits) is used neither for training nor for model
+    selection. ``core``: the frozen-core rows (all splits), inferred and reported by
+    split. ``core_train``: the core rows in ``train``.
+    """
+    rng = np.random.default_rng(seed)
+    theta = np.stack([np.asarray(labels[p], dtype=np.float64) for p in PARAMS], 1)
+    labelled = np.isfinite(theta).all(axis=1)
+    table_row = np.asarray(labels["table_row"], dtype=np.int64)
+    split = split_codes(labels["split"])
+    core_rows = np.unique(np.asarray(core_rows, dtype=np.int64))
+    core = np.isin(table_row, core_rows)
+    if "has_core_feh" in labels:
+        core |= np.asarray(labels["has_core_feh"]).astype(bool)
+    pool = labelled & (split == 0)
+    core_train = np.sort(table_row[pool & core])
+    rest = _pick(table_row[pool & ~core], max_train - len(core_train), rng)
+    return {
+        "train": np.sort(np.concatenate([core_train, rest])),
+        "valid": _pick(table_row[labelled & (split == 1) & ~core], max_valid, rng),
+        "heldout": _pick(table_row[labelled & (split == 2) & ~core], max_heldout, rng),
+        "core": core_rows,
+        "core_train": core_train,
+    }
 
 
 # ─── model ──────────────────────────────────────────────────────────────────
@@ -746,6 +969,16 @@ class XPForwardModel(nn.Module):
         mag = self.mag_loc + self.mag_scale * h0[:, n:] + e * F.softplus(h1[:, n:])
         return xp, mag
 
+    def extinction_coefficients(
+        self, theta: Tensor, ebv: Tensor
+    ) -> tuple[Tensor, Tensor]:
+        """``(dc/dE [M, 110], dM_b/dE [M, nb])`` at ``(theta, E)`` (forward mode)."""
+        with torch.no_grad():
+            _, (dxp, dmag) = torch.func.jvp(
+                lambda e: self(theta, e), (ebv,), (torch.ones_like(ebv),)
+            )
+        return dxp, dmag
+
     def describe(self) -> dict[str, Any]:
         """Summary of the learned scatter terms."""
         out: dict[str, Any] = {}
@@ -754,6 +987,7 @@ class XPForwardModel(nn.Module):
             floor = torch.exp(loss.log_floor).detach().cpu().numpy()
             out[f"{name}_fraction_median"] = float(np.median(frac))
             out[f"{name}_fraction_p90"] = float(np.quantile(frac, 0.9))
+            out[f"{name}_fraction_first5"] = [float(v) for v in frac[:5]]
             out[f"{name}_floor_median"] = float(np.median(floor))
             if loss.factor_weight is not None:
                 out[f"{name}_factor_norm"] = float(loss.factor_weight.detach().norm())
@@ -762,6 +996,44 @@ class XPForwardModel(nn.Module):
             zip(self.band_names, map(float, scatter), strict=True)
         )
         return out
+
+
+# ─── likelihood ─────────────────────────────────────────────────────────────
+
+
+def _known_xp(batch: dict[str, Tensor], k: int, s: Tensor, nc: int) -> Tensor:
+    """Band ``k``'s known covariance ``[B, nc, nc]`` in standardised units."""
+    if "xp_cov" in batch:
+        cov = batch["xp_cov"][:, k].to(s.dtype)
+        return cov / (s.unsqueeze(-1) * s.unsqueeze(-2))
+    var = batch["xp_var"][:, k * nc : (k + 1) * nc].to(s.dtype)
+    return torch.diag_embed(var / s.square())
+
+
+def _photometry_nll(
+    resid: Tensor, var: Tensor, mask: Tensor
+) -> tuple[Tensor, Tensor, Tensor]:
+    """Diagonal Gaussian ``(nll, chi2, dof)`` over the observed bands."""
+    maskf = mask.to(resid.dtype)
+    r = torch.where(mask, resid, torch.zeros_like(resid))
+    v = torch.where(mask, var, torch.ones_like(var))
+    chi2 = (r.square() / v * maskf).sum(-1)
+    dof = maskf.sum(-1)
+    nll = 0.5 * (chi2 + (torch.log(v) * maskf).sum(-1) + dof * LOG_2PI)
+    return nll, chi2, dof
+
+
+def _parallax_nll(
+    parallax: Tensor, plx_obs: Tensor, sig: Tensor, has_plx: Tensor
+) -> Tensor:
+    sig_safe = torch.where(has_plx, sig, torch.ones_like(sig))
+    obs = torch.where(has_plx, plx_obs, torch.zeros_like(plx_obs))
+    z = torch.where(has_plx, (obs - parallax) / sig_safe, torch.zeros_like(sig))
+    return torch.where(
+        has_plx,
+        0.5 * (z.square() + LOG_2PI) + torch.log(sig_safe),
+        torch.zeros_like(sig),
+    )
 
 
 def star_nll(
@@ -775,51 +1047,45 @@ def star_nll(
 ) -> Tensor | dict[str, Tensor]:
     """Per-star negative log-likelihood ``[M]`` (or its parts with ``parts=True``).
 
-    ``batch`` holds the stars' data for the same ``M`` rows (see :meth:`StarData.batch`);
-    ``parallax`` in mas (> 0).
+    The training loss: :func:`torchregress.losses.known_covariance_gaussian_nll` with
+    the learned model covariance evaluated at the observed coefficients (gradients
+    reach the emulator and every scatter term). ``batch`` holds the stars' data for
+    the same ``M`` rows (see :meth:`StarData.batch`); ``parallax`` in mas (> 0). The
+    anchor is not included (:func:`anchor_nll`).
     """
     xp_hat, mag_hat = model(theta, ebv)
     scale = model.xp_scale.to(xp_hat.dtype)
-    xp_obs = batch["xp"] / scale
+    xp_obs = batch["xp"].to(xp_hat.dtype) / scale
     nc = model.n_coeff
     nll_xp = torch.zeros_like(ebv)
     chi2_xp = torch.zeros_like(ebv)
     dof_xp = torch.zeros_like(ebv)
     for k, loss in enumerate(model.xp_losses):
         sl = slice(k * nc, (k + 1) * nc)
-        s = scale[sl]
-        kw: dict[str, Tensor] = {}
-        if "xp_cov" in batch:
-            kw["known_covariance"] = batch["xp_cov"][:, k] / (
-                s.unsqueeze(-1) * s.unsqueeze(-2)
-            )
-        else:
-            kw["known_variance"] = batch["xp_var"][:, sl] / s.square()
-        res = loss.evaluate(
-            xp_hat[:, sl], xp_obs[:, sl], mask=batch["xp_mask"][:, sl], **kw
+        var, factor = loss.model_covariance_terms(xp_obs[:, sl])
+        assert var is not None
+        res = known_covariance_gaussian_nll(
+            xp_obs[:, sl] - xp_hat[:, sl],
+            _known_xp(batch, k, scale[sl], nc),
+            model_scale=var.sqrt(),
+            model_factor=factor,
+            mask=batch["xp_mask"][:, sl],
+            max_jitter=loss.max_jitter,
         )
         nll_xp = nll_xp + res.nll
         chi2_xp = chi2_xp + res.chi2
         dof_xp = dof_xp + res.dof
     dist_mod = 5.0 * torch.log10(100.0 / parallax)
     resid = batch["mag"] - (mag_hat + dist_mod.unsqueeze(-1))
-    phot = known_covariance_gaussian_nll(
-        resid,
-        known_variance=batch["mag_err"].square(),
-        model_scale=torch.exp(model.log_mag_scatter).to(resid.dtype),
-        mask=batch["mag_mask"],
+    var_m = batch["mag_err"].square() + torch.exp(2.0 * model.log_mag_scatter).to(
+        resid.dtype
     )
+    nll_phot, chi2_phot, dof_phot = _photometry_nll(resid, var_m, batch["mag_mask"])
     plx_obs = batch["parallax"] - batch["parallax_zp"]
     sig = batch["parallax_err"]
     has_plx = torch.isfinite(plx_obs) & torch.isfinite(sig) & (sig > 0)
-    sig_safe = torch.where(has_plx, sig, torch.ones_like(sig))
-    z = torch.where(has_plx, (plx_obs - parallax) / sig_safe, torch.zeros_like(sig))
-    nll_plx = torch.where(
-        has_plx,
-        0.5 * (z.square() + LOG_2PI) + torch.log(sig_safe),
-        torch.zeros_like(sig),
-    )
-    total = nll_xp + phot.nll + nll_plx
+    nll_plx = _parallax_nll(parallax, plx_obs, sig, has_plx)
+    total = nll_xp + nll_phot + nll_plx
     if not parts:
         return total
     return {
@@ -827,17 +1093,219 @@ def star_nll(
         "nll_xp": nll_xp,
         "chi2_xp": chi2_xp,
         "dof_xp": dof_xp,
-        "nll_phot": phot.nll,
-        "chi2_phot": phot.chi2,
-        "dof_phot": phot.dof,
+        "nll_phot": nll_phot,
+        "chi2_phot": chi2_phot,
+        "dof_phot": dof_phot,
         "nll_parallax": nll_plx,
     }
 
 
-def unit_to_nuisance(u: Tensor, batch: dict[str, Tensor]) -> tuple[Tensor, Tensor]:
-    """``(E, parallax [mas])`` from unit-box coordinates ``u [M, 2]`` of each star."""
-    ebv = u[:, 0] * batch["e_max"]
-    lo, hi = batch["log_plx_lo"], batch["log_plx_hi"]
+def anchor_nll(ebv: Tensor, label: Tensor, label_err: Tensor) -> Tensor:
+    """Gaussian NLL of the reddening labels ``[M]`` (0 where a star has none)."""
+    ok = torch.isfinite(label_err) & (label_err > 0)
+    err = torch.where(ok, label_err, torch.ones_like(label_err))
+    z = (ebv - label) / err
+    return torch.where(
+        ok, 0.5 * (z.square() + LOG_2PI) + torch.log(err), torch.zeros_like(ebv)
+    )
+
+
+@dataclass
+class PreparedStars:
+    """Per-star tensors for repeated likelihood evaluations at a fixed covariance.
+
+    The XP covariance (known + learned model terms at the observed coefficients) is
+    equilibrated, ``C = D^{1/2} R D^{1/2}``, and ``R = L L^T`` is factorised once per
+    star and band (as in :func:`torchregress.losses.known_covariance_gaussian_nll`;
+    masked coefficients get unit variance and ``q = 0``). A likelihood evaluation is
+    then ``1/2 |L^{-1} (q * (y - c))|^2 + const``. Built by :func:`prepare_stars`.
+    """
+
+    xp_y: Tensor  # [n, 110] observed coefficients / xp_scale
+    xp_q: Tensor  # [n, 110] D^{-1/2}, 0 where masked
+    xp_factor: Tensor  # [n, 2, nc, nc] lower Cholesky factor of R
+    xp_log_det: Tensor  # [n] log |C| over the observed coefficients
+    xp_dof: Tensor  # [n]
+    mag: Tensor
+    mag_var: Tensor
+    mag_mask: Tensor
+    plx: Tensor  # zero-point corrected parallax (0 where none)
+    plx_err: Tensor  # 1 where none
+    has_plx: Tensor
+    e_min: Tensor
+    e_max: Tensor
+    log_plx_lo: Tensor
+    log_plx_hi: Tensor
+    ebv_label: Tensor
+    ebv_label_err: Tensor
+
+    def __len__(self) -> int:
+        return int(self.xp_y.shape[0])
+
+    def take(self, rows: Tensor) -> PreparedStars:
+        return PreparedStars(
+            **{f.name: getattr(self, f.name)[rows] for f in fields(self)}
+        )
+
+    def mu_bounds(self) -> tuple[Tensor, Tensor]:
+        """Distance-modulus box ``(lo, hi)`` (the parallax box)."""
+        return 5.0 * (2.0 - self.log_plx_hi), 5.0 * (2.0 - self.log_plx_lo)
+
+
+def _jittered_cholesky(
+    corr: Tensor, maskf: Tensor, failed: Tensor, start: float
+) -> Tensor:
+    """Factor of ``corr + j diag(mask)`` with the smallest power-of-ten ``j`` per failing row."""
+    factor = torch.linalg.cholesky_ex(corr)[0]
+    pending = failed.clone()
+    amount = max(start, 16.0 * torch.finfo(corr.dtype).eps)
+    while bool(pending.any()):
+        if amount > 1.0:
+            raise ValueError("XP covariance could not be factorised with jitter <= 1")
+        trial = corr[pending] + torch.diag_embed(maskf[pending] * amount)
+        f_try, info = torch.linalg.cholesky_ex(trial)
+        idx = pending.nonzero().squeeze(1)
+        ok = info == 0
+        factor[idx[ok]] = f_try[ok]
+        pending[idx[ok]] = False
+        amount *= 10.0
+    return factor
+
+
+def prepare_stars(
+    model: XPForwardModel,
+    batch: dict[str, Tensor],
+    *,
+    dtype: torch.dtype | None = None,
+    factor_dtype: torch.dtype = torch.float64,
+) -> PreparedStars:
+    """Factorise each star's XP covariance once (``factor_dtype``), cast to ``dtype``."""
+    work = dtype or batch["xp"].dtype
+    fd = factor_dtype
+    nc = model.n_coeff
+    with torch.no_grad():
+        scale = model.xp_scale.to(fd)
+        y = batch["xp"].to(fd) / scale
+        mask = batch["xp_mask"]
+        factors, qs = [], []
+        log_det = torch.zeros(y.shape[0], dtype=fd, device=y.device)
+        for k, loss in enumerate(model.xp_losses):
+            sl = slice(k * nc, (k + 1) * nc)
+            m = mask[:, sl]
+            cov = _known_xp(batch, k, scale[sl], nc)
+            var, factor = loss.model_covariance_terms(y[:, sl])
+            assert var is not None
+            cov = cov + torch.diag_embed(var)
+            if factor is not None:
+                cov = cov + factor @ factor.mT
+            pair = m.unsqueeze(-1) & m.unsqueeze(-2)
+            cov = torch.where(pair, cov, torch.zeros((), dtype=fd, device=y.device))
+            cov = cov + torch.diag_embed((~m).to(fd))
+            d = torch.diagonal(cov, dim1=-2, dim2=-1).clamp_min(torch.finfo(fd).tiny)
+            q = torch.rsqrt(d)
+            corr = cov * q.unsqueeze(-1) * q.unsqueeze(-2)
+            corr = 0.5 * (corr + corr.mT)
+            chol, info = torch.linalg.cholesky_ex(corr)
+            if bool((info != 0).any()):
+                chol = _jittered_cholesky(
+                    corr, m.to(fd), info != 0, max(loss.max_jitter / 1e3, 1e-12)
+                )
+            factors.append(chol)
+            qs.append(q * m.to(fd))
+            log_det = log_det + 2.0 * torch.log(
+                torch.diagonal(chol, dim1=-2, dim2=-1)
+            ).sum(-1)
+            log_det = log_det + torch.where(m, torch.log(d), torch.zeros_like(d)).sum(
+                -1
+            )
+        mag_var = batch["mag_err"].to(fd).square() + torch.exp(
+            2.0 * model.log_mag_scatter.to(fd)
+        )
+        plx_obs = batch["parallax"].to(fd) - batch["parallax_zp"].to(fd)
+        sig = batch["parallax_err"].to(fd)
+        has_plx = torch.isfinite(plx_obs) & torch.isfinite(sig) & (sig > 0)
+        return PreparedStars(
+            xp_y=y.to(work),
+            xp_q=torch.cat(qs, dim=1).to(work),
+            xp_factor=torch.stack(factors, dim=1).to(work),
+            xp_log_det=log_det.to(work),
+            xp_dof=mask.to(work).sum(-1),
+            mag=batch["mag"].to(work),
+            mag_var=mag_var.to(work),
+            mag_mask=batch["mag_mask"],
+            plx=torch.where(has_plx, plx_obs, torch.zeros_like(plx_obs)).to(work),
+            plx_err=torch.where(has_plx, sig, torch.ones_like(sig)).to(work),
+            has_plx=has_plx,
+            e_min=batch["e_min"].to(work),
+            e_max=batch["e_max"].to(work),
+            log_plx_lo=batch["log_plx_lo"].to(work),
+            log_plx_hi=batch["log_plx_hi"].to(work),
+            ebv_label=batch["ebv_label"].to(work),
+            ebv_label_err=batch["ebv_label_err"].to(work),
+        )
+
+
+def _whiten(prep: PreparedStars, values: Tensor, nc: int) -> list[Tensor]:
+    """``L_k^{-1} (q * values)`` per band; ``values`` ``[n, 110]`` or ``[n, 110, r]``."""
+    out = []
+    v = values * (prep.xp_q if values.dim() == 2 else prep.xp_q.unsqueeze(-1))
+    for k in range(2):
+        rhs = v[:, k * nc : (k + 1) * nc]
+        vec = rhs.dim() == 2
+        w = torch.linalg.solve_triangular(
+            prep.xp_factor[:, k], rhs.unsqueeze(-1) if vec else rhs, upper=False
+        )
+        out.append(w.squeeze(-1) if vec else w)
+    return out
+
+
+def star_nll_prepared(
+    model: XPForwardModel,
+    theta: Tensor,
+    ebv: Tensor,
+    parallax: Tensor,
+    prep: PreparedStars,
+    *,
+    parts: bool = False,
+) -> Tensor | dict[str, Tensor]:
+    """:func:`star_nll` at the fixed covariance of ``prep`` (same value, no factorisation)."""
+    xp_hat, mag_hat = model(theta, ebv)
+    nc = model.n_coeff
+    chi2_xp = sum(w.square().sum(-1) for w in _whiten(prep, prep.xp_y - xp_hat, nc))
+    nll_xp = 0.5 * (chi2_xp + prep.xp_log_det + prep.xp_dof * LOG_2PI)
+    nll_xp = torch.where(prep.xp_dof > 0, nll_xp, torch.zeros_like(nll_xp))
+    dist_mod = 5.0 * torch.log10(100.0 / parallax)
+    resid = prep.mag - (mag_hat + dist_mod.unsqueeze(-1))
+    nll_phot, chi2_phot, dof_phot = _photometry_nll(resid, prep.mag_var, prep.mag_mask)
+    nll_plx = _parallax_nll(parallax, prep.plx, prep.plx_err, prep.has_plx)
+    total = nll_xp + nll_phot + nll_plx
+    if not parts:
+        return total
+    return {
+        "nll": total,
+        "nll_xp": nll_xp,
+        "chi2_xp": chi2_xp,
+        "dof_xp": prep.xp_dof,
+        "nll_phot": nll_phot,
+        "chi2_phot": chi2_phot,
+        "dof_phot": dof_phot,
+        "nll_parallax": nll_plx,
+    }
+
+
+def unit_to_nuisance(u: Tensor, batch: Any) -> tuple[Tensor, Tensor]:
+    """``(E, parallax [mas])`` from unit-box coordinates ``u [M, 2]`` of each star.
+
+    ``batch``: a :meth:`StarData.batch` dict or :class:`PreparedStars` (``e_min``
+    defaults to :data:`E_MIN`).
+    """
+    get = batch.get if isinstance(batch, dict) else lambda k, d=None: getattr(batch, k)
+    e_max = get("e_max")
+    e_min = get("e_min", None)
+    if e_min is None:
+        e_min = torch.full_like(e_max, E_MIN)
+    ebv = e_min + u[:, 0] * (e_max - e_min)
+    lo, hi = get("log_plx_lo"), get("log_plx_hi")
     parallax = torch.pow(10.0, lo + u[:, 1] * (hi - lo))
     return ebv, parallax
 
@@ -848,9 +1316,10 @@ def nuisance_to_unit(
     lo: np.ndarray,
     hi: np.ndarray,
     e_max: np.ndarray,
+    e_min: float | np.ndarray = E_MIN,
 ) -> np.ndarray:
     with np.errstate(invalid="ignore", divide="ignore"):
-        ue = np.asarray(ebv) / e_max
+        ue = (np.asarray(ebv) - e_min) / (e_max - e_min)
         up = (np.log10(np.clip(parallax, 10.0**lo, 10.0**hi)) - lo) / (hi - lo)
     ue = np.where(np.isfinite(ue), ue, 0.5)
     up = np.where(np.isfinite(up), up, 0.5)
@@ -863,6 +1332,186 @@ def initial_nuisance_unit(data: StarData) -> np.ndarray:
     lo, hi, e_max = nuisance_box(data.ebv_sfd, plx_c, data.parallax_err)
     sfd = np.where(np.isfinite(data.ebv_sfd), np.maximum(data.ebv_sfd, 0.0), 0.0)
     return nuisance_to_unit(sfd, plx_c, lo, hi, e_max)
+
+
+# ─── per-star nuisances: (E, distance modulus) ──────────────────────────────
+
+
+def distance_modulus_start(
+    model: XPForwardModel, theta: Tensor, ebv: Tensor, prep: PreparedStars
+) -> Tensor:
+    """Distance modulus from the photometry and the parallax at ``(theta, E)``.
+
+    Inverse-variance mean of ``m_b - M_b`` and of ``5 log10(100 / parallax)`` (delta
+    method, parallaxes above 2 sigma), clipped to the box; the box centre for a star
+    with neither.
+    """
+    with torch.no_grad():
+        _, mag_hat = model(theta, ebv)
+        iv = prep.mag_mask.to(mag_hat.dtype) / prep.mag_var
+        num = (iv * (prep.mag - mag_hat)).sum(-1)
+        den = iv.sum(-1)
+        good = prep.has_plx & (prep.plx > 2.0 * prep.plx_err)
+        plx = torch.where(good, prep.plx, torch.ones_like(prep.plx))
+        mu_p = 5.0 * torch.log10(100.0 / plx)
+        w_p = torch.where(
+            good, (plx / (prep.plx_err / LN10_OVER_5)).square(), torch.zeros_like(plx)
+        )
+        lo, hi = prep.mu_bounds()
+        mu = torch.where(
+            den + w_p > 0,
+            (num + w_p * mu_p) / (den + w_p).clamp_min(torch.finfo(plx.dtype).tiny),
+            0.5 * (lo + hi),
+        )
+        return torch.minimum(torch.maximum(mu, lo), hi)
+
+
+def _nuisance_objective(
+    model: XPForwardModel,
+    theta: Tensor,
+    v: Tensor,
+    prep: PreparedStars,
+    *,
+    anchor: bool,
+    jac: bool,
+) -> tuple[Tensor, Tensor | None, Tensor | None]:
+    """NLL in ``v = (E, mu)`` without constant terms; with ``jac`` its gradient
+    ``[n, 2]`` and Gauss-Newton curvature ``[n, 2, 2]``."""
+    ebv, mu = v[:, 0], v[:, 1]
+    nc = model.n_coeff
+    if jac:
+        (xp_hat, mag_hat), (dxp, dmag) = torch.func.jvp(
+            lambda e: model(theta, e), (ebv,), (torch.ones_like(ebv),)
+        )
+    else:
+        xp_hat, mag_hat = model(theta, ebv)
+    n = ebv.shape[0]
+    g = h = None
+    if jac:
+        both = torch.stack([prep.xp_y - xp_hat, -dxp], dim=-1)  # [n, 110, 2]
+        ws = _whiten(prep, both, nc)
+        wr = torch.cat([w[..., 0] for w in ws], dim=1)
+        wj = torch.cat([w[..., 1] for w in ws], dim=1)
+        f = 0.5 * wr.square().sum(-1)
+        g = torch.zeros(n, 2, dtype=ebv.dtype, device=ebv.device)
+        h = torch.zeros(n, 2, 2, dtype=ebv.dtype, device=ebv.device)
+        g[:, 0] = (wr * wj).sum(-1)
+        h[:, 0, 0] = wj.square().sum(-1)
+    else:
+        f = 0.5 * sum(w.square().sum(-1) for w in _whiten(prep, prep.xp_y - xp_hat, nc))
+    maskf = prep.mag_mask.to(ebv.dtype)
+    iv = maskf / prep.mag_var
+    res = (prep.mag - mag_hat - mu.unsqueeze(-1)) * maskf
+    f = f + 0.5 * (iv * res.square()).sum(-1)
+    plx_model = 100.0 * torch.pow(10.0, -mu / 5.0)
+    hp = prep.has_plx.to(ebv.dtype)
+    z = (prep.plx - plx_model) / prep.plx_err * hp
+    f = f + 0.5 * z.square()
+    if anchor:
+        iv_a = torch.where(
+            torch.isfinite(prep.ebv_label_err),
+            prep.ebv_label_err.square().reciprocal(),
+            torch.zeros_like(ebv),
+        )
+        d = ebv - prep.ebv_label
+        f = f + 0.5 * iv_a * d.square()
+    if jac:
+        assert g is not None and h is not None
+        g[:, 0] = g[:, 0] - (iv * res * dmag).sum(-1)
+        g[:, 1] = -(iv * res).sum(-1)
+        h[:, 0, 0] = h[:, 0, 0] + (iv * dmag.square()).sum(-1)
+        h[:, 0, 1] = (iv * dmag).sum(-1)
+        h[:, 1, 1] = iv.sum(-1)
+        dz = LN10_OVER_5 * plx_model / prep.plx_err * hp  # dz/dmu
+        g[:, 1] = g[:, 1] + z * dz
+        h[:, 1, 1] = h[:, 1, 1] + dz.square()
+        if anchor:
+            g[:, 0] = g[:, 0] + iv_a * d
+            h[:, 0, 0] = h[:, 0, 0] + iv_a
+        h[:, 1, 0] = h[:, 0, 1]
+    return f, g, h
+
+
+def fit_nuisances(
+    model: XPForwardModel,
+    theta: Tensor,
+    prep: PreparedStars,
+    ebv: Tensor,
+    mu: Tensor,
+    *,
+    steps: int = 3,
+    anchor: bool = True,
+    hold_ebv: bool = False,
+    max_backtracks: int = 6,
+) -> tuple[Tensor, Tensor, Tensor]:
+    """Projected Gauss-Newton refinement of ``(E, mu)`` per star with ``theta`` fixed.
+
+    Box: ``E`` in ``[e_min, e_max]``, ``mu`` in the parallax box (``hold_ebv``: only
+    ``mu`` moves). Coordinates on a
+    bound whose gradient points out of the box are held; the step is capped
+    (0.5 mag in ``E``, 2 mag in ``mu``) and accepted by Armijo backtracking along the
+    projection arc (monotone decrease). Returns ``(E, mu, objective)``; the objective
+    omits terms constant in the nuisances.
+    """
+    mu_lo, mu_hi = prep.mu_bounds()
+    lo = torch.stack([prep.e_min, mu_lo], dim=1)
+    hi = torch.stack([prep.e_max, mu_hi], dim=1)
+    cap = torch.tensor([0.5, 2.0], dtype=ebv.dtype, device=ebv.device)
+    v = torch.minimum(torch.maximum(torch.stack([ebv, mu], dim=1), lo), hi)
+    tiny = torch.finfo(v.dtype).tiny
+    with torch.no_grad():
+        f = None
+        for _ in range(steps):
+            f, g, h = _nuisance_objective(
+                model, theta, v, prep, anchor=anchor, jac=True
+            )
+            assert g is not None and h is not None
+            free = ~(((v <= lo) & (g > 0)) | ((v >= hi) & (g < 0)))
+            if hold_ebv:
+                free[:, 0] = False
+            freef = free.to(v.dtype)
+            gf = g * freef
+            hf = h * freef.unsqueeze(2) * freef.unsqueeze(1)
+            hf = hf + torch.diag_embed(1.0 - freef)
+            damp = 1e-10 * torch.diagonal(hf, dim1=1, dim2=2).abs().sum(-1) + tiny
+            a, b, c = hf[:, 0, 0] + damp, hf[:, 0, 1], hf[:, 1, 1] + damp
+            det = (a * c - b * b).clamp_min(tiny)
+            step = -torch.stack(
+                [
+                    (c * gf[:, 0] - b * gf[:, 1]) / det,
+                    (a * gf[:, 1] - b * gf[:, 0]) / det,
+                ],
+                dim=1,
+            )
+            step = step * freef
+            step = step / (step.abs() / cap).amax(-1, keepdim=True).clamp_min(1.0)
+            pending = torch.arange(v.shape[0], device=v.device)
+            alpha = 1.0
+            for _ in range(max_backtracks):
+                if pending.numel() == 0:
+                    break
+                base = v[pending]
+                trial = torch.minimum(
+                    torch.maximum(base + alpha * step[pending], lo[pending]),
+                    hi[pending],
+                )
+                ft, _, _ = _nuisance_objective(
+                    model,
+                    theta[pending],
+                    trial,
+                    prep.take(pending),
+                    anchor=anchor,
+                    jac=False,
+                )
+                gain = (g[pending] * (trial - base)).sum(-1)
+                ok = torch.isfinite(ft) & (ft <= f[pending] + 1e-4 * gain)
+                acc = pending[ok]
+                v[acc] = trial[ok]
+                f[acc] = ft[ok]
+                pending = pending[~ok]
+                alpha *= 0.5
+        f, _, _ = _nuisance_objective(model, theta, v, prep, anchor=anchor, jac=False)
+    return v[:, 0].contiguous(), v[:, 1].contiguous(), f
 
 
 # ─── normalisation from the training stars ──────────────────────────────────
@@ -935,7 +1584,9 @@ class TrainConfig:
     lr: float = 1e-3
     scatter_lr: float = 3e-3
     weight_decay: float = 1e-5
-    nuisance_lr: float = 0.05
+    nuisance_steps: int = 3
+    nuisance_warmup_epochs: int = 1
+    anchor: bool = True
     scatter_warmup_epochs: int = 1
     grad_clip: float = 10.0
     label_noise: str = "plugin"
@@ -969,17 +1620,33 @@ def _theta_draws(
 def batch_loss(
     model: XPForwardModel,
     batch: dict[str, Tensor],
-    u: Tensor,
+    ebv: Tensor,
+    parallax: Tensor,
     cfg: TrainConfig,
     gen: torch.Generator,
 ) -> Tensor:
-    """Per-star training NLL ``[B]`` at nuisances ``u`` (label-noise hook applied)."""
-    ebv, parallax = unit_to_nuisance(u, batch)
+    """Per-star training NLL ``[B]`` at the nuisances (label-noise hook applied).
+
+    The data terms only: the anchor is constant in the emulator at fixed ``E``.
+    """
     draws = _theta_draws(batch, cfg, gen)
     nlls = torch.stack([star_nll(model, th, ebv, parallax, batch) for th in draws])
     if nlls.shape[0] == 1:
         return nlls[0]
     return -(torch.logsumexp(-nlls, dim=0) - math.log(nlls.shape[0]))
+
+
+def initial_ebv(data: StarData, anchor: bool = True) -> np.ndarray:
+    """Training start of ``E``: the reddening label (or SFD without one), in the box."""
+    lo, hi, e_max = nuisance_box(
+        data.ebv_sfd, data.parallax - data.parallax_zp, data.parallax_err
+    )
+    sfd = np.where(np.isfinite(data.ebv_sfd), np.maximum(data.ebv_sfd, 0.0), 0.0)
+    start = sfd.copy()
+    if anchor and data.ebv_label is not None:
+        ok = data.anchored()
+        start[ok] = data.ebv_label[ok]
+    return np.clip(start, E_MIN, e_max)
 
 
 def train_forward_model(
@@ -994,10 +1661,14 @@ def train_forward_model(
 ) -> dict[str, Any]:
     """Fit emulator, scatter terms and per-star nuisances on labelled stars.
 
-    Returns the history (per-epoch train/valid NLL, learned scatter) and the per-star
-    nuisances of the training stars. The model keeps the parameters of the epoch with
-    the lowest validation NLL (profiled nuisances), or of the last epoch without
-    validation stars.
+    Block coordinate descent on the profile likelihood (module docstring): per
+    batch, :func:`fit_nuisances` refines the stars' ``(E, mu)`` (anchored by the
+    reddening labels with ``cfg.anchor``), then one optimiser step updates the
+    emulator and the scatter terms at those nuisances. Returns the history (per-epoch
+    train/valid NLL, learned scatter, ``E`` recovery at the labels on the validation
+    stars) and the per-star nuisances of the training stars. The model keeps the
+    parameters of the epoch with the lowest validation NLL (nuisances profiled, no
+    anchor), or of the last epoch without validation stars.
     """
     ok = np.isfinite(train.theta).all(axis=1)
     if not ok.all():
@@ -1007,12 +1678,11 @@ def train_forward_model(
     rng = np.random.default_rng(cfg.seed)
     model.to(device=device, dtype=dtype)
     n = len(train)
-    init_u = np.clip(initial_nuisance_unit(train), 0.02, 0.98)
-    nuisance = nn.Embedding(n, 2, sparse=True).to(device=device, dtype=dtype)
-    with torch.no_grad():
-        nuisance.weight.copy_(
-            torch.logit(torch.as_tensor(init_u, device=device, dtype=dtype))
-        )
+    ebv_store = torch.as_tensor(
+        initial_ebv(train, cfg.anchor), device=device, dtype=dtype
+    )
+    mu_store = torch.zeros(n, device=device, dtype=dtype)
+    visited = torch.zeros(n, device=device, dtype=torch.bool)
     network = model.network_parameters()
     scatter = model.scatter_parameters()
     opt = torch.optim.AdamW(
@@ -1021,7 +1691,6 @@ def train_forward_model(
             {"params": scatter, "weight_decay": 0.0, "lr": cfg.scatter_lr},
         ]
     )
-    opt_n = torch.optim.SparseAdam(list(nuisance.parameters()), lr=cfg.nuisance_lr)
     steps_per_epoch = max(1, math.ceil(n / cfg.batch_size))
     total_steps = steps_per_epoch * cfg.epochs
 
@@ -1031,10 +1700,11 @@ def train_forward_model(
         )
 
     sched = torch.optim.lr_scheduler.LambdaLR(opt, cosine)
-    # Sparse Adam moves a row seen once per epoch by several times its lr (lazy moment
-    # updates with a global bias correction), so the nuisance steps must anneal too.
-    sched_n = torch.optim.lr_scheduler.LambdaLR(opt_n, cosine)
-    history: dict[str, Any] = {"epochs": [], "config": asdict(cfg)}
+    history: dict[str, Any] = {
+        "epochs": [],
+        "config": asdict(cfg),
+        "anchored_fraction": float(train.anchored().mean()) if n else 0.0,
+    }
     best_state, best_valid = None, math.inf
     valid_sub = None
     if valid is not None and len(valid):
@@ -1051,26 +1721,43 @@ def train_forward_model(
             p.requires_grad_(not warm)
         perm = rng.permutation(n)
         t0 = time.perf_counter()
-        sums = {"nll": 0.0, "count": 0}
+        sums = {"nll": 0.0, "anchor": 0.0, "count": 0}
         for start in range(0, n, cfg.batch_size):
             idx = perm[start : start + cfg.batch_size]
             batch = train.batch(idx, device, dtype)
             idx_t = torch.as_tensor(idx, device=device)
-            u = torch.sigmoid(nuisance(idx_t))
-            loss_rows = batch_loss(model, batch, u, cfg, gen)
+            theta = batch["theta"]
+            prep = prepare_stars(model, batch, dtype=dtype, factor_dtype=dtype)
+            ebv0 = ebv_store[idx_t]
+            new = ~visited[idx_t]
+            mu0 = mu_store[idx_t]
+            if bool(new.any()):
+                mu0 = torch.where(
+                    new, distance_modulus_start(model, theta, ebv0, prep), mu0
+                )
+            ebv, mu, _ = fit_nuisances(
+                model, theta, prep, ebv0, mu0, steps=cfg.nuisance_steps,
+                anchor=cfg.anchor, hold_ebv=epoch < cfg.nuisance_warmup_epochs,
+            )  # fmt: skip
+            ebv_store[idx_t] = ebv
+            mu_store[idx_t] = mu
+            visited[idx_t] = True
+            parallax = 100.0 * torch.pow(10.0, -mu / 5.0)
+            loss_rows = batch_loss(model, batch, ebv, parallax, cfg, gen)
             loss = loss_rows.mean()
             opt.zero_grad(set_to_none=True)
-            opt_n.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(
                 network + [p for p in scatter if p.requires_grad], cfg.grad_clip
             )
             opt.step()
-            opt_n.step()
             sched.step()
-            sched_n.step()
             step += 1
             sums["nll"] += float(loss_rows.detach().sum())
+            if cfg.anchor:
+                sums["anchor"] += float(
+                    anchor_nll(ebv, batch["ebv_label"], batch["ebv_label_err"]).sum()
+                )
             sums["count"] += len(idx)
             if cfg.log_every and step % cfg.log_every == 0:
                 log(
@@ -1079,6 +1766,7 @@ def train_forward_model(
         record: dict[str, Any] = {
             "epoch": epoch,
             "train_nll": sums["nll"] / max(sums["count"], 1),
+            "train_anchor_nll": sums["anchor"] / max(sums["count"], 1),
             "seconds": round(time.perf_counter() - t0, 1),
             "scatter_frozen": warm,
             "scatter": model.describe(),
@@ -1092,6 +1780,9 @@ def train_forward_model(
             record["valid_chi2_xp_per_dof"] = float(
                 np.sum(prof["chi2_xp"]) / max(np.sum(prof["dof_xp"]), 1)
             )
+            record["valid_ebv_vs_label"] = ebv_recovery(
+                prof["ebv"], valid_sub.ebv_label, valid_sub.ebv_label_err
+            )
             if record["valid_nll"] < best_valid:
                 best_valid = record["valid_nll"]
                 best_state = copy.deepcopy(model.state_dict())
@@ -1104,17 +1795,37 @@ def train_forward_model(
         p.requires_grad_(True)
     if best_state is not None:
         model.load_state_dict(best_state)
-    with torch.no_grad():
-        u_final = torch.sigmoid(nuisance.weight).cpu().numpy().astype(np.float64)
-    lo, hi, e_max = nuisance_box(
-        train.ebv_sfd, train.parallax - train.parallax_zp, train.parallax_err
-    )
     history["train_nuisance"] = {
-        "ebv": u_final[:, 0] * e_max,
-        "parallax": 10.0 ** (lo + u_final[:, 1] * (hi - lo)),
+        "ebv": ebv_store.detach().cpu().numpy().astype(np.float64),
+        "parallax": (100.0 * 10.0 ** (-mu_store.detach().cpu().double().numpy() / 5.0)),
     }
     history["best_valid_nll"] = best_valid if math.isfinite(best_valid) else None
     return history
+
+
+def ebv_recovery(
+    ebv: np.ndarray, label: np.ndarray | None, label_err: np.ndarray | None
+) -> dict[str, Any]:
+    """``E`` against the reddening labels: median offset, NMAD, pull NMAD."""
+    if label is None or label_err is None:
+        return {"n": 0}
+    with np.errstate(invalid="ignore"):
+        ok = (
+            np.isfinite(ebv)
+            & np.isfinite(label)
+            & np.isfinite(label_err)
+            & (label_err > 0)
+        )
+    if not ok.any():
+        return {"n": 0}
+    d = ebv[ok] - label[ok]
+    return {
+        "n": int(ok.sum()),
+        "median_offset": float(np.median(d)),
+        "nmad": _nmad(d),
+        "pull_nmad": _nmad(d / label_err[ok]),
+        "slope": float(np.polyfit(label[ok], ebv[ok], 1)[0]) if ok.sum() > 2 else None,
+    }
 
 
 # ─── inference ──────────────────────────────────────────────────────────────
@@ -1122,20 +1833,22 @@ def train_forward_model(
 
 def _score_fn(
     model: XPForwardModel,
-    batch: dict[str, Tensor],
+    prep: PreparedStars,
     fixed_theta: Tensor | None = None,
 ) -> Callable[[Tensor, Tensor], Tensor]:
     """``score(params [M, P], x [M, 1]) -> [M]`` with ``x`` the star's local index."""
 
     def score(params: Tensor, x: Tensor) -> Tensor:
         idx = x[:, 0].round().long()
-        sub = {k: v[idx] for k, v in batch.items()}
+        sub = prep.take(idx)
         if fixed_theta is None:
             theta, u = params[:, :3], params[:, 3:5]
         else:
             theta, u = fixed_theta[idx], params
         ebv, parallax = unit_to_nuisance(u, sub)
-        return -star_nll(model, theta, ebv, parallax, sub)
+        out = star_nll_prepared(model, theta, ebv, parallax, sub)
+        assert isinstance(out, Tensor)
+        return -out
 
     return score
 
@@ -1146,33 +1859,48 @@ def profile_nuisance_at_labels(
     *,
     device: torch.device,
     dtype: torch.dtype = torch.float64,
-    chunk_rows: int = 1024,
-    n_candidates: int = 16,
-    seed: int = 0,
+    chunk_rows: int = 4096,
+    steps: int = 12,
+    anchor: bool = False,
 ) -> dict[str, np.ndarray]:
-    """Likelihood at the labels with ``E`` and parallax profiled (emulator diagnostic)."""
+    """Likelihood at the labels with ``E`` and parallax profiled (emulator diagnostic).
+
+    :func:`fit_nuisances` from three ``E`` starts (0, mid-box, the upper bound) with
+    the distance modulus started from the photometry; the best end point is kept.
+    Without ``anchor`` this is the data likelihood (validation NLL, ``E`` against the
+    reddening labels).
+    """
     model_d = copy.deepcopy(model).to(device=device, dtype=dtype).eval()
     for p in model_d.parameters():
         p.requires_grad_(False)
-    gen = torch.Generator().manual_seed(seed)
     out: dict[str, list[np.ndarray]] = {
         k: [] for k in ("nll", "chi2_xp", "dof_xp", "ebv", "parallax")
     }
     for start in range(0, len(data), chunk_rows):
         idx = np.arange(start, min(start + chunk_rows, len(data)))
         batch = data.batch(idx, device, dtype)
-        x = torch.arange(len(idx), device=device, dtype=dtype).unsqueeze(1)
-        init = torch.as_tensor(
-            initial_nuisance_unit(data.subset(idx)), device=device, dtype=dtype
+        prep = prepare_stars(model_d, batch, dtype=dtype)
+        theta = batch["theta"]
+        n = len(idx)
+        starts = torch.stack(
+            [
+                torch.zeros_like(prep.e_max).clamp(prep.e_min, prep.e_max),
+                0.5 * (prep.e_min + prep.e_max),
+                prep.e_max,
+            ]
         )
-        score = _score_fn(model_d, batch, fixed_theta=batch["theta"])
-        res = maximize_score(
-            score, x, [[0.0, 1.0], [0.0, 1.0]], n_candidates=n_candidates, n_starts=2,
-            steps=30, init=init, generator=gen,
-        )  # fmt: skip
+        rows = torch.arange(n, device=device).repeat(3)
+        prep3, theta3, ebv0 = prep.take(rows), theta[rows], starts.reshape(-1)
+        mu0 = distance_modulus_start(model_d, theta3, ebv0, prep3)
+        ebv, mu, f = fit_nuisances(
+            model_d, theta3, prep3, ebv0, mu0, steps=steps, anchor=anchor
+        )
+        best = torch.nan_to_num(f.view(3, n), nan=math.inf).argmin(0)
+        pick = best * n + torch.arange(n, device=device)
+        ebv, mu = ebv[pick], mu[pick]
+        parallax = 100.0 * torch.pow(10.0, -mu / 5.0)
         with torch.no_grad():
-            ebv, parallax = unit_to_nuisance(res.theta, batch)
-            parts = star_nll(model_d, batch["theta"], ebv, parallax, batch, parts=True)
+            parts = star_nll_prepared(model_d, theta, ebv, parallax, prep, parts=True)
         assert isinstance(parts, dict)
         for k in ("nll", "chi2_xp", "dof_xp"):
             out[k].append(parts[k].cpu().numpy())
@@ -1196,110 +1924,73 @@ def candidate_bank(
 
 def coarse_init(
     model: XPForwardModel,
-    batch: dict[str, Tensor],
+    prep: PreparedStars,
     bank: Tensor,
     *,
     star_block: int = 32,
 ) -> Tensor:
     """Best bank point per star as a start ``[n, 5]`` (theta, u_E, u_parallax).
 
-    Fixed-covariance approximation: the XP covariance is evaluated at the observed
-    coefficients (one factorisation per star and band), the distance modulus is
-    profiled analytically from the photometry and the parallax (delta method), and
-    bank points with ``E > E_max`` are excluded.
+    The XP term is exact (the star's fixed covariance factor); the distance modulus
+    is profiled analytically from the photometry and the parallax (delta method);
+    bank points outside the star's ``E`` box are excluded.
     """
     dtype, device = bank.dtype, bank.device
     with torch.no_grad():
         xp_bank, mag_bank = model(bank[:, :3], bank[:, 3])  # [K, 110], [K, nb]
-        scale = model.xp_scale.to(dtype)
-        xp_obs = batch["xp"] / scale
-        n, nc = xp_obs.shape[0], model.n_coeff
+        n, nc = prep.xp_y.shape[0], model.n_coeff
         chi2 = torch.zeros(n, bank.shape[0], dtype=dtype, device=device)
-        for k, loss in enumerate(model.xp_losses):
+        for k in range(2):
             sl = slice(k * nc, (k + 1) * nc)
-            s = scale[sl]
-            mask = batch["xp_mask"][:, sl]
-            var, factor = loss.model_covariance_terms(xp_obs[:, sl])
-            if "xp_cov" in batch:
-                cov = batch["xp_cov"][:, k] / (s.unsqueeze(-1) * s.unsqueeze(-2))
-            else:
-                cov = torch.diag_embed(batch["xp_var"][:, sl] / s.square()).to(
-                    dtype=dtype
-                )
-            cov = cov + torch.diag_embed(var).to(dtype=dtype)
-            if factor is not None:
-                cov = cov + factor @ factor.mT
-            pair = mask.unsqueeze(-1) & mask.unsqueeze(-2)
-            cov = torch.where(pair, cov, torch.zeros((), dtype=dtype, device=device))
-            cov = cov + torch.diag_embed((~mask).to(dtype)).to(dtype=dtype)
-            d = torch.diagonal(cov, dim1=-2, dim2=-1).clamp_min(torch.finfo(dtype).tiny)
-            q = torch.rsqrt(d)
-            corr = cov * q.unsqueeze(-1) * q.unsqueeze(-2)
-            eye = torch.eye(nc, dtype=dtype, device=device)
-            factor_l, info = torch.linalg.cholesky_ex(corr)
-            if bool((info != 0).any()):
-                factor_l, _ = torch.linalg.cholesky_ex(corr + 1e-4 * eye)
             for start in range(0, n, star_block):
                 rs = slice(start, min(start + star_block, n))
-                resid = xp_obs[rs, sl].unsqueeze(-1) - xp_bank[:, sl].T.unsqueeze(
-                    0
-                )  # [b, nc, K]
-                resid = resid * (q[rs] * mask[rs].to(dtype)).unsqueeze(-1)
-                w = torch.linalg.solve_triangular(factor_l[rs], resid, upper=False)
+                resid = prep.xp_y[rs, sl].unsqueeze(-1) - xp_bank[:, sl].T.unsqueeze(0)
+                resid = resid * prep.xp_q[rs, sl].unsqueeze(-1)  # [b, nc, K]
+                w = torch.linalg.solve_triangular(
+                    prep.xp_factor[rs, k], resid, upper=False
+                )
                 chi2[rs] += w.square().sum(1)
         # Photometry with the distance modulus profiled (weighted mean incl. parallax).
-        var_m = batch["mag_err"].square() + torch.exp(2.0 * model.log_mag_scatter).to(
-            dtype
-        )
-        w_m = batch["mag_mask"].to(dtype) / var_m  # [n, nb]
-        plx_c = batch["parallax"] - batch["parallax_zp"]
-        sig = batch["parallax_err"]
-        good = (
-            torch.isfinite(plx_c)
-            & torch.isfinite(sig)
-            & (sig > 0)
-            & (plx_c > 2.0 * sig)
-        )
-        plx_safe = torch.where(good, plx_c, torch.ones_like(plx_c))
+        w_m = prep.mag_mask.to(dtype) / prep.mag_var  # [n, nb]
+        good = prep.has_plx & (prep.plx > 2.0 * prep.plx_err)
+        plx_safe = torch.where(good, prep.plx, torch.ones_like(prep.plx))
         mu_plx = 5.0 * torch.log10(100.0 / plx_safe)
-        var_mu = (5.0 / math.log(10.0) * sig / plx_safe).square()
+        var_mu = (prep.plx_err / LN10_OVER_5 / plx_safe).square()
         w_plx = torch.where(good, 1.0 / var_mu, torch.zeros_like(var_mu))
-        mag = torch.where(
-            batch["mag_mask"], batch["mag"], torch.zeros_like(batch["mag"])
-        )
-        diff = mag.unsqueeze(1) - mag_bank.unsqueeze(0)  # [n, K, nb]
+        diff = prep.mag.unsqueeze(1) - mag_bank.unsqueeze(0)  # [n, K, nb]
         num = (w_m.unsqueeze(1) * diff).sum(-1) + (w_plx * mu_plx).unsqueeze(1)
         den = w_m.sum(-1, keepdim=True) + w_plx.unsqueeze(1)
         mu = num / den.clamp_min(torch.finfo(dtype).tiny)
-        lo, hi = batch["log_plx_lo"], batch["log_plx_hi"]
-        mu_lo = 5.0 * (2.0 - hi)  # distance modulus range of the parallax box
-        mu_hi = 5.0 * (2.0 - lo)
+        mu_lo, mu_hi = prep.mu_bounds()
         mu = torch.minimum(torch.maximum(mu, mu_lo.unsqueeze(1)), mu_hi.unsqueeze(1))
         chi2_phot = (w_m.unsqueeze(1) * (diff - mu.unsqueeze(-1)).square()).sum(-1)
         chi2_plx = w_plx.unsqueeze(1) * (mu - mu_plx.unsqueeze(1)).square()
         total = chi2 + chi2_phot + chi2_plx
-        allowed = bank[:, 3].unsqueeze(0) <= batch["e_max"].unsqueeze(1)
+        e = bank[:, 3].unsqueeze(0)
+        allowed = (e <= prep.e_max.unsqueeze(1)) & (e >= prep.e_min.unsqueeze(1))
         total = torch.where(allowed, total, torch.full_like(total, math.inf))
         total = torch.nan_to_num(total, nan=math.inf)
         best = total.argmin(dim=1)
         theta = bank[best, :3]
-        u_e = (bank[best, 3] / batch["e_max"]).clamp(0.0, 1.0)
+        u_e = ((bank[best, 3] - prep.e_min) / (prep.e_max - prep.e_min)).clamp(0.0, 1.0)
         log_plx = 2.0 - mu[torch.arange(n, device=device), best] / 5.0
+        lo, hi = prep.log_plx_lo, prep.log_plx_hi
         u_p = ((log_plx - lo) / (hi - lo)).clamp(0.0, 1.0)
     return torch.cat([theta, u_e.unsqueeze(1), u_p.unsqueeze(1)], dim=1)
 
 
 @dataclass
 class InferenceConfig:
-    chunk_rows: int = 1024
-    chunk_size: int = 8192
-    n_candidates: int = 64
-    n_starts: int = 2
-    steps: int = 40
-    profile_steps: int = 15
-    profile_scan: int = 6
+    chunk_rows: int = 2048
+    chunk_size: int = 16384
+    n_candidates: int = 8
+    n_starts: int = 1
+    steps: int = 30
+    profile_steps: int = 10
+    profile_scan: int = 4
     bank_theta: int = 1024
     ebv_grid: tuple[float, ...] = (
+        -0.03,
         0.0,
         0.03,
         0.08,
@@ -1327,7 +2018,12 @@ def infer_stars(
     dtype: torch.dtype = torch.float64,
     log: Callable[[str], None] = print,
 ) -> dict[str, np.ndarray]:
-    """MLE, profile intervals, nuisances and goodness of fit for every star of ``data``."""
+    """MLE, profile intervals, nuisances and goodness of fit for every star of ``data``.
+
+    No reddening label enters (they are training-only). Covariance factors are
+    computed in float64 and cast to ``dtype`` (float32 is safe for the Newton
+    iterations and the profile scans: the score is a whitened quadratic form).
+    """
     model_d = copy.deepcopy(model).to(device=device, dtype=dtype).eval()
     for p in model_d.parameters():
         p.requires_grad_(False)
@@ -1344,15 +2040,17 @@ def infer_stars(
     gen = torch.Generator().manual_seed(cfg.seed)
     thresholds = [wilks_threshold(c, df=1) for c in cfg.confidence]
     keys = ("mle", "lo68", "hi68", "lo95", "hi95", "at_bound", "interval_at_bound", "E_mle",
-            "parallax_mle", "chi2_xp", "dof_xp", "chi2_phot", "dof_phot", "nll", "init")  # fmt: skip
+            "E_bound", "E_box_max", "parallax_mle", "chi2_xp", "dof_xp", "chi2_phot", "dof_phot",
+            "nll", "init")  # fmt: skip
     out: dict[str, list[np.ndarray]] = {k: [] for k in keys}
     t0 = time.perf_counter()
     for start in range(0, len(data), cfg.chunk_rows):
         idx = np.arange(start, min(start + cfg.chunk_rows, len(data)))
         batch = data.batch(idx, device, dtype)
-        init = coarse_init(model_d, batch, bank)
+        prep = prepare_stars(model_d, batch, dtype=dtype)
+        init = coarse_init(model_d, prep, bank)
         x = torch.arange(len(idx), device=device, dtype=dtype).unsqueeze(1)
-        score = _score_fn(model_d, batch)
+        score = _score_fn(model_d, prep)
         res = maximize_score(
             score, x, bounds, n_candidates=cfg.n_candidates, n_starts=cfg.n_starts,
             steps=cfg.steps, init=init, chunk_size=cfg.chunk_size, generator=gen,
@@ -1375,11 +2073,13 @@ def infer_stars(
                 torch.stack(lo_b, 1) | torch.stack(hi_b, 1),
             )
         with torch.no_grad():
-            ebv, parallax = unit_to_nuisance(res.theta[:, 3:5], batch)
-            parts = star_nll(
-                model_d, res.theta[:, :3], ebv, parallax, batch, parts=True
+            ebv, parallax = unit_to_nuisance(res.theta[:, 3:5], prep)
+            parts = star_nll_prepared(
+                model_d, res.theta[:, :3], ebv, parallax, prep, parts=True
             )
         assert isinstance(parts, dict)
+        u_e = res.theta[:, 3]
+        side = (u_e >= 1).to(torch.int8) - (u_e <= 0).to(torch.int8)
         out["mle"].append(res.theta[:, :3].cpu().numpy())
         out["at_bound"].append(res.at_bound.cpu().numpy())
         out["lo68"].append(intervals["68"][0].cpu().numpy())
@@ -1388,6 +2088,8 @@ def infer_stars(
         out["hi95"].append(intervals["95"][1].cpu().numpy())
         out["interval_at_bound"].append(intervals["95"][2].cpu().numpy())
         out["E_mle"].append(ebv.cpu().numpy())
+        out["E_bound"].append(side.cpu().numpy())
+        out["E_box_max"].append(prep.e_max.cpu().numpy())
         out["parallax_mle"].append(parallax.cpu().numpy())
         for k in ("chi2_xp", "dof_xp", "chi2_phot", "dof_phot", "nll"):
             out[k].append(parts[k].cpu().numpy())
@@ -1443,6 +2145,8 @@ def prediction_arrays(
     data: StarData, result: dict[str, np.ndarray], subset: np.ndarray
 ) -> dict[str, np.ndarray]:
     """Arrays of ``xp_forward_predictions.npz`` (the contract read by the evaluation)."""
+    n = len(data)
+    nan = np.full(n, np.nan)
     return {
         "source_id": data.source_id,
         "table_row": data.rows,
@@ -1453,6 +2157,8 @@ def prediction_arrays(
         "lo95": result["lo95"],
         "hi95": result["hi95"],
         "E_mle": result["E_mle"],
+        "E_bound": result["E_bound"],
+        "E_box_max": result["E_box_max"],
         "parallax_mle": result["parallax_mle"],
         "chi2_xp": result["chi2_xp"],
         "dof_xp": result["dof_xp"],
@@ -1465,6 +2171,10 @@ def prediction_arrays(
         "g_mag": data.g_mag,
         "label": data.theta,
         "label_err": data.theta_err,
+        "ebv_label": data.ebv_label if data.ebv_label is not None else nan,
+        "ebv_label_err": data.ebv_label_err if data.ebv_label_err is not None else nan,
+        "fe_h_ref": data.fe_h_ref if data.fe_h_ref is not None else nan,
+        "split": data.split if data.split is not None else np.full(n, -1, np.int8),
     }
 
 
@@ -1472,6 +2182,8 @@ def prediction_arrays(
 
 G_BINS = (-np.inf, 13.5, 15.0, 16.0, np.inf)
 FEH_BINS = (-np.inf, -3.0, -2.5, -2.0, -1.0, 0.0, np.inf)
+#: Reference [Fe/H] bins of the frozen-core tables (as in the S1 report).
+FEH_REF_BINS = (-9.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 9.0)
 
 
 def _nmad(x: np.ndarray) -> float:
@@ -1485,12 +2197,40 @@ def _bin_label(lo: float, hi: float) -> str:
     return f"[{lo:g}, {hi:g})"
 
 
+def _cells(
+    est: np.ndarray, ref: np.ndarray, g: np.ndarray, feh_bins: Sequence[float],
+    lo: np.ndarray | None = None, hi: np.ndarray | None = None,
+) -> list[dict[str, Any]]:  # fmt: skip
+    """Median offset / NMAD (and coverage) of ``est - ref`` per G x reference bin."""
+    have = np.isfinite(est) & np.isfinite(ref)
+    cells = []
+    for glo, ghi in zip(G_BINS[:-1], G_BINS[1:], strict=True):
+        for flo, fhi in zip(feh_bins[:-1], feh_bins[1:], strict=True):
+            sel = have & (g >= glo) & (g < ghi) & (ref >= flo) & (ref < fhi)
+            if not sel.any():
+                continue
+            d = est[sel] - ref[sel]
+            cell = {"g_bin": _bin_label(glo, ghi), "feh_bin": _bin_label(flo, fhi),
+                    "n": int(sel.sum()), "median_offset": float(np.median(d)), "nmad": _nmad(d)}  # fmt: skip
+            if lo is not None and hi is not None:
+                cell["coverage68"] = float(
+                    ((ref[sel] >= lo[sel]) & (ref[sel] <= hi[sel])).mean()
+                )
+            cells.append(cell)
+    return cells
+
+
 def recovery_summary(pred: dict[str, np.ndarray]) -> dict[str, Any]:
-    """Parameter recovery against labels: offsets, NMAD, interval coverage, chi2 by G."""
+    """Parameter recovery against labels: offsets, NMAD, interval coverage, chi2 by G.
+
+    Also, where present: ``E`` bound fractions by side and ``E`` against the
+    reddening labels (overall and by G), and [Fe/H] against the raw high-resolution
+    reference ``fe_h_ref`` per reference [Fe/H] x G bin.
+    """
     label, mle = pred["label"], pred["mle"]
     have = np.isfinite(label).all(axis=1)
     g = pred["g_mag"]
-    out: dict[str, Any] = {"n_labelled": int(have.sum())}
+    out: dict[str, Any] = {"n": int(len(g)), "n_labelled": int(have.sum())}
     for k, name in enumerate(PARAMS):
         d = (mle[:, k] - label[:, k])[have]
         inside68 = (
@@ -1505,25 +2245,16 @@ def recovery_summary(pred: dict[str, np.ndarray]) -> dict[str, Any]:
             "coverage68": float(inside68.mean()) if d.size else None,
             "coverage95": float(inside95.mean()) if d.size else None,
         }
-    cells = []
-    for glo, ghi in zip(G_BINS[:-1], G_BINS[1:], strict=True):
-        for flo, fhi in zip(FEH_BINS[:-1], FEH_BINS[1:], strict=True):
-            sel = (
-                have
-                & (g >= glo)
-                & (g < ghi)
-                & (label[:, 2] >= flo)
-                & (label[:, 2] < fhi)
-            )
-            if not sel.any():
-                continue
-            d = mle[sel, 2] - label[sel, 2]
-            cells.append({
-                "g_bin": _bin_label(glo, ghi), "feh_bin": _bin_label(flo, fhi), "n": int(sel.sum()),
-                "median_offset": float(np.median(d)), "nmad": _nmad(d),
-                "coverage68": float(((label[sel, 2] >= pred["lo68"][sel, 2]) & (label[sel, 2] <= pred["hi68"][sel, 2])).mean()),
-            })  # fmt: skip
-    out["feh_by_g_and_feh"] = cells
+    lab = np.where(have[:, None], label, np.nan)
+    out["feh_by_g_and_feh"] = _cells(
+        mle[:, 2], lab[:, 2], g, FEH_BINS, pred["lo68"][:, 2], pred["hi68"][:, 2]
+    )
+    ref = pred.get("fe_h_ref")
+    if ref is not None and np.isfinite(ref).any():
+        out["n_fe_h_ref"] = int(np.isfinite(ref).sum())
+        out["feh_vs_ref_by_g_and_feh"] = _cells(
+            mle[:, 2], ref, g, FEH_REF_BINS, pred["lo68"][:, 2], pred["hi68"][:, 2]
+        )
     chi2 = []
     for glo, ghi in zip(G_BINS[:-1], G_BINS[1:], strict=True):
         sel = (g >= glo) & (g < ghi) & (pred["dof_xp"] > 0)
@@ -1537,7 +2268,24 @@ def recovery_summary(pred: dict[str, np.ndarray]) -> dict[str, Any]:
         if len(g)
         else {}
     )
+    if "E_bound" in pred and len(g):
+        side = pred["E_bound"]
+        out["ebv_at_lower_bound"] = float((side < 0).mean())
+        out["ebv_at_upper_bound"] = float((side > 0).mean())
+    if "E_mle" in pred and pred.get("ebv_label") is not None:
+        e, lab_e, err_e = pred["E_mle"], pred["ebv_label"], pred["ebv_label_err"]
+        out["ebv_vs_label"] = ebv_recovery(e, lab_e, err_e)
+        out["ebv_vs_label_by_g"] = []
+        for glo, ghi in zip(G_BINS[:-1], G_BINS[1:], strict=True):
+            sel = (g >= glo) & (g < ghi)
+            rec = ebv_recovery(e[sel], lab_e[sel], err_e[sel])
+            if rec["n"]:
+                out["ebv_vs_label_by_g"].append({"g_bin": _bin_label(glo, ghi), **rec})
     return out
+
+
+def _fmt(v: Any, spec: str = ".3f") -> str:
+    return "nan" if v is None or not np.isfinite(v) else format(v, spec)
 
 
 def write_report(
@@ -1560,12 +2308,17 @@ def write_report(
         json.dumps(payload, indent=2, default=float) + "\n"
     )
     lines = ["# XP forward model report", "", f"Run: `{manifest.get('run', '')}`", ""]
-    lines += ["## Training", "", "| epoch | train NLL | valid NLL (profiled) | valid XP chi2/dof | s |",
-              "|--:|--:|--:|--:|--:|"]  # fmt: skip
+    if "anchored_fraction" in history:
+        lines += [f"Training stars with a reddening label (E anchor): "
+                  f"{history['anchored_fraction']:.3f}", ""]  # fmt: skip
+    lines += ["## Training", "", "| epoch | train NLL | anchor NLL | valid NLL (profiled) | valid XP chi2/dof "
+              "| valid E - label (offset / NMAD / slope) | s |", "|--:|--:|--:|--:|--:|--:|--:|"]  # fmt: skip
     for e in epochs:
+        ev = e.get("valid_ebv_vs_label") or {}
         lines.append(
-            f"| {e['epoch']} | {e['train_nll']:.3f} | {e.get('valid_nll', float('nan')):.3f} | "
-            f"{e.get('valid_chi2_xp_per_dof', float('nan')):.3f} | {e['seconds']} |"
+            f"| {e['epoch']} | {e['train_nll']:.3f} | {e.get('train_anchor_nll', float('nan')):.3f} | "
+            f"{e.get('valid_nll', float('nan')):.3f} | {e.get('valid_chi2_xp_per_dof', float('nan')):.3f} | "
+            f"{_fmt(ev.get('median_offset'))} / {_fmt(ev.get('nmad'))} / {_fmt(ev.get('slope'))} | {e['seconds']} |"
         )
     if epochs:
         lines += [
@@ -1573,41 +2326,63 @@ def write_report(
             "Learned scatter (last epoch): `" + json.dumps(epochs[-1]["scatter"]) + "`",
         ]
     if label_chi2:
-        lines += ["", "## Whitened XP residuals at the labels (E, parallax profiled)", "",
+        lines += ["", "## At the labels (E, parallax profiled, no anchor)", "",
                   "| G bin | n | chi2/dof | median chi2/dof |", "|:--|--:|--:|--:|"]  # fmt: skip
         for row in label_chi2.get("chi2_xp_by_g", []):
             lines.append(
                 f"| {row['g_bin']} | {row['n']} | {row['chi2_xp_per_dof']:.3f} | {row['median_chi2_xp_per_dof']:.3f} |"
             )
+        if label_chi2.get("ebv_vs_label"):
+            lines += ["", "E at the labels vs reddening labels: `"
+                      + json.dumps(label_chi2["ebv_vs_label"]) + "`"]  # fmt: skip
     for name, summ in summaries.items():
-        lines += ["", f"## Inference: {name} ({summ['n_labelled']} labelled)", "",
+        lines += ["", f"## Inference: {name} ({summ['n']} stars, {summ['n_labelled']} labelled)", "",
                   "| parameter | median offset | NMAD | 68 % coverage | 95 % coverage |", "|:--|--:|--:|--:|--:|"]  # fmt: skip
         for p in PARAMS:
             s = summ[p]
             lines.append(
-                f"| {p} | {s['median_offset']} | {s['nmad']:.4g} | {s['coverage68']} | {s['coverage95']} |"
+                f"| {p} | {_fmt(s['median_offset'], '.4g')} | {_fmt(s['nmad'], '.4g')} | "
+                f"{_fmt(s['coverage68'])} | {_fmt(s['coverage95'])} |"
             )
-        lines += [
-            "",
-            "XP chi2/dof at the MLE by G:",
-            "",
-            "| G bin | n | chi2/dof | median |",
-            "|:--|--:|--:|--:|",
-        ]
+        lines += ["", f"At bound: `{json.dumps(summ['at_bound_fraction'])}`; E at the lower bound "
+                  f"{_fmt(summ.get('ebv_at_lower_bound'))}, upper {_fmt(summ.get('ebv_at_upper_bound'))}"]  # fmt: skip
+        if summ.get("ebv_vs_label", {}).get("n"):
+            lines += ["", "E at the MLE vs reddening labels (labels not used at inference):", "",
+                      "| G bin | n | offset | NMAD | pull NMAD | slope |", "|:--|--:|--:|--:|--:|--:|"]  # fmt: skip
+            for r in [{"g_bin": "all", **summ["ebv_vs_label"]}] + summ[
+                "ebv_vs_label_by_g"
+            ]:
+                lines.append(
+                    f"| {r['g_bin']} | {r['n']} | {_fmt(r['median_offset'])} | {_fmt(r['nmad'])} | "
+                    f"{_fmt(r['pull_nmad'])} | {_fmt(r.get('slope'))} |"
+                )
+        lines += ["", "XP chi2/dof at the MLE by G:", "", "| G bin | n | chi2/dof | median |",
+                  "|:--|--:|--:|--:|"]  # fmt: skip
         for row in summ["chi2_xp_by_g"]:
             lines.append(
                 f"| {row['g_bin']} | {row['n']} | {row['chi2_xp_per_dof']:.3f} | {row['median_chi2_xp_per_dof']:.3f} |"
             )
-        lines += ["", "[Fe/H] recovery by G and [Fe/H] bin:", "", "| G | [Fe/H] | n | offset | NMAD | 68 % cov. |",
-                  "|:--|:--|--:|--:|--:|--:|"]  # fmt: skip
-        for c in summ["feh_by_g_and_feh"]:
-            lines.append(
-                f"| {c['g_bin']} | {c['feh_bin']} | {c['n']} | {c['median_offset']:.3f} | {c['nmad']:.3f} | {c['coverage68']:.2f} |"
+        tables = [
+            (
+                "[Fe/H] recovery against the labels by G and [Fe/H] bin:",
+                "feh_by_g_and_feh",
             )
-        lines += ["", f"At bound: `{json.dumps(summ['at_bound_fraction'])}`"]
+        ]
+        if summ.get("feh_vs_ref_by_g_and_feh"):
+            tables.append(("[Fe/H] against the raw high-resolution reference (`fe_h_ref`) by G and "
+                           "reference [Fe/H]:", "feh_vs_ref_by_g_and_feh"))  # fmt: skip
+        for title, key in tables:
+            lines += ["", title, "", "| G | [Fe/H] | n | offset | NMAD | 68 % cov. |",
+                      "|:--|:--|--:|--:|--:|--:|"]  # fmt: skip
+            for c in summ[key]:
+                lines.append(
+                    f"| {c['g_bin']} | {c['feh_bin']} | {c['n']} | {c['median_offset']:.3f} | "
+                    f"{c['nmad']:.3f} | {c.get('coverage68', float('nan')):.2f} |"
+                )
     lines += [
         "",
-        "Interval coverage is against labels that carry their own errors (not included).",
+        "Interval coverage is against labels (or references) that carry their own errors "
+        "(not included).",
     ]
     (out / "report.md").write_text("\n".join(lines) + "\n")
     try:

@@ -1006,19 +1006,17 @@ STEPS.update(
 # emulator of XP coefficients + absolute magnitudes from (Teff, log g, [Fe/H], E(B-V)),
 # likelihood with the per-star Gaia XP covariances (sidecar) plus learned fractional
 # scatter, parallax term with the Lindegren+2021 zero point; then MLE and profile
-# intervals for the held-out test rows and the frozen-core rows. Needs the pinned
-# torchregress to provide losses.KnownCovarianceGaussianNLL.
-XPFM_RUN = "xp_forward_model_20261120"
+# intervals for held-out test rows and the frozen-core rows.
+# Run 2 (20261122): E(B-V) anchored in training by the empirical reddening labels
+# (training-only; they derive from the labels and BP-RP), per-star (E, distance)
+# fitted by Gauss-Newton every batch, train-split core rows in training (held-out
+# core rows stay out), v10 labels (identity [Fe/H] core), 2MASS dropped (mismatched in
+# the tables), fixed per-star XP factor and float32 at inference. Run 1
+# (xp_forward_model_20261120) used the S1 20261120 labels and excluded every core row.
+XPFM_RUN = "xp_forward_model_20261122"
 XPFM_SIDECAR = "covariance_sidecar_20261120/sidecar_table.h5"
-# labels.npz contract (S1 common-scale labels). Until it exists the job uses the table's
-# own labels with the v8-nopool fine-tune split; set the path here once it is written.
-XPFM_LABELS: str | None = f"{ROOT}likelihood_head_s1_20261120/labels.npz"  # S1 labels
-_XPFM_SPLIT = "configs/finetune-multisurvey-20261119-v8-nopool.yaml"
-_xpfm_labels = (
-    f" --labels {XPFM_LABELS}"
-    if XPFM_LABELS
-    else f" --labels-from-table --split-config {_XPFM_SPLIT}"
-)
+XPFM_LABELS = f"{ROOT}likelihood_head_s1_v10_20261121/labels.npz"  # v10 labels
+XPFM_REDDENING = f"{ROOT}{REDDENING_V6}/v5_reddening.npz"  # ebv_star, e_ebv_star
 STEPS["ms-xp-forward-model"] = dict(
     run_id=XPFM_RUN,
     gpu=1,
@@ -1026,14 +1024,15 @@ STEPS["ms-xp-forward-model"] = dict(
     cpu=8,
     command=(
         "python -u scripts/run_xp_forward_model.py"
-        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits{_xpfm_labels}"
+        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits --labels {XPFM_LABELS}"
+        f" --reddening-labels {XPFM_REDDENING}"
         f" --covariance-sidecar {ROOT}{XPFM_SIDECAR}"
         f" --core-rows {ROOT}{RESCORE}/rows.npy"
         " --max-train-stars 1000000 --max-heldout-stars 50000 --epochs 20"
-        " --infer-chunk-size 4096"
+        " --nuisance-steps 3 --infer-dtype float32"
         ' --output "$experiment_output"'
     ),
-    files=[] if XPFM_LABELS else [_XPFM_SPLIT],
+    files=[],
 )
 
 
