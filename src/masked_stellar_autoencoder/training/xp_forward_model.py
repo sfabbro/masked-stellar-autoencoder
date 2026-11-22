@@ -162,10 +162,11 @@ Inference
 ---------
 Per star, ``maximize_score`` over ``(Teff, log g, [Fe/H], u_E, u_p)`` in a box (the
 labels' range for ``theta``), started from the best point of a candidate bank
-(training-population ``theta`` x an ``E`` grid, shortlisted with the known XP
-covariance alone and the distance modulus profiled analytically, the shortlist
-re-ranked with the exact likelihood; ranking with a covariance evaluated at the
-observation gave starts uncorrelated with the labels on real stars), re-maximised in
+(training-population ``theta``, each with ``E`` and the distance modulus profiled
+in closed form under the known XP covariance alone, the shortlist re-ranked with
+the exact likelihood; a fixed ``E`` grid and a covariance evaluated at the
+observation both gave starts nearly uncorrelated with the labels on real stars),
+re-maximised in
 ``covariance_passes`` passes with the covariance fixed at the previous point's
 prediction (the coarse start, then the previous MLE), then ``profile_interval``
 (Wilks 68.27 % and 95 %) for the three atmospheric parameters with the other four
@@ -2033,68 +2034,101 @@ def coarse_init(
     *,
     star_block: int = 32,
     top: int = 1,
+    e_ref: float = 0.1,
 ) -> Tensor:
     """Best bank point per star as a start ``[n, 5]`` (theta, u_E, u_parallax).
 
     ``top > 1``: the ``top`` best points ``[n, top, 5]``, best first.
 
-    The XP term is exact (the star's fixed covariance factor); the distance modulus
-    is profiled analytically from the photometry and the parallax (delta method);
-    bank points outside the star's ``E`` box are excluded.
+    ``bank`` ``[K, >= 3]``: candidate ``theta`` (any further column is ignored).
+    For each star and candidate, ``E`` and the distance modulus are profiled in
+    closed form: the emulator is linearised in ``E`` (``c = h0 + E g``, ``M_b = M0_b
+    + E A_b``, secant slopes over ``[0, e_ref]``), which makes the XP term (with
+    ``prep``'s fixed covariance factor), the photometry and the parallax (delta
+    method in the distance modulus) jointly quadratic in ``(E, mu)``; the 2 x 2
+    normal equations are solved, ``E`` clipped to the star's box and ``mu``
+    re-solved given it, then clipped. A fixed ``E`` grid does not work on real
+    stars: their XP spectra pin ``E`` to ~0.005 mag, so a grid's ``E`` mismatch
+    dominates the ranking and selects ``theta`` that compensates along the
+    ``E``-``Teff``-``[Fe/H]`` degeneracy.
     """
-    dtype, device = bank.dtype, bank.device
+    dtype, device = prep.xp_y.dtype, prep.xp_y.device
+    theta_bank = bank[:, :3].to(device=device, dtype=dtype)
+    f64 = torch.float64
     with torch.no_grad():
-        xp_bank, mag_bank = model(bank[:, :3], bank[:, 3])  # [K, 110], [K, nb]
-        n, nc = prep.xp_y.shape[0], model.n_coeff
-        chi2 = torch.zeros(n, bank.shape[0], dtype=dtype, device=device)
+        zero = torch.zeros(theta_bank.shape[0], dtype=dtype, device=device)
+        xp0, mag0 = model(theta_bank, zero)
+        xp1, mag1 = model(theta_bank, zero + e_ref)
+        g_xp, a_mag = (xp1 - xp0) / e_ref, (mag1 - mag0) / e_ref
+        n, nc, kk = prep.xp_y.shape[0], model.n_coeff, theta_bank.shape[0]
+        rr = torch.zeros(n, kk, dtype=f64, device=device)
+        rs = torch.zeros_like(rr)
+        ss = torch.zeros_like(rr)
         for k in range(2):
             sl = slice(k * nc, (k + 1) * nc)
             for start in range(0, n, star_block):
-                rs = slice(start, min(start + star_block, n))
-                resid = prep.xp_y[rs, sl].unsqueeze(-1) - xp_bank[:, sl].T.unsqueeze(0)
-                resid = resid * prep.xp_q[rs, sl].unsqueeze(-1)  # [b, nc, K]
+                rs_ = slice(start, min(start + star_block, n))
+                q = prep.xp_q[rs_, sl].unsqueeze(-1)
+                resid = (
+                    prep.xp_y[rs_, sl].unsqueeze(-1) - xp0[:, sl].T.unsqueeze(0)
+                ) * q
+                slope = g_xp[:, sl].T.unsqueeze(0) * q
                 w = torch.linalg.solve_triangular(
-                    prep.xp_factor[rs, k], resid, upper=False
-                )
-                chi2[rs] += w.square().sum(1)
-        # Photometry with the distance modulus profiled (weighted mean incl. parallax),
-        # expanded into [n, K] matrix products (no [n, K, bands] tensor), in float64.
-        f64 = torch.float64
+                    prep.xp_factor[rs_, k],
+                    torch.cat([resid, slope], dim=-1),
+                    upper=False,
+                ).to(f64)
+                wr, ws = w[..., :kk], w[..., kk:]
+                rr[rs_] += wr.square().sum(1)
+                rs[rs_] += (wr * ws).sum(1)
+                ss[rs_] += ws.square().sum(1)
+        # Photometry and parallax as [n, K] matrix products (no [n, K, bands] tensor).
         w_m = prep.mag_mask.to(f64) / prep.mag_var.to(f64)  # [n, nb]
         mag = prep.mag.to(f64)
-        bank_m = mag_bank.to(f64)  # [K, nb]
+        m0, am = mag0.to(f64), a_mag.to(f64)  # [K, nb]
         plx, plx_err = prep.plx.to(f64), prep.plx_err.to(f64)
         good = prep.has_plx & (plx > 2.0 * plx_err)
         plx_safe = torch.where(good, plx, torch.ones_like(plx))
-        mu_plx = 5.0 * torch.log10(100.0 / plx_safe)
+        mu_plx = (5.0 * torch.log10(100.0 / plx_safe)).unsqueeze(1)
         var_mu = (plx_err / LN10_OVER_5 / plx_safe).square()
-        w_plx = torch.where(good, 1.0 / var_mu, torch.zeros_like(var_mu))
-        sum_wd = (w_m * mag).sum(-1, keepdim=True) - w_m @ bank_m.T  # sum_b w (m - M)
-        sum_wdd = (
-            (w_m * mag.square()).sum(-1, keepdim=True)
-            - 2.0 * (w_m * mag) @ bank_m.T
-            + w_m @ bank_m.square().T
+        w_plx = torch.where(good, 1.0 / var_mu, torch.zeros_like(var_mu)).unsqueeze(1)
+        wm_m = w_m * mag
+        sw = w_m.sum(-1, keepdim=True)  # sum w
+        swd = wm_m.sum(-1, keepdim=True) - w_m @ m0.T  # sum w d, d = m - M0
+        swdd = (
+            (wm_m * mag).sum(-1, keepdim=True) - 2.0 * wm_m @ m0.T + w_m @ m0.square().T
         )
-        w_sum = w_m.sum(-1, keepdim=True)
-        mu = (sum_wd + (w_plx * mu_plx).unsqueeze(1)) / (
-            w_sum + w_plx.unsqueeze(1)
-        ).clamp_min(torch.finfo(f64).tiny)
-        mu_lo, mu_hi = (b.to(f64) for b in prep.mu_bounds())
-        mu = torch.minimum(torch.maximum(mu, mu_lo.unsqueeze(1)), mu_hi.unsqueeze(1))
-        chi2_phot = (sum_wdd - 2.0 * mu * sum_wd + mu.square() * w_sum).clamp_min(0.0)
-        chi2_plx = w_plx.unsqueeze(1) * (mu - mu_plx.unsqueeze(1)).square()
-        chi2_phot, chi2_plx, mu = (t.to(dtype) for t in (chi2_phot, chi2_plx, mu))
-        total = chi2 + chi2_phot + chi2_plx
-        e = bank[:, 3].unsqueeze(0)
-        allowed = (e <= prep.e_max.unsqueeze(1)) & (e >= prep.e_min.unsqueeze(1))
-        total = torch.where(allowed, total, torch.full_like(total, math.inf))
-        total = torch.nan_to_num(total, nan=math.inf)
-        k = max(1, min(int(top), total.shape[1]))
+        swa = w_m @ am.T  # sum w A
+        swaa = w_m @ am.square().T  # sum w A^2
+        swad = wm_m @ am.T - w_m @ (am * m0).T  # sum w A d
+        # Normal equations in (E, mu).
+        a11 = ss + swaa
+        a12 = swa
+        a22 = sw + w_plx
+        b1 = rs + swad
+        b2 = swd + w_plx * mu_plx
+        tiny = torch.finfo(f64).tiny
+        det = (a11 * a22 - a12.square()).clamp_min(tiny)
+        ebv = (b1 * a22 - a12 * b2) / det
+        e_lo, e_hi = prep.e_min.to(f64).unsqueeze(1), prep.e_max.to(f64).unsqueeze(1)
+        ebv = torch.minimum(torch.maximum(ebv, e_lo), e_hi)
+        mu = (b2 - a12 * ebv) / a22.clamp_min(tiny)
+        mu_lo, mu_hi = (b.to(f64).unsqueeze(1) for b in prep.mu_bounds())
+        mu = torch.minimum(torch.maximum(mu, mu_lo), mu_hi)
+        chi2_xp = rr - 2.0 * ebv * rs + ebv.square() * ss
+        chi2_phot = (
+            swdd - 2.0 * ebv * swad - 2.0 * mu * swd + ebv.square() * swaa
+            + 2.0 * ebv * mu * swa + mu.square() * sw
+        ).clamp_min(0.0)  # fmt: skip
+        chi2_plx = w_plx * (mu - mu_plx).square()
+        total = torch.nan_to_num(chi2_xp + chi2_phot + chi2_plx, nan=math.inf)
+        k = max(1, min(int(top), kk))
         best = total.topk(k, dim=1, largest=False).indices  # [n, k]
-        theta = bank[best, :3]  # [n, k, 3]
+        theta = theta_bank[best]  # [n, k, 3]
+        e_best = torch.gather(ebv, 1, best).to(dtype)
         e_min, e_max = prep.e_min.unsqueeze(1), prep.e_max.unsqueeze(1)
-        u_e = ((bank[best, 3] - e_min) / (e_max - e_min)).clamp(0.0, 1.0)
-        log_plx = 2.0 - torch.gather(mu, 1, best) / 5.0
+        u_e = ((e_best - e_min) / (e_max - e_min)).clamp(0.0, 1.0)
+        log_plx = (2.0 - torch.gather(mu, 1, best) / 5.0).to(dtype)
         lo, hi = prep.log_plx_lo.unsqueeze(1), prep.log_plx_hi.unsqueeze(1)
         u_p = ((log_plx - lo) / (hi - lo)).clamp(0.0, 1.0)
         out = torch.cat([theta, u_e.unsqueeze(-1), u_p.unsqueeze(-1)], dim=-1)
@@ -2264,30 +2298,17 @@ class InferenceConfig:
     # MLE passes, each with the XP covariance fixed at the previous point's
     # prediction (coarse start, then the previous MLE); the intervals use the last.
     covariance_passes: int = 2
-    # Start: the candidate bank ranked with the known covariance alone (no learned
-    # terms, observation-independent); the best ``start_shortlist`` re-ranked with
-    # the exact likelihood (:func:`refine_starts`).
+    # Start: ``bank_theta`` training-population theta, each with E and the distance
+    # modulus profiled in closed form (:func:`coarse_init`) under the known
+    # covariance alone (observation-independent); the best ``start_shortlist``
+    # re-ranked with the exact likelihood (:func:`refine_starts`).
     start_shortlist: int = 16
     profile_steps: int = 10
     profile_scan: int = 4
     profile_scan_local: int = 2
     profile_local_sigma: float = 8.0
     profile_tol: float = 1e-3
-    bank_theta: int = 1024
-    ebv_grid: tuple[float, ...] = (
-        -0.03,
-        0.0,
-        0.03,
-        0.08,
-        0.15,
-        0.25,
-        0.4,
-        0.6,
-        0.9,
-        1.3,
-        2.0,
-        3.0,
-    )
+    bank_theta: int = 4096
     confidence: tuple[float, float] = (0.6827, 0.95)
     seed: int = 0
 
@@ -2323,7 +2344,7 @@ def infer_stars(
         [np.asarray(theta_bounds, dtype=np.float64), [[0.0, 1.0], [0.0, 1.0]]]
     )
     bank = torch.as_tensor(
-        candidate_bank(theta_pool, cfg.bank_theta, cfg.ebv_grid, cfg.seed),
+        candidate_bank(theta_pool, cfg.bank_theta, (0.0,), cfg.seed),
         device=device,
         dtype=dtype,
     )

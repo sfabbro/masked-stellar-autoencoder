@@ -114,7 +114,7 @@ def parse_args(argv=None):
     p.add_argument("--newton-steps", type=int, default=30)
     p.add_argument("--profile-scan", type=int, default=4)
     p.add_argument("--profile-steps", type=int, default=10)
-    p.add_argument("--bank-theta", type=int, default=1024)
+    p.add_argument("--bank-theta", type=int, default=4096)
     p.add_argument("--checkpoint", help="skip training: load this model.pt")
     p.add_argument("--skip-inference", action="store_true")
     p.add_argument("--seed", type=int, default=0)
