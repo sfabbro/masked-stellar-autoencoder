@@ -787,6 +787,27 @@ def test_cli_end_to_end(tmp_path) -> None:
     train = np.load(out / "train_nuisance.npz")
     assert np.isin([0, 1, 2], train["table_row"]).all()  # train-split core trains
     assert not np.isin([101, 126], train["table_row"]).any()  # held-out core never
+    # The inference diagnosis runs on the trained checkpoint.
+    spec = importlib.util.spec_from_file_location(
+        "diagnose_xp_forward_inference",
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "diagnose_xp_forward_inference.py",
+    )
+    diag = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(diag)
+    dout = tmp_path / "diag"
+    diag.main([
+        "--table", str(tmp_path / "t.fits"), "--labels", str(tmp_path / "labels.npz"),
+        "--core-rows", str(tmp_path / "core.npy"), "--checkpoint", str(out / "model.pt"),
+        "--bands", "G,W1,G_PS1,R_PS1", "--n", "3", "--output", str(dout),
+        "--infer-dtype", "float64",
+    ])  # fmt: skip
+    rep = json.loads((dout / "diagnosis.json").read_text())
+    assert rep["n"] == 3
+    for key in ("standard", "exact_nll", "oracle", "wide"):
+        assert key in rep, key
+    assert (dout / "diagnosis.md").exists()
     report = json.loads((out / "report.json").read_text())
     assert {"heldout", "core_heldout", "core_train"} <= set(report["recovery"])
     assert report["recovery"]["core_heldout"]["n_fe_h_ref"] == 2

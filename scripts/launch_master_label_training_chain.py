@@ -1034,6 +1034,26 @@ STEPS["ms-xp-forward-model"] = dict(
     ),
     files=[],
 )
+# Diagnosis of run 2's inference (attempt 3, s81kdn7v): MLE chi^2/dof 2-5 against ~1
+# at the labels, half the stars at the lower E bound, Teff uncorrelated with the
+# labels; synthetic stars drawn from the same model are recovered. Exact NLL at the
+# labels vs the MLE, start quality, oracle (label) starts and a wide search on 2000
+# held-out stars.
+STEPS["ms-xp-forward-diagnose"] = dict(
+    run_id="xp_forward_diagnose_20261122",
+    gpu=1,
+    ram=64,
+    cpu=8,
+    command=(
+        "python -u scripts/diagnose_xp_forward_inference.py"
+        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits --labels {XPFM_LABELS}"
+        f" --checkpoint {ROOT}{XPFM_RUN}/model.pt"
+        f" --covariance-sidecar {ROOT}{XPFM_SIDECAR}"
+        f" --core-rows {ROOT}{RESCORE}/rows.npy --n 2000"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
 # P1 (S1 precision): parallax as a parameter with its measurement likelihood
 # (latents without the PARALLAX input; heads on theta' = (Teff, log g, [Fe/H],
 # log10 parallax) trained on parallax/error >= 10; score + log N(parallax -

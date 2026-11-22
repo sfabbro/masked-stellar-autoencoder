@@ -2266,8 +2266,12 @@ def infer_stars(
     device: torch.device,
     dtype: torch.dtype = torch.float64,
     log: Callable[[str], None] = print,
+    init: np.ndarray | None = None,
 ) -> dict[str, np.ndarray]:
     """MLE, profile intervals, nuisances and goodness of fit for every star of ``data``.
+
+    ``init`` ``[n, 5]`` (theta, u_E, u_parallax): starts that replace the coarse
+    candidate-bank start (e.g. diagnostics from the labels, or another estimator).
 
     ``cov_theta`` ``[n, 3, 3]``: the (Teff, log g, [Fe/H]) block of the inverse
     observed information at the MLE (nuisances profiled; NaN where not positive
@@ -2304,9 +2308,12 @@ def infer_stars(
         prep = prepare_stars(
             model_d, batch, reference=observed_reference(model_d, batch), dtype=dtype
         )
-        init = coarse_init(model_d, prep, bank)
+        if init is None:
+            start_pt = coarse_init(model_d, prep, bank)
+        else:
+            start_pt = torch.as_tensor(init[idx], device=device, dtype=dtype)
         x = torch.arange(len(idx), device=device, dtype=dtype).unsqueeze(1)
-        point = init
+        point = start_pt
         for _ in range(max(1, cfg.covariance_passes)):
             ebv_ref, _ = unit_to_nuisance(point[:, 3:5], prep)
             prep = prepare_stars(
@@ -2346,7 +2353,7 @@ def infer_stars(
         out["parallax_mle"].append(parallax.cpu().numpy())
         for k in ("chi2_xp", "dof_xp", "chi2_phot", "dof_phot", "nll"):
             out[k].append(parts[k].cpu().numpy())
-        out["init"].append(init.cpu().numpy())
+        out["init"].append(start_pt.cpu().numpy())
         out["cov_theta"].append(cov[:, :3, :3].cpu().numpy())
         done = idx[-1] + 1
         rate = done / max(time.perf_counter() - t0, 1e-9)
