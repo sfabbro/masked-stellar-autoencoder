@@ -1054,6 +1054,26 @@ STEPS["ms-xp-forward-diagnose"] = dict(
     ),
     files=[],
 )
+# Inference only, from run 2's trained model, with the start ranked under the learned
+# covariance at each candidate (diagnosis attempt 4: Teff r 0.81 vs -0.07 before) and
+# E_MIN -0.15: held-out and frozen-core rows, the same report as run 2.
+STEPS["ms-xp-forward-infer"] = dict(
+    run_id="xp_forward_infer_20261122",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        "python -u scripts/run_xp_forward_model.py"
+        f" --table {ROOT}{MS_TABLE_V5}/finetune.fits --labels {XPFM_LABELS}"
+        f" --reddening-labels {XPFM_REDDENING}"
+        f" --covariance-sidecar {ROOT}{XPFM_SIDECAR}"
+        f" --core-rows {ROOT}{RESCORE}/rows.npy"
+        f" --checkpoint {ROOT}{XPFM_RUN}/model.pt"
+        " --max-train-stars 1000000 --max-heldout-stars 50000 --infer-dtype float32"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
 # Likelihood scans around the labels of 300 held-out stars (1-D Teff and [Fe/H] scans
 # under the exact and the known-only covariance; 2-D (Teff, E) grid): why the start
 # ranking fails on real stars, and whether a spurious optimum at low E exists.
