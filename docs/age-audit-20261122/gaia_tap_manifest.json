@@ -1,0 +1,7 @@
+{
+  "tmass_uploaded": 158818,
+  "flame_queried": 4525412,
+  "flame_new_this_run": 7987,
+  "tmass_adql": "SELECT u.designation, b.source_id, b.angular_distance, b.number_of_neighbours FROM TAP_UPLOAD.ids AS u JOIN gaiadr3.tmass_psc_xsc_best_neighbour AS b ON b.original_ext_source_id = u.designation",
+  "flame_adql": "SELECT u.source_id, a.age_flame, a.age_flame_lower, a.age_flame_upper, a.evolstage_flame, a.flags_flame, a.teff_gspphot, a.logg_gspphot, a.mh_gspphot, s.age_flame_spec, s.age_flame_spec_lower, s.age_flame_spec_upper, s.evolstage_flame_spec FROM TAP_UPLOAD.ids AS u LEFT OUTER JOIN gaiadr3.astrophysical_parameters AS a ON a.source_id = u.source_id LEFT OUTER JOIN gaiadr3.astrophysical_parameters_supp AS s ON s.source_id = u.source_id WHERE a.age_flame IS NOT NULL OR s.age_flame_spec IS NOT NULL"
+}

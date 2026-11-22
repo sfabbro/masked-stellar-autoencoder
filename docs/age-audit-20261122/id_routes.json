@@ -1,0 +1,18 @@
+{
+  "kic": {
+    "route": "apokasc3_vac+kepler_dr3_good<1as",
+    "keys": 197750
+  },
+  "2mass": {
+    "route": "apokasc3_vac+kepler_dr3_good+apo_k2+starhorse_apogee17+gaia_dr3_tmass_best_neighbour",
+    "keys": 233302
+  },
+  "epic": {
+    "route": "apo_k2",
+    "keys": 4661
+  },
+  "sobject": {
+    "route": "galah_dr4",
+    "keys": 917578
+  }
+}

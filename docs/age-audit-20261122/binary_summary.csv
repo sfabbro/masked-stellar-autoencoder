@@ -1,0 +1,8 @@
+source,pairs,median,nmad,nmad_over_sqrt2,inflation
+flame_dr3,101294,-0.0646,0.4186,0.296,1.0492
+flame_spec_dr3,7649,-0.015,0.3168,0.224,0.8376
+galah_dr4,142,0.0456,0.1852,0.131,
+starhorse23_lamostl7,251,-0.06,0.1188,0.084,1.7787
+starhorse23_lamostm7,51,0.0079,0.1257,0.0889,1.4471
+starhorse23_ravedr6,38,-0.0434,0.1928,0.1363,1.1596
+starhorse23_rvs,756,-0.0612,0.2009,0.1421,1.494
