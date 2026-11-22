@@ -8,8 +8,10 @@ the posterior head on the same stars:
   (valid + test) core stars, per reference [Fe/H] bin x G bin.
 * **Anchors**: test stars' IRFM Teff and seismic log g anchor records.
 * **Coverage**: joint Neyman sets (lambda(theta_label) <= C(theta_label, G)),
-  per-parameter profile intervals and the head's 16-84 % interval, test
-  stars, binned per Teff, log g, [Fe/H] and G (``binned_conditional_coverage``).
+  per-parameter Neyman intervals, raw Wilks sets (joint and per parameter,
+  from the statistics of the label), per-parameter profile intervals and the
+  head's 16-84 % interval, test stars, binned per Teff, log g, [Fe/H] and G
+  (``binned_conditional_coverage``).
   The labels are noisy measurements, so coverage of the label is approximate
   (conservative when the critical values were calibrated on equally noisy
   labels).
@@ -256,6 +258,40 @@ def render_report(m):
                              if r["n"] else "-")  # fmt: skip
             L.append(f"| [{lo:g}, {hi:g}) | " + " | ".join(cells) + " |")
         L.append("")
+    if m.get("precision"):
+        L.append("## Precision summary (MLE scatter and raw Wilks coverage)\n")
+        L.append("Frozen held-out core NMAD per reference [Fe/H] bin (G <= 16), anchor "
+                 "and test-label NMAD, and coverage of the test labels (G <= 16). "
+                 "`mle_<arm>_single`: member 0 of the arm's ensemble alone.\n")  # fmt: skip
+        ests = list(m["precision"])
+        names = list(dict.fromkeys(k for v in m["precision"].values() for k in v))
+        L.append("| metric | " + " | ".join(ests) + " |")
+        L.append("|---" * (len(ests) + 1) + "|")
+        for name in names:
+            nd = 0 if name.startswith(("Teff", "test teff")) else 3
+            cells = [_fmt(m["precision"][e].get(name), nd) for e in ests]
+            L.append(f"| {name} | " + " | ".join(cells) + " |")
+        L.append("")
+    if m.get("edges"):
+        L.append("## MLE at the edges and left out (fractions of rows)\n")
+        L.append("left out: no finite score inside the label support; box: MLE on a "
+                 "box bound (any of Teff, log g, [Fe/H]); support edge: MLE in a "
+                 "support cell next to its boundary; window edge: parallax at its "
+                 "search-window edge; pull > 3: |parallax MLE - measured| > 3 "
+                 "errors.\n")  # fmt: skip
+        cols = [("left_out", "left out"), ("at_box_bound", "box"),
+                ("at_bound_teff", "box Teff"), ("at_bound_logg", "box log g"),
+                ("at_bound_fe_h", "box [Fe/H]"), ("support_edge", "support edge"),
+                ("parallax_window_edge", "window edge"),
+                ("parallax_pull_gt3", "pull > 3"),
+                ("parallax_measured", "parallax measured")]  # fmt: skip
+        L.append("| arm | rows | n | " + " | ".join(t for _, t in cols) + " |")
+        L.append("|---" * (len(cols) + 3) + "|")
+        for arm, groups in m["edges"].items():
+            for g, d in groups.items():
+                cells = [_fmt(d.get(k), 4) for k, _ in cols]
+                L.append(f"| {arm} | {g} | {d['n']} | " + " | ".join(cells) + " |")
+        L.append("")
     L.append("## Anchors (test stars): median offset / NMAD (n)\n")
     ests = sorted({e for v in m["anchors"].values() for e in v})
     L.append("| anchor | " + " | ".join(ests) + " |")
@@ -269,7 +305,9 @@ def render_report(m):
     L.append("## Coverage (test stars, labels of each arm)\n")
     L.append(
         "'Neyman 68/95': the joint (Teff, log g, [Fe/H]) set; 'Neyman 68 <p>': "
-        "the per-parameter Neyman interval; 'profile 68': Wilks (0.5).\n"
+        "the per-parameter Neyman interval; 'Wilks 68 joint': raw joint set "
+        "(lambda <= 1.765, chi2_3); 'Wilks 68 <p>': raw profile set (lambda_j <= "
+        "0.5); 'profile 68': the Wilks (0.5) profile interval (profiled rows).\n"
     )
     L.append("Labels are noisy measurements: coverage of the label is approximate. "
              "Critical values were calibrated on the valid split's labels, which carry "
@@ -277,7 +315,9 @@ def render_report(m):
              "true parameters).\n")  # fmt: skip
     kinds = [("neyman68", "Neyman 68"), ("neyman95", "Neyman 95"),
              ("neyman68_fe_h", "Neyman 68 [Fe/H]"), ("neyman68_teff", "Neyman 68 Teff"),
-             ("neyman68_logg", "Neyman 68 log g"),
+             ("neyman68_logg", "Neyman 68 log g"), ("wilks68_joint", "Wilks 68 joint"),
+             ("wilks68_fe_h", "Wilks 68 [Fe/H]"), ("wilks68_teff", "Wilks 68 Teff"),
+             ("wilks68_logg", "Wilks 68 log g"),
              ("profile68_fe_h", "profile 68 [Fe/H]"), ("posterior68_fe_h", "head 16-84 [Fe/H]"),
              ("profile68_teff", "profile 68 Teff"), ("posterior68_teff", "head 16-84 Teff"),
              ("profile68_logg", "profile 68 log g"), ("posterior68_logg", "head 16-84 log g")]  # fmt: skip
