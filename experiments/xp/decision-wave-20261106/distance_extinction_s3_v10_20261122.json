@@ -1,0 +1,24 @@
+{
+  "run_id": "distance_extinction_s3_v10_20261122",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/distance_extinction_s3_v10_20261122",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/distance_extinction_s3_v10_20261122",
+  "source_commit": "d55c427529e8a6f32a8df3912f27d813a5f3b572",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s3_distance_extinction.py --inputs /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_plx_ens_20261122 --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --config configs/finetune-multisurvey-20261121-v10.yaml --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --reddening /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v5_reddening.npz --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --members /arc/projects/k-pop/catalogues/OpenClusters/members.fits --clusters-table /arc/projects/k-pop/catalogues/OpenClusters/clusters.fits --families gmix,flow --ensemble 5 --max-train 3000000 --device cuda --threads 8 --output \"$experiment_output\" --stages data,clusters,train,predict,report && \"${pixi_run[@]}\" python -u scripts/s3_distance_extinction.py --inputs /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_plx_ens_20261122 --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --config configs/finetune-multisurvey-20261121-v10.yaml --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --reddening /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v5_reddening.npz --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --members /arc/projects/k-pop/catalogues/OpenClusters/members.fits --clusters-table /arc/projects/k-pop/catalogues/OpenClusters/clusters.fits --families gmix,flow --ensemble 5 --max-train 3000000 --device cuda --threads 8 --output \"$experiment_output\" --stages noxp,report --force --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/finetune_checkpoint_12.pth",
+  "utc": "2026-11-22T19:06:45.754430+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "efimom3d"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261121-v10.yaml": "7e57eebf11267bebfd9d9777b7f746352f6e1cb0c7806d5311110678ccadc70c"
+  },
+  "payload_sha256": "1e8194bce031ef98cac5ac45a73658a8c2caf9956465256b2f9e21e10b8e326a"
+}
