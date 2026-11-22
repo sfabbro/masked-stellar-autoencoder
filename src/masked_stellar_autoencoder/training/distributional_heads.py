@@ -44,7 +44,7 @@ import torch
 from torch import nn
 
 PARAMS = ("teff", "logg", "fe_h")
-KINDS = ("flow", "tmix", "t")
+KINDS = ("flow", "tmix", "gmix", "t")
 # Label-error floor and cap (physical units) of the errors-in-variables term:
 # quoted common-scale errors below the floor are not credible, above the cap a
 # record is not a measurement of the parameter.
@@ -190,9 +190,10 @@ class Member(nn.Module):
             self.trunk = mlp(in_dim, hidden, context)
         else:
             m = 1 if kind == "t" else int(components)
+            gauss = kind == "gmix"  # full-covariance Gaussian mixture (df = inf)
             self.density = MixtureDensityLoss(
-                m, 3, "full", full_parameterization="precision", df=df, learn_df=True,
-                reduction="none",
+                m, 3, "full", full_parameterization="precision",
+                df=math.inf if gauss else df, learn_df=not gauss, reduction="none",
             )  # fmt: skip
             self.trunk = mlp(in_dim, hidden, self.density.expected_output_size)
 

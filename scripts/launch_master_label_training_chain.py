@@ -1143,7 +1143,7 @@ STEPS["ms-s2-distributional-heads"] = dict(
         f" --core-rows {ROOT}{RESCORE}/rows.npy"
         f" --baseline {ROOT}{S1_V10}"
         f" --baseline {ROOT}likelihood_head_s1_v10_plx_ens_20261122 --baseline-arms all,plx"
-        " --heads flow,tmix,t,flow_noeiv --ensemble 5 --max-train 2000000"
+        " --heads flow,tmix,gmix,t,flow_noeiv --ensemble 5 --max-train 2000000"
         " --device cuda --threads 8"
         ' --output "$experiment_output"'
     ),

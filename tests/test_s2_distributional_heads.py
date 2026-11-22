@@ -206,7 +206,7 @@ def test_s2_script_end_to_end(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", [
         "s2", "--inputs", str(tmp_path), "--output", str(out),
         "--records", str(tmp_path / "records.npz"), "--core-rows", str(tmp_path / "rows.npy"),
-        "--baseline", str(base), "--heads", "flow,tmix,t,flow_noeiv", "--ensemble", "2",
+        "--baseline", str(base), "--heads", "flow,tmix,gmix,t,flow_noeiv", "--ensemble", "2",
         "--device", "cpu", "--epochs", "3", "--batch", "128", "--hidden", "32,32",
         "--context", "8", "--flow-hidden", "32,32", "--flow-bins", "8",
         "--components", "2", "--eiv-samples", "2", "--stop-mc", "2", "--eval-mc", "4",
@@ -219,10 +219,10 @@ def test_s2_script_end_to_end(tmp_path, monkeypatch):
     sel = json.loads((out / "selection.json").read_text())
     assert sel["counts"]["train"] > 500 and sel["counts"]["core_heldout"] > 50
     m = json.loads((out / "metrics.json").read_text())
-    assert set(m["scores"]) == {"posterior", "flow", "tmix", "t", "flow_noeiv"}
+    assert set(m["scores"]) == {"posterior", "flow", "tmix", "gmix", "t", "flow_noeiv"}
     for nm, s in m["scores"].items():
         assert np.isfinite(s["nll_label"]) and np.isfinite(s["energy"]), nm
-    assert set(m["decision"]) == {"flow", "tmix", "t", "flow_noeiv"}
+    assert set(m["decision"]) == {"flow", "tmix", "gmix", "t", "flow_noeiv"}
     assert "s1_all" in m["frozen_core"] and "flow_mode" in m["frozen_core"]
     assert (
         "teff_anchor" in m["anchors"] and "flow_median" in m["anchors"]["teff_anchor"]
@@ -250,3 +250,17 @@ def test_s2_script_end_to_end(tmp_path, monkeypatch):
     assert ex["samples_flow"].shape == (4, 50, 3) and "samples_posterior" in ex.files
     thr = json.loads((out / "conformal_tmix.json").read_text())["thresholds"]
     assert set(thr) == set(mod.VARIANTS)
+
+
+def test_gaussian_mixture_head_is_the_df_inf_mixture():
+    """gmix: a full-covariance Gaussian mixture (df = inf, not learned)."""
+    torch.manual_seed(2)
+    rng = np.random.default_rng(2)
+    z, y = _bimodal(200, rng)
+    std = dh.Standardizer.fit(z.astype("f8"), y)
+    m = dh.Member("gmix", z.shape[1], hidden=(16,), components=2).requires_grad_(False)
+    assert not any(n.endswith("raw_df") for n, _ in m.named_parameters())
+    with torch.no_grad():
+        pred = dh.EnsemblePredictor([m], std, True).predict(z[:20], "cpu")
+        assert torch.isinf(pred.mixture.df).all()
+        assert torch.isfinite(pred.log_prob(pred.mixture.loc[:, 0])).all()

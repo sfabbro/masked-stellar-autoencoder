@@ -2,7 +2,7 @@
 
 usage: s2_distributional_heads.py --inputs S1_DIR --output DIR
        [--records REC] [--core-rows ROWS.npy] [--baseline S1_DIR ...]
-       [--heads flow,tmix,t,flow_noeiv] [--ensemble 5] [--max-train 2000000]
+       [--heads flow,tmix,gmix,t,flow_noeiv] [--ensemble 5] [--max-train 2000000]
        [--stages data,train,evaluate,calibrate,report] [--device cuda]
 
 Design note ``docs/design-20261122-data-driven-inference.md`` (sections 2, 6;
@@ -14,6 +14,8 @@ K-member ensemble whose density is the equal-weight mixture of its members
 
 * ``flow``: conditional rational-quadratic spline flow (torchregress NSF), EIV;
 * ``tmix``: mixture of 4 multivariate Student-t (full scale), EIV;
+* ``gmix``: mixture of 4 full-covariance Gaussians (the harness's best on non-heavy-tailed
+  and rare-population tasks), EIV;
 * ``t``: one multivariate Student-t, EIV;
 * ``flow_noeiv``: the flow fitted to the noisy labels directly (EIV off).
 
@@ -74,6 +76,7 @@ from s1_likelihood_head import arm_theta, log  # noqa: E402
 ARMS = {
     "flow": dict(kind="flow", eiv=True),
     "tmix": dict(kind="tmix", eiv=True),
+    "gmix": dict(kind="gmix", eiv=True),
     "t": dict(kind="t", eiv=True),
     "flow_noeiv": dict(kind="flow", eiv=False),
 }
@@ -90,11 +93,13 @@ COLORS = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100")
 # Fixed series styles: four primary series, then dotted variants.
 STYLE = {
     "flow": (COLORS[0], "-"), "tmix": (COLORS[1], "-"), "t": (COLORS[2], "-"),
+    "gmix": (COLORS[1], "--"),
     POSTERIOR: (COLORS[3], "-"), "flow_noeiv": (COLORS[0], ":"),
     "s1_all": (COLORS[3], ":"), "s1_plx": (COLORS[1], ":"),
 }  # fmt: skip
 LABELS = {
     "flow": "flow (EIV)", "tmix": "t-mixture (EIV)", "t": "Student-t (EIV)",
+    "gmix": "Gaussian mixture (EIV)",
     POSTERIOR: "posterior head", "flow_noeiv": "flow (no EIV)", "s1_all": "S1 MLE",
     "s1_plx": "S1 plx MLE",
 }  # fmt: skip
@@ -482,7 +487,7 @@ def stage_evaluate(a, out):
         factory, kind, eiv, _ = entry
         log(f"evaluate {name}: {len(rows)} rows, {len(score_idx)} scored")
         res = _evaluate_one(a, factory, yl, sg, has, score_idx, std, dev,
-                            modes=kind in ("flow", "tmix"))  # fmt: skip
+                            modes=kind in ("flow", "tmix", "gmix"))  # fmt: skip
         np.savez(path, table_row=rows, score_idx=score_idx, kind=kind, eiv=eiv, **res)
         log(
             f"evaluate {name}: rows {res['t_rows']:.0f} s, scoring {res['t_score']:.0f} s"
@@ -866,7 +871,7 @@ def _notes(a, m, pred):
         f"{a.seed + a.ensemble - 1}), density = equal-weight mixture; trunk MLP "
         f"{a.hidden} on the standardized latent; flow: NSF, {a.flow_transforms} "
         f"transforms, hidden {a.flow_hidden}, {a.flow_bins} bins, tail bound "
-        f"{sel['tail_bound']:.1f}; tmix: {a.components} components; t: 1 component; "
+        f"{sel['tail_bound']:.1f}; tmix and gmix: {a.components} components; t: 1 component; "
         f"full scale matrices, one learned df per member (initial {a.df:g}).",
         "Errors in variables: flows by torchregress NoiseAwareDensityLoss (Monte Carlo "
         f"over label noise, {a.eiv_samples} draws per row in training, {a.stop_mc} for "
@@ -1141,7 +1146,11 @@ def _plots(a, out, m, ev, conf, theta, G, names):
     from masked_stellar_autoencoder.training import likelihood_validation as V
 
     files = []
-    order = [nm for nm in ("flow", "tmix", "t", POSTERIOR, "flow_noeiv") if nm in names]
+    order = [
+        nm
+        for nm in ("flow", "tmix", "gmix", "t", POSTERIOR, "flow_noeiv")
+        if nm in names
+    ]
     order += [nm for nm in names if nm not in order]
     levels = np.array(CURVE_LEVELS)
     # (1) coverage - nominal vs nominal, per stratum, raw and conformal.
