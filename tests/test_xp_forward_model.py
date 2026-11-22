@@ -513,7 +513,7 @@ def test_local_profile_intervals_match_the_global_box() -> None:
     model = _true_model()
     data, truth = _simulate(model, 24, seed=9)
     batch = data.batch(np.arange(24), CPU, torch.float64)
-    prep = xf.prepare_stars(model, batch, reference=xf.observed_reference(model, batch))
+    prep = xf.prepare_stars(model, batch, reference=None)
     score = xf._score_fn(model, prep)
     x = torch.arange(24, dtype=torch.float64).unsqueeze(1)
     bounds = np.concatenate([BOUNDS, [[0.0, 1.0], [0.0, 1.0]]])
@@ -805,7 +805,7 @@ def test_cli_end_to_end(tmp_path) -> None:
     ])  # fmt: skip
     rep = json.loads((dout / "diagnosis.json").read_text())
     assert rep["n"] == 3
-    for key in ("standard", "exact_nll", "oracle", "wide"):
+    for key in ("standard", "exact_nll", "oracle", "loose_e"):
         assert key in rep, key
     assert (dout / "diagnosis.md").exists()
     report = json.loads((out / "report.json").read_text())
@@ -925,3 +925,27 @@ def test_label_mode_holds_labelled_extinction_in_training() -> None:
     np.testing.assert_allclose(e[lab], train.ebv_label[lab], atol=1e-6)
     start = xf.initial_ebv(train)
     assert np.abs(e[~lab] - start[~lab]).max() > 1e-3  # fitted, not held
+
+
+def test_start_shortlist_is_reranked_with_the_exact_likelihood() -> None:
+    """coarse_init(top=k) returns k candidates best first; refine_starts picks the
+    candidate with the lowest exact NLL (learned covariance at its own prediction)."""
+    model = _true_model()
+    data, truth = _simulate(model, 20, seed=14)
+    batch = data.batch(np.arange(20), CPU, torch.float64)
+    prep = xf.prepare_stars(model, batch, reference=None)
+    pool = np.random.default_rng(6).uniform(BOUNDS[:, 0], BOUNDS[:, 1], size=(3000, 3))
+    bank = torch.as_tensor(xf.candidate_bank(pool, 256, (0.0, 0.1, 0.25, 0.5), 0))
+    one = xf.coarse_init(model, prep, bank)
+    top = xf.coarse_init(model, prep, bank, top=8)
+    assert one.shape == (20, 5) and top.shape == (20, 8, 5)
+    torch.testing.assert_close(top[:, 0], one)
+    best = xf.refine_starts(model, batch, top, block_rows=48)
+    rows = torch.arange(20).repeat_interleave(8)
+    sub = {k: v[rows] for k, v in batch.items()}
+    c = top.reshape(-1, 5)
+    ebv, plx = xf.unit_to_nuisance(c[:, 3:5], sub)
+    nll = xf.star_nll(model, c[:, :3], ebv, plx, sub).view(20, 8)
+    torch.testing.assert_close(best, top[torch.arange(20), nll.argmin(1)])
+    err = np.abs(best[:, 0].numpy() - truth["theta"][:, 0])
+    assert np.median(err) < 300, np.median(err)

@@ -12,8 +12,8 @@ held-out stars of a trained ``model.pt``:
   better, the likelihood itself prefers the wrong point.
 * ``start``: the candidate-bank start against the labels.
 * ``oracle``: the standard passes started at the labels.
-* ``wide``: the standard start replaced by a wide search (more bank points,
-  candidates and Newton starts).
+* ``loose_e``: the standard inference with a looser lower bound on ``E``
+  (``--loose-e-min``).
 
 Writes ``diagnosis.json`` and ``diagnosis.md`` to ``--output``.
 """
@@ -23,7 +23,6 @@ from __future__ import annotations
 import argparse
 import json
 import time
-from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -47,6 +46,7 @@ def parse_args(argv=None):
     p.add_argument("--infer-dtype", choices=["float32", "float64"], default="float32")
     p.add_argument("--output", required=True)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--loose-e-min", type=float, default=-0.3)
     return p.parse_args(argv)
 
 
@@ -158,25 +158,31 @@ def main(argv=None) -> None:
                         "nll_minus_standard_median": float(np.median(nll_ora - nll_mle))}  # fmt: skip
     log(f"oracle: {json.dumps(report['oracle'])}")
 
-    wide_cfg = replace(cfg, n_candidates=256, n_starts=4, bank_theta=8192)
-    wide = xf.infer_stars(
-        model, data, bounds, pool, wide_cfg, device=device, dtype=dtype, log=log
+    # A looser lower bound on E (the emulator's E gauge comes from noisy labels).
+    e_min_default = xf.E_MIN
+    xf.E_MIN = a.loose_e_min
+    try:
+        loose = xf.infer_stars(
+            model, data, bounds, pool, cfg, device=device, dtype=dtype, log=log
+        )
+    finally:
+        xf.E_MIN = e_min_default
+    nll_loose = _exact_nll(
+        model, data, loose["mle"], loose["E_mle"], loose["parallax_mle"], device
     )
-    nll_wide = _exact_nll(
-        model, data, wide["mle"], wide["E_mle"], wide["parallax_mle"], device
-    )
-    report["wide"] = {"mle": _stats(wide["mle"], lab), "start": _stats(wide["init"][:, :3], lab),
-                      "E_at_bound": float(np.mean(wide["E_bound"] != 0)),
-                      "nll_minus_label_median": float(np.median(nll_wide - nll_lab))}  # fmt: skip
-    log(f"wide: {json.dumps(report['wide'])}")
+    report["loose_e"] = {"mle": _stats(loose["mle"], lab), "start": _stats(loose["init"][:, :3], lab),
+                      "E_at_bound": float(np.mean(loose["E_bound"] != 0)),
+                      "E_min": a.loose_e_min,
+                      "nll_minus_label_median": float(np.median(nll_loose - nll_lab))}  # fmt: skip
+    log(f"loose E_min: {json.dumps(report['loose_e'])}")
 
     (out / "diagnosis.json").write_text(json.dumps(report, indent=2) + "\n")
     lines = ["# XP forward-model inference diagnosis", "", f"{len(data)} held-out stars, {a.checkpoint}", "",
              "| run | Teff corr / med abs | log g corr / med abs | [Fe/H] corr / med abs | E at bound |",
              "|---|---|---|---|---|"]  # fmt: skip
     for name, key in (("standard start", ("standard", "start")), ("standard MLE", ("standard", "mle")),
-                      ("oracle MLE", ("oracle", "mle")), ("wide start", ("wide", "start")),
-                      ("wide MLE", ("wide", "mle"))):  # fmt: skip
+                      ("oracle MLE", ("oracle", "mle")), ("loose-E start", ("loose_e", "start")),
+                      ("loose-E MLE", ("loose_e", "mle"))):  # fmt: skip
         st = report[key[0]][key[1]]
         eb = (
             report[key[0]].get("E_at_bound", float("nan"))
@@ -188,7 +194,7 @@ def main(argv=None) -> None:
     lines += ["", f"Exact NLL: {json.dumps(report['exact_nll'])}", "",
               f"Oracle: NLL - label {report['oracle']['nll_minus_label_median']:.2f}, "
               f"- standard {report['oracle']['nll_minus_standard_median']:.2f} (median)", "",
-              f"Wide: NLL - label {report['wide']['nll_minus_label_median']:.2f} (median)", ""]  # fmt: skip
+              f"Loose E_min {a.loose_e_min}: NLL - label {report["loose_e"]['nll_minus_label_median']:.2f} (median)", ""]  # fmt: skip
     (out / "diagnosis.md").write_text("\n".join(lines))
     log("done")
 

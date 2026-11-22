@@ -162,8 +162,10 @@ Inference
 ---------
 Per star, ``maximize_score`` over ``(Teff, log g, [Fe/H], u_E, u_p)`` in a box (the
 labels' range for ``theta``), started from the best point of a candidate bank
-(training-population ``theta`` x an ``E`` grid, ranked with the XP covariance at
-the observation and the distance modulus profiled analytically), re-maximised in
+(training-population ``theta`` x an ``E`` grid, shortlisted with the known XP
+covariance alone and the distance modulus profiled analytically, the shortlist
+re-ranked with the exact likelihood; ranking with a covariance evaluated at the
+observation gave starts uncorrelated with the labels on real stars), re-maximised in
 ``covariance_passes`` passes with the covariance fixed at the previous point's
 prediction (the coarse start, then the previous MLE), then ``profile_interval``
 (Wilks 68.27 % and 95 %) for the three atmospheric parameters with the other four
@@ -1209,20 +1211,11 @@ def model_reference(model: XPForwardModel, theta: Tensor, ebv: Tensor) -> Tensor
         return model(theta, ebv)[0].detach()
 
 
-def observed_reference(model: XPForwardModel, batch: dict[str, Tensor]) -> Tensor:
-    """Observed coefficients in standardised units, as a :func:`prepare_stars` reference.
-
-    Only for ranking start candidates (:func:`coarse_init`): a covariance evaluated
-    at the observation is not a likelihood (see the module docstring).
-    """
-    return batch["xp"] / model.xp_scale.to(batch["xp"].dtype)
-
-
 def prepare_stars(
     model: XPForwardModel,
     batch: dict[str, Tensor],
     *,
-    reference: Tensor,
+    reference: Tensor | None,
     dtype: torch.dtype | None = None,
     factor_dtype: torch.dtype = torch.float64,
 ) -> PreparedStars:
@@ -1230,7 +1223,9 @@ def prepare_stars(
 
     ``reference`` ``[n, 110]`` (standardised units): the prediction at which the
     learned model covariance is evaluated, usually :func:`model_reference` at the
-    current ``(theta, E)``; the known covariance does not depend on it.
+    current ``(theta, E)``; the known covariance does not depend on it. ``None``:
+    the known covariance alone (no learned terms; observation-independent, used to
+    shortlist start candidates).
     """
     work = dtype or batch["xp"].dtype
     fd = factor_dtype
@@ -1245,11 +1240,12 @@ def prepare_stars(
             sl = slice(k * nc, (k + 1) * nc)
             m = mask[:, sl]
             cov = _known_xp(batch, k, scale[sl], nc)
-            var, factor = loss.model_covariance_terms(reference[:, sl].to(fd))
-            assert var is not None
-            cov = cov + torch.diag_embed(var)
-            if factor is not None:
-                cov = cov + factor @ factor.mT
+            if reference is not None:
+                var, factor = loss.model_covariance_terms(reference[:, sl].to(fd))
+                assert var is not None
+                cov = cov + torch.diag_embed(var)
+                if factor is not None:
+                    cov = cov + factor @ factor.mT
             pair = m.unsqueeze(-1) & m.unsqueeze(-2)
             cov = torch.where(pair, cov, torch.zeros((), dtype=fd, device=y.device))
             cov = cov + torch.diag_embed((~m).to(fd))
@@ -2036,8 +2032,11 @@ def coarse_init(
     bank: Tensor,
     *,
     star_block: int = 32,
+    top: int = 1,
 ) -> Tensor:
     """Best bank point per star as a start ``[n, 5]`` (theta, u_E, u_parallax).
+
+    ``top > 1``: the ``top`` best points ``[n, top, 5]``, best first.
 
     The XP term is exact (the star's fixed covariance factor); the distance modulus
     is profiled analytically from the photometry and the parallax (delta method);
@@ -2090,13 +2089,46 @@ def coarse_init(
         allowed = (e <= prep.e_max.unsqueeze(1)) & (e >= prep.e_min.unsqueeze(1))
         total = torch.where(allowed, total, torch.full_like(total, math.inf))
         total = torch.nan_to_num(total, nan=math.inf)
-        best = total.argmin(dim=1)
-        theta = bank[best, :3]
-        u_e = ((bank[best, 3] - prep.e_min) / (prep.e_max - prep.e_min)).clamp(0.0, 1.0)
-        log_plx = 2.0 - mu[torch.arange(n, device=device), best] / 5.0
-        lo, hi = prep.log_plx_lo, prep.log_plx_hi
+        k = max(1, min(int(top), total.shape[1]))
+        best = total.topk(k, dim=1, largest=False).indices  # [n, k]
+        theta = bank[best, :3]  # [n, k, 3]
+        e_min, e_max = prep.e_min.unsqueeze(1), prep.e_max.unsqueeze(1)
+        u_e = ((bank[best, 3] - e_min) / (e_max - e_min)).clamp(0.0, 1.0)
+        log_plx = 2.0 - torch.gather(mu, 1, best) / 5.0
+        lo, hi = prep.log_plx_lo.unsqueeze(1), prep.log_plx_hi.unsqueeze(1)
         u_p = ((log_plx - lo) / (hi - lo)).clamp(0.0, 1.0)
-    return torch.cat([theta, u_e.unsqueeze(1), u_p.unsqueeze(1)], dim=1)
+        out = torch.cat([theta, u_e.unsqueeze(-1), u_p.unsqueeze(-1)], dim=-1)
+    return out[:, 0] if top <= 1 else out
+
+
+def refine_starts(
+    model: XPForwardModel,
+    batch: dict[str, Tensor],
+    candidates: Tensor,
+    *,
+    block_rows: int = 4096,
+) -> Tensor:
+    """The best of each star's ``candidates`` ``[n, M, 5]`` under the exact likelihood.
+
+    Each candidate is scored by :func:`star_nll` (the learned covariance at the
+    candidate's own prediction, as in training), so the choice does not depend on
+    a covariance evaluated elsewhere. Returns ``[n, 5]``.
+    """
+    n, m = candidates.shape[:2]
+    nll = torch.full((n, m), math.inf, dtype=candidates.dtype, device=candidates.device)
+    per = max(1, block_rows // m)
+    with torch.no_grad():
+        for start in range(0, n, per):
+            rows = torch.arange(start, min(start + per, n), device=candidates.device)
+            rep_rows = rows.repeat_interleave(m)
+            sub = {k: v[rep_rows] for k, v in batch.items()}
+            c = candidates[rows].reshape(-1, 5)
+            ebv, parallax = unit_to_nuisance(c[:, 3:5], sub)
+            value = star_nll(model, c[:, :3], ebv, parallax, sub)
+            assert isinstance(value, Tensor)
+            nll[rows] = torch.nan_to_num(value.view(-1, m), nan=math.inf)
+    pick = nll.argmin(dim=1)
+    return candidates[torch.arange(n, device=candidates.device), pick]
 
 
 def observed_information(
@@ -2232,6 +2264,10 @@ class InferenceConfig:
     # MLE passes, each with the XP covariance fixed at the previous point's
     # prediction (coarse start, then the previous MLE); the intervals use the last.
     covariance_passes: int = 2
+    # Start: the candidate bank ranked with the known covariance alone (no learned
+    # terms, observation-independent); the best ``start_shortlist`` re-ranked with
+    # the exact likelihood (:func:`refine_starts`).
+    start_shortlist: int = 16
     profile_steps: int = 10
     profile_scan: int = 4
     profile_scan_local: int = 2
@@ -2303,13 +2339,17 @@ def infer_stars(
     for start in range(0, len(data), cfg.chunk_rows):
         idx = np.arange(start, min(start + cfg.chunk_rows, len(data)))
         batch = data.batch(idx, device, dtype)
-        # Candidates are ranked with the covariance at the observation (ranking only),
-        # then each pass fixes the covariance at the previous point's prediction.
-        prep = prepare_stars(
-            model_d, batch, reference=observed_reference(model_d, batch), dtype=dtype
-        )
+        # Candidates are shortlisted with the known covariance alone and re-ranked
+        # with the exact likelihood; each pass then fixes the covariance at the
+        # previous point's prediction.
+        prep = prepare_stars(model_d, batch, reference=None, dtype=dtype)
         if init is None:
-            start_pt = coarse_init(model_d, prep, bank)
+            shortlist = coarse_init(
+                model_d, prep, bank, top=max(1, cfg.start_shortlist)
+            )
+            if shortlist.dim() == 2:
+                shortlist = shortlist.unsqueeze(1)
+            start_pt = refine_starts(model_d, batch, shortlist)
         else:
             start_pt = torch.as_tensor(init[idx], device=device, dtype=dtype)
         x = torch.arange(len(idx), device=device, dtype=dtype).unsqueeze(1)
