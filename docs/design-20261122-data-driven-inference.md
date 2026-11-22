@@ -330,3 +330,51 @@ against this measurement model:
 **First step (running):** an inventory of every age catalogue we hold or can reach,
 pairwise systematics on shared stars, the open-cluster consistency test, and a design
 note with the anchor options (`design-20261122-age-consensus.md`).
+
+## 11. Pensus inputs and what they imply for the models
+
+**How Pensus is built.** It is assembled with `xmatcher` from the per-survey HATS
+catalogues in `/arc/projects/hats`:
+- **Gaia:** DR3 and DR3 XP continuous;
+- **ground-based optical:** PS1, SDSS, SkyMapper, Legacy Survey, DES, DELVE, KiDS, HSC,
+  UNIONS, J-PAS, J-PLUS, S-PLUS, Pristine, ATLAS, CLAUDS;
+- **space:** Euclid and Hubble, plus LSST;
+- **infrared:** 2MASS, AllWISE, CatWISE, VHS, VIKING, VIDEO, VMC, VVVX, UHS, UKIDSS;
+- **UV, X-ray and radio:** GALEX, eROSITA, LoTSS.
+
+The pipeline is source-preserving (`xmatcher/docs/catalogue-pipeline.md`,
+`association-v1.md`):
+- **Observation releases** keep each survey's native rows, namespaced passbands with
+  filter-curve versions (for example `survey:g:curve-1`), signed fluxes,
+  uncertainties, limit conventions, epochs and methods.
+- **Candidate releases** hold every pair within the search radius.
+- **Association releases** record the chosen counterparts, with scores whose semantics
+  are declared (ranking, assumed-prior posterior, or calibrated probability).
+- **The outer union** (`ray-union`) is a full-sky HATS tree.
+- **Responsibilities:** Zensus (the 1.17-billion-object redshift sibling) owns evidence
+  conflicts. Applications, which includes us, own the reduction to a training view.
+
+`pensus/views` and `pensus/sidecars` are not populated yet.
+
+**Implications:**
+1. **Inputs are sets of observations, not a fixed column list.** A star has any subset
+   of about 30 surveys' bands, each a token: passband, signed flux, error, a limit
+   flag and the association score. The encoder should consume that set, with passband
+   embeddings and masking, rather than the current 140 fixed columns. The masked
+   autoencoder is the right family; its input layer changes.
+2. **The SED factor of the likelihood should be a continuous-wavelength emulator.**
+   An intrinsic SED `f_lambda(theta)` and a learned extinction curve, integrated over
+   each passband's filter curve, give `M_b`. That serves any current or future band
+   (LSST, Euclid) without retraining, makes upper limits censored terms, and treats
+   XP as one more low-resolution spectral observation with a known basis. Filter
+   integration is an instrument fact, not astrophysics.
+3. **Association uncertainty enters explicitly.**
+   - In training: build views from calibrated-probability associations, or marginalise
+     over the candidate counterparts.
+   - In blends: report the alternatives rather than a forced single counterpart.
+4. **Signed fluxes and limits are used as delivered.** Faint and negative fluxes are
+   measurements, not missing values. That matters most for the outer-halo and
+   metal-poor science cases, where the most interesting stars are the faintest.
+5. **Scale follows HATS:** latents, likelihood summaries and predictive summaries are
+   computed per HATS partition and written as sidecars aligned to the partitions,
+   matching how Pensus is laid out.
