@@ -152,3 +152,133 @@ def test_s1_pipeline_end_to_end(tmp_path, monkeypatch):
     report = (out / "report.md").read_text()
     assert "## Decision" in report and "ADOPT" in report
     assert math.isfinite(m["runs"]["all"]["t_mle_s"])
+
+
+def _load_script():
+    spec = importlib.util.spec_from_file_location(
+        "s1_likelihood_head", ROOT / "scripts" / "s1_likelihood_head.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _write_sidecar(path, source_id, rng):
+    import h5py
+
+    zpt = rng.uniform(-0.04, 0.0, len(source_id)).astype("f4")
+    zpt[::7] = np.nan  # e.g. 2-parameter solutions: constant zero point
+    with h5py.File(path, "w") as f:
+        f.attrs["format_version"] = "1"
+        f["source_id"] = source_id
+        f["parallax_zpt_l21"] = zpt
+    return zpt
+
+
+def test_s1_parallax_nuisance_ensemble_variant(tmp_path, monkeypatch):
+    """Variant: latents without PARALLAX, theta' with log10 parallax, its
+    measurement term, a 2-head ensemble; labels and baseline arms reused."""
+    from astropy.io import fits
+
+    from masked_stellar_autoencoder.training.likelihood_head import load_head
+
+    _write_inputs(tmp_path)
+    mod = _load_script()
+    common = ["--config", str(tmp_path / "config.yaml"), "--checkpoint",
+              str(tmp_path / "ckpt.pth"), "--device", "cpu", "--epochs", "3",
+              "--n-candidates", "64", "--min-train", "10", "--row-block", "128",
+              "--min-calib", "20", "--profile-rows", "none"]  # fmt: skip
+    base = tmp_path / "base"
+    monkeypatch.setattr(sys, "argv", ["s1", *common, "--output", str(base),
+                                      "--arms", "all"])  # fmt: skip
+    mod.main()
+    with fits.open(tmp_path / "finetune.fits") as h:
+        sid = np.asarray(h[1].data["source_id"])
+        plx = np.asarray(h[1].data["PARALLAX"], "f8")
+    zpt = _write_sidecar(tmp_path / "sidecar.h5", sid, np.random.default_rng(1))
+    out = tmp_path / "plx"
+    monkeypatch.setattr(sys, "argv", [
+        "s1", *common, "--output", str(out), "--parallax-nuisance", "--ensemble", "2",
+        "--labels", str(base / "labels.npz"), "--baseline", str(base),
+        "--sidecar", str(tmp_path / "sidecar.h5"),
+    ])  # fmt: skip
+    mod.main()
+    # Latents: PARALLAX hidden; the posterior head keeps the full input.
+    assert json.loads((out / "latent_meta.json").read_text())["hidden_inputs"] == [
+        "PARALLAX"
+    ]
+    assert not np.allclose(np.load(out / "latent.npy"), np.load(base / "latent.npy"))
+    np.testing.assert_allclose(
+        np.load(out / "predictions.npz")["post_median"],
+        np.load(base / "predictions.npz")["post_median"], rtol=1e-5,
+    )  # fmt: skip
+    par = np.load(out / "parallax.npz")
+    expect = np.where(np.isfinite(zpt), zpt, -0.017)
+    np.testing.assert_allclose(par["zero_point"], expect, rtol=1e-6)
+    np.testing.assert_allclose(par["parallax_corrected"], plx - expect, rtol=1e-6)
+    heads = [load_head(out / n)[0] for n in ("head_plx.pt", "head_plx_1.pt")]
+    assert all(h.config["n_params"] == 4 for h in heads)
+    assert not torch.equal(heads[0].theta_scale, torch.ones(4))
+    inf = np.load(out / "infer_plx.npz")
+    assert inf["mle"].shape[1] == 3 and inf["mle_search"].shape[1] == 4
+    assert int(inf["n_members"]) == 2
+    found = np.isfinite(inf["smax"])
+    assert found.mean() > 0.5
+    v = inf["mle_parallax"][found]
+    assert np.all((v > 10**-1.5 * 0.999) & (v < 10**2.5 * 1.001))
+    # No profile intervals here (--profile-rows none; the 4-D profiles are
+    # tested on the analytic toy); coverage comes from the label statistics.
+    assert not inf["profiled"].any() and np.isnan(inf["lo68"]).all()
+    test = (np.load(out / "labels.npz")["split"][inf["table_row"]] == 2) & found
+    assert np.isfinite(inf["lam_label_param"][test]).mean() > 0.5
+    single = np.load(out / "infer_plx_single.npz")
+    assert single["mle"].shape == inf["mle"].shape and single["stat_rows"].any()
+    s1 = np.load(out / "s1_predictions_plx.npz")
+    assert "mle_parallax" in s1.files and "parallax_pull" in s1.files
+    m = json.loads((out / "metrics.json").read_text())
+    assert set(m["decision"]) == {"all", "plx"}  # baseline arm + variant
+    assert {"posterior", "mle_all", "mle_plx", "mle_plx_single"} <= set(m["precision"])
+    assert {"all", "plx", "plx_single"} <= set(m["edges"])
+    assert "parallax_window_edge" in m["edges"]["plx"]["held-out"]
+    assert "support_edge" in m["edges"]["all"]["held-out"]
+    for k in ("neyman68", "wilks68_joint", "wilks68_fe_h", "neyman68_fe_h"):
+        assert k in m["coverage"]["plx"], k
+    assert "wilks68_joint" in m["coverage"]["plx_single"]
+    assert "neyman68" not in m["coverage"]["plx_single"]
+    assert m["runs"]["plx"]["members"] == 2
+    assert len(m["runs"]["plx"]["training_members"]) == 2
+    assert m["runs"]["all"]["source"] == str(base)
+    report = (out / "report.md").read_text()
+    for s in ("## Precision summary", "## MLE at the edges", "Arm `plx`", "Wilks 68"):
+        assert s in report, s
+
+
+def test_hidden_parallax_latents_ignore_the_parallax(tmp_path):
+    from astropy.io import fits
+
+    from masked_stellar_autoencoder.training.frozen_latents import encode_table
+
+    _write_inputs(tmp_path, n=64)
+    config = yaml.safe_load((tmp_path / "config.yaml").read_text())
+    state = torch.load(tmp_path / "ckpt.pth", weights_only=False)
+    with fits.open(tmp_path / "finetune.fits") as h:
+        data = h[1].data.copy()
+    data["PARALLAX"] = 3.0 * data["PARALLAX"] + 0.5
+    fits.BinTableHDU(data=data).writeto(tmp_path / "moved.fits")
+    for name in ("finetune", "moved"):
+        encode_table(config, state, tmp_path / f"{name}.fits", tmp_path / name,
+                     hide=("PARALLAX",), log=lambda m: None)  # fmt: skip
+    a, b = tmp_path / "finetune", tmp_path / "moved"
+    np.testing.assert_array_equal(np.load(a / "latent.npy"), np.load(b / "latent.npy"))
+    assert json.loads((a / "latent_meta.json").read_text())["hidden_inputs"] == [
+        "PARALLAX"
+    ]
+    # The posterior head (the comparator) still sees and conditions on parallax.
+    pa, pb = np.load(a / "predictions.npz"), np.load(b / "predictions.npz")
+    assert not np.allclose(pa["post_median"], pb["post_median"])
+
+
+def test_joint_wilks_threshold_matches_chi2_3():
+    from torchregress.inference import wilks_threshold
+
+    assert abs(_load_script().WILKS68_JOINT - wilks_threshold(0.6827, df=3)) < 1e-4

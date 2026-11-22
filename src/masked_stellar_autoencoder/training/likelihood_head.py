@@ -12,6 +12,13 @@ e = E(z), and the score is a small smooth MLP on [standardised theta, e]
 (``score_net``). Inference (``torchregress.inference``) receives e as the
 observation, so the multistart Newton search and the profile scans only run
 the small MLP.
+
+``EnsembleScore`` combines K heads (the mean of their log-ratios, i.e. the
+geometric mean of the ratios) and optionally a parallax nuisance parameter:
+the heads then take theta' = (Teff, log g, [Fe/H], u = log10 parallax/mas),
+and the score adds the Gaussian measurement term of the observed
+(zero-point-corrected) parallax, so parallax enters once, with its error, and
+is profiled together with theta.
 """
 
 from __future__ import annotations
@@ -33,10 +40,17 @@ class Support:
     the upper [Fe/H] edge of the box). ``inside(theta)`` marks grid cells
     holding at least ``min_count`` training labels, grown by ``dilate``
     cells in every direction. A hard, data-defined constraint, not a prior.
+
+    Any number of parameters P (e.g. 4 with log10 parallax as the last one);
+    the grid has prod(ceil(range / width)) cells. ``on_edge(theta)`` marks
+    support cells with a neighbour (3^P neighbourhood) outside the support or
+    the box: an MLE there was stopped by the support.
     """
 
     def __init__(self, theta, bounds, widths, device="cpu", *, dilate=1, min_count=1):
-        theta = np.asarray(theta, dtype="f8")
+        from scipy.ndimage import binary_dilation, binary_erosion
+
+        theta = np.asarray(theta, dtype="f8").reshape(-1, len(bounds))
         self.lo = torch.tensor(
             [b[0] for b in bounds], dtype=torch.float64, device=device
         )
@@ -49,21 +63,29 @@ class Support:
         counts = np.zeros(self.n, dtype=np.int64)
         np.add.at(counts, tuple(idx.T), 1)
         occ = counts >= min_count
+        cube = np.ones((3,) * occ.ndim, bool)  # full 3^P neighbourhood
         if dilate:
-            from scipy.ndimage import binary_dilation
-
-            # Full 3^P neighbourhood, no wrap-around at the box edges.
-            occ = binary_dilation(occ, structure=np.ones((3,) * occ.ndim, bool),
-                                  iterations=int(dilate))  # fmt: skip
+            # No wrap-around at the box edges.
+            occ = binary_dilation(occ, structure=cube, iterations=int(dilate))
+        edge = occ & ~binary_erosion(occ, structure=cube, border_value=0)
         self.grid = torch.as_tensor(occ, device=device)
+        self.edge = torch.as_tensor(edge, device=device)
         self.fraction = float(occ.mean())
 
-    def inside(self, theta):
+    def _cells(self, theta):
         idx = torch.floor((theta.double() - self.lo) / self.w).long()
         n = torch.tensor(self.n, device=theta.device)
         ok = ((idx >= 0) & (idx < n)).all(-1)
-        idx = torch.minimum(idx.clamp_min(0), n - 1)
-        return ok & self.grid[tuple(idx.T)]
+        return ok, tuple(torch.minimum(idx.clamp_min(0), n - 1).T)
+
+    def inside(self, theta):
+        ok, cell = self._cells(theta)
+        return ok & self.grid[cell]
+
+    def on_edge(self, theta):
+        """Inside the support, in a cell next to its boundary (or the box's)."""
+        ok, cell = self._cells(theta)
+        return ok & self.edge[cell]
 
     def mask(self, theta, score):
         """``score`` where ``theta`` is inside the support, NaN elsewhere."""
@@ -146,6 +168,177 @@ def load_head(path, device="cpu"):
     head = RatioHead(**blob["config"])
     head.load_state_dict(blob["state_dict"])
     return head.to(device).eval(), blob
+
+
+# ── ensemble and parallax nuisance ──────────────────────────────────────────
+
+LN10 = math.log(10.0)
+N_PARALLAX_COLUMNS = 4  # observation columns after the embeddings: a, b, plx, w
+
+
+def parallax_window(parallax, error, u_bounds, k=8.0):
+    """Per-row search window of u = log10(parallax / mas) and measurement terms.
+
+    ``parallax`` (zero-point corrected) and ``error`` in mas. Returns numpy
+    (a, b, plx, w), each [N]: the search coordinate t in [0, 1] maps to
+    u = a + b t; the measurement term is -0.5 ((plx - 10**u) w)^2.
+
+    * A measured parallax (finite, error > 0): w = 1 / error, and the window
+      holds the parallaxes within ``k`` errors of the measurement (clipped to
+      the box ``u_bounds``), i.e. wherever the term is above -k^2/2. Without
+      the window, in box units, a parallax with parallax / error ~ 1000 is
+      ~1e5 times more curved than the ratio in theta: the saddle-free Newton
+      eigenvalue floor (sqrt(eps) of the largest, float32) would then stall
+      the theta directions. A
+      window missing the box (e.g. parallax < -k error) falls back to the
+      whole box with the term kept (the MLE then sits on the window edge).
+    * No measurement: w = 0 (flat term, the learned coupling alone) and the
+      whole box.
+    """
+    plx = np.asarray(parallax, dtype="f8")
+    err = np.asarray(error, dtype="f8")
+    lo, hi = (float(v) for v in u_bounds)
+    meas = np.isfinite(plx) & np.isfinite(err) & (err > 0)
+    w = np.where(meas, 1.0 / np.where(meas, err, 1.0), 0.0)
+    p0 = np.where(meas, plx, 0.0)
+    e0 = np.where(meas, err, 0.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ulo = np.log10(np.maximum(p0 - k * e0, 10.0**lo))
+        uhi = np.log10(np.minimum(p0 + k * e0, 10.0**hi))
+    ok = meas & (p0 + k * e0 > 10.0**lo) & (p0 - k * e0 < 10.0**hi) & (uhi > ulo)
+    a = np.where(ok, ulo, lo)
+    b = np.where(ok, uhi - ulo, hi - lo)
+    return a, b, p0, w
+
+
+class EnsembleScore:
+    """Score of K ratio heads, optionally with a parallax nuisance parameter.
+
+    s(theta, x) = (1/K) sum_k s_k(theta', e_k(z))            (no parallax)
+                + -0.5 ((plx - 10**u) / sigma)^2              (parallax)
+
+    The ensemble score is the mean of the heads' log-ratios (the geometric
+    mean of the ratios): each s_k estimates log p(z | theta') - log p(z), so
+    the mean estimates the same quantity and averages the members' (partly
+    independent: different initialisation and batches, same data) errors.
+    With ``parallax`` the last search coordinate is t in
+    [0, 1], mapped per row to u = log10(parallax / mas) = a + b t
+    (``parallax_window``), theta' = (theta, u), and the observation x is
+    [e_1, ..., e_K, a, b, plx, w] (``observation``); constant terms of the
+    Gaussian (log sigma, log 2 pi) do not depend on theta and are dropped.
+    A ``support`` (in theta' space) masks the score with NaN outside it.
+    """
+
+    def __init__(self, heads, *, support=None, parallax=False):
+        self.heads = list(heads)
+        if not self.heads:
+            raise ValueError("EnsembleScore needs at least one head")
+        dims = [int(h.config["embed_out"]) for h in self.heads]
+        self.offsets = [0, *np.cumsum(dims).tolist()]
+        self.embed_dim = int(self.offsets[-1])
+        self.support = support
+        self.parallax = bool(parallax)
+        n_params = {int(h.config["n_params"]) for h in self.heads}
+        if len(n_params) != 1:
+            raise ValueError(f"Heads disagree on the parameter count: {n_params}")
+        self.n_params = n_params.pop()
+
+    def __len__(self):
+        return len(self.heads)
+
+    def member(self, k):
+        """The single-head score of member ``k`` (same support and parallax term)."""
+        return EnsembleScore([self.heads[k]], support=self.support,
+                             parallax=self.parallax)  # fmt: skip
+
+    def member_observation(self, x, k):
+        """Columns of ``x`` (this ensemble's observation) for ``member(k)``."""
+        lo, hi = self.offsets[k], self.offsets[k + 1]
+        return torch.cat([x[:, lo:hi], x[:, self.embed_dim :]], dim=1)
+
+    @torch.no_grad()
+    def embed(self, z):
+        return torch.cat([h.embed(z) for h in self.heads], dim=-1)
+
+    def observation(self, emb, window=None):
+        """x for ``torchregress.inference``: embeddings [+ the parallax window].
+
+        ``emb`` [N, E] (copied) or [N, E + 4] from ``embed_rows(...,
+        extra=N_PARALLAX_COLUMNS)`` (its last columns are filled in place).
+        """
+        if not self.parallax:
+            return emb
+        if window is None:
+            raise ValueError("A parallax score needs the parallax window")
+        extra = torch.as_tensor(np.column_stack(window), dtype=emb.dtype,
+                                device=emb.device)  # fmt: skip
+        if emb.shape[1] == self.embed_dim + N_PARALLAX_COLUMNS:
+            emb[:, self.embed_dim :] = extra
+            return emb
+        return torch.cat([emb, extra], dim=1)
+
+    def physical(self, theta, x):
+        """theta' (heads' parameters) from the search coordinates."""
+        if not self.parallax:
+            return theta
+        e = self.embed_dim
+        u = x[:, e] + x[:, e + 1] * theta[:, -1]
+        return torch.cat([theta[:, :-1], u[:, None]], dim=1)
+
+    def log_ratio(self, theta_phys, x):
+        s = 0.0
+        for h, lo, hi in zip(self.heads, self.offsets[:-1], self.offsets[1:],
+                             strict=True):  # fmt: skip
+            s = s + h.score_embedded(theta_phys, x[:, lo:hi])
+        return s / len(self.heads)
+
+    def measurement(self, theta_phys, x):
+        """-0.5 ((plx - 10**u) w)^2; 0 where w = 0 (no parallax)."""
+        e = self.embed_dim
+        plx, w = x[:, e + 2], x[:, e + 3]
+        return -0.5 * ((plx - torch.exp(LN10 * theta_phys[:, -1])) * w).square()
+
+    def score_fn(self, masked=True, measurement=True):
+        def score(theta, x):
+            tp = self.physical(theta, x)
+            s = self.log_ratio(tp, x)
+            if self.parallax and measurement:
+                s = s + self.measurement(tp, x)
+            if masked and self.support is not None:
+                s = self.support.mask(tp, s)
+            return s
+
+        return score
+
+
+@torch.no_grad()
+def window_start(score, x, theta, *, n_grid=17, chunk=1 << 17):
+    """Best window coordinate t per row on a grid, at fixed ``theta`` [N, P-1].
+
+    The start of the parallax coordinate for ``maximize``: the grid point
+    with the highest (masked) score; rows with no finite score start at the
+    measured parallax (inside the window) or the window centre. numpy [N].
+    """
+    fn = score.score_fn()
+    n = len(x)
+    th = torch.as_tensor(np.asarray(theta), dtype=x.dtype, device=x.device)
+    grid = torch.linspace(0.0, 1.0, n_grid, dtype=x.dtype, device=x.device)
+    out = np.full(n, 0.5)
+    step = max(1, chunk // n_grid)
+    e = score.embed_dim
+    for i in range(0, n, step):
+        xb, tb = x[i : i + step], th[i : i + step]
+        m = len(xb)
+        tt = torch.cat([tb.repeat_interleave(n_grid, 0), grid.repeat(m)[:, None]], 1)
+        s = fn(tt, xb.repeat_interleave(n_grid, 0)).view(m, n_grid)
+        s = torch.nan_to_num(s, nan=-math.inf)
+        best = s.argmax(1)
+        found = torch.isfinite(s.max(1).values)
+        a, b, plx = xb[:, e], xb[:, e + 1], xb[:, e + 2]
+        t_obs = (torch.log10(plx.clamp_min(1e-30)) - a) / b
+        t_obs = torch.where((plx > 0) & (xb[:, e + 3] > 0), t_obs.clamp(0, 1), 0.5)
+        out[i : i + m] = torch.where(found, grid[best], t_obs).cpu().numpy()
+    return out
 
 
 def _robust_stats(z, rows, chunk=262144):
@@ -245,19 +438,24 @@ def train_ratio_head(head, z, theta, train, valid, *, negatives=8, max_epochs=60
 
 
 @torch.no_grad()
-def embed_rows(head, z, rows, *, device, batch=65536):
-    """Embeddings (len(rows), E) float32 on ``device`` (z may be a numpy memmap)."""
-    out = []
+def embed_rows(head, z, rows, *, device, batch=65536, extra=0):
+    """Embeddings (len(rows), E [+ extra]) float32 on ``device``.
+
+    ``head``: a ``RatioHead`` or an ``EnsembleScore`` (E = sum of the
+    members'); ``z`` may be a numpy memmap. ``extra`` zero columns are
+    appended (filled in place by ``EnsembleScore.observation``), so the
+    observation is allocated once (K = 5 heads: ~2.6 kB per row).
+    """
+    dim = getattr(head, "embed_dim", None) or head.config["embed_out"]
+    out = torch.zeros(len(rows), dim + int(extra), device=device)
     for i in range(0, len(rows), batch):
         r = rows[i : i + batch]
         if isinstance(z, torch.Tensor):
             zb = z[torch.as_tensor(r, device=z.device)].to(device)
         else:
             zb = torch.as_tensor(np.asarray(z[r]), device=device)
-        out.append(head.embed(zb).float())
-    if not out:
-        return torch.empty(0, head.config["embed_out"], device=device)
-    return torch.cat(out)
+        out[i : i + len(r), :dim] = head.embed(zb).float()
+    return out
 
 
 def maximize(head, emb, bounds, *, init=None, block=200_000, n_candidates=256,
@@ -295,43 +493,47 @@ def maximize(head, emb, bounds, *, init=None, block=200_000, n_candidates=256,
             torch.cat(atb).numpy())  # fmt: skip
 
 
-def profiles(head, emb, theta_hat, s_max, threshold, bounds, *, block=200_000,
-             chunk_size=None, n_scan=8, log=print, label=""):  # fmt: skip
-    """Profile intervals of every parameter at ``threshold``.
+def profiles(head, emb, theta_hat, s_max, threshold, bounds, *, params=None,
+             block=200_000, chunk_size=None, n_scan=8, log=print, label=""):  # fmt: skip
+    """Profile intervals of parameters ``params`` (default: all) at ``threshold``.
 
-    ``threshold``: scalar, [N] (one per row) or [N, P] (one per row and
-    parameter, e.g. per-parameter Neyman critical values). Returns
-    (lower [N, P], upper [N, P], lower_at_bound [N, P], upper_at_bound [N, P])
-    as numpy.
+    ``threshold``: scalar, [N] (one per row) or [N, J] (one per row and
+    profiled parameter, e.g. per-parameter Neyman critical values). The
+    inner maximisation runs over every other parameter of the box (e.g. the
+    parallax coordinate of an ``EnsembleScore``). Returns (lower [N, J],
+    upper [N, J], lower_at_bound [N, J], upper_at_bound [N, J]) as numpy,
+    J = len(params).
     """
     from torchregress.inference import profile_interval
 
     score = head.score_fn()
     dt, dev = emb.dtype, emb.device
     box = torch.as_tensor(bounds, dtype=dt, device=dev)
-    N, P = len(emb), len(bounds)
-    lo, hi = np.full((N, P), np.nan), np.full((N, P), np.nan)
-    lob, hib = np.zeros((N, P), bool), np.zeros((N, P), bool)
+    N = len(emb)
+    params = list(range(len(bounds))) if params is None else [int(j) for j in params]
+    J = len(params)
+    lo, hi = np.full((N, J), np.nan), np.full((N, J), np.nan)
+    lob, hib = np.zeros((N, J), bool), np.zeros((N, J), bool)
     thr_all = np.asarray(threshold, dtype="f8")
     if thr_all.ndim == 1:
         thr_all = thr_all[:, None]
-    thr_all = np.broadcast_to(thr_all, (N, P))
+    thr_all = np.broadcast_to(thr_all, (N, J))
     t0 = time.time()
     for i in range(0, N, block):
         sl = slice(i, min(N, i + block))
         th = torch.as_tensor(theta_hat[sl], dtype=dt, device=dev)
         sm = torch.as_tensor(s_max[sl], dtype=dt, device=dev)
-        for j in range(P):
+        for c, j in enumerate(params):
             thr = torch.as_tensor(
-                np.ascontiguousarray(thr_all[sl, j]), dtype=dt, device=dev
+                np.ascontiguousarray(thr_all[sl, c]), dtype=dt, device=dev
             )
             r = profile_interval(
                 score, emb[sl], th, sm, j, thr, box, n_scan=n_scan,
                 chunk_size=chunk_size,
             )  # fmt: skip
-            lo[sl, j], hi[sl, j] = r.lower.cpu().numpy(), r.upper.cpu().numpy()
-            lob[sl, j] = r.lower_at_bound.cpu().numpy()
-            hib[sl, j] = r.upper_at_bound.cpu().numpy()
+            lo[sl, c], hi[sl, c] = r.lower.cpu().numpy(), r.upper.cpu().numpy()
+            lob[sl, c] = r.lower_at_bound.cpu().numpy()
+            hib[sl, c] = r.upper_at_bound.cpu().numpy()
         log(f"  profiles {label}: {sl.stop}/{N} ({time.time() - t0:.0f} s)")
     return lo, hi, lob, hib
 
@@ -339,37 +541,45 @@ def profiles(head, emb, theta_hat, s_max, threshold, bounds, *, block=200_000,
 def profile_statistic(head, emb, index, value, s_max, theta_init, bounds, *,
                       block=200_000, n_candidates=64, n_starts=2, chunk_size=None,
                       seed=0):  # fmt: skip
-    """Profile statistic s_max - max_{theta: theta_j = value} s(theta) per row.
+    """Profile statistic s_max - max_{theta: theta_J = value} s(theta) per row.
 
-    The constrained maximum over the other parameters uses ``maximize_score``
-    on the reduced box, started from ``theta_init`` (e.g. the MLE). Returns a
-    numpy [N] array, clamped at 0 (a constrained maximum above ``s_max``
-    means ``s_max`` was not the global maximum).
+    ``index``: one parameter j (``value`` [N]) or several, J (``value``
+    [N, len(J)]); e.g. the three atmospheric parameters of a parallax score,
+    whose statistic then profiles the parallax only. The constrained maximum
+    over the other parameters uses ``maximize_score`` on the reduced box,
+    started from ``theta_init`` (e.g. the MLE). Returns a numpy [N] array,
+    clamped at 0 (a constrained maximum above ``s_max`` means ``s_max`` was
+    not the global maximum).
     """
     from torchregress.inference import maximize_score
 
     dt, dev = emb.dtype, emb.device
     P = len(bounds)
-    j = int(index)
-    keep = [k for k in range(P) if k != j]
+    fixed = [int(index)] if np.ndim(index) == 0 else [int(i) for i in index]
+    keep = [k for k in range(P) if k not in fixed]
+    if not keep:
+        raise ValueError("profile_statistic needs at least one free parameter")
+    nf = len(fixed)
     box = torch.as_tensor(bounds, dtype=dt, device=dev)[keep]
-
+    value = np.asarray(value, dtype="f8").reshape(len(emb), nf)
     base = head.score_fn()
 
     def score(free, xa):
-        t = xa[:, -1:]
-        theta = torch.cat([free[:, :j], t, free[:, j:]], dim=1)
-        return base(theta, xa[:, :-1])
+        t = xa[:, -nf:]
+        cols = [t[:, fixed.index(k)] if k in fixed else free[:, keep.index(k)]
+                for k in range(P)]  # fmt: skip
+        return base(torch.stack(cols, dim=1), xa[:, :-nf])
 
     out = []
     for i in range(0, len(emb), block):
         sl = slice(i, i + block)
-        t = torch.as_tensor(np.asarray(value[sl]), dtype=dt, device=dev)
-        xa = torch.cat([emb[sl], t[:, None]], dim=1)
+        t = torch.as_tensor(value[sl], dtype=dt, device=dev)
+        xa = torch.cat([emb[sl], t], dim=1)
         ini = torch.as_tensor(np.asarray(theta_init[sl])[:, keep], dtype=dt, device=dev)
         res = maximize_score(
-            score, xa, box, n_candidates=n_candidates, n_starts=n_starts, init=ini,
-            chunk_size=chunk_size, generator=torch.Generator().manual_seed(seed + i),
+            score, xa, box, n_candidates=n_candidates,
+            n_starts=min(n_starts, n_candidates), init=ini, chunk_size=chunk_size,
+            generator=torch.Generator().manual_seed(seed + i),
         )  # fmt: skip
         sm = torch.as_tensor(np.asarray(s_max[sl]), dtype=dt, device=dev)
         out.append((sm - res.score).clamp_min(0).cpu())

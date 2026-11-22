@@ -8,10 +8,19 @@ the encoder. The posterior head is conditioned on the measured parallax where
 parallax / error >= SNR (``predict_fits_rows --condition-parallax``). The
 table is processed in row chunks, so it never sits in memory; latents are
 written as float16 to a ``.npy`` memmap.
+
+Missing inputs are the encoder's NaN token (``encoder_input``: NaN -> -9999,
+the value the masked autoencoder sees for masked and missing features), so
+``hide`` (e.g. ``("PARALLAX",)``) gives latents that carry no information from
+those inputs: they are set to NaN after scaling, exactly like the
+checkpoint's ``drop_input_features``. The posterior head keeps the full input
+(the comparator is unchanged); with hidden inputs each batch runs the
+encoder twice.
 """
 
 from __future__ import annotations
 
+import json
 import time
 from pathlib import Path
 
@@ -112,8 +121,13 @@ def parallax_condition(state, pack, plx_mas, e_plx_mas, snr):
 
 
 @torch.no_grad()
-def encode_and_predict(model, head, Xs, drop, *, device, batch=8192, condition=None):
-    """Latent (float16), scaled marginal 16/50/84 % quantiles (N, P, 3), conditioned."""
+def encode_and_predict(model, head, Xs, drop, *, device, batch=8192, condition=None,
+                       latent_drop=None):  # fmt: skip
+    """Latent (float16), scaled marginal 16/50/84 % quantiles (N, P, 3), conditioned.
+
+    ``latent_drop``: input indices hidden for the returned latent (default
+    ``drop``); the posterior head always sees the input with ``drop`` hidden.
+    """
     lat, lws, locs, sds, oks = [], [], [], [], []
     for i in range(0, len(Xs), batch):
         xb = torch.as_tensor(Xs[i : i + batch], device=device)
@@ -128,6 +142,8 @@ def encode_and_predict(model, head, Xs, drop, *, device, batch=8192, condition=N
             ok = torch.isfinite(zt) & torch.isfinite(vt) & (vt >= 0)
         else:
             sd = L.square().sum(-1).sqrt()
+        if latent_drop is not None and sorted(latent_drop) != sorted(drop):
+            z = model.encoder(encoder_input(xb, latent_drop))
         lat.append(z.half().cpu())
         lws.append(logw.cpu())
         locs.append(mu.cpu())
@@ -142,8 +158,12 @@ def encode_and_predict(model, head, Xs, drop, *, device, batch=8192, condition=N
 
 
 def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=262144,
-                 batch=8192, condition_parallax=5.0, log=print):  # fmt: skip
+                 batch=8192, condition_parallax=5.0, hide=(), log=print):  # fmt: skip
     """Write ``latent.npy`` (N, D) float16 and ``predictions.npz`` for every row.
+
+    ``hide``: feature names hidden from the encoder for the latent only
+    (recorded in ``latent_meta.json``); the posterior predictions use the
+    full input.
 
     ``predictions.npz``: ``source_id``, ``table_row``, ``G``, the posterior
     head's (Teff, log g, [Fe/H]) ``post_median``/``post_q16``/``post_q84``
@@ -161,6 +181,10 @@ def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=
     device = torch.device(device)
     model, head, drop = load_anchored_model(config, state, device)
     cols = config["data"]["feature_cols"]
+    unknown = [c for c in hide if c not in cols]
+    if unknown:
+        raise ValueError(f"Cannot hide unknown input features {unknown}")
+    latent_drop = sorted(set(drop) | {cols.index(c) for c in hide})
     error_cols = config["data"]["error_cols"]
     pack = label_pack(config)
     scalers = state["label_scalers"]
@@ -196,8 +220,9 @@ def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=
             Xs, plx, e_plx = preprocess(config, state, X, E)
             condition = parallax_condition(state, pack, plx, e_plx, condition_parallax)
             lat, q, ok = encode_and_predict(
-                model, head, Xs, drop, device=device, batch=batch, condition=condition
-            )
+                model, head, Xs, drop, device=device, batch=batch, condition=condition,
+                latent_drop=latent_drop,
+            )  # fmt: skip
             latent[sl] = lat
             cond[sl] = ok
             nu[sl] = head.nu + ok
@@ -209,6 +234,9 @@ def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=
         latent.flush()
         del latent
     (out_dir / "latent.npy.tmp").replace(out_dir / "latent.npy")
+    meta = dict(rows=int(n), dim=dim, hidden_inputs=list(hide),
+                dropped_inputs=[cols[i] for i in drop])  # fmt: skip
+    (out_dir / "latent_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     np.savez(
         out_dir / "predictions.npz", source_id=source_id, table_row=np.arange(n),
         G=G, parallax_conditioned=cond, post_nu=nu, label_names=np.array(MAPPED),

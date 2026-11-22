@@ -1034,6 +1034,34 @@ STEPS["ms-xp-forward-model"] = dict(
     ),
     files=[],
 )
+# P1 (S1 precision): parallax as a parameter with its measurement likelihood
+# (latents without the PARALLAX input; heads on theta' = (Teff, log g, [Fe/H],
+# log10 parallax) trained on parallax/error >= 10; score + log N(parallax -
+# L21 zero point | parallax, error^2), parallax profiled inside the 4-D label
+# support) and a 5-head ensemble (mean log-ratio). Reuses the S1 v10 labels;
+# the S1 v10 'all' arm joins every report table. Profile intervals on the
+# core rows only (coverage uses the label statistics of every test row); 512
+# MLE candidates (the 4-D support slice at a measured parallax is smaller than
+# the 3-D box). Expected ~2.5 h (2-4 h) on a 12 GB GPU slice, peak ~7-9 GiB.
+S1_V10 = "likelihood_head_s1_v10_20261121"
+STEPS["ms-s1-v10-plx-ens"] = dict(
+    run_id="likelihood_head_s1_v10_plx_ens_20261122",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        f"python -u scripts/s1_likelihood_head.py --config {MS_V10[1]}"
+        f" --checkpoint {_V10_CK}"
+        f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+        f" --records {ROOT}{MS_TABLE_V5}/records.npz"
+        f" --labels {ROOT}{S1_V10}/labels.npz --baseline {ROOT}{S1_V10}"
+        f" --sidecar {ROOT}{XPFM_SIDECAR}"
+        " --parallax-nuisance --ensemble 5 --profile-rows core --n-candidates 512"
+        " --device cuda --threads 8 --chunk-size 32768"
+        ' --output "$experiment_output"'
+    ),
+    files=[MS_V10[1]],
+)
 
 
 def pushed_head() -> tuple[str, str]:
