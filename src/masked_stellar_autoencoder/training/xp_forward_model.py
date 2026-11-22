@@ -1054,8 +1054,15 @@ def star_nll(
     batch: dict[str, Tensor],
     *,
     parts: bool = False,
+    quasi: bool = False,
 ) -> Tensor | dict[str, Tensor]:
     """Per-star negative log-likelihood ``[M]`` (or its parts with ``parts=True``).
+
+    ``quasi``: the learned covariance is evaluated at the detached prediction, so
+    the emulator's mean gets the quasi-likelihood (iteratively reweighted) gradient
+    ``J^T C^{-1} r`` without the ``d log|C| / d c`` and ``r^T dC^{-1}/dc r`` terms
+    (unbiased for the mean even when the variance model is wrong); the scatter
+    parameters still get the full Gaussian gradient.
 
     The training loss: :func:`torchregress.losses.known_covariance_gaussian_nll` with
     the learned model covariance evaluated at the observed coefficients (gradients
@@ -1072,7 +1079,8 @@ def star_nll(
     dof_xp = torch.zeros_like(ebv)
     for k, loss in enumerate(model.xp_losses):
         sl = slice(k * nc, (k + 1) * nc)
-        var, factor = loss.model_covariance_terms(xp_hat[:, sl])
+        at = xp_hat[:, sl].detach() if quasi else xp_hat[:, sl]
+        var, factor = loss.model_covariance_terms(at)
         assert var is not None
         res = known_covariance_gaussian_nll(
             xp_obs[:, sl] - xp_hat[:, sl],
@@ -1628,6 +1636,10 @@ class TrainConfig:
     valid_rows: int = 4096
     seed: int = 0
     log_every: int = 200
+    # "full": the Gaussian likelihood's gradient for the emulator's mean (through
+    # the covariance's dependence on the prediction too); "quasi": the
+    # quasi-likelihood gradient (covariance at the detached prediction).
+    mean_gradient: str = "full"
 
 
 def _theta_draws(
@@ -1664,7 +1676,12 @@ def batch_loss(
     The data terms only: the anchor is constant in the emulator at fixed ``E``.
     """
     draws = _theta_draws(batch, cfg, gen)
-    nlls = torch.stack([star_nll(model, th, ebv, parallax, batch) for th in draws])
+    if cfg.mean_gradient not in ("full", "quasi"):
+        raise ValueError(f"unknown mean_gradient {cfg.mean_gradient!r}")
+    quasi = cfg.mean_gradient == "quasi"
+    nlls = torch.stack(
+        [star_nll(model, th, ebv, parallax, batch, quasi=quasi) for th in draws]
+    )
     if nlls.shape[0] == 1:
         return nlls[0]
     return -(torch.logsumexp(-nlls, dim=0) - math.log(nlls.shape[0]))
