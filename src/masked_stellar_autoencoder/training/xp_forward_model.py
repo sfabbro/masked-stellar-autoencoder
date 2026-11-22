@@ -97,10 +97,15 @@ The label is a function of the star's spectroscopic labels and of its BP-RP colo
 (an integral of the XP spectrum). It is therefore a *training-only* term: at
 inference the spectroscopic labels are what is being measured (using them would be
 circular) and the colour is already in the XP term (double counting). Within training
-the label repeats the colour information that the XP term carries about ``E_i`` at
-the plugged-in ``theta``; that tightens each anchored ``E_i`` by at most a factor of
-order sqrt(2), while its purpose, the population-level scale and zero point of ``E``,
-is information that only the labels' calibration provides. A normalisation convention
+the label repeats the colour's share of the information that the XP term carries
+about ``E_i`` at the plugged-in ``theta`` (at most a doubled weight for that share, so
+each anchored ``E_i`` is at most ~sqrt(2) too tight); its purpose, the
+population-level scale and zero point of ``E``, is information that only the labels'
+calibration provides. The labels were computed at the fine-tune table's labels, not
+at the ``labels.npz`` values plugged in here; the difference (mostly [Fe/H] of the
+core stars) moves the intrinsic colour, hence ``E``, by of order 0.01 mag per 0.1 dex
+of [Fe/H], small against the labels' 0.03 mag errors except for the stars whose
+[Fe/H] moved most. A normalisation convention
 (e.g. fixing ``dE(BP-RP)/dE`` to the Casagrande ratio) would be the minimum without
 labels; with 72 % of the rows labelled it is redundant, and it would impose the
 extinction law in one colour.
