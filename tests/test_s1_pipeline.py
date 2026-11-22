@@ -276,3 +276,9 @@ def test_hidden_parallax_latents_ignore_the_parallax(tmp_path):
     # The posterior head (the comparator) still sees and conditions on parallax.
     pa, pb = np.load(a / "predictions.npz"), np.load(b / "predictions.npz")
     assert not np.allclose(pa["post_median"], pb["post_median"])
+
+
+def test_joint_wilks_threshold_matches_chi2_3():
+    from torchregress.inference import wilks_threshold
+
+    assert abs(_load_script().WILKS68_JOINT - wilks_threshold(0.6827, df=3)) < 1e-4

@@ -84,7 +84,7 @@ SUPPORT_WIDTHS = (100.0, 0.1, 0.1)  # occupancy-grid cells of the label support
 U_BOUNDS = (-1.5, 2.5)  # log10(parallax / mas) of the plx arm (0.03-316 mas)
 U_WIDTH = 0.1  # support cell in log10 parallax
 LEVELS = (("68", 0.5, 0.32), ("95", 1.92, 0.05))  # Wilks threshold, Neyman alpha
-WILKS68_JOINT = 1.7649  # wilks_threshold(0.6827, df=3): joint 3-parameter set
+WILKS68_JOINT = 1.7634  # wilks_threshold(0.6827, df=3): joint 3-parameter set
 L21_CONSTANT_ZP = -0.017  # mas, Lindegren+2021 quasar median (rows without L21)
 # A label with no score inside the support (e.g. its theta outside the 4-D
 # support at every parallax of its window) is rejected: not in any set, and an
@@ -848,9 +848,7 @@ def stage_report(a, config, out):
                 for g, m in (("G<=16", test & (G <= 16)), ("G>16", test & (G > 16)))
             }
         metrics["test_labels"][name] = tab
-    for arm, r in inf.items():
-        if int(r["n_calib"]) < a.min_calib:
-            continue
+    for arm in inf:  # an arm without Neyman sets fails the coverage criterion
         metrics["decision"][arm] = V.decide(
             metrics["frozen_core"][f"mle_{arm}"], metrics["frozen_core"]["posterior"],
             metrics["coverage"][arm]["neyman68"],

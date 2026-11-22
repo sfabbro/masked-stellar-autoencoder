@@ -306,7 +306,7 @@ def render_report(m):
     L.append(
         "'Neyman 68/95': the joint (Teff, log g, [Fe/H]) set; 'Neyman 68 <p>': "
         "the per-parameter Neyman interval; 'Wilks 68 joint': raw joint set "
-        "(lambda <= 1.765, chi2_3); 'Wilks 68 <p>': raw profile set (lambda_j <= "
+        "(lambda <= 1.763, chi2_3); 'Wilks 68 <p>': raw profile set (lambda_j <= "
         "0.5); 'profile 68': the Wilks (0.5) profile interval (profiled rows).\n"
     )
     L.append("Labels are noisy measurements: coverage of the label is approximate. "
