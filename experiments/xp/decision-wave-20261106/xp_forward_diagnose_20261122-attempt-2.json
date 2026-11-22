@@ -1,0 +1,22 @@
+{
+  "run_id": "xp_forward_diagnose_20261122",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/xp_forward_diagnose_20261122",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/xp_forward_diagnose_20261122-attempt-2",
+  "source_commit": "8d6d8c589daf6cab5528a8c4afee8e2af4484baa",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/diagnose_xp_forward_inference.py --table /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --checkpoint /arc/projects/astroai/msa/runs/xp_forward_model_20261122/model.pt --covariance-sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --n 2000 --output \"$experiment_output\"",
+  "utc": "2026-11-22T09:13:09.924890+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "d2clq6dy"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "ae53c704f7fdf60c34481add8008ac21fa5a19c5cc9eeafcf3333de6ea750e4e"
+}
