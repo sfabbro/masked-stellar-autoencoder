@@ -11,6 +11,43 @@ non-Gaussian) as a first-class product.
 This note builds on `design-20261120-likelihood-inference.md` and on the
 22 November results (S1 parallax ensemble, XP forward model run 2).
 
+## 0. Scope (updated 22 November, from the user)
+
+- **Every Gaia star**, about 2 x 10^9, not only the XP subset: DR4 will give XP spectra
+  for all of them.
+- **Beyond Gaia:** "Pensus", a full-sky, outer-joined crossmatch of multi-band
+  photometric surveys from the UV to the IR. Any subset of bands can be missing for a
+  given star.
+- **Science drivers:**
+  - outer-halo and metal-poor stars;
+  - distances;
+  - dark matter and Milky Way structure;
+  - cluster discovery;
+  - general stellar characterisation for follow-up targeting.
+- **Targets:**
+
+  | Target | Status |
+  |---|---|
+  | Teff, log g, [Fe/H] | being finished now |
+  | Distance, E(B-V) | in parallel |
+  | [alpha/Fe] | later |
+  | Ages | consensus-scale age programme, section 10 |
+
+**Consequence for the likelihood.** The measurement product A factorises by data
+source:
+
+`L(theta, E, parallax) = L_XP(theta, E) x L_SED(theta, E, parallax) x L_parallax(parallax) [x L_RVS ...]`
+
+- **Each factor is trained once** and simply drops out when its data are missing: no
+  XP for a Pensus-only star; no parallax far away; any subset of bands.
+- **The SED factor** carries the geometry: `m_b = M_b(theta, E) + 5 log10(100 / parallax)`.
+- **Distances are therefore never inverted parallaxes.** The parallax enters only
+  through its measurement likelihood, with the L21 zero point. No parallax/error cut is
+  applied; that cut biased the S1 parallax experiment (section 8).
+- **Gaia parallaxes are the training signal for absolute magnitudes** (spectrophotometric
+  parallaxes, Hogg, Eilers & Rix 2019). This needs no labels and improves with the
+  number of stars.
+
 ## 1. Ground rules
 
 What counts as "no prior physics", operationally:
@@ -262,3 +299,34 @@ g-modelling, Mondrian and weighted density conformal, multivariate flow heads
 with errors-in-variables training. MSA keeps the feature engineering (reduced
 proper motion, velocities, quality flags, propensity features) and the
 experiments.
+
+## 10. Ages: a consensus scale from model-dependent labels (programme)
+
+The age labels we hold disagree with one another and depend on their models. For
+example, APOKASC-3 and Willett et al. 2026 differ by up to about 3 Gyr on the same
+10k Kepler giants, and most for old and metal-poor stars (`plan-20261022/09`). The aim
+is not to beat the precision of the best measurements (highly sampled asteroseismic
+time series). It is accuracy that no longer depends on any single pipeline's grid,
+priors or selection, propagated with calibrated uncertainties to every Gaia star.
+
+**The machinery is the one that put [Fe/H] on a common scale:**
+- a latent log-age per star;
+- a measurement map per catalogue or method, in tiers by overlap;
+- a learned noise inflation per source, and censoring for reported bounds;
+- co-natal equality constraints (open clusters, wide binaries) as soft likelihood terms.
+  These are the most model-independent constraint available.
+
+**The gauge.** An absolute age scale is tied to physics somewhere. What we choose is
+which reference fixes the gauge. The lesson from [Fe/H] applies: anchors must be
+identity-mapped, never free zero-sum offsets. Choosing the anchor is the user's
+decision, informed by the audit.
+
+**Per-star ages.** A predictive age distribution comes from frozen-latent heads trained
+against this measurement model:
+- honest (wide) where the data carry no age information, as for main-sequence dwarfs;
+- informative for turn-off stars, subgiants and giants;
+- conformal-calibrated per evolutionary stratum.
+
+**First step (running):** an inventory of every age catalogue we hold or can reach,
+pairwise systematics on shared stars, the open-cluster consistency test, and a design
+note with the anchor options (`design-20261122-age-consensus.md`).
