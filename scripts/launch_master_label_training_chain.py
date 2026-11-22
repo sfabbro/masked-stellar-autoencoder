@@ -1121,6 +1121,29 @@ STEPS["ms-s1-v10-plx-ens"] = dict(
     ),
     files=[MS_V10[1]],
 )
+# Core three, step 1: the unbiased S1 'all' arm (all labelled stars, latent with the
+# full input, no parallax cut; +0.05/+0.07 below -2.5 on the held-out core) as a
+# 5-head ensemble (mean log-ratio) to cut its scatter; the parallax ensemble's
+# 1 -> 5 heads cut scatter in every bin without adding bias. Member 0 alone is
+# reported for the ensemble effect; the parallax-ensemble arm joins the tables.
+STEPS["ms-s1-v10-ens"] = dict(
+    run_id="likelihood_head_s1_v10_ens_20261122",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=(
+        f"python -u scripts/s1_likelihood_head.py --config {MS_V10[1]}"
+        f" --checkpoint {_V10_CK}"
+        f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits"
+        f" --records {ROOT}{MS_TABLE_V5}/records.npz"
+        f" --labels {ROOT}{S1_V10}/labels.npz"
+        f" --baseline {ROOT}likelihood_head_s1_v10_plx_ens_20261122 --baseline-arms plx"
+        " --arms all --ensemble 5 --profile-rows core"
+        " --device cuda --threads 8 --chunk-size 32768"
+        ' --output "$experiment_output"'
+    ),
+    files=[MS_V10[1]],
+)
 # S2 (product B, docs/design-20261122-data-driven-inference.md section 6, plan step
 # 4, B0): distributional heads on the frozen v10 latents of S1 v10 (latent.npy,
 # predictions.npz, labels.npz): conditional spline flow, Student-t mixture and
