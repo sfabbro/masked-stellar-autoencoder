@@ -1,0 +1,24 @@
+{
+  "run_id": "likelihood_head_s1_v10_plx_ens_20261122",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/likelihood_head_s1_v10_plx_ens_20261122",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/likelihood_head_s1_v10_plx_ens_20261122",
+  "source_commit": "98190423b5a652d72b84d6b19d531d60520ae455",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s1_likelihood_head.py --config configs/finetune-multisurvey-20261121-v10.yaml --checkpoint /arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/finetune_checkpoint_12.pth --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --records /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/records.npz --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --baseline /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121 --sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --parallax-nuisance --ensemble 5 --profile-rows core --n-candidates 512 --device cuda --threads 8 --chunk-size 32768 --output \"$experiment_output\"",
+  "utc": "2026-11-22T06:01:17.178911+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "zipxda0f"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261121-v10.yaml": "7e57eebf11267bebfd9d9777b7f746352f6e1cb0c7806d5311110678ccadc70c"
+  },
+  "payload_sha256": "c7e052555e5c387dd9be40ae09e37d1d87302a215339cf3c519d89f6efc76403"
+}
