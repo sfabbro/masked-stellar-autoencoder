@@ -1,0 +1,22 @@
+{
+  "run_id": "xp_forward_model_20261122",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/xp_forward_model_20261122",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/xp_forward_model_20261122",
+  "source_commit": "8474cfac5834319bb86c71872ce2fc6aecfb642d",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/run_xp_forward_model.py --table /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --reddening-labels /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v5_reddening.npz --covariance-sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --max-train-stars 1000000 --max-heldout-stars 50000 --epochs 20 --nuisance-steps 3 --infer-dtype float32 --output \"$experiment_output\"",
+  "utc": "2026-11-22T05:50:40.928873+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "b5ru5xd7"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "700010930e65d784d40e9c8bb4656bf54961332aa3545bcb7016ec8056994ed7"
+}
