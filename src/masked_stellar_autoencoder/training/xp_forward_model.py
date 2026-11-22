@@ -152,7 +152,9 @@ covariance and the distance modulus profiled analytically), then ``profile_inter
 profiled. Every evaluation reuses the star's covariance factor (:class:`PreparedStars`),
 so a candidate costs one emulator pass and two 55 x 55 triangular solves. Outputs:
 MLE, intervals, ``E`` and parallax at the MLE (with the side of any ``E`` bound),
-XP chi^2 and dof at the MLE, bound flags.
+the inverse observed information of (Teff, log g, [Fe/H]), XP chi^2 and dof at the
+MLE, bound flags. The profile scans use a per-star local box around the MLE
+(:func:`profile_intervals`) and stack the 68 % and 95 % levels in one call.
 
 Data contracts
 --------------
@@ -1950,21 +1952,33 @@ def coarse_init(
                     prep.xp_factor[rs, k], resid, upper=False
                 )
                 chi2[rs] += w.square().sum(1)
-        # Photometry with the distance modulus profiled (weighted mean incl. parallax).
-        w_m = prep.mag_mask.to(dtype) / prep.mag_var  # [n, nb]
-        good = prep.has_plx & (prep.plx > 2.0 * prep.plx_err)
-        plx_safe = torch.where(good, prep.plx, torch.ones_like(prep.plx))
+        # Photometry with the distance modulus profiled (weighted mean incl. parallax),
+        # expanded into [n, K] matrix products (no [n, K, bands] tensor), in float64.
+        f64 = torch.float64
+        w_m = prep.mag_mask.to(f64) / prep.mag_var.to(f64)  # [n, nb]
+        mag = prep.mag.to(f64)
+        bank_m = mag_bank.to(f64)  # [K, nb]
+        plx, plx_err = prep.plx.to(f64), prep.plx_err.to(f64)
+        good = prep.has_plx & (plx > 2.0 * plx_err)
+        plx_safe = torch.where(good, plx, torch.ones_like(plx))
         mu_plx = 5.0 * torch.log10(100.0 / plx_safe)
-        var_mu = (prep.plx_err / LN10_OVER_5 / plx_safe).square()
+        var_mu = (plx_err / LN10_OVER_5 / plx_safe).square()
         w_plx = torch.where(good, 1.0 / var_mu, torch.zeros_like(var_mu))
-        diff = prep.mag.unsqueeze(1) - mag_bank.unsqueeze(0)  # [n, K, nb]
-        num = (w_m.unsqueeze(1) * diff).sum(-1) + (w_plx * mu_plx).unsqueeze(1)
-        den = w_m.sum(-1, keepdim=True) + w_plx.unsqueeze(1)
-        mu = num / den.clamp_min(torch.finfo(dtype).tiny)
-        mu_lo, mu_hi = prep.mu_bounds()
+        sum_wd = (w_m * mag).sum(-1, keepdim=True) - w_m @ bank_m.T  # sum_b w (m - M)
+        sum_wdd = (
+            (w_m * mag.square()).sum(-1, keepdim=True)
+            - 2.0 * (w_m * mag) @ bank_m.T
+            + w_m @ bank_m.square().T
+        )
+        w_sum = w_m.sum(-1, keepdim=True)
+        mu = (sum_wd + (w_plx * mu_plx).unsqueeze(1)) / (
+            w_sum + w_plx.unsqueeze(1)
+        ).clamp_min(torch.finfo(f64).tiny)
+        mu_lo, mu_hi = (b.to(f64) for b in prep.mu_bounds())
         mu = torch.minimum(torch.maximum(mu, mu_lo.unsqueeze(1)), mu_hi.unsqueeze(1))
-        chi2_phot = (w_m.unsqueeze(1) * (diff - mu.unsqueeze(-1)).square()).sum(-1)
+        chi2_phot = (sum_wdd - 2.0 * mu * sum_wd + mu.square() * w_sum).clamp_min(0.0)
         chi2_plx = w_plx.unsqueeze(1) * (mu - mu_plx.unsqueeze(1)).square()
+        chi2_phot, chi2_plx, mu = (t.to(dtype) for t in (chi2_phot, chi2_plx, mu))
         total = chi2 + chi2_phot + chi2_plx
         e = bank[:, 3].unsqueeze(0)
         allowed = (e <= prep.e_max.unsqueeze(1)) & (e >= prep.e_min.unsqueeze(1))
@@ -1979,15 +1993,141 @@ def coarse_init(
     return torch.cat([theta, u_e.unsqueeze(1), u_p.unsqueeze(1)], dim=1)
 
 
+def observed_information(
+    score: Callable[[Tensor, Tensor], Tensor],
+    params: Tensor,
+    x: Tensor,
+    chunk_size: int = 8192,
+) -> Tensor:
+    """Negative Hessian of ``score`` in ``params`` ``[n, P, P]`` (rows independent)."""
+    n_par = params.shape[1]
+    out = []
+    for start in range(0, params.shape[0], chunk_size):
+        sl = slice(start, start + chunk_size)
+        with torch.enable_grad():
+            leaf = params[sl].detach().requires_grad_(True)
+            (g,) = torch.autograd.grad(
+                score(leaf, x[sl]).sum(), leaf, create_graph=True
+            )
+            rows = [
+                torch.autograd.grad(g[:, i].sum(), leaf, retain_graph=i < n_par - 1)[0]
+                for i in range(n_par)
+            ]
+        out.append(-torch.stack(rows, dim=1).detach())
+    return torch.cat(out) if out else params.new_zeros(0, n_par, n_par)
+
+
+def inverse_information(info: Tensor) -> Tensor:
+    """Inverse of each observed-information matrix; NaN where not positive definite."""
+    chol, bad = torch.linalg.cholesky_ex(info)
+    eye = torch.eye(info.shape[1], dtype=info.dtype, device=info.device).expand_as(info)
+    cov = torch.cholesky_solve(eye, chol)
+    return torch.where((bad == 0).view(-1, 1, 1), cov, torch.full_like(cov, math.nan))
+
+
+def profile_intervals(
+    score: Callable[[Tensor, Tensor], Tensor],
+    x: Tensor,
+    theta_hat: Tensor,
+    s_max: Tensor,
+    bounds: np.ndarray,
+    thresholds: Sequence[float],
+    cfg: InferenceConfig,
+    n_profiled: int = 3,
+    covariance: Tensor | None = None,
+) -> list[tuple[Tensor, Tensor, Tensor]]:
+    """Profile intervals ``(lower, upper, at_bound)`` ``[n, n_profiled]`` per threshold.
+
+    :func:`torchregress.inference.profile_interval` scans each side from the MLE to
+    the box edge. With the labels' range as the box, every scan point of a typical
+    star lies tens of sigma away and each needs a long inner maximisation. Here each
+    star's profiled parameters get a local box, the MLE +- ``cfg.profile_local_sigma``
+    marginal standard deviations (from the observed information, all five
+    parameters free) intersected with the global box, through a per-star affine map
+    to the unit box; the nuisance coordinates keep their global box. A side that
+    reaches a local edge which is not a global edge is recomputed in the global box
+    (as is any star whose observed information is not positive definite), so the
+    intervals are those of the global box: the local box only moves the scan points
+    next to the crossing.
+    """
+    glo = torch.as_tensor(bounds[:, 0], device=x.device, dtype=x.dtype)
+    ghi = torch.as_tensor(bounds[:, 1], device=x.device, dtype=x.dtype)
+    n = theta_hat.shape[0]
+    k = n_profiled
+    width = ghi[:k] - glo[:k]
+    lo = glo[:k].expand(n, k).clone()
+    hi = ghi[:k].expand(n, k).clone()
+    if cfg.profile_local_sigma > 0:
+        cov = covariance
+        if cov is None:
+            cov = inverse_information(
+                observed_information(score, theta_hat, x, cfg.chunk_size)
+            )
+        sd = torch.diagonal(cov, dim1=1, dim2=2)[:, :k].clamp_min(0.0).sqrt()
+        ok = torch.isfinite(sd)
+        half = (cfg.profile_local_sigma * sd).clamp(min=1e-3 * width)
+        half = torch.where(ok, half, width.expand(n, k))
+        lo = torch.maximum(theta_hat[:, :k] - half, lo)
+        hi = torch.minimum(theta_hat[:, :k] + half, hi)
+    span = hi - lo
+
+    def local_score(phi: Tensor, xx: Tensor) -> Tensor:
+        idx = xx[:, 0].round().long()
+        theta = lo[idx] + phi[:, :k] * span[idx]
+        return score(torch.cat([theta, phi[:, k:]], dim=1), xx)
+
+    phi_hat = torch.cat(
+        [((theta_hat[:, :k] - lo) / span).clamp(0.0, 1.0), theta_hat[:, k:]], 1
+    )
+    unit = [[0.0, 1.0]] * theta_hat.shape[1]
+    kw = dict(steps=cfg.profile_steps, tol=cfg.profile_tol, chunk_size=cfg.chunk_size)
+    # All thresholds in one call per parameter (rows stacked, per-row threshold).
+    m = len(thresholds)
+    thr = torch.cat(
+        [torch.full((n,), float(t), dtype=x.dtype, device=x.device) for t in thresholds]
+    )
+    xs, phis, smax = x.repeat(m, 1), phi_hat.repeat(m, 1), s_max.repeat(m)
+    lo_s, hi_s, span_s = lo.repeat(m, 1), hi.repeat(m, 1), span.repeat(m, 1)
+    lower = torch.empty(m * n, k, dtype=x.dtype, device=x.device)
+    upper = torch.empty_like(lower)
+    at_bound = torch.zeros(m * n, k, dtype=torch.bool, device=x.device)
+    for j in range(k):
+        pi = profile_interval(local_score, xs, phis, smax, j, thr, unit,
+                              n_scan=cfg.profile_scan_local, **kw)  # fmt: skip
+        lower[:, j] = lo_s[:, j] + pi.lower * span_s[:, j]
+        upper[:, j] = lo_s[:, j] + pi.upper * span_s[:, j]
+        lo_edge, hi_edge = pi.lower_at_bound, pi.upper_at_bound
+        redo = (lo_edge & (lo_s[:, j] > glo[j])) | (hi_edge & (hi_s[:, j] < ghi[j]))
+        redo = redo.nonzero().squeeze(1)
+        at_bound[:, j] = lo_edge | hi_edge
+        if redo.numel():
+            star = redo % n
+            g = profile_interval(score, x[star], theta_hat[star], s_max[star], j, thr[redo],
+                                 bounds, n_scan=cfg.profile_scan, **kw)  # fmt: skip
+            lower[redo, j], upper[redo, j] = g.lower, g.upper
+            at_bound[redo, j] = g.lower_at_bound | g.upper_at_bound
+    return [
+        (
+            lower[i * n : (i + 1) * n],
+            upper[i * n : (i + 1) * n],
+            at_bound[i * n : (i + 1) * n],
+        )
+        for i in range(m)
+    ]
+
+
 @dataclass
 class InferenceConfig:
     chunk_rows: int = 2048
-    chunk_size: int = 16384
+    chunk_size: int = 8192
     n_candidates: int = 8
     n_starts: int = 1
     steps: int = 30
     profile_steps: int = 10
     profile_scan: int = 4
+    profile_scan_local: int = 2
+    profile_local_sigma: float = 8.0
+    profile_tol: float = 1e-3
     bank_theta: int = 1024
     ebv_grid: tuple[float, ...] = (
         -0.03,
@@ -2020,6 +2160,9 @@ def infer_stars(
 ) -> dict[str, np.ndarray]:
     """MLE, profile intervals, nuisances and goodness of fit for every star of ``data``.
 
+    ``cov_theta`` ``[n, 3, 3]``: the (Teff, log g, [Fe/H]) block of the inverse
+    observed information at the MLE (nuisances profiled; NaN where not positive
+    definite), a Gaussian summary of the profile likelihood for population work.
     No reddening label enters (they are training-only). Covariance factors are
     computed in float64 and cast to ``dtype`` (float32 is safe for the Newton
     iterations and the profile scans: the score is a whitened quadratic form).
@@ -2041,7 +2184,7 @@ def infer_stars(
     thresholds = [wilks_threshold(c, df=1) for c in cfg.confidence]
     keys = ("mle", "lo68", "hi68", "lo95", "hi95", "at_bound", "interval_at_bound", "E_mle",
             "E_bound", "E_box_max", "parallax_mle", "chi2_xp", "dof_xp", "chi2_phot", "dof_phot",
-            "nll", "init")  # fmt: skip
+            "nll", "init", "cov_theta")  # fmt: skip
     out: dict[str, list[np.ndarray]] = {k: [] for k in keys}
     t0 = time.perf_counter()
     for start in range(0, len(data), cfg.chunk_rows):
@@ -2055,23 +2198,12 @@ def infer_stars(
             score, x, bounds, n_candidates=cfg.n_candidates, n_starts=cfg.n_starts,
             steps=cfg.steps, init=init, chunk_size=cfg.chunk_size, generator=gen,
         )  # fmt: skip
-        intervals = {}
-        for name, thr in zip(("68", "95"), thresholds, strict=True):
-            lo, hi, lo_b, hi_b = [], [], [], []
-            for j in range(3):
-                pi = profile_interval(
-                    score, x, res.theta, res.score, j, thr, bounds, n_scan=cfg.profile_scan,
-                    steps=cfg.profile_steps, chunk_size=cfg.chunk_size,
-                )  # fmt: skip
-                lo.append(pi.lower)
-                hi.append(pi.upper)
-                lo_b.append(pi.lower_at_bound)
-                hi_b.append(pi.upper_at_bound)
-            intervals[name] = (
-                torch.stack(lo, 1),
-                torch.stack(hi, 1),
-                torch.stack(lo_b, 1) | torch.stack(hi_b, 1),
-            )
+        cov = inverse_information(
+            observed_information(score, res.theta, x, cfg.chunk_size)
+        )
+        intervals = profile_intervals(
+            score, x, res.theta, res.score, bounds, thresholds, cfg, covariance=cov
+        )
         with torch.no_grad():
             ebv, parallax = unit_to_nuisance(res.theta[:, 3:5], prep)
             parts = star_nll_prepared(
@@ -2082,11 +2214,11 @@ def infer_stars(
         side = (u_e >= 1).to(torch.int8) - (u_e <= 0).to(torch.int8)
         out["mle"].append(res.theta[:, :3].cpu().numpy())
         out["at_bound"].append(res.at_bound.cpu().numpy())
-        out["lo68"].append(intervals["68"][0].cpu().numpy())
-        out["hi68"].append(intervals["68"][1].cpu().numpy())
-        out["lo95"].append(intervals["95"][0].cpu().numpy())
-        out["hi95"].append(intervals["95"][1].cpu().numpy())
-        out["interval_at_bound"].append(intervals["95"][2].cpu().numpy())
+        out["lo68"].append(intervals[0][0].cpu().numpy())
+        out["hi68"].append(intervals[0][1].cpu().numpy())
+        out["lo95"].append(intervals[1][0].cpu().numpy())
+        out["hi95"].append(intervals[1][1].cpu().numpy())
+        out["interval_at_bound"].append(intervals[1][2].cpu().numpy())
         out["E_mle"].append(ebv.cpu().numpy())
         out["E_bound"].append(side.cpu().numpy())
         out["E_box_max"].append(prep.e_max.cpu().numpy())
@@ -2094,6 +2226,7 @@ def infer_stars(
         for k in ("chi2_xp", "dof_xp", "chi2_phot", "dof_phot", "nll"):
             out[k].append(parts[k].cpu().numpy())
         out["init"].append(init.cpu().numpy())
+        out["cov_theta"].append(cov[:, :3, :3].cpu().numpy())
         done = idx[-1] + 1
         rate = done / max(time.perf_counter() - t0, 1e-9)
         log(f"xp_forward: inferred {done}/{len(data)} stars ({rate:.1f} stars/s)")
@@ -2165,6 +2298,7 @@ def prediction_arrays(
         "chi2_phot": result["chi2_phot"],
         "dof_phot": result["dof_phot"],
         "at_bound": result["at_bound"],
+        "cov_theta": result["cov_theta"],
         "at_bound_names": np.array(PARAM_NAMES),
         "interval_at_bound": result["interval_at_bound"],
         "subset": np.asarray(subset),

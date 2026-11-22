@@ -495,6 +495,44 @@ def test_inference_with_the_true_emulator_covers_at_nominal_rate() -> None:
     assert np.median(np.abs((res32["hi68"] - res32["lo68"]) / width - 1)) < 0.05
 
 
+def test_local_profile_intervals_match_the_global_box() -> None:
+    """The per-star local box only moves the scan points: intervals equal those of
+    the global box, also when a local edge is hit (0.5 sigma box: global fallback)."""
+    model = _true_model()
+    data, truth = _simulate(model, 24, seed=9)
+    batch = data.batch(np.arange(24), CPU, torch.float64)
+    prep = xf.prepare_stars(model, batch)
+    score = xf._score_fn(model, prep)
+    x = torch.arange(24, dtype=torch.float64).unsqueeze(1)
+    bounds = np.concatenate([BOUNDS, [[0.0, 1.0], [0.0, 1.0]]])
+    pool = np.random.default_rng(5).uniform(BOUNDS[:, 0], BOUNDS[:, 1], size=(2000, 3))
+    bank = torch.as_tensor(xf.candidate_bank(pool, 256, (0.0, 0.1, 0.25, 0.5), 0))
+    init = xf.coarse_init(model, prep, bank)
+    res = xf.maximize_score(
+        score, x, bounds, n_candidates=8, n_starts=1, steps=40, init=init
+    )
+    thr = [xf.wilks_threshold(0.6827), xf.wilks_threshold(0.95)]
+    cfg = xf.InferenceConfig(profile_tol=1e-6)
+    ref = xf.profile_intervals(score, x, res.theta, res.score, bounds, thr,
+                               xf.InferenceConfig(profile_local_sigma=0.0, profile_tol=1e-6))  # fmt: skip
+    cov = xf.inverse_information(xf.observed_information(score, res.theta, x))
+    for sigma in (8.0, 0.5):
+        cfg.profile_local_sigma = sigma
+        got = xf.profile_intervals(
+            score, x, res.theta, res.score, bounds, thr, cfg, covariance=cov
+        )
+        for (lo_r, hi_r, b_r), (lo_g, hi_g, b_g) in zip(ref, got, strict=True):
+            width = (hi_r - lo_r).clamp_min(1e-9)
+            assert float(((lo_g - lo_r).abs() / width).max()) < 1e-3
+            assert float(((hi_g - hi_r).abs() / width).max()) < 1e-3
+            assert torch.equal(b_r, b_g)
+    # The inverse observed information approximates the 68 % profile half-widths.
+    half = 0.5 * (ref[0][1] - ref[0][0])
+    sd = torch.diagonal(cov, dim1=1, dim2=2)[:, :3].sqrt()
+    ratio = (sd / half).numpy()
+    assert 0.8 < np.median(ratio) < 1.25, np.median(ratio, axis=0)
+
+
 def test_select_rows_keeps_held_out_core_out() -> None:
     n = 400
     rng = np.random.default_rng(0)
