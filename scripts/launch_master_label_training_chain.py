@@ -1172,6 +1172,46 @@ STEPS["ms-s2-distributional-heads"] = dict(
     ),
     files=[],
 )
+# S3 (distance and E(B-V) as first-class outputs; design note 20261122 sections 1-3,
+# 6): joint p(s = ln d/kpc, E(B-V) | z) heads on the frozen v10 latents of the S1
+# parallax ensemble (PARALLAX hidden from the encoder), trained by the exact marginal
+# likelihood of every star's Gaia parallax (L21 zero point from the sidecar, error
+# inflation fitted per G bin; no parallax cut, no inversion, negative parallaxes kept)
+# and of the empirical reddening labels (errors in variables). Families: 2-D Gaussian
+# mixture and 2-D conditional spline flow, 5-member ensembles, natural distribution
+# (3M split-0 stars). Validation on the test split: parallax PIT / coverage per G and
+# predicted S/N, mean parallax pull per G and [Fe/H], precise-parallax distance moduli
+# per G, [Fe/H] and frozen core, E vs labels and vs SFD at |b| > 60 deg, Hunt+24 open
+# clusters. Second command: the beyond-XP stage (XP coefficients hidden, the table
+# re-encoded) on the test rows, then the report again. Expected ~3 h (2-4.5 h) on a
+# 12 GB GPU slice (flow training ~1-1.5 h, gmix ~20 min, encoding ~30 min), peak
+# ~7 GiB GPU, ~20 GB RAM.
+S3_RUN = "distance_extinction_s3_v10_20261122"
+_OC = "/arc/projects/k-pop/catalogues/OpenClusters"
+_S3 = (
+    "python -u scripts/s3_distance_extinction.py"
+    f" --inputs {ROOT}likelihood_head_s1_v10_plx_ens_20261122"
+    f" --labels {ROOT}{S1_V10}/labels.npz --config {MS_V10[1]}"
+    f" --fits {ROOT}{MS_TABLE_V5}/finetune.fits --sidecar {ROOT}{XPFM_SIDECAR}"
+    f" --reddening {XPFM_REDDENING} --core-rows {ROOT}{RESCORE}/rows.npy"
+    f" --members {_OC}/members.fits --clusters-table {_OC}/clusters.fits"
+    " --families gmix,flow --ensemble 5 --max-train 3000000"
+    " --device cuda --threads 8"
+    ' --output "$experiment_output"'
+)
+STEPS["ms-s3-distance-extinction"] = dict(
+    run_id=S3_RUN,
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=' && "${pixi_run[@]}" '.join(
+        [
+            f"{_S3} --stages data,clusters,train,predict,report",
+            f"{_S3} --stages noxp,report --force --checkpoint {_V10_CK}",
+        ]
+    ),
+    files=[MS_V10[1]],
+)
 
 
 def pushed_head() -> tuple[str, str]:
