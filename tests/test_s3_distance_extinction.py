@@ -540,3 +540,22 @@ def test_s3_script_v2_options_end_to_end(tmp_path, monkeypatch):
     assert "## Fitted E-label error scale kappa_E" in report
     assert "## Fitted parallax zero-point uncertainty" in report
     assert "XP-hidden latents with probability 0.5" in report
+
+
+def test_heads_load_with_and_without_the_fitted_outlier_width(tmp_path):
+    """v2 heads (no outlier-width parameter) and v2.1 heads both load."""
+    std = _std(np.random.default_rng(0).normal(size=(50, 4)))
+    for fit_scale in (False, True):
+        m = _member("gmix", 4, fit_e_noise=True, fit_e_out_scale=fit_scale)
+        cfg = dict(m.config)
+        cfg.pop("fit_e_out_scale")  # configs saved before the key existed
+        path = tmp_path / f"m{int(fit_scale)}.pt"
+        torch.save(
+            dict(config=cfg, state_dict=m.state_dict(), standardizer=std.state()), path
+        )
+        loaded, _ = de.load_member(path)
+        assert hasattr(loaded, "e_out_scale_raw") == fit_scale
+        e = torch.full((3,), 0.05)
+        g = torch.zeros(3, dtype=torch.long)
+        want = m.e_outlier_sigma(e, g)
+        torch.testing.assert_close(loaded.e_outlier_sigma(e, g), want)

@@ -243,7 +243,8 @@ class Member(nn.Module):
     def __init__(self, kind, in_dim, *, hidden=(256, 256), context=64, transforms=3,
                  flow_hidden=(128, 128), bins=16, s_bound=7.5, e_bound=8.0,
                  components=4, e_loc=0.0, e_scale=1.0, fit_kappa=True,
-                 fit_e_noise=False, fit_zp=False, xp_flag=False):  # fmt: skip
+                 fit_e_noise=False, fit_zp=False, xp_flag=False,
+                 fit_e_out_scale=None):  # fmt: skip
         super().__init__()
         from torchregress.losses import MixtureDensityLoss, NormalizingFlowLoss
         from torchregress.losses.nflows import create_flow_model
@@ -261,6 +262,11 @@ class Member(nn.Module):
                            e_scale=float(e_scale), fit_kappa=bool(fit_kappa),
                            fit_e_noise=bool(fit_e_noise), fit_zp=bool(fit_zp),
                            xp_flag=bool(xp_flag))  # fmt: skip
+        if (
+            fit_e_out_scale is None
+        ):  # new members: fitted outlier width with the E noise
+            fit_e_out_scale = bool(fit_e_noise)
+        self.config["fit_e_out_scale"] = bool(fit_e_out_scale and fit_e_noise)
         self.xp_flag = bool(xp_flag)
         self.e_loc, self.e_scale = float(e_loc), float(e_scale)
         if kind == "flow":
@@ -296,8 +302,9 @@ class Member(nn.Module):
             self.e_out_raw = nn.Parameter(torch.tensor(math.log(q / (1.0 - q))))
             # Outlier width lambda x quoted error (lambda >= 1, fitted), independent
             # of kappa_E: tied to kappa_E e it stays as narrow as the core.
-            lam0 = math.log(math.expm1(E_OUTLIER_SCALE - 1.0))
-            self.e_out_scale_raw = nn.Parameter(torch.tensor(lam0))
+            if self.config["fit_e_out_scale"]:
+                lam0 = math.log(math.expm1(E_OUTLIER_SCALE - 1.0))
+                self.e_out_scale_raw = nn.Parameter(torch.tensor(lam0))
         if fit_zp:
             self.zp_raw = nn.Parameter(
                 torch.tensor(math.log(math.expm1(ZP_SIGMA_INIT)))
@@ -814,6 +821,8 @@ def save_member(module, path, std, **extra):
 def load_member(path, device="cpu"):
     blob = torch.load(path, map_location="cpu", weights_only=False)
     cfg = dict(blob["config"])
+    # v2 heads predate the fitted outlier width: build what the state dict holds.
+    cfg["fit_e_out_scale"] = "e_out_scale_raw" in blob["state_dict"]
     member = Member(cfg.pop("kind"), cfg.pop("in_dim"), **cfg)
     member.load_state_dict(blob["state_dict"])
     member.to(device).eval().requires_grad_(False)
