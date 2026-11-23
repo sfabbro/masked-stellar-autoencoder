@@ -1,0 +1,24 @@
+{
+  "run_id": "distance_extinction_s3_v21_final_20261123",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/distance_extinction_s3_v21_final_20261123",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/distance_extinction_s3_v21_final_20261123",
+  "source_commit": "6b4a2796b75747a2fe301840d98265ec96bc6be4",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/s3_distance_extinction.py --inputs /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_plx_ens_20261122 --labels /arc/projects/astroai/msa/runs/likelihood_head_s1_v10_20261121/labels.npz --config configs/finetune-multisurvey-20261121-v10.yaml --fits /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/finetune.fits --sidecar /arc/projects/astroai/msa/runs/covariance_sidecar_20261120/sidecar_table.h5 --reddening /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/v5_reddening.npz --core-rows /arc/projects/astroai/msa/runs/rescore_20261119/rows.npy --members /arc/projects/k-pop/catalogues/OpenClusters/members.fits --clusters-table /arc/projects/k-pop/catalogues/OpenClusters/clusters.fits --families gmix,flow --ensemble 5 --max-train 4700000 --device cuda --threads 8 --output /arc/projects/astroai/msa/runs/distance_extinction_s3_v21_20261123 --e-noise fit --fit-zp-sigma --xp-mix 0.5 --noxp-inputs /arc/projects/astroai/msa/runs/distance_extinction_s3_v10_20261122/noxp --families gmix --stages predict,noxp,report",
+  "utc": "2026-11-23T12:18:16.900394+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "xult17pu"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {
+    "configs/finetune-multisurvey-20261121-v10.yaml": "7e57eebf11267bebfd9d9777b7f746352f6e1cb0c7806d5311110678ccadc70c"
+  },
+  "payload_sha256": "fc16dfa9f463e6b2fc209c231d79753a5dae2b06fba54480c3a512562f6a2b6e"
+}
