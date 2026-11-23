@@ -69,7 +69,9 @@ STARHORSE = tuple(f"starhorse23_{s}" for s in (
 WILLETT = ("willett26_kepler", "willett26_k2_bhm", "willett26_k2_cor", "willett26_tess",
            "willett26_kepler_L", "willett26_k2_bhm_L", "willett26_k2_cor_L", "willett26_tess_L",
            "willett26_k2_gal_L")  # fmt: skip
-LEGACY = tuple(f"legacy17_{p}" for p in ("BASTA", "AST", "C2kSMO", "GOE", "V&A", "YMCM"))
+LEGACY = tuple(
+    f"legacy17_{p}" for p in ("BASTA", "AST", "C2kSMO", "GOE", "V&A", "YMCM")
+)
 #: Catalogues on the same inputs: one record per star and group enters the fit
 #: (the first in the list the star has); the others are validation records.
 SHARED_INPUT_GROUPS = {
@@ -102,7 +104,9 @@ RANK = {**{s: 6 for s in LEGACY}, "apokasc3": 5, "apokasc2": 5, "apok2_kepler": 
 REFERENCE_PREFERENCE = ("xiang24", "apokasc3", "starhorse23_lamostl7", "galah_dr4_sgb")
 DENSE, MIN_OVERLAP, LINEAR_MIN, FLEX_MIN, SPAN_MIN = 1000, 30, 1000, 20000, 0.6
 CLASS_MIN, NOISE_MIN = 300, 200
-MS_LOGG = 4.1  # isochrone-pipeline records at or above are main sequence (prior-dominated)
+MS_LOGG = (
+    4.1  # isochrone-pipeline records at or above are main sequence (prior-dominated)
+)
 CLUSTER_SPREAD, BINARY_SPREAD, BINARY_PRIOR = 0.01, 0.01, 0.9
 #: Literature ages (Gyr, eclipsing binaries / lithium depletion; orientation
 #: only, design note 2.3) shown beside the fitted cluster latents.
@@ -110,6 +114,9 @@ LITERATURE_GYR = {"NGC_6791": 8.0, "NGC_6819": 2.5, "NGC_2682": 4.0, "NGC_188": 
                   "NGC_6811": 1.0, "NGC_2632": 0.7, "Melotte_22": 0.12}  # fmt: skip
 SURFACE, INK, MUTED, GRID = "#fcfcfb", "#1f2328", "#5b6470", "#e6e6e3"
 SERIES = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100")
+#: one colour per evolutionary class in every panel
+CLASS_COLOUR = {"SGB": SERIES[0], "RGB": SERIES[0], "MSTO": SERIES[1], "RC": SERIES[1],
+                "giant": SERIES[2], "MS": SERIES[3]}  # fmt: skip
 
 
 def nmad(x) -> float:
@@ -142,10 +149,22 @@ def record_class(source: str, stage, stage_class) -> np.ndarray:
 
 def prepare(records: Path, targets: Path) -> dict:
     """Harmonised fit/validation records and co-natal groups."""
-    cols = ["source", "source_id", "age", "lage", "sig", "stage", "stage_class", "good", "feh",
-            "logg"]
+    cols = [
+        "source",
+        "source_id",
+        "age",
+        "lage",
+        "sig",
+        "stage",
+        "stage_class",
+        "good",
+        "feh",
+        "logg",
+    ]
     raw = pd.read_parquet(records, columns=cols)
-    raw = raw[raw.good & (raw.source_id > 0) & np.isfinite(raw.lage)].drop(columns="good")
+    raw = raw[raw.good & (raw.source_id > 0) & np.isfinite(raw.lage)].drop(
+        columns="good"
+    )
     raw["source"] = raw.source.astype(str)
     all_ids = np.unique(raw.source_id.to_numpy())
     use = raw[raw.source.isin(FIT_SOURCES + VALIDATION_SOURCES)].copy()
@@ -153,9 +172,13 @@ def prepare(records: Path, targets: Path) -> dict:
     gd = use.source.isin(ISOCHRONE) & (use.logg >= MS_LOGG)
     for s, n in use[gd].source.value_counts().items():
         excluded[f"{s} main-sequence records (log g >= {MS_LOGG})"] = int(n)
-    excluded["flame_dr3 + flame_spec_dr3 records"] = int(raw.source.str.startswith("flame").sum())
+    excluded["flame_dr3 + flame_spec_dr3 records"] = int(
+        raw.source.str.startswith("flame").sum()
+    )
     use = use[~gd]
-    use["_s"] = use.sig.fillna(np.inf)  # one record per (source, star): smallest quoted error
+    use["_s"] = use.sig.fillna(
+        np.inf
+    )  # one record per (source, star): smallest quoted error
     use = use.sort_values(["source", "source_id", "_s"], kind="stable")
     use = use.drop_duplicates(["source", "source_id"]).drop(columns="_s")
     use["cls"] = ""
@@ -176,7 +199,9 @@ def prepare(records: Path, targets: Path) -> dict:
             use.loc[m, "group"] = gname
             use.loc[m, "prio"] = p
     fit = use[use.source.isin(FIT_SOURCES)].sort_values(["source_id", "group", "prio"])
-    fit = fit.assign(representative=(~fit.duplicated(["source_id", "group"])).to_numpy())
+    fit = fit.assign(
+        representative=(~fit.duplicated(["source_id", "group"])).to_numpy()
+    )
     z = np.load(targets)
     mem = pd.DataFrame({"source_id": z["member"], "cid": z["member_cluster"].astype("i8"),
                         "prob": z["member_prob"].astype(float)})  # fmt: skip
@@ -228,6 +253,7 @@ class Config:
     name: str
     anchor: str = "apokasc3"
     galah_continuity: bool = False  # one GALAH DR4 map for its giants and subgiants
+    galah_giants: bool = False  # GALAH DR4 giant ages in the fit (else validation only)
     bridge_tier: int = OFFSET  # max tier of a component reference (thin bridges)
     mission_continuity: bool = True  # one Willett map per variant (Kepler, K2, TESS)
     conatal: bool = True
@@ -245,7 +271,12 @@ def map_key(source: str, cls: str, cfg: Config) -> str:
 
 def build_problem(data: dict, cfg: Config, log=print) -> dict:
     fit = data["fit"]
-    fit = fit[~fit.source.isin(cfg.drop)].sort_values(["source_id", "group", "prio"])
+    fit = fit[~fit.source.isin(cfg.drop)]
+    if not (cfg.galah_giants or cfg.galah_continuity):
+        # GALAH DR4 giant isochrone ages: validation only (their map, calibrated
+        # on K2 seismic giants, extrapolates badly to old metal-poor cluster giants)
+        fit = fit[~((fit.source == "galah_dr4") & fit.cls.isin(GIANT))]
+    fit = fit.sort_values(["source_id", "group", "prio"])
     fit = fit[~fit.duplicated(["source_id", "group"])].copy()  # representatives
     fit["key"] = [map_key(s, c, cfg) for s, c in zip(fit.source, fit.cls)]
     star_ids = np.unique(fit.source_id.to_numpy())
@@ -268,7 +299,11 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         n = int(g.source_id.nunique())
         span = float(np.subtract(*np.percentile(g.lage, [95, 5]))) if n else 0.0
         fok = np.isfinite(g.feh)
-        fspan = float(np.subtract(*np.percentile(g.feh[fok], [95, 5]))) if fok.sum() > 10 else 0.0
+        fspan = (
+            float(np.subtract(*np.percentile(g.feh[fok], [95, 5])))
+            if fok.sum() > 10
+            else 0.0
+        )
         i = kidx[k]
         if k == cfg.anchor or k in cfg.identity_extra:
             t = IDENTITY
@@ -299,7 +334,10 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         mk = [k for k in keys if comp[kidx[k]] == c and tier[kidx[k]] >= 0]
         if not mk:
             continue
-        ref = next((k for k in REFERENCE_PREFERENCE if k in mk), max(mk, key=lambda k: (fit.key == k).sum()))
+        ref = next(
+            (k for k in REFERENCE_PREFERENCE if k in mk),
+            max(mk, key=lambda k: (fit.key == k).sum()),
+        )
         width = _bridge_width(sc, gid, c)
         i = kidx[ref]
         if width < MIN_OVERLAP:
@@ -333,7 +371,13 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
             xr[i] = np.percentile(fe, [1, 99])
         if len(g) > 10:
             tr[i] = np.percentile(g.lage, [1, 99])
-    maps = MapSet([AgeMaps(keep, tier[sel], class_terms[sel], use_feh[sel], x_range=xr, t_range=tr)])
+    maps = MapSet(
+        [
+            AgeMaps(
+                keep, tier[sel], class_terms[sel], use_feh[sel], x_range=xr, t_range=tr
+            )
+        ]
+    )
     cnt = fit.groupby(["source", "cls"]).size()
     fit["unit"] = np.where([cnt[(s, c)] >= NOISE_MIN for s, c in zip(fit.source, fit.cls)],
                            fit.source + ":" + fit.cls, fit.source + ":all")  # fmt: skip
@@ -341,7 +385,9 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     uidx = {u: i for i, u in enumerate(units)}
     star_ids = np.unique(fit.source_id.to_numpy())
     star = np.searchsorted(star_ids, fit.source_id.to_numpy())
-    groups, glabels = conatal_groups(star_ids, data["members"], data["pairs"], cfg.conatal)
+    groups, glabels = conatal_groups(
+        star_ids, data["members"], data["pairs"], cfg.conatal
+    )
     gid = groups.gid
     nrec = np.bincount(star, minlength=len(star_ids))
     grec = np.bincount(gid[gid >= 0], minlength=max(len(groups.spread), 1))
@@ -384,7 +430,9 @@ def _bridge_width(sc: pd.DataFrame, gid: np.ndarray, c: int) -> int:
     co-natal partner."""
     in_c = set(sc.s[sc.c == c])
     other = set(sc.s[sc.c != c])
-    shared = {gid[s] for s in in_c if gid[s] >= 0} & {gid[s] for s in other if gid[s] >= 0}
+    shared = {gid[s] for s in in_c if gid[s] >= 0} & {
+        gid[s] for s in other if gid[s] >= 0
+    }
     return len((in_c & other) | {s for s in in_c if gid[s] in shared})
 
 
@@ -402,7 +450,9 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
     gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread)
     units = prob["units"]
     lk0 = np.where([u.split(":")[0] in ISOCHRONE for u in units], np.log(2.0), 0.0)
-    lw0 = np.where([u.startswith("galah_dr4") for u in units], np.log(0.1), np.log(0.03))
+    lw0 = np.where(
+        [u.startswith("galah_dr4") for u in units], np.log(0.1), np.log(0.03)
+    )
     le0 = np.full(len(EFFECT_FAMILIES), np.log(0.03))
     coefs0 = None
     maps = prob["maps"]
@@ -459,7 +509,10 @@ def map_table_from_res(res) -> pd.DataFrame:
         se[mask] = np.where(d > 0, np.sqrt(np.abs(d)), np.nan)
     rows = []
     for i, k in enumerate(fam.names):
-        row = {"key": k, "tier": ["identity", "offset", "linear", "flex"][int(fam.tier[i])]}
+        row = {
+            "key": k,
+            "tier": ["identity", "offset", "linear", "flex"][int(fam.tier[i])],
+        }
         for j, nm in enumerate(fam.column_names()):
             if mask[i, j]:
                 if nm.startswith(("db", "dA")):
@@ -479,7 +532,11 @@ def noise_table(prob, out) -> pd.DataFrame:
         sig = df.sig[m]
         q = float(np.nanmedian(sig)) if np.isfinite(sig).any() else np.nan
         k, w = float(np.exp(res.log_kappa[i])), float(np.exp(res.log_omega[i]))
-        kse = k * np.sqrt(vc[i, i]) if vc is not None and np.isfinite(vc[i, i]) else np.nan
+        kse = (
+            k * np.sqrt(vc[i, i])
+            if vc is not None and np.isfinite(vc[i, i])
+            else np.nan
+        )
         wse = w * np.sqrt(vc[U + i, U + i]) if vc is not None else np.nan
         scale = float(np.hypot(k * (q if np.isfinite(q) else 0.0), w))
         rows.append({"unit": u, "n_records": int(m.sum()), "median_quoted_sig": q,
@@ -514,7 +571,9 @@ def predict_heldout(name, recs: pd.DataFrame, star_ids, sol, tier_hint=LINEAR, s
     half = np.random.default_rng(seed).random(len(r)) < 0.5
     n = len(r)
     cls_ids = np.array([CLASSES.index(c) for c in r.cls])
-    big = [c for c in sorted(set(cls_ids[half])) if (cls_ids[half] == c).sum() >= CLASS_MIN]
+    big = [
+        c for c in sorted(set(cls_ids[half])) if (cls_ids[half] == c).sum() >= CLASS_MIN
+    ]
     ct = np.zeros((2, len(CLASSES)), bool)
     if tier_hint >= LINEAR and len(big) > 1:
         ref = max(big, key=lambda c: (cls_ids[half] == c).sum())
@@ -617,7 +676,10 @@ def run(args) -> None:
 
     if args.resume:  # reuse the saved main fits (fit_A.pkl, fit_C.pkl)
         results, sols = {}, {}
-        for tag, cfg in (("A", Config("A_apokasc3")), ("C", Config("C_xiang24", anchor="xiang24"))):
+        for tag, cfg in (
+            ("A", Config("A_apokasc3")),
+            ("C", Config("C_xiang24", anchor="xiang24")),
+        ):
             saved = pickle.load(open(work / f"fit_{tag}.pkl", "rb"))
             prob = build_problem(data, cfg, log=log)
             out = {"res": saved["res"], "rho": saved["rho"], "n_fit_stars": int(prob["in_fit"].sum()),
@@ -646,9 +708,12 @@ def run(args) -> None:
     # ---- bridge variants (gauge A) -------------------------------------------
     variants = {
         "V_affine_bridge": Config("V_affine_bridge", bridge_tier=LINEAR),
+        "V_galah_giants": Config("V_galah_giants", galah_giants=True),
         "V_galah_continuity": Config("V_galah_continuity", galah_continuity=True),
         "V_conatal_only": Config("V_conatal_only", mission_continuity=False),
-        "V_continuity_only": Config("V_continuity_only", galah_continuity=True, conatal=False),
+        "V_continuity_only": Config(
+            "V_continuity_only", galah_continuity=True, conatal=False
+        ),
         "V_seismic_dwarfs": Config("V_seismic_dwarfs", identity_extra=("chaplin14",)),
     }
     if args.quick:
@@ -659,7 +724,9 @@ def run(args) -> None:
     csv_only = {}
     for tag, cfg in variants.items():
         if args.resume and (docs / f"maps_{tag}.csv").exists():
-            csv_only[tag] = pd.read_csv(docs / f"maps_{tag}.csv")  # fitted before the resume
+            csv_only[tag] = pd.read_csv(
+                docs / f"maps_{tag}.csv"
+            )  # fitted before the resume
             continue
         # without co-natal terms the continuity-only problem converges slowly: capped
         extra = {"n_outer": 12} if not cfg.conatal else {}
@@ -673,8 +740,17 @@ def run(args) -> None:
         row = mt.set_index("key").loc["xiang24"]
         for feh in (-0.5, 0.0, 0.3):
             u, x = grid_t - 0.6, feh
-            d = row.get("b", 0.0) + np.nan_to_num(row.get("A", 0.0)) * u + np.nan_to_num(row.get("beta", 0.0)) * x
-            for g, term in (("g_uu", u * u), ("g_uuu", u**3), ("g_xu", x * u), ("g_xx", x * x + 0 * u)):
+            d = (
+                row.get("b", 0.0)
+                + np.nan_to_num(row.get("A", 0.0)) * u
+                + np.nan_to_num(row.get("beta", 0.0)) * x
+            )
+            for g, term in (
+                ("g_uu", u * u),
+                ("g_uuu", u**3),
+                ("g_xu", x * u),
+                ("g_xx", x * x + 0 * u),
+            ):
                 d = d + np.nan_to_num(row.get(g, 0.0)) * term
             se = row.get("b_se", np.nan) if row.tier == "offset" else np.nan
             for tt, dd in zip(grid_t, d):
@@ -686,7 +762,9 @@ def run(args) -> None:
             continue
         tr = prob["tiers"].set_index("key")
         for feh in (-0.5, 0.0, 0.3):
-            f, _, se = map_values(out["res"], "xiang24", grid_t, feh=feh, cls=CLASSES.index("SGB"))
+            f, _, se = map_values(
+                out["res"], "xiang24", grid_t, feh=feh, cls=CLASSES.index("SGB")
+            )
             for tt, dd, ss in zip(grid_t, f - grid_t, se):
                 bridge.append({"variant": tag, "xiang_tier": int(tr.tier["xiang24"]),
                                "bridge_width": tr.get("bridge_width", pd.Series()).get("xiang24", np.nan),
@@ -699,7 +777,9 @@ def run(args) -> None:
         prob = results[tag][0]
         sol = sols[tag]
         sid = stars.source_id.to_numpy()
-        pos = np.minimum(np.searchsorted(prob["star_ids"], sid), len(prob["star_ids"]) - 1)
+        pos = np.minimum(
+            np.searchsorted(prob["star_ids"], sid), len(prob["star_ids"]) - 1
+        )
         hit = prob["star_ids"][pos] == sid
         for col in ("t", "sd", "t_rec", "sd_rec"):
             stars[f"{col}_{tag}"] = np.where(hit, sol[col][pos], np.nan).astype("f4")
@@ -711,15 +791,21 @@ def run(args) -> None:
     stage = (fdf.assign(r=fdf.source.map(RANK)).sort_values("r", ascending=False)
              .drop_duplicates("source_id").set_index("source_id").cls)  # fmt: skip
     stars = stars.join(agg, on="source_id").join(stage.rename("stage"), on="source_id")
-    stars = stars.join(fdf.groupby("source_id").feh.median().rename("feh"), on="source_id")
+    stars = stars.join(
+        fdf.groupby("source_id").feh.median().rename("feh"), on="source_id"
+    )
     stars["n_catalogues"] = stars.n_catalogues.fillna(0).astype("i2")
     stars["n_families"] = stars.n_families.fillna(0).astype("i2")
     sid = stars.source_id.to_numpy()
-    pos = np.minimum(np.searchsorted(probA["star_ids"], sid), len(probA["star_ids"]) - 1)
+    pos = np.minimum(
+        np.searchsorted(probA["star_ids"], sid), len(probA["star_ids"]) - 1
+    )
     hit = probA["star_ids"][pos] == sid
     gidv = np.where(hit, probA["groups"].gid[pos], -1)
     lab = probA["group_labels"]
-    stars["cluster_id"] = np.array([lab[g][1] if g >= 0 and lab[g][0] == "cluster" else -1 for g in gidv], "i4")
+    stars["cluster_id"] = np.array(
+        [lab[g][1] if g >= 0 and lab[g][0] == "cluster" else -1 for g in gidv], "i4"
+    )
     stars["in_binary"] = np.array([g >= 0 and lab[g][0] == "binary" for g in gidv])
     stars["conatal_resp"] = np.where(hit, outA["rho"][pos], np.nan).astype("f4")
     stars["reason"] = np.where(stars.n_catalogues > 0, "",
@@ -732,7 +818,9 @@ def run(args) -> None:
     summary["n_stars_with_consensus_A"] = int(np.isfinite(stars.t_A).sum())
     summary["n_stars_with_consensus_C"] = int(np.isfinite(stars.t_C).sum())
     summary["n_lower_limits_A"] = int((stars.limit_A == 1).sum())
-    summary["frac_consensus_A_above_13p8"] = float(np.mean(stars.t_A[np.isfinite(stars.t_A)] > np.log10(13.8)))
+    summary["frac_consensus_A_above_13p8"] = float(
+        np.mean(stars.t_A[np.isfinite(stars.t_A)] > np.log10(13.8))
+    )
     # ---- record residuals before/after (consensus without the record's group) --
     for tag, (prob, out) in results.items():
         rec = prob["rec"]
@@ -741,27 +829,52 @@ def run(args) -> None:
                                  sols[tag]["t"])  # fmt: skip
         raw, mapped, z = record_residuals(rec, out["res"], len(prob["units"]),
                                           len(EFFECT_FAMILIES), t_o, v_o)  # fmt: skip
-        df = prob["fit_df"][["source", "source_id", "cls", "key", "lage", "feh", "censor"]].copy()
+        df = prob["fit_df"][
+            ["source", "source_id", "cls", "key", "lage", "feh", "censor"]
+        ].copy()
         df["t_other"], df["sd_other"] = t_o.astype("f4"), np.sqrt(v_o).astype("f4")
-        df["raw"], df["mapped"], df["z"] = raw.astype("f4"), mapped.astype("f4"), z.astype("f4")
-        df[np.isfinite(df.t_other)].to_parquet(work / f"residuals_{tag}.parquet", index=False)
+        df["raw"], df["mapped"], df["z"] = (
+            raw.astype("f4"),
+            mapped.astype("f4"),
+            z.astype("f4"),
+        )
+        df[np.isfinite(df.t_other)].to_parquet(
+            work / f"residuals_{tag}.parquet", index=False
+        )
     # ---- validation-only and non-representative records vs the consensus ------
-    val = pd.concat([data["fit"][~data["fit"].representative], data["val"]], ignore_index=True)
+    galah_giant = (data["fit"].source == "galah_dr4") & data["fit"].cls.isin(GIANT)
+    val = pd.concat(
+        [
+            data["fit"][~data["fit"].representative & ~galah_giant],
+            data["val"],
+            data["fit"][galah_giant].assign(source="galah_dr4_giant"),
+        ],
+        ignore_index=True,
+    )
     val_rows = []
     for s, g in val.groupby("source"):
-        val_rows += predict_heldout(s, g, probA["star_ids"], {"t": sols["A"]["t_rec"], "sd": sols["A"]["sd_rec"]})
+        val_rows += predict_heldout(
+            s,
+            g,
+            probA["star_ids"],
+            {"t": sols["A"]["t_rec"], "sd": sols["A"]["sd_rec"]},
+        )
     pd.DataFrame(val_rows).to_csv(docs / "validation_records.csv", index=False)
     # ---- leave-one-catalogue-out ---------------------------------------------
     loo = []
     warmA = warm_from(probA, outA)
     tiersA = probA["tiers"].set_index("key").tier
     for fname, srcs in ({} if args.quick else LOO_FAMILIES).items():
-        prob, out = do(Config(f"LOO_{fname}", drop=tuple(srcs)), warm=warmA, covariance=False)
+        prob, out = do(
+            Config(f"LOO_{fname}", drop=tuple(srcs)), warm=warmA, covariance=False
+        )
         sol = solve_all(prob, out)
         held = data["fit"][data["fit"].source.isin(srcs)]
         for s, g in held.groupby("source"):
             th = int(tiersA.get(map_key(s, "SGB", Config("A")), LINEAR))
-            for row in predict_heldout(s, g, prob["star_ids"], sol, tier_hint=max(th, OFFSET)):
+            for row in predict_heldout(
+                s, g, prob["star_ids"], sol, tier_hint=max(th, OFFSET)
+            ):
                 loo.append({"family_held_out": fname, **row})
         summary[f"fit_LOO_{fname}"] = {"stars": out["n_fit_stars"], "seconds": round(out["seconds"], 1),
                                        "outer_iterations": len(out["res"].history)}  # fmt: skip
@@ -808,9 +921,13 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     fitA = pickle.load(open(work / "fit_A.pkl", "rb"))
     resA = fitA["res"]
     rA = pd.read_parquet(work / "residuals_A.parquet")
-    stars = pd.read_parquet(work / "consensus_stars.parquet",
-                            columns=["source_id", "t_A", "sd_A", "t_rec_A", "sd_rec_A", "t_C",
-                                     "stage", "feh", "cluster_id", "conatal_resp", "n_catalogues"])  # fmt: skip
+    import pyarrow.parquet as pq
+
+    cols = ["source_id", "t_A", "sd_A", "t_rec_A", "sd_rec_A", "t_C", "stage", "feh",
+            "cluster_id", "conatal_resp", "n_catalogues"]  # fmt: skip
+    if "t_C_fromA" in pq.read_schema(work / "consensus_stars.parquet").names:
+        cols.append("t_C_fromA")
+    stars = pd.read_parquet(work / "consensus_stars.parquet", columns=cols)
     # (1) maps: catalogue log age vs consensus (other groups), map curves per class
     keys = [k for k in resA.maps.names if (rA.key == k).sum() >= 30]
     ncol = 5
@@ -822,13 +939,15 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         ax.hexbin(g.t_other, g.lage, gridsize=40, extent=(-1, 1.4, -1, 1.4), bins="log",
                   cmap="Greys", mincnt=1, linewidths=0)  # fmt: skip
         ax.plot([-1, 1.4], [-1, 1.4], color=MUTED, lw=0.8, ls=":")
-        for j, (c, gc) in enumerate(g.groupby("cls")):
+        for c, gc in g.groupby("cls"):
             if len(gc) < 30:
                 continue
             lo, hi = np.percentile(gc.t_other, [1, 99])
             tt = tg[(tg >= lo) & (tg <= hi)]
-            f, _, se = map_values(resA, k, tt, feh=float(np.nanmedian(gc.feh)), cls=CLASSES.index(c))
-            col = SERIES[j % 4]
+            f, _, se = map_values(
+                resA, k, tt, feh=float(np.nanmedian(gc.feh)), cls=CLASSES.index(c)
+            )
+            col = CLASS_COLOUR[c]
             ax.plot(tt, f, color=col, label=f"{c} (n={len(gc)})")
             if np.isfinite(se).any():
                 ax.fill_between(tt, f - se, f + se, color=col, alpha=0.25, lw=0)
@@ -840,36 +959,47 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         ax.set_xlabel("consensus log10(age/Gyr) [other groups]")
     for ax in axs[:, 0]:
         ax.set_ylabel("catalogue log10(age/Gyr)")
-    for ax in list(axs.flat)[len(keys):]:
+    for ax in list(axs.flat)[len(keys) :]:
         ax.set_visible(False)
     fig.suptitle("C0 maps (gauge A, APOKASC-3): catalogue vs consensus of the other "
                  "input groups; lines = fitted map per class at the class median [Fe/H] (±1σ)",
                  x=0.01, ha="left", fontsize=9)  # fmt: skip
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.98))
     fig.savefig(docs / "c0_maps.png", dpi=90)
     plt.close(fig)
     # (2) residuals before/after vs age and [Fe/H]
     top = rA.groupby("key").size().sort_values(ascending=False)
     top = [k for k in top.index if top[k] >= 300][:10]
-    fig, axs = plt.subplots(len(top), 2, figsize=(9, 1.6 * len(top)), squeeze=False, sharex="col")
+    fig, axs = plt.subplots(
+        len(top), 2, figsize=(9, 1.6 * len(top)), squeeze=False, sharex="col"
+    )
     ea, ef = np.arange(-0.6, 1.31, 0.1), np.arange(-1.5, 0.61, 0.15)
     for row, k in zip(axs, top):
         g = rA[rA.key == k]
-        for ax, x, e in ((row[0], g.t_other.to_numpy(), ea), (row[1], g.feh.to_numpy(), ef)):
-            for j, (col, lab) in enumerate((("raw", "before map: y − t"), ("mapped", "after map: y − f(t)"))):
+        for ax, x, e in (
+            (row[0], g.t_other.to_numpy(), ea),
+            (row[1], g.feh.to_numpy(), ef),
+        ):
+            for j, (col, lab) in enumerate(
+                (("raw", "before map: y − t"), ("mapped", "after map: y − f(t)"))
+            ):
                 b = _binned(x, g[col].to_numpy(), e)
                 if len(b):
-                    ax.plot(b[:, 0], b[:, 1], color=SERIES[j], label=lab, marker="o", ms=2.5)
-                    ax.fill_between(b[:, 0], b[:, 2], b[:, 3], color=SERIES[j], alpha=0.12, lw=0)
+                    ax.plot(
+                        b[:, 0], b[:, 1], color=SERIES[j], label=lab, marker="o", ms=2.5
+                    )
+                    ax.fill_between(
+                        b[:, 0], b[:, 2], b[:, 3], color=SERIES[j], alpha=0.12, lw=0
+                    )
             ax.axhline(0, color=MUTED, lw=0.8)
             ax.set_ylim(-0.45, 0.45)
         row[0].set_ylabel(f"{k}\nresidual (dex)", fontsize=7)
-    axs[0, 0].legend(loc="upper left", fontsize=6.5)
+    axs[0, 1].legend(loc="lower left", fontsize=6.5)
     axs[-1, 0].set_xlabel("consensus log10(age/Gyr) [other groups]")
     axs[-1, 1].set_xlabel("[Fe/H] (dex)")
     fig.suptitle("Residuals against the consensus of the other input groups (median, 16–84 %)",
                  x=0.01, ha="left", fontsize=9)  # fmt: skip
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.985))
     fig.savefig(docs / "c0_residuals.png", dpi=90)
     plt.close(fig)
     # (3) clusters: fitted cluster latents, member spread before/after, z-scores
@@ -895,8 +1025,10 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     ax.plot([-1.5, 1.2], [-1.5, 1.2], color=MUTED, lw=0.8, ls=":")
     ax.set_xlabel("Hunt & Reffert 2023 log10(age/Gyr) (comparison, not truth)")
     ax.set_ylabel("cluster log10(age/Gyr)")
-    ax.set_title("Cluster ages: fitted latent vs HR23 (clusters with ≥ 3 members)", loc="left")
-    ax.legend(loc="upper left", fontsize=6.5)
+    ax.set_title(
+        "Cluster ages: fitted latent vs HR23 (clusters with ≥ 3 members)", loc="left"
+    )
+    ax.legend(loc="lower right", fontsize=6.5)
     ax = axs[1]
     sp = ctab[(ctab.n_members >= 5)]
     bins = np.linspace(0, 0.5, 26)
@@ -912,41 +1044,71 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     zz = pd.read_parquet(work / "cluster_members_A.parquet")
     zb = np.linspace(-6, 6, 49)
     xx = np.linspace(-6, 6, 200)
-    for j, (lab, m) in enumerate((("open clusters", zz.kind == "cluster"), ("wide binaries", zz.kind == "binary"))):
+    for j, (lab, m) in enumerate(
+        (
+            ("open clusters", zz.kind == "cluster"),
+            ("wide binaries", zz.kind == "binary"),
+        )
+    ):
         v = zz.z[m & np.isfinite(zz.z)]
         if len(v) > 20:
             ax.hist(v, bins=zb, density=True, histtype="step", color=SERIES[j], lw=1.4,
                     label=f"{lab}: n={len(v)}, NMAD {nmad(v):.2f}")  # fmt: skip
-    ax.plot(xx, np.exp(-0.5 * xx**2) / np.sqrt(2 * np.pi), color=MUTED, ls=":", label="N(0, 1)")
-    ax.set_xlabel("z = (t_i − T_group,−i) / σ  (records-only consensus vs the other members; responsibility > 0.5)")
+    ax.plot(
+        xx,
+        np.exp(-0.5 * xx**2) / np.sqrt(2 * np.pi),
+        color=MUTED,
+        ls=":",
+        label="N(0, 1)",
+    )
+    ax.set_xlabel("z = (t_i − T_group,−i) / σ   (members, responsibility > 0.5)")
     ax.set_ylabel("density")
     ax.set_title("Co-natal consistency of the consensus", loc="left")
     ax.legend(fontsize=6.5)
     fig.tight_layout()
     fig.savefig(docs / "c0_clusters.png", dpi=90)
     plt.close(fig)
-    # (4) scale difference C - A vs age and [Fe/H] per stage
-    s = stars[np.isfinite(stars.t_A) & np.isfinite(stars.t_C) & (stars.n_catalogues > 0)]
-    fig, axs = plt.subplots(1, 2, figsize=(11, 3.8))
-    stages = [c for c in ("SGB", "MSTO", "RGB", "RC", "giant", "MS") if (s.stage == c).sum() >= 50]
-    for j, c in enumerate(stages):
-        g = s[s.stage == c]
-        col = SERIES[j % 4]
-        ls = "-" if j < 4 else "--"
-        for ax, x, e in ((axs[0], g.t_A.to_numpy(), ea), (axs[1], g.feh.to_numpy(), ef)):
-            b = _binned(x, (g.t_C - g.t_A).to_numpy(), e, min_n=30)
-            if len(b):
-                ax.plot(b[:, 0], b[:, 1], color=col, ls=ls, marker="o", ms=2.5, label=f"{c} (n={len(g)})")
-                ax.fill_between(b[:, 0], b[:, 2], b[:, 3], color=col, alpha=0.1, lw=0)
-    for ax in axs:
-        ax.axhline(0, color=MUTED, lw=0.8)
-        ax.set_ylabel("t(Xiang gauge) − t(APOKASC-3 gauge) (dex)")
-    axs[0].set_xlabel("consensus log10(age/Gyr), APOKASC-3 gauge")
-    axs[1].set_xlabel("[Fe/H] (dex)")
-    axs[0].legend(fontsize=6.5)
+    # (4) scale difference C - A vs age and [Fe/H] per stage (both C solutions)
+    variants_c = [("t_C", "Xiang gauge fitted from scratch")]
+    if "t_C_fromA" in stars:
+        variants_c.append(
+            ("t_C_fromA", "Xiang gauge started from the APOKASC-3 solution")
+        )
+    fig, axs = plt.subplots(len(variants_c), 2, figsize=(11, 3.6 * len(variants_c)),
+                            squeeze=False)  # fmt: skip
+    for row, (ccol, clab) in zip(axs, variants_c):
+        s = stars[
+            np.isfinite(stars.t_A) & np.isfinite(stars[ccol]) & (stars.n_catalogues > 0)
+        ]
+        stages = [
+            c
+            for c in ("SGB", "MSTO", "RGB", "RC", "giant", "MS")
+            if (s.stage == c).sum() >= 50
+        ]
+        for j, c in enumerate(stages):
+            g = s[s.stage == c]
+            col, ls = SERIES[j % 4], ("-" if j < 4 else "--")
+            for ax, x, e in (
+                (row[0], g.t_A.to_numpy(), ea),
+                (row[1], g.feh.to_numpy(), ef),
+            ):
+                b = _binned(x, (g[ccol] - g.t_A).to_numpy(), e, min_n=30)
+                if len(b):
+                    ax.plot(b[:, 0], b[:, 1], color=col, ls=ls, marker="o", ms=2.5,
+                            label=f"{c} (n={len(g)})")  # fmt: skip
+                    ax.fill_between(
+                        b[:, 0], b[:, 2], b[:, 3], color=col, alpha=0.1, lw=0
+                    )
+        for ax in row:
+            ax.axhline(0, color=MUTED, lw=0.8)
+            ax.set_ylabel("t(Xiang gauge) − t(APOKASC-3) (dex)")
+            ax.set_title(clab, loc="left")
+        row[0].legend(fontsize=6.5, loc="center right")
+    axs[-1, 0].set_xlabel("consensus log10(age/Gyr), APOKASC-3 gauge")
+    axs[-1, 1].set_xlabel("[Fe/H] (dex)")
     fig.suptitle("Scale systematic: Xiang 2024-anchored minus APOKASC-3-anchored consensus "
                  "(median, 16–84 %)", x=0.01, ha="left", fontsize=9)  # fmt: skip
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
     fig.savefig(docs / "c0_scale_difference.png", dpi=90)
     plt.close(fig)
     # (5) leave-one-catalogue-out predictive accuracy
@@ -956,8 +1118,13 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         loo = loo.sort_values("nmad_mapped")
         fig, axs = plt.subplots(1, 3, figsize=(13, 0.32 * len(loo) + 1.4), sharey=True)
         yy = np.arange(len(loo))
-        for ax, (a, b, lab) in zip(axs[:2], (("bias_raw", "bias_mapped", "median residual (dex)"),
-                                             ("nmad_raw", "nmad_mapped", "NMAD of residuals (dex)"))):
+        for ax, (a, b, lab) in zip(
+            axs[:2],
+            (
+                ("bias_raw", "bias_mapped", "median residual (dex)"),
+                ("nmad_raw", "nmad_mapped", "NMAD of residuals (dex)"),
+            ),
+        ):
             ax.scatter(loo[a], yy, color=SERIES[1], s=14, label="before map (y − t)")
             ax.scatter(loo[b], yy, color=SERIES[0], s=14, label="after map (y − f(t))")
             ax.set_xlabel(lab)
@@ -966,7 +1133,9 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         axs[2].axvline(1, color=MUTED, lw=0.8, ls=":")
         axs[2].set_xlabel("NMAD of z = (y − f(t)) / σ_pred")
         axs[0].set_yticks(yy)
-        axs[0].set_yticklabels([f"{r.catalogue} (n={r.n_test})" for r in loo.itertuples()], fontsize=6.5)
+        axs[0].set_yticklabels(
+            [f"{r.catalogue} (n={r.n_test})" for r in loo.itertuples()], fontsize=6.5
+        )
         axs[0].legend(fontsize=6.5, loc="lower right")
         axs[2].legend(fontsize=6.5)
         fig.suptitle("Leave-one-catalogue-out: held-out catalogue vs the refitted consensus "
@@ -977,13 +1146,20 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         plt.close(fig)
 
 
-def cluster_tables(work: Path, docs: Path, records: Path, clusters: Path, targets: Path) -> None:
+def cluster_tables(
+    work: Path, docs: Path, records: Path, clusters: Path, targets: Path
+) -> None:
     """Fitted cluster latents (gauge A), raw vs consensus member spreads, member z-scores."""
     from astropy.table import Table
 
     fitA = pickle.load(open(work / "fit_A.pkl", "rb"))
     sol, star_ids = fitA["sol"], fitA["star_ids"]
-    gid, prior, spread, labels = fitA["gid"], fitA["prior"], fitA["spread"], fitA["group_labels"]
+    gid, prior, spread, labels = (
+        fitA["gid"],
+        fitA["prior"],
+        fitA["spread"],
+        fitA["group_labels"],
+    )
     rho = fitA["rho"]
     t, sd = sol["t_rec"], sol["sd_rec"]
     ok = (gid >= 0) & np.isfinite(t) & np.isfinite(sd) & (sd > 0)
@@ -994,7 +1170,11 @@ def cluster_tables(work: Path, docs: Path, records: Path, clusters: Path, target
     W0 = np.bincount(gid[ok], om[ok], G)
     W1 = np.bincount(gid[ok], om[ok] * t[ok], G)
     rest = W0[np.maximum(gid, 0)] - om
-    T_loo = np.where(ok & (rest > 0), (W1[np.maximum(gid, 0)] - om * t) / np.maximum(rest, 1e-300), np.nan)
+    T_loo = np.where(
+        ok & (rest > 0),
+        (W1[np.maximum(gid, 0)] - om * t) / np.maximum(rest, 1e-300),
+        np.nan,
+    )
     z = (t - T_loo) / np.sqrt(sd**2 + s2 + 1.0 / np.maximum(rest, 1e-300))
     kind = np.array([labels[g][0] if g >= 0 else "" for g in gid])
     mem = pd.DataFrame({"source_id": star_ids, "gid": gid, "kind": kind, "t_rec": t, "sd_rec": sd,
@@ -1006,7 +1186,9 @@ def cluster_tables(work: Path, docs: Path, records: Path, clusters: Path, target
     raw = raw[raw.good & raw.source.astype(str).isin(FIT_SOURCES)]
     cm = mem[mem.kind == "cluster"].copy()
     cm["cid"] = [labels[g][1] for g in cm.gid]
-    cat = Table.read(clusters, hdu=1)[["Name", "ID", "Type", "logAge50", "CMDCl50"]].to_pandas()
+    cat = Table.read(clusters, hdu=1)[
+        ["Name", "ID", "Type", "logAge50", "CMDCl50"]
+    ].to_pandas()
     cat["Name"] = cat.Name.astype(str).str.strip()
     cat = cat.set_index("ID")
     # raw values (all good records of fit catalogues) of the same member stars
@@ -1031,7 +1213,9 @@ def cluster_tables(work: Path, docs: Path, records: Path, clusters: Path, target
                      "hr23_cmd_class": float(cat.CMDCl50.get(cid, np.nan)),
                      "literature_gyr": LITERATURE_GYR.get(cat.Name.get(cid, ""), np.nan),
                      "z_nmad": nmad(gg.z)})  # fmt: skip
-    pd.DataFrame(rows).sort_values("n_members", ascending=False).to_csv(docs / "clusters_A.csv", index=False)
+    pd.DataFrame(rows).sort_values("n_members", ascending=False).to_csv(
+        docs / "clusters_A.csv", index=False
+    )
 
 
 def export_model(work: Path, docs: Path) -> None:
@@ -1089,12 +1273,16 @@ def plots(args) -> None:
     work, docs = Path(args.work), Path(args.docs)
     export_model(work, docs)
     export_records(work, Path(args.records), Path(args.targets))
-    cluster_tables(work, docs, Path(args.records), Path(args.clusters), Path(args.targets))
+    cluster_tables(
+        work, docs, Path(args.records), Path(args.clusters), Path(args.targets)
+    )
     make_plots(work, docs, Path(args.clusters))
 
 
 def main(argv=None) -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("stage", choices=["run", "plots"])
     ap.add_argument("--records", default="records.parquet")
     ap.add_argument("--targets", default="consistency_targets_20261118.npz")
@@ -1105,7 +1293,9 @@ def main(argv=None) -> None:
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--quick", action="store_true", help="main solutions only")
     ap.add_argument("--verbose", action="store_true")
-    ap.add_argument("--resume", action="store_true", help="reuse saved main fits and variant tables")
+    ap.add_argument(
+        "--resume", action="store_true", help="reuse saved main fits and variant tables"
+    )
     args = ap.parse_args(argv)
     {"run": run, "plots": plots}[args.stage](args)
 

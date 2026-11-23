@@ -59,7 +59,9 @@ def _synthetic(seed=0, n=4000, censor=True, groups=False, eta=0.0):
             y = np.minimum(y, CAP_C)
         eff = np.full(len(idx), 0 if name in ("B", "C") else -1)
         rows.append((idx, np.full(len(idx), k), y, q, feh[idx], cens, eff))
-    star, mid, y, sig, fh, cens, eff = (np.concatenate([r[j] for r in rows]) for j in range(7))
+    star, mid, y, sig, fh, cens, eff = (
+        np.concatenate([r[j] for r in rows]) for j in range(7)
+    )
     rec = Records(star.astype("i8"), mid.astype("i8"), np.zeros(len(y), "i8"),
                   mid.astype("i8"), y, sig, fh, cens, n, effect=eff.astype("i8"))  # fmt: skip
     g = Groups.none(n)
@@ -73,7 +75,9 @@ def _synthetic(seed=0, n=4000, censor=True, groups=False, eta=0.0):
 def _maps(anchor="anchor", tiers=None):
     tiers = tiers or {}
     tier = [IDENTITY if s == anchor else tiers.get(s, LINEAR) for s in NAMES]
-    return MapSet([AgeMaps(NAMES, tier, np.zeros((4, 1), bool), [s == "C" for s in NAMES])])
+    return MapSet(
+        [AgeMaps(NAMES, tier, np.zeros((4, 1), bool), [s == "C" for s in NAMES])]
+    )
 
 
 def _strip_effect(rec):
@@ -126,7 +130,11 @@ def test_censoring_beats_naive_treatment():
     capped = np.zeros(rec.n_star, bool)
     capped[rec.star[rec.censor == 1]] = True
     sel = only_one & capped
-    assert sel.any() and np.all(sol["limit"][sel] == 1) and np.all(np.isnan(sol["sd"][sel]))
+    assert (
+        sel.any()
+        and np.all(sol["limit"][sel] == 1)
+        and np.all(np.isnan(sol["sd"][sel]))
+    )
 
 
 def test_anchor_change_shifts_scale_by_the_map():
@@ -140,7 +148,9 @@ def test_anchor_change_shifts_scale_by_the_map():
     fb, _, _ = map_values(fit_a, "B", sa["t"][ok])
     assert np.median(np.abs(sb["t"][ok] - fb)) < 0.01
     b, A, _ = TRUE["B"]
-    assert abs(np.median(sb["t"][ok] - (sa["t"][ok] + b + A * (sa["t"][ok] - T0)))) < 0.02
+    assert (
+        abs(np.median(sb["t"][ok] - (sa["t"][ok] + b + A * (sa["t"][ok] - T0)))) < 0.02
+    )
     # ... and the anchor's own map on the B scale is the inverse of B's.
     assert abs(fit_b.coefs[0][0, 1] - (1.0 / (1.0 + A) - 1.0)) < 0.05
 
@@ -148,7 +158,9 @@ def test_anchor_change_shifts_scale_by_the_map():
 def test_conatal_groups_tighten_members():
     rec, g, t, _, _ = _synthetic(seed=3, groups=True, censor=False)
     rec = _strip_effect(rec)
-    fit = fit_consensus(rec, g, _maps(tiers={"D": OFFSET}), 4, n_outer=30, covariance=False)
+    fit = fit_consensus(
+        rec, g, _maps(tiers={"D": OFFSET}), 4, n_outer=30, covariance=False
+    )
     sol = solve_stars(rec, g, fit, 4, rho=fit.rho)
     mem = g.gid >= 0
     ok = mem & np.isfinite(sol["t"]) & np.isfinite(sol["t_rec"])
@@ -161,7 +173,9 @@ def test_conatal_groups_tighten_members():
 def test_shared_effect_is_learned_and_not_double_counted():
     eta = 0.08
     rec, g, t, _, _ = _synthetic(seed=4, censor=False, eta=eta, groups=True)
-    fit = fit_consensus(rec, g, _maps(), 4, n_effect=1, nu=1e6, n_outer=40, covariance=False)
+    fit = fit_consensus(
+        rec, g, _maps(), 4, n_effect=1, nu=1e6, n_outer=40, covariance=False
+    )
     assert abs(np.exp(fit.log_eta[0]) - eta) < 0.025, np.exp(fit.log_eta)
     # stars measured only by B and C: their shared error is not averaged away
     sol = solve_stars(rec, g, fit, 4, n_effect=1, rho=fit.rho)
@@ -183,7 +197,13 @@ def test_non_age_observable_with_monotone_map():
     p_idx = np.flatnonzero(rng.random(n) < 0.7)
     y_age = t[a_idx] + rng.normal(0, 0.05, len(a_idx))
     tp = t[p_idx]
-    y_rot = 2.0 + 0.8 * tp + 0.3 * tp**2 + 0.2 * feh[p_idx] + rng.normal(0, 0.06, len(p_idx))
+    y_rot = (
+        2.0
+        + 0.8 * tp
+        + 0.3 * tp**2
+        + 0.2 * feh[p_idx]
+        + rng.normal(0, 0.06, len(p_idx))
+    )
     star = np.r_[a_idx, p_idx].astype("i8")
     map_id = np.r_[np.zeros(len(a_idx)), np.ones(len(p_idx))].astype("i8")
     rec = Records(star, map_id, np.zeros(len(star), "i8"), map_id.copy(), np.r_[y_age, y_rot],
@@ -194,7 +214,9 @@ def test_non_age_observable_with_monotone_map():
     fit = fit_consensus(rec, Groups.none(n), maps, 2, n_outer=40, covariance=False)
     grid = np.array([-0.4, 0.0, 0.4, 0.8])
     f, d, _ = map_values(fit, "ln_prot", grid, feh=0.0)
-    assert np.max(np.abs(f - (2.0 + 0.8 * grid + 0.3 * grid**2))) < 0.05 and np.all(d > 0)
+    assert np.max(np.abs(f - (2.0 + 0.8 * grid + 0.3 * grid**2))) < 0.05 and np.all(
+        d > 0
+    )
     # stars with a rotation record only get an age from the inverted map
     sol = solve_stars(rec, Groups.none(n), fit, 2)
     only_rot = np.setdiff1d(p_idx, a_idx)
@@ -230,7 +252,9 @@ def test_predict_heldout_recovers_known_map():
     y = t + 0.08 + 0.2 * (t - T0) + rng.normal(0, 0.06, n)  # held-out catalogue
     recs = pd.DataFrame({"source_id": np.arange(n), "lage": y, "sig": 0.05, "feh": 0.0,
                          "cls": "SGB", "censor": np.zeros(n, "i1")})  # fmt: skip
-    rows = c0.predict_heldout("cat", recs, np.arange(n), {"t": t_obs, "sd": sd}, tier_hint=LINEAR)
+    rows = c0.predict_heldout(
+        "cat", recs, np.arange(n), {"t": t_obs, "sd": sd}, tier_hint=LINEAR
+    )
     row = next(r for r in rows if r["class"] == "all")
     assert row["n_test"] > 1000
     assert abs(row["bias_raw"] - 0.08) < 0.03  # raw residual shows the offset
@@ -248,7 +272,7 @@ def test_run_quick_end_to_end(tmp_path):
     n = 900
     t = rng.uniform(0.0, 1.1, n)
     giant = np.arange(n) < 450
-    n_cl, size = 30, 8  # clusters: 4 giants + 4 subgiants with one age
+    n_cl = 30  # clusters: 4 giants + 4 subgiants with one age
     cid = np.full(n, -1)
     for c in range(n_cl):
         mem = np.r_[np.arange(4 * c, 4 * c + 4), 450 + np.arange(4 * c, 4 * c + 4)]
@@ -274,7 +298,9 @@ def test_run_quick_end_to_end(tmp_path):
         cat("galah_dr4", np.r_[gi[300:], sg[:300]], 0.0, np.nan, "x", "giant", 3.0),
     ]
     rec = pd.concat(frames, ignore_index=True)
-    rec.loc[(rec.source == "galah_dr4") & (rec.source_id >= 1450), "stage_class"] = "subgiant"
+    rec.loc[(rec.source == "galah_dr4") & (rec.source_id >= 1450), "stage_class"] = (
+        "subgiant"
+    )
     for c in ("source", "stage", "stage_class"):
         rec[c] = rec[c].astype("category")
     rec_path, tgt_path = tmp_path / "records.parquet", tmp_path / "targets.npz"
@@ -295,3 +321,36 @@ def test_run_quick_end_to_end(tmp_path):
     assert {"apokasc2", "leung23"} <= set(val.catalogue)
     for name in ("noise_A.csv", "tiers_C.csv", "bridge_variants.csv", "summary.json"):
         assert (docs / name).exists()
+
+
+def test_profile_gradient_matches_finite_differences():
+    """The envelope gradient of the profiled map objective (latents, shared
+    errors and group ages re-solved at every evaluation) equals its finite-
+    difference gradient, so L-BFGS gets a true descent direction."""
+    from masked_stellar_autoencoder.training import age_consensus as ac
+
+    rec, g, t, _, _ = _synthetic(seed=8, censor=False, eta=0.08, groups=True)
+    maps = _maps()
+    st = ac._State(rec, g, maps, 4, 1)
+    rng = np.random.default_rng(0)
+    theta = maps.theta0() + torch.as_tensor(rng.normal(0, 0.05, maps.theta0().numel()))
+    v = ac._noise_var(
+        st, torch.zeros(4, dtype=ac.DT), torch.full((4,), np.log(0.05), dtype=ac.DT)
+    )
+    w = torch.ones(st.R, dtype=ac.DT)
+    t_lin = torch.as_tensor(t + rng.normal(0, 0.05, len(t)), dtype=ac.DT)
+    rho = st.prior * st.member
+    e2 = st.eta2_blk(torch.tensor([np.log(0.08)], dtype=ac.DT))
+
+    def F(th):
+        return ac._map_objective(st, th, w, v, st.y_obs, t_lin, rho, e2)
+
+    th = theta.clone().requires_grad_(True)
+    (grad,) = torch.autograd.grad(F(th), th)
+    h = 1e-6
+    fd = torch.stack([(F(theta + h * e) - F(theta - h * e)) / (2 * h)
+                      for e in torch.eye(theta.numel(), dtype=ac.DT)])  # fmt: skip
+    assert torch.allclose(grad, fd, rtol=1e-4, atol=1e-4 * float(fd.abs().max())), (
+        grad,
+        fd,
+    )

@@ -1,0 +1,11 @@
+{
+ "apokasc3_offset_C_scratch": -0.2715247917322933,
+ "apokasc3_offset_C_from_A": -0.2514376419217461,
+ "xiang_offset_A": -0.02595060786561879,
+ "reml_m2logL_C_scratch": -1241864.42242498,
+ "reml_m2logL_C_from_A": -1240535.1735498584,
+ "t_loglik_C_scratch": 1604632.3508330793,
+ "t_loglik_C_from_A": 1605882.115343924,
+ "frac_members_resp_gt_half_C_scratch": 0.9478448033332825,
+ "frac_members_resp_gt_half_C_from_A": 0.9478448033332825
+}

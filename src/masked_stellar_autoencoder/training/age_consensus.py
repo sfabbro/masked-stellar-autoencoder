@@ -98,7 +98,9 @@ class Records:
         for name in ("star", "map_id", "cls", "noise_id", "sig", "feh", "censor", "effect",
                      "extra"):  # fmt: skip
             if len(getattr(self, name)) != n:
-                raise ValueError(f"Records.{name} has {len(getattr(self, name))} rows, y has {n}")
+                raise ValueError(
+                    f"Records.{name} has {len(getattr(self, name))} rows, y has {n}"
+                )
 
     def subset(self, keep: np.ndarray) -> Records:
         return Records(
@@ -165,7 +167,8 @@ class AgeMaps(MapFamily):
 
     f = t + b + db_c + (A + dA_c) u + beta x + g1 u^2 + g2 u^3 + g3 x u + g4 x^2,
     u = t - T0. Tiers: IDENTITY (gauge anchor), OFFSET (b), LINEAR (+ A, class
-    deltas db_c/dA_c where ``class_terms``, beta where ``use_feh``), FLEX (+ g).
+    deltas db_c/dA_c where ``class_terms``, beta where ``use_feh``), FLEX (+ g1,
+    g3, g4; the cubic g2 is in the layout but not fitted).
     The slope df/dt is kept above ``a_min`` (monotone maps). ``x_range`` and
     ``t_range`` ((M, 2), optional) bound the data each map was fitted on: the
     [Fe/H] terms use x clamped to ``x_range`` and the polynomial terms use t
@@ -179,8 +182,14 @@ class AgeMaps(MapFamily):
         self.use_feh = np.asarray(use_feh, bool)
         self.a_min = a_min
         n = len(self.names)
-        xr = np.tile(FEH_CLIP, (n, 1)) if x_range is None else np.asarray(x_range, float)
-        tr = np.tile((-3.0, 3.0), (n, 1)) if t_range is None else np.asarray(t_range, float)
+        xr = (
+            np.tile(FEH_CLIP, (n, 1)) if x_range is None else np.asarray(x_range, float)
+        )
+        tr = (
+            np.tile((-3.0, 3.0), (n, 1))
+            if t_range is None
+            else np.asarray(t_range, float)
+        )
         self.x_range = torch.as_tensor(xr, dtype=DT)
         self.t_range = torch.as_tensor(tr, dtype=DT)
 
@@ -202,7 +211,8 @@ class AgeMaps(MapFamily):
         out[:, 3 + c : 3 + 2 * c] = ct
         flex = self.tier >= FLEX
         out[:, 3 + 2 * c] = flex
-        out[:, 4 + 2 * c] = flex
+        # the cubic term (column 4 + 2c) is kept in the layout but not fitted:
+        # it was the one poorly identified direction (slow drift, no gain)
         out[:, 5 + 2 * c] = flex & self.use_feh
         out[:, 6 + 2 * c] = flex & self.use_feh
         return out
@@ -309,7 +319,9 @@ class MapSet:
 
     def theta0(self, coefs=None) -> torch.Tensor:
         coefs = coefs or [f.init() for f in self.families]
-        return torch.cat([torch.as_tensor(c, dtype=DT)[m] for c, m in zip(coefs, self.masks)])
+        return torch.cat(
+            [torch.as_tensor(c, dtype=DT)[m] for c, m in zip(coefs, self.masks)]
+        )
 
     def unpack(self, theta: torch.Tensor) -> list[torch.Tensor]:
         out, k = [], 0
@@ -357,14 +369,21 @@ class FitResult:
 # Internal tensor state
 # --------------------------------------------------------------------------- #
 class _State:
-    def __init__(self, rec: Records, groups: Groups, maps: MapSet, n_noise: int, n_effect: int):
+    def __init__(
+        self, rec: Records, groups: Groups, maps: MapSet, n_noise: int, n_effect: int
+    ):
         self.maps = maps
         self.n_star = rec.n_star
         self.R = len(rec.y)
         self.star = torch.as_tensor(rec.star, dtype=torch.long)
         fam = maps.family_of(rec.map_id)
-        self.fam_idx = [torch.as_tensor(np.flatnonzero(fam == j)) for j in range(len(maps.families))]
-        self.local = [torch.as_tensor(rec.map_id[fam == j] - maps.offsets[j]) for j in range(len(maps.families))]
+        self.fam_idx = [
+            torch.as_tensor(np.flatnonzero(fam == j)) for j in range(len(maps.families))
+        ]
+        self.local = [
+            torch.as_tensor(rec.map_id[fam == j] - maps.offsets[j])
+            for j in range(len(maps.families))
+        ]
         self.cls = torch.as_tensor(rec.cls, dtype=torch.long)
         self.noise_id = torch.as_tensor(rec.noise_id, dtype=torch.long)
         self.y_obs = torch.as_tensor(rec.y, dtype=DT)
@@ -404,17 +423,23 @@ class _State:
         return torch.zeros(self.n_star, dtype=DT).index_add(0, self.bstar, values)
 
     def gscatter(self, values, members):
-        return torch.zeros(max(self.n_group, 1), dtype=DT).index_add(0, self.gid[members], values[members])
+        return torch.zeros(max(self.n_group, 1), dtype=DT).index_add(
+            0, self.gid[members], values[members]
+        )
 
     def evaluate(self, coefs, t_rec):
         """(f, df/dt) for all records at per-record latent ``t_rec``."""
         f = torch.zeros(self.R, dtype=DT)
         a = torch.zeros(self.R, dtype=DT)
         pen = t_rec.new_zeros(())
-        for fam, idx, loc, coef in zip(self.maps.families, self.fam_idx, self.local, coefs):
+        for fam, idx, loc, coef in zip(
+            self.maps.families, self.fam_idx, self.local, coefs
+        ):
             if not len(idx):
                 continue
-            fj, aj = fam.evaluate(coef, loc, t_rec[idx], self.x[idx], self.z[idx], self.cls[idx])
+            fj, aj = fam.evaluate(
+                coef, loc, t_rec[idx], self.x[idx], self.z[idx], self.cls[idx]
+            )
             f = f.index_copy(0, idx, fj)
             a = a.index_copy(0, idx, aj)
             pen = pen + fam.penalty(aj)
@@ -521,15 +546,21 @@ def _map_objective(st: _State, theta, w, v, y, t_lin, rho, eta2b):
     yp = y - f + a * tl
     pi = w / v
     with torch.no_grad():
+        # joint optimum (t*, u*, T*) of the linearised problem, held fixed below
+        # (envelope theorem: the gradient of the profiled objective is the
+        # partial gradient at the optimum)
         m, P, c, _, _, _ = _posterior(st, pi, a.detach(), yp.detach(), eta2b)
         ts, _, _, _, _, T_hat = _group_solve(st, m, P, rho)
+        r0 = yp.detach() - a.detach() * ts[st.star]
+        u = c * st.bsum(pi * a.detach() * r0)  # shared age error per block
+        has_eta = eta2b > 0
+        uterm = (u[has_eta] ** 2 / eta2b[has_eta]).sum()
         gterm = 0.0
         if st.n_group:
             mem = st.member & st.has_rec
             gterm = (rho / st.s2[st.gid] * (ts - T_hat) ** 2)[mem].sum()
-    r = yp - a * ts[st.star]
-    br = st.bsum(pi * a * r)
-    F = (pi * r * r).sum() - (c * br * br).sum() + gterm
+    r = yp - a * (ts[st.star] + u[st.blk])
+    F = (pi * r * r).sum() + uterm + gterm
     F = F + (((theta - maps.prior_mean) / maps.prior_sd) ** 2).sum() + pen
     return F
 
@@ -546,7 +577,11 @@ def _var_objective(st: _State, p, w, y, a, f, t_lin, rho, has_sig):
     m, P, c, saa, say, S = _posterior(st, pi, a, yp, eta2b)
     has = st.has_rec & (P > 0)
     Pc = P.clamp_min(1e-300)
-    Q = st.scatter(pi * yp * yp) - st.b2star(c * say * say) - torch.where(has, S * S / Pc, 0.0)
+    Q = (
+        st.scatter(pi * yp * yp)
+        - st.b2star(c * say * say)
+        - torch.where(has, S * S / Pc, 0.0)
+    )
     F = torch.log(v).sum() + torch.log1p(eta2b * saa).sum() + Q[has].sum()
     if st.n_group:
         mem = st.member & has
@@ -618,7 +653,9 @@ def fit_consensus(
     lw = torch.as_tensor(lw0 if lw0 is not None else np.full(U, LOG_OMEGA0), dtype=DT)
     le = torch.as_tensor(le0 if le0 is not None else np.full(E, LOG_OMEGA0), dtype=DT)
     has_sig = torch.as_tensor(st.has_sig)
-    fixed = torch.as_tensor(np.zeros(U, bool) if fix_noise is None else np.asarray(fix_noise, bool))
+    fixed = torch.as_tensor(
+        np.zeros(U, bool) if fix_noise is None else np.asarray(fix_noise, bool)
+    )
     w = torch.ones(R, dtype=DT)
     rho = st.prior * st.member
     if t0 is not None:
@@ -660,7 +697,9 @@ def fit_consensus(
         fixp = torch.cat([fixed, fixed, torch.zeros(E, dtype=torch.bool)])
         p = _lbfgs(lambda q: _var_objective(st, torch.where(fixp, p0, q), w, y, a, f, t, rho,
                                             has_sig) / R, p0, 40)  # fmt: skip
-        lk_new = torch.where(has_sig, p[:U].clamp(*LOG_KAPPA_RANGE), torch.zeros_like(p[:U]))
+        lk_new = torch.where(
+            has_sig, p[:U].clamp(*LOG_KAPPA_RANGE), torch.zeros_like(p[:U])
+        )
         lk = torch.where(fixed, lk, lk_new)
         lw = torch.where(fixed, lw, p[U : 2 * U].clamp(*LOG_OMEGA_RANGE))
         le = p[2 * U :].clamp(*LOG_OMEGA_RANGE)
@@ -671,7 +710,9 @@ def fit_consensus(
             pi = w / v
             yp = y - f + a * t[st.star]
             _, _, c, _, _, _ = _posterior(st, pi, a, yp, eta2b)
-            u_hat = (c * st.bsum(pi * a * (yp - a * t[st.star])))[st.blk]  # shared age error
+            u_hat = (c * st.bsum(pi * a * (yp - a * t[st.star])))[
+                st.blk
+            ]  # shared age error
             y, _ = _impute(st, f + a * u_hat, v)
             # Student-t weights judge a record against its own star's other
             # records (records-only latent): disagreement between a star and
@@ -692,7 +733,9 @@ def fit_consensus(
         dtheta = float((theta - theta_old).abs().max()) if theta.numel() else 0.0
         history.append({"iter": it, "dtheta": dtheta, "eta": torch.exp(le).tolist()})
         if verbose:
-            log(f"  outer {it:02d} max|dtheta| {dtheta:.2e} eta {np.round(torch.exp(le).numpy(), 4)}")
+            log(
+                f"  outer {it:02d} max|dtheta| {dtheta:.2e} eta {np.round(torch.exp(le).numpy(), 4)}"
+            )
         if it >= 3 and dtheta < tol:
             break
     coefs = maps.unpack(theta)
@@ -704,12 +747,17 @@ def fit_consensus(
         t, var, _, _, _, _ = _group_solve(st, m, P, rho)
     cov = vcov = None
     if covariance and theta.numel():
-        cov = _fd_covariance(lambda th: _map_objective(st, th, w, v, y, t, rho, eta2b), theta)
+        cov = _fd_covariance(
+            lambda th: _map_objective(st, th, w, v, y, t, rho, eta2b), theta
+        )
     if covariance:
         p0 = torch.cat([lk, lw, le])
         H = torch.autograd.functional.hessian(
-            lambda q: _var_objective(st, q, w, y, a, f, t, rho, has_sig), p0)
-        keep = torch.cat([has_sig & ~fixed, ~fixed, torch.ones(E, dtype=torch.bool)]).numpy()
+            lambda q: _var_objective(st, q, w, y, a, f, t, rho, has_sig), p0
+        )
+        keep = torch.cat(
+            [has_sig & ~fixed, ~fixed, torch.ones(E, dtype=torch.bool)]
+        ).numpy()
         vcov = np.full((len(p0), len(p0)), np.nan)
         Hk = H.numpy()[np.ix_(keep, keep)]
         try:
@@ -752,7 +800,11 @@ def _fd_covariance(objective, theta, h: float = 1e-5):
 def _setup(rec, groups, fit: FitResult, n_noise, n_effect):
     st = _State(rec, groups, fit.maps, n_noise, n_effect)
     coefs = [torch.as_tensor(c, dtype=DT) for c in fit.coefs]
-    v = _noise_var(st, torch.as_tensor(fit.log_kappa, dtype=DT), torch.as_tensor(fit.log_omega, dtype=DT))
+    v = _noise_var(
+        st,
+        torch.as_tensor(fit.log_kappa, dtype=DT),
+        torch.as_tensor(fit.log_omega, dtype=DT),
+    )
     eta2b = st.eta2_blk(torch.as_tensor(fit.log_eta, dtype=DT))
     return st, coefs, v, eta2b
 
@@ -778,27 +830,44 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
             y, _ = _impute(st, f, v)
             yp = y - f + a * t[st.star]
             m, P, _, _, _, _ = _posterior(st, pi, a, yp, eta2b)
-            ycl = torch.where(st.cens, st.y_obs - f + a * t[st.star], torch.zeros_like(f))
-            tl = st.scatter(ycl * a) / st.scatter(torch.where(st.cens, a * a, 0.0)).clamp_min(1e-300)
+            ycl = torch.where(
+                st.cens, st.y_obs - f + a * t[st.star], torch.zeros_like(f)
+            )
+            tl = st.scatter(ycl * a) / st.scatter(
+                torch.where(st.cens, a * a, 0.0)
+            ).clamp_min(1e-300)
             t = torch.where(only_cens, tl, torch.where(st.has_rec & (P > 0), m, t))
         f, a, _ = st.evaluate(coefs, t[st.star])
         sd = v.sqrt()
         z = torch.where(st.censor > 0, (f - st.y_obs) / sd, (st.y_obs - f) / sd)
-        mills = torch.exp(-0.5 * z * z - 0.5 * math.log(2 * math.pi) - torch.special.log_ndtr(z))
+        mills = torch.exp(
+            -0.5 * z * z - 0.5 * math.log(2 * math.pi) - torch.special.log_ndtr(z)
+        )
         fac = torch.where(st.cens, mills * (z + mills), torch.ones_like(z))
         y, _ = _impute(st, f, v)
         _, P, _, _, _, _ = _posterior(st, pi * fac, a, y - f + a * t[st.star], eta2b)
         P = torch.where(only_cens, torch.zeros_like(P), P)
-        limit = torch.where(only_cens, st.scatter(st.censor.to(DT)).sign(), torch.zeros_like(P)).long()
-        rho_t = torch.as_tensor(rho, dtype=DT) if rho is not None else st.prior * st.member
+        limit = torch.where(
+            only_cens, st.scatter(st.censor.to(DT)).sign(), torch.zeros_like(P)
+        ).long()
+        rho_t = (
+            torch.as_tensor(rho, dtype=DT) if rho is not None else st.prior * st.member
+        )
         good = st.has_rec & (P > 0)
-        tg, vg, T_loo, _, kap, _ = _group_solve(st, torch.where(good, t, 0.0), P.clamp_min(1e-300), rho_t)
+        tg, vg, T_loo, _, kap, _ = _group_solve(
+            st, torch.where(good, t, 0.0), P.clamp_min(1e-300), rho_t
+        )
         nan = torch.full_like(t, float("nan"))
         t_rec = torch.where(st.has_rec, t, nan)
         sd_rec = torch.where(good, P.clamp_min(1e-300).rsqrt(), nan)
         t_con = torch.where(good, tg, t_rec)
         sd_con = torch.where(good, vg.sqrt(), sd_rec)
-        use_g = only_cens & torch.isfinite(T_loo) & (kap > 0) & (torch.nan_to_num(T_loo) * limit >= t * limit)
+        use_g = (
+            only_cens
+            & torch.isfinite(T_loo)
+            & (kap > 0)
+            & (torch.nan_to_num(T_loo) * limit >= t * limit)
+        )
         t_con = torch.where(use_g, T_loo, t_con)
         sd_con = torch.where(use_g, kap.clamp_min(1e-300).rsqrt(), sd_con)
     return {"t_rec": t_rec.numpy(), "sd_rec": sd_rec.numpy(), "t": t_con.numpy(),
