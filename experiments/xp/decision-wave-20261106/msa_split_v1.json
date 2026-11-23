@@ -1,0 +1,22 @@
+{
+  "run_id": "msa_split_v1",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/msa_split_v1",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/msa_split_v1",
+  "source_commit": "676bd78068fbaf17dac3c9fc4924f6d58c08f7fb",
+  "branch": "wip/intelligent-babbage-778ino",
+  "command": "python -u scripts/build_msa_split_v1.py --workers 8 --output \"$experiment_output\"",
+  "utc": "2026-11-23T22:50:40.757862+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "fekqgpk6"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 8,
+    "ram": 48
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "9eb49613c5750acfc580321f964c8609740455e03eeb853c778301d88047e5f9"
+}
