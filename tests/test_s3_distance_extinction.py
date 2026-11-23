@@ -463,6 +463,8 @@ def test_fitted_noise_recovers_overstated_e_errors_and_a_parallax_floor():
     zp = float(m.zp_sigma().detach())
     assert 0.01 < zp < floor + 0.02, zp
     assert 0.02 < float(m.e_outlier_frac().detach()) < 0.1
+    # Outliers have 4 x the real error = 2 x the quoted one: lambda ~ 2.
+    assert 1.4 < float(m.e_outlier_lambda().detach()) < 3.0
     assert hist["kappa_e_final"] == pytest.approx(ke.tolist())
     ens = de.EnsembleDE([m.requires_grad_(False)], std)
     z = torch.as_tensor(st["z"][te], dtype=torch.float32)

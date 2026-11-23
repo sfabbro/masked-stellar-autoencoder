@@ -1296,6 +1296,41 @@ STEPS["ms-s3v2-final"] = dict(
 )
 
 
+# S3 v2.1 (gmix only): the outlier E-label error is a fitted lambda x the quoted
+# error (in v2 it was 4 x kappa_E x quoted, as narrow as the core with kappa_E ~ 0.3,
+# so the predictive widened to cover the label tails: E coverage 0.90 at 68 %).
+S3V21_OUT = ROOT + "distance_extinction_s3_v21_20261123"
+_S3V21 = _S3V2.replace(f" --output {S3V2_OUT}", f" --output {S3V21_OUT}") + (
+    " --families gmix"
+)
+for _k in range(5):
+    _cmd = f"{_S3V21} --stages train --train-members {_k}"
+    if _k == 0:
+        _cmd = ' && "${pixi_run[@]}" '.join(
+            [f"{_S3V21} --stages data,clusters", f"touch {S3V21_OUT}/data_ready", _cmd]
+        )
+    else:
+        _cmd = _cmd.replace(
+            " --stages train", f" --wait-for {S3V21_OUT}/data_ready --stages train"
+        )
+    STEPS[f"ms-s3v21-gmix-{_k}"] = dict(
+        run_id=f"distance_extinction_s3_v21_gmix{_k}_20261123",
+        gpu=1,
+        ram=128 if _k == 0 else 96,
+        cpu=8,
+        command=_cmd,
+        files=[MS_V10[1]],
+    )
+STEPS["ms-s3v21-final"] = dict(
+    run_id="distance_extinction_s3_v21_final_20261123",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=f"{_S3V21} --stages predict,noxp,report",
+    files=[MS_V10[1]],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(

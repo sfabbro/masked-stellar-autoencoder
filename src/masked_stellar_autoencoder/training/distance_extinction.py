@@ -294,6 +294,10 @@ class Member(nn.Module):
             self.kappa_e_raw = nn.Parameter(torch.full((len(KAPPA_G_EDGES) + 1,), e0))
             q = E_OUTLIER_INIT / E_OUTLIER_MAX
             self.e_out_raw = nn.Parameter(torch.tensor(math.log(q / (1.0 - q))))
+            # Outlier width lambda x quoted error (lambda >= 1, fitted), independent
+            # of kappa_E: tied to kappa_E e it stays as narrow as the core.
+            lam0 = math.log(math.expm1(E_OUTLIER_SCALE - 1.0))
+            self.e_out_scale_raw = nn.Parameter(torch.tensor(lam0))
         if fit_zp:
             self.zp_raw = nn.Parameter(
                 torch.tensor(math.log(math.expm1(ZP_SIGMA_INIT)))
@@ -318,6 +322,18 @@ class Member(nn.Module):
         if hasattr(self, "e_out_raw"):
             return E_OUTLIER_MAX * torch.sigmoid(self.e_out_raw)
         return torch.zeros((), device=self.kappa_raw.device)
+
+    def e_outlier_sigma(self, e_sig, gbin):
+        """Error of an outlier E label: fitted lambda x quoted error (heads trained
+        before lambda existed: E_OUTLIER_SCALE x the effective error)."""
+        if hasattr(self, "e_out_scale_raw"):
+            return (1.0 + nn.functional.softplus(self.e_out_scale_raw)) * e_sig
+        return E_OUTLIER_SCALE * self.e_sigma_eff(e_sig, gbin)
+
+    def e_outlier_lambda(self):
+        if hasattr(self, "e_out_scale_raw"):
+            return 1.0 + nn.functional.softplus(self.e_out_scale_raw)
+        return torch.tensor(math.nan)
 
     def zp_sigma(self, default=0.0):
         """Parallax zero-point uncertainty [mas]: fitted, else ``default``."""
@@ -560,7 +576,8 @@ def log_marginal_likelihood(member, p, ob, *, n_s=48, n_e=24, zp_sigma=0.0,
     eps = member.e_outlier_frac()
     # The window of the broader (outlier) label error contains both components.
     has_out = bool(float(eps.detach()) > 0)
-    e_win = e_eff * (E_OUTLIER_SCALE if has_out else 1.0)
+    e_out = member.e_outlier_sigma(ob["e_sig"], ob["gbin"]) if has_out else e_eff
+    e_win = torch.maximum(e_eff, e_out)
     with torch.no_grad():
         lo_p, hi_p = member.s_window(p, ob["e_obs"], e_win.detach(), has_e)
         lo_m, hi_m, inf = parallax_window(ob["plx"], sig_eff.detach(), has_plx)
@@ -572,8 +589,7 @@ def log_marginal_likelihood(member, p, ob, *, n_s=48, n_e=24, zp_sigma=0.0,
     if has_out and bool(has_e.any()):
         # Label noise = (1 - eps) N(0, e^2) + eps N(0, (c e)^2): the label factor is
         # linear in the noise density, so the two label terms mix in probability.
-        lab_out = member.label_log_prob_s(p, s, ob["e_obs"], E_OUTLIER_SCALE * e_eff,
-                                          has_e, n_e)  # fmt: skip
+        lab_out = member.label_log_prob_s(p, s, ob["e_obs"], e_out, has_e, n_e)
         lab = torch.where(has_e, torch.logaddexp(torch.log1p(-eps) + lab,
                                                  torch.log(eps) + lab_out), lab)  # fmt: skip
     out = torch.logsumexp(logw + ll + lab, 0)
@@ -639,7 +655,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
     dev = z_train.device
     torch.manual_seed(seed)
     gen = torch.Generator().manual_seed(seed)
-    noise = ("kappa_raw", "kappa_e_raw", "e_out_raw", "zp_raw")
+    noise = ("kappa_raw", "kappa_e_raw", "e_out_raw", "e_out_scale_raw", "zp_raw")
     kap = [p for n, p in member.named_parameters() if n in noise]
     rest = [p for n, p in member.named_parameters() if n not in noise]
     mix = z_alt_train is not None and alt_prob > 0
@@ -758,6 +774,9 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         hist["kappa"].append(member.kappa().detach().cpu().tolist())
         hist["kappa_e"].append(member.kappa_e().detach().cpu().tolist())
         hist["e_outlier"].append(float(member.e_outlier_frac().detach()))
+        hist.setdefault("e_outlier_lambda", []).append(
+            float(member.e_outlier_lambda().detach())
+        )
         hist["zp_sigma"].append(float(member.zp_sigma(zp_sigma).detach()))
         log(f"  epoch {epoch}: train {hist['train'][-1]:.4f} stop {v:.4f} "
             f"({time.time() - t0:.0f} s{', skipped ' + str(skipped) if skipped else ''})")  # fmt: skip
@@ -780,6 +799,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
                 n_s=int(n_s), n_e=int(n_e), kappa_final=member.kappa().detach().cpu().tolist(),
                 kappa_e_final=member.kappa_e().detach().cpu().tolist(),
                 e_outlier_final=float(member.e_outlier_frac().detach()),
+                e_outlier_lambda_final=float(member.e_outlier_lambda().detach()),
                 zp_sigma_final=float(member.zp_sigma(zp_sigma).detach()),
                 alt_prob=float(alt_prob if mix else 0.0), rollbacks=int(rollbacks),
                 train_seconds=time.time() - t_start)  # fmt: skip
@@ -1019,8 +1039,11 @@ class EnsembleDE:
             [m.e_sigma_eff(ob["e_sig"], ob["gbin"]) for m in self.members]
         ).mean(0)
         eps = float(np.mean(self.e_outliers()))
+        es_out = torch.stack(
+            [m.e_outlier_sigma(ob["e_sig"], ob["gbin"]) for m in self.members]
+        ).mean(0)
         pit_e = torch.zeros_like(eo)
-        for wgt, sd in ((1.0 - eps, es), (eps, E_OUTLIER_SCALE * es)):
+        for wgt, sd in ((1.0 - eps, es), (eps, es_out)):
             if wgt <= 0:
                 continue
             lab, _ = uniform_nodes(eo - K_MEAS * sd, eo + K_MEAS * sd, n_e)
