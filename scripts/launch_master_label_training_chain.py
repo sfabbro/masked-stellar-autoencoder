@@ -1276,6 +1276,16 @@ for _k in range(5):  # retrain flow member k (another seed, half the step)
         " --epochs 12 --seed 100 --lr 5e-4 --force",
         files=[MS_V10[1]],
     )
+# Second final pass once the retrained flow members exist (the first final pass
+# may run with gmix only: predict/noxp skip a family with missing members).
+STEPS["ms-s3v2-final-2"] = dict(
+    run_id="distance_extinction_s3_v2_final2_20261123",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=f"{_S3V2} --stages predict,noxp,report --force",
+    files=[MS_V10[1]],
+)
 STEPS["ms-s3v2-final"] = dict(
     run_id="distance_extinction_s3_v2_final_20261123",
     gpu=1,
