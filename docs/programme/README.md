@@ -22,7 +22,7 @@ From now on, every result is produced on the full data sets defined here and jud
 
 ## 2. Where things are
 
-Output rule: every MSA output (tables, cross-matches, caches, runs) is written under `/arc/projects/astroai/msa` (`vos:astroai/msa`). `/arc/projects/hats` is read-only for us; it is reserved for the community to access HATS catalogues.
+Output rule: every MSA output (tables, cross-matches, runs) is written under `/arc/projects/astroai/msa` (`vos:astroai/msa`); xmatcher's catalogue cache goes under `/arc/projects/astroai/hats` (candidates for promotion to community-ready HATS). `/arc/projects/hats` is read-only for us; it is reserved for the community to access HATS catalogues.
 
 
 | What | Where | Size |

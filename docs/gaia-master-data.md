@@ -135,12 +135,13 @@ environment variables are set, and runs the anchor engine:
 Output location rule: MSA writes only under `/arc/projects/astroai/msa`
 (`vos:astroai/msa`). `/arc/projects/hats` is reserved for the community to read
 HATS catalogues: read the mirrors there, never write (no outputs, no new mirrors).
-Inputs not yet mirrored under `/arc/projects/hats` are cached under
-`/arc/projects/astroai/msa/hats_cache`; with every input already mirrored, run
-with `--no-sync` so nothing is synced.
+xmatcher's catalogue cache (mirrors of remote HATS inputs) lives under
+`/arc/projects/astroai/hats`, xmatcher's CANFAR default since sfabbro/xmatcher
+c0699cc; cached catalogues there may later be promoted to community-ready HATS.
+With every input already cached, run with `--no-sync` so nothing is synced.
 
 ```bash
-export CACHE=/arc/projects/astroai/msa/hats_cache   # new mirrors only; read existing ones from /arc/projects/hats
+export CACHE=/arc/projects/astroai/hats   # xmatcher catalogue cache (never /arc/projects/hats)
 export OUT=/arc/projects/astroai/msa/xmatcher/gaia_master.hats
 
 PREFLIGHT_ONLY=1 bash scripts/run_gaia_master.sh
@@ -154,7 +155,7 @@ xmatcher match gaia_lsdb_hats \
   twomass_hats allwise_hats catwise_hats skymapper_hats \
   sdss_hats ps1_hats vhs_hats galex_hats splus_hats \
   --engine ray-anchor -r 1.5 --target-epoch 2016.0 \
-  --cache-root /arc/projects/astroai/msa/hats_cache \
+  --cache-root /arc/projects/astroai/hats \
   -o /arc/projects/astroai/msa/xmatcher/gaia_master.hats
 ```
 

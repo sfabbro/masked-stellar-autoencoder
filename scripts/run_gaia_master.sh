@@ -7,7 +7,7 @@
 # Examples:
 #   bash scripts/run_gaia_master.sh --preflight
 #   OUT=/arc/projects/astroai/msa/xmatcher/gaia_master.hats \
-#     CACHE=/arc/projects/astroai/msa/hats_cache \
+#     CACHE=/arc/projects/astroai/hats \
 #     bash scripts/run_gaia_master.sh
 #
 # Local CANFAR products are picked up only when their environment variable is

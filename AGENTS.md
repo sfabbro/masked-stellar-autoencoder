@@ -33,8 +33,11 @@ are a separate path. Do not push this fork to `upstream`.
 
 ## Output locations (CANFAR / ARC)
 
-- Write every MSA output (tables, cross-matches, xmatcher caches and mirrors,
-  runs, analysis) under `/arc/projects/astroai/msa` (`vos:astroai/msa`).
+- Write every MSA output (tables, cross-matches, runs, analysis) under
+  `/arc/projects/astroai/msa` (`vos:astroai/msa`).
+- xmatcher's catalogue cache (mirrors of remote HATS inputs) goes under
+  `/arc/projects/astroai/hats` (`XMATCHER_CACHE_ROOT`; xmatcher's CANFAR
+  default). Those caches may later be promoted to community-ready HATS.
 - `/arc/projects/hats` is reserved for the community to read HATS catalogues:
   read from it, never write to it (no outputs, no new mirrors or syncs).
 
