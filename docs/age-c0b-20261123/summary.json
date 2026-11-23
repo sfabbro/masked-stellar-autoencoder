@@ -1,0 +1,241 @@
+{
+  "excluded": {
+    "starhorse23_lamostl7 main-sequence records (log g >= 4.1)": 677432,
+    "starhorse23_rvs main-sequence records (log g >= 4.1)": 295991,
+    "galah_dr4 main-sequence records (log g >= 4.1)": 267687,
+    "starhorse23_lamostm7 main-sequence records (log g >= 4.1)": 91249,
+    "starhorse23_galahdr3 main-sequence records (log g >= 4.1)": 57148,
+    "starhorse23_sdssdr12 main-sequence records (log g >= 4.1)": 38006,
+    "starhorse23_apogee17 main-sequence records (log g >= 4.1)": 28305,
+    "starhorse23_ravedr6 main-sequence records (log g >= 4.1)": 25974,
+    "xiang24 main-sequence records (log g >= 4.1)": 14484,
+    "starhorse23_gesdr5 main-sequence records (log g >= 4.1)": 4810,
+    "flame_dr3 + flame_spec_dr3 records": 3911011,
+    "records without an evolutionary class": 0,
+    "C0b label records": 17553
+  },
+  "n_records_good": 7456035,
+  "n_stars_all": 3608454,
+  "n_members": 774576,
+  "n_pairs": 1256400,
+  "fit_A": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 10,
+    "last_max_dtheta": 0.0008193645654208086,
+    "seconds": 277.0
+  },
+  "fit_C": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 13,
+    "last_max_dtheta": 0.0003268430551378182,
+    "seconds": 328.1
+  },
+  "fit_C_fromA": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 20,
+    "last_max_dtheta": 0.00029661225979079123,
+    "seconds": 457.4
+  },
+  "gauge_check": {
+    "xiang_offset_in_A": 0.2598166885071716,
+    "xiang_slope_in_A": 0.0,
+    "coefficient_not_representable_in_C": 0.0,
+    "C_fromA_max_coef_move": 0.20175319260290311,
+    "C_fromA_median_abs_latent_move": 0.0022191938823007407,
+    "C_fromA_p99_abs_latent_move": 0.2015049047791493,
+    "C_scratch_max_coef_diff_from_transformed_A": 0.28626793106350956,
+    "C_scratch_median_abs_latent_diff": 0.0022428584789537798,
+    "C_scratch_p99_abs_latent_diff": 0.20910726937348814,
+    "eta_A": [
+      0.12332496997201195,
+      0.348500841826961,
+      0.06780869852530746,
+      0.005000000000000002
+    ],
+    "eta_C_fromA": [
+      0.1123756500344449,
+      0.2614059444909644,
+      0.07104911919199883,
+      0.005000000000000002
+    ],
+    "eta_C": [
+      0.11292608249108717,
+      0.5754546641455668,
+      0.07311886688274247,
+      0.005000000000000002
+    ]
+  },
+  "fit_ARB_A": {
+    "stars": 273771,
+    "records": 549727,
+    "outer_iterations": 5,
+    "last_max_dtheta": 0.0008289296241577038,
+    "seconds": 114.6
+  },
+  "fit_ARB_C": {
+    "stars": 273771,
+    "records": 549727,
+    "outer_iterations": 30,
+    "last_max_dtheta": 6.783149285960292e-05,
+    "seconds": 653.5
+  },
+  "fit_V_no_identifiability": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 11,
+    "last_max_dtheta": 0.0001605910871766425,
+    "seconds": 266.6
+  },
+  "fit_V_wd_fit": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 6,
+    "last_max_dtheta": 0.0009157359922440378,
+    "seconds": 140.9
+  },
+  "fit_V_conatal_only": {
+    "stars": 270345,
+    "records": 542901,
+    "outer_iterations": 5,
+    "last_max_dtheta": 1.8626774163192639e-06,
+    "seconds": 120.9
+  },
+  "fit_V_seismic_dwarfs": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 14,
+    "last_max_dtheta": 0.000501916704321639,
+    "seconds": 298.7
+  },
+  "fit_V_no_latent_domain": {
+    "stars": 273777,
+    "records": 549757,
+    "outer_iterations": 30,
+    "last_max_dtheta": 0.003990046321477703,
+    "seconds": 498.5
+  },
+  "fit_V_no_conatal": {
+    "stars": 11314,
+    "records": 22628,
+    "outer_iterations": 5,
+    "last_max_dtheta": 0.0007066356604445712,
+    "seconds": 2.2
+  },
+  "per_star_path": "/tmp/claude-0/-home-user/d60e9c7a-7b13-5bb2-ade1-fb8da7adbc26/scratchpad/age_c0b/work/consensus_stars.parquet",
+  "n_stars_with_consensus_A": 1163699,
+  "n_stars_with_consensus_C": 1163699,
+  "n_lower_limits_A": 2527,
+  "frac_consensus_A_above_13p8": 0.001258057281135414,
+  "C_minus_C_fromA_median_abs": 0.0007036328315734863,
+  "conatal_A": {
+    "cluster_members": {
+      "n": 1749,
+      "z_nmad": 0.9737440437425914,
+      "z_median": 0.1848334700721758
+    },
+    "wide_pairs_all": {
+      "n": 351,
+      "z_nmad": 0.5774853655074036
+    },
+    "wide_pairs_giant+subgiant": {
+      "n": 2,
+      "z_nmad": 2.9575711181479853,
+      "dt_nmad": 0.43825803509630934
+    },
+    "wide_pairs_subgiant+subgiant": {
+      "n": 349,
+      "z_nmad": 0.5760380246307036,
+      "dt_nmad": 0.11449983790735066
+    }
+  },
+  "conatal_C": {
+    "cluster_members": {
+      "n": 1739,
+      "z_nmad": 0.9172592289641222,
+      "z_median": 0.238531520446614
+    },
+    "wide_pairs_all": {
+      "n": 351,
+      "z_nmad": 0.6113120154019647
+    },
+    "wide_pairs_giant+subgiant": {
+      "n": 2,
+      "z_nmad": 0.9035908838713306,
+      "dt_nmad": 0.13218715494158106
+    },
+    "wide_pairs_subgiant+subgiant": {
+      "n": 349,
+      "z_nmad": 0.6113120154019647,
+      "dt_nmad": 0.11519904449675133
+    }
+  },
+  "fit_LOO_apokasc2+apok2_kepler": {
+    "stars": 273692,
+    "seconds": 90.4,
+    "outer_iterations": 5
+  },
+  "fit_LOO_willett26": {
+    "stars": 262501,
+    "seconds": 84.8,
+    "outer_iterations": 4
+  },
+  "fit_LOO_apok2": {
+    "stars": 270557,
+    "seconds": 115.3,
+    "outer_iterations": 6
+  },
+  "fit_LOO_legacy17": {
+    "stars": 273739,
+    "seconds": 91.5,
+    "outer_iterations": 5
+  },
+  "fit_LOO_chaplin14": {
+    "stars": 273568,
+    "seconds": 333.7,
+    "outer_iterations": 17
+  },
+  "fit_LOO_xiang24": {
+    "stars": 80539,
+    "seconds": 169.5,
+    "outer_iterations": 30
+  },
+  "fit_LOO_galah_dr4": {
+    "stars": 212155,
+    "seconds": 84.6,
+    "outer_iterations": 5
+  },
+  "fit_LOO_starhorse23_lamostl7": {
+    "stars": 118848,
+    "seconds": 288.1,
+    "outer_iterations": 30
+  },
+  "fit_LOO_starhorse23_apogee17": {
+    "stars": 272217,
+    "seconds": 225.9,
+    "outer_iterations": 11
+  },
+  "fit_LOO_starhorse23_galahdr3": {
+    "stars": 238077,
+    "seconds": 78.2,
+    "outer_iterations": 5
+  },
+  "fit_LOO_starhorse23_lamostm7": {
+    "stars": 272174,
+    "seconds": 81.8,
+    "outer_iterations": 4
+  },
+  "fit_LOO_cluster_catalogues": {
+    "stars": 271306,
+    "seconds": 132.4,
+    "outer_iterations": 7
+  },
+  "fit_LOO_bench_clusters": {
+    "stars": 273771,
+    "seconds": 98.0,
+    "outer_iterations": 5
+  },
+  "runtime_seconds": 5803.7
+}

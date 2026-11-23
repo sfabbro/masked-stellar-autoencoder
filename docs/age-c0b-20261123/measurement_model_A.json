@@ -1,0 +1,686 @@
+{
+ "gauge": "apokasc3",
+ "latent": "log10(age/Gyr)",
+ "pivot_T0": 0.6,
+ "classes": [
+  "MS",
+  "MSTO",
+  "SGB",
+  "RGB",
+  "RC",
+  "giant",
+  "cluster",
+  "system"
+ ],
+ "student_t_nu": 5.0,
+ "map_form": "f = t + b + db_c + (A + dA_c)(t - T0) + beta x + g_uu u^2 + g_uuu u^3 + g_xu x u + g_xx x^2; x = [Fe/H] clamped to feh_range, u in the polynomial terms clamped to t_range - T0; db_c/dA_c index CLASSES",
+ "noise": "Student-t scale^2 = kappa^2 sigma_quoted^2 + omega^2 per unit (source:class); records of an effect family share an age error u ~ N(0, eta^2) per star (y = f(t + u)); pipelines on the same spectra add a nested u_k ~ N(0, eta_k^2) (y = f(t + u + u_k))",
+ "eta": {
+  "isochrone": 0.12332496997201195,
+  "cluster_cmd": 0.348500841826961,
+  "lamost_spectra": 0.06780869852530746,
+  "galah_spectra": 0.005000000000000002
+ },
+ "effect_families": {
+  "isochrone": [
+   "galah_dr4",
+   "starhorse23_apogee17",
+   "starhorse23_galahdr3",
+   "starhorse23_gesdr5",
+   "starhorse23_lamostl7",
+   "starhorse23_lamostm7",
+   "starhorse23_ravedr6",
+   "starhorse23_rvs",
+   "starhorse23_sdssdr12",
+   "xiang24"
+  ],
+  "cluster_cmd": [
+   "cl_hr23",
+   "cl_cg20",
+   "cl_dias21"
+  ],
+  "lamost_spectra": [
+   "starhorse23_lamostl7",
+   "starhorse23_lamostm7",
+   "xiang24"
+  ],
+  "galah_spectra": [
+   "starhorse23_galahdr3",
+   "galah_dr4"
+  ]
+ },
+ "isochrone_sources": [
+  "galah_dr4",
+  "starhorse23_apogee17",
+  "starhorse23_galahdr3",
+  "starhorse23_gesdr5",
+  "starhorse23_lamostl7",
+  "starhorse23_lamostm7",
+  "starhorse23_ravedr6",
+  "starhorse23_rvs",
+  "starhorse23_sdssdr12",
+  "xiang24"
+ ],
+ "caps_gyr_right_censored_within_1pc": {
+  "starhorse23_apogee17": 13.725,
+  "starhorse23_galahdr3": 13.725,
+  "starhorse23_gesdr5": 13.725,
+  "starhorse23_lamostm7": 13.725,
+  "starhorse23_lamostl7": 13.725,
+  "starhorse23_sdssdr12": 13.725,
+  "starhorse23_ravedr6": 13.725,
+  "starhorse23_rvs": 13.725,
+  "galah_dr4": 14.794,
+  "xiang24": 20.0,
+  "willett26_kepler": 19.5,
+  "willett26_k2_bhm": 19.5,
+  "willett26_k2_cor": 19.5,
+  "willett26_tess": 19.5,
+  "willett26_kepler_L": 19.5,
+  "willett26_k2_bhm_L": 19.5,
+  "willett26_k2_cor_L": 19.5,
+  "willett26_tess_L": 19.5,
+  "willett26_k2_gal_L": 19.5,
+  "martig16": 13.0
+ },
+ "main_sequence_rule": "isochrone records with catalogue log g >= 4.1 excluded",
+ "shared_input_groups_priority": {
+  "apokasc": [
+   "apokasc3",
+   "apokasc2",
+   "apok2_kepler"
+  ],
+  "apok2": [
+   "apok2",
+   "zinn22_k2gap"
+  ],
+  "willett26": [
+   "willett26_kepler",
+   "willett26_k2_bhm",
+   "willett26_k2_cor",
+   "willett26_tess",
+   "willett26_kepler_L",
+   "willett26_k2_bhm_L",
+   "willett26_k2_cor_L",
+   "willett26_tess_L",
+   "willett26_k2_gal_L",
+   "mackereth21_tess"
+  ],
+  "legacy17": [
+   "legacy17_BASTA",
+   "legacy17_AST",
+   "legacy17_C2kSMO",
+   "legacy17_GOE",
+   "legacy17_V&A",
+   "legacy17_YMCM"
+  ],
+  "starhorse23": [
+   "starhorse23_apogee17",
+   "starhorse23_galahdr3",
+   "starhorse23_gesdr5",
+   "starhorse23_lamostm7",
+   "starhorse23_lamostl7",
+   "starhorse23_sdssdr12",
+   "starhorse23_ravedr6",
+   "starhorse23_rvs"
+  ],
+  "chaplin14": [
+   "chaplin14"
+  ],
+  "xiang24": [
+   "xiang24"
+  ],
+  "galah_dr4": [
+   "galah_dr4"
+  ],
+  "wd": [
+   "wd_qiu21",
+   "wd_raddi22_H_C18"
+  ],
+  "bench_ldb": [
+   "bench_ldb"
+  ],
+  "bench_eb": [
+   "bench_eb"
+  ],
+  "bench_gc": [
+   "bench_gc"
+  ],
+  "cl_hr23": [
+   "cl_hr23"
+  ],
+  "cl_cg20": [
+   "cl_cg20"
+  ],
+  "cl_dias21": [
+   "cl_dias21"
+  ]
+ },
+ "maps": {
+  "apokasc3": {
+   "tier": "identity",
+   "coef": {},
+   "feh_range": [
+    -0.7177437996864319,
+    0.34169569581747056
+   ],
+   "t_range": [
+    -0.2563550516963005,
+    1.1914264965057375
+   ]
+  },
+  "apok2": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.014015550755039978
+   },
+   "feh_range": [
+    -0.8658099991083145,
+    0.31581001132726666
+   ],
+   "t_range": [
+    0.1760912537574768,
+    1.5526682138442993
+   ]
+  },
+  "apokasc2": {
+   "tier": "offset",
+   "coef": {
+    "b": -0.05155521693491117
+   },
+   "feh_range": [
+    -0.8060225808620453,
+    0.34030400693416596
+   ],
+   "t_range": [
+    -0.2959000086784363,
+    1.0896799993515016
+   ]
+  },
+  "bench_eb": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.041003911760003446
+   },
+   "feh_range": [
+    -0.46492,
+    0.29806
+   ],
+   "t_range": [
+    -1.8115105835769105,
+    0.9084733487433158
+   ]
+  },
+  "bench_gc": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.0861082981143951
+   },
+   "feh_range": [
+    -0.5,
+    0.3
+   ],
+   "t_range": [
+    0.0,
+    1.0
+   ]
+  },
+  "bench_ldb": {
+   "tier": "offset",
+   "coef": {
+    "b": -0.04417030642066453
+   },
+   "feh_range": [
+    -0.5,
+    0.3
+   ],
+   "t_range": [
+    0.0,
+    1.0
+   ]
+  },
+  "chaplin14": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.2637242115825587
+   },
+   "feh_range": [
+    -0.5770000219345093,
+    0.3409999907016754
+   ],
+   "t_range": [
+    0.21748393774032593,
+    1.1931246519088745
+   ]
+  },
+  "cl_cg20": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.02808586214125298,
+    "A": 0.1017700994722885,
+    "beta": 0.0856467472404723
+   },
+   "feh_range": [
+    -0.31316,
+    0.4526199999999999
+   ],
+   "t_range": [
+    -2.2933,
+    0.6310999999999998
+   ]
+  },
+  "cl_dias21": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.05403085021972226,
+    "A": 0.13041544590537946,
+    "beta": 0.03572376055992
+   },
+   "feh_range": [
+    -0.31063999999999997,
+    0.44991999999999965
+   ],
+   "t_range": [
+    -2.2638200000000004,
+    0.5887399999999995
+   ]
+  },
+  "cl_hr23": {
+   "tier": "offset",
+   "coef": {
+    "b": -0.18506909542601252
+   },
+   "feh_range": [
+    -0.31063999999999997,
+    0.44991999999999965
+   ],
+   "t_range": [
+    -2.39787507,
+    0.3382947449999998
+   ]
+  },
+  "galah_dr4_sgb": {
+   "tier": "flex",
+   "coef": {
+    "b": 0.24205473485136678,
+    "A": 0.14190762331804258,
+    "beta": -0.2556933615906802,
+    "g_uu": 0.060280022925335644,
+    "g_xu": 0.11419974802601437,
+    "g_xx": -0.055424575983393155
+   },
+   "feh_range": [
+    -0.7491364061832427,
+    0.372033567726612
+   ],
+   "t_range": [
+    0.14331186443567276,
+    1.1348583865165711
+   ]
+  },
+  "legacy17_BASTA": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.15635807403569288
+   },
+   "feh_range": [
+    -0.43620001077651976,
+    0.21950000017881396
+   ],
+   "t_range": [
+    0.15592534437775613,
+    1.0186899256706239
+   ]
+  },
+  "starhorse23_apogee17": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.24987119328510643,
+    "A": 0.0947358274667906,
+    "beta": -0.18549430919183382,
+    "db1": 0.002845885310578777,
+    "dA1": 0.020997321467783107
+   },
+   "feh_range": [
+    -0.5826499873399734,
+    0.354906907081604
+   ],
+   "t_range": [
+    0.29267655551433563,
+    1.1196975159645082
+   ]
+  },
+  "starhorse23_galahdr3": {
+   "tier": "flex",
+   "coef": {
+    "b": 0.22379012729199868,
+    "A": 0.1924700852934719,
+    "beta": -0.31793060040986504,
+    "db2": 0.005561076265206879,
+    "dA2": 0.0022358690430276437,
+    "g_uu": 0.10161873481105409,
+    "g_xu": 0.23485396605588937,
+    "g_xx": -0.10188361970262814
+   },
+   "feh_range": [
+    -0.575180641412735,
+    0.3655902403593065
+   ],
+   "t_range": [
+    0.13515164345502853,
+    1.099773464202881
+   ]
+  },
+  "starhorse23_gesdr5": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.23038565960009869
+   },
+   "feh_range": [
+    -1.5886611104011537,
+    0.16440479457378424
+   ],
+   "t_range": [
+    0.19444575905799866,
+    1.1187502026557923
+   ]
+  },
+  "starhorse23_lamostl7": {
+   "tier": "flex",
+   "coef": {
+    "b": 0.23027798341260577,
+    "A": -0.22840703615129307,
+    "beta": -0.14614419592738903,
+    "db1": 0.029169878358684447,
+    "dA1": 0.11289466462758797,
+    "g_uu": -0.48750785292628246,
+    "g_xu": 0.18483688086145386,
+    "g_xx": -0.017083997726156885
+   },
+   "feh_range": [
+    -1.308107030391693,
+    0.3395765459537506
+   ],
+   "t_range": [
+    0.15577564850449563,
+    1.120019543170929
+   ]
+  },
+  "starhorse23_lamostm7": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.24853790651942997,
+    "A": 0.18892360358476204,
+    "beta": -0.00567659727902494
+   },
+   "feh_range": [
+    -0.6958468347787857,
+    0.28378784507513016
+   ],
+   "t_range": [
+    0.1383084736764431,
+    1.1288221538066863
+   ]
+  },
+  "starhorse23_ravedr6": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.1959178045006845
+   },
+   "feh_range": [
+    -0.6911691510677338,
+    0.3343888494372368
+   ],
+   "t_range": [
+    0.15174574479460717,
+    1.0744011151790618
+   ]
+  },
+  "starhorse23_rvs": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.19549576428548932,
+    "A": 0.0639556488263942,
+    "beta": -0.26948477128523846,
+    "db1": -0.02084530284075753,
+    "dA1": 0.1778309477789973
+   },
+   "feh_range": [
+    -0.4710573944449425,
+    0.36104169875383363
+   ],
+   "t_range": [
+    0.20858027279376984,
+    1.067983533143997
+   ]
+  },
+  "starhorse23_sdssdr12": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.20795122855176654
+   },
+   "feh_range": [
+    -2.1739176654815675,
+    0.2116092938184739
+   ],
+   "t_range": [
+    0.2170417632162571,
+    1.1098566794395448
+   ]
+  },
+  "willett26_L": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.23512841821857808
+   },
+   "feh_range": [
+    -0.9729917347431183,
+    0.31786099374294285
+   ],
+   "t_range": [
+    -0.3310313045978546,
+    1.2867977142333984
+   ]
+  },
+  "willett26_dnu": {
+   "tier": "linear",
+   "coef": {
+    "b": 0.01023300067630179,
+    "A": 0.01112480153265619,
+    "beta": -0.033231855864040934
+   },
+   "feh_range": [
+    -0.7799295735359192,
+    0.33677879810333233
+   ],
+   "t_range": [
+    -0.2077740502357483,
+    1.2210220336914062
+   ]
+  },
+  "xiang24": {
+   "tier": "offset",
+   "coef": {
+    "b": 0.2598166885071716
+   },
+   "feh_range": [
+    -1.4038836121559144,
+    0.30863338172435756
+   ],
+   "t_range": [
+    0.20947226107120515,
+    1.2001010394096374
+   ]
+  }
+ },
+ "noise_units": {
+  "apok2:giant": {
+   "kappa": 0.49236840127917414,
+   "omega": 0.07591508281617315
+  },
+  "apokasc2:RGB": {
+   "kappa": 0.46049884262324764,
+   "omega": 0.01667246263634636
+  },
+  "apokasc2:all": {
+   "kappa": 1.9905043016223045,
+   "omega": 0.03131386097671978
+  },
+  "apokasc3:RC": {
+   "kappa": 0.47083190664641517,
+   "omega": 0.008462616392608547
+  },
+  "apokasc3:RGB": {
+   "kappa": 0.40454482022741683,
+   "omega": 0.005000000000000002
+  },
+  "bench_eb:all": {
+   "kappa": 1.0299292949552785,
+   "omega": 0.08020501493897357
+  },
+  "bench_gc:all": {
+   "kappa": 1.5969829017729007,
+   "omega": 0.24216956720124228
+  },
+  "bench_ldb:all": {
+   "kappa": 1.5869019594854463,
+   "omega": 0.033495820469967456
+  },
+  "chaplin14:SGB": {
+   "kappa": 0.3344321106442896,
+   "omega": 0.01796962604354289
+  },
+  "chaplin14:all": {
+   "kappa": 1.1247462161383137,
+   "omega": 0.02939717720343817
+  },
+  "cl_cg20:cluster": {
+   "kappa": 1.0,
+   "omega": 0.17174783296736662
+  },
+  "cl_dias21:cluster": {
+   "kappa": 0.699807888816134,
+   "omega": 0.10328593523304225
+  },
+  "cl_hr23:cluster": {
+   "kappa": 0.7898937347629889,
+   "omega": 0.14287131407426107
+  },
+  "galah_dr4:SGB": {
+   "kappa": 1.0,
+   "omega": 0.005000000000000002
+  },
+  "legacy17_BASTA:all": {
+   "kappa": 0.627769199882702,
+   "omega": 0.07978718477934504
+  },
+  "starhorse23_apogee17:MSTO": {
+   "kappa": 0.6694493358794191,
+   "omega": 0.05777213436551432
+  },
+  "starhorse23_apogee17:SGB": {
+   "kappa": 1.0194057810555672,
+   "omega": 0.048885258410908905
+  },
+  "starhorse23_galahdr3:MSTO": {
+   "kappa": 0.39022994500012703,
+   "omega": 0.023459798072665503
+  },
+  "starhorse23_galahdr3:SGB": {
+   "kappa": 0.33323928226359534,
+   "omega": 0.01904707028287642
+  },
+  "starhorse23_gesdr5:MSTO": {
+   "kappa": 0.3537351107357684,
+   "omega": 0.049610566546976605
+  },
+  "starhorse23_gesdr5:SGB": {
+   "kappa": 0.5531277788430257,
+   "omega": 0.03828930122391815
+  },
+  "starhorse23_lamostl7:MSTO": {
+   "kappa": 0.5596401735337506,
+   "omega": 0.03637111208260326
+  },
+  "starhorse23_lamostl7:SGB": {
+   "kappa": 0.702826562055815,
+   "omega": 0.057708154186093576
+  },
+  "starhorse23_lamostm7:SGB": {
+   "kappa": 0.7598154412831458,
+   "omega": 0.0720896563304326
+  },
+  "starhorse23_ravedr6:MSTO": {
+   "kappa": 0.2373701107108074,
+   "omega": 0.07980178049640375
+  },
+  "starhorse23_ravedr6:SGB": {
+   "kappa": 1.0515147270075496,
+   "omega": 0.04617627753436256
+  },
+  "starhorse23_rvs:MSTO": {
+   "kappa": 0.32080290150009394,
+   "omega": 0.06968839407430484
+  },
+  "starhorse23_rvs:SGB": {
+   "kappa": 0.3807446847390262,
+   "omega": 0.05095940232108538
+  },
+  "starhorse23_sdssdr12:MSTO": {
+   "kappa": 0.3704857295413425,
+   "omega": 0.011263815175936906
+  },
+  "starhorse23_sdssdr12:SGB": {
+   "kappa": 0.7708759672942394,
+   "omega": 0.019602199052885655
+  },
+  "willett26_k2_bhm:giant": {
+   "kappa": 0.36582273760809436,
+   "omega": 0.005977799726772705
+  },
+  "willett26_k2_bhm_L:giant": {
+   "kappa": 2.704134559499436,
+   "omega": 0.06297583782539652
+  },
+  "willett26_k2_cor:giant": {
+   "kappa": 0.2,
+   "omega": 0.011903866891697671
+  },
+  "willett26_k2_cor_L:all": {
+   "kappa": 1.927268702585543,
+   "omega": 0.0392449652317178
+  },
+  "willett26_k2_gal_L:giant": {
+   "kappa": 1.5934118465361964,
+   "omega": 0.03297728487197449
+  },
+  "willett26_kepler:RC": {
+   "kappa": 0.4949568365830957,
+   "omega": 0.0628962036901241
+  },
+  "willett26_kepler:RGB": {
+   "kappa": 0.629114655793882,
+   "omega": 0.005000000000000002
+  },
+  "willett26_kepler:all": {
+   "kappa": 1.0010426744776788,
+   "omega": 0.02928241400264296
+  },
+  "willett26_kepler_L:all": {
+   "kappa": 2.314479068747312,
+   "omega": 0.1876394058577966
+  },
+  "willett26_tess:giant": {
+   "kappa": 0.9915919315026089,
+   "omega": 0.029972214967868855
+  },
+  "willett26_tess_L:all": {
+   "kappa": 1.0,
+   "omega": 0.029999999999999995
+  },
+  "xiang24:SGB": {
+   "kappa": 0.9543313259676305,
+   "omega": 0.005000000000000002
+  }
+ }
+}
