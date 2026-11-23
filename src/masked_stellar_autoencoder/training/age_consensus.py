@@ -635,14 +635,18 @@ def _shared_penalty(u_o, u_k, e2):
     return (u_o[po] ** 2 / e2o[po]).sum() + (u_k[pk] ** 2 / e2k[pk]).sum()
 
 
-def _group_solve(st: _State, m, P, rho):
+def _group_solve(st: _State, m, P, rho, t_fb=None):
     """Latent posteriors with the co-natal terms, group ages integrated (flat prior).
 
     Returns (t, var, T_loo, var_T_loo, kappa, T_hat): marginal mean/variance of
     t_i (= the joint profile mode, the posterior being Gaussian), the
     leave-one-out group pseudo-measurement N(T_loo, s^2/rho + var_T_loo) with
-    precision kappa, and the group mode T_hat over all members."""
+    precision kappa, and the group mode T_hat over all members. ``t_fb``: the
+    latent kept by a star without any record information (P = 0) that no
+    group holds either (else NaN)."""
     t, var = m.clone(), 1.0 / P
+    if t_fb is not None:
+        t = torch.where(P > 0, t, t_fb)
     T_loo = torch.full_like(m, float("nan"))
     vT_loo = torch.full_like(m, float("inf"))
     kappa = torch.zeros_like(m)
@@ -662,7 +666,7 @@ def _group_solve(st: _State, m, P, rho):
     prec = P + kappa
     t = torch.where(ok, (P * m + kappa * torch.nan_to_num(T_loo)) / prec, t)
     var = torch.where(ok, 1.0 / prec, var)
-    T_hat = torch.where(mem & (W0 > 0), W1 / W0.clamp_min(1e-300), m)
+    T_hat = torch.where(mem & (W0 > 0), W1 / W0.clamp_min(1e-300), t)
     # members without record information (all records outside their maps'
     # data range): the group posterior
     blind = st.member & st.has_rec & ~(P > 0) & (W0 > 0)
@@ -741,22 +745,27 @@ def _map_objective(st: _State, theta, w, v, y, t_lin, rho, e2):
     with torch.no_grad():
         ad, ypd = a.detach(), yp.detach()
         post = _posterior(st, pi, ad, ypd, e2)
-        ts, _, _, _, _, T_hat = _group_solve(st, post["m"], post["P"], rho)
+        ts, _, _, _, _, T_hat = _group_solve(st, post["m"], post["P"], rho, t_lin)
         u_o, u_k = _shared_modes(st, post, pi, ad, ypd - ad * ts[st.star])
         uterm = _shared_penalty(u_o, u_k, e2)
         ushare = u_o[st.blk_o] + u_k[st.blk_k]
         gterm = 0.0
         if st.n_group:
-            mem = st.member & st.has_rec
+            mem = st.member & st.has_rec & (post["P"] > 0)
             gterm = (rho / st.s2[st.gid] * (ts - T_hat) ** 2)[mem].sum()
     r = yp - a * (ts[st.star] + ushare)
+    r = torch.where(pi > 0, r, torch.zeros_like(r))  # missing records: no term
     F = (pi * r * r).sum() + uterm + gterm
     F = F + (((theta - maps.prior_mean) / maps.prior_sd) ** 2).sum() + pen
     return F
 
 
-def _var_objective(st: _State, p, w, y, a, f, t_lin, rho, has_sig):
-    """-2 log restricted likelihood of (log kappa, log omega, log eta)."""
+def _var_objective(st: _State, p, w, y, a, f, t_lin, rho, has_sig, cvar=None):
+    """-2 log restricted likelihood of (log kappa, log omega, log eta).
+    ``cvar``: conditional variance of the imputed values of censored records
+    (EM: the expected residual sum of squares adds it), so a censored value
+    is not taken as an exact observation (identical imputed limits of two
+    co-natal stars would otherwise say the noise is zero)."""
     U, E, Sn = st.n_noise, st.n_effect, st.n_sub
     lk = torch.where(has_sig, p[:U], torch.zeros_like(p[:U]))
     lw, le = p[U : 2 * U], p[2 * U : 2 * U + E + Sn]
@@ -785,6 +794,8 @@ def _var_objective(st: _State, p, w, y, a, f, t_lin, rho, has_sig):
         F = F + torch.log(G0[okg]).sum()
     else:
         F = F + torch.log(Pc[has]).sum()
+    if cvar is not None:
+        F = F + (pi * cvar).sum()
     F = F + (lk**2).sum() + (((lw - LOG_OMEGA0) / 1.5) ** 2).sum()
     F = F + (((le - LOG_OMEGA0) / 1.5) ** 2).sum()
     return F
@@ -806,14 +817,15 @@ def _lbfgs(fn, x0, iters):
 
 
 def _record_weights(st, f, a, y, t, w, v, e2, nu):
-    """Imputed values and Student-t weights. A record is judged against its
+    """Imputed values, Student-t weights and the conditional variance of the
+    imputed values. A record is judged against its
     own star's other records (records-only latent); disagreement between a
     star and its co-natal group is the member weight's job."""
     pi = w / v
     yp = y - f + a * t[st.star]
     post = _posterior(st, pi, a, yp, e2)
     u_o, u_k = _shared_modes(st, post, pi, a, yp - a * t[st.star])
-    y, _ = _impute(st, f + a * (u_o[st.blk_o] + u_k[st.blk_k]), v)
+    y, cvar = _impute(st, f + a * (u_o[st.blk_o] + u_k[st.blk_k]), v)
     yp = y - f + a * t[st.star]
     post = _posterior(st, pi, a, yp, e2)
     t_r = torch.where(post["P"] > 0, post["m"], t)
@@ -835,8 +847,27 @@ def _record_weights(st, f, a, y, t, w, v, e2, nu):
     # a co-natal member whose latent (set by its group) lies below a map's data
     # edge: that map says nothing there, so its record is missing (weight 0)
     outside = st.member[st.star] & (a <= FLAT_SLOPE * (1.0 + 1e-9))
+    if bool(outside.any()):
+        # ... only where another member carries information (a pair whose two
+        # stars both sit below their edges keeps its records)
+        inside = ((~outside) & (w > 0) & ~st.cens).to(DT)
+        has_inf = (st.scatter(inside) > 0) & st.member
+        n_inf = st.gscatter(has_inf.to(DT), st.member)[st.gid]
+        held = (n_inf - has_inf.to(DT)) > 0
+        outside = outside & held[st.star]
     w = torch.where(outside, torch.zeros_like(w), w)
-    return y, w
+    return y, w, cvar
+
+
+def _require_finite(what: str, x: torch.Tensor, it: int) -> None:
+    """Fail loudly instead of propagating NaN through the alternation."""
+    bad = ~torch.isfinite(x)
+    if bool(bad.any()):
+        idx = torch.nonzero(bad).flatten()[:10].tolist()
+        raise FloatingPointError(
+            f"non-finite {what} at outer iteration {it}: {int(bad.sum())} of "
+            f"{x.numel()} entries (first indices {idx})"
+        )
 
 
 # --------------------------------------------------------------------------- #
@@ -907,10 +938,11 @@ def fit_consensus(
             t = torch.where(st.member & (G0[st.gid] > 0), Tg[st.gid], t)
     var = torch.full_like(t, 0.01)
     y = st.y_obs.clone()
+    cvar = torch.zeros_like(y)
     if t0 is not None:  # warm start: impute censored values at the given latents
         with torch.no_grad():
             f, a, _ = st.evaluate(maps.unpack(theta), t[st.star])
-            y, _ = _impute(st, f, _noise_var(st, lk, lw))
+            y, cvar = _impute(st, f, _noise_var(st, lk, lw))
     history = []
     for it in range(n_outer):
         v = _noise_var(st, lk, lw)
@@ -919,21 +951,24 @@ def fit_consensus(
         if theta.numel():
             theta = _lbfgs(lambda th: _map_objective(st, th, w, v, y, t, rho, e2) / R,
                            theta, inner_iter)  # fmt: skip
+            _require_finite("map coefficients", theta, it)
         coefs = maps.unpack(theta)
         with torch.no_grad():
             pi = w / v
             for _ in range(2):  # Gauss-Newton steps on the latents
                 f, a, _ = st.evaluate(coefs, t[st.star])
                 post = _posterior(st, pi, a, y - f + a * t[st.star], e2)
-                t_new, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho)
+                t_new, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho, t)
                 t = torch.where(st.has_rec & torch.isfinite(t_new), t_new, t)
             rho = _member_weights(st, post["m"], post["P"], rho, member_nu)
             f, a, _ = st.evaluate(coefs, t[st.star])
+            _require_finite("latents of stars with records", t[st.has_rec], it)
         # ---- variances: REML ----------------------------------------------
         p0 = torch.cat([lk, lw, le])
         fixp = torch.cat([fixed, fixed, torch.zeros(E, dtype=torch.bool)])
         p = _lbfgs(lambda q: _var_objective(st, torch.where(fixp, p0, q), w, y, a, f, t, rho,
-                                            has_sig) / R, p0, 40)  # fmt: skip
+                                            has_sig, cvar) / R, p0, 40)  # fmt: skip
+        _require_finite("noise parameters (log kappa, log omega, log eta)", p, it)
         lk_new = torch.where(
             has_sig, p[:U].clamp(*LOG_KAPPA_RANGE), torch.zeros_like(p[:U])
         )
@@ -943,7 +978,7 @@ def fit_consensus(
         # ---- imputation and Student-t weights ------------------------------
         with torch.no_grad():
             v = _noise_var(st, lk, lw)
-            y, w = _record_weights(st, f, a, y, t, w, v, st.eta2(le), nu)
+            y, w, cvar = _record_weights(st, f, a, y, t, w, v, st.eta2(le), nu)
         dtheta = float((theta - theta_old).abs().max()) if theta.numel() else 0.0
         history.append({"iter": it, "dtheta": dtheta, "eta": torch.exp(le).tolist()})
         if verbose:
@@ -958,7 +993,7 @@ def fit_consensus(
     with torch.no_grad():
         f, a, _ = st.evaluate(coefs, t[st.star])
         post = _posterior(st, w / v, a, y - f + a * t[st.star], e2)
-        t, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho)
+        t, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho, t)
     cov = vcov = None
     if covariance and theta.numel():
         cov = _fd_covariance(
@@ -967,7 +1002,7 @@ def fit_consensus(
     if covariance:
         p0 = torch.cat([lk, lw, le])
         H = torch.autograd.functional.hessian(
-            lambda q: _var_objective(st, q, w, y, a, f, t, rho, has_sig), p0
+            lambda q: _var_objective(st, q, w, y, a, f, t, rho, has_sig, cvar), p0
         )
         keep = torch.cat(
             [has_sig & ~fixed, ~fixed, torch.ones(E, dtype=torch.bool)]
