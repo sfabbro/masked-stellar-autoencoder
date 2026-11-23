@@ -1331,6 +1331,24 @@ STEPS["ms-s3v21-final"] = dict(
 )
 
 
+# P0: freeze msa-split-v1 (docs/programme/data.md section 3) for all 1,811,709,771
+# Gaia DR3 sources. CPU only: streams source_id, has_xp_continuous and the G/BP/RP
+# magnitudes of the 2,016 HATS partitions of /arc/projects/hats/gaia/dr3 with 8
+# worker processes, plus the HR23/EB21 group and reserved catalogues.
+SPLIT_V1 = "msa_split_v1"
+STEPS["msa-split-v1"] = dict(
+    run_id=SPLIT_V1,
+    gpu=0,
+    ram=48,
+    cpu=8,
+    command=(
+        "python -u scripts/build_msa_split_v1.py --workers 8"
+        ' --output "$experiment_output"'
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
