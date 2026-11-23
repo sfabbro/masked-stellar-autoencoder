@@ -102,8 +102,11 @@ CLUSTER_CATALOGUES = ("cl_hr23", "cl_cg20", "cl_dias21")
 #: noise per catalogue and bin; FGK(M) dwarfs, single-star quality. Lithium:
 #: A(Li), decreasing in t, one map per catalogue and Teff bin (3D-NLTE GALAH and
 #: 1D GES are different scales); non-detections are upper limits (censored).
-ROT_SOURCES = ("rot_santos21", "rot_mcquillan14", "rot_santos19", "rot_reinhold20_k2",
-               "rot_tars26")  # fmt: skip
+#: TARS (TESS) periods are not used: completeness falls above ~10-13 d, so in
+#: older clusters only the fast tail is detected (Ruprecht 147: TARS median 5.0 d
+#: against K2 26.1 d) and, even as solve-only records, they pulled the Hyades,
+#: NGC 752, Ruprecht 147 and NGC 3532 latents to 0.1-0.9 Gyr
+ROT_SOURCES = ("rot_santos21", "rot_mcquillan14", "rot_santos19", "rot_reinhold20_k2")  # fmt: skip
 LI_SOURCES = ("li_galah_dr4", "li_ges_dr5")
 MONO_SOURCES = ROT_SOURCES + LI_SOURCES
 ROT_TEFF = (3500, 4000, 4500, 5000, 5500, 6000, 6500)
