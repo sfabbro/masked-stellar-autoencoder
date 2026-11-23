@@ -746,3 +746,97 @@ def test_run_with_bridge_labels_end_to_end(tmp_path):
     assert (ctab.young_benchmark == "Pleiades").sum() == 1
     stars = pd.read_parquet(work / "consensus_stars.parquet")
     assert (stars.source_id > 0).all() and "t_C_fromA" in stars
+
+
+def test_maps_flatten_below_their_data_range():
+    """Below the latent where a map reaches its data edge ``y_lo`` the map is
+    flat (no information); the edge is fixed in measurement units, so it moves
+    with the map's offset (gauge-covariant) and the map stays continuous."""
+    from masked_stellar_autoencoder.training.age_consensus import FLAT_SLOPE
+
+    ct = np.zeros((2, 1), bool)
+    fam = AgeMaps(
+        ["S", "S2"], [LINEAR, LINEAR], ct, [False, False], y_lo=[0.1, -np.inf]
+    )
+    coef = torch.zeros((2, fam.n_coef()), dtype=torch.float64)
+    coef[:, 0], coef[:, 1] = 0.2, 0.1  # f = t + 0.2 + 0.1 (t - T0) above the edge
+    t = torch.linspace(-1.5, 1.0, 251, dtype=torch.float64)
+    m = torch.zeros(251, dtype=torch.long)
+    zeros = torch.zeros(251, dtype=torch.float64)
+    f, a = fam.evaluate(coef, m, t, zeros, torch.zeros((251, 0)), m)
+    t_star = T0 + (0.1 - T0 - 0.2) / 1.1
+    below = t < t_star
+    assert torch.allclose(a[below], torch.full_like(a[below], FLAT_SLOPE))
+    assert torch.allclose(a[~below], torch.full_like(a[~below], 1.1))
+    assert (
+        abs(float(f[below].max()) - 0.1) < 1e-3 and float(f[~below].min()) >= 0.1 - 1e-9
+    )
+    f2, a2 = fam.evaluate(
+        coef, torch.ones(251, dtype=torch.long), t, zeros, torch.zeros((251, 0)), m
+    )
+    assert torch.allclose(a2, torch.full_like(a2, 1.1))  # no edge: linear everywhere
+    # an offset change of the map moves the edge latent with it (same y_lo)
+    coef[0, 0] = 0.5
+    f3, _ = fam.evaluate(coef, m, t, zeros, torch.zeros((251, 0)), m)
+    assert abs(float(f3[t < T0 + (0.1 - T0 - 0.5) / 1.1].max()) - 0.1) < 1e-3
+    assert float(fam.penalty(a)) == 0.0
+
+
+def test_young_clusters_follow_the_cluster_level_records():
+    """Young clusters whose few member stars carry coherently wrong ages (an
+    isochrone catalogue reads 2 Gyr for 100 Myr stars, inside its own data
+    range) against a cluster-level record. With the node a fixed member
+    (weight = its prior) and the catalogue's map flat below its data edge
+    (member records there are missing), the cluster-level record sets the
+    young latents and its offset is recovered. Without both, the members win:
+    the likelihood counts records, and the node is the minority."""
+    rng = np.random.default_rng(29)
+    n_f, n_cl = 3000, 120
+    tf = rng.uniform(0.0, 1.0, n_f)
+    T = rng.uniform(-1.2, 1.0, n_cl)
+    young = T < -0.5
+    n_m = np.where(young, 2, 5)  # few (hot, prior-dominated) members in young clusters
+    n = n_f + int((n_m + 1).sum())
+    gid = np.r_[np.full(n_f, -1), np.repeat(np.arange(n_cl), n_m + 1)]
+    t = np.r_[tf, np.repeat(T, n_m + 1)]
+    node = np.zeros(n, bool)
+    node[np.cumsum(n_m + 1) + n_f - 1] = True
+    field, mem = np.arange(n_f), np.flatnonzero((gid >= 0) & ~node)
+    nodes = np.flatnonzero(node)
+    # the catalogue reads ~1 Gyr (t = 0, the young end of its field data) for
+    # every younger member
+    yS = np.r_[tf, np.maximum(t[mem], 0.0)] + rng.normal(0, 0.1, n_f + len(mem))
+    star = np.r_[field, field, mem, nodes].astype("i8")
+    mid = np.r_[np.zeros(n_f), np.ones(n_f + len(mem)), np.full(n_cl, 2)].astype("i8")
+    y = np.r_[tf + rng.normal(0, 0.05, n_f), yS, T + 0.1 + rng.normal(0, 0.08, n_cl)]
+    sig = np.r_[np.full(n_f, 0.05), np.full(n_f + len(mem), 0.1), np.full(n_cl, 0.08)]
+    rec = Records(star, mid, np.zeros(len(y), "i8"), mid, y, sig, np.zeros(len(y)),
+                  np.zeros(len(y), "i1"), n)  # fmt: skip
+    ct = np.zeros((3, 1), bool)
+    edge = [-np.inf, float(np.percentile(yS[:n_f], 0.1)), -np.inf]
+    prior = np.where(node, 1.0, np.where(gid >= 0, 0.9, 0.0))
+    err, koff = {}, {}
+    for tag, fixed, y_lo in (("both", node, edge), ("neither", None, None)):
+        maps = MapSet(
+            [
+                AgeMaps(
+                    ["X", "S", "K"],
+                    [IDENTITY, LINEAR, OFFSET],
+                    ct,
+                    [False] * 3,
+                    y_lo=y_lo,
+                )
+            ]
+        )
+        g = Groups(gid, prior, np.full(n_cl, 0.01), fixed)
+        fit = fit_consensus(rec, g, maps, 3, n_outer=30, covariance=False)
+        sol = solve_stars(rec, g, fit, 3, rho=fit.rho)
+        err[tag] = float(np.median(np.abs(sol["t"][nodes][young] - T[young])))
+        koff[tag] = float(fit.coef_of("K")[0])
+        if tag == "both":
+            ym = np.isin(gid[mem], np.flatnonzero(young))
+            s_rec = (mid == 1) & np.isin(star, mem[ym])
+            assert (fit.weight[s_rec] == 0).mean() > 0.9  # missing below the edge
+            assert abs(fit.coef_of("S")[0]) < 0.03  # S's map is not dragged by them
+    assert err["both"] < 0.1 and abs(koff["both"] - 0.1) < 0.05, (err, koff)
+    assert err["neither"] > 0.3, (err, koff)

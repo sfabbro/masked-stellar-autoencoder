@@ -129,11 +129,16 @@ class Records:
 
 @dataclass
 class Groups:
-    """Co-natal groups; ``gid`` is -1 for field stars."""
+    """Co-natal groups; ``gid`` is -1 for field stars. ``fixed`` marks members
+    whose weight is their prior, never a Student-t member weight: a group's
+    own records (e.g. a cluster node carrying the cluster-level ages) are not a
+    star that may be a non-member; their outliers are handled by the record
+    noise models."""
 
     gid: np.ndarray  # (n_star,) int64
     prior: np.ndarray  # (n_star,) membership prior in [0, 1]
     spread: np.ndarray  # (n_group,) intrinsic age spread in dex
+    fixed: np.ndarray | None = None  # (n_star,) bool
 
     @staticmethod
     def none(n_star: int) -> Groups:
@@ -179,6 +184,12 @@ class MapFamily:
         return [f"c{j}" for j in range(self.n_coef())]
 
 
+#: slope of a map below its data edge (``AgeMaps.y_lo``): a numerical stand-in
+#: for zero (no information); records of co-natal members whose latent lies
+#: there are treated as missing (EM weight 0, ``_record_weights``)
+FLAT_SLOPE = 1e-2
+
+
 class AgeMaps(MapFamily):
     """Maps of catalogue ages onto the latent (both log10 Gyr):
 
@@ -189,10 +200,17 @@ class AgeMaps(MapFamily):
     The slope df/dt is kept above ``a_min`` (monotone maps). ``x_range`` and
     ``t_range`` ((M, 2), optional) bound the data each map was fitted on: the
     [Fe/H] terms use x clamped to ``x_range`` and the polynomial terms use t
-    clamped to ``t_range`` (no extrapolation; linear continuation in t)."""
+    clamped to ``t_range`` (no extrapolation; linear continuation in t).
+    ``y_lo`` ((M,), optional): the lower edge of each map's data in measurement
+    units. Below the latent t* where the map reaches it, the map is flat
+    (slope ``FLAT_SLOPE``, a numerical stand-in for zero): a catalogue carries
+    no information on latents below the range it was calibrated on (e.g.
+    prior-dominated isochrone ages of members of 100 Myr clusters, which read
+    about 1 Gyr whatever the true age). t* follows the coefficients, so the
+    edge is fixed in measurement space and does not depend on the gauge."""
 
     def __init__(self, names, tier, class_terms, use_feh, a_min: float = 0.2,
-                 x_range=None, t_range=None):  # fmt: skip
+                 x_range=None, t_range=None, y_lo=None):  # fmt: skip
         self.names = list(names)
         self.tier = np.asarray(tier, "i8")
         self.class_terms = np.asarray(class_terms, bool)
@@ -209,6 +227,8 @@ class AgeMaps(MapFamily):
         )
         self.x_range = torch.as_tensor(xr, dtype=DT)
         self.t_range = torch.as_tensor(tr, dtype=DT)
+        yl = np.full(n, -np.inf) if y_lo is None else np.asarray(y_lo, float)
+        self.y_lo = torch.as_tensor(np.where(np.isfinite(yl), yl, -1e3), dtype=DT)
 
     @property
     def n_cls(self) -> int:
@@ -246,22 +266,36 @@ class AgeMaps(MapFamily):
 
     def evaluate(self, coef, m, t, x, z, cls):
         n = self.n_cls
-        u = t - T0
         x = torch.minimum(torch.maximum(x, self.x_range[m, 0]), self.x_range[m, 1])
-        tc = torch.minimum(torch.maximum(t, self.t_range[m, 0]), self.t_range[m, 1])
-        inside = ((t >= self.t_range[m, 0]) & (t <= self.t_range[m, 1])).to(t.dtype)
-        uc = tc - T0
         b = coef[m, 0] + coef[m, 3 + cls]
         a1 = coef[m, 1] + coef[m, 3 + n + cls]
         g = coef[m, 3 + 2 * n :]
-        f = (t + b + a1 * u + coef[m, 2] * x + g[:, 0] * uc * uc + g[:, 1] * uc * uc * uc
-             + g[:, 2] * x * uc + g[:, 3] * x * x)  # fmt: skip
-        dpoly = 2.0 * g[:, 0] * uc + 3.0 * g[:, 1] * uc * uc + g[:, 2] * x
-        dfdt = 1.0 + a1 + inside * dpoly
+        lo, hi = self.t_range[m, 0], self.t_range[m, 1]
+
+        def full(tt):
+            u = tt - T0
+            uc = torch.minimum(torch.maximum(tt, lo), hi) - T0
+            inside = ((tt >= lo) & (tt <= hi)).to(tt.dtype)
+            f = (tt + b + a1 * u + coef[m, 2] * x + g[:, 0] * uc * uc + g[:, 1] * uc * uc * uc
+                 + g[:, 2] * x * uc + g[:, 3] * x * x)  # fmt: skip
+            dpoly = 2.0 * g[:, 0] * uc + 3.0 * g[:, 1] * uc * uc + g[:, 2] * x
+            return f, 1.0 + a1 + inside * dpoly
+
+        f, dfdt = full(t)
+        # latent where the linear part reaches the lower data edge y_lo
+        slope = torch.clamp(1.0 + a1, min=self.a_min)
+        t_star = T0 + (self.y_lo[m] - T0 - b - coef[m, 2] * x) / slope
+        below = t < t_star
+        if bool(below.any()):
+            f_star, _ = full(t_star)
+            f = torch.where(below, f_star + FLAT_SLOPE * (t - t_star), f)
+            dfdt = torch.where(below, torch.full_like(dfdt, FLAT_SLOPE), dfdt)
         return f, dfdt
 
     def penalty(self, dfdt):
-        return 1e3 * ((self.a_min - dfdt).clamp_min(0.0) ** 2).sum()
+        # records below a map's data edge (slope FLAT_SLOPE) are not penalised
+        short = (self.a_min - dfdt).clamp_min(0.0) * (dfdt > FLAT_SLOPE)
+        return 1e3 * (short**2).sum()
 
 
 class MonotoneMaps(MapFamily):
@@ -485,6 +519,12 @@ class _State:
         self.member = torch.as_tensor(gid >= 0)
         self.gid = torch.as_tensor(np.where(gid >= 0, gid, 0))
         self.prior = torch.as_tensor(np.asarray(groups.prior, float), dtype=DT)
+        fx = (
+            np.zeros(len(gid), bool)
+            if groups.fixed is None
+            else np.asarray(groups.fixed, bool)
+        )
+        self.fixed = torch.as_tensor(fx & (gid >= 0))
         self.n_group = int(len(groups.spread))
         self.s2 = torch.as_tensor(np.asarray(groups.spread, float), dtype=DT) ** 2
         self.has_rec = torch.zeros(self.n_star, dtype=torch.bool)
@@ -623,6 +663,12 @@ def _group_solve(st: _State, m, P, rho):
     t = torch.where(ok, (P * m + kappa * torch.nan_to_num(T_loo)) / prec, t)
     var = torch.where(ok, 1.0 / prec, var)
     T_hat = torch.where(mem & (W0 > 0), W1 / W0.clamp_min(1e-300), m)
+    # members without record information (all records outside their maps'
+    # data range): the group posterior
+    blind = st.member & st.has_rec & ~(P > 0) & (W0 > 0)
+    t = torch.where(blind, W1 / W0.clamp_min(1e-300), t)
+    var = torch.where(blind, s2 / r + 1.0 / W0.clamp_min(1e-300), var)
+    T_hat = torch.where(blind, t, T_hat)
     return t, var, T_loo, vT_loo, kappa, T_hat
 
 
@@ -677,7 +723,7 @@ def _member_weights(st: _State, m, P, rho, nu_m: float):
     d2 = (m - T_loo) ** 2 / (V + st.s2[st.gid] + vT_loo)
     lam = (nu_m + 1.0) / (nu_m + torch.nan_to_num(d2, nan=0.0))
     base = torch.where(st.member, st.prior, torch.zeros_like(rho))
-    return torch.where(ok, base * lam.clamp(max=1.0), base)
+    return torch.where(ok & ~st.fixed, base * lam.clamp(max=1.0), base)
 
 
 # --------------------------------------------------------------------------- #
@@ -786,6 +832,10 @@ def _record_weights(st, f, a, y, t, w, v, e2, nu):
     )
     Er = resid**2 + a * a * var_tu
     w = torch.where(st.cens, torch.ones_like(Er), (nu + 1.0) / (nu + Er / v))
+    # a co-natal member whose latent (set by its group) lies below a map's data
+    # edge: that map says nothing there, so its record is missing (weight 0)
+    outside = st.member[st.star] & (a <= FLAT_SLOPE * (1.0 + 1e-9))
+    w = torch.where(outside, torch.zeros_like(w), w)
     return y, w
 
 
@@ -847,6 +897,14 @@ def fit_consensus(
         P0 = st.scatter(pi0)
         t = torch.where(P0 > 0, st.scatter(pi0 * st.y_obs) / P0.clamp_min(1e-300),
                         torch.full((st.n_star,), T0, dtype=DT))  # fmt: skip
+        if st.n_group and bool(st.fixed.any()):
+            # a group with its own records (fixed member) starts from them
+            fx = st.fixed & (P0 > 0)
+            G0 = st.gscatter(fx.to(DT), fx)
+            Tg = st.gscatter(
+                torch.where(fx, t, torch.zeros_like(t)), fx
+            ) / G0.clamp_min(1e-300)
+            t = torch.where(st.member & (G0[st.gid] > 0), Tg[st.gid], t)
     var = torch.full_like(t, 0.01)
     y = st.y_obs.clone()
     if t0 is not None:  # warm start: impute censored values at the given latents
@@ -868,7 +926,7 @@ def fit_consensus(
                 f, a, _ = st.evaluate(coefs, t[st.star])
                 post = _posterior(st, pi, a, y - f + a * t[st.star], e2)
                 t_new, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho)
-                t = torch.where(st.has_rec, t_new, t)
+                t = torch.where(st.has_rec & torch.isfinite(t_new), t_new, t)
             rho = _member_weights(st, post["m"], post["P"], rho, member_nu)
             f, a, _ = st.evaluate(coefs, t[st.star])
         # ---- variances: REML ----------------------------------------------
@@ -1023,6 +1081,36 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
         tg, vg, T_loo, _, kap, _ = _group_solve(
             st, torch.where(good, t, 0.0), P.clamp_min(1e-300), rho_t
         )
+        # members whose group latent lies below a record's map edge: that
+        # record is missing (as in the fit); re-solve until the set is stable
+        keep = torch.ones_like(v)
+        ypl = y - f + a * t[st.star]
+        t_eval = tg
+        if st.n_group and bool(st.fixed.any()):  # start from the group's own records
+            fx = st.fixed & good
+            G0 = st.gscatter(fx.to(DT), fx)
+            Tg = st.gscatter(
+                torch.where(fx, t, torch.zeros_like(t)), fx
+            ) / G0.clamp_min(1e-300)
+            t_eval = torch.where(st.member & (G0[st.gid] > 0), Tg[st.gid], tg)
+        for _ in range(10):
+            _, a_g, _ = st.evaluate(coefs, torch.nan_to_num(t_eval, nan=T0)[st.star])
+            out = (
+                st.member[st.star] & (a_g <= FLAT_SLOPE * (1.0 + 1e-9)) & good[st.star]
+            )
+            new_keep = torch.where(out, torch.zeros_like(keep), torch.ones_like(keep))
+            if torch.equal(new_keep, keep):
+                break
+            keep = new_keep
+            pk = _posterior(st, pi * fac * keep, a, ypl, e2)
+            mk, Pk = pk["m"], torch.where(only_cens, torch.zeros_like(P), pk["P"])
+            okk = st.has_rec & (Pk > 0)
+            tg, vg, T_loo, _, kap, _ = _group_solve(
+                st, torch.where(okk, mk, 0.0), Pk, rho_t
+            )
+            blind = good & ~okk & st.member
+            good = okk | blind
+            t_eval = tg
         nan = torch.full_like(t, float("nan"))
         t_rec = torch.where(st.has_rec, t, nan)
         sd_rec = torch.where(good, P.clamp_min(1e-300).rsqrt(), nan)

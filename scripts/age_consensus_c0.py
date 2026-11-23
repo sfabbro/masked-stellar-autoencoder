@@ -152,7 +152,7 @@ SERIES = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100")
 PREFIX = "c0b"  # QA figure file prefix
 #: one colour per evolutionary class in every panel
 CLASS_COLOUR = {"SGB": SERIES[0], "RGB": SERIES[0], "MSTO": SERIES[1], "RC": SERIES[1],
-                "giant": SERIES[2], "MS": SERIES[3]}  # fmt: skip
+                "giant": SERIES[2], "MS": SERIES[3], "cluster": SERIES[0], "system": SERIES[1]}  # fmt: skip
 
 
 def nmad(x) -> float:
@@ -428,7 +428,8 @@ def conatal_groups(star_ids, members, pairs, use_groups=True):
         spread.append(BINARY_SPREAD)
         labels.append(("binary", int(j)))
         k += 1
-    return Groups(gid, prior, np.asarray(spread, float)), labels
+    # cluster nodes carry the cluster-level records: weight = prior (1), fixed
+    return Groups(gid, prior, np.asarray(spread, float), star_ids <= NODE_ID0), labels
 
 
 # --------------------------------------------------------------------------- #
@@ -447,9 +448,8 @@ class Config:
     drop: tuple = ()  # held-out catalogues
     wd_fit: bool = False  # white-dwarf system ages in the fit (else validation only)
     bench_fit: bool = True  # benchmark cluster ages in the fit (else validation only)
-    identifiability: bool = (
-        True  # slope/[Fe/H] terms only for units with identified noise
-    )
+    identifiability: bool = True  # slope/[Fe/H] terms only with identified noise
+    latent_domain: bool = True  # maps flatten (floor slope) below their data range
 
 
 def map_key(source: str, cls: str, cfg: Config) -> str:
@@ -591,7 +591,9 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     # a map is defined on the range of its data: mapped records below it (e.g.
     # pre-main-sequence stars in a subgiant catalogue) become upper limits at the
     # domain edge instead of extrapolated values
-    # (the anchor too: the censoring set must not depend on the gauge)
+    # (the anchor too: the censoring set must not depend on the gauge). Latents
+    # below the edge: the map continues with the floor slope (``AgeMaps.y_lo``)
+    y_lo = np.full(len(keep), -np.inf)
     for k in keep:
         msk = (fit.key == k).to_numpy()
         base = fit.lage[msk & fit.constrained.to_numpy()]
@@ -601,6 +603,8 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         below = msk & (fit.lage.to_numpy() < lo) & (fit.censor.to_numpy() == 0)
         fit.loc[below, "lage"] = lo
         fit.loc[below, "censor"] = -1
+        if cfg.latent_domain:
+            y_lo[keep.index(k)] = lo
         for row in info:
             if row["key"] == k:
                 row["domain_lo"] = round(lo, 3)
@@ -618,8 +622,14 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     maps = MapSet(
         [
             AgeMaps(
-                keep, tier[sel], class_terms[sel], use_feh[sel], x_range=xr, t_range=tr
-            )
+                keep,
+                tier[sel],
+                class_terms[sel],
+                use_feh[sel],
+                x_range=xr,
+                t_range=tr,
+                y_lo=y_lo,
+            )  # fmt: skip
         ]
     )
     units = sorted(fit.unit.unique())
@@ -724,7 +734,8 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
     r = rec.subset(in_fit[rec.star])
     r = replace(r, star=remap[r.star], n_star=len(fit_stars))
     g = prob["groups"]
-    gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread)
+    gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
+                  None if g.fixed is None else g.fixed[fit_stars])  # fmt: skip
     units = prob["units"]
     lk0 = np.where([u.split(":")[0] in ISOCHRONE for u in units], np.log(2.0), 0.0)
     lw0 = np.where(
@@ -904,18 +915,14 @@ LOO_FAMILIES = {
     "apokasc2+apok2_kepler": ("apokasc2", "apok2_kepler"),
     "willett26": WILLETT,
     "apok2": ("apok2",),
-    "zinn22_k2gap": ("zinn22_k2gap",),
     "legacy17": LEGACY,
     "chaplin14": ("chaplin14",),
     "xiang24": ("xiang24",),
     "galah_dr4": ("galah_dr4",),
     "starhorse23_lamostl7": ("starhorse23_lamostl7",),
-    "starhorse23_rvs": ("starhorse23_rvs",),
     "starhorse23_apogee17": ("starhorse23_apogee17",),
     "starhorse23_galahdr3": ("starhorse23_galahdr3",),
     "starhorse23_lamostm7": ("starhorse23_lamostm7",),
-    "starhorse23_ges+sdss+rave": ("starhorse23_gesdr5", "starhorse23_sdssdr12",
-                                  "starhorse23_ravedr6"),
     "cluster_catalogues": CLUSTER_CATALOGUES,
     "bench_clusters": BENCH_SOURCES,
 }  # fmt: skip
@@ -1371,7 +1378,7 @@ def run(args) -> None:
         "V_wd_fit": Config("V_wd_fit", wd_fit=True),
         "V_conatal_only": Config("V_conatal_only", mission_continuity=False),
         "V_seismic_dwarfs": Config("V_seismic_dwarfs", identity_extra=("chaplin14",)),
-        "V_galah_giants": Config("V_galah_giants", galah_giants=True),
+        "V_no_latent_domain": Config("V_no_latent_domain", latent_domain=False),
         "V_no_conatal": Config("V_no_conatal", conatal=False),
     }
     if args.quick:
@@ -1580,12 +1587,15 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     ncol = 5
     nrow = int(np.ceil(len(keys) / ncol))
     fig, axs = plt.subplots(nrow, ncol, figsize=(13, 2.5 * nrow), squeeze=False)
-    tg = np.linspace(-1.0, 1.4, 120)
     for ax, k in zip(axs.flat, keys):
         g = rA[rA.key == k]
-        ax.hexbin(g.t_other, g.lage, gridsize=40, extent=(-1, 1.4, -1, 1.4), bins="log",
+        lo_ax = (
+            -2.4 if k.startswith(("cl_", "bench_")) else -1.0
+        )  # cluster ages reach 4 Myr
+        tg = np.linspace(lo_ax, 1.4, 160)
+        ax.hexbin(g.t_other, g.lage, gridsize=40, extent=(lo_ax, 1.4, lo_ax, 1.4), bins="log",
                   cmap="Greys", mincnt=1, linewidths=0)  # fmt: skip
-        ax.plot([-1, 1.4], [-1, 1.4], color=MUTED, lw=0.8, ls=":")
+        ax.plot([lo_ax, 1.4], [lo_ax, 1.4], color=MUTED, lw=0.8, ls=":")
         for c, gc in g.groupby("cls"):
             if len(gc) < 30:
                 continue
@@ -1599,8 +1609,8 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
             if np.isfinite(se).any():
                 ax.fill_between(tt, f - se, f + se, color=col, alpha=0.25, lw=0)
         ax.set_title(k, loc="left")
-        ax.set_xlim(-1, 1.4)
-        ax.set_ylim(-1, 1.4)
+        ax.set_xlim(lo_ax, 1.4)
+        ax.set_ylim(lo_ax, 1.4)
         ax.legend(loc="upper left", fontsize=6.5)
     for ax in axs[-1]:
         ax.set_xlabel("consensus log10(age/Gyr) [other groups]")
