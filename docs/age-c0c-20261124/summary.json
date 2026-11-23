@@ -1,0 +1,148 @@
+{
+  "excluded": {
+    "starhorse23_lamostl7 main-sequence records (log g >= 4.1)": 677432,
+    "starhorse23_rvs main-sequence records (log g >= 4.1)": 295991,
+    "galah_dr4 main-sequence records (log g >= 4.1)": 267687,
+    "starhorse23_lamostm7 main-sequence records (log g >= 4.1)": 91249,
+    "starhorse23_galahdr3 main-sequence records (log g >= 4.1)": 57148,
+    "starhorse23_sdssdr12 main-sequence records (log g >= 4.1)": 38006,
+    "starhorse23_apogee17 main-sequence records (log g >= 4.1)": 28305,
+    "starhorse23_ravedr6 main-sequence records (log g >= 4.1)": 25974,
+    "xiang24 main-sequence records (log g >= 4.1)": 14484,
+    "starhorse23_gesdr5 main-sequence records (log g >= 4.1)": 4810,
+    "flame_dr3 + flame_spec_dr3 records": 3911011,
+    "records without an evolutionary class": 0,
+    "C0b label records": 17553,
+    "C0c rotation/lithium records (fitted, non-age maps)": 428681,
+    "C0c counts": {
+      "rot_santos21": {
+        "periods": 39404,
+        "dwarf_single_in_bins": 25509
+      },
+      "rot_mcquillan14": {
+        "periods": 33870,
+        "dwarf_single_in_bins": 26570
+      },
+      "rot_santos19": {
+        "periods": 15476,
+        "dwarf_single_in_bins": 12109
+      },
+      "rot_reinhold20_k2": {
+        "periods": 31481,
+        "dwarf_single_in_bins": 23412
+      },
+      "li_galah_dr4": {
+        "a_li": 801211,
+        "dwarf_in_bins": 330346,
+        "upper_limits": 141953
+      },
+      "li_ges_dr5": {
+        "a_li": 38214,
+        "dwarf_in_bins": 10735,
+        "upper_limits": 2740
+      }
+    }
+  },
+  "n_records_good": 7456035,
+  "n_stars_all": 3608454,
+  "n_members": 774576,
+  "n_pairs": 1256400,
+  "fit_A": {
+    "stars": 277691,
+    "records": 552130,
+    "outer_iterations": 15,
+    "last_max_dtheta": 0.7099873253963231,
+    "seconds": 479.3
+  },
+  "fit_C": {
+    "stars": 277691,
+    "records": 552130,
+    "outer_iterations": 15,
+    "last_max_dtheta": 8.355297954328432,
+    "seconds": 431.9
+  },
+  "staged_fit": {
+    "frozen_from": "/tmp/claude-0/-home-user/d60e9c7a-7b13-5bb2-ade1-fb8da7adbc26/scratchpad/age_c0b/work",
+    "eta_A": [
+      0.12332496997201195,
+      0.348500841826961,
+      0.06780869852530746,
+      0.005000000000000002
+    ],
+    "eta_C": [
+      0.11292608249108717,
+      0.5754546641455668,
+      0.07311886688274247,
+      0.005000000000000002
+    ],
+    "xiang_offset_in_A": 0.2598166885071716
+  },
+  "per_star_path": "/tmp/claude-0/-home-user/d60e9c7a-7b13-5bb2-ade1-fb8da7adbc26/scratchpad/age_c0c/work/consensus_stars.parquet",
+  "n_stars_with_consensus_A": 1434190,
+  "n_stars_with_consensus_C": 1434190,
+  "n_lower_limits_A": 2527,
+  "frac_consensus_A_above_13p8": 0.060450149561773546,
+  "conatal_A": {
+    "cluster_members": {
+      "n": 3301,
+      "z_nmad": 0.6744441633025344,
+      "z_median": 0.04361323807267017
+    },
+    "wide_pairs_all": {
+      "n": 510,
+      "z_nmad": 0.4880299277387578
+    },
+    "wide_pairs_dwarf+dwarf": {
+      "n": 99,
+      "z_nmad": 0.14559543945772674,
+      "dt_nmad": 0.40463930048134195
+    },
+    "wide_pairs_evolved+dwarf": {
+      "n": 60,
+      "z_nmad": 0.19547731622226483,
+      "dt_nmad": 0.8909339902026884
+    },
+    "wide_pairs_giant+subgiant": {
+      "n": 2,
+      "z_nmad": 2.9575711181479853,
+      "dt_nmad": 0.43825803509630934
+    },
+    "wide_pairs_subgiant+subgiant": {
+      "n": 349,
+      "z_nmad": 0.5760380246307036,
+      "dt_nmad": 0.11449983790735066
+    }
+  },
+  "conatal_C": {
+    "cluster_members": {
+      "n": 3276,
+      "z_nmad": 0.643162298242002,
+      "z_median": 0.04526580695014985
+    },
+    "wide_pairs_all": {
+      "n": 510,
+      "z_nmad": 0.46856052442570184
+    },
+    "wide_pairs_dwarf+dwarf": {
+      "n": 99,
+      "z_nmad": 0.09424960107254436,
+      "dt_nmad": 0.5506273147966261
+    },
+    "wide_pairs_evolved+dwarf": {
+      "n": 60,
+      "z_nmad": 0.16383873881500666,
+      "dt_nmad": 0.8682589864700697
+    },
+    "wide_pairs_giant+subgiant": {
+      "n": 2,
+      "z_nmad": 0.9035908838713306,
+      "dt_nmad": 0.13218715494158106
+    },
+    "wide_pairs_subgiant+subgiant": {
+      "n": 349,
+      "z_nmad": 0.6113120154019647,
+      "dt_nmad": 0.11519904449675133
+    }
+  },
+  "runtime_seconds": 1264.9
+}

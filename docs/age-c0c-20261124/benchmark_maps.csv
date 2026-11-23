@@ -1,0 +1,13 @@
+gauge,variant,source,role,tier,offset,offset_se,slope_A,n
+A,main_A,bench_ldb,fitted map,offset,-0.04417030642066453,,,9
+A,main_A,bench_eb,fitted map,offset,0.041003911760003446,,,15
+A,main_A,bench_gc,fitted map,offset,0.0861082981143951,,,9
+A,main_A,cl_hr23,fitted map,offset,-0.18506909542601252,,,6956
+A,main_A,cl_cg20,fitted map,linear,0.02808586214125298,,0.1017700994722885,1790
+A,main_A,cl_dias21,fitted map,linear,0.05403085021972226,,0.13041544590537946,1519
+C,main_C,bench_ldb,fitted map,offset,-0.017719063864326583,,,9
+C,main_C,bench_eb,fitted map,offset,-0.08612578708193329,,,15
+C,main_C,bench_gc,fitted map,offset,0.013805904400579626,,,9
+C,main_C,cl_hr23,fitted map,offset,-0.3010010340124726,,,6956
+C,main_C,cl_cg20,fitted map,linear,-0.07464405221765975,,0.12247847519066901,1790
+C,main_C,cl_dias21,fitted map,linear,-0.05510969229175345,,0.14964259108400368,1519
