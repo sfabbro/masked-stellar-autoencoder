@@ -59,6 +59,7 @@ from masked_stellar_autoencoder.training.age_consensus import (
     OFFSET,
     T0,
     AgeMaps,
+    FitResult,
     FrozenAgeMaps,
     Groups,
     MapSet,
@@ -69,6 +70,7 @@ from masked_stellar_autoencoder.training.age_consensus import (
     leave_key_out,
     map_values,
     noise_identified,
+    prefit_monotone,
     record_residuals,
     solve_stars,
 )
@@ -1012,13 +1014,59 @@ def fit_frozen(data, cfg, frozen_pkl: Path, log=print, res_override=None, **kw):
     gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
                   None if g.fixed is None else g.fixed[fit_stars])  # fmt: skip
     t0 = time.time()
+    if res_override is None and mono:
+        # start: every star's latent from the frozen age maps alone (cluster or
+        # pair latent for members without age records), then each monotone map
+        # pre-fitted against those latents (censored Student-t regression):
+        # without it the alternation can inflate a map's noise before the map
+        # takes shape (A(Li) with 40-60 % upper limits did)
+        is_age_rec = np.asarray(maps.family_of(rec.map_id)) == 0
+        fr0 = FitResult(maps=MapSet([maps.families[0]]), coefs=[res0.coefs[0]], theta_cov=None,
+                        log_kappa=lk0, log_omega=lw0, log_eta=res0.log_eta, var_cov=None,
+                        t=np.zeros(0), var=np.zeros(0), rho=np.zeros(0), weight=np.zeros(0),
+                        nu=res0.nu, n_effect=res0.n_effect, n_sub=res0.n_sub)  # fmt: skip
+        sol0 = solve_stars(
+            rec.subset(is_age_rec), g, fr0, len(units), len(EFFECT_FAMILIES)
+        )
+        ts, ss = sol0["t"].copy(), sol0["sd"].copy()
+        okm = (gid >= 0) & np.isfinite(ts) & np.isfinite(ss) & (ss > 0)
+        if okm.any():
+            w = np.where(okm, 1.0 / (ss**2 + g.spread[np.maximum(gid, 0)] ** 2), 0.0)
+            G = len(g.spread)
+            W0 = np.bincount(gid[okm], w[okm], G)
+            W1 = np.bincount(gid[okm], w[okm] * ts[okm], G)
+            Tg = np.where(W0 > 0, W1 / np.maximum(W0, 1e-300), np.nan)
+            fill = (gid >= 0) & ~np.isfinite(ts)
+            ts[fill] = Tg[gid[fill]]
+            ss[fill] = np.where(
+                W0[gid[fill]] > 0,
+                1.0 / np.sqrt(np.maximum(W0[gid[fill]], 1e-300)),
+                np.nan,
+            )
+        fm = np.asarray(maps.family_of(rec.map_id))
+        sel = (fm == 1) & mf & np.isfinite(ts[rec.star]) & (ss[rec.star] < 0.25)
+        fam1 = maps.families[1]
+        pc, plw = prefit_monotone(fam1, rec.map_id[sel] - maps.offsets[1], ts[rec.star[sel]],
+                                  rec.y[sel], rec.sig[sel], rec.censor[sel], rec.extra[sel])  # fmt: skip
+        mono_coefs0 = [pc]
+        key_lw = dict(zip(fam1.names, plw))
+        unit_key = df.groupby("unit").key.first()
+        for i, u in enumerate(units):
+            if not fixed[i] and unit_key.get(u) in key_lw:
+                lw0[i] = key_lw[unit_key[u]]
+        log(f"[{cfg.name}] monotone pre-fit on {int(sel.sum())} records: omega "
+            f"{dict(zip(fam1.names, np.round(np.exp(plw), 3)))}")  # fmt: skip
+        t_start = np.nan_to_num(ts[fit_stars], nan=T0)
+    else:
+        mono_coefs0 = [f.init() for f in mono]
+        t_start = None
     if res_override is not None:  # resume: the staged fit saved earlier
         rho = np.zeros(len(in_fit))
         rho[fit_stars] = res_override.rho
         return prob, {"res": res_override, "rho": rho, "n_fit_stars": int(r.n_star),
                       "n_fit_rec": int(len(r.y)), "seconds": float("nan")}  # fmt: skip
     res = fit_consensus(r, gsub, maps, len(units), len(EFFECT_FAMILIES), n_sub=len(SUB_FAMILIES),
-                        coefs0=[fam0.init() if False else res0.coefs[0], *[f.init() for f in mono]],
+                        coefs0=[res0.coefs[0], *mono_coefs0], t0=t_start,
                         lk0=lk0, lw0=lw0, le0=res0.log_eta, fix_noise=fixed,
                         fix_eta=np.ones(len(res0.log_eta), bool), log=log, **kw)  # fmt: skip
     rho = np.zeros(len(in_fit))

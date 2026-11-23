@@ -404,6 +404,57 @@ class MonotoneMaps(MapFamily):
         return f, dfdt
 
 
+def prefit_monotone(
+    fam: MonotoneMaps, m, t, y, sig, censor, z, nu: float = 5.0, iters: int = 300
+) -> tuple[np.ndarray, np.ndarray]:
+    """Start values for monotone maps: per map, the coefficients and the scatter
+    omega that maximise the (censored) likelihood of the records against given
+    latents ``t`` (e.g. a consensus without these records). Detections are
+    Student-t (``nu``), limits Gaussian-censored; the family prior keeps bumps
+    without data flat. Returns (coef (n_maps, n_coef), log omega (n_maps,))."""
+    n = len(fam.names)
+    mask = torch.as_tensor(fam.mask())
+    mean, sd = (
+        torch.as_tensor(np.broadcast_to(a, mask.shape).copy(), dtype=DT)
+        for a in fam.prior()
+    )
+    base = torch.as_tensor(fam.init(), dtype=DT)
+    coef = base.clone().requires_grad_(True)
+    lw = torch.full((n,), math.log(0.3), dtype=DT, requires_grad=True)
+    m_t = torch.as_tensor(np.asarray(m, "i8"))
+    t_t = torch.as_tensor(np.asarray(t, float), dtype=DT)
+    y_t = torch.as_tensor(np.asarray(y, float), dtype=DT)
+    s2 = torch.as_tensor(np.nan_to_num(np.asarray(sig, float)), dtype=DT) ** 2
+    cen = torch.as_tensor(np.asarray(censor, "i8"))
+    zz = torch.as_tensor(
+        np.nan_to_num(np.asarray(z, float)).reshape(len(y_t), -1), dtype=DT
+    )
+    x0 = torch.zeros_like(t_t)
+    cls0 = torch.zeros_like(m_t)
+    opt = torch.optim.LBFGS(
+        [coef, lw], lr=1.0, max_iter=iters, line_search_fn="strong_wolfe"
+    )
+
+    def closure():
+        opt.zero_grad()
+        c = torch.where(mask, coef, base)
+        f, _ = fam.evaluate(c, m_t, t_t, x0, zz, cls0)
+        sdv = torch.sqrt(s2 + torch.exp(2 * lw.clamp(*LOG_OMEGA_RANGE))[m_t])
+        r = (y_t - f) / sdv
+        det = -0.5 * (nu + 1.0) * torch.log1p(r * r / nu) - torch.log(sdv)
+        ll = torch.where(cen == 0, det, torch.where(cen == -1, torch.special.log_ndtr(r),
+                                                    torch.special.log_ndtr(-r)))  # fmt: skip
+        pen = 0.5 * ((((c - mean) / sd) ** 2) * mask).sum()
+        loss = (-ll.sum() + pen) / max(len(y_t), 1)
+        loss.backward()
+        return loss
+
+    if len(y_t):
+        opt.step(closure)
+    c = torch.where(mask, coef, base).detach().numpy()
+    return c, lw.detach().clamp(*LOG_OMEGA_RANGE).numpy()
+
+
 class MapSet:
     """All maps of a fit: families concatenated; global map ids are contiguous
     per family. The free coefficients of all families form one vector."""
