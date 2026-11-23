@@ -1056,6 +1056,11 @@ def fit_frozen(data, cfg, frozen_pkl: Path, log=print, res_override=None, **kw):
                 lw0[i] = key_lw[unit_key[u]]
         log(f"[{cfg.name}] monotone pre-fit on {int(sel.sum())} records: omega "
             f"{dict(zip(fam1.names, np.round(np.exp(plw), 3)))}")  # fmt: skip
+        # the non-age noise stays at the pre-fit scatter: with most records upper
+        # limits below the map, the EM imputation and the REML scatter feed each
+        # other (a larger omega imputes limits further below the map, which
+        # raises omega) and two GALAH lithium bins ran omega to its bound
+        fixed = np.ones(len(units), bool)
         t_start = np.nan_to_num(ts[fit_stars], nan=T0)
     else:
         mono_coefs0 = [f.init() for f in mono]
