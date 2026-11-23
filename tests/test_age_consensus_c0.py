@@ -340,7 +340,7 @@ def test_profile_gradient_matches_finite_differences():
     w = torch.ones(st.R, dtype=ac.DT)
     t_lin = torch.as_tensor(t + rng.normal(0, 0.05, len(t)), dtype=ac.DT)
     rho = st.prior * st.member
-    e2 = st.eta2_blk(torch.tensor([np.log(0.08)], dtype=ac.DT))
+    e2 = st.eta2(torch.tensor([np.log(0.08)], dtype=ac.DT))
 
     def F(th):
         return ac._map_objective(st, th, w, v, st.y_obs, t_lin, rho, e2)
@@ -354,3 +354,489 @@ def test_profile_gradient_matches_finite_differences():
         grad,
         fd,
     )
+
+
+# --------------------------------------------------------------------------- #
+# C0b mechanisms
+# --------------------------------------------------------------------------- #
+def test_nested_shared_errors_are_learned():
+    """An outer family (all isochrone pipelines) and a nested sub-family (two
+    pipelines on the same spectra) each get their eta; stars measured only by
+    the two same-spectra pipelines keep both shared errors in their width."""
+    rng = np.random.default_rng(21)
+    n, n_cl = 5000, 300
+    t = rng.uniform(-0.2, 1.1, n)
+    t[: 8 * n_cl] = np.repeat(t[: 8 * n_cl : 8], 8)
+    eta_o, eta_k = 0.08, 0.06
+    u_o, u_k = rng.normal(0, eta_o, n), rng.normal(0, eta_k, n)
+    spec = {"anchor": (0.4, 0.05, -1, -1), "B": (0.7, 0.04, 0, 0), "C": (0.6, 0.04, 0, 0),
+            "D": (0.5, 0.05, 0, -1)}  # fmt: skip
+    rows = []
+    for k, (name, (frac, s, eff, sub)) in enumerate(spec.items()):
+        idx = np.flatnonzero(rng.random(n) < frac)
+        shared = (u_o[idx] if eff >= 0 else 0.0) + (u_k[idx] if sub >= 0 else 0.0)
+        y = t[idx] + shared + rng.normal(0, s, len(idx))
+        rows.append((idx, np.full(len(idx), k), y, np.full(len(idx), s),
+                     np.full(len(idx), eff), np.full(len(idx), sub)))  # fmt: skip
+    star, mid, y, sig, eff, sub = (
+        np.concatenate([r[j] for r in rows]) for j in range(6)
+    )
+    rec = Records(star.astype("i8"), mid.astype("i8"), np.zeros(len(y), "i8"), mid.astype("i8"),
+                  y, sig, np.zeros(len(y)), np.zeros(len(y), "i1"), n,
+                  effect=eff.astype("i8"), subeffect=sub.astype("i8"))  # fmt: skip
+    gid = np.full(n, -1, "i8")
+    gid[: 8 * n_cl] = np.repeat(np.arange(n_cl), 8)
+    g = Groups(gid, np.where(gid >= 0, 1.0, 0.0), np.full(n_cl, 0.01))
+    names = list(spec)
+    maps = MapSet([AgeMaps(names, [IDENTITY, OFFSET, OFFSET, OFFSET], np.zeros((4, 1), bool),
+                           [False] * 4)])  # fmt: skip
+    fit = fit_consensus(
+        rec, g, maps, 4, 1, n_sub=1, nu=1e6, n_outer=30, covariance=False
+    )
+    eo, ek = np.exp(fit.log_eta)
+    assert abs(eo - eta_o) < 0.03 and abs(ek - eta_k) < 0.03, (eo, ek)
+    sol = solve_stars(rec, g, fit, 4, rho=fit.rho)
+    by = np.zeros((n, 4), bool)
+    by[rec.star, rec.map_id] = True
+    sel = by[:, 1] & by[:, 2] & ~by[:, 0] & ~by[:, 3] & (gid < 0)
+    z = (sol["t"][sel] - t[sel]) / sol["sd"][sel]
+    assert 0.8 < 1.4826 * np.median(np.abs(z - np.median(z))) < 1.25
+
+
+def test_interval_records_use_a_flat_top_likelihood():
+    """A source reporting an asymmetric interval (not a centred Gaussian):
+    the interval likelihood recovers its offset, the interval midpoint does not."""
+    rng = np.random.default_rng(22)
+    n = 3000
+    t = rng.uniform(0.0, 1.0, n)
+    a_idx = np.flatnonzero(rng.random(n) < 0.6)
+    b_idx = np.flatnonzero(rng.random(n) < 0.6)
+    ya = t[a_idx] + rng.normal(0, 0.05, len(a_idx))
+    yb = t[b_idx] + 0.1 + rng.normal(0, 0.03, len(b_idx))
+    lo, hi = yb - 0.05, yb + 0.25  # interval containing the value, not centred on it
+    star = np.r_[a_idx, b_idx].astype("i8")
+    mid = np.r_[np.zeros(len(a_idx)), np.ones(len(b_idx))].astype("i8")
+    maps = MapSet(
+        [
+            AgeMaps(
+                ["anchor", "B"],
+                [IDENTITY, OFFSET],
+                np.zeros((2, 1), bool),
+                [False, False],
+            )
+        ]
+    )
+
+    def run(y, y2, cens):
+        rec = Records(star, mid, np.zeros(len(star), "i8"), mid.copy(), y,
+                      np.r_[np.full(len(a_idx), 0.05), np.full(len(b_idx), 0.03)],
+                      np.zeros(len(star)), cens, n, y2=y2)  # fmt: skip
+        return fit_consensus(rec, Groups.none(n), maps, 2, nu=1e6, n_outer=30,
+                             covariance=False).coefs[0][1, 0]  # fmt: skip
+
+    b_int = run(
+        np.r_[ya, lo],
+        np.r_[ya, hi],
+        np.r_[np.zeros(len(a_idx)), np.full(len(b_idx), 2)].astype("i1"),
+    )
+    b_mid = run(np.r_[ya, 0.5 * (lo + hi)], None, np.zeros(len(star), "i1"))
+    assert abs(b_mid - 0.2) < 0.02  # the midpoint is biased by the interval's asymmetry
+    assert abs(b_int - 0.1) < abs(b_mid - 0.1) - 0.03, (b_int, b_mid)
+
+
+def test_gauge_change_is_an_exact_reparametrisation():
+    """Fit on anchor X; re-express the solution on catalogue Y's scale (an
+    offset-only reference) and refit there from it: the solution must not move
+    (the co-natal term has fixed memberships and a Student-t member weight, so
+    the likelihood is covariant under a common shift of the latents)."""
+    rng = np.random.default_rng(23)
+    n, n_cl = 4000, 200
+    t = rng.uniform(-0.2, 1.1, n)
+    t[: 6 * n_cl] = np.repeat(t[: 6 * n_cl : 6], 6)
+    regime = np.arange(n) % 2  # two regimes linked only through clusters
+    rows = []
+    spec = [("X", 0, 0.0, 0.0, 0.05), ("Z", 0, 0.05, 0.1, 0.06), ("Y", 1, -0.1, 0.0, 0.05),
+            ("W", 1, 0.08, -0.1, 0.07)]  # fmt: skip
+    for k, (name, reg, b, A, s) in enumerate(spec):
+        idx = np.flatnonzero((regime == reg) & (rng.random(n) < 0.8))
+        y = t[idx] + b + A * (t[idx] - T0) + rng.normal(0, s, len(idx))
+        rows.append((idx, np.full(len(idx), k), y, np.full(len(idx), s)))
+    star, mid, y, sig = (np.concatenate([r[j] for r in rows]) for j in range(4))
+    rec = Records(star.astype("i8"), mid.astype("i8"), np.zeros(len(y), "i8"), mid.astype("i8"),
+                  y, sig, np.zeros(len(y)), np.zeros(len(y), "i1"), n)  # fmt: skip
+    gid = np.full(n, -1, "i8")
+    gid[: 6 * n_cl] = np.repeat(np.arange(n_cl), 6)
+    g = Groups(gid, np.where(gid >= 0, 0.9, 0.0), np.full(n_cl, 0.01))
+    names = [s[0] for s in spec]
+    ct = np.zeros((4, 1), bool)
+    mapsA = MapSet(
+        [AgeMaps(names, [IDENTITY, LINEAR, OFFSET, LINEAR], ct, [False] * 4)]
+    )
+    fa = fit_consensus(rec, g, mapsA, 4, n_outer=40, tol=1e-5, covariance=False)
+    d = fa.coefs[0][2, 0]  # Y's offset: t_Y = t_X + d
+    cB = fa.coefs[0].copy()
+    cB[:, 0] = cB[:, 0] - d * (1.0 + cB[:, 1])
+    cB[2] = 0.0
+    cB[0, 0], cB[0, 1] = -d, 0.0
+    mapsB = MapSet(
+        [AgeMaps(names, [OFFSET, LINEAR, IDENTITY, LINEAR], ct, [False] * 4)]
+    )
+    fb = fit_consensus(rec, g, mapsB, 4, n_outer=40, tol=1e-5, covariance=False, coefs0=[cB],
+                       lk0=fa.log_kappa, lw0=fa.log_omega, t0=fa.t + d, w0=fa.weight, rho0=fa.rho)  # fmt: skip
+    assert np.max(np.abs(fb.coefs[0] - cB)) < 2e-3, (fb.coefs[0], cB)
+    ok = np.isfinite(fa.t)
+    assert np.max(np.abs(fb.t[ok] - (fa.t[ok] + d))) < 2e-3
+
+
+def test_noise_identifiability_needs_triads_or_an_identified_partner():
+    from masked_stellar_autoencoder.training.age_consensus import noise_identified
+
+    n = 400
+    # units 0 and 1 overlap only pairwise: their noise split is not identified
+    star = np.r_[np.arange(n), np.arange(n)]
+    group = np.r_[np.zeros(n), np.ones(n)].astype("i8")
+    unit = group.copy()
+    ident, triad, _ = noise_identified(star, group, unit, 2)
+    assert not ident.any() and triad.sum() == 0
+    # a third independent measurement on the same stars identifies all three
+    ident3, triad3, _ = noise_identified(np.r_[star, np.arange(n)], np.r_[group, np.full(n, 2)],
+                                         np.r_[unit, np.full(n, 2)], 3)  # fmt: skip
+    assert ident3.all() and (triad3 == n).all()
+    # unit 3 paired only with an identified unit becomes identified (propagation);
+    # units 4 and 5 paired only with each other stay unidentified
+    s2 = np.r_[np.arange(n), np.arange(n), np.arange(n), 1000 + np.arange(n), 1000 + np.arange(n),
+               2000 + np.arange(n), 2000 + np.arange(n)]  # fmt: skip
+    g2 = np.r_[np.zeros(n), np.ones(n), np.full(n, 2), np.zeros(n), np.full(n, 3), np.full(n, 4),
+               np.full(n, 5)].astype("i8")  # fmt: skip
+    u2 = np.r_[np.zeros(n), np.ones(n), np.full(n, 2), np.zeros(n), np.full(n, 3), np.full(n, 4),
+               np.full(n, 5)].astype("i8")  # fmt: skip
+    ident2, _, pair2 = noise_identified(s2, g2, u2, 6)
+    assert ident2[:4].all() and not ident2[4:].any()
+
+
+# --------------------------------------------------------------------------- #
+# C0b script mechanisms
+# --------------------------------------------------------------------------- #
+def _fit_frame(rows):
+    """Fit-record frame in the layout of ``prepare``: rows of (source, ids,
+    lage, cls, group)."""
+    import pandas as pd
+
+    out = []
+    for source, ids, lage, cls, group in rows:
+        out.append(pd.DataFrame({"source": source, "source_id": np.asarray(ids, "i8"), "lage": lage,
+                                 "sig": 0.05, "cls": cls, "feh": 0.0, "censor": np.int8(0),
+                                 "lage2": np.nan, "group": group, "prio": 0}))  # fmt: skip
+    fit = pd.concat(out, ignore_index=True)
+    return fit.assign(representative=True)
+
+
+def test_identifiability_gate_and_domain_censoring():
+    """A catalogue that overlaps only pairwise with another unidentified one
+    gets an offset map; a map shared with identified units keeps its slope;
+    pipelines on the same spectra count as one independent measurement;
+    unconstrained records below a map's data range become upper limits."""
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(3)
+    n = 1500
+    tg = rng.uniform(-0.3, 1.0, 2 * n)
+    ts = rng.uniform(-0.1, 1.0, n)
+    a, b = np.arange(n), n + np.arange(n)
+    sg = 10_000 + np.arange(n)
+    lone = 20_000 + np.arange(5)  # single-record apok2 stars far below its range
+    fit = _fit_frame([
+        ("apokasc3", a, tg[a], "RGB", "apokasc"),
+        ("willett26_kepler", a, tg[a] + 0.02, "RGB", "willett26"),
+        ("chaplin14", a, tg[a] - 0.01, "RGB", "chaplin14"),  # third independent group: triads
+        ("apok2", np.r_[b, lone], np.r_[tg[b] + 0.05, np.full(5, -1.5)], "giant", "apok2"),
+        ("willett26_k2_bhm", b, tg[b], "giant", "willett26"),  # pairwise only with apok2
+        ("xiang24", sg, ts, "SGB", "xiang24"),
+        ("starhorse23_lamostl7", sg, ts + 0.05, "SGB", "starhorse23"),  # same LAMOST spectra
+        ("galah_dr4", sg, ts - 0.05, "SGB", "galah_dr4"),
+    ])  # fmt: skip
+    data = {"fit": fit, "members": pd.DataFrame({"source_id": [], "cid": [], "prob": []}),
+            "pairs": pd.DataFrame({"s1": [], "s2": [], "prior": []})}  # fmt: skip
+    prob = c0.build_problem(data, c0.Config("gate"), log=lambda m: None)
+    tiers = prob["tiers"].set_index("key")
+    assert tiers.tier["apok2"] == OFFSET and not tiers.noise_identified["apok2"]
+    assert (
+        tiers.tier["willett26_dnu"] == LINEAR
+        and tiers.noise_identified["willett26_dnu"]
+    )
+    assert tiers.triad_stars["xiang24"] == 0 and not tiers.noise_identified["xiang24"]
+    off = c0.build_problem(
+        data, c0.Config("nogate", identifiability=False), log=lambda m: None
+    )
+    assert off["tiers"].set_index("key").tier["apok2"] == LINEAR
+    df = prob["fit_df"]
+    low = df[df.source_id.isin(lone)]
+    assert len(low) == 5 and (low.censor == -1).all()
+    assert np.allclose(low.lage, tiers.domain_lo["apok2"], atol=1e-3)
+    assert (
+        tiers.n_below_domain["apok2"] >= 5
+    )  # (+ the 0.1 % tail of its constrained records)
+
+
+def test_bridge_width_does_not_depend_on_the_anchor():
+    """Components join along a maximum spanning tree: every edge of the tree,
+    and so the reference tier it sets, is the same whichever component holds
+    the anchor (chain 0 -40- 1 -10- 2 with one co-natal group linking 0 and 2)."""
+    import pandas as pd
+
+    c0 = _script()
+    s = np.r_[np.arange(100), np.arange(60, 160), np.arange(150, 400)]
+    c = np.r_[np.zeros(100), np.ones(100), np.full(250, 2)].astype(int)
+    sc = pd.DataFrame({"s": s, "c": c})
+    gid = np.full(400, -1)
+    gid[[10, 300]] = 7
+
+    def need(k):
+        return 5
+
+    w0 = dict(c0._attach_order(sc, gid, 0, need))
+    w2 = dict(c0._attach_order(sc, gid, 2, need))
+    assert w0 == {1: 40, 2: 10} and w2 == {1: 10, 0: 40}
+    # an edge below ``need`` leaves the component out
+    w_strict = c0._attach_order(sc, gid, 0, lambda k: 20)
+    assert w_strict == [(1, 40), (2, 10)] and dict(
+        c0._attach_order(sc, gid, 2, lambda k: 20)
+    ) == {0: 1, 1: 10}
+
+
+def test_arbitration_offset_recovers_a_known_offset():
+    """A validation-only source with a constant offset from the consensus
+    (including flat-top interval records): offset recovered within its error."""
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(5)
+    n = 60
+    t = rng.uniform(-1.5, 1.0, n)
+    sd = np.full(n, 0.03)
+    t_obs = t + rng.normal(0, 0.03, n)
+    y = t + 0.12 + rng.normal(0, 0.06, n)
+    cens = np.zeros(n, "i1")
+    cens[:5] = 2
+    recs = pd.DataFrame({"source_id": np.arange(n), "lage": np.where(cens == 2, y - 0.05, y),
+                         "lage2": np.where(cens == 2, y + 0.05, np.nan),
+                         "sig": np.where(cens == 2, 0.0, 0.06), "censor": cens})  # fmt: skip
+    row = c0.offset_vs_consensus("bench", recs, np.arange(n), {"t": t_obs, "sd": sd})
+    assert row["n"] == n and row["n_censored"] == 5
+    assert abs(row["offset"] - 0.12) < 3 * row["offset_se"] and row["offset_se"] < 0.02
+    assert abs(row["offset_quoted"] - 0.12) < 0.03
+
+
+def _hr23_fits(path, ids, names, logage):
+    from astropy.table import Table
+
+    t = Table({"Name": np.array(names), "ID": np.asarray(ids, "i8"),
+               "Type": np.array(["o"] * len(ids)), "logAge16": logage - 0.05,
+               "logAge50": logage, "logAge84": logage + 0.05, "CMDCl50": np.full(len(ids), 0.9)})  # fmt: skip
+    t.write(path, overwrite=True)
+
+
+def test_run_with_bridge_labels_end_to_end(tmp_path):
+    """``run --quick --labels``: benchmark clusters, cluster catalogues, extra
+    seismology, WD+MS and wide pairs enter as mapped sources; benchmark
+    families get offset maps, nodes carry the cluster records, the gauge-C fit
+    started from gauge A stays put, and the arbitration table recovers the
+    LDB offset."""
+    import json
+
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(17)
+    n = 900
+    t = rng.uniform(0.0, 1.1, n)
+    giant = np.arange(n) < 450
+    n_cl = 30
+    cid = np.full(n, -1)
+    for c in range(n_cl):
+        mem = np.r_[np.arange(4 * c, 4 * c + 4), 450 + np.arange(4 * c, 4 * c + 4)]
+        t[mem] = t[mem[0]]
+        cid[mem] = 100 + c
+    t_cl = np.array([t[4 * c] for c in range(n_cl)])
+    feh = rng.normal(-0.2, 0.25, n)
+
+    def cat(source, idx, offset, sig, stage, stage_class, logg):
+        y = t[idx] + offset + rng.normal(0, 0.06, len(idx))
+        return pd.DataFrame({"source": source, "source_id": 1000 + idx, "age": 10**y, "lage": y,
+                             "sig": sig, "stage": stage, "stage_class": stage_class, "good": True,
+                             "feh": feh[idx], "logg": logg})  # fmt: skip
+
+    gi, sg = np.flatnonzero(giant), np.flatnonzero(~giant)
+    rec = pd.concat([
+        cat("apokasc3", gi[:330], 0.0, 0.05, "RGB", "giant", 2.5),
+        cat("willett26_kepler", gi[100:], 0.02, 0.06, "RC", "giant", 2.4),
+        cat("xiang24", sg, -0.1, 0.03, "SGB", "subgiant", 3.8),
+        cat("starhorse23_lamostl7", sg[100:], -0.15, 0.04, "SGB", "subgiant", 3.9),
+        cat("galah_dr4", sg[:300], 0.0, 0.05, "x", "subgiant", 3.8),
+    ], ignore_index=True)  # fmt: skip
+    for c in ("source", "stage", "stage_class"):
+        rec[c] = rec[c].astype("category")
+    rec_path, tgt_path = tmp_path / "records.parquet", tmp_path / "targets.npz"
+    rec.to_parquet(rec_path, index=False)
+    m = cid >= 0
+    np.savez(tgt_path, member=1000 + np.flatnonzero(m), member_cluster=cid[m].astype("i4"),
+             member_prob=np.full(m.sum(), 0.9, "f4"), pair1=np.zeros(0, "i8"), pair2=np.zeros(0, "i8"),
+             source_id=1000 + np.arange(n))  # fmt: skip
+    lab = tmp_path / "labels"
+    lab.mkdir()
+    ids = 100 + np.arange(n_cl)
+    names = [f"CL_{i}" for i in ids]
+    names[0] = "Melotte_22"
+    clusters = tmp_path / "clusters.fits"
+    _hr23_fits(clusters, ids, names, t_cl + 9 + 0.03 + rng.normal(0, 0.05, n_cl))
+    pd.DataFrame({"catalogue": np.repeat(["cantatgaudin20", "dias21"], n_cl), "hr23_id": np.r_[ids, ids],
+                  "value": np.r_[t_cl + 9 - 0.05, t_cl + 9 + 0.02] + rng.normal(0, 0.05, 2 * n_cl),
+                  "err_lo": np.r_[np.full(n_cl, np.nan), np.full(n_cl, 0.05)], "feh": 0.0}).to_parquet(
+        lab / "cluster_msto_catalogues.parquet")  # fmt: skip
+    # benchmarks: LDB (+0.08 dex) on 12 clusters, EB on 8 (one published as a range), GC none
+    ldb, eb = np.arange(12), np.arange(12, 20)
+    age_l = 10 ** (t_cl[ldb] + 0.08 + rng.normal(0, 0.02, len(ldb)))
+    age_e = 10 ** (t_cl[eb] + rng.normal(0, 0.02, len(eb)))
+    pri = pd.DataFrame({
+        "cluster": [names[i] for i in np.r_[ldb, eb]], "hr23_name": [names[i] for i in np.r_[ldb, eb]],
+        "hr23_id": ids[np.r_[ldb, eb]], "cluster_type": "OC", "age_gyr": np.r_[age_l, age_e],
+        "err_lo_gyr": np.r_[age_l, age_e] * 0.03, "err_hi_gyr": np.r_[age_l, age_e] * 0.03,
+        "sys_err_gyr": np.nan, "model_range_lo_gyr": np.nan, "model_range_hi_gyr": np.nan,
+        "method": ["LDB"] * len(ldb) + ["EB"] * len(eb), "feh": 0.0, "primary": True,
+        "notes": [""] * (len(ldb) + len(eb) - 1) + ["published as a range between two values"]})  # fmt: skip
+    pri.to_csv(lab / "cluster_priors.csv", index=False)
+    pd.DataFrame({"source_id": [5_000_001, 5_000_002], "cluster": "NGC 104", "hr23_name": [None, None],
+                  "prob": [0.9, 0.9]}).to_parquet(lab / "cluster_members_extra.parquet")  # fmt: skip
+    for name in ("seis_zinn22_k2gap", "seis_mackereth21_tess"):
+        g = gi[300:340]
+        pd.DataFrame({"source_id": 1000 + g, "kind": "age_gyr", "value": 10 ** t[g], "err_lo": 0.2 * 10 ** t[g],
+                      "err_hi": 0.2 * 10 ** t[g], "feh": feh[g]}).to_parquet(lab / f"{name}.parquet")  # fmt: skip
+    comp = sg[300:320]
+    wd_ids = 7_000_000 + np.arange(len(comp))
+    pd.DataFrame({"source": "qiu21_base9", "source_id": wd_ids, "value": 10 ** t[comp],
+                  "err_lo": 0.1 * 10 ** t[comp], "err_hi": 0.1 * 10 ** t[comp],
+                  "companion_source_id": (1000 + comp).astype(float), "limit": 0}).to_parquet(
+        lab / "wd_ages_published.parquet")  # fmt: skip
+    pd.DataFrame({"wd_source_id": wd_ids, "ms_source_id": 1000 + comp, "usable_H": True,
+                  "atm_hint": "H"}).to_parquet(lab / "wdms_pairs.parquet")  # fmt: skip
+    pp = 1000 + sg[-40:].reshape(20, 2)
+    pd.DataFrame({"source_id1": pp[:, 0], "source_id2": pp[:, 1], "R_chance_align": 0.01,
+                  "binary_type": "MSMS"}).to_parquet(lab / "wide_pairs_eb21.parquet")  # fmt: skip
+    work, docs = tmp_path / "work", tmp_path / "docs"
+    c0.main(["run", "--records", str(rec_path), "--targets", str(tgt_path), "--work", str(work),
+             "--docs", str(docs), "--labels", str(lab), "--clusters", str(clusters), "--quick",
+             "--n-outer", "20", "--threads", "2"])  # fmt: skip
+    tiers = pd.read_csv(docs / "tiers_A.csv").set_index("key")
+    assert tiers.tier["bench_ldb"] == OFFSET and tiers.tier["bench_eb"] == OFFSET
+    assert {"cl_hr23", "cl_cg20", "cl_dias21", "zinn22_k2gap"} <= set(tiers.index)
+    summ = json.loads((docs / "summary.json").read_text())
+    gc = summ["gauge_check"]
+    assert (
+        gc["C_fromA_max_coef_move"] < 0.01
+        and gc["C_scratch_median_abs_latent_diff"] < 0.01
+    )
+    arb = pd.read_csv(docs / "arbitration_offsets.csv").set_index(["variant", "source"])
+    ldb_a = arb.loc[("ARB_A", "bench_ldb")]
+    assert ldb_a.n == 12 and abs(ldb_a.offset - 0.08) < 0.05
+    assert arb.loc[("ARB_A", "bench_eb")].n_censored == 1
+    assert arb.loc[("main_A", "wd_qiu21")].n == len(comp)
+    ctab = pd.read_csv(docs / "clusters_A.csv")
+    assert {"info_share_benchmarks", "T_without_benchmarks"} <= set(ctab.columns)
+    assert (ctab.young_benchmark == "Pleiades").sum() == 1
+    stars = pd.read_parquet(work / "consensus_stars.parquet")
+    assert (stars.source_id > 0).all() and "t_C_fromA" in stars
+
+
+def test_maps_flatten_below_their_data_range():
+    """Below the latent where a map reaches its data edge ``y_lo`` the map is
+    flat (no information); the edge is fixed in measurement units, so it moves
+    with the map's offset (gauge-covariant) and the map stays continuous."""
+    from masked_stellar_autoencoder.training.age_consensus import FLAT_SLOPE
+
+    ct = np.zeros((2, 1), bool)
+    fam = AgeMaps(
+        ["S", "S2"], [LINEAR, LINEAR], ct, [False, False], y_lo=[0.1, -np.inf]
+    )
+    coef = torch.zeros((2, fam.n_coef()), dtype=torch.float64)
+    coef[:, 0], coef[:, 1] = 0.2, 0.1  # f = t + 0.2 + 0.1 (t - T0) above the edge
+    t = torch.linspace(-1.5, 1.0, 251, dtype=torch.float64)
+    m = torch.zeros(251, dtype=torch.long)
+    zeros = torch.zeros(251, dtype=torch.float64)
+    f, a = fam.evaluate(coef, m, t, zeros, torch.zeros((251, 0)), m)
+    t_star = T0 + (0.1 - T0 - 0.2) / 1.1
+    below = t < t_star
+    assert torch.allclose(a[below], torch.full_like(a[below], FLAT_SLOPE))
+    assert torch.allclose(a[~below], torch.full_like(a[~below], 1.1))
+    assert (
+        abs(float(f[below].max()) - 0.1) < 1e-3 and float(f[~below].min()) >= 0.1 - 1e-9
+    )
+    f2, a2 = fam.evaluate(
+        coef, torch.ones(251, dtype=torch.long), t, zeros, torch.zeros((251, 0)), m
+    )
+    assert torch.allclose(a2, torch.full_like(a2, 1.1))  # no edge: linear everywhere
+    # an offset change of the map moves the edge latent with it (same y_lo)
+    coef[0, 0] = 0.5
+    f3, _ = fam.evaluate(coef, m, t, zeros, torch.zeros((251, 0)), m)
+    assert abs(float(f3[t < T0 + (0.1 - T0 - 0.5) / 1.1].max()) - 0.1) < 1e-3
+    assert float(fam.penalty(a)) == 0.0
+
+
+def test_young_clusters_follow_the_cluster_level_records():
+    """Young clusters whose few member stars carry coherently wrong ages (an
+    isochrone catalogue reads 2 Gyr for 100 Myr stars, inside its own data
+    range) against a cluster-level record. With the node a fixed member
+    (weight = its prior) and the catalogue's map flat below its data edge
+    (member records there are missing), the cluster-level record sets the
+    young latents and its offset is recovered. Without both, the members win:
+    the likelihood counts records, and the node is the minority."""
+    rng = np.random.default_rng(29)
+    n_f, n_cl = 3000, 120
+    tf = rng.uniform(0.0, 1.0, n_f)
+    T = rng.uniform(-1.2, 1.0, n_cl)
+    young = T < -0.5
+    n_m = np.where(young, 2, 5)  # few (hot, prior-dominated) members in young clusters
+    n = n_f + int((n_m + 1).sum())
+    gid = np.r_[np.full(n_f, -1), np.repeat(np.arange(n_cl), n_m + 1)]
+    t = np.r_[tf, np.repeat(T, n_m + 1)]
+    node = np.zeros(n, bool)
+    node[np.cumsum(n_m + 1) + n_f - 1] = True
+    field, mem = np.arange(n_f), np.flatnonzero((gid >= 0) & ~node)
+    nodes = np.flatnonzero(node)
+    # the catalogue reads ~1 Gyr (t = 0, the young end of its field data) for
+    # every younger member
+    yS = np.r_[tf, np.maximum(t[mem], 0.0)] + rng.normal(0, 0.1, n_f + len(mem))
+    star = np.r_[field, field, mem, nodes].astype("i8")
+    mid = np.r_[np.zeros(n_f), np.ones(n_f + len(mem)), np.full(n_cl, 2)].astype("i8")
+    y = np.r_[tf + rng.normal(0, 0.05, n_f), yS, T + 0.1 + rng.normal(0, 0.08, n_cl)]
+    sig = np.r_[np.full(n_f, 0.05), np.full(n_f + len(mem), 0.1), np.full(n_cl, 0.08)]
+    rec = Records(star, mid, np.zeros(len(y), "i8"), mid, y, sig, np.zeros(len(y)),
+                  np.zeros(len(y), "i1"), n)  # fmt: skip
+    ct = np.zeros((3, 1), bool)
+    edge = [-np.inf, float(np.percentile(yS[:n_f], 0.1)), -np.inf]
+    prior = np.where(node, 1.0, np.where(gid >= 0, 0.9, 0.0))
+    err, koff = {}, {}
+    for tag, fixed, y_lo in (("both", node, edge), ("neither", None, None)):
+        maps = MapSet(
+            [
+                AgeMaps(
+                    ["X", "S", "K"],
+                    [IDENTITY, LINEAR, OFFSET],
+                    ct,
+                    [False] * 3,
+                    y_lo=y_lo,
+                )
+            ]
+        )
+        g = Groups(gid, prior, np.full(n_cl, 0.01), fixed)
+        fit = fit_consensus(rec, g, maps, 3, n_outer=30, covariance=False)
+        sol = solve_stars(rec, g, fit, 3, rho=fit.rho)
+        err[tag] = float(np.median(np.abs(sol["t"][nodes][young] - T[young])))
+        koff[tag] = float(fit.coef_of("K")[0])
+        if tag == "both":
+            ym = np.isin(gid[mem], np.flatnonzero(young))
+            s_rec = (mid == 1) & np.isin(star, mem[ym])
+            assert (fit.weight[s_rec] == 0).mean() > 0.9  # missing below the edge
+            assert abs(fit.coef_of("S")[0]) < 0.03  # S's map is not dragged by them
+    assert err["both"] < 0.1 and abs(koff["both"] - 0.1) < 0.05, (err, koff)
+    assert err["neither"] > 0.3, (err, koff)
