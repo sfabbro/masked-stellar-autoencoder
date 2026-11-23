@@ -167,7 +167,8 @@ class AgeMaps(MapFamily):
 
     f = t + b + db_c + (A + dA_c) u + beta x + g1 u^2 + g2 u^3 + g3 x u + g4 x^2,
     u = t - T0. Tiers: IDENTITY (gauge anchor), OFFSET (b), LINEAR (+ A, class
-    deltas db_c/dA_c where ``class_terms``, beta where ``use_feh``), FLEX (+ g).
+    deltas db_c/dA_c where ``class_terms``, beta where ``use_feh``), FLEX (+ g1,
+    g3, g4; the cubic g2 is in the layout but not fitted).
     The slope df/dt is kept above ``a_min`` (monotone maps). ``x_range`` and
     ``t_range`` ((M, 2), optional) bound the data each map was fitted on: the
     [Fe/H] terms use x clamped to ``x_range`` and the polynomial terms use t
@@ -210,7 +211,8 @@ class AgeMaps(MapFamily):
         out[:, 3 + c : 3 + 2 * c] = ct
         flex = self.tier >= FLEX
         out[:, 3 + 2 * c] = flex
-        out[:, 4 + 2 * c] = flex
+        # the cubic term (column 4 + 2c) is kept in the layout but not fitted:
+        # it was the one poorly identified direction (slow drift, no gain)
         out[:, 5 + 2 * c] = flex & self.use_feh
         out[:, 6 + 2 * c] = flex & self.use_feh
         return out

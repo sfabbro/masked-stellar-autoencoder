@@ -253,6 +253,7 @@ class Config:
     name: str
     anchor: str = "apokasc3"
     galah_continuity: bool = False  # one GALAH DR4 map for its giants and subgiants
+    galah_giants: bool = False  # GALAH DR4 giant ages in the fit (else validation only)
     bridge_tier: int = OFFSET  # max tier of a component reference (thin bridges)
     mission_continuity: bool = True  # one Willett map per variant (Kepler, K2, TESS)
     conatal: bool = True
@@ -270,7 +271,12 @@ def map_key(source: str, cls: str, cfg: Config) -> str:
 
 def build_problem(data: dict, cfg: Config, log=print) -> dict:
     fit = data["fit"]
-    fit = fit[~fit.source.isin(cfg.drop)].sort_values(["source_id", "group", "prio"])
+    fit = fit[~fit.source.isin(cfg.drop)]
+    if not (cfg.galah_giants or cfg.galah_continuity):
+        # GALAH DR4 giant isochrone ages: validation only (their map, calibrated
+        # on K2 seismic giants, extrapolates badly to old metal-poor cluster giants)
+        fit = fit[~((fit.source == "galah_dr4") & fit.cls.isin(GIANT))]
+    fit = fit.sort_values(["source_id", "group", "prio"])
     fit = fit[~fit.duplicated(["source_id", "group"])].copy()  # representatives
     fit["key"] = [map_key(s, c, cfg) for s, c in zip(fit.source, fit.cls)]
     star_ids = np.unique(fit.source_id.to_numpy())
@@ -702,6 +708,7 @@ def run(args) -> None:
     # ---- bridge variants (gauge A) -------------------------------------------
     variants = {
         "V_affine_bridge": Config("V_affine_bridge", bridge_tier=LINEAR),
+        "V_galah_giants": Config("V_galah_giants", galah_giants=True),
         "V_galah_continuity": Config("V_galah_continuity", galah_continuity=True),
         "V_conatal_only": Config("V_conatal_only", mission_continuity=False),
         "V_continuity_only": Config(
@@ -835,8 +842,14 @@ def run(args) -> None:
             work / f"residuals_{tag}.parquet", index=False
         )
     # ---- validation-only and non-representative records vs the consensus ------
+    galah_giant = (data["fit"].source == "galah_dr4") & data["fit"].cls.isin(GIANT)
     val = pd.concat(
-        [data["fit"][~data["fit"].representative], data["val"]], ignore_index=True
+        [
+            data["fit"][~data["fit"].representative & ~galah_giant],
+            data["val"],
+            data["fit"][galah_giant].assign(source="galah_dr4_giant"),
+        ],
+        ignore_index=True,
     )
     val_rows = []
     for s, g in val.groupby("source"):
