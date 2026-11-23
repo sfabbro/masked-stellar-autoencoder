@@ -601,14 +601,10 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         # rotation of stars that carry an evolved-class age record (turn-off,
         # subgiants, giants) is not a dwarf spin-down clock: drop those records
         evolved = set(fit.source_id[(~is_mono) & fit.cls.isin(EVOLVED).to_numpy()])
-        drop = (
-            is_mono
-            & fit.source.isin(ROT_SOURCES).to_numpy()
-            & fit.source_id.isin(evolved).to_numpy()
-        )
+        drop = is_mono & fit.source_id.isin(evolved).to_numpy()  # rotation and lithium
         if drop.any():
-            log(f"[{cfg.name}] dropped {int(drop.sum())} rotation records of stars with an "
-                f"evolved-class age record")  # fmt: skip
+            log(f"[{cfg.name}] dropped {int(drop.sum())} rotation/lithium records of stars "
+                f"with an evolved-class age record")  # fmt: skip
             fit, is_mono = fit[~drop].copy(), is_mono[~drop]
         fit["map_fit"] = ~fit.source.isin(list(ROT_TRUNCATED)).to_numpy()
     star_ids = np.unique(fit.source_id.to_numpy())
@@ -1003,12 +999,21 @@ def fit_frozen(data, cfg, frozen_pkl: Path, log=print, res_override=None, **kw):
     fit_stars = np.flatnonzero(in_fit)
     remap = np.full(len(in_fit), -1, "i8")
     remap[fit_stars] = np.arange(len(fit_stars))
-    # records of truncated catalogues inform the stars (solve), not the maps
+    # records of truncated catalogues inform the stars (solve), not the maps;
+    # non-age maps are learned from cluster members only (the gyrochronology and
+    # lithium ladders): field-tied records (wide pairs, own age records) carry
+    # detection bias (active, fast rotators are found first), unresolved
+    # binaries and turn-off contamination, and pulled the first rotation maps
+    # flat between 0.6 and 4 Gyr (Praesepe inverted to 3.3 Gyr)
     mf = (
         df["map_fit"].fillna(True).to_numpy(bool)
         if "map_fit" in df
         else np.ones(len(df), bool)
     )
+    lab = prob["group_labels"]
+    is_cl = np.array([k >= 0 and lab[k][0] == "cluster" for k in g.gid], bool)
+    age_rec = np.asarray(maps.family_of(rec.map_id)) == 0
+    mf = mf & (age_rec | is_cl[rec.star])
     r = rec.subset(in_fit[rec.star] & mf)
     r = replace(r, star=remap[r.star], n_star=len(fit_stars))
     gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
