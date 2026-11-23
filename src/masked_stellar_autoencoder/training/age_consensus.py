@@ -336,8 +336,9 @@ class MonotoneMaps(MapFamily):
     flat below the first knot and above the last bump: no extrapolated age
     information. ``use_x`` / ``use_z`` switch the [Fe/H] and first
     extra-covariate terms on per map; ``y_center`` (per map) starts c0 at the
-    data level; ``slope_floor`` keeps |df/dt| >= floor (a numerical stand-in
-    for zero, so a record in a flat stretch has finite, tiny information)."""
+    data level (c0 is the value at T0: the ramps are pivoted there);
+    ``slope_floor`` keeps |df/dt| >= floor (a numerical stand-in for zero, so
+    a record in a flat stretch has finite, tiny information)."""
 
     def __init__(self, names, direction, knots=(-1.0, -0.4, 0.2, 0.6, 1.0),
                  smooth: float = 0.15, use_x=None, use_z=None, y_scale=None,
@@ -386,7 +387,14 @@ class MonotoneMaps(MapFamily):
         a1 = (t[:, None] - self.knots[None, :]) / self.s
         a2 = (t[:, None] - self.right[None, :]) / self.s
         sp = torch.nn.functional.softplus
-        h = self.s * (sp(a1) - sp(a2))  # 0 below k, r - k above r
+        # pivoted at T0, so c0 = f(T0): the bumps below the data do not trade
+        # against c0 (a flat direction of the fit otherwise)
+        b1 = (T0 - self.knots) / self.s
+        b2 = (T0 - self.right) / self.s
+        h0 = self.s * (sp(b1) - sp(b2))
+        h = (
+            self.s * (sp(a1) - sp(a2)) - h0[None, :]
+        )  # ramps between knot and right edge
         dh = torch.sigmoid(a1) - torch.sigmoid(a2)
         d = self.direction[m]
         zz = z[:, 0] if z.shape[1] else torch.zeros_like(t)

@@ -746,24 +746,31 @@ def test_run_with_bridge_labels_end_to_end(tmp_path):
     assert (ctab.young_benchmark == "Pleiades").sum() == 1
     stars = pd.read_parquet(work / "consensus_stars.parquet")
     assert (stars.source_id > 0).all() and "t_C_fromA" in stars
-    # C0c staged fit: rotation periods (TARS layout) for every star; the age
-    # maps, noise and shared errors stay those of the run above
+    # C0c staged fit: dwarf cluster members with rotation periods (Kepler
+    # layout; no age record of their own); the age maps, noise and shared
+    # errors stay those of the run above
     import shutil
 
     lab2 = tmp_path / "labels2"
     shutil.copytree(lab, lab2)
-    ids_r = np.arange(n)
+    n_dw = 3 * n_cl
+    dw_ids = 50_000 + np.arange(n_dw)
+    dw_cl = np.repeat(np.arange(n_cl), 3)
     lnp = (
         1.0
-        + 0.9 * 0.2 * np.log1p(np.exp((t[ids_r] + 0.9) / 0.2))
-        + rng.normal(0, 0.05, n)
+        + 0.9 * 0.2 * np.log1p(np.exp((t_cl[dw_cl] + 0.9) / 0.2))
+        + rng.normal(0, 0.05, n_dw)
     )
-    pd.DataFrame({"source_id": 1000 + ids_r, "kind": "ln_prot_days", "value": lnp, "err_lo": 0.02,
+    pd.DataFrame({"source_id": dw_ids, "kind": "ln_prot_days", "value": lnp, "err_lo": 0.02,
                   "limit": 0, "teff": 5250.0, "ruwe": 1.0, "non_single_star": 0,
-                  "phot_g_mean_mag_0": 6.0, "BpmRp0": 1.0, "flag_possible_binary": False}).to_parquet(
-        lab2 / "rot_tars26.parquet")  # fmt: skip
+                  "logg": 4.5}).to_parquet(lab2 / "rot_mcquillan14.parquet")  # fmt: skip
+    z0 = np.load(tgt_path)
+    tgt2 = tmp_path / "targets2.npz"
+    np.savez(tgt2, member=np.r_[z0["member"], dw_ids], member_cluster=np.r_[z0["member_cluster"], 100 + dw_cl].astype("i4"),
+             member_prob=np.r_[z0["member_prob"], np.full(n_dw, 0.9, "f4")], pair1=z0["pair1"],
+             pair2=z0["pair2"], source_id=z0["source_id"])  # fmt: skip
     work2, docs2 = tmp_path / "work2", tmp_path / "docs2"
-    c0.main(["run", "--records", str(rec_path), "--targets", str(tgt_path), "--work", str(work2),
+    c0.main(["run", "--records", str(rec_path), "--targets", str(tgt2), "--work", str(work2),
              "--docs", str(docs2), "--labels", str(lab2), "--clusters", str(clusters),
              "--freeze-from", str(work), "--n-outer", "20", "--threads", "2"])  # fmt: skip
     m1 = pd.read_csv(docs / "maps_A.csv").set_index("key")

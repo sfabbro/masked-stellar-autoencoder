@@ -105,7 +105,15 @@ ROT_SOURCES = ("rot_santos21", "rot_mcquillan14", "rot_santos19", "rot_reinhold2
 LI_SOURCES = ("li_galah_dr4", "li_ges_dr5")
 MONO_SOURCES = ROT_SOURCES + LI_SOURCES
 ROT_TEFF = (3500, 4000, 4500, 5000, 5500, 6000, 6500)
-LI_TEFF = (4800, 5300, 5700, 6000, 6300, 6700)
+#: no 6300-6700 K bin: the lithium dip makes A(Li) non-monotone across it
+LI_TEFF = (4800, 5300, 5700, 6000, 6300)
+#: rotation catalogues whose periods are truncated (TESS sectors: completeness
+#: falls above ~10-13 d, README P4): their records inform the stars but not the
+#: maps (a truncated sample biases the slow, old end), and they share the noise
+#: units of the Kepler catalogue in the same bin
+ROT_TRUNCATED = {"rot_tars26": "rot_mcquillan14"}
+#: age-record classes of evolved stars: gyrochronology does not apply to them
+EVOLVED = ("SGB", "MSTO", "RGB", "RC", "giant")
 MONO_KNOTS = (-1.8, -1.3, -0.8, -0.4, 0.0, 0.4, 0.8, 1.1)
 MONO_SMOOTH, MONO_FLOOR = 0.2, 1e-3
 MONO_MIN = 30  # constrained stars a monotone map needs
@@ -588,6 +596,19 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         fit, is_mono = fit[~is_mono].copy(), np.zeros((~is_mono).sum(), bool)
     if is_mono.any():
         fit.loc[is_mono, "key"] = fit.mkey[is_mono]
+        # rotation of stars that carry an evolved-class age record (turn-off,
+        # subgiants, giants) is not a dwarf spin-down clock: drop those records
+        evolved = set(fit.source_id[(~is_mono) & fit.cls.isin(EVOLVED).to_numpy()])
+        drop = (
+            is_mono
+            & fit.source.isin(ROT_SOURCES).to_numpy()
+            & fit.source_id.isin(evolved).to_numpy()
+        )
+        if drop.any():
+            log(f"[{cfg.name}] dropped {int(drop.sum())} rotation records of stars with an "
+                f"evolved-class age record")  # fmt: skip
+            fit, is_mono = fit[~drop].copy(), is_mono[~drop]
+        fit["map_fit"] = ~fit.source.isin(list(ROT_TRUNCATED)).to_numpy()
     star_ids = np.unique(fit.source_id.to_numpy())
     star = np.searchsorted(star_ids, fit.source_id.to_numpy())
     groups, _ = conatal_groups(star_ids, data["members"], data["pairs"], cfg.conatal)
@@ -606,6 +627,14 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         cnt1 = cand[is_mono].value_counts()
         fit.loc[is_mono, "unit"] = np.where(cand[is_mono].map(cnt1) >= NOISE_MIN,
                                             cand[is_mono], fit.source[is_mono] + ":all")  # fmt: skip
+        for (
+            trunc,
+            ref,
+        ) in ROT_TRUNCATED.items():  # truncated catalogues: the reference's units
+            tm = (fit.source == trunc).to_numpy()
+            rm = (fit.source == ref).to_numpy()
+            ref_unit = fit.unit[rm].groupby(mk[rm]).first()
+            fit.loc[tm, "unit"] = mk[tm].map(ref_unit).fillna(ref + ":all").to_numpy()
     ucodes, ucode = np.unique(fit.unit.to_numpy(), return_inverse=True)
     # independent measurements: shared-input groups, with pipelines on the same
     # spectra (a nested shared effect) counted as one
@@ -972,7 +1001,13 @@ def fit_frozen(data, cfg, frozen_pkl: Path, log=print, res_override=None, **kw):
     fit_stars = np.flatnonzero(in_fit)
     remap = np.full(len(in_fit), -1, "i8")
     remap[fit_stars] = np.arange(len(fit_stars))
-    r = rec.subset(in_fit[rec.star])
+    # records of truncated catalogues inform the stars (solve), not the maps
+    mf = (
+        df["map_fit"].fillna(True).to_numpy(bool)
+        if "map_fit" in df
+        else np.ones(len(df), bool)
+    )
+    r = rec.subset(in_fit[rec.star] & mf)
     r = replace(r, star=remap[r.star], n_star=len(fit_stars))
     gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
                   None if g.fixed is None else g.fixed[fit_stars])  # fmt: skip
