@@ -431,14 +431,21 @@ def _member_kwargs(a, sel, family):
                 flow_hidden=a.flow_hidden, bins=a.flow_bins, s_bound=a.s_bound,
                 e_bound=float(sel["e_bound"]), components=a.components,
                 e_loc=float(sel["y_mean"][1]), e_scale=float(std_e),
-                fit_kappa=a.parallax_inflation == "fit")  # fmt: skip
+                fit_kappa=a.parallax_inflation == "fit", fit_e_noise=a.e_noise == "fit",
+                fit_zp=a.fit_zp_sigma, xp_flag=a.xp_mix > 0)  # fmt: skip
+
+
+def _noxp_dir(a, out):
+    return a.noxp_inputs if a.noxp_inputs else out / "noxp"
 
 
 def stage_train(a, config, out):
     from masked_stellar_autoencoder.training import distance_extinction as de
     from masked_stellar_autoencoder.training import distributional_heads as dh
 
-    todo = {f: [k for k, p in enumerate(head_paths(a, f)) if a.force or not p.exists()]
+    todo = {f: [k for k, p in enumerate(head_paths(a, f))
+                if (a.train_members is None or k in a.train_members)
+                and (a.force or not p.exists())]
             for f in a.families}  # fmt: skip
     todo = {f: ks for f, ks in todo.items() if ks}
     if not todo:
@@ -458,18 +465,40 @@ def stage_train(a, config, out):
         dh.gather_rows(lat, sel["stop"], chunk_rows=a.chunk_rows), device=dev
     )
     log(f"train: latents {len(z_tr)} + {len(z_st)} rows in {time.time() - t0:.0f} s")
+    za_tr = za_st = None
+    if a.xp_mix > 0:
+        lat_dir = _noxp_dir(a, out)
+        alt = np.load(lat_dir / "latent.npy", mmap_mode="r")
+        if alt.shape != lat.shape:
+            raise SystemExit(f"train: XP-hidden latents {alt.shape} != {lat.shape}")
+        hidden = set((_latent_meta(lat_dir) or {}).get("hidden_inputs", []))
+        need = set(_expand_hide(config["data"]["feature_cols"], a.noxp_hide))
+        if not need <= hidden:
+            raise SystemExit(
+                f"train: {lat_dir} latents do not hide {sorted(need - hidden)}"
+            )
+        za_tr = torch.as_tensor(
+            dh.gather_rows(alt, sel["train"], chunk_rows=a.chunk_rows), device=dev
+        )
+        za_st = torch.as_tensor(
+            dh.gather_rows(alt, sel["stop"], chunk_rows=a.chunk_rows), device=dev
+        )
+        log(f"train: XP-hidden latents from {lat_dir} (mix probability {a.xp_mix:g})")
     o_tr = de.observation_tensors(obs, sel["train"], dev)
     o_st = de.observation_tensors(obs, sel["stop"], dev)
     for family, ks in todo.items():
         for k in ks:
             log(f"train {family} member {k} ({len(z_tr)} rows)")
             member = de.Member(
-                family, z_tr.shape[1], **_member_kwargs(a, sel, family)
+                family,
+                z_tr.shape[1] + int(a.xp_mix > 0),
+                **_member_kwargs(a, sel, family),
             ).to(dev)
             hist = de.train_member(
                 member, std, z_tr, o_tr, z_st, o_st, n_s=a.train_ns, n_e=a.train_ne,
                 zp_sigma=a.zp_sigma, batch=a.batch, max_epochs=a.epochs, patience=a.patience,
-                lr=a.lr, seed=a.seed + k, micro_batch=a.micro_batch, log=log,
+                lr=a.lr, seed=a.seed + k, micro_batch=a.micro_batch,
+                z_alt_train=za_tr, z_alt_stop=za_st, alt_prob=a.xp_mix, log=log,
             )  # fmt: skip
             de.save_member(member, head_paths(a, family)[k], std, family=family, member=k,
                            history=hist)  # fmt: skip
@@ -568,7 +597,7 @@ def _predict(a, ens, lat, rows, obs, dev, label):
     return res, len(rows) / max(t_pred, 1e-9)
 
 
-ROW_INDEPENDENT = ("kappa", "kappa_g_edges")
+ROW_INDEPENDENT = ("kappa", "kappa_g_edges", "kappa_e", "e_outlier", "zp_sigma_fit")
 
 
 def _write_predictions(path, rows, obs, res, ens):
@@ -576,6 +605,7 @@ def _write_predictions(path, rows, obs, res, ens):
 
     np.savez(path, table_row=rows, source_id=obs["source_id"][rows], split=obs["split"][rows],
              G=obs["G"][rows], kappa=ens.kappas(), kappa_g_edges=np.array(KAPPA_G_EDGES),
+             kappa_e=ens.kappa_es(), e_outlier=ens.e_outliers(), zp_sigma_fit=ens.zp_sigmas(),
              **{k: v.astype("f4") if v.dtype.kind == "f" else v for k, v in res.items()})  # fmt: skip
 
 
@@ -647,11 +677,9 @@ def stage_noxp(a, config, out):
 
     cols = config["data"]["feature_cols"]
     hide = _expand_hide(cols, a.noxp_hide)
-    if a.noxp_inputs:
-        lat_dir = a.noxp_inputs
-    else:
-        lat_dir = out / "noxp"
-        if a.force or not (lat_dir / "latent.npy").exists():
+    lat_dir = _noxp_dir(a, out)
+    if not a.noxp_inputs:
+        if not (lat_dir / "latent.npy").exists():
             if not a.checkpoint:
                 raise SystemExit("noxp: --checkpoint (or --noxp-inputs) is required")
             from s1_likelihood_head import load_state
@@ -677,6 +705,7 @@ def stage_noxp(a, config, out):
         ens = _ensemble(a, family, dev)
         if ens is None:
             continue
+        ens.flag_value = 1.0  # heads trained with the XP-hidden flag see it set
         log(f"noxp {family}: {len(rows)} test rows")
         res, rate = _predict(a, ens, lat, rows, obs, dev, f"noxp {family}")
         _write_predictions(
@@ -695,6 +724,26 @@ def _kappa_rows(P, obs, rows):
     return kap[np.asarray(obs["kappa_bin"])[rows]]
 
 
+def _zp_sigma(P, a_zp=0.0):
+    """Ensemble-mean parallax zero-point uncertainty [mas] (fitted, else fixed)."""
+    z = P.get("zp_sigma_fit")
+    return float(np.mean(z)) if z is not None and len(np.atleast_1d(z)) else float(a_zp)
+
+
+def _sig_eff_rows(P, obs, rows, err):
+    """Effective parallax error: sqrt((kappa_g err)^2 + sig_zp^2)."""
+    return np.sqrt((_kappa_rows(P, obs, rows) * err) ** 2 + _zp_sigma(P) ** 2)
+
+
+def _e_err_rows(P, obs, rows):
+    """Effective E-label error: quoted x ensemble-mean fitted kappa_E (G bin)."""
+    ee = obs["e_ebv"][rows]
+    if "kappa_e" not in P:
+        return ee
+    ke = np.asarray(P["kappa_e"], "f8").mean(0)
+    return ke[np.asarray(obs["kappa_bin"])[rows]] * ee
+
+
 def distance_metrics(P, obs, mask_fn):
     """Parallax calibration, parallax-space bias and precise-parallax distance
     moduli of the rows of ``P`` selected by ``mask_fn(rows)``."""
@@ -705,7 +754,7 @@ def distance_metrics(P, obs, mask_fn):
     has = use & np.isfinite(plx) & np.isfinite(err) & (err > 0)
     snr = np.where(has, plx / np.where(has, err, 1.0), np.nan)
     G = obs["G"][rows]
-    sig = np.where(has, _kappa_rows(P, obs, rows) * err, np.nan)
+    sig = np.where(has, _sig_eff_rows(P, obs, rows, err), np.nan)
     # S/N classes by the PREDICTED parallax over its error (a function of z and
     # the error only): classes of the observed parallax would select on the
     # measurement and bias its PIT and pull by construction.
@@ -783,7 +832,7 @@ def core_metrics(P, obs):
     with np.errstate(divide="ignore", invalid="ignore"):
         dmu = (10.0 + 5.0 * P["s_q"][:, 1] / math.log(10.0)) - np.where(
             precise, 10.0 - 5.0 * np.log10(np.where(precise, plx, 1.0)), np.nan)  # fmt: skip
-    sig = _kappa_rows(P, obs, rows) * err
+    sig = _sig_eff_rows(P, obs, rows, err)
     pull = (plx - P["plx_mean"]) / np.sqrt(P["plx_sd"].astype("f8") ** 2 + sig**2)
     ref = obs["fe_h_ref"][rows]
     fb = _bin(ref, V.FEH_BINS)
@@ -800,7 +849,7 @@ def core_metrics(P, obs):
 def ebv_metrics(P, obs, mask_fn):
     rows = P["table_row"]
     use = mask_fn(rows)
-    e, ee = obs["ebv"][rows], obs["e_ebv"][rows]
+    e, ee = obs["ebv"][rows], _e_err_rows(P, obs, rows)
     has = use & np.isfinite(e) & np.isfinite(ee)
     med = P["e_q"][:, 1].astype("f8")
     d = med - e
@@ -870,7 +919,9 @@ def cluster_metrics(P, obs, cl, eval_mask, n_min):
         chie = (me - ebar) / sde
         pulls_e += list(chie * math.sqrt(len(me) / (len(me) - 1)))
         hp = np.isfinite(plx[r]) & np.isfinite(err[r]) & (err[r] > 0)
-        se = kap[obs["kappa_bin"][r[hp]]] * err[r[hp]]
+        se = np.sqrt(
+            (kap[obs["kappa_bin"][r[hp]]] * err[r[hp]]) ** 2 + _zp_sigma(P) ** 2
+        )
         d = dict(cluster_id=int(c), n_eval=int(len(ev)), n_members=int(len(r)),
                  s_mean=sbar, s_sd_mean=float(1 / math.sqrt(np.sum(w))),
                  chi2_s=float(np.sum(chi**2) / (len(m) - 1)), e_mean=ebar,
@@ -912,7 +963,8 @@ def stage_report(a, config, out):
         if p.exists():
             preds[f"{f}_noxp"] = dict(np.load(p))
     m = dict(summary="", selection=selj, scores={}, distance={}, core={}, ebv={},
-             clusters={}, kappa={}, quadrature={}, training={}, speed={}, noxp={},
+             clusters={}, kappa={}, kappa_e={}, zp_sigma={}, quadrature={}, training={},
+             speed={}, noxp={},
              decision={}, files=[], notes=[])  # fmt: skip
     for name, P in preds.items():
         m["scores"][name] = score_metrics(P, obs, is_test)
@@ -921,6 +973,14 @@ def stage_report(a, config, out):
         if not name.endswith("_noxp"):
             m["core"][name] = core_metrics(P, obs)
             m["kappa"][name] = np.asarray(P["kappa"]).tolist()
+            if "kappa_e" in P:
+                m["kappa_e"][name] = np.asarray(P["kappa_e"]).tolist()
+            if "e_outlier" in P:
+                m.setdefault("e_outlier", {})[name] = np.asarray(
+                    P["e_outlier"]
+                ).tolist()
+            if "zp_sigma_fit" in P:
+                m["zp_sigma"][name] = np.asarray(P["zp_sigma_fit"]).tolist()
     # Same rows for the beyond-XP comparison: test rows of the noxp run.
     for f in a.families:
         if f in preds and f"{f}_noxp" in preds:
@@ -1012,14 +1072,17 @@ def _notes(a, m):
         "Likelihood per star: L = int int p(s, E | z) N(plx - zp | exp(-s), sig_eff^2) "
         "[N(E_obs | E, e_E^2)] ds dE, s = ln(d/kpc), zp = Lindegren+2021 (sidecar; else "
         "-0.017 mas), sig_eff^2 = (kappa_g sig)^2 + sig_zp^2 (kappa_g fitted per G bin "
-        f"{'(fit)' if a.parallax_inflation == 'fit' else '(fixed at 1)'}, sig_zp = "
-        f"{a.zp_sigma:g} mas). No parallax cut or inversion: every parallax "
+        f"{'(fit)' if a.parallax_inflation == 'fit' else '(fixed at 1)'}, sig_zp "
+        f"{'fitted' if a.fit_zp_sigma else f'= {a.zp_sigma:g} mas'}). No parallax cut or inversion: every parallax "
         f"(train: {sel['counts']['train_with_parallax']}, of which "
         f"{sel['counts']['train_negative_parallax']} negative and "
         f"{sel['counts']['train_snr_lt_5']} with plx/err < 5) enters the likelihood.",
         "E(B-V) labels: empirical reddening labels (intrinsic colours learned from the "
         "spectroscopic labels; BP-RP based), errors in variables with their quoted errors "
-        f"(floor 0.01, cap 0.5 mag; median {sel.get('ebv_error_median')}). Missing label: E "
+        f"(floor 0.01, cap 0.5 mag; median {sel.get('ebv_error_median')})"
+        f"{' scaled by a fitted kappa_E per G bin' if a.e_noise == 'fit' else ''}. "
+        f"{'Training mixes XP-hidden latents with probability ' + format(a.xp_mix, 'g') + ' (0/1 flag input). ' if a.xp_mix > 0 else ''}"
+        "Missing label: E "
         "marginalised exactly. The SFD map value is an encoder input, never a label; the "
         "|b| > 60 deg comparison with SFD is therefore a zero-point sanity check, not an "
         "independent validation (SFD informs the prediction). The labels derive from BP-RP "
@@ -1203,6 +1266,21 @@ def render_report(m):
         for f, k in m["kappa"].items():
             L.append(f"- `{f}`: " + "; ".join("[" + ", ".join(f"{x:.3f}" for x in row) + "]"
                                              for row in k))  # fmt: skip
+        L.append("")
+    if m.get("kappa_e"):
+        L.append("## Fitted E-label error scale kappa_E (members x G bins "
+                 "<=13, 13-15, 15-17, 17-18, 18-19, >19)\n")  # fmt: skip
+        for f, k in m["kappa_e"].items():
+            L.append(f"- `{f}`: " + "; ".join("[" + ", ".join(f"{x:.3f}" for x in row) + "]"
+                                             for row in k))  # fmt: skip
+            if f in m.get("e_outlier", {}):
+                L.append("  - outlier fraction (error x 4): "
+                         + ", ".join(f"{x:.3f}" for x in m["e_outlier"][f]))  # fmt: skip
+        L.append("")
+    if m.get("zp_sigma"):
+        L.append("## Fitted parallax zero-point uncertainty sig_zp [mas] (members)\n")
+        for f, z in m["zp_sigma"].items():
+            L.append(f"- `{f}`: " + ", ".join(f"{x:.4f}" for x in z))
         L.append("")
     if m["quadrature"]:
         L.append("## Quadrature convergence (|log L(n) - log L(4n)|, test rows)\n")
@@ -1605,6 +1683,38 @@ def main():
     p.add_argument("--parallax-inflation", choices=["fit", "none"], default="fit")
     p.add_argument("--zp-sigma", type=float, default=0.0,
                    help="zero-point uncertainty added in quadrature [mas]")  # fmt: skip
+    p.add_argument(
+        "--fit-zp-sigma",
+        action="store_true",
+        help="fit the parallax zero-point uncertainty (overrides --zp-sigma)",
+    )
+    p.add_argument(
+        "--e-noise",
+        choices=["fit", "none"],
+        default="none",
+        help="fit a scale kappa_E per G bin of the quoted E-label errors",
+    )
+    p.add_argument(
+        "--xp-mix",
+        type=float,
+        default=0.0,
+        help="probability that a training row uses its XP-hidden latent "
+        "(--noxp-inputs or DIR/noxp); the heads get a 0/1 flag input",
+    )
+    p.add_argument(
+        "--wait-for",
+        type=Path,
+        default=None,
+        help="block until this file exists (a sentinel written by the session that "
+        "runs the data stages), polling every 60 s",
+    )
+    p.add_argument("--wait-hours", type=float, default=8.0)
+    p.add_argument(
+        "--train-members",
+        type=_ints,
+        default=None,
+        help="train only these ensemble member indices (parallel sessions)",
+    )
     p.add_argument("--hidden", type=_ints, default=[256, 256])
     p.add_argument("--context", type=int, default=64)
     p.add_argument("--flow-transforms", type=int, default=3)
@@ -1651,12 +1761,25 @@ def main():
     a.cluster_columns = [c for c in a.cluster_columns.split(",") if c]
     a.cluster_types = [c for c in a.cluster_types.split(",") if c]
     a.noxp_hide = [c for c in a.noxp_hide.split(",") if c]
+    if not 0.0 <= a.xp_mix < 1.0:
+        raise SystemExit("--xp-mix must be in [0, 1)")
     if len(a.member_columns) != 3 or len(a.cluster_columns) != 3:
         raise SystemExit("--member-columns and --cluster-columns take three names each")
     if a.ensemble < 1:
         raise SystemExit("--ensemble must be >= 1")
     out = a.output
     out.mkdir(parents=True, exist_ok=True)
+    if a.wait_for is not None:
+        t_wait = time.time()
+        while not a.wait_for.exists():
+            if time.time() - t_wait > 3600 * a.wait_hours:
+                raise SystemExit(
+                    f"--wait-for {a.wait_for}: absent after {a.wait_hours} h"
+                )
+            if int(time.time() - t_wait) % 600 < 60:
+                log(f"waiting for {a.wait_for}")
+            time.sleep(60)
+        log(f"{a.wait_for} found after {time.time() - t_wait:.0f} s")
     stages = [s for s in a.stages.split(",") if s]
     for s in stages:
         if s not in STAGES:

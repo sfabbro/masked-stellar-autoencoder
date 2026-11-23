@@ -1214,6 +1214,56 @@ STEPS["ms-s3-distance-extinction"] = dict(
 )
 
 
+# S3 v2 (2026-11-23): fitted E-label noise (kappa_E per G bin + outlier fraction),
+# fitted parallax zero-point uncertainty, and heads trained on a 50/50 random mix of
+# full and XP-hidden latents (0/1 flag input; the attempt-3 XP-hidden latents are
+# reused), on all 4.70M train-split rows. Parallel sessions share one output dir:
+# ``ms-s3v2-gmix`` builds the data stages, writes the sentinel ``data_ready`` and
+# trains the 5 gmix members; ``ms-s3v2-flow-<k>`` each wait for the sentinel and
+# train flow member k; ``ms-s3v2-final`` (launched once every head exists) runs
+# predict, noxp and the report.
+S3V2_OUT = ROOT + "distance_extinction_s3_v2_20261123"
+_S3V2 = (
+    _S3.replace(' --output "$experiment_output"', f" --output {S3V2_OUT}").replace(
+        " --max-train 3000000", " --max-train 4700000"
+    )
+    + " --e-noise fit --fit-zp-sigma --xp-mix 0.5"
+    + f" --noxp-inputs {ROOT}{S3_RUN}/noxp"
+)
+STEPS["ms-s3v2-gmix"] = dict(
+    run_id="distance_extinction_s3_v2_gmix_20261123",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=' && "${pixi_run[@]}" '.join(
+        [
+            f"{_S3V2} --stages data,clusters",
+            f"touch {S3V2_OUT}/data_ready",
+            f"{_S3V2} --stages train --families gmix",
+        ]
+    ),
+    files=[MS_V10[1]],
+)
+for _k in range(5):
+    STEPS[f"ms-s3v2-flow-{_k}"] = dict(
+        run_id=f"distance_extinction_s3_v2_flow{_k}_20261123",
+        gpu=1,
+        ram=96,
+        cpu=8,
+        command=f"{_S3V2} --wait-for {S3V2_OUT}/data_ready --stages train"
+        f" --families flow --train-members {_k} --epochs 12",
+        files=[MS_V10[1]],
+    )
+STEPS["ms-s3v2-final"] = dict(
+    run_id="distance_extinction_s3_v2_final_20261123",
+    gpu=1,
+    ram=128,
+    cpu=8,
+    command=f"{_S3V2} --stages predict,noxp,report",
+    files=[MS_V10[1]],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(

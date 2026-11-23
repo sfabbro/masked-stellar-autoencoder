@@ -17,10 +17,19 @@ likelihood of the star's measurements::
 
 * parallax: ``plx - zp`` with the Lindegren+2021 zero point,
   ``sig_eff^2 = (kappa_g sig)^2 + sig_zp^2``; ``kappa_g`` is a fitted inflation
-  of the quoted error per G bin (``KAPPA_G_EDGES``), ``sig_zp`` a fixed
-  zero-point uncertainty (default 0);
-* E(B-V) label (errors in variables) where one exists; without one E is
+  of the quoted error per G bin (``KAPPA_G_EDGES``), ``sig_zp`` a zero-point
+  uncertainty, fixed (default 0) or fitted (``fit_zp``);
+* E(B-V) label (errors in variables) where one exists, with its quoted error
+  scaled by a fitted ``kappa_E`` per G bin and a fitted outlier fraction
+  ``eps`` of labels whose error is ``E_OUTLIER_SCALE`` times larger
+  (``fit_e_noise``: no label is truth, its noise is fitted too). The scale is
+  identified by the spread of the quoted errors (homoscedastic errors trade
+  off exactly against the predictive width); without a label E is
   marginalised exactly (the factor is 1).
+
+Latents without the XP spectrum (``xp_flag``): a member trained on a random
+mix of full and XP-hidden latents of the same stars takes a 0/1 flag as an
+extra input, so one head serves both (the "beyond XP" case).
 
 Distance and extinction are degenerate in photometry, so the head is joint and
 represents their correlation. Two families (``KINDS``), each run as a
@@ -105,6 +114,14 @@ E_ERROR_FLOOR, E_ERROR_CAP = 0.01, 0.5
 #: G bins of the fitted parallax-error inflation kappa_g (bin b: edges[b-1] < G <= edges[b]).
 KAPPA_G_EDGES = (13.0, 15.0, 17.0, 18.0, 19.0)
 KAPPA_MIN = 0.3
+#: Lower bound of the fitted E-label error scale kappa_E (quoted errors may be too large).
+KAPPA_E_MIN = 0.1
+#: Outlier labels of the E-label noise model: error x this factor (fraction fitted).
+E_OUTLIER_SCALE = 4.0
+#: Starting outlier fraction and its upper bound.
+E_OUTLIER_INIT, E_OUTLIER_MAX = 0.05, 0.5
+#: Starting value of a fitted parallax zero-point uncertainty sig_zp [mas].
+ZP_SIGMA_INIT = 0.005
 _LOG_2PI = math.log(2.0 * math.pi)
 _SQRT2 = math.sqrt(2.0)
 
@@ -225,7 +242,8 @@ class Member(nn.Module):
 
     def __init__(self, kind, in_dim, *, hidden=(256, 256), context=64, transforms=3,
                  flow_hidden=(128, 128), bins=16, s_bound=7.5, e_bound=8.0,
-                 components=4, e_loc=0.0, e_scale=1.0, fit_kappa=True):  # fmt: skip
+                 components=4, e_loc=0.0, e_scale=1.0, fit_kappa=True,
+                 fit_e_noise=False, fit_zp=False, xp_flag=False):  # fmt: skip
         super().__init__()
         from torchregress.losses import MixtureDensityLoss, NormalizingFlowLoss
         from torchregress.losses.nflows import create_flow_model
@@ -240,7 +258,10 @@ class Member(nn.Module):
                            flow_hidden=list(flow_hidden), bins=int(bins),
                            s_bound=float(s_bound), e_bound=float(e_bound),
                            components=int(components), e_loc=float(e_loc),
-                           e_scale=float(e_scale), fit_kappa=bool(fit_kappa))  # fmt: skip
+                           e_scale=float(e_scale), fit_kappa=bool(fit_kappa),
+                           fit_e_noise=bool(fit_e_noise), fit_zp=bool(fit_zp),
+                           xp_flag=bool(xp_flag))  # fmt: skip
+        self.xp_flag = bool(xp_flag)
         self.e_loc, self.e_scale = float(e_loc), float(e_scale)
         if kind == "flow":
             self.trunk = mlp(in_dim, hidden, context)
@@ -267,6 +288,16 @@ class Member(nn.Module):
             self.kappa_raw = nn.Parameter(raw)
         else:
             self.register_buffer("kappa_raw", raw)
+        # Optional fitted noise terms (absent from older heads' state dicts).
+        if fit_e_noise:
+            e0 = math.log(math.expm1(1.0 - KAPPA_E_MIN))  # kappa_E = 1 at start
+            self.kappa_e_raw = nn.Parameter(torch.full((len(KAPPA_G_EDGES) + 1,), e0))
+            q = E_OUTLIER_INIT / E_OUTLIER_MAX
+            self.e_out_raw = nn.Parameter(torch.tensor(math.log(q / (1.0 - q))))
+        if fit_zp:
+            self.zp_raw = nn.Parameter(
+                torch.tensor(math.log(math.expm1(ZP_SIGMA_INIT)))
+            )
 
     # ── parameters ──────────────────────────────────────────────────────
     def forward(self, x):
@@ -276,9 +307,41 @@ class Member(nn.Module):
     def kappa(self):
         return KAPPA_MIN + nn.functional.softplus(self.kappa_raw)
 
+    def kappa_e(self):
+        """Fitted E-label error scale per G bin (ones when not fitted)."""
+        if hasattr(self, "kappa_e_raw"):
+            return KAPPA_E_MIN + nn.functional.softplus(self.kappa_e_raw)
+        return torch.ones(len(KAPPA_G_EDGES) + 1, device=self.kappa_raw.device)
+
+    def e_outlier_frac(self):
+        """Fitted fraction of outlier E labels (0 when not fitted)."""
+        if hasattr(self, "e_out_raw"):
+            return E_OUTLIER_MAX * torch.sigmoid(self.e_out_raw)
+        return torch.zeros((), device=self.kappa_raw.device)
+
+    def zp_sigma(self, default=0.0):
+        """Parallax zero-point uncertainty [mas]: fitted, else ``default``."""
+        if hasattr(self, "zp_raw"):
+            return nn.functional.softplus(self.zp_raw)
+        return torch.tensor(float(default), device=self.kappa_raw.device)
+
     def sigma_eff(self, sig, gbin, zp_sigma=0.0):
         k = self.kappa()[gbin]
-        return torch.sqrt((k * sig).square() + float(zp_sigma) ** 2)
+        return torch.sqrt((k * sig).square() + self.zp_sigma(zp_sigma).square())
+
+    def e_sigma_eff(self, e_sig, gbin):
+        """Effective E-label error: quoted error x fitted kappa_E of the G bin."""
+        if hasattr(self, "kappa_e_raw"):
+            return self.kappa_e()[gbin] * e_sig
+        return e_sig
+
+    def inputs(self, x, flag=None):
+        """Head input: standardized latent, plus the XP-hidden flag column."""
+        if not self.xp_flag:
+            return x
+        if flag is None:
+            flag = torch.zeros(x.shape[0], device=x.device)
+        return torch.cat([x, flag.to(x.dtype).reshape(-1, 1)], 1)
 
     def _e(self, E):
         return (E - self.e_loc) / self.e_scale
@@ -493,14 +556,26 @@ def log_marginal_likelihood(member, p, ob, *, n_s=48, n_e=24, zp_sigma=0.0,
     has_plx = ob["has_plx"] & bool(use_plx)
     has_e = ob["has_e"] & bool(use_e)
     sig_eff = member.sigma_eff(ob["sig"], ob["gbin"], zp_sigma)
+    e_eff = member.e_sigma_eff(ob["e_sig"], ob["gbin"])
+    eps = member.e_outlier_frac()
+    # The window of the broader (outlier) label error contains both components.
+    has_out = bool(float(eps.detach()) > 0)
+    e_win = e_eff * (E_OUTLIER_SCALE if has_out else 1.0)
     with torch.no_grad():
-        lo_p, hi_p = member.s_window(p, ob["e_obs"], ob["e_sig"], has_e)
+        lo_p, hi_p = member.s_window(p, ob["e_obs"], e_win.detach(), has_e)
         lo_m, hi_m, inf = parallax_window(ob["plx"], sig_eff.detach(), has_plx)
         lo, hi, fb = combine_windows(lo_p, hi_p, lo_m, hi_m, inf, S_BOUNDS)
     s, logw = member.quadrature_nodes(p, lo, hi, n_s)
     ll = torch.where(has_plx, parallax_log_likelihood(s, ob["plx"], sig_eff),
                      torch.zeros_like(s))  # fmt: skip
-    lab = member.label_log_prob_s(p, s, ob["e_obs"], ob["e_sig"], has_e, n_e)
+    lab = member.label_log_prob_s(p, s, ob["e_obs"], e_eff, has_e, n_e)
+    if has_out and bool(has_e.any()):
+        # Label noise = (1 - eps) N(0, e^2) + eps N(0, (c e)^2): the label factor is
+        # linear in the noise density, so the two label terms mix in probability.
+        lab_out = member.label_log_prob_s(p, s, ob["e_obs"], E_OUTLIER_SCALE * e_eff,
+                                          has_e, n_e)  # fmt: skip
+        lab = torch.where(has_e, torch.logaddexp(torch.log1p(-eps) + lab,
+                                                 torch.log(eps) + lab_out), lab)  # fmt: skip
     out = torch.logsumexp(logw + ll + lab, 0)
     return (out, fb) if return_fallback else out
 
@@ -541,6 +616,7 @@ def parallax_pit(member, p, ob, *, n_s=96, zp_sigma=0.0):
 def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n_e=24,
                  zp_sigma=0.0, batch=2048, max_epochs=20, patience=3, lr=1e-3,
                  weight_decay=1e-4, seed=0, eval_batch=2048, micro_batch=None,
+                 z_alt_train=None, z_alt_stop=None, alt_prob=0.0, noise_lr_mult=10.0,
                  log=print):  # fmt: skip
     """Fit one member by maximum marginal likelihood; early stopping on the stop set.
 
@@ -548,25 +624,44 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
     ``obs_*``: ``observation_tensors`` dicts on the same device. The loss is
     the mean per-star -log p(observations | z) over rows with a parallax or
     an E label. Returns the history; ``member`` holds the best state.
+
+    ``z_alt_*`` (optional): XP-hidden latents of the same rows. Each training
+    row then uses its XP-hidden latent with probability ``alt_prob`` (drawn
+    per batch) and the member gets the 0/1 flag (``member.xp_flag``); the stop
+    set uses one fixed draw, so early stopping weighs both cases.
     """
     dev = z_train.device
     torch.manual_seed(seed)
     gen = torch.Generator().manual_seed(seed)
-    kap = [p for n, p in member.named_parameters() if n == "kappa_raw"]
-    rest = [p for n, p in member.named_parameters() if n != "kappa_raw"]
+    noise = ("kappa_raw", "kappa_e_raw", "e_out_raw", "zp_raw")
+    kap = [p for n, p in member.named_parameters() if n in noise]
+    rest = [p for n, p in member.named_parameters() if n not in noise]
+    mix = z_alt_train is not None and alt_prob > 0
+    if mix and not member.xp_flag:
+        raise ValueError("XP-hidden mixing needs a member built with xp_flag=True")
     groups = [dict(params=rest, lr=lr, weight_decay=weight_decay)]
-    if kap:
-        groups.append(dict(params=kap, lr=lr, weight_decay=0.0))
+    if kap:  # scalar nuisance parameters (noise scales): a larger step, no decay
+        groups.append(dict(params=kap, lr=lr * float(noise_lr_mult), weight_decay=0.0))
     opt = torch.optim.AdamW(groups)
     sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=1)
     use_tr = torch.nonzero(obs_train["has_plx"] | obs_train["has_e"]).reshape(-1).cpu()
     use_st = torch.nonzero(obs_stop["has_plx"] | obs_stop["has_e"]).reshape(-1).to(dev)
 
-    def rows_nll(z, ob):
-        p = member(std.latent(z))
+    def rows_nll(z, ob, flag=None):
+        p = member(member.inputs(std.latent(z), flag))
         return -log_marginal_likelihood(
             member, p, ob, n_s=n_s, n_e=n_e, zp_sigma=zp_sigma
         )
+
+    def batch_latents(z_main, z_alt, idx, flag):
+        if flag is None:
+            return z_main[idx]
+        return torch.where(flag.reshape(-1, 1), z_alt[idx], z_main[idx])
+
+    stop_flag = None
+    if mix:
+        g_stop = torch.Generator().manual_seed(seed + 7919)
+        stop_flag = (torch.rand(len(z_stop), generator=g_stop) < alt_prob).to(dev)
 
     def stop_loss():
         member.eval()
@@ -574,7 +669,9 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         with torch.no_grad():
             for i in range(0, len(use_st), eval_batch):
                 idx = use_st[i : i + eval_batch]
-                nll = rows_nll(z_stop[idx], subset(obs_stop, idx))
+                fl = None if stop_flag is None else stop_flag[idx]
+                nll = rows_nll(batch_latents(z_stop, z_alt_stop, idx, fl),
+                               subset(obs_stop, idx), fl)  # fmt: skip
                 ok = torch.isfinite(nll)
                 tot += float(nll[ok].sum())
                 cnt += int(ok.sum())
@@ -586,7 +683,8 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         return tot / cnt if cnt else math.inf  # no finite row: never a "best" epoch
 
     best, best_state, bad = math.inf, None, 0
-    hist = dict(train=[], valid=[], lr=[], skipped=[], seconds=[], kappa=[])
+    hist = dict(train=[], valid=[], lr=[], skipped=[], seconds=[], kappa=[], kappa_e=[],
+                e_outlier=[], zp_sigma=[])  # fmt: skip
     t_start = time.time()
     member.train()
     for epoch in range(max_epochs):
@@ -603,7 +701,11 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
             loss_val, finite = 0.0, True
             for j in range(0, len(idx), micro):
                 sub = idx[j : j + micro]
-                part = rows_nll(z_train[sub], subset(obs_train, sub)).sum() / len(idx)
+                fl = None
+                if mix:
+                    fl = (torch.rand(len(sub), generator=gen) < alt_prob).to(dev)
+                zb = batch_latents(z_train, z_alt_train, sub, fl)
+                part = rows_nll(zb, subset(obs_train, sub), fl).sum() / len(idx)
                 if not torch.isfinite(part):
                     finite = False
                     break
@@ -642,6 +744,9 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         hist["skipped"].append(skipped)
         hist["seconds"].append(time.time() - t0)
         hist["kappa"].append(member.kappa().detach().cpu().tolist())
+        hist["kappa_e"].append(member.kappa_e().detach().cpu().tolist())
+        hist["e_outlier"].append(float(member.e_outlier_frac().detach()))
+        hist["zp_sigma"].append(float(member.zp_sigma(zp_sigma).detach()))
         log(f"  epoch {epoch}: train {hist['train'][-1]:.4f} stop {v:.4f} "
             f"({time.time() - t0:.0f} s{', skipped ' + str(skipped) if skipped else ''})")  # fmt: skip
         if v < best - 1e-4:
@@ -657,6 +762,10 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
     hist.update(best_valid=best, epochs=len(hist["valid"]), n_train=int(len(use_tr)),
                 n_valid=int(len(use_st)), batch_size=int(batch), seed=int(seed),
                 n_s=int(n_s), n_e=int(n_e), kappa_final=member.kappa().detach().cpu().tolist(),
+                kappa_e_final=member.kappa_e().detach().cpu().tolist(),
+                e_outlier_final=float(member.e_outlier_frac().detach()),
+                zp_sigma_final=float(member.zp_sigma(zp_sigma).detach()),
+                alt_prob=float(alt_prob if mix else 0.0),
                 train_seconds=time.time() - t_start)  # fmt: skip
     return hist
 
@@ -749,9 +858,31 @@ class EnsembleDE:
         self.members, self.std = list(members), std
         self.kind = kinds.pop()
         self.zp_sigma = float(zp_sigma)
+        #: XP-hidden flag fed to members trained with it (0: full latents).
+        self.flag_value = 0.0
+
+    @property
+    def xp_flag(self):
+        return any(m.xp_flag for m in self.members)
 
     def kappas(self):
         return np.array([m.kappa().detach().cpu().numpy() for m in self.members])
+
+    def kappa_es(self):
+        return np.array([m.kappa_e().detach().cpu().numpy() for m in self.members])
+
+    def e_outliers(self):
+        return np.array([float(m.e_outlier_frac()) for m in self.members])
+
+    def zp_sigmas(self):
+        return np.array([float(m.zp_sigma(self.zp_sigma)) for m in self.members])
+
+    def _x(self, z, device):
+        x = self.std.latent(z, device)
+        if not self.xp_flag:
+            return x
+        flag = torch.full((x.shape[0],), float(self.flag_value), device=x.device)
+        return self.members[0].inputs(x, flag)
 
     def _ens(self, per_member):
         return torch.logsumexp(torch.stack(per_member), 0) - math.log(len(per_member))
@@ -817,7 +948,7 @@ class EnsembleDE:
         E marginals and the (s, E) correlation on ``n_joint`` x ``n_e`` grids;
         scores with the training quadrature (``n_s_lik``, ``n_e_lik``).
         """
-        x = self.std.latent(z, device)
+        x = self._x(z, device)
         ps = [m(x) for m in self.members]
         has_plx, has_e = ob["has_plx"], ob["has_e"]
         B = x.shape[0]
@@ -866,13 +997,22 @@ class EnsembleDE:
         res["pit_plx"] = torch.stack(pits).mean(0)
         res["window_fallback"] = torch.stack(fbs).any(0) & has_plx
         # PIT of the E label: int F_E(E) N(E | E_obs, e^2) dE (+ upper tail).
-        eo, es = ob["e_obs"], ob["e_sig"]
-        lab, _ = uniform_nodes(eo - K_MEAS * es, eo + K_MEAS * es, n_e)
-        ee = torch.sort(torch.cat([E, lab], 0), 0).values
-        fe = interp_cdf(E, cdf_e, ee)
-        w = sorted_trapezoid_log_weights(ee)
-        pit_e = (torch.exp(w + _normal_logpdf(ee, eo, es)) * fe).sum(0)
-        pit_e = pit_e + (1.0 - _ndtr((ee[-1] - eo) / es))
+        eo = ob["e_obs"]
+        # Label noise of the members (ensemble means): core error and outlier mix.
+        es = torch.stack(
+            [m.e_sigma_eff(ob["e_sig"], ob["gbin"]) for m in self.members]
+        ).mean(0)
+        eps = float(np.mean(self.e_outliers()))
+        pit_e = torch.zeros_like(eo)
+        for wgt, sd in ((1.0 - eps, es), (eps, E_OUTLIER_SCALE * es)):
+            if wgt <= 0:
+                continue
+            lab, _ = uniform_nodes(eo - K_MEAS * sd, eo + K_MEAS * sd, n_e)
+            ee = torch.sort(torch.cat([E, lab], 0), 0).values
+            fe = interp_cdf(E, cdf_e, ee)
+            w = sorted_trapezoid_log_weights(ee)
+            part = (torch.exp(w + _normal_logpdf(ee, eo, sd)) * fe).sum(0)
+            pit_e = pit_e + wgt * (part + (1.0 - _ndtr((ee[-1] - eo) / sd)))
         res["pit_e"] = torch.where(has_e, pit_e.clamp(0, 1), nan)
         # Spectrophotometric + Gaia parallax: predictive x measurement.
         sigs = [m.sigma_eff(ob["sig"], ob["gbin"], self.zp_sigma) for m in self.members]
@@ -897,7 +1037,7 @@ class EnsembleDE:
     @torch.no_grad()
     def grids(self, z, ob, *, n_s=96, n_e=64, device="cpu"):
         """Ensemble predictive and parallax-combined joint grids (examples)."""
-        x = self.std.latent(z, device)
+        x = self._x(z, device)
         ps = [m(x) for m in self.members]
         wins = [m.s_window(p) for m, p in zip(self.members, ps, strict=True)]
         lo = torch.stack([w[0] for w in wins]).amin(0)
@@ -922,7 +1062,7 @@ class EnsembleDE:
 def quadrature_check(ens, z, ob, *, n_s=48, n_e=24, factor=4, device="cpu"):
     """|log L(n nodes) - log L(factor x n nodes)| per row and member (max over
     members) for the training objective: the discretisation error on real rows."""
-    x = ens.std.latent(z, device)
+    x = ens._x(z, device)
     out = torch.zeros(x.shape[0], device=x.device)
     for m in ens.members:
         p = m(x)

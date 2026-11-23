@@ -427,3 +427,112 @@ def test_non_finite_gradients_are_skipped_and_parameters_stay_finite():
     for q, q0 in zip(member.parameters(), before):
         torch.testing.assert_close(q.detach(), q0)
     assert math.isfinite(hist["best_valid"])
+
+
+# ── S3 v2: fitted label noise, zero-point floor, XP-hidden mixing ───────────
+
+
+def test_fitted_noise_recovers_overstated_e_errors_and_a_parallax_floor():
+    """No label is truth: quoted E errors twice the real ones (spread over a
+    decade, as on real data: that spread identifies the scale) plus 5 %
+    outliers are recovered by the fitted kappa_E and outlier fraction, and an
+    unmodelled parallax noise floor by the fitted sig_zp; the held-out E labels
+    and parallaxes are then calibrated."""
+    rng = np.random.default_rng(5)
+    n = 10_000
+    st = _stars(n, rng)
+    floor = 0.05
+    st["e_ebv"] = np.exp(rng.uniform(np.log(0.02), np.log(0.2), n))  # quoted
+    real = 0.5 * st["e_ebv"] * np.where(rng.random(n) < 0.05, de.E_OUTLIER_SCALE, 1.0)
+    st["ebv"] = st["E"] + real * rng.normal(size=n)
+    st["plx"] = np.exp(-st["s"]) + np.sqrt(st["sig"] ** 2 + floor**2) * rng.normal(
+        size=n
+    )
+    tr, sp, te = np.arange(0, 7000), np.arange(7000, 8000), np.arange(8000, n)
+    torch.manual_seed(5)
+    m = _member("gmix", st["z"].shape[1], fit_e_noise=True, fit_zp=True,
+                e_loc=float(st["ebv"].mean()), e_scale=float(st["ebv"].std()))  # fmt: skip
+    std, hist = _fit(m, st, tr, sp, with_e=True, epochs=10, batch=256)
+    ke = m.kappa_e().detach().numpy()
+    occupied = np.bincount(de.kappa_bin(st["G"][tr]), minlength=len(ke)) > 500
+    assert np.all(np.abs(ke[occupied] - 0.5) < 0.15), ke
+    # The floor is weakly identified (bright parallaxes are far tighter than the
+    # predictive): it must move from its 0.005 mas start towards the truth.
+    zp = float(m.zp_sigma().detach())
+    assert 0.01 < zp < floor + 0.02, zp
+    assert 0.02 < float(m.e_outlier_frac().detach()) < 0.1
+    assert hist["kappa_e_final"] == pytest.approx(ke.tolist())
+    ens = de.EnsembleDE([m.requires_grad_(False)], std)
+    z = torch.as_tensor(st["z"][te], dtype=torch.float32)
+    r = ens.predict(z, _obs(st, te), n_joint=32, n_e=32, n_s_lik=32)
+    assert abs(np.mean(np.abs(r["pit_e"] - 0.5) <= 0.34) - 0.68) < 0.05
+    assert abs(np.mean(np.abs(r["pit_plx"] - 0.5) <= 0.34) - 0.68) < 0.04
+    # Old heads (no fitted noise terms) still load and give unit scales.
+    old = _member("gmix", st["z"].shape[1])
+    assert torch.allclose(old.kappa_e(), torch.ones(len(de.KAPPA_G_EDGES) + 1))
+    assert float(old.zp_sigma(0.01)) == pytest.approx(0.01)
+
+
+def test_xp_hidden_mixing_gives_one_head_calibrated_with_and_without_xp():
+    """Trained on a random mix of full and information-poor ("XP hidden")
+    latents with a 0/1 flag, one head is sharp on full latents and wider but
+    still calibrated on the XP-hidden ones."""
+    rng = np.random.default_rng(6)
+    n = 12_000
+    st = _stars(n, rng, d_noise=2)
+    zx = st["z"].copy()
+    zx[:, 1] = zx[:, 1] + rng.normal(0, 1.0, n)  # absolute magnitude much noisier
+    zx[:, 2] = zx[:, 2] + rng.normal(0, 0.15, n)
+    tr, sp, te = np.arange(0, 9000), np.arange(9000, 10_000), np.arange(10_000, n)
+    torch.manual_seed(6)
+    d = st["z"].shape[1]
+    m = _member("gmix", d + 1, xp_flag=True, e_loc=float(st["ebv"].mean()),
+                e_scale=float(st["ebv"].std()))  # fmt: skip
+    std = _std(st["z"][tr])
+    f32 = lambda a: torch.as_tensor(a, dtype=torch.float32)  # noqa: E731
+    hist = de.train_member(m, std, f32(st["z"][tr]), _obs(st, tr), f32(st["z"][sp]),
+                           _obs(st, sp), n_s=32, batch=256, max_epochs=10, patience=3,
+                           z_alt_train=f32(zx[tr]), z_alt_stop=f32(zx[sp]), alt_prob=0.5,
+                           log=lambda *_: None)  # fmt: skip
+    assert hist["alt_prob"] == 0.5
+    ens = de.EnsembleDE([m.requires_grad_(False)], std)
+    out = {}
+    for name, lat, flag in (("full", st["z"], 0.0), ("noxp", zx, 1.0)):
+        ens.flag_value = flag
+        r = ens.predict(f32(lat[te]), _obs(st, te), n_joint=32, n_e=32, n_s_lik=32)
+        out[name] = r
+        cov = np.mean(np.abs(r["pit_plx"] - 0.5) <= 0.34)
+        assert abs(cov - 0.68) < 0.05, (name, cov)
+    hw = {k: np.median(0.5 * (r["s_q"][:, 2] - r["s_q"][:, 0])) for k, r in out.items()}
+    assert hw["noxp"] > 1.5 * hw["full"], hw
+    with pytest.raises(ValueError, match="xp_flag"):
+        de.train_member(_member("gmix", d), std, f32(st["z"][tr[:300]]), _obs(st, tr[:300]),
+                        f32(st["z"][sp[:100]]), _obs(st, sp[:100]), max_epochs=1,
+                        z_alt_train=f32(zx[tr[:300]]), alt_prob=0.5, log=lambda *_: None)  # fmt: skip
+
+
+def test_s3_script_v2_options_end_to_end(tmp_path, monkeypatch):
+    """--e-noise fit, --fit-zp-sigma, --xp-mix and --train-members (parallel sessions)."""
+    inp = _write_stand_in(tmp_path)
+    mod = _load_script()
+    out = tmp_path / "out"
+    v2 = ("--families", "gmix", "--e-noise", "fit", "--fit-zp-sigma", "--xp-mix", "0.5")
+    for members in ("0", "1"):  # two "sessions", one member each
+        monkeypatch.setattr(sys, "argv", _args(
+            tmp_path, inp, out, "--stages", "data,clusters,train", "--train-members", members,
+            *v2))  # fmt: skip
+        mod.main()
+    assert {p.name for p in (out / "heads").glob("gmix_*.pt")} == {
+        "gmix_0.pt",
+        "gmix_1.pt",
+    }
+    monkeypatch.setattr(sys, "argv", _args(
+        tmp_path, inp, out, "--stages", "predict,noxp,report", "--wait-for", str(out / "selection.npz"), *v2))  # fmt: skip
+    mod.main()
+    m = json.loads((out / "metrics.json").read_text())
+    assert len(m["kappa_e"]["gmix"]) == 2 and len(m["zp_sigma"]["gmix"]) == 2
+    assert set(m["scores"]) == {"gmix", "gmix_noxp"}
+    report = (out / "report.md").read_text()
+    assert "## Fitted E-label error scale kappa_E" in report
+    assert "## Fitted parallax zero-point uncertainty" in report
+    assert "XP-hidden latents with probability 0.5" in report
