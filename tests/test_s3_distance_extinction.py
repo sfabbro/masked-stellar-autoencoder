@@ -405,3 +405,25 @@ def test_micro_batch_accumulation_matches_the_full_batch_step():
                         micro_batch=micro, log=lambda *_: None)  # fmt: skip
         params.append(torch.cat([p.detach().reshape(-1) for p in member.parameters()]))
     torch.testing.assert_close(params[0], params[1], rtol=1e-4, atol=1e-5)
+
+
+def test_non_finite_gradients_are_skipped_and_parameters_stay_finite():
+    """A step with a non-finite gradient is skipped instead of poisoning the model."""
+    rng = np.random.default_rng(6)
+    st = _stars(400, rng)
+    z = torch.as_tensor(st["z"], dtype=torch.float32)
+    std = _std(st["z"])
+    tr, sr = np.arange(300), np.arange(300, 400)
+    torch.manual_seed(0)
+    member = _member("gmix", z.shape[1])
+    before = [q.detach().clone() for q in member.parameters()]
+    first = next(q for q in member.parameters() if q.requires_grad)
+    first.register_hook(lambda g: g * float("nan"))
+    hist = de.train_member(member, std, z[tr], _obs(st, tr), z[sr], _obs(st, sr), n_s=8,
+                           n_e=4, batch=100, max_epochs=1, patience=3, lr=3e-3,
+                           log=lambda *_: None)  # fmt: skip
+    assert hist["skipped"] == [3]
+    assert all(torch.isfinite(q).all() for q in member.parameters())
+    for q, q0 in zip(member.parameters(), before):
+        torch.testing.assert_close(q.detach(), q0)
+    assert math.isfinite(hist["best_valid"])

@@ -583,7 +583,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
             # The stop-set pass allocates (rows x quadrature nodes) blocks unlike the
             # training batches; release them so training does not hit fragmentation.
             torch.cuda.empty_cache()
-        return tot / max(cnt, 1)
+        return tot / cnt if cnt else math.inf  # no finite row: never a "best" epoch
 
     best, best_state, bad = math.inf, None, 0
     hist = dict(train=[], valid=[], lr=[], skipped=[], seconds=[], kappa=[])
@@ -613,11 +613,28 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
                 opt.zero_grad(set_to_none=True)
                 skipped += 1
                 continue
-            nn.utils.clip_grad_norm_(member.parameters(), 5.0)
+            # A finite loss can still give a non-finite gradient; stepping on it
+            # would make every parameter NaN and every later batch non-finite.
+            gnorm = nn.utils.clip_grad_norm_(member.parameters(), 5.0)
+            if not torch.isfinite(gnorm):
+                opt.zero_grad(set_to_none=True)
+                skipped += 1
+                continue
             opt.step()
             tot += loss_val * len(idx)
             cnt += len(idx)
         v = stop_loss()
+        diverged = cnt == 0 or not math.isfinite(v) or not all(
+            bool(torch.isfinite(q).all()) for q in member.parameters())  # fmt: skip
+        if diverged and best_state is not None:
+            # Roll back to the best state with a halved step and a fresh optimiser
+            # state (Adam moments may hold the blow-up) instead of idling to patience.
+            member.load_state_dict(best_state)
+            opt.state.clear()
+            for g in opt.param_groups:
+                g["lr"] *= 0.5
+            log(f"  epoch {epoch}: diverged; restored the best state, lr -> "
+                f"{opt.param_groups[0]['lr']:.2e}")  # fmt: skip
         sched.step(v)
         hist["train"].append(tot / max(cnt, 1))
         hist["valid"].append(v)
