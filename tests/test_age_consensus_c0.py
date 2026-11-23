@@ -746,6 +746,42 @@ def test_run_with_bridge_labels_end_to_end(tmp_path):
     assert (ctab.young_benchmark == "Pleiades").sum() == 1
     stars = pd.read_parquet(work / "consensus_stars.parquet")
     assert (stars.source_id > 0).all() and "t_C_fromA" in stars
+    # C0c staged fit: rotation periods (TARS layout) for every star; the age
+    # maps, noise and shared errors stay those of the run above
+    import shutil
+
+    lab2 = tmp_path / "labels2"
+    shutil.copytree(lab, lab2)
+    ids_r = np.arange(n)
+    lnp = (
+        1.0
+        + 0.9 * 0.2 * np.log1p(np.exp((t[ids_r] + 0.9) / 0.2))
+        + rng.normal(0, 0.05, n)
+    )
+    pd.DataFrame({"source_id": 1000 + ids_r, "kind": "ln_prot_days", "value": lnp, "err_lo": 0.02,
+                  "limit": 0, "teff": 5250.0, "ruwe": 1.0, "non_single_star": 0,
+                  "phot_g_mean_mag_0": 6.0, "BpmRp0": 1.0, "flag_possible_binary": False}).to_parquet(
+        lab2 / "rot_tars26.parquet")  # fmt: skip
+    work2, docs2 = tmp_path / "work2", tmp_path / "docs2"
+    c0.main(["run", "--records", str(rec_path), "--targets", str(tgt_path), "--work", str(work2),
+             "--docs", str(docs2), "--labels", str(lab2), "--clusters", str(clusters),
+             "--freeze-from", str(work), "--n-outer", "20", "--threads", "2"])  # fmt: skip
+    m1 = pd.read_csv(docs / "maps_A.csv").set_index("key")
+    m2 = pd.read_csv(docs2 / "maps_A.csv").set_index("key")
+    assert np.allclose(m1.b.dropna(), m2.b.reindex(m1.b.dropna().index), atol=1e-12)
+    mono = pd.read_csv(docs2 / "mono_maps_A.csv").set_index(["key", "t"]).f
+    k = "rot:t5000-5500"
+    want = {
+        0.2: 1.0 + 0.9 * 0.2 * np.log1p(np.exp(1.1 / 0.2)),
+        0.8: 1.0 + 0.9 * 0.2 * np.log1p(np.exp(1.7 / 0.2)),
+    }
+    for tt, v in want.items():
+        assert abs(mono[(k, tt)] - v) < 0.1, (tt, mono[(k, tt)], v)
+    summ2 = json.loads((docs2 / "summary.json").read_text())
+    assert (
+        "staged_fit" in summ2
+        and summ2["staged_fit"]["eta_A"] == summ["gauge_check"]["eta_A"]
+    )
 
 
 def test_maps_flatten_below_their_data_range():

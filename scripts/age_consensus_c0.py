@@ -59,6 +59,7 @@ from masked_stellar_autoencoder.training.age_consensus import (
     OFFSET,
     T0,
     AgeMaps,
+    FrozenAgeMaps,
     Groups,
     MapSet,
     MonotoneMaps,
@@ -924,6 +925,72 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
             "seconds": sec}  # fmt: skip
 
 
+def fit_frozen(data, cfg, frozen_pkl: Path, log=print, **kw):
+    """Staged fit (C0c): the age maps, their noise and the shared errors are
+    those of an earlier fit (``frozen_pkl``, fitted on age data alone) and stay
+    fixed; only the non-age (monotone) maps and their noise are fitted, against
+    that consensus, with the latents and group ages profiled as usual. Flexible
+    non-age maps fed by many cluster members otherwise trade their slopes
+    against the clusters' shared catalogue error (eta_cluster_cmd ran to 1 dex
+    in a joint fit): they must not redefine the age scale they are learned on.
+    Returns (problem with the staged maps and records, fit output)."""
+    saved = pickle.load(open(frozen_pkl, "rb"))
+    res0, units0 = saved["res"], list(saved["units"])
+    prob = build_problem(data, cfg, log=log)
+    fam0 = res0.maps.families[0]
+    new_maps = prob["maps"]
+    age_names = new_maps.families[0].names
+    mono = new_maps.families[1:]
+    rec, df = prob["rec"], prob["fit_df"]
+    fam_of = new_maps.family_of(rec.map_id)
+    is_age = fam_of == 0
+    idx0 = {k: i for i, k in enumerate(fam0.names)}
+    key = np.array(age_names, dtype=object)[np.where(is_age, rec.map_id, 0)]
+    keep = ~is_age | np.array([k in idx0 for k in key])
+    if (~keep).any():
+        log(f"[{cfg.name}] staged fit: dropping {(~keep).sum()} records of age maps the frozen "
+            f"fit lacks: {sorted(set(key[~keep]))}")  # fmt: skip
+    mid = np.where(is_age, [idx0.get(k, -1) for k in key],
+                   rec.map_id - len(age_names) + len(fam0.names))  # fmt: skip
+    rec = replace(rec.subset(keep), map_id=mid[keep].astype("i8"))
+    df = df[keep].reset_index(drop=True)
+    g = prob["groups"]
+    nrec = np.bincount(rec.star, minlength=len(prob["star_ids"]))
+    gid = g.gid
+    grec = np.bincount(gid[(gid >= 0) & (nrec > 0)], minlength=max(len(g.spread), 1))
+    in_fit = (nrec >= 2) | ((gid >= 0) & (grec[np.maximum(gid, 0)] >= 2))
+    maps = MapSet([FrozenAgeMaps(fam0, res0.coefs[0]), *mono])
+    prob = {**prob, "maps": maps, "rec": rec, "fit_df": df, "in_fit": in_fit}
+    units = prob["units"]
+    fixed = np.array([u in units0 for u in units])
+    lk0 = np.zeros(len(units))
+    lw0 = np.full(len(units), np.log(0.25))
+    for i, u in enumerate(units):
+        if u in units0:
+            j = units0.index(u)
+            lk0[i], lw0[i] = res0.log_kappa[j], res0.log_omega[j]
+    fit_stars = np.flatnonzero(in_fit)
+    remap = np.full(len(in_fit), -1, "i8")
+    remap[fit_stars] = np.arange(len(fit_stars))
+    r = rec.subset(in_fit[rec.star])
+    r = replace(r, star=remap[r.star], n_star=len(fit_stars))
+    gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
+                  None if g.fixed is None else g.fixed[fit_stars])  # fmt: skip
+    t0 = time.time()
+    res = fit_consensus(r, gsub, maps, len(units), len(EFFECT_FAMILIES), n_sub=len(SUB_FAMILIES),
+                        coefs0=[fam0.init() if False else res0.coefs[0], *[f.init() for f in mono]],
+                        lk0=lk0, lw0=lw0, le0=res0.log_eta, fix_noise=fixed,
+                        fix_eta=np.ones(len(res0.log_eta), bool), log=log, **kw)  # fmt: skip
+    rho = np.zeros(len(in_fit))
+    rho[fit_stars] = res.rho
+    sec = time.time() - t0
+    log(f"[{cfg.name}] staged: {r.n_star} stars, {len(r.y)} records, {len(res.history)} outer "
+        f"iterations (last max|dtheta| {res.history[-1]['dtheta']:.1e}), {sec:.0f} s; age maps, "
+        f"noise and eta frozen from {frozen_pkl}")  # fmt: skip
+    return prob, {"res": res, "rho": rho, "n_fit_stars": int(r.n_star), "n_fit_rec": int(len(r.y)),
+                  "seconds": sec}  # fmt: skip
+
+
 def warm_from(prob, out):
     res = out["res"]
     fams = prob["maps"].families
@@ -948,11 +1015,12 @@ def map_table_from_res(res) -> pd.DataFrame:
     responsibilities; a non-positive variance (non-smooth or flat direction,
     e.g. clamped polynomial terms) is reported as NaN, not as zero."""
     fam = res.maps.families[0]
-    mask = fam.mask()
+    free = fam.mask()
+    mask = fam.display_mask() if hasattr(fam, "display_mask") else free
     se = np.full(mask.shape, np.nan)
-    if res.theta_cov is not None:
-        d = np.diag(res.theta_cov)
-        se[mask] = np.where(d > 0, np.sqrt(np.abs(d)), np.nan)
+    if res.theta_cov is not None and free.any():
+        d = np.diag(res.theta_cov)[: res.maps.sizes[0]]  # the age family's block
+        se[free] = np.where(d > 0, np.sqrt(np.abs(d)), np.nan)
     rows = []
     for i, k in enumerate(fam.names):
         row = {
@@ -1513,6 +1581,7 @@ def run(args) -> None:
 
     cfgA, cfgC = Config("A_apokasc3"), Config("C_xiang24", anchor="xiang24")
     results, sols = {}, {}
+    frozen = args.freeze_from is not None
     for tag, cfg in (("A", cfgA), ("C", cfgC)):
         if args.resume and (work / f"fit_{tag}.pkl").exists():
             saved = pickle.load(open(work / f"fit_{tag}.pkl", "rb"))
@@ -1522,11 +1591,20 @@ def run(args) -> None:
             results[tag], sols[tag] = (prob, out), saved["sol"]
             record_fit(tag, prob, out)
             continue
-        prob, out = do(cfg)
+        if frozen:
+            prob, out = fit_frozen(data, cfg, Path(args.freeze_from) / f"fit_{tag}.pkl", log=log,
+                                   **kw)  # fmt: skip
+        else:
+            prob, out = do(cfg)
         results[tag], sols[tag] = (prob, out), solve_all(prob, out)
         save(tag, prob, out, sols[tag])
     probA, outA = results["A"]
     probC, outC = results["C"]
+    if frozen:
+        _run_frozen_rest(args, data, results, sols, summary, docs, log)
+        _run_common_tail(args, data, results, sols, summary, work, docs, log, t_start,
+                         bridge=bridge_rows("A_main", probA, outA), bench_rows=[])  # fmt: skip
+        return
     # ---- gauge C started from the transformed gauge-A solution ----------------
     warm, start, lost = reparam_warm(probA, outA, probC)
     outCA = fit_problem(probC, warm=warm, covariance=False, log=log, **kw, **start)
@@ -1613,9 +1691,69 @@ def run(args) -> None:
         pd.DataFrame(bridge).to_csv(docs / "bridge_variants.csv", index=False)
     pd.DataFrame(bench_rows).to_csv(docs / "benchmark_maps.csv", index=False)
     pd.DataFrame(bridge).to_csv(docs / "bridge_variants.csv", index=False)
+    _run_common_tail(args, data, results, sols, summary, work, docs, log, t_start,
+                     bridge=bridge, bench_rows=bench_rows, do=do)  # fmt: skip
+
+
+def _run_frozen_rest(args, data, results, sols, summary, docs, log):
+    """Staged fit (C0c): arbitration offsets of the benchmark and WD sources
+    against the latents re-solved without the benchmark records (the age maps
+    are the frozen ones, so this measures what the non-age records change)."""
+    arb_rows, bench_rows = [], []
+    fitdf = data["fit"]
+    for g in ("A", "C"):
+        prob, out = results[g]
+        nb = ~prob["fit_df"].source.isin(BENCH_SOURCES).to_numpy()
+        sol = solve_stars(prob["rec"].subset(nb), prob["groups"], out["res"], len(prob["units"]),
+                          len(EFFECT_FAMILIES), rho=out["rho"])  # fmt: skip
+        sol["star_ids"] = prob["star_ids"]
+        sols[f"ARB_{g}"] = sol
+        for src in (*BENCH_SOURCES, *WD_SOURCES):
+            rr = fitdf[fitdf.source == src]
+            arb_rows.append({"gauge": g, "variant": f"ARB_{g}",
+                             **offset_vs_consensus(src, rr, prob["star_ids"], sol)})  # fmt: skip
+        for src in WD_SOURCES:
+            rr = fitdf[fitdf.source == src]
+            arb_rows.append({"gauge": g, "variant": f"main_{g}",
+                             **offset_vs_consensus(src, rr, prob["star_ids"], sols[g])})  # fmt: skip
+        bench_rows += [
+            {"gauge": g, **r} for r in bench_map_rows(f"main_{g}", prob, out)
+        ]
+    pd.DataFrame(arb_rows).to_csv(docs / "arbitration_offsets.csv", index=False)
+    pd.DataFrame(bench_rows).to_csv(docs / "benchmark_maps.csv", index=False)
+    summary["staged_fit"] = {
+        "frozen_from": str(args.freeze_from),
+        "eta_A": np.exp(results["A"][1]["res"].log_eta).tolist(),
+        "eta_C": np.exp(results["C"][1]["res"].log_eta).tolist(),
+        "xiang_offset_in_A": float(results["A"][1]["res"].coef_of("xiang24")[0]),
+    }  # fmt: skip
+    log(f"staged fit: arbitration offsets written; {summary['staged_fit']}")
+
+
+def _run_common_tail(
+    args,
+    data,
+    results,
+    sols,
+    summary,
+    work,
+    docs,
+    log,
+    t_start,
+    bridge,
+    bench_rows,
+    do=None,
+):
+    """Per-star consensus, co-natal tables, residuals, validation and (with
+    ``do``) the leave-one-catalogue-out folds; writes summary.json."""
+    probA, outA = results["A"]
+    probC, outC = results["C"]
+    fit_all = data["fit"]
     # ---- per-star consensus (both gauges; cluster nodes are not stars) ---------
     stars = pd.DataFrame({"source_id": data["all_ids"]})
-    for tag, ptag in (("A", "A"), ("C", "C"), ("C_fromA", "C")):
+    for tag, ptag in [
+        t for t in (("A", "A"), ("C", "C"), ("C_fromA", "C")) if t[0] in sols
+    ]:
         prob = results[ptag][0]
         sol = sols[tag]
         sid = stars.source_id.to_numpy()
@@ -1666,10 +1804,15 @@ def run(args) -> None:
     summary["frac_consensus_A_above_13p8"] = float(
         np.mean(stars.t_A[np.isfinite(stars.t_A)] > np.log10(13.8))
     )
-    ok = np.isfinite(stars.t_A) & np.isfinite(stars.t_C_fromA) & np.isfinite(stars.t_C)
-    summary["C_minus_C_fromA_median_abs"] = float(
-        np.median(np.abs(stars.t_C - stars.t_C_fromA)[ok])
-    )
+    if "t_C_fromA" in stars:
+        ok = (
+            np.isfinite(stars.t_A)
+            & np.isfinite(stars.t_C_fromA)
+            & np.isfinite(stars.t_C)
+        )
+        summary["C_minus_C_fromA_median_abs"] = float(
+            np.median(np.abs(stars.t_C - stars.t_C_fromA)[ok])
+        )
     del stars
     # ---- clusters, members and wide pairs --------------------------------------
     raw = pd.read_parquet(args.records, columns=["source", "source_id", "lage", "good"])
@@ -1729,7 +1872,7 @@ def run(args) -> None:
     loo = []
     warmA = warm_from(probA, outA)
     tiersA = probA["tiers"].set_index("key").tier
-    for fname, srcs in ({} if args.quick else LOO_FAMILIES).items():
+    for fname, srcs in ({} if (args.quick or do is None) else LOO_FAMILIES).items():
         prob, out = do(
             Config(f"LOO_{fname}", drop=tuple(srcs)), warm=warmA, covariance=False
         )
@@ -2208,7 +2351,7 @@ def export_model(work: Path, docs: Path) -> None:
         res = fit["res"]
         map_table_from_res(res).to_csv(docs / f"maps_{tag}.csv", index=False)
         fam = res.maps.families[0]
-        mask = fam.mask()
+        mask = fam.display_mask() if hasattr(fam, "display_mask") else fam.mask()
         maps = {}
         for i, k in enumerate(fam.names):
             maps[k] = {"tier": ["identity", "offset", "linear", "flex"][int(fam.tier[i])],
@@ -2295,6 +2438,9 @@ def main(argv=None) -> None:
     ap.add_argument("--n-outer", type=int, default=30)
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--quick", action="store_true", help="main solutions only")
+    ap.add_argument("--freeze-from", default=None,
+                    help="staged fit: age maps, noise and shared errors from this earlier WORK "
+                         "directory's fit_{A,C}.pkl; only non-age maps are fitted")  # fmt: skip
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument(
         "--resume", action="store_true", help="reuse saved main fits and variant tables"

@@ -302,6 +302,25 @@ class AgeMaps(MapFamily):
         return 1e3 * (short**2).sum()
 
 
+class FrozenAgeMaps(AgeMaps):
+    """``AgeMaps`` with fixed coefficients (no free coefficient): the age maps
+    of an earlier fit, held fixed while new map families are fitted against
+    that consensus (a staged fit). ``display_mask`` is the base fit's mask."""
+
+    def __init__(self, base: AgeMaps, coef):
+        self.__dict__.update(base.__dict__)
+        self.coef = np.asarray(coef, float).copy()
+
+    def mask(self) -> np.ndarray:
+        return np.zeros((len(self.names), self.n_coef()), bool)
+
+    def display_mask(self) -> np.ndarray:
+        return AgeMaps.mask(self)
+
+    def init(self) -> np.ndarray:
+        return self.coef.copy()
+
+
 class MonotoneMaps(MapFamily):
     """Monotone maps of a non-age observable (e.g. ln P_rot, A(Li), [C/N]):
 
@@ -930,6 +949,7 @@ def fit_consensus(
     rho0: np.ndarray | None = None,
     covariance: bool = True,
     fix_noise: np.ndarray | None = None,
+    fix_eta: np.ndarray | None = None,
     verbose: bool = False,
     log=print,
 ) -> FitResult:
@@ -939,7 +959,8 @@ def fit_consensus(
     the Student-t index of the co-natal member term; ``w0``/``rho0`` optional
     starting record and member weights (with ``t0`` and the coefficients, a
     warm start from a transformed solution); ``fix_noise``: boolean per noise
-    unit kept at its initial (``lk0``, ``lw0``) values."""
+    unit kept at its initial (``lk0``, ``lw0``) values; ``fix_eta``: boolean per
+    shared-error family (outer, then nested) kept at ``le0``."""
     st = _State(rec, groups, maps, n_noise, n_effect, n_sub)
     R, U, E = st.R, n_noise, n_effect + n_sub
     theta = maps.theta0(coefs0)
@@ -949,6 +970,9 @@ def fit_consensus(
     has_sig = torch.as_tensor(st.has_sig)
     fixed = torch.as_tensor(
         np.zeros(U, bool) if fix_noise is None else np.asarray(fix_noise, bool)
+    )
+    fixed_e = torch.as_tensor(
+        np.zeros(E, bool) if fix_eta is None else np.asarray(fix_eta, bool)
     )
     w = torch.as_tensor(w0, dtype=DT) if w0 is not None else torch.ones(R, dtype=DT)
     rho = torch.as_tensor(rho0, dtype=DT) if rho0 is not None else st.prior * st.member
@@ -1001,7 +1025,7 @@ def fit_consensus(
             _require_finite("latents of stars with records", t[st.has_rec], it)
         # ---- variances: REML ----------------------------------------------
         p0 = torch.cat([lk, lw, le])
-        fixp = torch.cat([fixed, fixed, torch.zeros(E, dtype=torch.bool)])
+        fixp = torch.cat([fixed, fixed, fixed_e])
         p = _lbfgs(lambda q: _var_objective(st, torch.where(fixp, p0, q), w, y, a, f, t, rho,
                                             has_sig, cvar) / R, p0, 40)  # fmt: skip
         _require_finite("noise parameters (log kappa, log omega, log eta)", p, it)
@@ -1010,7 +1034,7 @@ def fit_consensus(
         )
         lk = torch.where(fixed, lk, lk_new)
         lw = torch.where(fixed, lw, p[U : 2 * U].clamp(*LOG_OMEGA_RANGE))
-        le = p[2 * U :].clamp(*LOG_OMEGA_RANGE)
+        le = torch.where(fixed_e, le, p[2 * U :].clamp(*LOG_OMEGA_RANGE))
         # ---- imputation and Student-t weights ------------------------------
         with torch.no_grad():
             v = _noise_var(st, lk, lw)
@@ -1040,9 +1064,7 @@ def fit_consensus(
         H = torch.autograd.functional.hessian(
             lambda q: _var_objective(st, q, w, y, a, f, t, rho, has_sig, cvar), p0
         )
-        keep = torch.cat(
-            [has_sig & ~fixed, ~fixed, torch.ones(E, dtype=torch.bool)]
-        ).numpy()
+        keep = torch.cat([has_sig & ~fixed, ~fixed, ~fixed_e]).numpy()
         vcov = np.full((len(p0), len(p0)), np.nan)
         Hk = H.numpy()[np.ix_(keep, keep)]
         try:
