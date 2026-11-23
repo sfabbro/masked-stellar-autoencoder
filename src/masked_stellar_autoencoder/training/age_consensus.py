@@ -19,16 +19,25 @@ Model. Star ``i`` has a latent ``t_i``. A record of source map ``k`` reports
   noise unit ``n`` (source x class); ``sigma`` is the quoted error (0 if none).
 * ``u_{i,e} ~ N(0, eta_e^2)`` is an age error shared by all records of star
   ``i`` in effect family ``e`` (sources with shared inputs: isochrone
-  pipelines on the same Gaia photometry/parallax and spectra; seismic
-  pipelines on the same light curves), so correlated catalogues are not
-  counted as independent votes. It cancels in contrasts within a family, so
-  ``eta`` is learned only from independent constraints (another family or a
-  co-natal partner).
-* records at a catalogue cap (floor) are right- (left-) censored;
+  pipelines on the same Gaia photometry/parallax), with an optional nested
+  sub-family ``u_{i,k}`` (e.g. two pipelines on the same spectra), so
+  correlated catalogues are not counted as independent votes. They cancel in
+  contrasts within a (sub-)family, so the etas are learned only from
+  independent constraints (another family or a co-natal partner).
+* records at a catalogue cap (floor) are right- (left-) censored; a record
+  that only bounds the value to an interval [y, y2] has a flat-top
+  (interval-censored) likelihood;
 * co-natal groups (clusters, wide binaries) share a fitted age latent T_g:
-  ``t_i ~ N(T_g, s_g^2)`` for a member with responsibility ``rho_i``
-  (membership prior x likelihood, against a field density); T_g has a flat
-  prior. A literature group age would enter as one more mapped source of T_g.
+  ``t_i - T_g ~ Student-t(member_nu, s_g)`` weighted by a fixed external
+  membership probability (HR23, VB21, 1 - R_chance); no field density, so the
+  likelihood is covariant under any common change of the latent scale and a
+  change of gauge is an exact reparametrisation. T_g has a flat prior; a
+  literature group age enters as a record of a pseudo-member (the group node)
+  with its own map and noise, never as a fixed value.
+* ``noise_identified`` says which units have an identified noise variance
+  (triads, or pairs with an identified unit): only those may carry slope or
+  [Fe/H] map terms, since the errors-in-variables slope needs the variance
+  ratio.
 
 Estimation (maximum likelihood, CPU, memory bounded):
 
@@ -84,10 +93,14 @@ class Records:
     y: np.ndarray  # (R,) reported value (log10 age for ages)
     sig: np.ndarray  # (R,) quoted error; 0 or NaN when none
     feh: np.ndarray  # (R,) [Fe/H]; NaN when unknown
-    censor: np.ndarray  # (R,) int8: +1 y is a lower limit (cap), -1 upper limit
+    censor: (
+        np.ndarray
+    )  # (R,) int8: +1 lower limit (cap), -1 upper limit, 2 interval [y, y2]
     n_star: int
     effect: np.ndarray | None = None  # (R,) int64 shared-effect family, -1 none
     extra: np.ndarray | None = None  # (R, q) further covariates (e.g. colour)
+    subeffect: np.ndarray | None = None  # (R,) int64 nested sub-family, -1 none
+    y2: np.ndarray | None = None  # (R,) upper bound of interval records (censor 2)
 
     def __post_init__(self):
         n = len(self.y)
@@ -95,8 +108,12 @@ class Records:
             self.effect = np.full(n, -1, "i8")
         if self.extra is None:
             self.extra = np.zeros((n, 0))
+        if self.subeffect is None:
+            self.subeffect = np.full(n, -1, "i8")
+        if self.y2 is None:
+            self.y2 = np.asarray(self.y, float).copy()
         for name in ("star", "map_id", "cls", "noise_id", "sig", "feh", "censor", "effect",
-                     "extra"):  # fmt: skip
+                     "extra", "subeffect", "y2"):  # fmt: skip
             if len(getattr(self, name)) != n:
                 raise ValueError(
                     f"Records.{name} has {len(getattr(self, name))} rows, y has {n}"
@@ -106,7 +123,7 @@ class Records:
         return Records(
             self.star[keep], self.map_id[keep], self.cls[keep], self.noise_id[keep],
             self.y[keep], self.sig[keep], self.feh[keep], self.censor[keep], self.n_star,
-            self.effect[keep], self.extra[keep],
+            self.effect[keep], self.extra[keep], self.subeffect[keep], self.y2[keep],
         )  # fmt: skip
 
 
@@ -351,14 +368,16 @@ class FitResult:
     theta_cov: np.ndarray | None  # covariance of the free coefficients
     log_kappa: np.ndarray  # (U,)
     log_omega: np.ndarray  # (U,)
-    log_eta: np.ndarray  # (E,)
+    log_eta: np.ndarray  # (E + S,) outer families, then nested sub-families
     var_cov: np.ndarray | None  # covariance of (log kappa, log omega, log eta)
     t: np.ndarray  # (n_star,) latent of the fit stars
     var: np.ndarray
-    rho: np.ndarray  # (n_star,) co-natal responsibility
+    rho: np.ndarray  # (n_star,) co-natal member weight (prior x Student-t weight)
     weight: np.ndarray  # (R,) Student-t weights of the fit records
     history: list = field(default_factory=list)
     nu: float = 5.0
+    n_effect: int = 0
+    n_sub: int = 0
 
     def coef_of(self, name: str) -> np.ndarray:
         j, local = self.maps.locate(name)
@@ -366,12 +385,62 @@ class FitResult:
 
 
 # --------------------------------------------------------------------------- #
+# Noise identifiability (which units may carry slope / [Fe/H] / class terms)
+# --------------------------------------------------------------------------- #
+def noise_identified(star, group, unit, n_unit: int, partner=None, min_count: int = 30):
+    """Units whose noise variance is identified by the overlap pattern.
+
+    In an errors-in-variables fit the slope of a map depends on the ratio of
+    the two error variances; a pair of measurements of the same stars only
+    identifies their sum. A unit's own variance is identified (i) by triads:
+    stars where it is measured together with at least two other independent
+    measurements (records of other shared-input ``group``s, or a co-natal
+    partner), or (ii) by pairs with a unit already identified (its variance is
+    then the pair variance minus the known one); (ii) is iterated. ``min_count``
+    is the same count that the offset tier requires, not a tuned threshold.
+
+    Returns (identified bool[n_unit], triad counts[n_unit], pair-with-identified
+    counts[n_unit])."""
+    star = np.asarray(star, "i8")
+    group = np.asarray(group, "i8")
+    unit = np.asarray(unit, "i8")
+    n_star = int(star.max()) + 1 if len(star) else 0
+    partner = np.zeros(n_star, bool) if partner is None else np.asarray(partner, bool)
+    sg = (
+        np.unique(star * (int(group.max()) + 2) + group)
+        if len(star)
+        else np.zeros(0, "i8")
+    )
+    n_grp = (
+        np.bincount(sg // (int(group.max()) + 2), minlength=n_star)
+        if len(star)
+        else np.zeros(0)
+    )
+    n_ind = n_grp + partner[: len(n_grp)]
+    triad = np.bincount(unit[n_ind[star] >= 3], minlength=n_unit)
+    ident = triad >= min_count
+    pair = np.zeros(n_unit, "i8")
+    for _ in range(n_unit + 1):
+        idr = ident[unit].astype("i8")
+        tot = np.bincount(star, weights=idr, minlength=n_star)
+        key = star * (int(group.max()) + 2) + group
+        uk, inv = np.unique(key, return_inverse=True)
+        in_grp = np.bincount(inv, weights=idr)[inv]
+        has_other = (tot[star] - in_grp) > 0
+        pair = np.bincount(unit[has_other], minlength=n_unit)
+        new = ident | (pair >= min_count)
+        if np.array_equal(new, ident):
+            break
+        ident = new
+    return ident, triad, pair
+
+
+# --------------------------------------------------------------------------- #
 # Internal tensor state
 # --------------------------------------------------------------------------- #
 class _State:
-    def __init__(
-        self, rec: Records, groups: Groups, maps: MapSet, n_noise: int, n_effect: int
-    ):
+    def __init__(self, rec: Records, groups: Groups, maps: MapSet, n_noise: int,
+                 n_effect: int, n_sub: int = 0):  # fmt: skip
         self.maps = maps
         self.n_star = rec.n_star
         self.R = len(rec.y)
@@ -380,13 +449,12 @@ class _State:
         self.fam_idx = [
             torch.as_tensor(np.flatnonzero(fam == j)) for j in range(len(maps.families))
         ]
-        self.local = [
-            torch.as_tensor(rec.map_id[fam == j] - maps.offsets[j])
-            for j in range(len(maps.families))
-        ]
+        self.local = [torch.as_tensor(rec.map_id[fam == j] - maps.offsets[j])
+                      for j in range(len(maps.families))]  # fmt: skip
         self.cls = torch.as_tensor(rec.cls, dtype=torch.long)
         self.noise_id = torch.as_tensor(rec.noise_id, dtype=torch.long)
         self.y_obs = torch.as_tensor(rec.y, dtype=DT)
+        self.y_hi = torch.as_tensor(rec.y2, dtype=DT)
         sig = np.where(np.isfinite(rec.sig) & (rec.sig > 0), rec.sig, 0.0)
         self.sig2 = torch.as_tensor(sig, dtype=DT) ** 2
         self.x = torch.as_tensor(clip_feh(rec.feh), dtype=DT)
@@ -395,15 +463,24 @@ class _State:
         self.cens = self.censor != 0
         self.has_sig = np.zeros(n_noise, bool)
         np.logical_or.at(self.has_sig, rec.noise_id, sig > 0)
-        self.n_noise, self.n_effect = n_noise, n_effect
-        # shared-effect blocks: (star, effect family); family -1 has eta = 0
+        self.n_noise, self.n_effect, self.n_sub = n_noise, n_effect, n_sub
+        # shared age errors, two nested levels: outer blocks (star, family) and
+        # sub-blocks (outer block, sub-family); index -1 means "none" (eta = 0)
         eff = np.asarray(rec.effect, "i8")
-        key = rec.star.astype("i8") * (n_effect + 1) + (eff + 1)
-        uk, blk = np.unique(key, return_inverse=True)
-        self.blk = torch.as_tensor(blk)
-        self.n_blk = len(uk)
-        self.bstar = torch.as_tensor(uk // (n_effect + 1))
-        self.bfam = torch.as_tensor(uk % (n_effect + 1) - 1)
+        sub = np.asarray(rec.subeffect, "i8")
+        if np.any((sub >= 0) & (eff < 0)):
+            raise ValueError("a sub-family record must belong to an outer family")
+        okey = rec.star.astype("i8") * (n_effect + 1) + (eff + 1)
+        uo, blk_o = np.unique(okey, return_inverse=True)
+        kkey = blk_o.astype("i8") * (n_sub + 1) + (sub + 1)
+        uk, blk_k = np.unique(kkey, return_inverse=True)
+        self.blk_o, self.blk_k = torch.as_tensor(blk_o), torch.as_tensor(blk_k)
+        self.n_o, self.n_k = len(uo), len(uk)
+        self.ostar = torch.as_tensor(uo // (n_effect + 1))
+        self.ofam = torch.as_tensor(uo % (n_effect + 1) - 1)
+        self.k2o = torch.as_tensor(uk // (n_sub + 1))
+        self.kstar = self.ostar[self.k2o]
+        self.kfam = torch.as_tensor(uk % (n_sub + 1) - 1)
         gid = np.asarray(groups.gid, "i8")
         self.member = torch.as_tensor(gid >= 0)
         self.gid = torch.as_tensor(np.where(gid >= 0, gid, 0))
@@ -416,16 +493,24 @@ class _State:
     def scatter(self, values):
         return torch.zeros(self.n_star, dtype=DT).index_add(0, self.star, values)
 
-    def bsum(self, values):
-        return torch.zeros(self.n_blk, dtype=DT).index_add(0, self.blk, values)
+    def osum(self, values):
+        return torch.zeros(self.n_o, dtype=DT).index_add(0, self.blk_o, values)
 
-    def b2star(self, values):
-        return torch.zeros(self.n_star, dtype=DT).index_add(0, self.bstar, values)
+    def ksum(self, values):
+        return torch.zeros(self.n_k, dtype=DT).index_add(0, self.blk_k, values)
+
+    def k2osum(self, values):
+        return torch.zeros(self.n_o, dtype=DT).index_add(0, self.k2o, values)
+
+    def o2star(self, values):
+        return torch.zeros(self.n_star, dtype=DT).index_add(0, self.ostar, values)
+
+    def k2star(self, values):
+        return torch.zeros(self.n_star, dtype=DT).index_add(0, self.kstar, values)
 
     def gscatter(self, values, members):
-        return torch.zeros(max(self.n_group, 1), dtype=DT).index_add(
-            0, self.gid[members], values[members]
-        )
+        return torch.zeros(max(self.n_group, 1), dtype=DT).index_add(0, self.gid[members],
+                                                                     values[members])  # fmt: skip
 
     def evaluate(self, coefs, t_rec):
         """(f, df/dt) for all records at per-record latent ``t_rec``."""
@@ -445,28 +530,69 @@ class _State:
             pen = pen + fam.penalty(aj)
         return f, a, pen
 
-    def eta2_blk(self, le):
-        e2 = torch.exp(2 * le) if self.n_effect else torch.zeros(0, dtype=DT)
-        e2 = torch.cat([torch.zeros(1, dtype=DT), e2])
-        return e2[self.bfam + 1]
+    def eta2(self, le):
+        """(eta^2 per outer block, eta^2 per sub-block) from log eta (E + S)."""
+        E, S = self.n_effect, self.n_sub
+        z = torch.zeros(1, dtype=DT)
+        e2o = torch.cat([z, torch.exp(2 * le[:E])]) if E else z
+        e2k = torch.cat([z, torch.exp(2 * le[E : E + S])]) if S else z
+        return e2o[self.ofam + 1], e2k[self.kfam + 1]
 
 
 def _noise_var(st: _State, lk, lw):
     return torch.exp(2 * lk)[st.noise_id] * st.sig2 + torch.exp(2 * lw)[st.noise_id]
 
 
-def _posterior(st: _State, pi, a, yp, eta2b):
-    """Records-only flat-prior posterior (m, P) with the shared age errors
-    integrated out: per block the covariance is diag(v) + eta^2 a a^T
-    (Sherman-Morrison). Returns (m, P, c, s_aa, s_ay, S) with the per-block
-    c = eta^2 / (1 + eta^2 s_aa), s_aa = sum pi a^2, s_ay = sum pi a y'."""
-    saa = st.bsum(pi * a * a)
-    say = st.bsum(pi * a * yp)
-    c = eta2b / (1.0 + eta2b * saa)
-    P = st.scatter(pi * a * a) - st.b2star(c * saa * saa)
-    S = st.scatter(pi * a * yp) - st.b2star(c * saa * say)
+def _posterior(st: _State, pi, a, yp, e2):
+    """Records-only flat-prior posterior of the latents with the shared age
+    errors integrated out. Per star the covariance of the linearised records
+    y' = a (t + u_o + u_k) + e is diag(v) + sum_k eta_k^2 a_k a_k^T +
+    eta_o^2 a_o a_o^T (sub-blocks k nested in outer blocks o): two-level
+    Sherman-Morrison. Returns a dict with m, P, S, yy (= y'^T Sigma^-1 y'),
+    the per-block quantities and the extra log-determinant."""
+    e2o, e2k = e2
+    saa_k = st.ksum(pi * a * a)
+    say_k = st.ksum(pi * a * yp)
+    c_k = e2k / (1.0 + e2k * saa_k)
+    aoo = st.osum(pi * a * a) - st.k2osum(c_k * saa_k * saa_k)
+    aoy = st.osum(pi * a * yp) - st.k2osum(c_k * saa_k * say_k)
+    c_o = e2o / (1.0 + e2o * aoo)
+    P = (
+        st.scatter(pi * a * a)
+        - st.k2star(c_k * saa_k * saa_k)
+        - st.o2star(c_o * aoo * aoo)
+    )
+    S = (
+        st.scatter(pi * a * yp)
+        - st.k2star(c_k * saa_k * say_k)
+        - st.o2star(c_o * aoo * aoy)
+    )
+    yy = (
+        st.scatter(pi * yp * yp)
+        - st.k2star(c_k * say_k * say_k)
+        - st.o2star(c_o * aoy * aoy)
+    )
     m = torch.where(P > 0, S / P.clamp_min(1e-300), torch.full_like(P, float("nan")))
-    return m, P, c, saa, say, S
+    logdet = torch.log1p(e2k * saa_k).sum() + torch.log1p(e2o * aoo).sum()
+    return {"m": m, "P": P, "S": S, "yy": yy, "c_k": c_k, "c_o": c_o, "saa_k": saa_k,
+            "aoo": aoo, "logdet": logdet}  # fmt: skip
+
+
+def _shared_modes(st: _State, post, pi, a, r):
+    """Posterior modes of the shared errors given residuals r = y' - a t:
+    per-record total a-scaled error (u_o + u_k) and the penalty sum u^2/eta^2."""
+    c_k, c_o, saa_k = post["c_k"], post["c_o"], post["saa_k"]
+    sar_k = st.ksum(pi * a * r)
+    aor = st.osum(pi * a * r) - st.k2osum(c_k * saa_k * sar_k)
+    u_o = c_o * aor
+    u_k = c_k * (sar_k - saa_k * u_o[st.k2o])
+    return u_o, u_k
+
+
+def _shared_penalty(u_o, u_k, e2):
+    e2o, e2k = e2
+    po, pk = e2o > 0, e2k > 0
+    return (u_o[po] ** 2 / e2o[po]).sum() + (u_k[pk] ** 2 / e2k[pk]).sum()
 
 
 def _group_solve(st: _State, m, P, rho):
@@ -501,13 +627,15 @@ def _group_solve(st: _State, m, P, rho):
 
 
 def _impute(st: _State, mu, v):
-    """E[y*] and Var[y*] of censored records given the predicted mean ``mu``."""
+    """E[y*] and Var[y*] of censored records given the predicted mean ``mu``:
+    +1 lower limit (y* >= y), -1 upper limit (y* <= y), +2 interval
+    (y <= y* <= y2, a flat-top likelihood)."""
     y = st.y_obs.clone()
     cvar = torch.zeros_like(y)
     if not bool(st.cens.any()):
         return y, cvar
     sd = v.sqrt()
-    up, lo = st.censor > 0, st.censor < 0
+    up, lo, iv = st.censor == 1, st.censor == -1, st.censor == 2
     a = (st.y_obs - mu) / sd
     lphi = -0.5 * a * a - 0.5 * math.log(2 * math.pi)
     lam = torch.exp(lphi - torch.special.log_ndtr(-a))  # true value >= c
@@ -516,29 +644,48 @@ def _impute(st: _State, mu, v):
     lam2 = torch.exp(lphi - torch.special.log_ndtr(a))  # true value <= c
     y = torch.where(lo, mu - sd * lam2, y)
     cvar = torch.where(lo, v * (1 - a * lam2 - lam2 * lam2).clamp_min(1e-6), cvar)
+    if bool(iv.any()):
+        ey, vy = _interval_moments(a, (st.y_hi - mu) / sd)
+        y = torch.where(iv, mu + sd * ey, y)
+        cvar = torch.where(iv, (v * vy).clamp_min(1e-8), cvar)
     return y, cvar
 
 
-def _responsibility(st: _State, m, P, rho, field_mu, field_sd):
+def _interval_moments(al, be):
+    """Mean and variance of a standard normal truncated to [al, be]."""
+    pa, pb = torch.exp(-0.5 * al * al), torch.exp(-0.5 * be * be)
+    pa, pb = pa / math.sqrt(2 * math.pi), pb / math.sqrt(2 * math.pi)
+    Z = (torch.special.ndtr(be) - torch.special.ndtr(al)).clamp_min(1e-300)
+    mean = (pa - pb) / Z
+    var = 1.0 + (al * pa - be * pb) / Z - mean * mean
+    return mean, var
+
+
+def _member_weights(st: _State, m, P, rho, nu_m: float):
+    """Fixed external membership prior x Student-t member weight.
+
+    The co-natal term of a member is t_i - T_g ~ Student-t(nu_m, s_g) written
+    as a Gaussian scale mixture: the EM weight is (nu_m + 1)/(nu_m + d^2), with
+    d the records-only latent's deviation from the leave-one-out group mean
+    over its predicted spread. No field density is involved, so the term is
+    covariant under any common change of the latent scale (gauge)."""
     if st.n_group == 0:
         return rho
     _, _, T_loo, vT_loo, _, _ = _group_solve(st, m, P, rho)
     V = 1.0 / P.clamp_min(1e-300)
     ok = st.member & st.has_rec & torch.isfinite(T_loo) & (P > 0)
-    vc = V + st.s2[st.gid] + vT_loo
-    lc = -0.5 * (m - T_loo) ** 2 / vc - 0.5 * torch.log(vc)
-    vf = V + field_sd**2
-    lf = -0.5 * (m - field_mu) ** 2 / vf - 0.5 * torch.log(vf)
-    p = st.prior.clamp(1e-6, 1 - 1e-6)
-    new = torch.sigmoid(torch.log(p) - torch.log1p(-p) + lc - lf)
-    return torch.where(ok, new, torch.where(st.member, st.prior, torch.zeros_like(rho)))
+    d2 = (m - T_loo) ** 2 / (V + st.s2[st.gid] + vT_loo)
+    lam = (nu_m + 1.0) / (nu_m + torch.nan_to_num(d2, nan=0.0))
+    base = torch.where(st.member, st.prior, torch.zeros_like(rho))
+    return torch.where(ok, base * lam.clamp(max=1.0), base)
 
 
 # --------------------------------------------------------------------------- #
 # Objectives
 # --------------------------------------------------------------------------- #
-def _map_objective(st: _State, theta, w, v, y, t_lin, rho, eta2b):
-    """Profile objective (latents and group ages profiled; envelope gradient)."""
+def _map_objective(st: _State, theta, w, v, y, t_lin, rho, e2):
+    """Profile objective (latents, shared errors and group ages profiled at
+    their joint optimum, which is then held fixed: envelope gradient)."""
     maps = st.maps
     coefs = maps.unpack(theta)
     tl = t_lin[st.star]
@@ -546,20 +693,17 @@ def _map_objective(st: _State, theta, w, v, y, t_lin, rho, eta2b):
     yp = y - f + a * tl
     pi = w / v
     with torch.no_grad():
-        # joint optimum (t*, u*, T*) of the linearised problem, held fixed below
-        # (envelope theorem: the gradient of the profiled objective is the
-        # partial gradient at the optimum)
-        m, P, c, _, _, _ = _posterior(st, pi, a.detach(), yp.detach(), eta2b)
-        ts, _, _, _, _, T_hat = _group_solve(st, m, P, rho)
-        r0 = yp.detach() - a.detach() * ts[st.star]
-        u = c * st.bsum(pi * a.detach() * r0)  # shared age error per block
-        has_eta = eta2b > 0
-        uterm = (u[has_eta] ** 2 / eta2b[has_eta]).sum()
+        ad, ypd = a.detach(), yp.detach()
+        post = _posterior(st, pi, ad, ypd, e2)
+        ts, _, _, _, _, T_hat = _group_solve(st, post["m"], post["P"], rho)
+        u_o, u_k = _shared_modes(st, post, pi, ad, ypd - ad * ts[st.star])
+        uterm = _shared_penalty(u_o, u_k, e2)
+        ushare = u_o[st.blk_o] + u_k[st.blk_k]
         gterm = 0.0
         if st.n_group:
             mem = st.member & st.has_rec
             gterm = (rho / st.s2[st.gid] * (ts - T_hat) ** 2)[mem].sum()
-    r = yp - a * (ts[st.star] + u[st.blk])
+    r = yp - a * (ts[st.star] + ushare)
     F = (pi * r * r).sum() + uterm + gterm
     F = F + (((theta - maps.prior_mean) / maps.prior_sd) ** 2).sum() + pen
     return F
@@ -567,22 +711,19 @@ def _map_objective(st: _State, theta, w, v, y, t_lin, rho, eta2b):
 
 def _var_objective(st: _State, p, w, y, a, f, t_lin, rho, has_sig):
     """-2 log restricted likelihood of (log kappa, log omega, log eta)."""
-    U, E = st.n_noise, st.n_effect
+    U, E, Sn = st.n_noise, st.n_effect, st.n_sub
     lk = torch.where(has_sig, p[:U], torch.zeros_like(p[:U]))
-    lw, le = p[U : 2 * U], p[2 * U : 2 * U + E]
+    lw, le = p[U : 2 * U], p[2 * U : 2 * U + E + Sn]
     v = _noise_var(st, lk, lw)
     pi = w / v
-    eta2b = st.eta2_blk(le)
+    e2 = st.eta2(le)
     yp = y - f + a * t_lin[st.star]
-    m, P, c, saa, say, S = _posterior(st, pi, a, yp, eta2b)
+    post = _posterior(st, pi, a, yp, e2)
+    m, P, S = post["m"], post["P"], post["S"]
     has = st.has_rec & (P > 0)
     Pc = P.clamp_min(1e-300)
-    Q = (
-        st.scatter(pi * yp * yp)
-        - st.b2star(c * say * say)
-        - torch.where(has, S * S / Pc, 0.0)
-    )
-    F = torch.log(v).sum() + torch.log1p(eta2b * saa).sum() + Q[has].sum()
+    Q = post["yy"] - torch.where(has, S * S / Pc, 0.0)
+    F = torch.log(v).sum() + post["logdet"] + Q[has].sum()
     if st.n_group:
         mem = st.member & has
         s2 = st.s2[st.gid]
@@ -618,6 +759,36 @@ def _lbfgs(fn, x0, iters):
     return x.detach()
 
 
+def _record_weights(st, f, a, y, t, w, v, e2, nu):
+    """Imputed values and Student-t weights. A record is judged against its
+    own star's other records (records-only latent); disagreement between a
+    star and its co-natal group is the member weight's job."""
+    pi = w / v
+    yp = y - f + a * t[st.star]
+    post = _posterior(st, pi, a, yp, e2)
+    u_o, u_k = _shared_modes(st, post, pi, a, yp - a * t[st.star])
+    y, _ = _impute(st, f + a * (u_o[st.blk_o] + u_k[st.blk_k]), v)
+    yp = y - f + a * t[st.star]
+    post = _posterior(st, pi, a, yp, e2)
+    t_r = torch.where(post["P"] > 0, post["m"], t)
+    u_o, u_k = _shared_modes(st, post, pi, a, yp - a * t_r[st.star])
+    resid = yp - a * (t_r[st.star] + u_o[st.blk_o] + u_k[st.blk_k])
+    # posterior variance of t + u_o + u_k (anti-correlated): exact for one
+    # level, Var(t)/(1 + eta^2 s_aa)^2 + c; the nested form chains the shrinks
+    e2o, e2k = e2
+    s_k = (1.0 / (1.0 + e2k * post["saa_k"]))[st.blk_k]
+    s_o = (1.0 / (1.0 + e2o * post["aoo"]))[st.blk_o]
+    var_r = (1.0 / post["P"].clamp_min(1e-300))[st.star]
+    var_tu = (
+        var_r * (s_o * s_k) ** 2
+        + post["c_o"][st.blk_o] * s_k**2
+        + post["c_k"][st.blk_k]
+    )
+    Er = resid**2 + a * a * var_tu
+    w = torch.where(st.cens, torch.ones_like(Er), (nu + 1.0) / (nu + Er / v))
+    return y, w
+
+
 # --------------------------------------------------------------------------- #
 # Fit
 # --------------------------------------------------------------------------- #
@@ -628,7 +799,9 @@ def fit_consensus(
     n_noise: int,
     n_effect: int = 0,
     *,
+    n_sub: int = 0,
     nu: float = 5.0,
+    member_nu: float = 4.0,
     n_outer: int = 40,
     tol: float = 1e-3,
     inner_iter: int = 80,
@@ -637,6 +810,8 @@ def fit_consensus(
     lw0: np.ndarray | None = None,
     le0: np.ndarray | None = None,
     t0: np.ndarray | None = None,
+    w0: np.ndarray | None = None,
+    rho0: np.ndarray | None = None,
     covariance: bool = True,
     fix_noise: np.ndarray | None = None,
     verbose: bool = False,
@@ -644,10 +819,13 @@ def fit_consensus(
 ) -> FitResult:
     """Alternating maximum likelihood (see the module docstring).
 
-    ``fix_noise``: boolean per noise unit; those units keep their initial
-    (``lk0``, ``lw0``) values (e.g. a pseudo-record of known variance)."""
-    st = _State(rec, groups, maps, n_noise, n_effect)
-    R, U, E = st.R, n_noise, n_effect
+    ``n_effect`` outer and ``n_sub`` nested shared-error families; ``member_nu``
+    the Student-t index of the co-natal member term; ``w0``/``rho0`` optional
+    starting record and member weights (with ``t0`` and the coefficients, a
+    warm start from a transformed solution); ``fix_noise``: boolean per noise
+    unit kept at its initial (``lk0``, ``lw0``) values."""
+    st = _State(rec, groups, maps, n_noise, n_effect, n_sub)
+    R, U, E = st.R, n_noise, n_effect + n_sub
     theta = maps.theta0(coefs0)
     lk = torch.as_tensor(lk0 if lk0 is not None else np.zeros(U), dtype=DT)
     lw = torch.as_tensor(lw0 if lw0 is not None else np.full(U, LOG_OMEGA0), dtype=DT)
@@ -656,8 +834,8 @@ def fit_consensus(
     fixed = torch.as_tensor(
         np.zeros(U, bool) if fix_noise is None else np.asarray(fix_noise, bool)
     )
-    w = torch.ones(R, dtype=DT)
-    rho = st.prior * st.member
+    w = torch.as_tensor(w0, dtype=DT) if w0 is not None else torch.ones(R, dtype=DT)
+    rho = torch.as_tensor(rho0, dtype=DT) if rho0 is not None else st.prior * st.member
     if t0 is not None:
         t = torch.as_tensor(np.nan_to_num(t0, nan=T0), dtype=DT)
     else:  # quoted-error weighted mean of the raw values of age-family records
@@ -671,26 +849,27 @@ def fit_consensus(
                         torch.full((st.n_star,), T0, dtype=DT))  # fmt: skip
     var = torch.full_like(t, 0.01)
     y = st.y_obs.clone()
+    if t0 is not None:  # warm start: impute censored values at the given latents
+        with torch.no_grad():
+            f, a, _ = st.evaluate(maps.unpack(theta), t[st.star])
+            y, _ = _impute(st, f, _noise_var(st, lk, lw))
     history = []
     for it in range(n_outer):
         v = _noise_var(st, lk, lw)
-        eta2b = st.eta2_blk(le)
+        e2 = st.eta2(le)
         theta_old = theta.clone()
         if theta.numel():
-            theta = _lbfgs(lambda th: _map_objective(st, th, w, v, y, t, rho, eta2b) / R,
+            theta = _lbfgs(lambda th: _map_objective(st, th, w, v, y, t, rho, e2) / R,
                            theta, inner_iter)  # fmt: skip
         coefs = maps.unpack(theta)
         with torch.no_grad():
             pi = w / v
             for _ in range(2):  # Gauss-Newton steps on the latents
                 f, a, _ = st.evaluate(coefs, t[st.star])
-                m, P, _, _, _, _ = _posterior(st, pi, a, y - f + a * t[st.star], eta2b)
-                t_new, var, _, _, _, _ = _group_solve(st, m, P, rho)
+                post = _posterior(st, pi, a, y - f + a * t[st.star], e2)
+                t_new, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho)
                 t = torch.where(st.has_rec, t_new, t)
-            good = st.has_rec & torch.isfinite(m)
-            fm = torch.median(m[good])
-            fsd = (1.4826 * torch.median((m[good] - fm).abs())).clamp_min(0.1)
-            rho = _responsibility(st, m, P, rho, fm, fsd)
+            rho = _member_weights(st, post["m"], post["P"], rho, member_nu)
             f, a, _ = st.evaluate(coefs, t[st.star])
         # ---- variances: REML ----------------------------------------------
         p0 = torch.cat([lk, lw, le])
@@ -706,30 +885,7 @@ def fit_consensus(
         # ---- imputation and Student-t weights ------------------------------
         with torch.no_grad():
             v = _noise_var(st, lk, lw)
-            eta2b = st.eta2_blk(le)
-            pi = w / v
-            yp = y - f + a * t[st.star]
-            _, _, c, _, _, _ = _posterior(st, pi, a, yp, eta2b)
-            u_hat = (c * st.bsum(pi * a * (yp - a * t[st.star])))[
-                st.blk
-            ]  # shared age error
-            y, _ = _impute(st, f + a * u_hat, v)
-            # Student-t weights judge a record against its own star's other
-            # records (records-only latent): disagreement between a star and
-            # its co-natal group is handled by the membership responsibility,
-            # so a group can never turn a star's records into outliers.
-            yp = y - f + a * t[st.star]
-            m_r, P_r, c, saa, _, _ = _posterior(st, pi, a, yp, eta2b)
-            t_r = torch.where(P_r > 0, m_r, t)
-            u_r = (c * st.bsum(pi * a * (yp - a * t_r[st.star])))[st.blk]
-            resid = yp - a * (t_r[st.star] + u_r)
-            # posterior variance of t + u_b (t and u_b are anti-correlated):
-            # u_b | t has mean c sum pi a (y' - a t) and variance c, so
-            # Var(t + u_b) = Var(t) / (1 + eta^2 s_aa)^2 + c.
-            shrink = (1.0 / (1.0 + eta2b * saa))[st.blk]
-            var_r = (1.0 / P_r.clamp_min(1e-300))[st.star]
-            Er = resid**2 + a * a * (var_r * shrink**2 + c[st.blk])
-            w = torch.where(st.cens, torch.ones_like(Er), (nu + 1.0) / (nu + Er / v))
+            y, w = _record_weights(st, f, a, y, t, w, v, st.eta2(le), nu)
         dtheta = float((theta - theta_old).abs().max()) if theta.numel() else 0.0
         history.append({"iter": it, "dtheta": dtheta, "eta": torch.exp(le).tolist()})
         if verbose:
@@ -740,15 +896,15 @@ def fit_consensus(
             break
     coefs = maps.unpack(theta)
     v = _noise_var(st, lk, lw)
-    eta2b = st.eta2_blk(le)
+    e2 = st.eta2(le)
     with torch.no_grad():
         f, a, _ = st.evaluate(coefs, t[st.star])
-        m, P, _, _, _, _ = _posterior(st, w / v, a, y - f + a * t[st.star], eta2b)
-        t, var, _, _, _, _ = _group_solve(st, m, P, rho)
+        post = _posterior(st, w / v, a, y - f + a * t[st.star], e2)
+        t, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho)
     cov = vcov = None
     if covariance and theta.numel():
         cov = _fd_covariance(
-            lambda th: _map_objective(st, th, w, v, y, t, rho, eta2b), theta
+            lambda th: _map_objective(st, th, w, v, y, t, rho, e2), theta
         )
     if covariance:
         p0 = torch.cat([lk, lw, le])
@@ -769,6 +925,7 @@ def fit_consensus(
         maps=maps, coefs=[c.numpy() for c in coefs], theta_cov=cov, log_kappa=lk.numpy(),
         log_omega=lw.numpy(), log_eta=le.numpy(), var_cov=vcov, t=t_out.numpy(),
         var=var.numpy(), rho=rho.numpy(), weight=w.numpy(), history=history, nu=nu,
+        n_effect=n_effect, n_sub=n_sub,
     )  # fmt: skip
 
 
@@ -797,44 +954,46 @@ def _fd_covariance(objective, theta, h: float = 1e-5):
 # --------------------------------------------------------------------------- #
 # Consensus for every star, residuals
 # --------------------------------------------------------------------------- #
-def _setup(rec, groups, fit: FitResult, n_noise, n_effect):
-    st = _State(rec, groups, fit.maps, n_noise, n_effect)
+def _setup(rec, groups, fit: FitResult, n_noise):
+    st = _State(rec, groups, fit.maps, n_noise, fit.n_effect, fit.n_sub)
     coefs = [torch.as_tensor(c, dtype=DT) for c in fit.coefs]
-    v = _noise_var(
-        st,
-        torch.as_tensor(fit.log_kappa, dtype=DT),
-        torch.as_tensor(fit.log_omega, dtype=DT),
-    )
-    eta2b = st.eta2_blk(torch.as_tensor(fit.log_eta, dtype=DT))
-    return st, coefs, v, eta2b
+    v = _noise_var(st, torch.as_tensor(fit.log_kappa, dtype=DT),
+                   torch.as_tensor(fit.log_omega, dtype=DT))  # fmt: skip
+    e2 = st.eta2(torch.as_tensor(fit.log_eta, dtype=DT))
+    return st, coefs, v, e2
 
 
-def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_effect: int = 0,
+def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_effect=None,
                 rho: np.ndarray | None = None, iters: int = 25) -> dict:  # fmt: skip
     """Flat-prior consensus for every star: records only (``t_rec``) and with
     the co-natal terms (``t``). Censored records enter through the censored
     likelihood (EM for the mean, observed information for the variance). A
-    star whose only records are censored gets a limit (``limit`` = +1 lower,
-    -1 upper): ``t`` is where its maps reach the reported values, ``sd`` NaN."""
-    st, coefs, v, eta2b = _setup(rec, groups, fit, n_noise, n_effect)
+    star whose only records are one-sided limits gets a limit (``limit`` = +1
+    lower, -1 upper): ``t`` is where its maps reach the reported values, ``sd``
+    NaN. (``n_effect`` is taken from ``fit``; the argument is kept for API
+    compatibility.)"""
+    st, coefs, v, e2 = _setup(rec, groups, fit, n_noise)
     pi = 1.0 / v
-    unc = (~st.cens).to(DT)
+    onesided = (st.censor == 1) | (st.censor == -1)
+    unc = (~onesided).to(DT)
     n_unc = st.scatter(unc)
     only_cens = st.has_rec & (n_unc == 0)
+    ymid = torch.where(st.censor == 2, 0.5 * (st.y_obs + st.y_hi), st.y_obs)
     with torch.no_grad():
         P0 = st.scatter(pi * unc)
-        t = torch.where(P0 > 0, st.scatter(pi * unc * st.y_obs) / P0.clamp_min(1e-300),
+        t = torch.where(P0 > 0, st.scatter(pi * unc * ymid) / P0.clamp_min(1e-300),
                         st.scatter(st.y_obs) / st.scatter(torch.ones_like(v)).clamp_min(1))  # fmt: skip
         for _ in range(iters):
             f, a, _ = st.evaluate(coefs, t[st.star])
             y, _ = _impute(st, f, v)
             yp = y - f + a * t[st.star]
-            m, P, _, _, _, _ = _posterior(st, pi, a, yp, eta2b)
+            post = _posterior(st, pi, a, yp, e2)
+            m, P = post["m"], post["P"]
             ycl = torch.where(
-                st.cens, st.y_obs - f + a * t[st.star], torch.zeros_like(f)
+                onesided, st.y_obs - f + a * t[st.star], torch.zeros_like(f)
             )
             tl = st.scatter(ycl * a) / st.scatter(
-                torch.where(st.cens, a * a, 0.0)
+                torch.where(onesided, a * a, 0.0)
             ).clamp_min(1e-300)
             t = torch.where(only_cens, tl, torch.where(st.has_rec & (P > 0), m, t))
         f, a, _ = st.evaluate(coefs, t[st.star])
@@ -843,13 +1002,20 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
         mills = torch.exp(
             -0.5 * z * z - 0.5 * math.log(2 * math.pi) - torch.special.log_ndtr(z)
         )
-        fac = torch.where(st.cens, mills * (z + mills), torch.ones_like(z))
+        fac = torch.where(onesided, mills * (z + mills), torch.ones_like(z))
+        iv = st.censor == 2
+        if bool(iv.any()):
+            al, be = (st.y_obs - f) / sd, (st.y_hi - f) / sd
+            pa = torch.exp(-0.5 * al * al) / math.sqrt(2 * math.pi)
+            pb = torch.exp(-0.5 * be * be) / math.sqrt(2 * math.pi)
+            Z = (torch.special.ndtr(be) - torch.special.ndtr(al)).clamp_min(1e-300)
+            fiv = ((pa - pb) / Z) ** 2 - (al * pa - be * pb) / Z
+            fac = torch.where(iv, fiv.clamp_min(0.0), fac)
         y, _ = _impute(st, f, v)
-        _, P, _, _, _, _ = _posterior(st, pi * fac, a, y - f + a * t[st.star], eta2b)
+        P = _posterior(st, pi * fac, a, y - f + a * t[st.star], e2)["P"]
         P = torch.where(only_cens, torch.zeros_like(P), P)
-        limit = torch.where(
-            only_cens, st.scatter(st.censor.to(DT)).sign(), torch.zeros_like(P)
-        ).long()
+        lim_sign = st.scatter(torch.where(onesided, st.censor.to(DT), 0.0)).sign()
+        limit = torch.where(only_cens, lim_sign, torch.zeros_like(P)).long()
         rho_t = (
             torch.as_tensor(rho, dtype=DT) if rho is not None else st.prior * st.member
         )
@@ -862,12 +1028,8 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
         sd_rec = torch.where(good, P.clamp_min(1e-300).rsqrt(), nan)
         t_con = torch.where(good, tg, t_rec)
         sd_con = torch.where(good, vg.sqrt(), sd_rec)
-        use_g = (
-            only_cens
-            & torch.isfinite(T_loo)
-            & (kap > 0)
-            & (torch.nan_to_num(T_loo) * limit >= t * limit)
-        )
+        use_g = (only_cens & torch.isfinite(T_loo) & (kap > 0)
+                 & (torch.nan_to_num(T_loo) * limit >= t * limit))  # fmt: skip
         t_con = torch.where(use_g, T_loo, t_con)
         sd_con = torch.where(use_g, kap.clamp_min(1e-300).rsqrt(), sd_con)
     return {"t_rec": t_rec.numpy(), "sd_rec": sd_rec.numpy(), "t": t_con.numpy(),
@@ -875,12 +1037,12 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
             "group_kappa": kap.numpy(), "n_rec": st.scatter(torch.ones_like(v)).numpy().astype("i8")}  # fmt: skip
 
 
-def leave_key_out(rec: Records, fit: FitResult, n_noise: int, n_effect: int, key: np.ndarray,
+def leave_key_out(rec: Records, fit: FitResult, n_noise: int, n_effect, key: np.ndarray,
                   t_lin: np.ndarray) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
     """Per record: the records-only consensus of its star from the records with
     a different ``key`` (e.g. its shared-input group), flat prior, maps
     linearised at ``t_lin``; censored records enter with imputed values."""
-    st, coefs, v, eta2b = _setup(rec, Groups.none(rec.n_star), fit, n_noise, n_effect)
+    st, coefs, v, e2 = _setup(rec, Groups.none(rec.n_star), fit, n_noise)
     t = torch.as_tensor(np.nan_to_num(t_lin, nan=T0), dtype=DT)
     key = np.asarray(key)
     t_o = np.full(st.R, np.nan)
@@ -892,7 +1054,8 @@ def leave_key_out(rec: Records, fit: FitResult, n_noise: int, n_effect: int, key
         for k in np.unique(key):
             sel = torch.as_tensor(key == k)
             pi = torch.where(sel, torch.zeros_like(v), 1.0 / v)
-            m, P, _, _, _, _ = _posterior(st, pi, a, yp, eta2b)
+            post = _posterior(st, pi, a, yp, e2)
+            m, P = post["m"], post["P"]
             rows = np.flatnonzero(key == k)
             s = st.star[rows]
             ok = (P[s] > 1e-9).numpy()
@@ -901,18 +1064,19 @@ def leave_key_out(rec: Records, fit: FitResult, n_noise: int, n_effect: int, key
     return t_o, v_o
 
 
-def record_residuals(rec: Records, fit: FitResult, n_noise: int, n_effect: int,
+def record_residuals(rec: Records, fit: FitResult, n_noise: int, n_effect,
                      t_other: np.ndarray, var_other: np.ndarray):  # fmt: skip
     """(raw = y - t, mapped = y - f(t), z = mapped / sqrt(v + a^2 (eta^2 + var)))
     of records against a consensus ``t_other`` that excludes them."""
-    st, coefs, v, eta2b = _setup(rec, Groups.none(rec.n_star), fit, n_noise, n_effect)
+    st, coefs, v, e2 = _setup(rec, Groups.none(rec.n_star), fit, n_noise)
     tt = torch.as_tensor(np.nan_to_num(t_other), dtype=DT)
     with torch.no_grad():
         f, a, _ = st.evaluate(coefs, tt)
     f, a = f.numpy(), a.numpy()
     raw = rec.y - t_other
     mapped = rec.y - f
-    z = mapped / np.sqrt(v.numpy() + a * a * (eta2b[st.blk].numpy() + var_other))
+    eta2 = e2[0][st.blk_o].numpy() + e2[1][st.blk_k].numpy()
+    z = mapped / np.sqrt(v.numpy() + a * a * (eta2 + var_other))
     bad = ~np.isfinite(t_other)
     for arr in (raw, mapped, z):
         arr[bad] = np.nan

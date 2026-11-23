@@ -340,7 +340,7 @@ def test_profile_gradient_matches_finite_differences():
     w = torch.ones(st.R, dtype=ac.DT)
     t_lin = torch.as_tensor(t + rng.normal(0, 0.05, len(t)), dtype=ac.DT)
     rho = st.prior * st.member
-    e2 = st.eta2_blk(torch.tensor([np.log(0.08)], dtype=ac.DT))
+    e2 = st.eta2(torch.tensor([np.log(0.08)], dtype=ac.DT))
 
     def F(th):
         return ac._map_objective(st, th, w, v, st.y_obs, t_lin, rho, e2)
@@ -354,3 +354,161 @@ def test_profile_gradient_matches_finite_differences():
         grad,
         fd,
     )
+
+
+# --------------------------------------------------------------------------- #
+# C0b mechanisms
+# --------------------------------------------------------------------------- #
+def test_nested_shared_errors_are_learned():
+    """An outer family (all isochrone pipelines) and a nested sub-family (two
+    pipelines on the same spectra) each get their eta; stars measured only by
+    the two same-spectra pipelines keep both shared errors in their width."""
+    rng = np.random.default_rng(21)
+    n, n_cl = 5000, 300
+    t = rng.uniform(-0.2, 1.1, n)
+    t[: 8 * n_cl] = np.repeat(t[: 8 * n_cl : 8], 8)
+    eta_o, eta_k = 0.08, 0.06
+    u_o, u_k = rng.normal(0, eta_o, n), rng.normal(0, eta_k, n)
+    spec = {"anchor": (0.4, 0.05, -1, -1), "B": (0.7, 0.04, 0, 0), "C": (0.6, 0.04, 0, 0),
+            "D": (0.5, 0.05, 0, -1)}  # fmt: skip
+    rows = []
+    for k, (name, (frac, s, eff, sub)) in enumerate(spec.items()):
+        idx = np.flatnonzero(rng.random(n) < frac)
+        shared = (u_o[idx] if eff >= 0 else 0.0) + (u_k[idx] if sub >= 0 else 0.0)
+        y = t[idx] + shared + rng.normal(0, s, len(idx))
+        rows.append((idx, np.full(len(idx), k), y, np.full(len(idx), s),
+                     np.full(len(idx), eff), np.full(len(idx), sub)))  # fmt: skip
+    star, mid, y, sig, eff, sub = (
+        np.concatenate([r[j] for r in rows]) for j in range(6)
+    )
+    rec = Records(star.astype("i8"), mid.astype("i8"), np.zeros(len(y), "i8"), mid.astype("i8"),
+                  y, sig, np.zeros(len(y)), np.zeros(len(y), "i1"), n,
+                  effect=eff.astype("i8"), subeffect=sub.astype("i8"))  # fmt: skip
+    gid = np.full(n, -1, "i8")
+    gid[: 8 * n_cl] = np.repeat(np.arange(n_cl), 8)
+    g = Groups(gid, np.where(gid >= 0, 1.0, 0.0), np.full(n_cl, 0.01))
+    names = list(spec)
+    maps = MapSet([AgeMaps(names, [IDENTITY, OFFSET, OFFSET, OFFSET], np.zeros((4, 1), bool),
+                           [False] * 4)])  # fmt: skip
+    fit = fit_consensus(
+        rec, g, maps, 4, 1, n_sub=1, nu=1e6, n_outer=30, covariance=False
+    )
+    eo, ek = np.exp(fit.log_eta)
+    assert abs(eo - eta_o) < 0.03 and abs(ek - eta_k) < 0.03, (eo, ek)
+    sol = solve_stars(rec, g, fit, 4, rho=fit.rho)
+    by = np.zeros((n, 4), bool)
+    by[rec.star, rec.map_id] = True
+    sel = by[:, 1] & by[:, 2] & ~by[:, 0] & ~by[:, 3] & (gid < 0)
+    z = (sol["t"][sel] - t[sel]) / sol["sd"][sel]
+    assert 0.8 < 1.4826 * np.median(np.abs(z - np.median(z))) < 1.25
+
+
+def test_interval_records_use_a_flat_top_likelihood():
+    """A source reporting an asymmetric interval (not a centred Gaussian):
+    the interval likelihood recovers its offset, the interval midpoint does not."""
+    rng = np.random.default_rng(22)
+    n = 3000
+    t = rng.uniform(0.0, 1.0, n)
+    a_idx = np.flatnonzero(rng.random(n) < 0.6)
+    b_idx = np.flatnonzero(rng.random(n) < 0.6)
+    ya = t[a_idx] + rng.normal(0, 0.05, len(a_idx))
+    yb = t[b_idx] + 0.1 + rng.normal(0, 0.03, len(b_idx))
+    lo, hi = yb - 0.05, yb + 0.25  # interval containing the value, not centred on it
+    star = np.r_[a_idx, b_idx].astype("i8")
+    mid = np.r_[np.zeros(len(a_idx)), np.ones(len(b_idx))].astype("i8")
+    maps = MapSet(
+        [
+            AgeMaps(
+                ["anchor", "B"],
+                [IDENTITY, OFFSET],
+                np.zeros((2, 1), bool),
+                [False, False],
+            )
+        ]
+    )
+
+    def run(y, y2, cens):
+        rec = Records(star, mid, np.zeros(len(star), "i8"), mid.copy(), y,
+                      np.r_[np.full(len(a_idx), 0.05), np.full(len(b_idx), 0.03)],
+                      np.zeros(len(star)), cens, n, y2=y2)  # fmt: skip
+        return fit_consensus(rec, Groups.none(n), maps, 2, nu=1e6, n_outer=30,
+                             covariance=False).coefs[0][1, 0]  # fmt: skip
+
+    b_int = run(
+        np.r_[ya, lo],
+        np.r_[ya, hi],
+        np.r_[np.zeros(len(a_idx)), np.full(len(b_idx), 2)].astype("i1"),
+    )
+    b_mid = run(np.r_[ya, 0.5 * (lo + hi)], None, np.zeros(len(star), "i1"))
+    assert abs(b_mid - 0.2) < 0.02  # the midpoint is biased by the interval's asymmetry
+    assert abs(b_int - 0.1) < abs(b_mid - 0.1) - 0.03, (b_int, b_mid)
+
+
+def test_gauge_change_is_an_exact_reparametrisation():
+    """Fit on anchor X; re-express the solution on catalogue Y's scale (an
+    offset-only reference) and refit there from it: the solution must not move
+    (the co-natal term has fixed memberships and a Student-t member weight, so
+    the likelihood is covariant under a common shift of the latents)."""
+    rng = np.random.default_rng(23)
+    n, n_cl = 4000, 200
+    t = rng.uniform(-0.2, 1.1, n)
+    t[: 6 * n_cl] = np.repeat(t[: 6 * n_cl : 6], 6)
+    regime = np.arange(n) % 2  # two regimes linked only through clusters
+    rows = []
+    spec = [("X", 0, 0.0, 0.0, 0.05), ("Z", 0, 0.05, 0.1, 0.06), ("Y", 1, -0.1, 0.0, 0.05),
+            ("W", 1, 0.08, -0.1, 0.07)]  # fmt: skip
+    for k, (name, reg, b, A, s) in enumerate(spec):
+        idx = np.flatnonzero((regime == reg) & (rng.random(n) < 0.8))
+        y = t[idx] + b + A * (t[idx] - T0) + rng.normal(0, s, len(idx))
+        rows.append((idx, np.full(len(idx), k), y, np.full(len(idx), s)))
+    star, mid, y, sig = (np.concatenate([r[j] for r in rows]) for j in range(4))
+    rec = Records(star.astype("i8"), mid.astype("i8"), np.zeros(len(y), "i8"), mid.astype("i8"),
+                  y, sig, np.zeros(len(y)), np.zeros(len(y), "i1"), n)  # fmt: skip
+    gid = np.full(n, -1, "i8")
+    gid[: 6 * n_cl] = np.repeat(np.arange(n_cl), 6)
+    g = Groups(gid, np.where(gid >= 0, 0.9, 0.0), np.full(n_cl, 0.01))
+    names = [s[0] for s in spec]
+    ct = np.zeros((4, 1), bool)
+    mapsA = MapSet(
+        [AgeMaps(names, [IDENTITY, LINEAR, OFFSET, LINEAR], ct, [False] * 4)]
+    )
+    fa = fit_consensus(rec, g, mapsA, 4, n_outer=40, tol=1e-5, covariance=False)
+    d = fa.coefs[0][2, 0]  # Y's offset: t_Y = t_X + d
+    cB = fa.coefs[0].copy()
+    cB[:, 0] = cB[:, 0] - d * (1.0 + cB[:, 1])
+    cB[2] = 0.0
+    cB[0, 0], cB[0, 1] = -d, 0.0
+    mapsB = MapSet(
+        [AgeMaps(names, [OFFSET, LINEAR, IDENTITY, LINEAR], ct, [False] * 4)]
+    )
+    fb = fit_consensus(rec, g, mapsB, 4, n_outer=40, tol=1e-5, covariance=False, coefs0=[cB],
+                       lk0=fa.log_kappa, lw0=fa.log_omega, t0=fa.t + d, w0=fa.weight, rho0=fa.rho)  # fmt: skip
+    assert np.max(np.abs(fb.coefs[0] - cB)) < 2e-3, (fb.coefs[0], cB)
+    ok = np.isfinite(fa.t)
+    assert np.max(np.abs(fb.t[ok] - (fa.t[ok] + d))) < 2e-3
+
+
+def test_noise_identifiability_needs_triads_or_an_identified_partner():
+    from masked_stellar_autoencoder.training.age_consensus import noise_identified
+
+    n = 400
+    # units 0 and 1 overlap only pairwise: their noise split is not identified
+    star = np.r_[np.arange(n), np.arange(n)]
+    group = np.r_[np.zeros(n), np.ones(n)].astype("i8")
+    unit = group.copy()
+    ident, triad, _ = noise_identified(star, group, unit, 2)
+    assert not ident.any() and triad.sum() == 0
+    # a third independent measurement on the same stars identifies all three
+    ident3, triad3, _ = noise_identified(np.r_[star, np.arange(n)], np.r_[group, np.full(n, 2)],
+                                         np.r_[unit, np.full(n, 2)], 3)  # fmt: skip
+    assert ident3.all() and (triad3 == n).all()
+    # unit 3 paired only with an identified unit becomes identified (propagation);
+    # units 4 and 5 paired only with each other stay unidentified
+    s2 = np.r_[np.arange(n), np.arange(n), np.arange(n), 1000 + np.arange(n), 1000 + np.arange(n),
+               2000 + np.arange(n), 2000 + np.arange(n)]  # fmt: skip
+    g2 = np.r_[np.zeros(n), np.ones(n), np.full(n, 2), np.zeros(n), np.full(n, 3), np.full(n, 4),
+               np.full(n, 5)].astype("i8")  # fmt: skip
+    u2 = np.r_[np.zeros(n), np.ones(n), np.full(n, 2), np.zeros(n), np.full(n, 3), np.full(n, 4),
+               np.full(n, 5)].astype("i8")  # fmt: skip
+    ident2, _, pair2 = noise_identified(s2, g2, u2, 6)
+    assert ident2[:4].all() and not ident2[4:].any()
