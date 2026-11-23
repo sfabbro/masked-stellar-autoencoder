@@ -7,7 +7,7 @@ push to `upstream` unless explicitly asked.
 
 | Remote | Points at | Use |
 |--------|-----------|-----|
-| `origin` | `sfabbro/masked-stellar-autoencoder` | Push WIP / keep fork current |
+| `origin` | `sfabbro/masked-stellar-autoencoder` | Work on `main`; push to `origin main` (no `wip` branches) |
 | `upstream` | `aydanmckay/masked-stellar-autoencoder` | Fetch only (no push by default) |
 
 ```bash
