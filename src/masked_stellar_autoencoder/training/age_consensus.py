@@ -365,9 +365,12 @@ class MonotoneMaps(MapFamily):
         return out
 
     def prior(self):
+        # bump weights start (and, without data, stay) near softplus(-3) ~ 0.05
+        # per dex: a stretch of latent with no data gets no slope, i.e. no age
+        # information, rather than a default one
         k = len(self.knots)
-        mean = np.r_[0.0, 0.0, 0.0, np.full(k, -1.0)]
-        sd = np.r_[100.0, 10.0, 10.0, np.full(k, 5.0)]
+        mean = np.r_[0.0, 0.0, 0.0, np.full(k, -3.0)]
+        sd = np.r_[100.0, 10.0, 10.0, np.full(k, 3.0)]
         return mean, sd
 
     def init(self) -> np.ndarray:

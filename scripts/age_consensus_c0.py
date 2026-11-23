@@ -925,7 +925,7 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
             "seconds": sec}  # fmt: skip
 
 
-def fit_frozen(data, cfg, frozen_pkl: Path, log=print, **kw):
+def fit_frozen(data, cfg, frozen_pkl: Path, log=print, res_override=None, **kw):
     """Staged fit (C0c): the age maps, their noise and the shared errors are
     those of an earlier fit (``frozen_pkl``, fitted on age data alone) and stay
     fixed; only the non-age (monotone) maps and their noise are fitted, against
@@ -977,6 +977,11 @@ def fit_frozen(data, cfg, frozen_pkl: Path, log=print, **kw):
     gsub = Groups(g.gid[fit_stars], g.prior[fit_stars], g.spread,
                   None if g.fixed is None else g.fixed[fit_stars])  # fmt: skip
     t0 = time.time()
+    if res_override is not None:  # resume: the staged fit saved earlier
+        rho = np.zeros(len(in_fit))
+        rho[fit_stars] = res_override.rho
+        return prob, {"res": res_override, "rho": rho, "n_fit_stars": int(r.n_star),
+                      "n_fit_rec": int(len(r.y)), "seconds": float("nan")}  # fmt: skip
     res = fit_consensus(r, gsub, maps, len(units), len(EFFECT_FAMILIES), n_sub=len(SUB_FAMILIES),
                         coefs0=[fam0.init() if False else res0.coefs[0], *[f.init() for f in mono]],
                         lk0=lk0, lw0=lw0, le0=res0.log_eta, fix_noise=fixed,
@@ -1095,7 +1100,7 @@ def noise_table(prob, out) -> pd.DataFrame:
         rows.append({"unit": u, "n_records": int(m.sum()), "median_quoted_sig": q,
                      "kappa": k if np.isfinite(q) else np.nan, "kappa_se": kse if np.isfinite(q) else np.nan,
                      "omega": w, "omega_se": wse, "scale_at_median_sig": scale,
-                     "effective_inflation": scale / q if np.isfinite(q) else np.nan})  # fmt: skip
+                     "effective_inflation": scale / q if np.isfinite(q) and q > 0 else np.nan})  # fmt: skip
     for e, name in enumerate((*EFFECT_FAMILIES, *SUB_FAMILIES)):
         eta = float(np.exp(res.log_eta[e]))
         ese = eta * np.sqrt(vc[2 * U + e, 2 * U + e]) if vc is not None else np.nan
@@ -1563,6 +1568,12 @@ def run(args) -> None:
                                  "seconds": round(out["seconds"], 1)}  # fmt: skip
 
     def save(tag, prob, out, sol):
+        with open(work / f"fit_{tag}.pkl", "wb") as fh:
+            pickle.dump({"res": out["res"], "units": prob["units"], "tiers": prob["tiers"],
+                         "rho": out["rho"], "star_ids": prob["star_ids"],
+                         "group_labels": prob["group_labels"], "gid": prob["groups"].gid,
+                         "prior": prob["groups"].prior, "spread": prob["groups"].spread,
+                         "sol": sol}, fh)  # fmt: skip
         map_table(prob, out).to_csv(docs / f"maps_{tag}.csv", index=False)
         noise_table(prob, out).to_csv(docs / f"noise_{tag}.csv", index=False)
         prob["tiers"].to_csv(docs / f"tiers_{tag}.csv", index=False)
@@ -1572,17 +1583,18 @@ def run(args) -> None:
                 docs / f"mono_maps_{tag}.csv", index=False
             )
         record_fit(tag, prob, out)
-        with open(work / f"fit_{tag}.pkl", "wb") as fh:
-            pickle.dump({"res": out["res"], "units": prob["units"], "tiers": prob["tiers"],
-                         "rho": out["rho"], "star_ids": prob["star_ids"],
-                         "group_labels": prob["group_labels"], "gid": prob["groups"].gid,
-                         "prior": prob["groups"].prior, "spread": prob["groups"].spread,
-                         "sol": sol}, fh)  # fmt: skip
 
     cfgA, cfgC = Config("A_apokasc3"), Config("C_xiang24", anchor="xiang24")
     results, sols = {}, {}
     frozen = args.freeze_from is not None
     for tag, cfg in (("A", cfgA), ("C", cfgC)):
+        if frozen and args.resume and (work / f"fit_{tag}.pkl").exists():
+            saved = pickle.load(open(work / f"fit_{tag}.pkl", "rb"))
+            prob, out = fit_frozen(data, cfg, Path(args.freeze_from) / f"fit_{tag}.pkl", log=log,
+                                   res_override=saved["res"])  # fmt: skip
+            results[tag], sols[tag] = (prob, out), saved["sol"]
+            record_fit(tag, prob, out)
+            continue
         if args.resume and (work / f"fit_{tag}.pkl").exists():
             saved = pickle.load(open(work / f"fit_{tag}.pkl", "rb"))
             prob = build_problem(data, cfg, log=log)
@@ -2241,7 +2253,12 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     fig.savefig(docs / f"{PREFIX}_scale_difference.png", dpi=90)
     plt.close(fig)
     # (5) leave-one-catalogue-out predictive accuracy
-    loo = pd.read_csv(docs / "loo_predictive.csv")
+    loo_path = docs / "loo_predictive.csv"  # absent for a staged (frozen) run
+    loo = (
+        pd.read_csv(loo_path)
+        if loo_path.exists()
+        else pd.DataFrame(columns=["class", "n_test"])
+    )
     loo = loo[(loo["class"] == "all") & (loo.n_test >= 20)].copy()
     if len(loo):
         loo = loo.sort_values("nmad_mapped")
