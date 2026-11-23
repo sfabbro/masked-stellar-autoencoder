@@ -488,6 +488,9 @@ def stage_train(a, config, out):
     o_st = de.observation_tensors(obs, sel["stop"], dev)
     for family, ks in todo.items():
         for k in ks:
+            if not a.force and head_paths(a, family)[k].exists():
+                log(f"train {family} member {k}: written meanwhile by another session")
+                continue
             log(f"train {family} member {k} ({len(z_tr)} rows)")
             member = de.Member(
                 family,

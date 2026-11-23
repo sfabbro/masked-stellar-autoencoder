@@ -617,7 +617,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
                  zp_sigma=0.0, batch=2048, max_epochs=20, patience=3, lr=1e-3,
                  weight_decay=1e-4, seed=0, eval_batch=2048, micro_batch=None,
                  z_alt_train=None, z_alt_stop=None, alt_prob=0.0, noise_lr_mult=10.0,
-                 log=print):  # fmt: skip
+                 max_skip_frac=0.05, max_rollbacks=3, log=print):  # fmt: skip
     """Fit one member by maximum marginal likelihood; early stopping on the stop set.
 
     ``z_*``: raw latents (torch, e.g. float16, on the training device);
@@ -629,6 +629,12 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
     row then uses its XP-hidden latent with probability ``alt_prob`` (drawn
     per batch) and the member gets the 0/1 flag (``member.xp_flag``); the stop
     set uses one fixed draw, so early stopping weighs both cases.
+
+    An epoch is unhealthy when it has no finite batch, a non-finite stop loss or
+    parameters, or skips more than ``max_skip_frac`` of its batches (a blow-up
+    in progress). It never becomes the best state: the member rolls back to the
+    end of the last healthy epoch (the initial state at first) with a halved
+    step and a fresh optimiser state; after ``max_rollbacks`` it stops.
     """
     dev = z_train.device
     torch.manual_seed(seed)
@@ -683,6 +689,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         return tot / cnt if cnt else math.inf  # no finite row: never a "best" epoch
 
     best, best_state, bad = math.inf, None, 0
+    healthy_state, rollbacks = copy.deepcopy(member.state_dict()), 0
     hist = dict(train=[], valid=[], lr=[], skipped=[], seconds=[], kappa=[], kappa_e=[],
                 e_outlier=[], zp_sigma=[])  # fmt: skip
     t_start = time.time()
@@ -726,18 +733,23 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
             tot += loss_val * len(idx)
             cnt += len(idx)
         v = stop_loss()
-        diverged = cnt == 0 or not math.isfinite(v) or not all(
-            bool(torch.isfinite(q).all()) for q in member.parameters())  # fmt: skip
-        if diverged and best_state is not None:
-            # Roll back to the best state with a halved step and a fresh optimiser
-            # state (Adam moments may hold the blow-up) instead of idling to patience.
-            member.load_state_dict(best_state)
+        n_batches = max(1, -(-len(perm) // batch))
+        diverged = cnt == 0 or not math.isfinite(v) or skipped > max_skip_frac * n_batches \
+            or not all(bool(torch.isfinite(q).all()) for q in member.parameters())  # fmt: skip
+        if diverged:
+            # Roll back to the last healthy state with a halved step and a fresh
+            # optimiser state (Adam moments may hold the blow-up) instead of idling
+            # to patience; the unhealthy epoch can never become the best state.
+            rollbacks += 1
+            member.load_state_dict(healthy_state)
             opt.state.clear()
             for g in opt.param_groups:
                 g["lr"] *= 0.5
-            log(f"  epoch {epoch}: diverged; restored the best state, lr -> "
-                f"{opt.param_groups[0]['lr']:.2e}")  # fmt: skip
-        sched.step(v)
+            log(f"  epoch {epoch}: diverged ({skipped}/{n_batches} batches skipped); "
+                f"restored the last healthy state, lr -> {opt.param_groups[0]['lr']:.2e}")  # fmt: skip
+        else:
+            healthy_state = copy.deepcopy(member.state_dict())
+            sched.step(v)
         hist["train"].append(tot / max(cnt, 1))
         hist["valid"].append(v)
         hist["lr"].append(opt.param_groups[0]["lr"])
@@ -749,7 +761,11 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
         hist["zp_sigma"].append(float(member.zp_sigma(zp_sigma).detach()))
         log(f"  epoch {epoch}: train {hist['train'][-1]:.4f} stop {v:.4f} "
             f"({time.time() - t0:.0f} s{', skipped ' + str(skipped) if skipped else ''})")  # fmt: skip
-        if v < best - 1e-4:
+        if diverged:
+            if rollbacks > max_rollbacks:
+                log(f"  stopping: {rollbacks} rollbacks")
+                break
+        elif v < best - 1e-4:
             best, bad = v, 0
             best_state = copy.deepcopy(member.state_dict())
         else:
@@ -765,7 +781,7 @@ def train_member(member, std, z_train, obs_train, z_stop, obs_stop, *, n_s=48, n
                 kappa_e_final=member.kappa_e().detach().cpu().tolist(),
                 e_outlier_final=float(member.e_outlier_frac().detach()),
                 zp_sigma_final=float(member.zp_sigma(zp_sigma).detach()),
-                alt_prob=float(alt_prob if mix else 0.0),
+                alt_prob=float(alt_prob if mix else 0.0), rollbacks=int(rollbacks),
                 train_seconds=time.time() - t_start)  # fmt: skip
     return hist
 

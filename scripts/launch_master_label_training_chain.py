@@ -1254,6 +1254,27 @@ for _k in range(5):
         f" --families flow --train-members {_k} --epochs 12",
         files=[MS_V10[1]],
     )
+# gmix members one per session (one session trains a member in ~2 h), and flow
+# member 2 again (attempt 1 diverged in epoch 0) with another seed and half the step.
+for _k in range(1, 5):
+    STEPS[f"ms-s3v2-gmix-{_k}"] = dict(
+        run_id=f"distance_extinction_s3_v2_gmix{_k}_20261123",
+        gpu=1,
+        ram=96,
+        cpu=8,
+        command=f"{_S3V2} --wait-for {S3V2_OUT}/data_ready --stages train"
+        f" --families gmix --train-members {_k}",
+        files=[MS_V10[1]],
+    )
+STEPS["ms-s3v2-flow-2b"] = dict(
+    run_id="distance_extinction_s3_v2_flow2b_20261123",
+    gpu=1,
+    ram=96,
+    cpu=8,
+    command=f"{_S3V2} --stages train --families flow --train-members 2 --epochs 12"
+    " --seed 100 --lr 5e-4 --force",
+    files=[MS_V10[1]],
+)
 STEPS["ms-s3v2-final"] = dict(
     run_id="distance_extinction_s3_v2_final_20261123",
     gpu=1,

@@ -426,7 +426,9 @@ def test_non_finite_gradients_are_skipped_and_parameters_stay_finite():
     assert all(torch.isfinite(q).all() for q in member.parameters())
     for q, q0 in zip(member.parameters(), before):
         torch.testing.assert_close(q.detach(), q0)
-    assert math.isfinite(hist["best_valid"])
+    # An epoch whose every step was skipped is unhealthy: rolled back (to the
+    # initial state here) and never taken as the best state.
+    assert hist["rollbacks"] == 1 and hist["best_valid"] == math.inf
 
 
 # ── S3 v2: fitted label noise, zero-point floor, XP-hidden mixing ───────────
