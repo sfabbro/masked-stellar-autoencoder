@@ -26,6 +26,10 @@ Spec: ``docs/programme/data.md`` section 3 and ``docs/programme/datasets.yaml``.
   exact for 19-digit ids: a companion is resolved exactly through the EB21/WDMS
   pair that holds its white dwarf; otherwise every Gaia source whose id rounds
   to that float64 is reserved (a few stars per companion, always including it).
+  The GBS v3 table stores ``GaiaDR3`` rounded through float64 as well (every id
+  float-exact, median 10 trailing zero bits against 7 for Gaia ids), so its
+  benchmarks are reserved by the same rounding superset. Any other id list
+  that looks float-rounded stops the build.
 
 Input: ``source_id``, ``has_xp_continuous`` and ``phot_{g,bp,rp}_mean_mag`` of
 every partition of the Gaia DR3 HATS tree, read column-wise, one partition at a
@@ -84,6 +88,8 @@ HR23_MIN_PROB = 0.7
 EB21_MAX_R = 0.1
 VB21_MIN_PROB = 0.5
 FRACTION_TOLERANCE = 1e-3
+# reserved by the float64 rounding superset (bit j of the per-float mask)
+FLOAT_REASONS = ("gbs_v3", "wd_age_companion_float")
 GAIA_COLUMNS = (
     "source_id",
     "has_xp_continuous",
@@ -367,6 +373,24 @@ def _int_ids(values, what: str) -> np.ndarray:
     return a.astype(np.int64)
 
 
+def float_exact_fraction(ids) -> float:
+    """Share of ids equal to their float64 rounding (~0.2-0.5 for Gaia ids)."""
+    a = np.asarray(ids, np.int64)
+    if not len(a):
+        return float("nan")
+    return float(np.mean(a.astype(np.float64).astype(np.int64) == a))
+
+
+def check_not_float_rounded(ids, what: str, min_n: int = 50) -> float:
+    """Fail closed on an id list that was rounded through float64 upstream."""
+    f = float_exact_fraction(ids)
+    if len(ids) >= min_n and f == 1.0:
+        raise SystemExit(
+            f"{what}: every id is float64-exact; ids were rounded upstream"
+        )
+    return f
+
+
 def load_hr23(inputs: Inputs) -> tuple[pd.DataFrame, dict]:
     m = _read_fits_columns(inputs.hr23_members, ["GaiaDR3", "ID", "Prob", "Name"])
     cl = _read_fits_columns(inputs.hr23_clusters, ["ID", "Name", "Type"])
@@ -445,10 +469,21 @@ def load_reserved(inputs: Inputs, hr23: pd.DataFrame, eb21: pd.DataFrame):
     the white-dwarf companions that did not resolve exactly)."""
     info, res = {}, {}
     g = pd.read_parquet(inputs.gbs, columns=["GaiaDR3"])
-    gid = pd.to_numeric(g.GaiaDR3, errors="coerce").dropna()
-    res["gbs_v3"] = np.unique(_int_ids(gid, "GBS"))
-    info["gbs_v3"] = dict(rows=len(g), unique=len(res["gbs_v3"]))
+    gid = np.unique(_int_ids(pd.to_numeric(g.GaiaDR3, errors="coerce").dropna(), "GBS"))
+    # GaiaDR3 went through float64 upstream: reserve its rounding superset
+    gbs_floats = np.unique(gid.astype(np.float64))
+    res["gbs_v3"] = np.zeros(0, np.int64)
+    info["gbs_v3"] = dict(
+        rows=len(g),
+        unique=len(gid),
+        float_exact_fraction=float_exact_fraction(gid),
+        rule="float64 rounding superset",
+        float_ids=len(gbs_floats),
+    )
     res["vb21_gc"], info["vb21_gc"] = load_vb21(inputs)
+    info["vb21_gc"]["float_exact_fraction"] = check_not_float_rounded(
+        res["vb21_gc"], "VB21"
+    )
     pr = pd.read_csv(inputs.age_clusters)
     want = sorted(set(pr.hr23_name.dropna().astype(str).str.strip()) - {""})
     sel = hr23.name.isin(want)
@@ -475,6 +510,7 @@ def load_reserved(inputs: Inputs, hr23: pd.DataFrame, eb21: pd.DataFrame):
     kic = np.unique(leg)
     hit = kt[kt.kepid.isin(kic)]
     res["kepler_legacy"] = np.unique(hit.source_id.to_numpy(np.int64))
+    check_not_float_rounded(kt.source_id, "kepler_dr3_good")
     info["kepler_legacy"] = dict(
         kic=len(kic),
         resolved=len(hit),
@@ -486,9 +522,14 @@ def load_reserved(inputs: Inputs, hr23: pd.DataFrame, eb21: pd.DataFrame):
             [_int_ids(w.wd_source_id, "WDMS"), _int_ids(w.ms_source_id, "WDMS")]
         )
     )
-    info["wdms_pair"] = dict(pairs=len(w), unique=len(res["wdms_pair"]))
+    info["wdms_pair"] = dict(
+        pairs=len(w),
+        unique=len(res["wdms_pair"]),
+        float_exact_fraction=check_not_float_rounded(res["wdms_pair"], "WDMS"),
+    )
     a = pd.read_parquet(inputs.wd_ages, columns=["source_id", "companion_source_id"])
     wd = _int_ids(a.source_id, "WD ages")
+    check_not_float_rounded(np.unique(wd), "WD ages source_id")
     # companion ids are stored as float64 (not exact for 19-digit ids): resolve
     # them exactly through the pair lists that contain the white dwarf
     links = pd.concat(
@@ -532,7 +573,15 @@ def load_reserved(inputs: Inputs, hr23: pd.DataFrame, eb21: pd.DataFrame):
         unresolved_float_ids=len(floats),
         unique=len(res["wd_age_published"]),
     )
-    return res, info, floats
+    ids = np.r_[gbs_floats, floats]
+    bits = np.r_[
+        np.full(len(gbs_floats), 1, np.uint8), np.full(len(floats), 2, np.uint8)
+    ]
+    order = np.argsort(ids, kind="stable")
+    ids, bits = ids[order], bits[order]
+    uniq, first = np.unique(ids, return_index=True)
+    mask = np.bitwise_or.reduceat(bits, first) if len(ids) else bits
+    return res, info, uniq, mask.astype(np.uint8)
 
 
 # ── scan of the Gaia HATS partitions ─────────────────────────────────────────
@@ -541,14 +590,15 @@ _OVER_IDS = np.zeros(0, np.int64)
 _OVER_PART = np.zeros(0, np.uint8)
 _OVER_GROUP = np.zeros(0, np.int32)
 _FLOAT_IDS = np.zeros(0, np.float64)
+_FLOAT_BITS = np.zeros(0, np.uint8)
 _FINGERPRINT = ""
 
 
-def init_worker(ids, part, group, floats, fingerprint) -> None:
+def init_worker(ids, part, group, floats, float_bits, fingerprint) -> None:
     """Pool initializer: the override arrays every partition is joined against."""
-    global _OVER_IDS, _OVER_PART, _OVER_GROUP, _FLOAT_IDS, _FINGERPRINT
+    global _OVER_IDS, _OVER_PART, _OVER_GROUP, _FLOAT_IDS, _FLOAT_BITS, _FINGERPRINT
     _OVER_IDS, _OVER_PART, _OVER_GROUP = ids, part, group
-    _FLOAT_IDS, _FINGERPRINT = floats, fingerprint
+    _FLOAT_IDS, _FLOAT_BITS, _FINGERPRINT = floats, float_bits, fingerprint
 
 
 def assign(source_id: np.ndarray):
@@ -567,12 +617,14 @@ def assign(source_id: np.ndarray):
         part[hit_row] = _OVER_PART[hit_pos]
         group[hit_row] = _OVER_GROUP[hit_pos]
     float_row = np.zeros(0, np.int64)
+    float_bits = np.zeros(0, np.uint8)
     if len(_FLOAT_IDS):
         f = source_id.astype(np.float64)
         pos = np.minimum(np.searchsorted(_FLOAT_IDS, f), len(_FLOAT_IDS) - 1)
         float_row = np.flatnonzero(_FLOAT_IDS[pos] == f)
+        float_bits = _FLOAT_BITS[pos[float_row]]
         part[float_row] = RESERVED
-    return base, part, group, hit_pos, hit_row, float_row
+    return base, part, group, hit_pos, hit_row, float_row, float_bits
 
 
 def _read_partition(path: Path):
@@ -601,7 +653,7 @@ def process_partition(task):
             if str(z["fingerprint"]) == _FINGERPRINT:
                 return {k: z[k] for k in z.files}
     sid, cls = _read_partition(src)
-    base, part, group, hit_pos, hit_row, float_row = assign(sid)
+    base, part, group, hit_pos, hit_row, float_row, float_bits = assign(sid)
     table = pa.table(
         {
             "source_id": pa.array(sid, pa.int64()),
@@ -632,6 +684,7 @@ def process_partition(task):
         hit_cls=cls[hit_row],
         float_sid=sid[float_row],
         float_cls=cls[float_row],
+        float_bits=float_bits,
         fingerprint=np.str_(_FINGERPRINT),
     )
     stats.parent.mkdir(parents=True, exist_ok=True)
@@ -659,33 +712,47 @@ def hats_properties(root: Path) -> dict[str, str]:
     return props
 
 
-def add_float_reserved(over: pd.DataFrame, sid, cls, floats):
-    """Reserve the Gaia sources whose id rounds to an unresolved companion float.
+def add_float_reserved(over: pd.DataFrame, sid, cls, bits, floats, float_bits):
+    """Reserve the Gaia sources whose id rounds to a float64-stored id.
 
     The workers already wrote them as QA_RESERVED; this adds them to the
-    override list (or marks their existing row) with their reason.
+    override list (or adds the reason to their existing row).
     """
     order = np.argsort(sid, kind="stable")
-    sid, cls = np.asarray(sid, np.int64)[order], np.asarray(cls, np.uint8)[order]
-    hits = np.unique(sid.astype(np.float64), return_counts=True)[1]
-    info = dict(
-        float_ids=len(floats),
-        float_ids_with_gaia_sources=len(hits),
-        float_ids_without_gaia_source=len(floats) - len(hits),
-        gaia_sources_reserved=len(sid),
-        sources_per_float_max=int(hits.max()) if len(hits) else 0,
-        sources_per_float_median=float(np.median(hits)) if len(hits) else 0.0,
-    )
+    sid = np.asarray(sid, np.int64)[order]
+    cls = np.asarray(cls, np.uint8)[order]
+    bits = np.asarray(bits, np.uint8)[order]
+    info = {}
+    for j, name in enumerate(FLOAT_REASONS):
+        fl = floats[(float_bits >> j) & 1 == 1]
+        s = sid[(bits >> j) & 1 == 1]
+        hits = np.unique(s.astype(np.float64), return_counts=True)[1]
+        info[name] = dict(
+            float_ids=len(fl),
+            float_ids_with_gaia_sources=len(hits),
+            float_ids_without_gaia_source=len(fl) - len(hits),
+            gaia_sources_reserved=len(s),
+            sources_per_float_max=int(hits.max()) if len(hits) else 0,
+            sources_per_float_median=float(np.median(hits)) if len(hits) else 0.0,
+        )
     if not len(sid):
         return over, info
     ids = over.source_id.to_numpy()
     pos = np.minimum(np.searchsorted(ids, sid), max(len(ids) - 1, 0))
     known = (ids[pos] == sid) if len(ids) else np.zeros(len(sid), bool)
+
+    def reasons(old: str, b: int) -> str:
+        have = set(filter(None, old.split(";"))) | {
+            n for j, n in enumerate(FLOAT_REASONS) if b >> j & 1
+        }
+        return ";".join(n for n in RESERVED_REASONS if n in have)
+
     over = over.copy()
     j = over.index[pos[known]]
-    tag = "wd_age_companion_float"
-    old = over.loc[j, "reserved_reason"].fillna("")
-    over.loc[j, "reserved_reason"] = np.where(old == "", tag, old + ";" + tag)
+    old = over.loc[j, "reserved_reason"].fillna("").tolist()
+    over.loc[j, "reserved_reason"] = [
+        reasons(o, int(b)) for o, b in zip(old, bits[known], strict=True)
+    ]
     over.loc[j, "reserved"] = True
     over.loc[j, "partition"] = np.uint8(RESERVED)
     new_ids = sid[~known]
@@ -698,7 +765,7 @@ def add_float_reserved(over: pd.DataFrame, sid, cls, floats):
             "hash_partition": b,
             "partition": np.full(len(new_ids), RESERVED, np.uint8),
             "reserved": True,
-            "reserved_reason": tag,
+            "reserved_reason": [reasons("", int(x)) for x in bits[~known]],
             "in_gaia_dr3": True,
             "written_partition": np.full(len(new_ids), RESERVED, np.uint8),
             "input_class": cls[~known],
@@ -895,7 +962,8 @@ def run(args) -> int:
             "inherits the most probable cluster of its members (companion follows the cluster)",
         ),
         reserved_rules=dict(
-            gbs_v3="gaia_fgk_benchmarks.parquet GaiaDR3",
+            gbs_v3="gaia_fgk_benchmarks.parquet GaiaDR3 (stored rounded through float64): every "
+            "Gaia source whose id rounds to the same float64",
             vb21_gc=f"VB21 gc_gaia/catalogues/*.txt + cluster_members_extra.parquet, memberprob >= {VB21_MIN_PROB}",
             age_benchmark_cluster=f"HR23 members (Prob >= {HR23_MIN_PROB}) of the hr23_name clusters in cluster_priors.csv",
             kepler_legacy="kepler-legacy-dwarfs.fits KIC -> kepler_dr3_good.fits (nearest)",
@@ -920,7 +988,7 @@ def run(args) -> int:
     eb21, info_eb21 = load_eb21(inputs)
     print(f"HR23 {info_hr23}; EB21 {info_eb21}", flush=True)
     groups, members, pairs = resolve_groups(hr23, eb21)
-    reserved, info_res, floats = load_reserved(inputs, hr23, eb21)
+    reserved, info_res, floats, float_bits = load_reserved(inputs, hr23, eb21)
     print(f"reserved {info_res}", flush=True)
     over = build_overrides(members, groups, reserved)
     m["groups"] = dict(
@@ -951,6 +1019,7 @@ def run(args) -> int:
         over.partition.to_numpy(np.uint8),
         over.group_id.to_numpy(np.int32),
         floats.astype(np.float64),
+        float_bits.astype(np.uint8),
     ]
     h = hashlib.sha256()
     h.update(f"{SPEC}:{SALT64}".encode())
@@ -992,7 +1061,7 @@ def run(args) -> int:
     base = np.zeros(16, np.int64)
     final = np.zeros(20, np.int64)
     pstats, rows_done, t0 = [], 0, time.monotonic()
-    float_sid, float_cls = [], []
+    float_sid, float_cls, float_hit_bits = [], [], []
     # spawn, not fork: the parent already runs Arrow threads (parquet reads)
     ctx = mp.get_context("spawn")
     with ctx.Pool(args.workers, initializer=init_worker, initargs=shared) as pool:
@@ -1002,6 +1071,7 @@ def run(args) -> int:
             hit_cls[r["hit_pos"]] = r["hit_cls"]
             float_sid.append(r["float_sid"])
             float_cls.append(r["float_cls"])
+            float_hit_bits.append(r["float_bits"])
             base += r["base"]
             final += r["final"]
             rows_done += int(r["rows"])
@@ -1033,9 +1103,14 @@ def run(args) -> int:
     over["written_partition"] = written
     over["input_class"] = hit_cls
     over, info_float = add_float_reserved(
-        over, np.concatenate(float_sid), np.concatenate(float_cls), floats
+        over,
+        np.concatenate(float_sid),
+        np.concatenate(float_cls),
+        np.concatenate(float_hit_bits),
+        floats,
+        float_bits,
     )
-    m["reserved"]["wd_age_companion_float"] = info_float
+    m["reserved"]["float_rounding_superset"] = info_float
     m["reserved"]["unique_final"] = int(over.reserved.sum())
     over.to_parquet(out / "overrides.parquet", index=False)
     gfound = np.bincount(

@@ -177,32 +177,47 @@ def test_unresolved_float_companions_reserve_their_rounding_superset():
         clusters, pd.DataFrame({"source_id1": [], "source_id2": []}, dtype=np.int64)
     )
     over = S.build_overrides(members, groups, {})
-    floats = np.array([float(base + 2)])
+    floats = np.array([float(base + 2), float(base + 5000)])
+    float_bits = np.array([2, 1], np.uint8)  # WD companion, GBS benchmark
     S.init_worker(
         over.source_id.to_numpy(),
         over.partition.to_numpy(),
         over.group_id.to_numpy(),
         floats,
+        float_bits,
         "fp",
     )
     try:
-        b, part, group, hit_pos, hit_row, float_row = S.assign(gaia)
+        b, part, group, hit_pos, hit_row, float_row, bits = S.assign(gaia)
     finally:
         empty = (np.zeros(0, np.int64), np.zeros(0, np.uint8), np.zeros(0, np.int32))
-        S.init_worker(*empty, np.zeros(0), "")
-    assert list(float_row) == [0, 1] and list(part[:2]) == [S.RESERVED] * 2
-    assert part[2] == b[2] and part[3] == b[3] and group[0] == 0
+        S.init_worker(*empty, np.zeros(0), np.zeros(0, np.uint8), "")
+    assert list(float_row) == [0, 1, 3] and list(bits) == [2, 2, 1]
+    assert list(part[[0, 1, 3]]) == [S.RESERVED] * 3
+    assert part[2] == b[2] and group[0] == 0
     over = over.assign(
         in_gaia_dr3=True, written_partition=part[:1], input_class=np.uint8(1)
     )
     new, info = S.add_float_reserved(
-        over, gaia[float_row], np.array([1, 2], np.uint8), floats
+        over, gaia[float_row], np.array([1, 2, 1], np.uint8), bits, floats, float_bits
     )
     new = new.set_index("source_id")
-    assert info["added"] == 1 and info["already_listed"] == 1
+    assert info["added"] == 2 and info["already_listed"] == 1
+    assert info["gbs_v3"]["gaia_sources_reserved"] == 1
+    assert info["wd_age_companion_float"]["gaia_sources_reserved"] == 2
     assert new.loc[base + 1, "reserved_reason"] == "wd_age_companion_float"
+    assert new.loc[base + 5000, "reserved_reason"] == "gbs_v3"
     assert new.loc[base + 1, "group_id"] == 0 and new.loc[base + 2, "group_id"] == -1
     assert (new.partition == S.RESERVED).all() and new.reserved.all()
+
+
+def test_float_rounded_id_lists_fail_closed():
+    rng = np.random.default_rng(9)
+    ids = _gaia_ids(rng, 500)
+    assert S.check_not_float_rounded(ids, "ok") < 1.0
+    rounded = np.unique(ids.astype(np.float64).astype(np.int64))
+    with pytest.raises(SystemExit, match="rounded upstream"):
+        S.check_not_float_rounded(rounded, "rounded")
 
 
 def test_input_class():
@@ -422,7 +437,11 @@ def test_end_to_end_freeze(tmp_path):
     assert part[f["gc"][25]] != S.RESERVED and part[f["kic"][1]] != S.RESERVED
     assert part[f["wdcomp"]] == S.RESERVED
     assert over.loc[f["wdcomp"], "reserved_reason"] == "wd_age_companion_float"
-    assert man["reserved"]["wd_age_companion_float"]["added"] == 1
+    sup = man["reserved"]["float_rounding_superset"]
+    assert sup["added"] == 6  # five benchmarks and one companion
+    assert sup["gbs_v3"]["gaia_sources_reserved"] == 5
+    assert sup["wd_age_companion_float"]["gaia_sources_reserved"] == 1
+    assert v["reserved_not_in_gaia"] == 0
     res = man["reserved"]["per_reason"]
     assert res["wd_age_published"]["companions_resolved"] == 4
     assert res["wd_age_published"]["companions_unresolved"] == 1
