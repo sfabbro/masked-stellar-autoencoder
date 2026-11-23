@@ -132,9 +132,16 @@ must be staged separately; otherwise use match-at-source on RSP/NERSC.
 The wrapper selects the public survey list, adds local products only when their
 environment variables are set, and runs the anchor engine:
 
+Output location rule: MSA writes only under `/arc/projects/astroai/msa`
+(`vos:astroai/msa`). `/arc/projects/hats` is reserved for the community to read
+HATS catalogues: read the mirrors there, never write (no outputs, no new mirrors).
+Inputs not yet mirrored under `/arc/projects/hats` are cached under
+`/arc/projects/astroai/msa/hats_cache`; with every input already mirrored, run
+with `--no-sync` so nothing is synced.
+
 ```bash
-export CACHE=/arc/projects/hats
-export OUT=/arc/projects/hats/xmatcher/gaia_master.hats
+export CACHE=/arc/projects/astroai/msa/hats_cache   # new mirrors only; read existing ones from /arc/projects/hats
+export OUT=/arc/projects/astroai/msa/xmatcher/gaia_master.hats
 
 PREFLIGHT_ONLY=1 bash scripts/run_gaia_master.sh
 bash scripts/run_gaia_master.sh
@@ -147,8 +154,8 @@ xmatcher match gaia_lsdb_hats \
   twomass_hats allwise_hats catwise_hats skymapper_hats \
   sdss_hats ps1_hats vhs_hats galex_hats splus_hats \
   --engine ray-anchor -r 1.5 --target-epoch 2016.0 \
-  --cache-root /arc/projects/hats \
-  -o /arc/projects/hats/xmatcher/gaia_master.hats
+  --cache-root /arc/projects/astroai/msa/hats_cache \
+  -o /arc/projects/astroai/msa/xmatcher/gaia_master.hats
 ```
 
 The first run mirrors each input on demand. `--no-sync` requires the cache to
@@ -162,7 +169,7 @@ Stream the output (only anchor ID and ambiguity columns are read):
 
 ```bash
 python scripts/validate_anchor_output.py \
-  /arc/projects/hats/xmatcher/gaia_master.hats \
+  /arc/projects/astroai/msa/xmatcher/gaia_master.hats \
   --json gaia_master_validation.json
 ```
 

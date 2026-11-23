@@ -31,6 +31,13 @@ The stellar-parameter pipeline is `masked_stellar_autoencoder.pipeline`
 `pixi run pytest tests/test_pipeline.py -q`. The original `training/` scripts
 are a separate path. Do not push this fork to `upstream`.
 
+## Output locations (CANFAR / ARC)
+
+- Write every MSA output (tables, cross-matches, xmatcher caches and mirrors,
+  runs, analysis) under `/arc/projects/astroai/msa` (`vos:astroai/msa`).
+- `/arc/projects/hats` is reserved for the community to read HATS catalogues:
+  read from it, never write to it (no outputs, no new mirrors or syncs).
+
 ## Env hygiene
 
 - Prefer `pixi run` / `pixi run python` over bare `python3` when Pixi exists.

@@ -22,6 +22,9 @@ From now on, every result is produced on the full data sets defined here and jud
 
 ## 2. Where things are
 
+Output rule: every MSA output (tables, cross-matches, caches, runs) is written under `/arc/projects/astroai/msa` (`vos:astroai/msa`). `/arc/projects/hats` is read-only for us; it is reserved for the community to access HATS catalogues.
+
+
 | What | Where | Size |
 |---|---|---|
 | Master label set (current, complete) | `/arc/projects/astroai/msa/runs/master_spectroscopic_labels_20261113_v1/` (`stars.parquet`, `records/`, `manifest.json`, `catalogues.json`) | 44,576,092 records; 19,255,342 stars (19,205,652 with Gaia DR3 id); 43 surveys/pipelines |
@@ -137,7 +140,7 @@ Found while writing these documents; each one changes results.
 | Step | What | Output | Depends on |
 |---|---|---|---|
 | P0 | Freeze `msa-split-v1` for all 1.81B DR3 sources + group and override lists | `runs/msa_split_v1/` | — |
-| P1 | **Gaia-anchored full-wavelength master**: xmatcher `ray-anchor` with `hats/gaia/dr3` as anchor and every mirror in §2 (runbook `docs/gaia-master-data.md`; preflight, then full run; 3–5 TB) | `/arc/projects/hats/xmatcher/gaia_master.hats` | disk check |
+| P1 | **Gaia-anchored full-wavelength master**: xmatcher `ray-anchor` with `hats/gaia/dr3` as anchor and every mirror in §2 (runbook `docs/gaia-master-data.md`; preflight, then full run; 3–5 TB) | `/arc/projects/astroai/msa/xmatcher/gaia_master.hats` (never under `/arc/projects/hats`) | disk check |
 | P2 | Input contract v2: band list UV→MIR, errors, presence masks, epochs and quality flags per survey; XP joined from `dr3_xp_continuous`; SFD E(B−V); parallax/pm as conditioning | `docs/programme/input-contract.md`, builder | P1 |
 | P3 | Training tables: REC (all FIT objects, streamed from HATS, no row cap); labelled FIT/DEV/CAL/TEST from all 19.2M master stars, X/P/G classes | `runs/msa_tables_v2/` | P0, P2 |
 | P4 | Encoder v11 (token set encoder, heteroscedastic reconstruction, XP dropout, filter-integral term) pretrained on REC | checkpoint | P3 |

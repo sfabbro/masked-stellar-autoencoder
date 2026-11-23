@@ -104,11 +104,11 @@ Step 3: crossmatch.py
     × other surveys with measured motion propagated to J2016.0
     × surveys without PM either matched at their declared epoch or handled
       with an explicitly accepted missing-motion prior and positional errors
-  ──→ /arc/projects/hats/xmatcher/
+  ──→ /arc/projects/astroai/msa/xmatcher/
 
 Step 4: build_master.py
   Gaia XP (via source_id join) + crossmatch results
-  ──→ /arc/projects/hats/master/
+  ──→ /arc/projects/astroai/msa/master/
 ```
 
 ## Storage Layout
