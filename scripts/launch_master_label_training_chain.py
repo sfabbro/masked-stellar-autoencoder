@@ -1266,15 +1266,16 @@ for _k in range(1, 5):
         f" --families gmix --train-members {_k}",
         files=[MS_V10[1]],
     )
-STEPS["ms-s3v2-flow-2b"] = dict(
-    run_id="distance_extinction_s3_v2_flow2b_20261123",
-    gpu=1,
-    ram=96,
-    cpu=8,
-    command=f"{_S3V2} --stages train --families flow --train-members 2 --epochs 12"
-    " --seed 100 --lr 5e-4 --force",
-    files=[MS_V10[1]],
-)
+for _k in range(5):  # retrain flow member k (another seed, half the step)
+    STEPS[f"ms-s3v2-flow-{_k}b"] = dict(
+        run_id=f"distance_extinction_s3_v2_flow{_k}b_20261123",
+        gpu=1,
+        ram=96,
+        cpu=8,
+        command=f"{_S3V2} --stages train --families flow --train-members {_k}"
+        " --epochs 12 --seed 100 --lr 5e-4 --force",
+        files=[MS_V10[1]],
+    )
 STEPS["ms-s3v2-final"] = dict(
     run_id="distance_extinction_s3_v2_final_20261123",
     gpu=1,
