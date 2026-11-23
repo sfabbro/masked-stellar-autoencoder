@@ -921,9 +921,13 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     fitA = pickle.load(open(work / "fit_A.pkl", "rb"))
     resA = fitA["res"]
     rA = pd.read_parquet(work / "residuals_A.parquet")
-    stars = pd.read_parquet(work / "consensus_stars.parquet",
-                            columns=["source_id", "t_A", "sd_A", "t_rec_A", "sd_rec_A", "t_C",
-                                     "stage", "feh", "cluster_id", "conatal_resp", "n_catalogues"])  # fmt: skip
+    import pyarrow.parquet as pq
+
+    cols = ["source_id", "t_A", "sd_A", "t_rec_A", "sd_rec_A", "t_C", "stage", "feh",
+            "cluster_id", "conatal_resp", "n_catalogues"]  # fmt: skip
+    if "t_C_fromA" in pq.read_schema(work / "consensus_stars.parquet").names:
+        cols.append("t_C_fromA")
+    stars = pd.read_parquet(work / "consensus_stars.parquet", columns=cols)
     # (1) maps: catalogue log age vs consensus (other groups), map curves per class
     keys = [k for k in resA.maps.names if (rA.key == k).sum() >= 30]
     ncol = 5
@@ -1064,45 +1068,47 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     fig.tight_layout()
     fig.savefig(docs / "c0_clusters.png", dpi=90)
     plt.close(fig)
-    # (4) scale difference C - A vs age and [Fe/H] per stage
-    s = stars[
-        np.isfinite(stars.t_A) & np.isfinite(stars.t_C) & (stars.n_catalogues > 0)
-    ]
-    fig, axs = plt.subplots(1, 2, figsize=(11, 3.8))
-    stages = [
-        c
-        for c in ("SGB", "MSTO", "RGB", "RC", "giant", "MS")
-        if (s.stage == c).sum() >= 50
-    ]
-    for j, c in enumerate(stages):
-        g = s[s.stage == c]
-        col = SERIES[j % 4]
-        ls = "-" if j < 4 else "--"
-        for ax, x, e in (
-            (axs[0], g.t_A.to_numpy(), ea),
-            (axs[1], g.feh.to_numpy(), ef),
-        ):
-            b = _binned(x, (g.t_C - g.t_A).to_numpy(), e, min_n=30)
-            if len(b):
-                ax.plot(
-                    b[:, 0],
-                    b[:, 1],
-                    color=col,
-                    ls=ls,
-                    marker="o",
-                    ms=2.5,
-                    label=f"{c} (n={len(g)})",
-                )
-                ax.fill_between(b[:, 0], b[:, 2], b[:, 3], color=col, alpha=0.1, lw=0)
-    for ax in axs:
-        ax.axhline(0, color=MUTED, lw=0.8)
-        ax.set_ylabel("t(Xiang gauge) − t(APOKASC-3 gauge) (dex)")
-    axs[0].set_xlabel("consensus log10(age/Gyr), APOKASC-3 gauge")
-    axs[1].set_xlabel("[Fe/H] (dex)")
-    axs[0].legend(fontsize=6.5, loc="center right")
+    # (4) scale difference C - A vs age and [Fe/H] per stage (both C solutions)
+    variants_c = [("t_C", "Xiang gauge fitted from scratch")]
+    if "t_C_fromA" in stars:
+        variants_c.append(
+            ("t_C_fromA", "Xiang gauge started from the APOKASC-3 solution")
+        )
+    fig, axs = plt.subplots(len(variants_c), 2, figsize=(11, 3.6 * len(variants_c)),
+                            squeeze=False)  # fmt: skip
+    for row, (ccol, clab) in zip(axs, variants_c):
+        s = stars[
+            np.isfinite(stars.t_A) & np.isfinite(stars[ccol]) & (stars.n_catalogues > 0)
+        ]
+        stages = [
+            c
+            for c in ("SGB", "MSTO", "RGB", "RC", "giant", "MS")
+            if (s.stage == c).sum() >= 50
+        ]
+        for j, c in enumerate(stages):
+            g = s[s.stage == c]
+            col, ls = SERIES[j % 4], ("-" if j < 4 else "--")
+            for ax, x, e in (
+                (row[0], g.t_A.to_numpy(), ea),
+                (row[1], g.feh.to_numpy(), ef),
+            ):
+                b = _binned(x, (g[ccol] - g.t_A).to_numpy(), e, min_n=30)
+                if len(b):
+                    ax.plot(b[:, 0], b[:, 1], color=col, ls=ls, marker="o", ms=2.5,
+                            label=f"{c} (n={len(g)})")  # fmt: skip
+                    ax.fill_between(
+                        b[:, 0], b[:, 2], b[:, 3], color=col, alpha=0.1, lw=0
+                    )
+        for ax in row:
+            ax.axhline(0, color=MUTED, lw=0.8)
+            ax.set_ylabel("t(Xiang gauge) − t(APOKASC-3) (dex)")
+            ax.set_title(clab, loc="left")
+        row[0].legend(fontsize=6.5, loc="center right")
+    axs[-1, 0].set_xlabel("consensus log10(age/Gyr), APOKASC-3 gauge")
+    axs[-1, 1].set_xlabel("[Fe/H] (dex)")
     fig.suptitle("Scale systematic: Xiang 2024-anchored minus APOKASC-3-anchored consensus "
                  "(median, 16–84 %)", x=0.01, ha="left", fontsize=9)  # fmt: skip
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
     fig.savefig(docs / "c0_scale_difference.png", dpi=90)
     plt.close(fig)
     # (5) leave-one-catalogue-out predictive accuracy

@@ -1,0 +1,145 @@
+{
+  "excluded": {
+    "starhorse23_lamostl7 main-sequence records (log g >= 4.1)": 677432,
+    "starhorse23_rvs main-sequence records (log g >= 4.1)": 295991,
+    "galah_dr4 main-sequence records (log g >= 4.1)": 267687,
+    "starhorse23_lamostm7 main-sequence records (log g >= 4.1)": 91249,
+    "starhorse23_galahdr3 main-sequence records (log g >= 4.1)": 57148,
+    "starhorse23_sdssdr12 main-sequence records (log g >= 4.1)": 38006,
+    "starhorse23_apogee17 main-sequence records (log g >= 4.1)": 28305,
+    "starhorse23_ravedr6 main-sequence records (log g >= 4.1)": 25974,
+    "xiang24 main-sequence records (log g >= 4.1)": 14484,
+    "starhorse23_gesdr5 main-sequence records (log g >= 4.1)": 4810,
+    "flame_dr3 + flame_spec_dr3 records": 3911011,
+    "records without an evolutionary class": 0
+  },
+  "n_records_good": 7456035,
+  "n_stars_all": 3608454,
+  "fit_A": {
+    "stars": 271190,
+    "records": 543837,
+    "outer_iterations": 23,
+    "last_max_dtheta": 0.0009878347456544478,
+    "seconds": 380.6
+  },
+  "fit_C": {
+    "stars": 271190,
+    "records": 543837,
+    "outer_iterations": 16,
+    "last_max_dtheta": 0.0008182927449655831,
+    "seconds": 282.9
+  },
+  "fit_V_affine_bridge": {
+    "stars": 271190,
+    "records": 543837,
+    "outer_iterations": 30,
+    "last_max_dtheta": 0.0013127665491312092,
+    "seconds": 411.0
+  },
+  "fit_V_galah_giants": {
+    "stars": 274618,
+    "records": 551147,
+    "outer_iterations": 17,
+    "last_max_dtheta": 6.275276433653776e-06,
+    "seconds": 266.3
+  },
+  "fit_V_galah_continuity": {
+    "stars": 274618,
+    "records": 551147,
+    "outer_iterations": 21,
+    "last_max_dtheta": 0.0005206063485941326,
+    "seconds": 2092.8
+  },
+  "fit_V_conatal_only": {
+    "stars": 271177,
+    "records": 543812,
+    "outer_iterations": 17,
+    "last_max_dtheta": 0.0008323858402100592,
+    "seconds": 232.6
+  },
+  "fit_V_continuity_only": {
+    "stars": 271479,
+    "records": 548008,
+    "outer_iterations": 12,
+    "last_max_dtheta": 0.00426313599723821,
+    "seconds": 149.6
+  },
+  "fit_V_seismic_dwarfs": {
+    "stars": 271190,
+    "records": 543837,
+    "outer_iterations": 12,
+    "last_max_dtheta": 0.0009207659696456871,
+    "seconds": 171.1
+  },
+  "per_star_path": "/tmp/claude-0/-home-user/d60e9c7a-7b13-5bb2-ade1-fb8da7adbc26/scratchpad/age_c0/work/consensus_stars.parquet",
+  "n_stars_with_consensus_A": 1163699,
+  "n_stars_with_consensus_C": 1163699,
+  "n_lower_limits_A": 2527,
+  "frac_consensus_A_above_13p8": 0.04033259459705645,
+  "fit_LOO_apokasc2+apok2_kepler": {
+    "stars": 271105,
+    "seconds": 170.6,
+    "outer_iterations": 13
+  },
+  "fit_LOO_willett26": {
+    "stars": 259916,
+    "seconds": 128.2,
+    "outer_iterations": 11
+  },
+  "fit_LOO_apok2": {
+    "stars": 267772,
+    "seconds": 144.8,
+    "outer_iterations": 12
+  },
+  "fit_LOO_legacy17": {
+    "stars": 271152,
+    "seconds": 142.0,
+    "outer_iterations": 12
+  },
+  "fit_LOO_chaplin14": {
+    "stars": 270981,
+    "seconds": 161.5,
+    "outer_iterations": 13
+  },
+  "fit_LOO_xiang24": {
+    "stars": 77966,
+    "seconds": 105.1,
+    "outer_iterations": 30
+  },
+  "fit_LOO_galah_dr4": {
+    "stars": 209624,
+    "seconds": 113.9,
+    "outer_iterations": 11
+  },
+  "fit_LOO_starhorse23_lamostl7": {
+    "stars": 116572,
+    "seconds": 104.9,
+    "outer_iterations": 20
+  },
+  "fit_LOO_starhorse23_rvs": {
+    "stars": 256433,
+    "seconds": 193.2,
+    "outer_iterations": 15
+  },
+  "fit_LOO_starhorse23_apogee17": {
+    "stars": 269660,
+    "seconds": 150.4,
+    "outer_iterations": 11
+  },
+  "fit_LOO_starhorse23_galahdr3": {
+    "stars": 235507,
+    "seconds": 222.8,
+    "outer_iterations": 18
+  },
+  "fit_LOO_starhorse23_lamostm7": {
+    "stars": 269665,
+    "seconds": 203.5,
+    "outer_iterations": 14
+  },
+  "fit_LOO_starhorse23_ges+sdss+rave": {
+    "stars": 269822,
+    "seconds": 184.0,
+    "outer_iterations": 13
+  },
+  "runtime_seconds": 6532.4
+}
