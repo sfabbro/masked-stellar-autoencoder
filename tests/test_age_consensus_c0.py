@@ -404,8 +404,11 @@ def test_nested_shared_errors_are_learned():
 
 
 def test_interval_records_use_a_flat_top_likelihood():
-    """A source reporting an asymmetric interval (not a centred Gaussian):
-    the interval likelihood recovers its offset, the interval midpoint does not."""
+    """A source reporting intervals: a narrow interval behaves like its value
+    (offset recovered); a wide one is a flat top, not an exact value: its
+    offset lies anywhere inside the feasible range and its noise is not
+    driven to the floor (the imputed values' conditional variance enters
+    the restricted likelihood)."""
     rng = np.random.default_rng(22)
     n = 3000
     t = rng.uniform(0.0, 1.0, n)
@@ -413,7 +416,6 @@ def test_interval_records_use_a_flat_top_likelihood():
     b_idx = np.flatnonzero(rng.random(n) < 0.6)
     ya = t[a_idx] + rng.normal(0, 0.05, len(a_idx))
     yb = t[b_idx] + 0.1 + rng.normal(0, 0.03, len(b_idx))
-    lo, hi = yb - 0.05, yb + 0.25  # interval containing the value, not centred on it
     star = np.r_[a_idx, b_idx].astype("i8")
     mid = np.r_[np.zeros(len(a_idx)), np.ones(len(b_idx))].astype("i8")
     maps = MapSet(
@@ -426,22 +428,20 @@ def test_interval_records_use_a_flat_top_likelihood():
             )
         ]
     )
+    cens = np.r_[np.zeros(len(a_idx)), np.full(len(b_idx), 2)].astype("i1")
 
-    def run(y, y2, cens):
-        rec = Records(star, mid, np.zeros(len(star), "i8"), mid.copy(), y,
-                      np.r_[np.full(len(a_idx), 0.05), np.full(len(b_idx), 0.03)],
-                      np.zeros(len(star)), cens, n, y2=y2)  # fmt: skip
-        return fit_consensus(rec, Groups.none(n), maps, 2, nu=1e6, n_outer=30,
-                             covariance=False).coefs[0][1, 0]  # fmt: skip
+    def run(lo, hi):
+        rec = Records(star, mid, np.zeros(len(star), "i8"), mid.copy(), np.r_[ya, lo],
+                      np.r_[np.full(len(a_idx), 0.05), np.zeros(len(b_idx))],
+                      np.zeros(len(star)), cens, n, y2=np.r_[ya, hi])  # fmt: skip
+        return fit_consensus(rec, Groups.none(n), maps, 2, n_outer=30, covariance=False)
 
-    b_int = run(
-        np.r_[ya, lo],
-        np.r_[ya, hi],
-        np.r_[np.zeros(len(a_idx)), np.full(len(b_idx), 2)].astype("i1"),
-    )
-    b_mid = run(np.r_[ya, 0.5 * (lo + hi)], None, np.zeros(len(star), "i1"))
-    assert abs(b_mid - 0.2) < 0.02  # the midpoint is biased by the interval's asymmetry
-    assert abs(b_int - 0.1) < abs(b_mid - 0.1) - 0.03, (b_int, b_mid)
+    narrow = run(yb - 0.001, yb + 0.001)
+    assert abs(narrow.coef_of("B")[0] - 0.1) < 0.01
+    wide = run(yb - 0.05, yb + 0.25)  # every value lies 0.05 above its interval's floor
+    b_w = wide.coef_of("B")[0]
+    assert 0.05 < b_w < 0.35  # anywhere on the flat top
+    assert np.exp(wide.log_omega[1]) > 0.03  # not an exact value
 
 
 def test_gauge_change_is_an_exact_reparametrisation():
@@ -840,3 +840,38 @@ def test_young_clusters_follow_the_cluster_level_records():
             assert abs(fit.coef_of("S")[0]) < 0.03  # S's map is not dragged by them
     assert err["both"] < 0.1 and abs(koff["both"] - 0.1) < 0.05, (err, koff)
     assert err["neither"] > 0.3, (err, koff)
+
+
+def test_co_natal_pairs_below_their_maps_edge_stay_finite():
+    """Regression (C0b check fit went NaN at outer iteration 2): wide pairs
+    whose two stars carry only upper limits at a map's data edge drift below
+    it; their records must not all be dropped (no member holds the latent),
+    and a star without record information must keep a finite latent (a NaN
+    latent times a zero weight made the map objective NaN)."""
+    from masked_stellar_autoencoder.training.age_consensus import _require_finite
+
+    rng = np.random.default_rng(1)
+    n_f, n_p = 600, 20
+    tf = rng.uniform(0.0, 1.0, n_f)
+    n = n_f + 2 * n_p
+    pair = n_f + np.arange(2 * n_p)
+    yS = tf + rng.normal(0, 0.1, n_f)
+    lo = float(np.percentile(yS, 0.1))
+    star = np.r_[np.arange(n_f), np.arange(n_f), pair].astype("i8")
+    mid = np.r_[np.zeros(n_f), np.ones(n_f), np.ones(2 * n_p)].astype("i8")
+    y = np.r_[tf + rng.normal(0, 0.05, n_f), yS, np.full(2 * n_p, lo)]
+    sig = np.r_[np.full(n_f, 0.05), np.full(n_f, 0.1), np.full(2 * n_p, 0.1)]
+    cens = np.r_[np.zeros(2 * n_f), -np.ones(2 * n_p)].astype("i1")
+    rec = Records(
+        star, mid, np.zeros(len(y), "i8"), mid, y, sig, np.zeros(len(y)), cens, n
+    )
+    gid = np.r_[np.full(n_f, -1), np.repeat(np.arange(n_p), 2)]
+    g = Groups(gid, np.where(gid >= 0, 0.9, 0.0), np.full(n_p, 0.01))
+    maps = MapSet([AgeMaps(["X", "S"], [IDENTITY, OFFSET], np.zeros((2, 1), bool), [False, False],
+                           y_lo=[-np.inf, lo])])  # fmt: skip
+    fit = fit_consensus(rec, g, maps, 2, n_outer=8, covariance=False)
+    assert np.isfinite(fit.coefs[0]).all() and np.isfinite(fit.t).all()
+    assert np.isfinite(fit.log_kappa).all() and np.isfinite(fit.log_omega).all()
+    assert abs(fit.coef_of("S")[0]) < 0.03
+    with pytest.raises(FloatingPointError, match="map coefficients"):
+        _require_finite("map coefficients", torch.tensor([0.0, float("nan")]), 2)
