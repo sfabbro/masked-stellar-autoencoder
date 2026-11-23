@@ -512,3 +512,237 @@ def test_noise_identifiability_needs_triads_or_an_identified_partner():
                np.full(n, 5)].astype("i8")  # fmt: skip
     ident2, _, pair2 = noise_identified(s2, g2, u2, 6)
     assert ident2[:4].all() and not ident2[4:].any()
+
+
+# --------------------------------------------------------------------------- #
+# C0b script mechanisms
+# --------------------------------------------------------------------------- #
+def _fit_frame(rows):
+    """Fit-record frame in the layout of ``prepare``: rows of (source, ids,
+    lage, cls, group)."""
+    import pandas as pd
+
+    out = []
+    for source, ids, lage, cls, group in rows:
+        out.append(pd.DataFrame({"source": source, "source_id": np.asarray(ids, "i8"), "lage": lage,
+                                 "sig": 0.05, "cls": cls, "feh": 0.0, "censor": np.int8(0),
+                                 "lage2": np.nan, "group": group, "prio": 0}))  # fmt: skip
+    fit = pd.concat(out, ignore_index=True)
+    return fit.assign(representative=True)
+
+
+def test_identifiability_gate_and_domain_censoring():
+    """A catalogue that overlaps only pairwise with another unidentified one
+    gets an offset map; a map shared with identified units keeps its slope;
+    pipelines on the same spectra count as one independent measurement;
+    unconstrained records below a map's data range become upper limits."""
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(3)
+    n = 1500
+    tg = rng.uniform(-0.3, 1.0, 2 * n)
+    ts = rng.uniform(-0.1, 1.0, n)
+    a, b = np.arange(n), n + np.arange(n)
+    sg = 10_000 + np.arange(n)
+    lone = 20_000 + np.arange(5)  # single-record apok2 stars far below its range
+    fit = _fit_frame([
+        ("apokasc3", a, tg[a], "RGB", "apokasc"),
+        ("willett26_kepler", a, tg[a] + 0.02, "RGB", "willett26"),
+        ("chaplin14", a, tg[a] - 0.01, "RGB", "chaplin14"),  # third independent group: triads
+        ("apok2", np.r_[b, lone], np.r_[tg[b] + 0.05, np.full(5, -1.5)], "giant", "apok2"),
+        ("willett26_k2_bhm", b, tg[b], "giant", "willett26"),  # pairwise only with apok2
+        ("xiang24", sg, ts, "SGB", "xiang24"),
+        ("starhorse23_lamostl7", sg, ts + 0.05, "SGB", "starhorse23"),  # same LAMOST spectra
+        ("galah_dr4", sg, ts - 0.05, "SGB", "galah_dr4"),
+    ])  # fmt: skip
+    data = {"fit": fit, "members": pd.DataFrame({"source_id": [], "cid": [], "prob": []}),
+            "pairs": pd.DataFrame({"s1": [], "s2": [], "prior": []})}  # fmt: skip
+    prob = c0.build_problem(data, c0.Config("gate"), log=lambda m: None)
+    tiers = prob["tiers"].set_index("key")
+    assert tiers.tier["apok2"] == OFFSET and not tiers.noise_identified["apok2"]
+    assert (
+        tiers.tier["willett26_dnu"] == LINEAR
+        and tiers.noise_identified["willett26_dnu"]
+    )
+    assert tiers.triad_stars["xiang24"] == 0 and not tiers.noise_identified["xiang24"]
+    off = c0.build_problem(
+        data, c0.Config("nogate", identifiability=False), log=lambda m: None
+    )
+    assert off["tiers"].set_index("key").tier["apok2"] == LINEAR
+    df = prob["fit_df"]
+    low = df[df.source_id.isin(lone)]
+    assert len(low) == 5 and (low.censor == -1).all()
+    assert np.allclose(low.lage, tiers.domain_lo["apok2"], atol=1e-3)
+    assert (
+        tiers.n_below_domain["apok2"] >= 5
+    )  # (+ the 0.1 % tail of its constrained records)
+
+
+def test_bridge_width_does_not_depend_on_the_anchor():
+    """Components join along a maximum spanning tree: every edge of the tree,
+    and so the reference tier it sets, is the same whichever component holds
+    the anchor (chain 0 -40- 1 -10- 2 with one co-natal group linking 0 and 2)."""
+    import pandas as pd
+
+    c0 = _script()
+    s = np.r_[np.arange(100), np.arange(60, 160), np.arange(150, 400)]
+    c = np.r_[np.zeros(100), np.ones(100), np.full(250, 2)].astype(int)
+    sc = pd.DataFrame({"s": s, "c": c})
+    gid = np.full(400, -1)
+    gid[[10, 300]] = 7
+
+    def need(k):
+        return 5
+
+    w0 = dict(c0._attach_order(sc, gid, 0, need))
+    w2 = dict(c0._attach_order(sc, gid, 2, need))
+    assert w0 == {1: 40, 2: 10} and w2 == {1: 10, 0: 40}
+    # an edge below ``need`` leaves the component out
+    w_strict = c0._attach_order(sc, gid, 0, lambda k: 20)
+    assert w_strict == [(1, 40), (2, 10)] and dict(
+        c0._attach_order(sc, gid, 2, lambda k: 20)
+    ) == {0: 1, 1: 10}
+
+
+def test_arbitration_offset_recovers_a_known_offset():
+    """A validation-only source with a constant offset from the consensus
+    (including flat-top interval records): offset recovered within its error."""
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(5)
+    n = 60
+    t = rng.uniform(-1.5, 1.0, n)
+    sd = np.full(n, 0.03)
+    t_obs = t + rng.normal(0, 0.03, n)
+    y = t + 0.12 + rng.normal(0, 0.06, n)
+    cens = np.zeros(n, "i1")
+    cens[:5] = 2
+    recs = pd.DataFrame({"source_id": np.arange(n), "lage": np.where(cens == 2, y - 0.05, y),
+                         "lage2": np.where(cens == 2, y + 0.05, np.nan),
+                         "sig": np.where(cens == 2, 0.0, 0.06), "censor": cens})  # fmt: skip
+    row = c0.offset_vs_consensus("bench", recs, np.arange(n), {"t": t_obs, "sd": sd})
+    assert row["n"] == n and row["n_censored"] == 5
+    assert abs(row["offset"] - 0.12) < 3 * row["offset_se"] and row["offset_se"] < 0.02
+    assert abs(row["offset_quoted"] - 0.12) < 0.03
+
+
+def _hr23_fits(path, ids, names, logage):
+    from astropy.table import Table
+
+    t = Table({"Name": np.array(names), "ID": np.asarray(ids, "i8"),
+               "Type": np.array(["o"] * len(ids)), "logAge16": logage - 0.05,
+               "logAge50": logage, "logAge84": logage + 0.05, "CMDCl50": np.full(len(ids), 0.9)})  # fmt: skip
+    t.write(path, overwrite=True)
+
+
+def test_run_with_bridge_labels_end_to_end(tmp_path):
+    """``run --quick --labels``: benchmark clusters, cluster catalogues, extra
+    seismology, WD+MS and wide pairs enter as mapped sources; benchmark
+    families get offset maps, nodes carry the cluster records, the gauge-C fit
+    started from gauge A stays put, and the arbitration table recovers the
+    LDB offset."""
+    import json
+
+    import pandas as pd
+
+    c0 = _script()
+    rng = np.random.default_rng(17)
+    n = 900
+    t = rng.uniform(0.0, 1.1, n)
+    giant = np.arange(n) < 450
+    n_cl = 30
+    cid = np.full(n, -1)
+    for c in range(n_cl):
+        mem = np.r_[np.arange(4 * c, 4 * c + 4), 450 + np.arange(4 * c, 4 * c + 4)]
+        t[mem] = t[mem[0]]
+        cid[mem] = 100 + c
+    t_cl = np.array([t[4 * c] for c in range(n_cl)])
+    feh = rng.normal(-0.2, 0.25, n)
+
+    def cat(source, idx, offset, sig, stage, stage_class, logg):
+        y = t[idx] + offset + rng.normal(0, 0.06, len(idx))
+        return pd.DataFrame({"source": source, "source_id": 1000 + idx, "age": 10**y, "lage": y,
+                             "sig": sig, "stage": stage, "stage_class": stage_class, "good": True,
+                             "feh": feh[idx], "logg": logg})  # fmt: skip
+
+    gi, sg = np.flatnonzero(giant), np.flatnonzero(~giant)
+    rec = pd.concat([
+        cat("apokasc3", gi[:330], 0.0, 0.05, "RGB", "giant", 2.5),
+        cat("willett26_kepler", gi[100:], 0.02, 0.06, "RC", "giant", 2.4),
+        cat("xiang24", sg, -0.1, 0.03, "SGB", "subgiant", 3.8),
+        cat("starhorse23_lamostl7", sg[100:], -0.15, 0.04, "SGB", "subgiant", 3.9),
+        cat("galah_dr4", sg[:300], 0.0, 0.05, "x", "subgiant", 3.8),
+    ], ignore_index=True)  # fmt: skip
+    for c in ("source", "stage", "stage_class"):
+        rec[c] = rec[c].astype("category")
+    rec_path, tgt_path = tmp_path / "records.parquet", tmp_path / "targets.npz"
+    rec.to_parquet(rec_path, index=False)
+    m = cid >= 0
+    np.savez(tgt_path, member=1000 + np.flatnonzero(m), member_cluster=cid[m].astype("i4"),
+             member_prob=np.full(m.sum(), 0.9, "f4"), pair1=np.zeros(0, "i8"), pair2=np.zeros(0, "i8"),
+             source_id=1000 + np.arange(n))  # fmt: skip
+    lab = tmp_path / "labels"
+    lab.mkdir()
+    ids = 100 + np.arange(n_cl)
+    names = [f"CL_{i}" for i in ids]
+    names[0] = "Melotte_22"
+    clusters = tmp_path / "clusters.fits"
+    _hr23_fits(clusters, ids, names, t_cl + 9 + 0.03 + rng.normal(0, 0.05, n_cl))
+    pd.DataFrame({"catalogue": np.repeat(["cantatgaudin20", "dias21"], n_cl), "hr23_id": np.r_[ids, ids],
+                  "value": np.r_[t_cl + 9 - 0.05, t_cl + 9 + 0.02] + rng.normal(0, 0.05, 2 * n_cl),
+                  "err_lo": np.r_[np.full(n_cl, np.nan), np.full(n_cl, 0.05)], "feh": 0.0}).to_parquet(
+        lab / "cluster_msto_catalogues.parquet")  # fmt: skip
+    # benchmarks: LDB (+0.08 dex) on 12 clusters, EB on 8 (one published as a range), GC none
+    ldb, eb = np.arange(12), np.arange(12, 20)
+    age_l = 10 ** (t_cl[ldb] + 0.08 + rng.normal(0, 0.02, len(ldb)))
+    age_e = 10 ** (t_cl[eb] + rng.normal(0, 0.02, len(eb)))
+    pri = pd.DataFrame({
+        "cluster": [names[i] for i in np.r_[ldb, eb]], "hr23_name": [names[i] for i in np.r_[ldb, eb]],
+        "hr23_id": ids[np.r_[ldb, eb]], "cluster_type": "OC", "age_gyr": np.r_[age_l, age_e],
+        "err_lo_gyr": np.r_[age_l, age_e] * 0.03, "err_hi_gyr": np.r_[age_l, age_e] * 0.03,
+        "sys_err_gyr": np.nan, "model_range_lo_gyr": np.nan, "model_range_hi_gyr": np.nan,
+        "method": ["LDB"] * len(ldb) + ["EB"] * len(eb), "feh": 0.0, "primary": True,
+        "notes": [""] * (len(ldb) + len(eb) - 1) + ["published as a range between two values"]})  # fmt: skip
+    pri.to_csv(lab / "cluster_priors.csv", index=False)
+    pd.DataFrame({"source_id": [5_000_001, 5_000_002], "cluster": "NGC 104", "hr23_name": [None, None],
+                  "prob": [0.9, 0.9]}).to_parquet(lab / "cluster_members_extra.parquet")  # fmt: skip
+    for name in ("seis_zinn22_k2gap", "seis_mackereth21_tess"):
+        g = gi[300:340]
+        pd.DataFrame({"source_id": 1000 + g, "kind": "age_gyr", "value": 10 ** t[g], "err_lo": 0.2 * 10 ** t[g],
+                      "err_hi": 0.2 * 10 ** t[g], "feh": feh[g]}).to_parquet(lab / f"{name}.parquet")  # fmt: skip
+    comp = sg[300:320]
+    wd_ids = 7_000_000 + np.arange(len(comp))
+    pd.DataFrame({"source": "qiu21_base9", "source_id": wd_ids, "value": 10 ** t[comp],
+                  "err_lo": 0.1 * 10 ** t[comp], "err_hi": 0.1 * 10 ** t[comp],
+                  "companion_source_id": (1000 + comp).astype(float), "limit": 0}).to_parquet(
+        lab / "wd_ages_published.parquet")  # fmt: skip
+    pd.DataFrame({"wd_source_id": wd_ids, "ms_source_id": 1000 + comp, "usable_H": True,
+                  "atm_hint": "H"}).to_parquet(lab / "wdms_pairs.parquet")  # fmt: skip
+    pp = 1000 + sg[-40:].reshape(20, 2)
+    pd.DataFrame({"source_id1": pp[:, 0], "source_id2": pp[:, 1], "R_chance_align": 0.01,
+                  "binary_type": "MSMS"}).to_parquet(lab / "wide_pairs_eb21.parquet")  # fmt: skip
+    work, docs = tmp_path / "work", tmp_path / "docs"
+    c0.main(["run", "--records", str(rec_path), "--targets", str(tgt_path), "--work", str(work),
+             "--docs", str(docs), "--labels", str(lab), "--clusters", str(clusters), "--quick",
+             "--n-outer", "20", "--threads", "2"])  # fmt: skip
+    tiers = pd.read_csv(docs / "tiers_A.csv").set_index("key")
+    assert tiers.tier["bench_ldb"] == OFFSET and tiers.tier["bench_eb"] == OFFSET
+    assert {"cl_hr23", "cl_cg20", "cl_dias21", "zinn22_k2gap"} <= set(tiers.index)
+    summ = json.loads((docs / "summary.json").read_text())
+    gc = summ["gauge_check"]
+    assert (
+        gc["C_fromA_max_coef_move"] < 0.01
+        and gc["C_scratch_median_abs_latent_diff"] < 0.01
+    )
+    arb = pd.read_csv(docs / "arbitration_offsets.csv").set_index(["variant", "source"])
+    ldb_a = arb.loc[("ARB_A", "bench_ldb")]
+    assert ldb_a.n == 12 and abs(ldb_a.offset - 0.08) < 0.05
+    assert arb.loc[("ARB_A", "bench_eb")].n_censored == 1
+    assert arb.loc[("main_A", "wd_qiu21")].n == len(comp)
+    ctab = pd.read_csv(docs / "clusters_A.csv")
+    assert {"info_share_benchmarks", "T_without_benchmarks"} <= set(ctab.columns)
+    assert (ctab.young_benchmark == "Pleiades").sum() == 1
+    stars = pd.read_parquet(work / "consensus_stars.parquet")
+    assert (stars.source_id > 0).all() and "t_C_fromA" in stars
