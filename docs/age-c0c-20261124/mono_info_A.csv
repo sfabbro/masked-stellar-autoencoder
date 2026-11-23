@@ -1,0 +1,15 @@
+key,n_records,n_constrained,n_tied_to_identified_ages,n_upper_limits,kept,units
+li_galah:t4800-5300,45867,1062,376,36460,True,li_galah_dr4:t4800-5300
+li_galah:t5300-5700,82872,709,301,56736,True,li_galah_dr4:t5300-5700
+li_galah:t5700-6000,96535,532,298,24348,True,li_galah_dr4:t5700-6000
+li_galah:t6000-6300,55907,314,251,9527,True,li_galah_dr4:t6000-6300
+li_ges:t4800-5300,1469,41,37,614,True,li_ges_dr5:t4800-5300
+li_ges:t5300-5700,2596,39,38,1160,True,li_ges_dr5:t5300-5700
+li_ges:t5700-6000,3618,125,124,613,True,li_ges_dr5:t5700-6000
+li_ges:t6000-6300,2793,151,151,309,True,li_ges_dr5:t6000-6300
+rot:t3500-4000,9760,320,280,0,True,"rot_mcquillan14:t3500-4000,rot_reinhold20_k2:t3500-4000,rot_santos19:t3500-4000,rot_santos21:all"
+rot:t4000-4500,8800,135,103,0,True,"rot_mcquillan14:t4000-4500,rot_reinhold20_k2:t4000-4500,rot_santos19:t4000-4500,rot_santos21:all"
+rot:t4500-5000,9290,285,65,0,True,"rot_mcquillan14:t4500-5000,rot_reinhold20_k2:t4500-5000,rot_santos19:t4500-5000,rot_santos21:t4500-5000"
+rot:t5000-5500,13579,549,77,0,True,"rot_mcquillan14:t5000-5500,rot_reinhold20_k2:t5000-5500,rot_santos19:t5000-5500,rot_santos21:t5000-5500"
+rot:t5500-6000,15430,537,78,0,True,"rot_mcquillan14:t5500-6000,rot_reinhold20_k2:t5500-6000,rot_santos21:t5500-6000"
+rot:t6000-6500,7566,206,73,0,True,"rot_mcquillan14:t6000-6500,rot_reinhold20_k2:t6000-6500,rot_santos21:t6000-6500"
