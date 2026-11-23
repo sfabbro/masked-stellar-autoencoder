@@ -875,3 +875,144 @@ def test_co_natal_pairs_below_their_maps_edge_stay_finite():
     assert abs(fit.coef_of("S")[0]) < 0.03
     with pytest.raises(FloatingPointError, match="map coefficients"):
         _require_finite("map coefficients", torch.tensor([0.0, float("nan")]), 2)
+
+
+# --------------------------------------------------------------------------- #
+# C0c: non-age observables (rotation, lithium) through monotone maps
+# --------------------------------------------------------------------------- #
+def test_monotone_maps_are_monotone_by_construction():
+    """Any coefficients (raw ramp weights of either sign), either direction and
+    the slope floor: f is monotone in t and df/dt has the map's sign."""
+    rng = np.random.default_rng(11)
+    fam = MonotoneMaps(["up", "down"], direction=[1.0, -1.0],
+                       knots=(-1.6, -1.1, -0.6, -0.2, 0.2, 0.6, 1.0), smooth=0.2,
+                       use_z=[True, True], slope_floor=1e-3)  # fmt: skip
+    t = torch.linspace(-3.0, 2.0, 501, dtype=torch.float64)
+    for _ in range(20):
+        coef = torch.as_tensor(rng.normal(0, 3, (2, fam.n_coef())))
+        for m, sign in ((0, 1.0), (1, -1.0)):
+            loc = torch.full((len(t),), m, dtype=torch.long)
+            z = torch.full((len(t), 1), float(rng.normal()), dtype=torch.float64)
+            f, d = fam.evaluate(coef, loc, t, torch.zeros_like(t), z, loc)
+            assert torch.all(sign * d >= 1e-3 - 1e-12)
+            assert torch.all(sign * torch.diff(f) > 0)
+
+
+def _li_synthetic(seed=3, n=4000, limit=1.2):
+    """Ages for half the stars (anchor), A(Li) for 70 %: decreasing in t,
+    reported as an upper limit at ``limit`` where the line is not detected."""
+    rng = np.random.default_rng(seed)
+    t = rng.uniform(-1.5, 1.0, n)
+    a_idx = np.flatnonzero(rng.random(n) < 0.5)
+    l_idx = np.flatnonzero(rng.random(n) < 0.7)
+
+    def true_li(tt):
+        return 3.2 - 0.72 * np.log1p(np.exp((tt + 0.8) / 0.25))
+
+    li = true_li(t[l_idx]) + rng.normal(0, 0.12, len(l_idx))
+    cens = np.where(li < limit, -1, 0).astype("i1")
+    li = np.where(cens == -1, limit, li)
+    y_age = t[a_idx] + rng.normal(0, 0.05, len(a_idx))
+    star = np.r_[a_idx, l_idx].astype("i8")
+    map_id = np.r_[np.zeros(len(a_idx)), np.ones(len(l_idx))].astype("i8")
+    rec = Records(star, map_id, np.zeros(len(star), "i8"), map_id.copy(), np.r_[y_age, li],
+                  np.r_[np.full(len(a_idx), 0.05), np.zeros(len(l_idx))], np.zeros(len(star)),
+                  np.r_[np.zeros(len(a_idx), "i1"), cens], n)  # fmt: skip
+    return rec, t, true_li, a_idx, l_idx
+
+
+def test_lithium_upper_limits_enter_censored():
+    """A decreasing A(Li) map with non-detections reported as upper limits: the
+    censored likelihood recovers the map below the limit's level where the
+    naive fit (limits as values) is biased high, and stars with A(Li) only get
+    ages from the inverted map."""
+    rec, t, true_li, a_idx, l_idx = _li_synthetic()
+    knots = (-1.6, -1.1, -0.6, -0.2, 0.2, 0.6, 1.0)
+
+    def maps():
+        return MapSet([AgeMaps(["anchor"], [IDENTITY], np.zeros((1, 1), bool), [False]),
+                       MonotoneMaps(["a_li"], direction=[-1.0], knots=knots, smooth=0.2,
+                                    use_x=[False], y_center=[2.0], slope_floor=1e-3)])  # fmt: skip
+
+    fit = fit_consensus(
+        rec, Groups.none(rec.n_star), maps(), 2, n_outer=40, covariance=False
+    )
+    naive = _strip_effect(rec)
+    naive.censor[:] = 0
+    fit_n = fit_consensus(naive, Groups.none(rec.n_star), maps(), 2, n_outer=40,
+                          covariance=False)  # fmt: skip
+    grid = np.array([-1.2, -0.6, -0.3, -0.1])  # the last: ~70 % of records are limits
+    f, d, _ = map_values(fit, "a_li", grid)
+    fn, _, _ = map_values(fit_n, "a_li", grid)
+    err, err_n = np.abs(f - true_li(grid)), np.abs(fn - true_li(grid))
+    assert np.all(d < 0)
+    assert err.max() < 0.12, err
+    assert err_n[-1] > 2 * err[-1]  # below the limit's level the naive map is biased
+    sol = solve_stars(rec, Groups.none(rec.n_star), fit, 2)
+    det = np.setdiff1d(l_idx, a_idx)
+    det = det[(true_li(t[det]) > 1.6) & (t[det] > -1.0)]  # on the informative ramp
+    e = sol["t"][det] - t[det]
+    assert abs(np.median(e)) < 0.05 and np.median(np.abs(e)) < 0.15
+
+
+def test_rotation_map_learned_through_cluster_members_only():
+    """Rotation stars carry no age record; clusters (a node record on the
+    anchor scale plus members with periods) teach the monotone ln P map,
+    including its colour term."""
+    rng = np.random.default_rng(21)
+    n_cl, n_mem, n_field = 150, 10, 2000
+    T = rng.uniform(-1.3, 0.8, n_cl)
+    n = n_cl * (n_mem + 1) + n_field
+    t = np.r_[T, np.repeat(T, n_mem), rng.uniform(-1.3, 0.8, n_field)]
+    gid = np.r_[
+        np.arange(n_cl), np.repeat(np.arange(n_cl), n_mem), np.full(n_field, -1)
+    ]
+    node = np.arange(n_cl)
+    rot = np.arange(n_cl, n)
+    zc = rng.uniform(-1, 1, len(rot))
+
+    def true_lnp(tt, z):
+        return 1.0 + 0.4 * z + 0.9 * 0.2 * np.log1p(np.exp((tt + 0.9) / 0.2))
+
+    y_rot = true_lnp(t[rot], zc) + rng.normal(0, 0.1, len(rot))
+    y_node = T + rng.normal(0, 0.05, n_cl)
+    star = np.r_[node, rot].astype("i8")
+    map_id = np.r_[np.zeros(n_cl), np.ones(len(rot))].astype("i8")
+    extra = np.r_[np.zeros(n_cl), zc][:, None]
+    rec = Records(star, map_id, np.zeros(len(star), "i8"), map_id.copy(), np.r_[y_node, y_rot],
+                  np.r_[np.full(n_cl, 0.05), np.full(len(rot), 0.02)], np.zeros(len(star)),
+                  np.zeros(len(star), "i1"), n, extra=extra)  # fmt: skip
+    fixed = np.zeros(n, bool)
+    fixed[node] = True
+    g = Groups(
+        gid.astype("i8"), np.where(gid >= 0, 1.0, 0.0), np.full(n_cl, 0.01), fixed
+    )
+    maps = MapSet([AgeMaps(["anchor"], [IDENTITY], np.zeros((1, 1), bool), [False]),
+                   MonotoneMaps(["rot"], direction=[1.0], knots=(-1.6, -1.1, -0.6, -0.2, 0.2, 0.6, 1.0),
+                                smooth=0.2, use_x=[False], use_z=[True], y_center=[2.0],
+                                slope_floor=1e-3)])  # fmt: skip
+    in_fit = gid >= 0
+    remap = np.full(n, -1, "i8")
+    remap[in_fit] = np.arange(in_fit.sum())
+    r = rec.subset(in_fit[rec.star])
+    r = Records(remap[r.star], r.map_id, r.cls, r.noise_id, r.y, r.sig, r.feh, r.censor,
+                int(in_fit.sum()), extra=r.extra)  # fmt: skip
+    gs = Groups(gid[in_fit], g.prior[in_fit], g.spread, fixed[in_fit])
+    # the node (age) noise is identified, as for real clusters (triads of
+    # catalogue ages, member records, benchmarks); with it free and only
+    # rotation as the second measurement, map slope and noise trade off (the
+    # errors-in-variables slope needs the variance ratio, cf. the age maps)
+    fit = fit_consensus(r, gs, maps, 2, n_outer=40, covariance=False,
+                        fix_noise=np.array([True, False]), lk0=np.zeros(2),
+                        lw0=np.log([0.01, 0.2]))  # fmt: skip
+    grid = np.array([-1.0, -0.6, -0.2, 0.2, 0.6])
+    for z in (-0.5, 0.5):
+        f, d, _ = map_values(fit, "rot", grid, z=z)
+        assert np.all(d > 0)
+        assert np.max(np.abs(f - true_lnp(grid, z))) < 0.08, (z, f - true_lnp(grid, z))
+    # field stars with a period only: ages from the inverted map
+    sol = solve_stars(rec, Groups.none(n), fit, 2)
+    fld = np.arange(n_cl * (n_mem + 1), n)
+    fld = fld[t[fld] > -0.7]  # where the map has slope
+    e = sol["t"][fld] - t[fld]
+    assert abs(np.median(e)) < 0.05 and np.median(np.abs(e)) < 0.2

@@ -77,6 +77,10 @@ LOG_OMEGA0 = math.log(0.03)
 #: floor below 0.005 dex or an inflation below 0.2 of its quoted error.
 LOG_KAPPA_RANGE = (math.log(0.2), math.log(20.0))
 LOG_OMEGA_RANGE = (math.log(0.005), math.log(3.0))
+#: Latent domain (log10 Gyr, 2 Myr to 25 Gyr): a star whose only records sit in
+#: a flat stretch of a non-age map (e.g. a rotation period beyond the slow
+#: sequence) is held inside it instead of running off along a near-zero slope.
+LATENT_RANGE = (-2.7, 1.4)
 
 
 # --------------------------------------------------------------------------- #
@@ -299,23 +303,38 @@ class AgeMaps(MapFamily):
 
 
 class MonotoneMaps(MapFamily):
-    """Monotone maps of a non-age observable (e.g. ln P_rot, Li EW, [C/N]):
+    """Monotone maps of a non-age observable (e.g. ln P_rot, A(Li), [C/N]):
 
-    f = c0 + c1 x + c2 z_0 + direction * sum_k softplus(w_k) h_k(t),
-    h_k(t) = s softplus((t - knot_k) / s): smooth ramps, so f is monotone in
-    ``t`` by construction (increasing for direction +1). ``use_x`` /
-    ``use_z`` switch the [Fe/H] and first extra-covariate terms on per map."""
+    f = c0 + c1 x + c2 z_0 + direction * (sum_k softplus(w_k) h_k(t) + floor (t - T0)),
+    df/dt = direction * (sum_k softplus(w_k) b_k(t) + floor),
+
+    with non-negative bumps b_k(t) = sigmoid((t - k_k)/s) - sigmoid((t - r_k)/s)
+    between consecutive knots (r_k = k_{k+1}; the last bump as wide as the one
+    before) and h_k their integrals (smoothed clipped ramps). df/dt is a
+    non-negative combination of local bumps (a smoothed degree-1 B-spline
+    basis), so f is monotone by construction, can steepen or flatten anywhere
+    (e.g. a plateau of young lithium, stalled braking of old rotators) and is
+    flat below the first knot and above the last bump: no extrapolated age
+    information. ``use_x`` / ``use_z`` switch the [Fe/H] and first
+    extra-covariate terms on per map; ``y_center`` (per map) starts c0 at the
+    data level; ``slope_floor`` keeps |df/dt| >= floor (a numerical stand-in
+    for zero, so a record in a flat stretch has finite, tiny information)."""
 
     def __init__(self, names, direction, knots=(-1.0, -0.4, 0.2, 0.6, 1.0),
-                 smooth: float = 0.15, use_x=None, use_z=None, y_scale=None):  # fmt: skip
+                 smooth: float = 0.15, use_x=None, use_z=None, y_scale=None,
+                 y_center=None, slope_floor: float = 0.0):  # fmt: skip
         self.names = list(names)
         self.direction = torch.as_tensor(np.asarray(direction, float), dtype=DT)
-        self.knots = torch.as_tensor(np.asarray(knots, float), dtype=DT)
+        k = np.asarray(knots, float)
+        self.knots = torch.as_tensor(k, dtype=DT)
+        self.right = torch.as_tensor(np.r_[k[1:], k[-1] + (k[-1] - k[-2])], dtype=DT)
         self.s = smooth
         n = len(self.names)
         self.use_x = np.ones(n, bool) if use_x is None else np.asarray(use_x, bool)
         self.use_z = np.zeros(n, bool) if use_z is None else np.asarray(use_z, bool)
         self.y_scale = np.ones(n) if y_scale is None else np.asarray(y_scale, float)
+        self.y_center = np.zeros(n) if y_center is None else np.asarray(y_center, float)
+        self.floor = float(slope_floor)
 
     def n_coef(self) -> int:
         return 3 + len(self.knots)
@@ -332,15 +351,26 @@ class MonotoneMaps(MapFamily):
         sd = np.r_[100.0, 10.0, 10.0, np.full(k, 5.0)]
         return mean, sd
 
+    def init(self) -> np.ndarray:
+        c = np.tile(self.prior()[0], (len(self.names), 1))
+        c[:, 0] = self.y_center
+        return c
+
+    def column_names(self) -> list[str]:
+        return ["c0", "c_feh", "c_z"] + [f"w{j}" for j in range(len(self.knots))]
+
     def evaluate(self, coef, m, t, x, z, cls):
         w = torch.nn.functional.softplus(coef[m, 3:])  # (R, K) >= 0
-        arg = (t[:, None] - self.knots[None, :]) / self.s
-        h = self.s * torch.nn.functional.softplus(arg)
-        dh = torch.sigmoid(arg)
+        a1 = (t[:, None] - self.knots[None, :]) / self.s
+        a2 = (t[:, None] - self.right[None, :]) / self.s
+        sp = torch.nn.functional.softplus
+        h = self.s * (sp(a1) - sp(a2))  # 0 below k, r - k above r
+        dh = torch.sigmoid(a1) - torch.sigmoid(a2)
         d = self.direction[m]
         zz = z[:, 0] if z.shape[1] else torch.zeros_like(t)
-        f = coef[m, 0] + coef[m, 1] * x + coef[m, 2] * zz + d * (w * h).sum(1)
-        dfdt = d * (w * dh).sum(1)
+        f = (coef[m, 0] + coef[m, 1] * x + coef[m, 2] * zz
+             + d * ((w * h).sum(1) + self.floor * (t - T0)))  # fmt: skip
+        dfdt = d * ((w * dh).sum(1) + self.floor)
         return f, dfdt
 
 
@@ -485,6 +515,11 @@ class _State:
         ]
         self.local = [torch.as_tensor(rec.map_id[fam == j] - maps.offsets[j])
                       for j in range(len(maps.families))]  # fmt: skip
+        # records of age maps (the data-edge rule below applies to them only)
+        self.is_age = torch.zeros(self.R, dtype=torch.bool)
+        for j, f in enumerate(maps.families):
+            if isinstance(f, AgeMaps):
+                self.is_age[self.fam_idx[j]] = True
         self.cls = torch.as_tensor(rec.cls, dtype=torch.long)
         self.noise_id = torch.as_tensor(rec.noise_id, dtype=torch.long)
         self.y_obs = torch.as_tensor(rec.y, dtype=DT)
@@ -846,7 +881,7 @@ def _record_weights(st, f, a, y, t, w, v, e2, nu):
     w = torch.where(st.cens, torch.ones_like(Er), (nu + 1.0) / (nu + Er / v))
     # a co-natal member whose latent (set by its group) lies below a map's data
     # edge: that map says nothing there, so its record is missing (weight 0)
-    outside = st.member[st.star] & (a <= FLAT_SLOPE * (1.0 + 1e-9))
+    outside = st.member[st.star] & st.is_age & (a <= FLAT_SLOPE * (1.0 + 1e-9))
     if bool(outside.any()):
         # ... only where another member carries information (a pair whose two
         # stars both sit below their edges keeps its records)
@@ -960,6 +995,7 @@ def fit_consensus(
                 post = _posterior(st, pi, a, y - f + a * t[st.star], e2)
                 t_new, var, _, _, _, _ = _group_solve(st, post["m"], post["P"], rho, t)
                 t = torch.where(st.has_rec & torch.isfinite(t_new), t_new, t)
+                t = t.clamp(*LATENT_RANGE)
             rho = _member_weights(st, post["m"], post["P"], rho, member_nu)
             f, a, _ = st.evaluate(coefs, t[st.star])
             _require_finite("latents of stars with records", t[st.has_rec], it)
@@ -1056,6 +1092,34 @@ def _setup(rec, groups, fit: FitResult, n_noise):
     return st, coefs, v, e2
 
 
+def _grid_start(st: _State, coefs, pi, n_grid: int = 83) -> torch.Tensor:
+    """Per star: the latent on a grid over LATENT_RANGE minimising the weighted
+    misfit of its records (one-sided for limits, outside-the-interval for
+    interval records). Memory O(records): one map evaluation per grid point."""
+    grid = torch.linspace(*LATENT_RANGE, n_grid, dtype=DT)
+    best = torch.full((st.n_star,), float("inf"), dtype=DT)
+    t_best = torch.full((st.n_star,), T0, dtype=DT)
+    for g in grid:
+        f, _, _ = st.evaluate(coefs, torch.full((st.R,), float(g), dtype=DT))
+        r = st.y_obs - f
+        r = torch.where(
+            st.censor == 1, r.clamp_min(0.0), r
+        )  # y* >= y: only f < y costs
+        r = torch.where(
+            st.censor == -1, r.clamp_max(0.0), r
+        )  # y* <= y: only f > y costs
+        r = torch.where(
+            st.censor == 2,
+            torch.where(f < st.y_obs, r, (st.y_hi - f).clamp_max(0.0)),
+            r,
+        )
+        J = st.scatter(pi * r * r)
+        better = best > J
+        best = torch.where(better, J, best)
+        t_best = torch.where(better, g, t_best)
+    return t_best
+
+
 def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_effect=None,
                 rho: np.ndarray | None = None, iters: int = 25) -> dict:  # fmt: skip
     """Flat-prior consensus for every star: records only (``t_rec``) and with
@@ -1073,9 +1137,21 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
     only_cens = st.has_rec & (n_unc == 0)
     ymid = torch.where(st.censor == 2, 0.5 * (st.y_obs + st.y_hi), st.y_obs)
     with torch.no_grad():
-        P0 = st.scatter(pi * unc)
-        t = torch.where(P0 > 0, st.scatter(pi * unc * ymid) / P0.clamp_min(1e-300),
-                        st.scatter(st.y_obs) / st.scatter(torch.ones_like(v)).clamp_min(1))  # fmt: skip
+        # start from the age records (a non-age observable is not on the
+        # latent's scale); stars with non-age records only start at T0
+        age = st.is_age.to(DT)
+        P0 = st.scatter(pi * unc * age)
+        Pc = st.scatter(age)
+        t = torch.where(P0 > 0, st.scatter(pi * unc * age * ymid) / P0.clamp_min(1e-300),
+                        torch.where(Pc > 0, st.scatter(age * st.y_obs) / Pc.clamp_min(1),
+                                    torch.full_like(P0, T0)))  # fmt: skip
+        t = t.clamp(*LATENT_RANGE)
+        # stars without age records: their maps are monotone but non-linear, so
+        # Gauss-Newton from a fixed start can overshoot into flat stretches;
+        # start from a grid search of the (censored) records misfit instead
+        no_age = st.has_rec & ~(P0 > 0) & ~(Pc > 0)
+        if bool(no_age.any()):
+            t = torch.where(no_age, _grid_start(st, coefs, pi), t)
         for _ in range(iters):
             f, a, _ = st.evaluate(coefs, t[st.star])
             y, _ = _impute(st, f, v)
@@ -1088,7 +1164,11 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
             tl = st.scatter(ycl * a) / st.scatter(
                 torch.where(onesided, a * a, 0.0)
             ).clamp_min(1e-300)
-            t = torch.where(only_cens, tl, torch.where(st.has_rec & (P > 0), m, t))
+            t_new = torch.where(only_cens, tl, torch.where(st.has_rec & (P > 0), m, t))
+            t_new = torch.nan_to_num(t_new, nan=T0)
+            # damped steps for stars without age records (non-linear maps)
+            step = (t_new - t).clamp(-0.25, 0.25)
+            t = torch.where(no_age, t + step, t_new).clamp(*LATENT_RANGE)
         f, a, _ = st.evaluate(coefs, t[st.star])
         sd = v.sqrt()
         z = torch.where(st.censor > 0, (f - st.y_obs) / sd, (st.y_obs - f) / sd)
@@ -1131,7 +1211,10 @@ def solve_stars(rec: Records, groups: Groups, fit: FitResult, n_noise: int, n_ef
         for _ in range(10):
             _, a_g, _ = st.evaluate(coefs, torch.nan_to_num(t_eval, nan=T0)[st.star])
             out = (
-                st.member[st.star] & (a_g <= FLAT_SLOPE * (1.0 + 1e-9)) & good[st.star]
+                st.member[st.star]
+                & st.is_age
+                & (a_g <= FLAT_SLOPE * (1.0 + 1e-9))
+                & good[st.star]
             )
             new_keep = torch.where(out, torch.zeros_like(keep), torch.ones_like(keep))
             if torch.equal(new_keep, keep):

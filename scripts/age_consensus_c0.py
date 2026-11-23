@@ -61,6 +61,7 @@ from masked_stellar_autoencoder.training.age_consensus import (
     AgeMaps,
     Groups,
     MapSet,
+    MonotoneMaps,
     Records,
     clip_feh,
     fit_consensus,
@@ -90,6 +91,24 @@ SEISMIC_EXTRA = ("zinn22_k2gap", "mackereth21_tess")
 WD_SOURCES = ("wd_qiu21", "wd_raddi22_H_C18")
 BENCH_SOURCES = ("bench_ldb", "bench_eb", "bench_gc")
 CLUSTER_CATALOGUES = ("cl_hr23", "cl_cg20", "cl_dias21")
+#: C0c non-age observables (``--labels``; README P4/P5), each through monotone
+#: maps of the latent, one map per Teff bin, learned against the consensus
+#: (clusters, wide pairs, overlapping age records); published gyrochronology or
+#: lithium relations are comparison only. Rotation: ln(P/day), increasing in t,
+#: one map per Teff bin shared by the period catalogues (a period is a period),
+#: noise per catalogue and bin; FGK(M) dwarfs, single-star quality. Lithium:
+#: A(Li), decreasing in t, one map per catalogue and Teff bin (3D-NLTE GALAH and
+#: 1D GES are different scales); non-detections are upper limits (censored).
+ROT_SOURCES = ("rot_santos21", "rot_mcquillan14", "rot_santos19", "rot_reinhold20_k2",
+               "rot_tars26")  # fmt: skip
+LI_SOURCES = ("li_galah_dr4", "li_ges_dr5")
+MONO_SOURCES = ROT_SOURCES + LI_SOURCES
+ROT_TEFF = (3500, 4000, 4500, 5000, 5500, 6000, 6500)
+LI_TEFF = (4800, 5300, 5700, 6000, 6300, 6700)
+MONO_KNOTS = (-1.8, -1.3, -0.8, -0.4, 0.0, 0.4, 0.8, 1.1)
+MONO_SMOOTH, MONO_FLOOR = 0.2, 1e-3
+MONO_MIN = 30  # constrained stars a monotone map needs
+MONO_DIRECTION = {"rot": 1.0, "li": -1.0}
 #: Independent-physics arbiters (benchmark clusters, white-dwarf systems): one
 #: offset map each; with a handful of records (one per cluster) an offset and a
 #: noise scale need FEW_MIN constrained records (two residual degrees of freedom).
@@ -106,6 +125,8 @@ SHARED_INPUT_GROUPS = {
     "galah_dr4": ("galah_dr4",),
     "wd": WD_SOURCES,
     **{s: (s,) for s in BENCH_SOURCES + CLUSTER_CATALOGUES},
+    "rotation": ROT_SOURCES,
+    "lithium": LI_SOURCES,
 }
 FIT_SOURCES = tuple(s for g in SHARED_INPUT_GROUPS.values() for s in g)
 VALIDATION_SOURCES = ("leung23", "martig16")
@@ -149,7 +170,7 @@ YOUNG_CLUSTERS = {"Melotte_22": "Pleiades", "NGC_2632": "Praesepe", "Melotte_20"
                   "IC_2391": "IC 2391", "Blanco_1": "Blanco 1"}  # fmt: skip
 SURFACE, INK, MUTED, GRID = "#fcfcfb", "#1f2328", "#5b6470", "#e6e6e3"
 SERIES = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100")
-PREFIX = "c0b"  # QA figure file prefix
+PREFIX = "c0c"  # QA figure file prefix
 #: one colour per evolutionary class in every panel
 CLASS_COLOUR = {"SGB": SERIES[0], "RGB": SERIES[0], "MSTO": SERIES[1], "RC": SERIES[1],
                 "giant": SERIES[2], "MS": SERIES[3], "cluster": SERIES[0], "system": SERIES[1]}  # fmt: skip
@@ -314,6 +335,88 @@ def load_bridge_labels(labels: Path, clusters: Path, members: pd.DataFrame):
     return rec, mem, pairs, clusters_tab
 
 
+def _teff_bin(teff, edges, prefix):
+    """Map key per record: ``prefix:t<lo>-<hi>`` (NaN outside the bins) and the
+    within-bin colour covariate z = (Teff - bin centre) / bin width."""
+    e = np.asarray(edges, float)
+    tf = np.asarray(teff, float)
+    j = np.digitize(tf, e) - 1
+    ok = np.isfinite(tf) & (j >= 0) & (j < len(e) - 1)
+    jj = np.clip(j, 0, len(e) - 2)
+    key = np.where(ok, [f"{prefix}:t{int(e[a])}-{int(e[a + 1])}" for a in jj], None)
+    z = np.where(ok, (tf - 0.5 * (e[jj] + e[jj + 1])) / (e[jj + 1] - e[jj]), np.nan)
+    return key, z
+
+
+def load_monotone_labels(labels: Path) -> tuple[pd.DataFrame, dict]:
+    """Rotation periods and lithium (README P4/P5) as records of non-age maps.
+    ``lage`` holds the observable (ln P/day or A(Li)); ``mkey`` the map key;
+    ``zcov`` the within-bin Teff covariate. Returns (records, counts)."""
+    frames, counts = [], {}
+    for src in ROT_SOURCES:
+        if not (labels / f"{src}.parquet").exists():
+            continue
+        cols = ["source_id", "kind", "value", "err_lo", "limit", "teff", "ruwe",
+                "non_single_star"]  # fmt: skip
+        extra = {
+            "rot_tars26": ["phot_g_mean_mag_0", "BpmRp0", "flag_possible_binary"]
+        }.get(src, ["logg"])
+        r = pd.read_parquet(labels / f"{src}.parquet", columns=cols + extra)
+        r = r[
+            (r.kind == "ln_prot_days")
+            & (r["limit"] == 0)
+            & np.isfinite(r.value)
+            & (r.source_id > 0)
+        ]
+        n0 = len(r)
+        single = ~(r.ruwe > 1.4) & ~(r.non_single_star > 0)
+        if (
+            src == "rot_tars26"
+        ):  # dwarf locus in the dereddened CMD; no possible binaries
+            dwarf = r.phot_g_mean_mag_0 > 4.0 * r.BpmRp0 + 0.3
+            single &= ~r.flag_possible_binary.fillna(False).astype(bool)
+        else:
+            dwarf = r.logg >= MS_LOGG
+        r = r[single & dwarf].sort_values("err_lo").drop_duplicates("source_id")
+        key, z = _teff_bin(r.teff, ROT_TEFF, "rot")
+        ok = key != None  # noqa: E711
+        r, key, z = r[ok], key[ok], z[ok]
+        counts[src] = {"periods": int(n0), "dwarf_single_in_bins": int(len(r))}
+        frames.append(pd.DataFrame({
+            "source": src, "source_id": r.source_id.to_numpy("i8"), "age": np.nan,
+            "lage": r.value.to_numpy(float), "sig": r.err_lo.to_numpy(float), "stage": "MS",
+            "stage_class": "MS", "feh": np.nan, "logg": np.nan, "cls": "MS",
+            "censor": np.zeros(len(r), "i1"), "lage2": np.nan, "mkey": key, "zcov": z}))  # fmt: skip
+    for src in LI_SOURCES:
+        if not (labels / f"{src}.parquet").exists():
+            continue
+        cols = ["source_id", "kind", "value", "err_lo", "limit", "teff", "logg", "feh"]
+        cols += ["flag_a_li"] if src == "li_galah_dr4" else []
+        r = pd.read_parquet(labels / f"{src}.parquet", columns=cols)
+        r = r[(r.kind == "a_li") & np.isfinite(r.value) & (r.source_id > 0)]
+        if "flag_a_li" in r:
+            r = r[r.flag_a_li < 2]  # DR4 recommendation (bit 0 = upper limit is kept)
+        n0 = len(r)
+        r = r[r.logg >= 4.0]  # dwarfs: Li in subgiants and giants is diluted
+        r = r.sort_values("limit").drop_duplicates("source_id")  # detections first
+        key, z = _teff_bin(r.teff, LI_TEFF, src.replace("li_", "li_").split("_dr")[0])
+        ok = key != None  # noqa: E711
+        r, key, z = r[ok], key[ok], z[ok]
+        cens = np.where(r["limit"].to_numpy() == 1, -1, 0).astype("i1")
+        counts[src] = {"a_li": int(n0), "dwarf_in_bins": int(len(r)),
+                       "upper_limits": int((cens == -1).sum())}  # fmt: skip
+        frames.append(pd.DataFrame({
+            "source": src, "source_id": r.source_id.to_numpy("i8"), "age": np.nan,
+            "lage": r.value.to_numpy(float), "sig": np.where(cens == -1, 0.0, r.err_lo.to_numpy(float)),
+            "stage": "MS", "stage_class": "MS", "feh": r.feh.to_numpy(float), "logg": np.nan,
+            "cls": "MS", "censor": cens, "lage2": np.nan, "mkey": key, "zcov": z}))  # fmt: skip
+    if not frames:
+        return pd.DataFrame(
+            columns=["source", "source_id", "lage", "mkey", "zcov"]
+        ), counts
+    return pd.concat(frames, ignore_index=True), counts
+
+
 def prepare(records: Path, targets: Path, labels: Path | None = None,
             clusters: Path | None = None) -> dict:  # fmt: skip
     """Harmonised fit/validation records and co-natal groups (C0b label
@@ -375,6 +478,10 @@ def prepare(records: Path, targets: Path, labels: Path | None = None,
         extra = extra[(extra.source_id <= NODE_ID0) | (extra.source_id > 0)]
         excluded["C0b label records"] = int(len(extra))
         use = pd.concat([use, extra], ignore_index=True)
+        mono, mono_counts = load_monotone_labels(Path(labels))
+        excluded["C0c rotation/lithium records (fitted, non-age maps)"] = int(len(mono))
+        excluded["C0c counts"] = mono_counts
+        use = pd.concat([use, mono], ignore_index=True)
     med = use.groupby("source_id").feh.median()  # [Fe/H]: own, else the star's median
     use["feh"] = use.feh.fillna(use.source_id.map(med))
     use["group"], use["prio"] = "", 0
@@ -450,6 +557,7 @@ class Config:
     bench_fit: bool = True  # benchmark cluster ages in the fit (else validation only)
     identifiability: bool = True  # slope/[Fe/H] terms only with identified noise
     latent_domain: bool = True  # maps flatten (floor slope) below their data range
+    monotone: bool = True  # C0c rotation and lithium records (non-age monotone maps)
 
 
 def map_key(source: str, cls: str, cfg: Config) -> str:
@@ -474,6 +582,11 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     fit = fit.sort_values(["source_id", "group", "prio"])
     fit = fit[~fit.duplicated(["source_id", "group"])].copy()  # representatives
     fit["key"] = [map_key(s, c, cfg) for s, c in zip(fit.source, fit.cls)]
+    is_mono = fit.source.isin(MONO_SOURCES).to_numpy()
+    if is_mono.any() and not cfg.monotone:
+        fit, is_mono = fit[~is_mono].copy(), np.zeros((~is_mono).sum(), bool)
+    if is_mono.any():
+        fit.loc[is_mono, "key"] = fit.mkey[is_mono]
     star_ids = np.unique(fit.source_id.to_numpy())
     star = np.searchsorted(star_ids, fit.source_id.to_numpy())
     groups, _ = conatal_groups(star_ids, data["members"], data["pairs"], cfg.conatal)
@@ -486,6 +599,12 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     cnt0 = fit.groupby(["source", "cls"]).size()
     fit["unit"] = np.where([cnt0[(s, c)] >= NOISE_MIN for s, c in zip(fit.source, fit.cls)],
                            fit.source + ":" + fit.cls, fit.source + ":all")  # fmt: skip
+    if is_mono.any():  # non-age records: noise per catalogue and Teff bin
+        mk = fit.key.where(is_mono, "").str.split(":").str[-1]
+        cand = fit.source + ":" + mk
+        cnt1 = cand[is_mono].value_counts()
+        fit.loc[is_mono, "unit"] = np.where(cand[is_mono].map(cnt1) >= NOISE_MIN,
+                                            cand[is_mono], fit.source[is_mono] + ":all")  # fmt: skip
     ucodes, ucode = np.unique(fit.unit.to_numpy(), return_inverse=True)
     # independent measurements: shared-input groups, with pipelines on the same
     # spectra (a nested shared effect) counted as one
@@ -498,6 +617,33 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
     unit_ident = dict(zip(ucodes, ident))
     unit_triad = dict(zip(ucodes, triad))
     unit_pair = dict(zip(ucodes, pair_id))
+    # monotone (non-age) maps: kept when MONO_MIN constrained stars tie them to
+    # the consensus; they take no part in the age tiers, bridges or domains
+    # A monotone map's slopes need the variance ratio, as the age maps' do: it
+    # counts only constrained stars tied (own records, or a co-natal partner)
+    # to age records whose noise is identified.
+    ident_age = np.zeros(len(star_ids), bool)
+    ok_age = (~is_mono) & fit.unit.map(unit_ident).fillna(False).to_numpy(bool)
+    ident_age[star[ok_age]] = True
+    if (gid >= 0).any():
+        g_ok = np.zeros(gid.max() + 1, bool)
+        np.logical_or.at(g_ok, gid[gid >= 0], ident_age[gid >= 0])
+        ident_age |= (gid >= 0) & g_ok[np.maximum(gid, 0)]
+    mono_df = fit[is_mono].copy()
+    mono_df["tied"] = ident_age[star[is_mono]]
+    fit, star = fit[~is_mono].copy(), star[~is_mono]
+    mono_info, mono_keep = [], []
+    for k in sorted(mono_df.key.unique()):
+        g = mono_df[mono_df.key == k]
+        n = int(g.source_id[g.constrained].nunique())
+        n_tied = int(g.source_id[g.constrained & g.tied].nunique())
+        if n_tied >= MONO_MIN:
+            mono_keep.append(k)
+        mono_info.append({"key": k, "n_records": int(len(g)), "n_constrained": n,
+                          "n_tied_to_identified_ages": n_tied,
+                          "n_upper_limits": int((g.censor == -1).sum()), "kept": n_tied >= MONO_MIN,
+                          "units": ",".join(sorted(g.unit.unique()))})  # fmt: skip
+    mono_df = mono_df[mono_df.key.isin(mono_keep)]
     keys = sorted(fit.key.unique(), key=lambda k: (k != cfg.anchor, k))
     kidx = {k: i for i, k in enumerate(keys)}
     M, C = len(keys), len(CLASSES)
@@ -619,19 +765,18 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
             xr[i] = np.percentile(fe, [1, 99])
         if len(g) > 10:
             tr[i] = np.percentile(g.lage, [1, 99])
-    maps = MapSet(
-        [
-            AgeMaps(
-                keep,
-                tier[sel],
-                class_terms[sel],
-                use_feh[sel],
-                x_range=xr,
-                t_range=tr,
-                y_lo=y_lo,
-            )  # fmt: skip
-        ]
-    )
+    families = [AgeMaps(keep, tier[sel], class_terms[sel], use_feh[sel], x_range=xr,
+                        t_range=tr, y_lo=y_lo)]  # fmt: skip
+    if mono_keep:
+        cen = mono_df.groupby("key").lage.median()
+        families.append(MonotoneMaps(
+            mono_keep, [MONO_DIRECTION[k.split(":")[0].split("_")[0]] for k in mono_keep],
+            knots=MONO_KNOTS, smooth=MONO_SMOOTH, use_x=np.zeros(len(mono_keep), bool),
+            use_z=np.ones(len(mono_keep), bool), y_center=[float(cen[k]) for k in mono_keep],
+            slope_floor=MONO_FLOOR))  # fmt: skip
+        fit = pd.concat([fit, mono_df])
+    keep = keep + mono_keep
+    maps = MapSet(families)
     units = sorted(fit.unit.unique())
     uidx = {u: i for i, u in enumerate(units)}
     star_ids = np.unique(fit.source_id.to_numpy())
@@ -657,10 +802,11 @@ def build_problem(data: dict, cfg: Config, log=print) -> dict:
         np.array([CLASSES.index(c) for c in fit.cls], "i8"), fit.unit.map(uidx).to_numpy("i8"),
         fit.lage.to_numpy(float), fit.sig.to_numpy(float), fit.feh.to_numpy(float),
         fit.censor.to_numpy("i1"), len(star_ids), effect=effect, subeffect=subeffect, y2=y2,
+        extra=np.nan_to_num(fit.zcov.to_numpy(float) if "zcov" in fit else np.zeros(len(fit)))[:, None],
     )  # fmt: skip
     return {"cfg": cfg, "fit_df": fit.reset_index(drop=True), "maps": maps, "units": units,
             "rec": rec, "star_ids": star_ids, "groups": groups, "group_labels": glabels,
-            "in_fit": in_fit, "tiers": pd.DataFrame(info)}  # fmt: skip
+            "in_fit": in_fit, "tiers": pd.DataFrame(info), "mono_info": pd.DataFrame(mono_info)}  # fmt: skip
 
 
 def _pair_counts(star, kk):
@@ -741,6 +887,7 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
     lw0 = np.where(
         [u.startswith("galah_dr4") for u in units], np.log(0.1), np.log(0.03)
     )
+    lw0 = np.where([u.split(":")[0] in MONO_SOURCES for u in units], np.log(0.25), lw0)
     le0 = np.full(len(EFFECT_FAMILIES) + len(SUB_FAMILIES), np.log(0.03))
     coefs0 = None
     maps = prob["maps"]
@@ -751,6 +898,13 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
             if k in warm["keys"]:
                 c0[i] = warm["coef"][warm["keys"].index(k)] * fam.mask()[i]
         coefs0 = [c0]
+        for fam in maps.families[1:]:  # non-age (monotone) maps, by name
+            cm = fam.init()
+            mk = warm.get("mono_keys", [])
+            for i, k in enumerate(fam.names):
+                if k in mk:
+                    cm[i] = warm["mono_coef"][mk.index(k)]
+            coefs0.append(cm)
         for i, u in enumerate(units):
             if u in warm["units"]:
                 j = warm["units"].index(u)
@@ -772,8 +926,11 @@ def fit_problem(prob, warm=None, covariance=True, log=print, **kw):
 
 def warm_from(prob, out):
     res = out["res"]
-    return {"keys": list(prob["maps"].names), "coef": res.coefs[0], "units": list(prob["units"]),
-            "lk": res.log_kappa, "lw": res.log_omega, "le": res.log_eta}  # fmt: skip
+    fams = prob["maps"].families
+    return {"keys": list(fams[0].names), "coef": res.coefs[0], "units": list(prob["units"]),
+            "lk": res.log_kappa, "lw": res.log_omega, "le": res.log_eta,
+            "mono_keys": [k for f in fams[1:] for k in f.names],
+            "mono_coef": np.concatenate(res.coefs[1:]) if len(fams) > 1 else np.zeros((0, 0))}  # fmt: skip
 
 
 def solve_all(prob, out):
@@ -808,6 +965,45 @@ def map_table_from_res(res) -> pd.DataFrame:
                     nm = f"{nm[:2]}_{CLASSES[int(nm[2:])]}"
                 row[nm], row[nm + "_se"] = res.coefs[0][i, j], se[i, j]
         rows.append(row)
+    return pd.DataFrame(rows)
+
+
+MONO_GRID = (
+    -1.8,
+    -1.5,
+    -1.2,
+    -1.0,
+    -0.8,
+    -0.6,
+    -0.4,
+    -0.2,
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    1.0,
+)
+
+
+def mono_table_from_res(res) -> pd.DataFrame:
+    """Monotone (non-age) maps: value and slope at the bin centre (z = 0) on a
+    latent grid, with the finite-difference standard error of the value."""
+    rows = []
+    for fam in res.maps.families[1:]:
+        for k in fam.names:
+            f, d, se = map_values(res, k, np.asarray(MONO_GRID), z=0.0)
+            for tt, fv, dv, sv in zip(MONO_GRID, f, d, se):
+                rows.append(
+                    {
+                        "key": k,
+                        "t": tt,
+                        "age_gyr": round(10**tt, 4),
+                        "f": fv,
+                        "dfdt": dv,
+                        "f_se": sv,
+                    }
+                )
     return pd.DataFrame(rows)
 
 
@@ -968,7 +1164,10 @@ def reparam_warm(probA, outA, probC, ref="xiang24"):
             and np.array_equal(probA["star_ids"], probC["star_ids"])):  # fmt: skip
         raise ValueError("gauges A and C must share the fit set")
     warm = {"keys": famC.names, "coef": c0, "units": list(probA["units"]),
-            "lk": resA.log_kappa, "lw": resA.log_omega, "le": resA.log_eta + np.log(s)}  # fmt: skip
+            "lk": resA.log_kappa, "lw": resA.log_omega, "le": resA.log_eta + np.log(s),
+            # monotone maps start unchanged (fixed knots: not exactly transformable)
+            "mono_keys": [k for f in resA.maps.families[1:] for k in f.names],
+            "mono_coef": np.concatenate(resA.coefs[1:]) if len(resA.coefs) > 1 else np.zeros((0, 0))}  # fmt: skip
     start = {"t0": T0 + s * (resA.t - T0) + b, "w0": resA.weight, "rho0": resA.rho}
     return warm, start, lost
 
@@ -1036,12 +1235,20 @@ def record_scales(prob, out, t_star) -> tuple[np.ndarray, np.ndarray]:
     """Per record of ``prob``: map slope a = df/dt at the star latent and the
     noise variance v (kappa^2 sigma^2 + omega^2); information a^2 / v."""
     rec, res = prob["rec"], out["res"]
-    fam = res.maps.families[0]
     t = torch.as_tensor(np.nan_to_num(t_star[rec.star], nan=T0), dtype=torch.float64)
+    a = torch.zeros(len(t), dtype=torch.float64)
+    fam_of = res.maps.family_of(rec.map_id)
     with torch.no_grad():
-        _, a = fam.evaluate(torch.as_tensor(res.coefs[0]), torch.as_tensor(rec.map_id), t,
-                            torch.as_tensor(clip_feh(rec.feh)), torch.zeros((len(t), 0), dtype=torch.float64),
-                            torch.as_tensor(rec.cls))  # fmt: skip
+        for j, fam in enumerate(res.maps.families):
+            idx = np.flatnonzero(fam_of == j)
+            if not len(idx):
+                continue
+            _, aj = fam.evaluate(torch.as_tensor(res.coefs[j]),
+                                 torch.as_tensor(rec.map_id[idx] - res.maps.offsets[j]), t[idx],
+                                 torch.as_tensor(clip_feh(rec.feh[idx])),
+                                 torch.as_tensor(np.asarray(rec.extra, float)[idx]),
+                                 torch.as_tensor(rec.cls[idx]))  # fmt: skip
+            a[idx] = aj
     sig = np.where(np.isfinite(rec.sig) & (rec.sig > 0), rec.sig, 0.0)
     v = np.exp(2 * res.log_kappa[rec.noise_id]) * sig**2 + np.exp(
         2 * res.log_omega[rec.noise_id]
@@ -1291,6 +1498,11 @@ def run(args) -> None:
         map_table(prob, out).to_csv(docs / f"maps_{tag}.csv", index=False)
         noise_table(prob, out).to_csv(docs / f"noise_{tag}.csv", index=False)
         prob["tiers"].to_csv(docs / f"tiers_{tag}.csv", index=False)
+        if len(prob["mono_info"]):
+            prob["mono_info"].to_csv(docs / f"mono_info_{tag}.csv", index=False)
+            mono_table_from_res(out["res"]).to_csv(
+                docs / f"mono_maps_{tag}.csv", index=False
+            )
         record_fit(tag, prob, out)
         with open(work / f"fit_{tag}.pkl", "wb") as fh:
             pickle.dump({"res": out["res"], "units": prob["units"], "tiers": prob["tiers"],
@@ -1490,7 +1702,12 @@ def run(args) -> None:
             mapped.astype("f4"),
             z.astype("f4"),
         )
-        df[np.isfinite(df.t_other)].to_parquet(
+        # co-natal leave-one-out latent (cluster or pair without the star): the
+        # independent age of a rotation/lithium star that has no age record
+        df["t_group"] = sols[tag]["group_T_loo"][rec.star].astype("f4")
+        df["zcov"] = np.asarray(rec.extra, float)[:, 0].astype("f4")
+        mono = df.source.isin(MONO_SOURCES).to_numpy()
+        df[np.isfinite(df.t_other) | (mono & np.isfinite(df.t_group))].to_parquet(
             work / f"residuals_{tag}.parquet", index=False
         )
     # ---- validation-only and non-representative records vs the consensus ------
@@ -1498,6 +1715,7 @@ def run(args) -> None:
     galah_giant = (fit_all.source == "galah_dr4") & fit_all.cls.isin(GIANT)
     val = pd.concat([fit_all[~fit_all.representative & ~galah_giant], data["val"],
                      fit_all[galah_giant].assign(source="galah_dr4_giant")], ignore_index=True)  # fmt: skip
+    val = val[~val.source.isin(MONO_SOURCES)]  # non-age records: no age map to validate
     val_rows = []
     for s, g in val.groupby("source"):
         val_rows += predict_heldout(
@@ -1565,6 +1783,93 @@ def _binned(x, y, edges, min_n=20):
     return np.array(out).reshape(-1, 5)
 
 
+#: Teff -> B-V for dwarfs (Pecaut & Mamajek 2013 table, rounded); comparison only
+_BV_TEFF = (np.array([3500, 3800, 4000, 4300, 4500, 4800, 5000, 5300, 5500, 5800, 6000, 6300, 6500]),
+            np.array([1.54, 1.42, 1.38, 1.22, 1.08, 0.97, 0.88, 0.80, 0.73, 0.65, 0.58, 0.50, 0.44]))  # fmt: skip
+
+
+def _mh08_lnp(teff, t):
+    """Mamajek & Hillenbrand (2008) gyrochronology, ln(P/day) at log10(age/Gyr)
+    ``t`` (comparison only; NaN where B-V <= 0.495)."""
+    bv = np.interp(teff, *_BV_TEFF)
+    if bv <= 0.5:
+        return np.full_like(t, np.nan)
+    return np.log(0.407 * (bv - 0.495) ** 0.325 * (10 ** (t + 3)) ** 0.566)
+
+
+def _plot_monotone(plt, res, rM, keys, docs: Path) -> None:
+    rot = sorted(
+        [k for k in keys if k.startswith("rot:")],
+        key=lambda k: int(k.split("t")[-1].split("-")[0]),
+    )
+    li = sorted([k for k in keys if k.startswith("li_")])
+    rows = [r for r in (rot, [k for k in li if k.startswith("li_galah")],
+                        [k for k in li if k.startswith("li_ges")]) if r]  # fmt: skip
+    ncol = max(len(r) for r in rows)
+    fig, axs = plt.subplots(
+        len(rows), ncol, figsize=(2.6 * ncol, 2.6 * len(rows)), squeeze=False
+    )
+    tg = np.linspace(-2.0, 1.2, 200)
+    for ax in axs.flat:
+        ax.set_visible(False)
+    for r_i, row in enumerate(rows):
+        for c_i, k in enumerate(row):
+            ax = axs[r_i, c_i]
+            ax.set_visible(True)
+            g = rM[rM.key == k]
+            x = np.where(np.isfinite(g.t_other), g.t_other, g.t_group)
+            det = g.censor.to_numpy() == 0
+            ax.scatter(x[det], g.lage[det], s=3, color=SERIES[0], alpha=0.35, lw=0,
+                       label=f"detections ({det.sum()})")  # fmt: skip
+            if (~det).any():
+                ax.scatter(x[~det], g.lage[~det], s=6, marker="v", color=MUTED, alpha=0.4, lw=0,
+                           label=f"upper limits ({(~det).sum()})")  # fmt: skip
+            for z, ls in ((0.0, "-"), (-0.4, ":"), (0.4, ":")):
+                f, _, se = map_values(res, k, tg, z=z)
+                ax.plot(tg, f, color=SERIES[1], lw=1.4 if z == 0 else 0.8, ls=ls,
+                        label="fitted map (bin centre; ±0.4 bin)" if z == 0 else None)  # fmt: skip
+                if z == 0 and np.isfinite(se).any():
+                    ax.fill_between(
+                        tg, f - se, f + se, color=SERIES[1], alpha=0.2, lw=0
+                    )
+            lo, hi = (int(v) for v in k.split(":t")[1].split("-"))
+            tc = 0.5 * (lo + hi)
+            if k.startswith("rot:"):
+                ax.plot(tg, _mh08_lnp(tc, tg), color=INK, ls="--", lw=0.9,
+                        label="Mamajek & Hillenbrand 2008 (comparison)")  # fmt: skip
+                if lo <= 5772 < hi:
+                    ax.plot(
+                        [np.log10(4.57)],
+                        [np.log(25.4)],
+                        marker="*",
+                        color=INK,
+                        ms=8,
+                        ls="",
+                    )
+                ax.set_ylim(-1.5, 4.2)
+                ax.set_ylabel("ln(P_rot / day)" if c_i == 0 else "")
+            else:
+                if lo <= 5772 < hi:
+                    ax.plot([np.log10(4.57)], [0.96], marker="*", color=INK, ms=8, ls="",
+                            label="Sun (comparison)")  # fmt: skip
+                ax.set_ylim(-0.5, 3.8)
+                ax.set_ylabel("A(Li)" if c_i == 0 else "")
+            ax.set_xlim(-2.0, 1.2)
+            ax.set_title(f"{k}  (n={len(g)})", loc="left", fontsize=8)
+            ax.set_xlabel("independent log10(age/Gyr)", fontsize=7)
+            if c_i == 0:
+                ax.legend(
+                    fontsize=5.5,
+                    loc="upper left" if k.startswith("rot") else "lower left",
+                )
+    fig.suptitle("C0c non-age maps (gauge A): observable vs the star's independent age (other age "
+                 "records, else its cluster/pair leave-one-out latent); maps are fitted, published "
+                 "relations shown for comparison only", x=0.01, ha="left", fontsize=8.5)  # fmt: skip
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(docs / f"{PREFIX}_rotation_lithium.png", dpi=90)
+    plt.close(fig)
+
+
 def make_plots(work: Path, docs: Path, clusters: Path) -> None:
     import matplotlib
 
@@ -1583,7 +1888,10 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         cols.append("t_C_fromA")
     stars = pd.read_parquet(work / "consensus_stars.parquet", columns=cols)
     # (1) maps: catalogue log age vs consensus (other groups), map curves per class
-    keys = [k for k in resA.maps.names if (rA.key == k).sum() >= 30]
+    age_keys = list(resA.maps.families[0].names)
+    rM = rA[rA.source.isin(MONO_SOURCES)]
+    rA = rA[~rA.source.isin(MONO_SOURCES) & np.isfinite(rA.t_other)]
+    keys = [k for k in age_keys if (rA.key == k).sum() >= 30]
     ncol = 5
     nrow = int(np.ceil(len(keys) / ncol))
     fig, axs = plt.subplots(nrow, ncol, figsize=(13, 2.5 * nrow), squeeze=False)
@@ -1618,24 +1926,36 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
         ax.set_ylabel("catalogue log10(age/Gyr)")
     for ax in list(axs.flat)[len(keys) :]:
         ax.set_visible(False)
-    fig.suptitle("C0b maps (gauge A, APOKASC-3): catalogue vs consensus of the other "
+    fig.suptitle("C0c age maps (gauge A, APOKASC-3): catalogue vs consensus of the other "
                  "input groups; lines = fitted map per class at the class median [Fe/H] (±1σ)",
                  x=0.01, ha="left", fontsize=9)  # fmt: skip
     fig.tight_layout(rect=(0, 0, 1, 0.98))
     fig.savefig(docs / f"{PREFIX}_maps.png", dpi=90)
     plt.close(fig)
-    # (2) residuals before/after vs age and [Fe/H]
+    # (2) residuals before/after vs age, [Fe/H] and the record value. Binning by a
+    # noisy consensus (sd_other ~ 0.15 dex for isochrone-only stars) bends the
+    # residual at the tails of the age distribution (regression to the mean);
+    # the dashed null curve shows that bend for a correct map, simulated by
+    # perturbing t_other by N(0, sd_other) and binning the same way.
     top = rA.groupby("key").size().sort_values(ascending=False)
     top = [k for k in top.index if top[k] >= 300][:10]
     fig, axs = plt.subplots(
-        len(top), 2, figsize=(9, 1.6 * len(top)), squeeze=False, sharex="col"
+        len(top), 3, figsize=(13, 1.6 * len(top)), squeeze=False, sharex="col"
     )
     ea, ef = np.arange(-0.6, 1.31, 0.1), np.arange(-1.5, 0.61, 0.15)
+    rng = np.random.default_rng(0)
     for row, k in zip(axs, top):
         g = rA[rA.key == k]
+        t_o, s_o = g.t_other.to_numpy(), g.sd_other.to_numpy()
+        t_sim = t_o + rng.standard_normal(len(t_o)) * s_o
+        b = _binned(t_sim, t_o - t_sim, ea)
+        if len(b):
+            row[0].plot(b[:, 0], b[:, 1], color=INK, ls="--", lw=1,
+                        label="null (correct map, noisy consensus)")  # fmt: skip
         for ax, x, e in (
-            (row[0], g.t_other.to_numpy(), ea),
+            (row[0], t_o, ea),
             (row[1], g.feh.to_numpy(), ef),
+            (row[2], g.lage.to_numpy(), ea),
         ):
             for j, (col, lab) in enumerate(
                 (("raw", "before map: y − t"), ("mapped", "after map: y − f(t)"))
@@ -1652,13 +1972,20 @@ def make_plots(work: Path, docs: Path, clusters: Path) -> None:
             ax.set_ylim(-0.45, 0.45)
         row[0].set_ylabel(f"{k}\nresidual (dex)", fontsize=7)
     axs[0, 1].legend(loc="lower left", fontsize=6.5)
+    axs[0, 0].legend(loc="lower left", fontsize=6.5)
     axs[-1, 0].set_xlabel("consensus log10(age/Gyr) [other groups]")
     axs[-1, 1].set_xlabel("[Fe/H] (dex)")
+    axs[-1, 2].set_xlabel("catalogue log10(age/Gyr) (record value)")
     fig.suptitle("Residuals against the consensus of the other input groups (median, 16–84 %)",
                  x=0.01, ha="left", fontsize=9)  # fmt: skip
     fig.tight_layout(rect=(0, 0, 1, 0.985))
     fig.savefig(docs / f"{PREFIX}_residuals.png", dpi=90)
     plt.close(fig)
+    # (2b) non-age observables: rotation and lithium against an independent age
+    # (the star's other age records, else its cluster/pair leave-one-out latent)
+    mono_keys = [k for f in resA.maps.families[1:] for k in f.names]
+    if mono_keys and len(rM):
+        _plot_monotone(plt, resA, rM, mono_keys, docs)
     # (3) clusters: fitted cluster latents, member spread before/after, z-scores
     from astropy.table import Table
 
@@ -1904,6 +2231,18 @@ def export_model(work: Path, docs: Path) -> None:
                "isochrone_sources": sorted(ISOCHRONE), "caps_gyr_right_censored_within_1pc": CAPS,
                "main_sequence_rule": f"isochrone records with catalogue log g >= {MS_LOGG} excluded",
                "shared_input_groups_priority": SHARED_INPUT_GROUPS, "maps": maps, "noise_units": units}  # fmt: skip
+        if len(res.maps.families) > 1:
+            mono = {}
+            for j, fam in enumerate(res.maps.families[1:], start=1):
+                for i, k in enumerate(fam.names):
+                    mono[k] = {"direction": float(fam.direction[i]), "y_center": float(fam.y_center[i]),
+                               "coef": dict(zip(fam.column_names(), map(float, res.coefs[j][i])))}  # fmt: skip
+            out["monotone_maps"] = {
+                "form": "f = c0 + c_z z + direction * (sum_k softplus(w_k) s softplus((t - knot_k)/s) "
+                        "+ floor (t - T0)); z = (Teff - bin centre) / bin width; y = ln(P/day) for "
+                        "rot:*, A(Li) for li_*:*; upper limits censored",
+                "knots": list(MONO_KNOTS), "smooth": MONO_SMOOTH, "floor": MONO_FLOOR, "maps": mono}  # fmt: skip
+            mono_table_from_res(res).to_csv(docs / f"mono_maps_{tag}.csv", index=False)
         (docs / f"measurement_model_{tag}.json").write_text(json.dumps(out, indent=1))
 
 
@@ -1950,7 +2289,7 @@ def main(argv=None) -> None:
     ap.add_argument("--targets", default="consistency_targets_20261118.npz")
     ap.add_argument("--clusters", default="clusters.fits")
     ap.add_argument("--work", default="age_c0_work")
-    ap.add_argument("--docs", default="docs/age-c0b-20261123")
+    ap.add_argument("--docs", default="docs/age-c0c-20261124")
     ap.add_argument("--labels", default=None,
                     help="C0b label directory (benchmark clusters, wide pairs, WD+MS, seismology)")  # fmt: skip
     ap.add_argument("--n-outer", type=int, default=30)
