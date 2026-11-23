@@ -1337,7 +1337,8 @@ STEPS["ms-s3v21-final"] = dict(
 # worker processes, plus the HR23/EB21 group and reserved catalogues.
 # Attempt 1 (session fekqgpk6) reserved the GBS benchmarks by their float-rounded
 # GaiaDR3 ids (107 of 192 not in DR3); attempt 2 rebuilds the freeze in place with
-# the float64 rounding superset, hence --force (a launch needs --attempt N anyway).
+# the float64 rounding superset (it used --force; removed after the freeze so a
+# relaunch cannot overwrite the frozen split).
 SPLIT_V1 = "msa_split_v1"
 STEPS["msa-split-v1"] = dict(
     run_id=SPLIT_V1,
@@ -1345,7 +1346,7 @@ STEPS["msa-split-v1"] = dict(
     ram=48,
     cpu=8,
     command=(
-        "python -u scripts/build_msa_split_v1.py --workers 8 --force"
+        "python -u scripts/build_msa_split_v1.py --workers 8"
         ' --output "$experiment_output"'
     ),
     files=[],

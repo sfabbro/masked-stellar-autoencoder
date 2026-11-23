@@ -4,7 +4,7 @@
 
 spec: msa-split-v1
 date: 2026-11-23
-status: proposed  # becomes "frozen" when the freeze artefact exists
+status: frozen  # 2026-11-23, /arc/projects/astroai/msa/runs/msa_split_v1 (manifest status msa_split_v1_complete; salt 0xb6f6e5353645106b)
 
 keys:
   precedence:
@@ -136,7 +136,7 @@ legacy_sets:   # kept for continuity; not part of msa-split-v1
   comparison_rule: "new vs v5-v10 models only on TEST minus (v5 train U v5 valid)"
 
 freeze:
-  location: /arc/projects/astroai/msa/splits/msa-split-v1/   # proposed, not created
+  location: /arc/projects/astroai/msa/runs/msa_split_v1/   # frozen: assignment/ (HATS partition layout), overrides.parquet, groups.parquet, counts.json, manifest.json
   files: [manifest.json, overrides.parquet, qa_sets.parquet]
   versioning: "minor: add groups/reserved, FIT -> held-out only; major: salt or fractions change, retires TEST"
 
