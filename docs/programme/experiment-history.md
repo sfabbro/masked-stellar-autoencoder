@@ -695,7 +695,7 @@ Where things live (ARC, `/arc/projects/astroai/msa/`):
 
 ### 5.2 Defined splits in use
 
-- **v5 table:** split by source-id hash inside the table builder. Indices 0/1/2 are train/valid/test (4,697,789 / 786,880 / 387,568).
+- **v5 table:** split by a seeded shuffle of table row positions (`finetune_data.split_row_positions`, `train_test_split(random_state=42)`), not by a source-id hash, so any rebuild reshuffles it. Indices 0/1/2 are train/valid/test (4,697,789 / 786,880 / 387,568). The stable replacement is `msa-split-v1` in `data.md`.
 - **v1-table test:** 129,908–129,927 stars, held out of v5, and the common test set for stopgap through v10.
 - **Frozen core:** `rescore_20261119/rows.npy` and `rows_split.npz`.
 - **Earlier October roles:** FIT/TUNE/CAL/DEV/external (e.g. 8,545,728 / 1,155,269 / 883,669 / 974,986 / 7,872 in

@@ -1,0 +1,199 @@
+# Machine-readable companion of docs/programme/data.md (section 3 and the paths of sections 1-2).
+# Spec only: nothing here is implemented in code yet. Counts are from ARC manifests/headers read 2026-11-23;
+# "est" marks planning estimates.
+
+spec: msa-split-v1
+date: 2026-11-23
+status: proposed  # becomes "frozen" when the freeze artefact exists
+
+keys:
+  precedence:
+    - {kind: gaia_dr3, form: "<source_id>", type: int64}          # EDR3 == DR3 ids
+    - {kind: gaia_dr4_new, form: "gdr4:<source_id>", type: str}   # DR4 sources without a DR3 counterpart
+    - {kind: pensus_nongaia, form: "pensus:<survey>:<native_id>", type: str}
+    - {kind: label_nogaia, form: "lbl:<survey>:<native_id>", type: str, rule: lexicographically smallest over the star's records}
+  string_key_to_uint64: "int.from_bytes(sha256(key.encode())[:8], 'little') | 2**63"
+  pensus_precedence: [ls_dr11, catwise2020, vhs_dr7, uhs_dr3, ps1_dr2, skymapper_dr4, des_y6_gold, delve_dr3_gold, twomass_psc, allwise]
+  dr4_mapping:
+    table: DR3->DR4 neighbourhood table published with DR4
+    split_source: children inherit the DR3 key
+    merged_sources: most held-out partition wins (TEST > CAL > DEV > FIT)
+    record: key_route
+
+hash:
+  algorithm: splitmix64 finaliser on (key64 XOR SALT64)
+  salt: msa-split-v1
+  salt64: "0xb6f6e5353645106b"   # first 8 bytes (little-endian) of sha256(b"msa-split-v1")
+  unit: "(z >> 11) * 2**-53"
+  test_vectors:
+    - {key: 4185355646116022528, u: 0.662500593453, partition: FIT}
+    - {key: 4398046511104, u: 0.798229566688, partition: DEV}
+    - {key: 4295806720, u: 0.852028592613, partition: CAL}
+    - {key: 4295806753, u: 0.882257348434, partition: TEST}
+    - {key: "grp:hr23:Melotte_22", u: 0.440677168076, partition: FIT}
+  rec_subsample_salt: msa-rec-v1        # nested REC samples: unit(key, salt) < rate
+  fit_folds: "floor(u / 0.15) for u < 0.75 (5 folds)"
+
+partitions:          # upper edges of u
+  FIT: 0.75
+  DEV: 0.80
+  CAL: 0.88
+  TEST: 1.00
+
+sets:
+  FIT:
+    definition: labelled AND P == FIT AND NOT reserved
+    uses: [supervised_loss, label_model_fitting, scalers, conatal_training_terms]
+  DEV:
+    definition: labelled AND P == DEV AND NOT reserved
+    uses: [early_stopping, model_selection, hyperparameters]
+    forbidden: [calibration, final_reporting]
+  CAL:
+    definition: labelled AND P == CAL AND NOT reserved
+    uses: [conformal, recalibration, neyman_critical_values]
+    forbidden: [training, model_selection]
+  TEST:
+    definition: labelled AND P == TEST AND NOT reserved
+    uses: [final_reporting]
+    forbidden: [any_decision]
+    inspection_log: required
+  REC:
+    definition: all universe objects with P == FIT AND NOT reserved (inputs only)
+    uses: [self_supervised_reconstruction, pretraining, modality_dropout]
+  REC_DEV:
+    definition: all universe objects with P == DEV (inputs only)
+    uses: [reconstruction_early_stopping]
+  PRED:
+    definition: whole universe (Gaia DR3, then DR4, then Pensus)
+    uses: [inference]
+  labelled:
+    note: per target (spectroscopic, age, ebv, parallax) under the build's label policy; never changes the partition
+
+input_classes:
+  X: XP present
+  P: no XP, >= 2 colours
+  G: G only or G + astrometry (PRED only; flagged)
+  supervised_minimum: G plus one colour (BP-RP or one external band)
+
+groups:   # members inherit the partition of unit(group_key)
+  open_clusters:
+    catalogue: Hunt & Reffert 2023
+    path: /arc/projects/k-pop/catalogues/OpenClusters/members.fits
+    membership: p >= 0.7
+    key: "grp:hr23:<Name>"
+    size: {clusters: 7167, members_p_gt_0p5: 574116}
+  wide_binaries:
+    catalogue: El-Badry, Rix & Heintz 2021
+    path: /arc/projects/astroai/msa/analysis/age_labels_20261122/wide_pairs_eb21.parquet
+    membership: R_chance_align < 0.1
+    key: "grp:eb21:<min(source_id1, source_id2)>"
+    size: {pairs: 1256400}
+  precedence: [open_clusters, wide_binaries]   # then highest membership probability, then smaller key
+
+reserved:   # never FIT/DEV/CAL; excluded from REC; report-only
+  gbs_v3: {path: /arc/projects/k-pop/catalogues/gaia_fgk_benchmarks.parquet, size: 192}
+  globular_clusters:
+    catalogue: Vasiliev & Baumgardt 2021
+    path: [/arc/projects/k-pop/catalogues/gc_gaia/, /arc/projects/astroai/msa/analysis/age_labels_20261122/cluster_members_extra.parquet]
+    membership: p >= 0.5
+    size: {gcs_est: 170}
+  age_benchmark_clusters: {path: /arc/projects/astroai/msa/analysis/age_labels_20261122/cluster_priors.csv, size: {clusters: 35}, members: HR23 p >= 0.7}
+  kepler_legacy: {path: /arc/projects/k-pop/catalogues/kepler-legacy-dwarfs.fits, size: 66}
+  wd_ms_pairs: {path: [/arc/projects/astroai/msa/analysis/age_labels_20261122/wdms_pairs.parquet, /arc/projects/astroai/msa/analysis/age_labels_20261122/wd_ages_published.parquet], size: {pairs: 16703}}
+
+qa_sets:   # evaluated per partition: qa-dev (decisions ok), qa-cal, qa-test (final); reserved sets report-only
+  QA-core: {rule: per star, definition: ">=1 fit_ok non-grid-edge [Fe/H] from multisurvey.fe_h_core surveys in master 20261113_v1; frozen id list", current: {v5_rows: 39073, held_out: 7740}}
+  QA-mp: {rule: per star, definition: "QA-core [Fe/H] < -2 plus metal-poor survey stars", current: {highres_lt_m2: 3101, highres_lt_m3: 706, highres_lt_m4: 37}}
+  QA-seis: {rule: per star, sources: [apokasc-3-2024.fits, apo_k2_2024.fits, apokasc-1-dwarfs.fits], current_reference_records: {apokasc3: 13871, apok2: 4660, apokasc_dwarfs: 413}}
+  QA-irfm: {rule: per star, note: computed from input photometry; consistency only, current: 898839}
+  QA-gbs: {rule: reserved, current: 192}
+  QA-oc: {rule: per cluster, current_clusters: 7167}
+  QA-gc: {rule: reserved}
+  QA-wb: {rule: per pair, current_pairs: 1256400}
+  QA-age: {rule: reserved, members: [age_benchmark_clusters, kepler_legacy, wd_ms_pairs]}
+  QA-dist: {rule: per star or cluster, sources: [Hipparcos parallaxes, HR23 cluster parallaxes]}
+  QA-ext: {rule: per star or cluster, sources: [SFD at |b| > 60 (not independent), cluster E(B-V)]}
+  QA-loso: {rule: TEST only, code: pipeline/splits.py leave_one_survey_out}
+  QA-noxp: {rule: TEST only, strata: [P, X_with_xp_hidden]}
+  strata: [G_bin, feh_bin, teff_logg_regime, input_class, companion_labelled_or_not]
+
+expected_sizes_gaia_dr3:   # fractions x universe; exact counts at freeze
+  universe: 1811709771
+  with_xp: 219197643
+  labelled_gaia_master: 19205652
+  FIT: {labelled: 14404239, rec: 1358782328, rec_with_xp: 164398232}
+  DEV: {labelled: 960283, rec_dev: 90585489}
+  CAL: {labelled: 1536452}
+  TEST: {labelled: 2304678}
+  highres_feh_lt_m2: {FIT: 2326, DEV: 155, CAL: 248, TEST: 372}
+  labelled_no_xp: {in_v5_cap: 2128095, master_est: 5000000}
+
+legacy_sets:   # kept for continuity; not part of msa-split-v1
+  v5_split: {code: training/finetune_data.py split_row_positions, train: 4697789, valid: 786880, test: 387568, rule: "train_test_split(random_state=42) on row positions"}
+  v1_table_test: {code: scripts/build_stopgap_finetune_table.py test_ids_of, stars: 129927}
+  frozen_core: {path: /arc/projects/astroai/msa/runs/rescore_20261119/, rows: 39073, held_out: 7740}
+  october_roles: {code: scripts/prepare_expanded_six_source.py role_buckets, fit: 75, tune: 10, cal: 7, devtest: 8, status: runs lost}
+  comparison_rule: "new vs v5-v10 models only on TEST minus (v5 train U v5 valid)"
+
+freeze:
+  location: /arc/projects/astroai/msa/splits/msa-split-v1/   # proposed, not created
+  files: [manifest.json, overrides.parquet, qa_sets.parquet]
+  versioning: "minor: add groups/reserved, FIT -> held-out only; major: salt or fractions change, retires TEST"
+
+data:
+  labels:
+    master: /arc/projects/astroai/msa/runs/master_spectroscopic_labels_20261113_v1/
+    master_counts: {records: 44576092, stars: 19255342, gaia_stars: 19205652, nogaia_stars: 49690, surveys: 43}
+    census: /arc/projects/astroai/msa/runs/master_label_census_20261113_v2/
+    raw_sources: /arc/projects/astroai/msa/runs/master_label_sources_20261110_v1/
+    staged_surveys: /arc/projects/astroai/msa/runs/master_survey_stage_20261113_v1/
+    age_records: /arc/projects/astroai/msa/analysis/age_audit_20261122/
+    age_sources: /arc/projects/astroai/msa/analysis/age_labels_20261122/
+    reddening: /arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/
+    anchors_benchmarks: /arc/projects/k-pop/catalogues/
+    consistency: /arc/projects/astroai/msa/runs/consistency_table_20261118/
+    current_table: /arc/projects/astroai/msa/runs/multisurvey_table_20261117_v5/
+  gaia:
+    dr3_hats: {path: /arc/projects/hats/gaia/dr3, rows: 1811709771, columns: 152, epoch: J2016.0}
+    dr3_hdf5: {path: /arc/projects/k-pop/gaia/GaiaSource/, files: 3386}
+    xp_hats: {path: /arc/projects/hats/gaia/dr3_xp_continuous, rows: 219197643}
+    xp_raw: /arc/projects/k-pop/spectra/gaia/dr3/xp_continuous_mean_spectrum/
+    rvs_raw: /arc/projects/k-pop/spectra/gaia/dr3/rvs_mean_spectrum/
+  gaia_keyed_matches:   # /arc/projects/k-pop/catalogues/adql_matches/
+    twomass: {file: twomass.fits, rows: 469001402, bands: [J, H, Ks]}
+    ps1_ids: {file: pans_gaia_ids.fits, rows: 951450474}
+    ps1_phot: {file: [panstarrsdr1_matches/, ps1_curated.h5], bands: [g, r, i, z, y]}
+    sdss: {file: sdss.fits, rows: 119663765, bands: [u, g, r, i, z]}
+    catwise: {file: catwise.fits, rows: 678990741, bands: [W1, W2]}
+    skymapper: {file: [smssdr4_curated.h5, ../skymapperdr4/], bands: [u, v, g, r, i, z], rows: not_verified}
+  xp_training_set: {path: /arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5, shards: 135, rows_approx: 218000000}
+  hats_mirrors:   # /arc/projects/hats/<path>; rows and MOC sky fraction from properties
+    galex_guvcat_ais_gr67: {path: galex/guvcat_ais_gr67, rows: 82992062, sky: 0.995, bands: [FUV, NUV]}
+    skymapper_dr4: {path: skymapper/dr4, rows: 724329344, sky: 0.870, bands: [u, v, g, r, i, z]}
+    sdss_dr13: {path: sdss/photoprimary_dr13, rows: 469050917, sky: 0.698, bands: [u, g, r, i, z]}
+    ps1_otmo: {path: ps1/otmo, rows: 10560724292, bands: [g, r, i, z, y]}
+    ls_dr11: {path: legacysurvey/dr11, rows: 3967618454, sky: 0.810, bands: [g, r, i, z, W1, W2, W3, W4]}
+    des_y6_gold: {path: des/y6_gold, rows: 691483608, sky: 0.189, bands: [g, r, i, z, Y]}
+    delve_dr3_gold: {path: delve/dr3_gold, rows: 2588267795, sky: 0.613, bands: [g, r, i, z]}
+    atlas_dr5: {path: atlas/dr5, rows: 150198243, sky: 0.190, bands: [u, g, r, i, z]}
+    kids_dr5: {path: kids/dr5, rows: 138812117, sky: 0.053, bands: [u, g, r, i]}
+    cfis_dr6_u: {path: unions/cfis_DR6_u, rows: 377545437, sky: 0.360, bands: [u]}
+    splus_dr4: {path: splus/dr4, rows: 80155547, sky: 0.296, bands: 12}
+    jplus_dr3: {path: jplus/dr3, rows: 16419372, sky: 0.370, bands: 12}
+    pristine_dr2: {path: pristine/dr2, rows: 25224342, sky: 0.633, bands: [CaHK]}
+    twomass_psc: {path: 2mass/psc, rows: 470992970, sky: 1.0, bands: [J, H, Ks]}
+    uhs_dr3: {path: uhs/dr3, rows: 514336270, sky: 0.394, bands: [J, K]}
+    vhs_dr7: {path: vhs/dr7, rows: 1496104720, sky: 0.493, bands: [Y, J, H, Ks]}
+    ukidss_dr11_las: {path: ukidss/dr11_las, rows: 77685267, sky: 0.185, bands: [Y, J, H, K]}
+    ukidss_dr11_gcs: {path: ukidss/dr11_gcs, rows: 64835919, sky: 0.071, bands: [Z, Y, J, H, K]}
+    viking_dr5: {path: viking/dr5, rows: 82063585, sky: 0.073, bands: [Z, Y, J, H, Ks]}
+    vvvx_dr1: {path: vvvx/dr1, rows: 886574093, sky: 0.051, bands: [Z, Y, J, H, Ks]}
+    vmc_dr7: {path: vmc/dr7, rows: 64359516, sky: 0.017, bands: [Y, J, Ks]}
+    catwise2020: {path: catwise/2020, rows: 1890715640, sky: 1.0, bands: [W1, W2]}
+    allwise: {path: allwise/catalog, rows: 747634026, sky: 1.0, bands: [W1, W2, W3, W4]}
+    euclid_dr1_wide: {path: euclid/dr1/mer_catalogue_wide_survey, rows: 888152165, sky: 0.075, bands: [VIS, Y, J, H]}
+    hsc_pdr3_forced: {path: hsc/pdr3, bands: [g, r, i, z, y, NB0387, NB0816, NB0921, NB1010]}
+  pensus:
+    inputs: /arc/projects/k-pop/pensus/inputs/
+    views: /arc/projects/hats/pensus/views/   # empty on 2026-11-23
+  missing: [GALEX MIS, VPHAS+, IPHAS, UKIDSS GPS, Spitzer GLIMPSE, S-PLUS DR5 HATS, full-Gaia x full-wavelength master]
