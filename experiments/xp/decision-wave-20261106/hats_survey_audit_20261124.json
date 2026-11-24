@@ -1,0 +1,26 @@
+{
+  "run_id": "hats_survey_audit_20261124",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/hats_survey_audit_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/hats_survey_audit_20261124",
+  "source_commit": "27d90c834eb2cb23700c816c68eaa3f6ca1543b4",
+  "branch": "main",
+  "command": "python -u scripts/audit_hats_community.py --root /arc/projects/hats --output \"$experiment_output\" --workers 16 --max-hours 8",
+  "utc": "2026-11-24T07:09:06.437226+00:00",
+  "status": "not_submitted_confirmed",
+  "session_ids": [],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "5c440ec869ffd07f251f6fcca728dfccd7452985a953f746c24cec547879877c",
+  "error": "Server error '500 Internal Server Error' for url 'https://ws-uv.canfar.net/skaha/v1/session'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+  "error_type": "HTTPStatusError",
+  "http_status": 500,
+  "response_body": "unexpected exception: java.lang.RuntimeException: unexpected failure download certificate",
+  "response_body_truncated": false,
+  "reconciliation": "The POST got HTTP 500 ('unexpected failure download certificate') during a CANFAR skaha/credential outage (session API 500/timeouts 07:09-07:35 UTC). At 07:37 the session listing worked and shows no session named msa-hats-survey-audit-20261124; the source bundle directory and the run directory were never created. No job ran; superseded by attempt 2."
+}
