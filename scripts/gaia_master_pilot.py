@@ -119,19 +119,26 @@ def diff(before: Path, after: Path, depth: int) -> dict:
 # estimate
 # --------------------------------------------------------------------------- #
 def _footer(path: Path, columns: list[str]) -> tuple[int, int]:
+    """Rows and compressed bytes of ``columns`` of one partition.
+
+    A partition is one ``Npix=N.parquet`` file or an ``Npix=N/`` directory of
+    files (Euclid DR1 MER).
+    """
     import pyarrow.parquet as pq
 
-    md = pq.read_metadata(path)
+    files = sorted(path.glob("*.parquet")) if path.is_dir() else [path]
     wanted = set(columns)
     rows = 0
     nbytes = 0
-    for r in range(md.num_row_groups):
-        rg = md.row_group(r)
-        rows += rg.num_rows
-        for c in range(rg.num_columns):
-            col = rg.column(c)
-            if col.path_in_schema in wanted:
-                nbytes += int(col.total_compressed_size)
+    for file in files:
+        md = pq.read_metadata(file)
+        for r in range(md.num_row_groups):
+            rg = md.row_group(r)
+            rows += rg.num_rows
+            for c in range(rg.num_columns):
+                col = rg.column(c)
+                if col.path_in_schema in wanted:
+                    nbytes += int(col.total_compressed_size)
     return rows, nbytes
 
 

@@ -86,3 +86,22 @@ def test_summary_reports_fractions_and_task_stats(tmp_path):
     assert row["tasks"][rel]["rows"] == 100
     assert result["tasks"][rel]["peak_rss_gib"] == 3.2
     assert "| sdss | 4 |" in out.with_suffix(".md").read_text()
+
+
+def test_footer_reads_files_and_npix_directories(tmp_path):
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    def write(path, a):
+        pq.write_table(pa.table({"a": a, "b": [float(x) for x in a]}), path)
+
+    one = tmp_path / "Npix=1.parquet"
+    write(one, [1, 2])
+    many = tmp_path / "Npix=2"
+    many.mkdir()
+    write(many / "part0.parquet", [1])
+    write(many / "part1.parquet", [2, 3, 4])
+    rows, nbytes = pilot._footer(one, ["a"])
+    assert rows == 2 and nbytes > 0
+    rows, nbytes = pilot._footer(many, ["a", "b"])
+    assert rows == 4 and nbytes > pilot._footer(many, ["a"])[1]

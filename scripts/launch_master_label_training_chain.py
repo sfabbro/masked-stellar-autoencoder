@@ -1384,6 +1384,20 @@ STEPS["gaia-master-pilot"] = dict(
     ),
     files=[],
 )
+# Full-run task estimates alone (the pilots' estimate step failed on Euclid's
+# Npix=N/ directory partitions): candidate rows and bytes per anchor partition.
+STEPS["gaia-master-estimate"] = dict(
+    run_id="gaia_master_estimate_20261124",
+    gpu=0,
+    ram=32,
+    cpu=16,
+    command=(
+        'bash scripts/run_gaia_master_pilot.sh --report "$experiment_output"'
+        f" --xmatcher-tarball {XMATCHER_PILOT_TARBALL}"
+        f" --xmatcher-sha256 {XMATCHER_PILOT_SHA256} --estimate-only"
+    ),
+    files=[],
+)
 
 
 def pushed_head() -> tuple[str, str]:

@@ -14,6 +14,7 @@
 #   bash scripts/run_gaia_master_pilot.sh --report DIR \
 #     --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/xmatcher-<sha>.tar.gz \
 #     --xmatcher-sha256 <sha256> [--anchor-partitions 2/69,6/42837] [--out PATH]
+#     [--estimate-only]   (only the per-partition full-run estimates)
 set -euo pipefail
 
 REPORT=""
@@ -22,6 +23,7 @@ TARBALL_SHA=""
 OUT="/arc/projects/astroai/msa/xmatcher/pilot_gaia_master.hats"
 CACHE="/arc/projects/astroai/hats"
 ANCHOR_PARTITIONS="2/69,6/42837"
+ESTIMATE_ONLY=0
 COMMUNITY="/arc/projects/hats"
 ANCHOR="gaia_lsdb_hats"
 # Every community entry with local_paths (or a sync record) that is not being
@@ -44,6 +46,7 @@ while [[ $# -gt 0 ]]; do
     --anchor-partitions) ANCHOR_PARTITIONS="$2"; shift 2 ;;
     --out) OUT="$2"; shift 2 ;;
     --cache) CACHE="$2"; shift 2 ;;
+    --estimate-only) ESTIMATE_ONLY=1; shift ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -54,7 +57,7 @@ for path in "$OUT" "$CACHE" "$REPORT"; do
     "$COMMUNITY"/*) echo "refusing to write under $COMMUNITY: $path" >&2; exit 2 ;;
   esac
 done
-if [[ -e "$OUT" ]]; then
+if [[ "$ESTIMATE_ONLY" == 0 && -e "$OUT" ]]; then
   echo "pilot output already exists: $OUT (choose a new --out)" >&2
   exit 2
 fi
@@ -91,6 +94,15 @@ xm_py() {
 xm_py python -c 'import xmatcher, torchsky, ray, polars; print("xmatcher", xmatcher.__version__, "torchsky", torchsky.__version__, "ray", ray.__version__, "polars", polars.__version__)' \
   | tee "$REPORT/versions.txt"
 cat "$XM/XMATCHER_COMMIT" 2>/dev/null | tee -a "$REPORT/versions.txt" || true
+
+if [[ "$ESTIMATE_ONLY" == 1 ]]; then
+  log "full-run task estimates only (footers of every input partition)"
+  mkdir -p "$CACHE"
+  xm_py python "$HERE/gaia_master_pilot.py" estimate --anchor "$ANCHOR" \
+    --surveys "${SURVEYS[@]}" --cache-root "$CACHE" --radius 1.5 --target-epoch 2016.0 \
+    --threads 16 --out "$REPORT/task_estimates.parquet" 2>&1 | tee "$REPORT/estimate.log"
+  exit "${PIPESTATUS[0]}"
+fi
 
 # ---------------------------------------------------------------- snapshots
 mem_monitor() {
