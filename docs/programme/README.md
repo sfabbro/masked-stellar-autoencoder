@@ -141,7 +141,7 @@ Found while writing these documents; each one changes results.
 | Step | What | Output | Depends on |
 |---|---|---|---|
 | P0 | Freeze `msa-split-v1` for all 1.81B DR3 sources + group and override lists | `runs/msa_split_v1/` | — |
-| P1 | **Gaia-anchored full-wavelength master**: xmatcher `ray-anchor` with `hats/gaia/dr3` as anchor and every mirror in §2 (runbook `docs/gaia-master-data.md`; preflight, then full run; 3–5 TB) | `/arc/projects/astroai/msa/xmatcher/gaia_master.hats` (never under `/arc/projects/hats`) | disk check |
+| P1 | **Gaia-anchored full-wavelength master**: xmatcher `ray-anchor` with `hats/gaia/dr3` as anchor and every community tree in §2 read in place (runbook `docs/gaia-master-data.md`; pilot verified 2026-11-24, full run proposed: 3–5 h on 16 cores, ≈ 0.45 TB) | `/arc/projects/astroai/msa/xmatcher/gaia_master.hats` (never under `/arc/projects/hats`) | disk check |
 | P2 | Input contract v2: band list UV→MIR, errors, presence masks, epochs and quality flags per survey; XP joined from `dr3_xp_continuous`; SFD E(B−V); parallax/pm as conditioning | `docs/programme/input-contract.md`, builder | P1 |
 | P3 | Training tables: REC (all FIT objects, streamed from HATS, no row cap); labelled FIT/DEV/CAL/TEST from all 19.2M master stars, X/P/G classes | `runs/msa_tables_v2/` | P0, P2 |
 | P4 | Encoder v11 (token set encoder, heteroscedastic reconstruction, XP dropout, filter-integral term) pretrained on REC | checkpoint | P3 |

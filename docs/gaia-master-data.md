@@ -1,217 +1,277 @@
-# Gaia DR3 master: data inventory and staging
+# Gaia DR3 master: data and verified run procedure (P1)
 
-This is the data-side runbook for the Gaia-anchored master
-([xmatcher `ray-anchor` engine](https://github.com/astroai/xmatcher/blob/main/docs/ray-anchor.md)). It records the sources, sizes, local CANFAR
-products, and the staging/validation order. The engine keeps every Gaia row;
-the data plan must therefore budget for one row per Gaia source, not for the
-intersection.
+Runbook for programme step P1 (`docs/programme/README.md` §6): the
+Gaia-anchored, full-wavelength master built with the
+[xmatcher `ray-anchor` engine](https://github.com/astroai/xmatcher/blob/main/docs/ray-anchor.md).
+The engine keeps every Gaia row and adds, per survey, the best counterpart
+within 1.5″ plus `sep_arcsec`, `sep_second`, `n_within`, `crowded`, `pm_warn`
+and `quality`. Status on 2026-11-24: pilot verified (three CANFAR runs, below);
+the full run is proposed, not started.
 
-## Scope
+## Output-location rules
 
-- **Anchor:** Gaia DR3, one row per `source_id`.
-- **Surveys:** SDSS DR16 imaging, Pan-STARRS1 DR2, CatWISE2020, VHS DR5,
-  SkyMapper DR4, 2MASS PSC, AllWISE, GALEX GR6/7, S-PLUS (DR4 public or DR5
-  local), UHS DR3, Pristine DR2, HSC-SSP PDR3, LSST DP2, and DESI Legacy DR11.
-- **Match:** best counterpart per survey at 1.5″ by default, with
-  `sep_second`, `n_within`, `crowded`, `pm_warn`, and `quality`.
-- **Epoch:** propagate to J2016.0 where epoch and proper motion exist.
+- MSA writes only under `/arc/projects/astroai/msa` (`vos:astroai/msa`): the
+  master at `/arc/projects/astroai/msa/xmatcher/gaia_master.hats`, pilots next
+  to it (`xmatcher/pilot_gaia_master*.hats`), reports under `runs/<run_id>/`.
+- `/arc/projects/hats` is reserved for the community to read HATS catalogues:
+  read the trees there in place, never write there (no outputs, no new
+  mirrors or syncs). xmatcher refuses every write under it.
+- xmatcher's catalogue cache (mirrors of remote HATS inputs) lives under
+  `/arc/projects/astroai/hats` (`XMATCHER_CACHE_ROOT`, xmatcher's CANFAR
+  default); cached catalogues there may later be promoted to community-ready
+  HATS. The master needs no mirror: run with `--no-sync`, so a tree that cannot
+  be read in place is an error, never a download.
 
-## Source inventory
+## Inputs
 
-Sizes are the catalogues' `hats_estsize`/published tree sizes; they change when
-a provider rebuilds. `Rows` are from `properties`.
+Anchor: `gaia_lsdb_hats`, read in place from `/arc/projects/hats/gaia/dr3`
+(1,811,709,771 rows, 2,016 partitions at orders 2–6, epoch J2016.0). Every
+survey is a community tree under `/arc/projects/hats` with a bundled xmatcher
+entry (`local_paths` or a `PENSUS_SYNC.json` record, pinned `hats_nrows` and
+`obs_collection`, `default_columns`). Rows and selected-column sizes are from
+the partition footers read by the pilot's estimate pass.
 
-| Alias | Product | Rows | Tree size | Access | Notes |
-|---|---|---:|---:|---|---|
-| `gaia_lsdb_hats` | Gaia DR3 core (LSDB) | 1,812,731,847 | ~712 GiB | HTTPS | Preferred anchor; 153 cols, no XP coefficients |
-| `gaia_hats` | Gaia DR3 core (CDS) | 1,811,709,771 | ~1.6 TB | CDS HTTPS | 225 cols; on-the-fly; no XP coefficients |
-| `sdss_hats` | SDSS DR16 photometry | 1,231,051,050 | ~810 GB | CDS HTTPS | Static imaging; DR20 adds no imaging |
-| `ps1_hats` | Pan-STARRS1 DR2 | 1,868,236,315 | ~460 GB | CDS HTTPS | 67 cols |
-| `catwise_hats` | CatWISE2020 | 1,890,715,640 | ~600 GB | CDS HTTPS | Proper motions |
-| `vhs_hats` | VHS DR5 | 1,374,207,485 | ~742 GB | CDS HTTPS | Per-band MJD; no PM |
-| `skymapper_hats` | SkyMapper DR4 | 724,329,344 | ~96 GB | LSDB HTTPS | `mean_epoch`; no PM |
-| `twomass_hats` | 2MASS PSC | 470,992,970 | ~41 GiB | LSDB HTTPS | J/H/K |
-| `allwise_hats` | AllWISE | 747,634,026 | ~246 GiB | LSDB HTTPS | W1–W4, PM |
-| `galex_hats` | GALEX GR6/7 | 82,992,086 | ~90 GB | CDS HTTPS | FUV/NUV |
-| `splus_hats` | S-PLUS DR4 | 27,235,968 | ~8.8 GB | CDS HTTPS | Public DR4 |
-| `splus5_hats` | S-PLUS DR5 | — | local | CANFAR | Set `XMATCHER_SPLUS_DR5_HATS` |
-| `uhs_hats` | UHS DR3 | ~560 M | local | CANFAR/WSA | Set `XMATCHER_UHS_DR3_HATS` |
-| `pristine_hats` | Pristine DR2 | — | local | CANFAR | Set `XMATCHER_PRISTINE_DR2_HATS` |
-| `hsc_hats` | HSC-SSP PDR3 combined | — | local | CANFAR | Set `XMATCHER_HSC_PDR3_HATS` |
-| `dp2` | LSST DP2 | 786,420,720 | ~3.6 TiB | RSP/NERSC/CANFAR | Set `XMATCHER_DP2_HATS`; stage only if allocation allows |
-| `legacy_dr11` | LS DR11 tractor | ~1.5 B | TAP | Data Lab | No HATS; largest staging bottleneck |
+| Entry | Tree | Rows | Partitions | Selected columns (compressed) | Epoch |
+|---|---|--:|--:|--:|--:|
+| `twomass_psc_hats` | `2mass/psc` (sync record) | 470,992,970 | 219 | 13.8 GB | 2000.0 |
+| `allwise_hats` | `allwise/catalog` | 747,634,026 | 1,071 | 24.7 GB | 2010.0 |
+| `catwise2020_catalog` | `catwise/2020` | 1,890,715,640 | 4,080 | 138.1 GB | 2015.4 |
+| `skymapper_dr4_hats` | `skymapper/dr4` | 724,329,344 | 356 | 23.9 GB | 2015.0 |
+| `sdss_dr16_photoprimary` | `sdss/photoprimary_dr13` | 469,050,917 | 1,247 | 43.8 GB | 2000.0 |
+| `ls_dr11_sweep` | `legacysurvey/dr11` | 3,967,618,454 | 9,222 | 261.6 GB | 2017.0 |
+| `galex_guvcat_ais` | `galex/guvcat_ais_gr67` | 82,992,062 | 158 | 3.6 GB | 2007.0 |
+| `vhs_dr7` | `vhs/dr7` | 1,496,104,720 | 3,274 | 55.5 GB | 2014.0 |
+| `ukidss_dr11_las` | `ukidss/dr11_las` | 77,685,267 | 188 | 4.3 GB | 2008.0 |
+| `ukidss_dr11_gcs` | `ukidss/dr11_gcs` | 64,835,919 | 151 | 3.4 GB | 2008.0 |
+| `viking_dr5` | `viking/dr5` | 82,063,585 | 159 | 4.9 GB | 2013.0 |
+| `vvvx_dr1` | `vvvx/dr1` | 886,574,093 | 1,663 | 35.1 GB | 2017.0 |
+| `vmc_dr7` | `vmc/dr7` | 64,359,516 | 149 | 3.2 GB | 2014.0 |
+| `splus_dr4_dual` | `splus/dr4` | 80,155,547 | 218 | 13.4 GB | 2018.0 |
+| `pristine_dr2` | `pristine/dr2` | 25,224,342 | 63 | 2.7 GB | 2016.0 |
+| `hsc_pdr3_forced_{g,r,i,z,y}` | `hsc/pdr3/forced_*` | 731–784 M each | 2,010–2,574 each | 43–46 GB each | 2016.0 |
+| `euclid_dr1_mer_wide` | `euclid/dr1/mer_catalogue_wide_survey/…-hats` | 888,152,165 | 768 (`Npix=N/` directories) | 83.6 GB | 2024.0 |
 
-The IVOA registry also provides `hats:skymapper_dr4`, `hats:two_mass`,
-`hats:allwise`, and `hats:hsc_pdr3_*`; the aliases above pin the HTTP copy and
-the intended release so a run does not silently follow a registry change.
+Left out of the pilot and of the proposed full run: PS1 OTMO, DES Y6 Gold,
+DELVE DR3 Gold and UHS DR3 (Pensus was rebuilding or re-importing them:
+sessions `pensus-ps1-otmo-rawrap`, `pensus-ps1-import-arm`,
+`pensus-des-delve-import`; UHS rebuilt with RA wrapped), and J-PLUS/J-PAS
+(string-typed magnitudes). Add a tree back only once its Pensus session has
+finished and `xmatcher describe <entry>` resolves it in place; a rebuilt tree
+whose row count changed fails the entry's `hats_nrows` pin instead of being
+read silently.
 
-## Quota model
+No survey is moved to J2016.0: only Gaia carries usable motions (its
+`ref_epoch` is already 2016.0). AllWISE `pmra`/`pmdec` are kept as data but are
+not used as proper motions (xmatcher ffa5e23; see caveats). `pm_warn` flags a
+Gaia source whose motion over the Gaia–survey epoch baseline exceeds half the
+radius, or with no usable motion when the baseline exceeds five years.
 
-Full mirrors of the nine public surveys plus Gaia are roughly **3.5–4 TB**
-before the master. `/scratch` on a CANFAR session is typically ~200 GiB and is
-session-local; it is not enough. Use a durable `/arc/projects/<group>` tree for
-both the cache and the master.
+## Procedure
 
-Narrow staging cuts the stored footprint substantially:
+Preconditions:
 
-| Stage | Approximate stored size |
-|---|---:|
-| Gaia core projection (33 cols) | ~100–150 GB |
-| SDSS photometry projection (~15 cols) | ~200–300 GB |
-| PS1, CatWISE, VHS, SkyMapper, 2MASS, AllWISE projections | ~400–600 GB |
-| GALEX + S-PLUS | ~15–30 GB |
-| Master with ~100 output columns | ~0.5–1.5 TB |
+1. No input is mid-rebuild:
+   `curl -sSL --cert ~/.ssl/cadcproxy.pem https://ws-uv.canfar.net/skaha/v1/session`
+   (look for `pensus-*` sessions touching the trees above). Do not touch other
+   projects' sessions.
+2. xmatcher is the sfabbro fork at 266e85c or later (community trees read in
+   place, `--anchor-partitions`, per-task stats and memory reservations).
+   The repository is private, so headless jobs receive it as a tarball under
+   `/arc/projects/astroai/msa/launcher/xmatcher_src/`, checked by sha256.
+3. The MSA HEAD is clean and pushed (the launcher refuses otherwise); commit and
+   push the receipt it writes under `experiments/xp/decision-wave-20261106/`.
 
-Plan for **3–5 TB free** on `/arc/projects` for a full run with local UHS,
-S-PLUS DR5, HSC, Pristine, and DP2. If DP2 is included, the full 3.6 TiB tree
-must be staged separately; otherwise use match-at-source on RSP/NERSC.
+Headless job: `scripts/run_gaia_master_pilot.sh` (launcher steps
+`gaia-master-*` in `scripts/launch_master_label_training_chain.py`). It
 
-## Staging order
+- unpacks and checks the xmatcher tarball, installs xmatcher's Pixi env;
+- snapshots `/arc/projects/hats` and the cache root (type, mtime, size of every
+  entry) before and after, and diffs them by tree;
+- runs (subset or full)
 
-1. **Anchor first.** Mirror `gaia_lsdb_hats`, or project it directly:
+  ```bash
+  xmatcher -v match gaia_lsdb_hats \
+    twomass_psc_hats allwise_hats catwise2020_catalog skymapper_dr4_hats \
+    sdss_dr16_photoprimary ls_dr11_sweep galex_guvcat_ais vhs_dr7 \
+    ukidss_dr11_las ukidss_dr11_gcs viking_dr5 vvvx_dr1 vmc_dr7 \
+    splus_dr4_dual pristine_dr2 \
+    hsc_pdr3_forced_g hsc_pdr3_forced_r hsc_pdr3_forced_i hsc_pdr3_forced_z hsc_pdr3_forced_y \
+    euclid_dr1_mer_wide \
+    --engine ray-anchor -r 1.5 --target-epoch 2016.0 \
+    [--anchor-partitions 2/69,6/42837] \
+    --no-sync --cache-root /arc/projects/astroai/hats \
+    --task-rows 4000000000 --chunk-memory-gb 4096 --no-color \
+    -o /arc/projects/astroai/msa/xmatcher/<name>.hats
+  ```
 
-   ```bash
-   xmatcher project-hats gaia_lsdb_hats gaia_core.hats \
-     --columns source_id,ra,dec,ref_epoch,parallax,parallax_error,pmra,pmra_error,pmdec,pmdec_error,ruwe,phot_g_mean_mag,phot_bp_mean_mag,phot_rp_mean_mag,bp_rp,radial_velocity,teff_gspphot,logg_gspphot,mh_gspphot,distance_gspphot,azero_gspphot,ebpminrp_gspphot,classprob_dsc_combmod_star,classprob_dsc_combmod_galaxy,classprob_dsc_combmod_quasar,has_xp_continuous,has_xp_sampled,has_rvs,has_epoch_photometry,phot_variable_flag,duplicated_source,l,b
-   ```
+  with a local Ray cluster on the session (`RAY_DEFAULT_OBJECT_STORE_MEMORY_PROPORTION=0.05`,
+  so ~95% of the memory is schedulable for the per-task reservations);
+- greps the log for the "reading … in place (read-only; no mirror)" lines (one
+  per input), runs xmatcher's `scripts/validate_anchor_output.py`, and writes
+  `pilot_summary.{json,md}` (per survey: match, crowded, ambiguous, `pm_warn`
+  fractions, invalid rows dropped; per task: seconds, peak RSS, rows read) and,
+  unless `--skip-estimate`, `task_estimates.parquet` (candidate partitions,
+  rows and compressed bytes per anchor partition and survey, from footers).
 
-   `project-hats` reads HTTPS HATS partitions directly and, on CDS, asks for
-   at most eight columns per request (`?columns=…`), so it does not mirror the
-   full tree first. For a multi-TB projection, add `--resume`: the
-   `project.state` fingerprint binds the source, columns, and partition layout,
-   and completed partitions are skipped after an interruption.
-
-2. **Public surveys.** Project each survey to the columns the master needs.
-   Examples:
-
-   ```bash
-   xmatcher project-hats sdss_hats sdss_narrow.hats \
-     --columns objID,RA_ICRS,DE_ICRS,mode,class,clean,upmag,gpmag,rpmag,ipmag,zpmag,e_upmag,e_gpmag,e_rpmag,e_ipmag,e_zpmag,uMJD,gMJD,rMJD,iMJD,zMJD,Q
-
-   xmatcher project-hats ps1_hats ps1_narrow.hats \
-     --columns objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag,e_gmag,e_rmag,e_imag,e_zmag,e_ymag,Qual,Epoch
-
-   xmatcher project-hats catwise_hats catwise_narrow.hats \
-     --columns objID,RA_ICRS,DE_ICRS,W1mproPM,W2mproPM,e_W1mproPM,e_W2mproPM,pmRA,pmDE,e_pmRA,e_pmDE,MJD,pmQual
-   ```
-
-   The bundled `default_columns` for each alias is already the recommended
-   projection; `xmatcher describe <alias>` prints it.
-
-3. **Local CANFAR products.** Point the environment variables at the HATS
-   roots and use the aliases unchanged:
-
-   ```bash
-   export XMATCHER_UHS_DR3_HATS=/arc/projects/<group>/uhs_dr3/hats
-   export XMATCHER_SPLUS_DR5_HATS=/arc/projects/<group>/splus_dr5/hats
-   export XMATCHER_PRISTINE_DR2_HATS=/arc/projects/<group>/pristine_dr2/hats
-   export XMATCHER_HSC_PDR3_HATS=/arc/projects/<group>/hsc_pdr3/hats
-   export XMATCHER_DP2_HATS=/arc/projects/<group>/dp2/hats
-   ```
-
-   If a variable is unset, the alias resolution fails with the variable named;
-   no public fallback sky is substituted.
-
-4. **Legacy DR11.** There is no HATS for LS DR11. The Data Lab TAP table
-   `ls_dr11.tractor` is the photometry source; the precomputed
-   `ls_dr11.x1p5__tractor__gaia_dr3__gaia_source` table (532,539,684 rows) is
-   the fastest candidate set and validation reference. Staging the full TAP
-   table is a separate, large job; do not start it until the HATS surveys have
-   passed the pilot.
-
-5. **XP sidecar.** Keep XP out of the master. Project the CANFAR XP copy to
-   `source_id` plus the coefficient/error arrays and join on `source_id` later:
-
-   ```bash
-   xmatcher project-hats xp_hats gaia_xp_dr3.hats \
-     --columns source_id,bp_coefficients,bp_coefficient_errors,rp_coefficients,rp_coefficient_errors
-   ```
-
-## Run
-
-The wrapper selects the public survey list, adds local products only when their
-environment variables are set, and runs the anchor engine:
-
-Output location rule: MSA writes only under `/arc/projects/astroai/msa`
-(`vos:astroai/msa`). `/arc/projects/hats` is reserved for the community to read
-HATS catalogues: read the mirrors there, never write (no outputs, no new mirrors).
-xmatcher's catalogue cache (mirrors of remote HATS inputs) lives under
-`/arc/projects/astroai/hats`, xmatcher's CANFAR default since sfabbro/xmatcher
-c0699cc; cached catalogues there may later be promoted to community-ready HATS.
-With every input already cached, run with `--no-sync` so nothing is synced.
+Pilot (verified):
 
 ```bash
-export CACHE=/arc/projects/astroai/hats   # xmatcher catalogue cache (never /arc/projects/hats)
-export OUT=/arc/projects/astroai/msa/xmatcher/gaia_master.hats
-
-PREFLIGHT_ONLY=1 bash scripts/run_gaia_master.sh
-bash scripts/run_gaia_master.sh
+pixi run -e monitor --no-install python scripts/launch_master_label_training_chain.py --step gaia-master-pilot-v3
 ```
 
-Equivalent direct command:
+Full run (proposed; launch only when asked):
 
 ```bash
-xmatcher match gaia_lsdb_hats \
-  twomass_hats allwise_hats catwise_hats skymapper_hats \
-  sdss_hats ps1_hats vhs_hats galex_hats splus_hats \
-  --engine ray-anchor -r 1.5 --target-epoch 2016.0 \
-  --cache-root /arc/projects/astroai/hats \
-  -o /arc/projects/astroai/msa/xmatcher/gaia_master.hats
+pixi run -e monitor --no-install python scripts/launch_master_label_training_chain.py --step gaia-master-full
 ```
 
-The first run mirrors each input on demand. `--no-sync` requires the cache to
-be complete. Resume is per anchor partition: rerunning the same output
-directory skips partitions that already exist, but changing the inputs,
-columns, radius, or epoch wipes the dataset first.
+This is `run_gaia_master_pilot.sh --anchor-partitions all --out
+/arc/projects/astroai/msa/xmatcher/gaia_master.hats --expected-rows 1811709771
+--skip-estimate` on 16 cores / 128 GiB, CPU only. A restart after an
+interruption reruns the step as a new attempt with `--resume`: finished
+partitions are kept when the fingerprint (inputs, columns, radius, epoch)
+matches; changing any of them starts over. From an interactive session with
+xmatcher on PATH, `scripts/run_gaia_master.sh` runs the same command
+(`--dry-run` prints it).
 
-## Validate
-
-Stream the output (only anchor ID and ambiguity columns are read):
+Validate (the job does it; to rerun):
 
 ```bash
-python scripts/validate_anchor_output.py \
+python <xmatcher>/scripts/validate_anchor_output.py \
   /arc/projects/astroai/msa/xmatcher/gaia_master.hats \
-  --json gaia_master_validation.json
+  --expected-rows 1811709771 --json gaia_master_validation.json
 ```
 
-The validator reports total rows, null IDs, duplicate IDs within each
-partition, and per-survey matched/crowded/PM/quality counts. `hats_nrows` must
-equal the partition sum; the validator's `expected-rows` option pins the Gaia
-anchor count when supplied.
+It fails on a null or repeated `source_id` within a partition, on
+`hats_nrows` different from the partition sum, and on a row count other than
+the expected one.
 
-## Pilot order
+## Pilot results (2026-11-24)
 
-Do not start with all surveys. The first pass should be:
+Runs (reports under `/arc/projects/astroai/msa/runs/<run_id>/`):
 
-1. `gaia_lsdb_hats` + `twomass_hats` + `catwise_hats` + `skymapper_hats` +
-   `uhs_hats` (the smallest useful set).
-2. `ps1_hats` + `sdss_hats`.
-3. `vhs_hats` + `galex_hats` + `splus_hats`.
-4. Local HSC/Pristine/DP2 and the LS DR11 candidate set.
+| Run | Session | xmatcher | Partitions | Outcome |
+|---|---|---|---|---|
+| `gaia_master_pilot_20261124` | `ozv1t6ad` | 9b2d810 | 2/69, 6/42837 | all 22 inputs read in place; stopped in the first task: AllWISE's motion fit moved a source by 1,630″ (halo check) |
+| `gaia_master_pilot_20261124_v2` | `ufvwfkmc` | ffa5e23 | 2/69, 6/42837 | passed; `xmatcher/pilot_gaia_master.hats` |
+| `gaia_master_estimate_20261124` | `zm3mjlkm` | ffa5e23 | none (estimates) | per-partition candidate rows/bytes for all 2,016 anchor partitions |
+| `gaia_master_pilot_20261124_v3` | `d0680ko2` | 6d65857 | 2/69, 2/133, 5/8283 | passed; `xmatcher/pilot_gaia_master_v3.hats` |
 
-After each pass, run the validator and compare a random sky sample against the
-Data Lab precomputed 1.5″ Gaia crossmatches where available. A survey with
-systematically low coverage or an implausible `n_within` distribution should be
-inspected before the next pass; do not "fix" it by widening the radius.
+Checks, every run:
+
+- Each of the 22 inputs logged "reading local_paths copy …" (2MASS: "community
+  copy", via its sync record) "in place (read-only; no mirror)".
+- `/arc/projects/hats` before/after: the only differences were new partitions
+  in `des/y6_gold` written by the running `pensus-des-delve-import` session
+  (DES is not an input); nothing else added, removed or modified.
+- Cache root `/arc/projects/astroai/hats`: only `registry/community_index.json`
+  (the index of community sync records) appeared in the first run; later runs
+  left it unchanged. Nothing was mirrored.
+- Validator: 0 null and 0 duplicate `source_id`; `hats_nrows` equals the
+  partition sum (v2: 1,513,619 rows; v3: 2,193,149). 2/69 written by v2 and by
+  v3 has the same rows and the same file size (565,159,810 bytes).
+- Invalid survey rows dropped (non-finite or |Dec| > 90): 0 for every survey.
+
+Partitions: 2/69 (coarse, RA 34°, Dec 0°: 14 surveys including all HSC bands),
+6/42837 (fine, bulge, VVVX), 2/133 (largest estimated task: 289 M Euclid
+candidate rows), 5/8283 (LMC outskirts: VMC, Euclid).
+
+Match fraction (% of Gaia rows with a counterpart within 1.5″) and, in
+brackets, crowded = ambiguous fraction (`n_within` > 1). "–": no survey
+partition overlaps; "0": partitions read, no match.
+
+| Survey | 2/69 (637,729) | 6/42837 (875,890) | 2/133 (1,424,509) | 5/8283 (130,911) |
+|---|--:|--:|--:|--:|
+| 2MASS PSC | 50.5 (0.01) | 11.7 (0.01) | 44.3 (0.01) | 13.5 (0.00) |
+| AllWISE | 77.0 (0.00) | 3.2 (0.00) | 73.9 (0.00) | 27.9 (0.00) |
+| CatWISE2020 | 86.7 (0.07) | 9.7 (0.02) | 89.1 (0.07) | 47.5 (0.02) |
+| SkyMapper DR4 | 86.3 (0.04) | 25.9 (0.18) | 89.0 (0.05) | 59.9 (0.10) |
+| SDSS DR16 | 97.4 (0.60) | – | 0 | – |
+| LS DR11 | 100.0 (23.46) | – | 100.0 (5.55) | 100.0 (9.77) |
+| GALEX | 12.3 (0.00) | 0 | 10.0 (0.00) | 1.5 (0.00) |
+| VHS DR7 | 62.8 (0.40) | 66.6 (1.26) | 98.9 (0.47) | 85.7 (0.39) |
+| UKIDSS LAS | 61.8 (0.79) | – | – | – |
+| UKIDSS GCS | – | – | – | – |
+| VIKING DR5 | 4.1 (0.04) | – | 0 | – |
+| VVVX DR1 | – | 94.7 (13.13) | – | – |
+| VMC DR7 | – | – | – | 39.8 (0.57) |
+| S-PLUS DR4 | 26.5 (0.45) | 0 | 12.9 (1.39) | 55.7 (4.48) |
+| Pristine DR2 | 49.3 (0.12) | – | 0 | – |
+| HSC g / r / i / z / y | 67.9 / 71.1 / 59.7 / 67.1 / 58.7 (52–63) | – | – | – |
+| Euclid DR1 MER | – | – | 93.7 (16.34) | 22.1 (6.02) |
+
+`pm_warn`: 13–23% of rows for surveys ≥ 5 years from 2016 (2MASS, AllWISE,
+SDSS, GALEX, UKIDSS, Euclid) at high latitude, 45% in the bulge, ~0 for the
+others; nearly all are Gaia two-parameter sources (no proper motion) on a long
+baseline. UKIDSS GCS overlaps none of the pilot partitions (resolution only).
+
+Tasks (seconds and peak RSS of the Ray worker; candidate rows read):
+
+| Partition | Rows read | v2 (ffa5e23) | v3 (6d65857) | Estimate (266e85c model) |
+|---|--:|--:|--:|--:|
+| 2/69 | 598 M | 657.6 s, 19.4 GiB | 213.1 s, 19.6 GiB | 27.9 GiB |
+| 6/42837 | 34 M | 43.2 s, 4.1 GiB | – | 7.9 GiB |
+| 2/133 | 564 M | – | 202.1 s, 59.5 GiB | 64.9 GiB |
+| 5/8283 | 39 M | – | 29.7 s, 3.3 GiB | 5.4 GiB |
+
+v2 → v3 on 2/69: reads 433 → 110 s (8 partition files read concurrently),
+time outside read/match 170 → 7 s (surveys without motion are no longer
+propagated), match 55 → 96 s (it shared the 16 cores with 2/133).
+
+## Full run: extrapolation
+
+From the estimate pass over all 2,016 anchor partitions and the v3 per-survey
+costs:
+
+- **Reads.** 90.9 B candidate rows and 4.63 TB of compressed selected columns
+  (3.9× the 23.6 B survey rows: each task's cone circumscribes its HEALPix cell
+  plus a 600″ halo, and every overlapping survey partition is read whole).
+  The 87 order-2 anchor partitions (4.8% of Gaia rows) take 31% of the bytes.
+- **Time.** Fitted v3 costs: read 1.35 s/GB + 0.04 s per partition file;
+  match 0.14 s per M survey rows + 0.76 s per M anchor rows per survey; other
+  3.9 s per M anchor rows + 6 s. That gives 20 task-hours; with small tasks
+  running 50% slower than the fit (5/8283) and 5 s of worker start per task,
+  about **32 task-hours** (median task ≈ 45 s, largest ≈ 4–5 min).
+- **Memory.** Task estimates (conservative: 1.1× the measured 2/133 peak, 1.4×
+  2/69): median 7.6 GiB, p90 12.8, p99 27.3, max 64.9 GiB (2/133); 13 tasks
+  above 32 GiB. Ray reserves each estimate (capped at 90% of the node), so
+  heavy tasks are not packed together.
+- **Wall time on 16 cores / 128 GiB.** CPU bound ≥ 2.0 h; memory-reservation
+  bound ≈ 330 GiB·h / ~109 GiB ≈ 3 h. Expect **3–5 h**; the plan (footers of
+  ~36k selected partitions, read concurrently) adds a few minutes. Two such
+  sessions as one Ray cluster would roughly halve it; not needed.
+- **Output.** Gaia columns ≈ 80–110 B/row; each survey adds 45–190 B per
+  matched row (2MASS 52, CatWISE 70–85, LS DR11 85, SDSS 117, S-PLUS 189) and
+  ≈ 0 for unmatched rows. The pilot partitions span 192 B/row (bulge, 7
+  surveys) to 886 B/row (2/69, 14 surveys). With ~0.47 B 2MASS, ~0.68 B
+  CatWISE, ~0.53 B LS DR11 and a few 10⁸ each for AllWISE, SkyMapper, VHS and
+  VVVX matches: **≈ 0.45 TB (0.35–0.6 TB)**, not the 3–5 TB budgeted earlier.
+  `/arc` had 634 TB free. Cache growth: none.
 
 ## Known data caveats
 
-- **Gaia XP:** neither Gaia HATS carries coefficients. The CDS `xpcont` tree
-  is metadata-only; use the CANFAR XP copy or the ESA table, and keep it as a
-  sidecar.
-- **SDSS:** DR20 is spectroscopy; the DR16 HATS is the static imaging
-  photometry product. The HATS has per-band MJD (`uMJD`…`zMJD`) and both PSF
-  and model magnitude families.
-- **S-PLUS:** DR5 is not public; use the CANFAR copy if present, otherwise
-  public DR4. `splus_hats` is DR4.
-- **UHS:** DR3 is public via WSA but has no public HATS; prefer the CANFAR
-  copy. Do not run a WSA SQL harvest for the full sky; tile it if needed.
-- **HSC:** the registry exposes per-band forced-photometry trees
-  (`hsc_pdr3_g/i/r/y/z`), not one combined object row. Use the CANFAR combined
-  HATS or stage the bands and combine by object ID.
-- **DP2:** the full HATS is 3.6 TiB. Prefer match-at-source on RSP/NERSC and
-  transfer only the match table; a full CANFAR sync needs a dedicated
-  `/arc/projects` allocation.
-- **Gaia duplicates:** the LSDB and CDS row counts differ slightly. Validate
-  `source_id` uniqueness/partition routing before treating either as the exact
-  official catalogue.
+- **AllWISE motions.** The AllWISE motion fit is not astrometry: wired as
+  proper motion it moved a source by 1,630″ between 2010 and 2016 (pilot v1).
+  xmatcher ffa5e23 keeps `pmra`/`pmdec` as columns only; AllWISE positions stay
+  at 2010.
+- **LS DR11 duplicates.** Every Gaia source has an LS row at its Gaia position
+  (`REF_CAT=G3`, separation 0.000″, match 100%), and 6–23% of Gaia sources have
+  a second row at the same position (`sep_second` ≈ 0), from `RELEASE` 11010 and
+  11011. The best match among exact duplicates is the lowest row; P2 must pick
+  one release (or brick) per object.
+- **HSC forced photometry** has deblend parents and children (and probably
+  patch/tract overlaps) but no `isPrimary` flag: 52–63% of Gaia rows have ≥ 2
+  rows within 1.5″ (`sep_second` ≈ 0.025″), and 39% of best matches are
+  parents (`deblend_nChild > 0`). Fluxes are `instFlux`. P2 should prefer
+  `deblend_nChild == 0` rows and calibrate the fluxes.
+- **Euclid DR1 MER** partitions are `Npix=N/` directories of files (read as
+  such; xmatcher 6d65857 also counts their footers). 16% of Gaia rows in 2/133
+  have two MER rows within 1.5″.
+- **Crowding** in the bulge is real: VVVX 13% crowded at 95% match.
+- **Gaia XP** stays out of the master; join `/arc/projects/hats/gaia/dr3_xp_continuous`
+  on `source_id` as a sidecar.
+- **UKIDSS GCS** was not exercised by the pilot (no overlap); verify it on
+  the full-run validator report.
+- **Remote fallbacks** (`gaia_hats`, `sdss_hats`, `ps1_hats`, `catwise_hats`,
+  `vhs_hats`, ...) are CDS/LSDB HTTPS copies; they are not needed for this
+  master and must not be mirrored into `/arc/projects/hats`.
