@@ -1,0 +1,22 @@
+{
+  "run_id": "pretrain_v11_pilot_20261124",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/pretrain_v11_pilot_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/pretrain_v11_pilot_20261124-attempt-2",
+  "source_commit": "3a6692e3cb111e8cf3852099ff4c6bc9bef1132a",
+  "branch": "main",
+  "command": "timeout 40m python -u -m masked_stellar_autoencoder.training.pretrain_v11 --config configs/pretrain-v11-pilot.yaml --max-steps 500 || echo \"v11 pilot segment 1 exited $?\" ; \"${pixi_run[@]}\" timeout 55m python -u -m masked_stellar_autoencoder.training.pretrain_v11 --config configs/pretrain-v11-pilot.yaml || echo \"v11 pilot segment 2 exited $?\" ; \"${pixi_run[@]}\" timeout 20m python -u -m masked_stellar_autoencoder.training.pretrain_v11 --config configs/pretrain-v11-pilot-l16.yaml --max-steps 400 || echo \"v11 pilot segment 3 exited $?\"",
+  "utc": "2026-11-24T07:37:09.707441+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "j6qd4aat"
+  ],
+  "resources": {
+    "gpu": 1,
+    "cores": 8,
+    "ram": 64
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "7785044bd80505190115118ce809c9269c2ae6cabaab6d5ecdeae0ca6cea50aa"
+}
