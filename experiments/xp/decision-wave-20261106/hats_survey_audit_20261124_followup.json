@@ -1,0 +1,23 @@
+{
+  "run_id": "hats_survey_audit_20261124_followup",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/hats_survey_audit_20261124_followup",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/hats_survey_audit_20261124_followup",
+  "source_commit": "2e50bb4bbcffe8bdc443e9e82943222c47e10579",
+  "branch": "main",
+  "command": "python -u scripts/audit_hats_community.py --root /arc/projects/hats --output /arc/projects/astroai/msa/runs/hats_survey_audit_20261124/followup --workers 16 --stages followup --max-hours 4",
+  "utc": "2026-11-24T08:20:52.243841+00:00",
+  "status": "not_submitted_confirmed",
+  "session_ids": [],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "c91dd87bd248027f8a207f9fe6f5a8c7aeebe06bf5af4bc132a6d8523c10cddf",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout",
+  "reconciliation": "The POST timed out (ReadTimeout) during a CANFAR skaha/credential outage (session API and authenticated ARC timeouts 08:20-08:39 UTC). At 08:39-08:41 the session listing worked and shows no session named msa-hats-survey-audit-20261124-followup; the source bundle directory and the session log were never created. No job ran; superseded by attempt 2."
+}
