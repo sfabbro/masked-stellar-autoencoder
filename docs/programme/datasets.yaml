@@ -91,7 +91,7 @@ groups:   # members inherit the partition of unit(group_key)
   precedence: [open_clusters, wide_binaries]   # then highest membership probability, then smaller key
 
 reserved:   # never FIT/DEV/CAL; excluded from REC; report-only
-  gbs_v3: {path: /arc/projects/k-pop/catalogues/gaia_fgk_benchmarks.parquet, size: 192}
+  gbs_v3: {path: /arc/projects/k-pop/catalogues/gaia_fgk_benchmarks.parquet, size: 192, exact_ids: /arc/projects/astroai/msa/catalogues/gaia_fgk_benchmarks_v3_dr3ids.parquet}  # stored GaiaDR3 rounded through float64; the freeze reserved the rounding superset, which holds every exact id
   globular_clusters:
     catalogue: Vasiliev & Baumgardt 2021
     path: [/arc/projects/k-pop/catalogues/gc_gaia/, /arc/projects/astroai/msa/analysis/age_labels_20261122/cluster_members_extra.parquet]

@@ -8,7 +8,11 @@ hundred stars. Elsewhere the log g scale is set by the survey consensus.
 
 The Gaia FGK benchmark stars (GBS v3, Soubiran+2024) have fundamental Teff
 and log g; they are returned with ``role="validation"`` and must not enter
-training, so they stay an independent check (as in SoS DR3).
+training, so they stay an independent check (as in SoS DR3). The k-pop copy
+of the GBS table stores ``GaiaDR3`` rounded through float64 (most values are
+not DR3 ids); ``gaia_benchmarks`` reads the corrected table written by
+``scripts/fix_gbs_dr3_ids.py`` (exact ``source_id``) and refuses float-typed
+or float-rounded id columns (``exact_gaia_ids``).
 
 All outputs use the master-record columns (survey, tier, source_id, teff,
 logg, fe_h, alpha and errors, fe_h_kind, alpha_kind, fe_h_corrected, fit_ok)
@@ -24,6 +28,9 @@ import numpy as np
 import pandas as pd
 
 CATALOGUES = Path("/arc/projects/k-pop/catalogues")
+# GBS v3 with exact Gaia DR3 ids (scripts/fix_gbs_dr3_ids.py, 2026-11-24)
+GBS_FIXED_NAME = "gaia_fgk_benchmarks_v3_dr3ids.parquet"
+GBS_FIXED = Path("/arc/projects/astroai/msa/catalogues") / GBS_FIXED_NAME
 SEISMIC = (
     "anchor_apokasc3",
     "anchor_apok2",
@@ -111,9 +118,44 @@ def kepler_legacy(root, kic):
     )  # fmt: skip
 
 
-def gaia_benchmarks(root):
-    t = pd.read_parquet(root / "gaia_fgk_benchmarks.parquet")
-    sid = pd.to_numeric(t["GaiaDR3"], errors="coerce").fillna(0)
+def exact_gaia_ids(values, what: str, min_n: int = 50) -> np.ndarray:
+    """int64 Gaia ids (0 where missing); refuses ids that lost precision.
+
+    Float columns cannot hold 19-digit ids exactly, so they are refused. An
+    integer column whose every id equals its float64 rounding (``min_n`` or
+    more ids; about 0.2-0.5 of genuine Gaia ids are float-exact) was rounded
+    upstream and is refused as well.
+    """
+    s = pd.Series(values)
+    if s.dtype.kind == "f":
+        raise ValueError(f"{what}: Gaia ids stored as float lose precision")
+    if s.dtype == object:
+        if any(isinstance(v, float) and np.isfinite(v) for v in s):
+            raise ValueError(f"{what}: Gaia ids stored as float lose precision")
+        s = s.map(lambda v: int(v) if pd.notna(v) and str(v).strip() else 0)
+    ids = s.fillna(0).astype("int64").to_numpy()
+    valid = ids[ids > 0]
+    if len(valid) >= min_n and np.all(
+        valid.astype(np.float64).astype(np.int64) == valid
+    ):
+        raise ValueError(
+            f"{what}: every id equals its float64 rounding; the ids were rounded "
+            "upstream (use the corrected table, scripts/fix_gbs_dr3_ids.py)"
+        )
+    return ids
+
+
+def gbs_path(root) -> Path:
+    """Corrected GBS table: in ``root`` if present, else the MSA catalogue copy."""
+    local = Path(root) / GBS_FIXED_NAME
+    return local if local.exists() else GBS_FIXED
+
+
+def gaia_benchmarks(root, path=None):
+    path = Path(path) if path is not None else gbs_path(root)
+    t = pd.read_parquet(path)
+    col = "source_id" if "source_id" in t.columns else "GaiaDR3"
+    sid = exact_gaia_ids(t[col], f"{path}:{col}")
     teff = t["Teff"].to_numpy("f8")
     # GBS v3 gives no per-star errors in this table; nominal values (1.5 %,
     # 0.05 dex, 0.1 dex) are for plotting only, the stars are never trained on.
