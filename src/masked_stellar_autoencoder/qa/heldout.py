@@ -72,7 +72,9 @@ def _coverage(pred: Predictions, p: str, ref, mass: float):
     return (ref >= lo) & (ref <= hi), "central quantile interval"
 
 
-def evaluate_product(pred: Predictions, p: str, ref, strata: dict) -> dict:
+def evaluate_product(
+    pred: Predictions, p: str, ref, strata: dict, full_label=None
+) -> dict:
     """All held-out label metrics of one product."""
     from masked_stellar_autoencoder.reporting.metrics import pit_diagnostics
 
@@ -112,14 +114,19 @@ def evaluate_product(pred: Predictions, p: str, ref, strata: dict) -> dict:
         covered, how = _coverage(pred, p, ref, mass)
         if covered is None:
             continue
+        sel = ok
+        if how == "model set" and full_label is not None:
+            # the model's own sets are computed on the full (Teff, log g, [Fe/H])
+            # label; rows without it carry no membership
+            sel = ok & np.asarray(full_label, bool)
         cov = dict(
             method=how,
-            overall=float(np.mean(covered[ok])),
-            n=int(ok.sum()),
+            overall=float(np.mean(covered[sel])) if sel.any() else float("nan"),
+            n=int(sel.sum()),
             by_stratum={},
         )
         for axis in AXES:
-            rows = wilson_by_stratum(np.where(ok, strata[axis], ""), covered, mass,
+            rows = wilson_by_stratum(np.where(sel, strata[axis], ""), covered, mass,
                                      order=list(STRATA[axis][1]))  # fmt: skip
             if rows:
                 cov["by_stratum"][axis] = rows

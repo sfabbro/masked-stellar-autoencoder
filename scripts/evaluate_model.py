@@ -168,9 +168,13 @@ def evaluate_set(name, pred, split, a, cov, labels, physical, comp_frames) -> di
     }
     out["strata_known"] = {k: float(np.mean(v != "")) for k, v in strata.items()}
     out["heldout"] = {}
+    full_refs = [refs[p] for p in ("teff", "logg", "fe_h") if p in refs]
+    full = np.all([np.isfinite(v) for v in full_refs], axis=0) if full_refs else None
     for p in REF_PRODUCTS:
         if p in sub.q and p in refs and np.isfinite(refs[p]).any():
-            out["heldout"][p] = evaluate_product(sub, p, refs[p], strata)
+            out["heldout"][p] = evaluate_product(
+                sub, p, refs[p], strata, full_label=full
+            )
     out["supplied_pit"] = {}
     for key in ("parallax_pit", "ebv_pit"):
         if key in sub.extra:
@@ -179,9 +183,14 @@ def evaluate_set(name, pred, split, a, cov, labels, physical, comp_frames) -> di
     for mass in ("68", "95"):  # the model's own joint set (Neyman, conformal)
         key = f"joint_member{mass}"
         if key in sub.extra:
-            has_ref = np.ones(len(sub), bool)
-            if refs:
-                has_ref = np.any([np.isfinite(v) for v in refs.values()], axis=0)
+            # a joint set covers the full label: rows lacking any of Teff, log g,
+            # [Fe/H] carry no membership (stored False) and are not scored
+            joint = [refs[p] for p in ("teff", "logg", "fe_h") if p in refs]
+            has_ref = (
+                np.all([np.isfinite(v) for v in joint], axis=0)
+                if joint
+                else (np.ones(len(sub), bool))
+            )
             out["joint_sets"][mass] = evaluate_membership(
                 sub.extra[key], strata, int(mass) / 100, has_ref
             )
