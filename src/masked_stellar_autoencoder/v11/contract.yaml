@@ -1,0 +1,476 @@
+# MSA v11 input contract: canonical bands (UV -> mid-IR) and, per column contract, how
+# each band is read from a table. Loaded and validated by
+# masked_stellar_autoencoder.v11.schema (unknown keys fail). Adding a band, a survey or a
+# column mapping is an edit here, not a code change; checkpoints key band embeddings by
+# band name, so a model trained on fewer bands loads into a longer band list.
+#
+# Units: magnitudes (system per band), XP coefficients in raw Gaia units (e-/s) that the
+# loader divides by f_G = 10**((8.5 - G) / 2.5), parallax in mas, proper motions in mas/yr,
+# SFD E(B-V) in mag. Errors are 1-sigma in the same units. An absent or unusable value
+# is NaN: the band is simply absent for that star (no fill token).
+#
+# wavelength_nm: pivot wavelength. For bands with an `svo` curve it is the pivot of that
+# curve (tests check agreement within 1 %); otherwise the instrument's published pivot.
+# fi: filter-integral passband. `xp_system: "<torchgaiaxp system>:<band>"` uses
+# torchgaiaxp 0.3.0's packaged design; `svo` alone integrates the stored SVO curve with
+# XPSpectra.integrate. Whether a band joins the filter-integral term is decided from its
+# SVO curve support (config filter_integral.wavelength_range_nm / support_threshold).
+
+version: msa-in-v2-draft-1
+
+kinds: [mag, xp, cond]
+
+surveys:
+  gaia: {description: "Gaia DR3 G, BP, RP (Riello+2021)"}
+  gaia_xp: {description: "Gaia DR3 XP continuous mean spectra, 55 BP + 55 RP coefficients"}
+  gaia_astrometry: {description: "Gaia DR3 parallax and proper motion (conditioning only)"}
+  sfd: {description: "SFD98 E(B-V) at the Gaia position (conditioning only)"}
+  galex: {description: "GALEX GUVcat AIS GR6/7"}
+  sdss: {description: "SDSS DR13/DR16 imaging (photoPrimary)"}
+  skymapper: {description: "SkyMapper DR4"}
+  ps1: {description: "Pan-STARRS1 DR2 mean PSF photometry"}
+  ls_dr11: {description: "Legacy Surveys DR11 (PHOTSYS S = DECam, N = BASS/MzLS) and forced unWISE"}
+  des: {description: "DES Y6 Gold"}
+  delve: {description: "DELVE DR3 Gold"}
+  atlas: {description: "VST ATLAS DR5 (OmegaCAM)"}
+  cfis: {description: "UNIONS CFIS DR6 (MegaCam 3rd-generation u, r)"}
+  splus: {description: "S-PLUS DR4 dual-mode (12 bands)"}
+  jplus: {description: "J-PLUS DR3 (12 bands)"}
+  pristine: {description: "Pristine DR2 CaHK (dereddened CaHK_0 as published)"}
+  twomass: {description: "2MASS PSC"}
+  uhs: {description: "UKIRT Hemisphere Survey DR3 (WFCAM)"}
+  vhs: {description: "VISTA Hemisphere Survey DR7 (VIRCAM)"}
+  ukidss: {description: "UKIDSS DR11 LAS and GCS (WFCAM)"}
+  viking: {description: "VISTA VIKING DR5 (VIRCAM)"}
+  vvvx: {description: "VISTA VVVX DR1 (VIRCAM)"}
+  catwise: {description: "CatWISE2020 W1, W2"}
+  allwise: {description: "AllWISE W3, W4"}
+
+bands:
+  # ---- UV
+  - {name: galex_fuv, survey: galex, kind: mag, system: AB, wavelength_nm: 153.9}
+  - {name: galex_nuv, survey: galex, kind: mag, system: AB, wavelength_nm: 231.6}
+  # ---- Gaia
+  - {name: gaia_g, survey: gaia, kind: mag, system: Vega, wavelength_nm: 621.8, svo: GAIA/GAIA3.G}
+  - {name: gaia_bp, survey: gaia, kind: mag, system: Vega, wavelength_nm: 511.0, svo: GAIA/GAIA3.Gbp}
+  - {name: gaia_rp, survey: gaia, kind: mag, system: Vega, wavelength_nm: 776.9, svo: GAIA/GAIA3.Grp}
+  # ---- SDSS
+  - {name: sdss_u, survey: sdss, kind: mag, system: AB, wavelength_nm: 355.7, svo: SLOAN/SDSS.u, xp_system: "DR3_SDSS:u"}
+  - {name: sdss_g, survey: sdss, kind: mag, system: AB, wavelength_nm: 470.2, svo: SLOAN/SDSS.g, xp_system: "DR3_SDSS:g"}
+  - {name: sdss_r, survey: sdss, kind: mag, system: AB, wavelength_nm: 617.6, svo: SLOAN/SDSS.r, xp_system: "DR3_SDSS:r"}
+  - {name: sdss_i, survey: sdss, kind: mag, system: AB, wavelength_nm: 749.0, svo: SLOAN/SDSS.i, xp_system: "DR3_SDSS:i"}
+  - {name: sdss_z, survey: sdss, kind: mag, system: AB, wavelength_nm: 894.7, svo: SLOAN/SDSS.z, xp_system: "DR3_SDSS:z"}
+  # ---- SkyMapper
+  - {name: skymapper_u, survey: skymapper, kind: mag, system: AB, wavelength_nm: 349.3, svo: SkyMapper/SkyMapper.u, xp_system: "DR3_Sky_Mapper:u"}
+  - {name: skymapper_v, survey: skymapper, kind: mag, system: AB, wavelength_nm: 383.6, svo: SkyMapper/SkyMapper.v, xp_system: "DR3_Sky_Mapper:v"}
+  - {name: skymapper_g, survey: skymapper, kind: mag, system: AB, wavelength_nm: 507.5, svo: SkyMapper/SkyMapper.g, xp_system: "DR3_Sky_Mapper:g"}
+  - {name: skymapper_r, survey: skymapper, kind: mag, system: AB, wavelength_nm: 613.8, svo: SkyMapper/SkyMapper.r, xp_system: "DR3_Sky_Mapper:r"}
+  - {name: skymapper_i, survey: skymapper, kind: mag, system: AB, wavelength_nm: 776.8, svo: SkyMapper/SkyMapper.i, xp_system: "DR3_Sky_Mapper:i"}
+  - {name: skymapper_z, survey: skymapper, kind: mag, system: AB, wavelength_nm: 914.6, svo: SkyMapper/SkyMapper.z, xp_system: "DR3_Sky_Mapper:z"}
+  # ---- Pan-STARRS1
+  - {name: ps1_g, survey: ps1, kind: mag, system: AB, wavelength_nm: 484.9, svo: PAN-STARRS/PS1.g, xp_system: "DR3_PanSTARRS1:gp"}
+  - {name: ps1_r, survey: ps1, kind: mag, system: AB, wavelength_nm: 620.1, svo: PAN-STARRS/PS1.r, xp_system: "DR3_PanSTARRS1:rp"}
+  - {name: ps1_i, survey: ps1, kind: mag, system: AB, wavelength_nm: 753.5, svo: PAN-STARRS/PS1.i, xp_system: "DR3_PanSTARRS1:ip"}
+  - {name: ps1_z, survey: ps1, kind: mag, system: AB, wavelength_nm: 867.4, svo: PAN-STARRS/PS1.z, xp_system: "DR3_PanSTARRS1:zp"}
+  - {name: ps1_y, survey: ps1, kind: mag, system: AB, wavelength_nm: 962.8, svo: PAN-STARRS/PS1.y, xp_system: "DR3_PanSTARRS1:yp"}
+  # ---- Legacy Surveys DR11: south (DECam) and north (BASS g, r; MzLS z) are different bands
+  - {name: ls_s_g, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 480.8, svo: CTIO/DECam.g, xp_system: "DR3_DECam:g"}
+  - {name: ls_s_r, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 641.8, svo: CTIO/DECam.r, xp_system: "DR3_DECam:r"}
+  - {name: ls_s_i, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 781.5, svo: CTIO/DECam.i, xp_system: "DR3_DECam:i"}
+  - {name: ls_s_z, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 916.9, svo: CTIO/DECam.z, xp_system: "DR3_DECam:z"}
+  - {name: ls_n_g, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 476.9, svo: BOK/BASS.g}
+  - {name: ls_n_r, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 639.0, svo: BOK/BASS.r}
+  - {name: ls_n_z, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 920.0, svo: KPNO/MzLS.z}
+  # ---- DES Y6 and DELVE DR3 (DECam)
+  - {name: des_g, survey: des, kind: mag, system: AB, wavelength_nm: 480.8, svo: CTIO/DECam.g, xp_system: "DR3_DECam:g"}
+  - {name: des_r, survey: des, kind: mag, system: AB, wavelength_nm: 641.8, svo: CTIO/DECam.r, xp_system: "DR3_DECam:r"}
+  - {name: des_i, survey: des, kind: mag, system: AB, wavelength_nm: 781.5, svo: CTIO/DECam.i, xp_system: "DR3_DECam:i"}
+  - {name: des_z, survey: des, kind: mag, system: AB, wavelength_nm: 916.9, svo: CTIO/DECam.z, xp_system: "DR3_DECam:z"}
+  - {name: des_y, survey: des, kind: mag, system: AB, wavelength_nm: 989.6, svo: CTIO/DECam.Y, xp_system: "DR3_DECam:Y"}
+  - {name: delve_g, survey: delve, kind: mag, system: AB, wavelength_nm: 480.8, svo: CTIO/DECam.g, xp_system: "DR3_DECam:g"}
+  - {name: delve_r, survey: delve, kind: mag, system: AB, wavelength_nm: 641.8, svo: CTIO/DECam.r, xp_system: "DR3_DECam:r"}
+  - {name: delve_i, survey: delve, kind: mag, system: AB, wavelength_nm: 781.5, svo: CTIO/DECam.i, xp_system: "DR3_DECam:i"}
+  - {name: delve_z, survey: delve, kind: mag, system: AB, wavelength_nm: 916.9, svo: CTIO/DECam.z, xp_system: "DR3_DECam:z"}
+  # ---- VST ATLAS (OmegaCAM)
+  - {name: atlas_u, survey: atlas, kind: mag, system: AB, wavelength_nm: 357.0, svo: Paranal/OmegaCAM.u_SDSS}
+  - {name: atlas_g, survey: atlas, kind: mag, system: AB, wavelength_nm: 471.2, svo: Paranal/OmegaCAM.g_SDSS}
+  - {name: atlas_r, survey: atlas, kind: mag, system: AB, wavelength_nm: 628.6, svo: Paranal/OmegaCAM.r_SDSS}
+  - {name: atlas_i, survey: atlas, kind: mag, system: AB, wavelength_nm: 755.5, svo: Paranal/OmegaCAM.i_SDSS}
+  - {name: atlas_z, survey: atlas, kind: mag, system: AB, wavelength_nm: 888.9, svo: Paranal/OmegaCAM.z_SDSS}
+  # ---- UNIONS CFIS
+  - {name: cfis_u, survey: cfis, kind: mag, system: AB, wavelength_nm: 367.6, svo: CFHT/MegaCam.u}
+  - {name: cfis_r, survey: cfis, kind: mag, system: AB, wavelength_nm: 638.3, svo: CFHT/MegaCam.r}
+  # ---- S-PLUS (T80Cam-S)
+  - {name: splus_u, survey: splus, kind: mag, system: AB, wavelength_nm: 353.3, svo: CTIO/S-PLUS.u}
+  - {name: splus_j0378, survey: splus, kind: mag, system: AB, wavelength_nm: 377.3, svo: CTIO/S-PLUS.F378}
+  - {name: splus_j0395, survey: splus, kind: mag, system: AB, wavelength_nm: 394.1, svo: CTIO/S-PLUS.F395}
+  - {name: splus_j0410, survey: splus, kind: mag, system: AB, wavelength_nm: 409.5, svo: CTIO/S-PLUS.F410}
+  - {name: splus_j0430, survey: splus, kind: mag, system: AB, wavelength_nm: 429.2, svo: CTIO/S-PLUS.F430}
+  - {name: splus_g, survey: splus, kind: mag, system: AB, wavelength_nm: 475.8, svo: CTIO/S-PLUS.g}
+  - {name: splus_j0515, survey: splus, kind: mag, system: AB, wavelength_nm: 513.3, svo: CTIO/S-PLUS.F515}
+  - {name: splus_r, survey: splus, kind: mag, system: AB, wavelength_nm: 625.2, svo: CTIO/S-PLUS.r}
+  - {name: splus_j0660, survey: splus, kind: mag, system: AB, wavelength_nm: 661.4, svo: CTIO/S-PLUS.F660}
+  - {name: splus_i, survey: splus, kind: mag, system: AB, wavelength_nm: 767.1, svo: CTIO/S-PLUS.i}
+  - {name: splus_j0861, survey: splus, kind: mag, system: AB, wavelength_nm: 860.8, svo: CTIO/S-PLUS.F861}
+  - {name: splus_z, survey: splus, kind: mag, system: AB, wavelength_nm: 893.7, svo: CTIO/S-PLUS.z}
+  # ---- J-PLUS (T80Cam)
+  - {name: jplus_ujava, survey: jplus, kind: mag, system: AB, wavelength_nm: 353.3, svo: OAJ/JPLUS.uJAVA, xp_system: "DR3_JPLUS:uJAVA"}
+  - {name: jplus_j0378, survey: jplus, kind: mag, system: AB, wavelength_nm: 378.2, svo: OAJ/JPLUS.J0378, xp_system: "DR3_JPLUS:J0378"}
+  - {name: jplus_j0395, survey: jplus, kind: mag, system: AB, wavelength_nm: 393.9, svo: OAJ/JPLUS.J0395, xp_system: "DR3_JPLUS:J0395"}
+  - {name: jplus_j0410, survey: jplus, kind: mag, system: AB, wavelength_nm: 410.8, svo: OAJ/JPLUS.J0410, xp_system: "DR3_JPLUS:J0410"}
+  - {name: jplus_j0430, survey: jplus, kind: mag, system: AB, wavelength_nm: 430.3, svo: OAJ/JPLUS.J0430, xp_system: "DR3_JPLUS:J0430"}
+  - {name: jplus_g, survey: jplus, kind: mag, system: AB, wavelength_nm: 479.0, svo: OAJ/JPLUS.gSDSS, xp_system: "DR3_JPLUS:gJPLUS"}
+  - {name: jplus_j0515, survey: jplus, kind: mag, system: AB, wavelength_nm: 514.1, svo: OAJ/JPLUS.J0515, xp_system: "DR3_JPLUS:J0515"}
+  - {name: jplus_r, survey: jplus, kind: mag, system: AB, wavelength_nm: 625.7, svo: OAJ/JPLUS.rSDSS, xp_system: "DR3_JPLUS:rJPLUS"}
+  - {name: jplus_j0660, survey: jplus, kind: mag, system: AB, wavelength_nm: 660.4, svo: OAJ/JPLUS.J0660, xp_system: "DR3_JPLUS:J0660"}
+  - {name: jplus_i, survey: jplus, kind: mag, system: AB, wavelength_nm: 765.6, svo: OAJ/JPLUS.iSDSS, xp_system: "DR3_JPLUS:iJPLUS"}
+  - {name: jplus_j0861, survey: jplus, kind: mag, system: AB, wavelength_nm: 861.0, svo: OAJ/JPLUS.J0861, xp_system: "DR3_JPLUS:J0861"}
+  - {name: jplus_z, survey: jplus, kind: mag, system: AB, wavelength_nm: 896.5, svo: OAJ/JPLUS.zSDSS, xp_system: "DR3_JPLUS:zJPLUS"}
+  # ---- Pristine: dereddened CaHK_0 as published (never a filter-integral band)
+  - {name: pristine_cahk0, survey: pristine, kind: mag, system: AB, wavelength_nm: 395.3, dereddened: true}
+  # ---- near-IR
+  - {name: tmass_j, survey: twomass, kind: mag, system: Vega, wavelength_nm: 1235.0}
+  - {name: tmass_h, survey: twomass, kind: mag, system: Vega, wavelength_nm: 1662.0}
+  - {name: tmass_ks, survey: twomass, kind: mag, system: Vega, wavelength_nm: 2159.0}
+  - {name: uhs_j, survey: uhs, kind: mag, system: Vega, wavelength_nm: 1248.0}
+  - {name: uhs_k, survey: uhs, kind: mag, system: Vega, wavelength_nm: 2201.0}
+  - {name: vhs_y, survey: vhs, kind: mag, system: Vega, wavelength_nm: 1021.0}
+  - {name: vhs_j, survey: vhs, kind: mag, system: Vega, wavelength_nm: 1254.0}
+  - {name: vhs_h, survey: vhs, kind: mag, system: Vega, wavelength_nm: 1646.0}
+  - {name: vhs_ks, survey: vhs, kind: mag, system: Vega, wavelength_nm: 2149.0}
+  - {name: ukidss_z, survey: ukidss, kind: mag, system: Vega, wavelength_nm: 882.0}
+  - {name: ukidss_y, survey: ukidss, kind: mag, system: Vega, wavelength_nm: 1031.0}
+  - {name: ukidss_j, survey: ukidss, kind: mag, system: Vega, wavelength_nm: 1248.0}
+  - {name: ukidss_h, survey: ukidss, kind: mag, system: Vega, wavelength_nm: 1631.0}
+  - {name: ukidss_k, survey: ukidss, kind: mag, system: Vega, wavelength_nm: 2201.0}
+  - {name: viking_z, survey: viking, kind: mag, system: Vega, wavelength_nm: 878.0}
+  - {name: viking_y, survey: viking, kind: mag, system: Vega, wavelength_nm: 1021.0}
+  - {name: viking_j, survey: viking, kind: mag, system: Vega, wavelength_nm: 1254.0}
+  - {name: viking_h, survey: viking, kind: mag, system: Vega, wavelength_nm: 1646.0}
+  - {name: viking_ks, survey: viking, kind: mag, system: Vega, wavelength_nm: 2149.0}
+  - {name: vvvx_z, survey: vvvx, kind: mag, system: Vega, wavelength_nm: 878.0}
+  - {name: vvvx_y, survey: vvvx, kind: mag, system: Vega, wavelength_nm: 1021.0}
+  - {name: vvvx_j, survey: vvvx, kind: mag, system: Vega, wavelength_nm: 1254.0}
+  - {name: vvvx_h, survey: vvvx, kind: mag, system: Vega, wavelength_nm: 1646.0}
+  - {name: vvvx_ks, survey: vvvx, kind: mag, system: Vega, wavelength_nm: 2149.0}
+  # ---- mid-IR
+  - {name: ls_w1, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 3368.0}
+  - {name: ls_w2, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 4618.0}
+  - {name: ls_w3, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 12082.0}
+  - {name: ls_w4, survey: ls_dr11, kind: mag, system: AB, wavelength_nm: 22194.0}
+  - {name: catwise_w1, survey: catwise, kind: mag, system: Vega, wavelength_nm: 3368.0}
+  - {name: catwise_w2, survey: catwise, kind: mag, system: Vega, wavelength_nm: 4618.0}
+  - {name: allwise_w3, survey: allwise, kind: mag, system: Vega, wavelength_nm: 12082.0}
+  - {name: allwise_w4, survey: allwise, kind: mag, system: Vega, wavelength_nm: 22194.0}
+  # ---- conditioning (inputs only, never reconstructed; hidden on demand)
+  - {name: parallax, survey: gaia_astrometry, kind: cond}
+  - {name: pmra, survey: gaia_astrometry, kind: cond}
+  - {name: pmdec, survey: gaia_astrometry, kind: cond}
+  - {name: sfd_ebv, survey: sfd, kind: cond}
+  # XP coefficients (kind xp) are generated: xp_bp_00..54, xp_rp_00..54.
+
+defaults:
+  max_error_mag: 0.5        # magnitude bands: larger quoted errors -> absent
+  min_error_mag: 0.0        # quoted error <= this -> error treated as unknown (NaN)
+
+# ---------------------------------------------------------------------------------
+# Column contracts. Value specs:
+#   value: <col>                          magnitude column
+#   flux_nmgy: <col> + ivar_nmgy: <col>   nanomaggy flux and inverse variance (AB, ZP 22.5)
+#   value: <col>, index: k                k-th element of a list column
+# error specs: error: <col> | error_flux_over_error: <col> | error_index: k
+# where: {column, equals}                 band valid only where column == value
+# A list of specs coalesces: the first usable value wins.
+# Quality rules (survey `quality` or band `quality`):
+#   {column, rule: in, values: [...]}         value in set
+#   {column, rule: bits_none, mask: int}      (value & mask) == 0
+#   {column, rule: bits_any, mask: int}       (value & mask) != 0
+#   {column, rule: range, min: x, max: y}     min <= value <= max (either bound optional)
+#   {column, rule: char_in, index: k, values: "ABC"}   k-th character in the set
+# bright_limit / faint_limit (mag): values outside -> absent (saturation, depth).
+# `verified: false` marks a mapping not yet checked against the real schema; the loader
+# refuses it unless data.allow_unverified_columns is true.
+# ---------------------------------------------------------------------------------
+contracts:
+  gaia_keyed_v1a:
+    description: >
+      MSA-IN v1a (data.md 2.7): Gaia DR3 HATS anchor with partition-aligned trees
+      joined on source_id: dr3_xp_continuous and the Gaia-keyed adql_matches tables
+      (2MASS, PS1, SDSS, CatWISE) and SkyMapper DR4 Gaia ids, re-partitioned to the Gaia
+      layout, plus SFD E(B-V). Native column names of each source.
+    xp:
+      coefficients: {bp: bp_coefficients, rp: rp_coefficients}
+      errors: {bp: bp_coefficient_errors, rp: rp_coefficient_errors}
+      correlations: {bp: bp_coefficient_correlations, rp: rp_coefficient_correlations}
+      g_mag: phot_g_mean_mag
+    surveys:
+      gaia:
+        bands:
+          gaia_g: {value: phot_g_mean_mag, error_flux_over_error: phot_g_mean_flux_over_error}
+          gaia_bp: {value: phot_bp_mean_mag, error_flux_over_error: phot_bp_mean_flux_over_error}
+          gaia_rp: {value: phot_rp_mean_mag, error_flux_over_error: phot_rp_mean_flux_over_error}
+      gaia_astrometry:
+        bands:
+          parallax: {value: parallax, error: parallax_error}
+          pmra: {value: pmra, error: pmra_error}
+          pmdec: {value: pmdec, error: pmdec_error}
+      sfd:
+        bands:
+          sfd_ebv: {value: sfd_ebv}
+      sdss:
+        bands:
+          sdss_u: {value: u, error: err_u, bright_limit: 14.0, quality: [{column: flags_u, rule: bits_none, mask: 262144}]}
+          sdss_g: {value: g, error: err_g, bright_limit: 14.0, quality: [{column: flags_g, rule: bits_none, mask: 262144}]}
+          sdss_r: {value: r, error: err_r, bright_limit: 14.0, quality: [{column: flags_r, rule: bits_none, mask: 262144}]}
+          sdss_i: {value: i, error: err_i, bright_limit: 14.0, quality: [{column: flags_i, rule: bits_none, mask: 262144}]}
+          sdss_z: {value: z, error: err_z, bright_limit: 14.0, quality: [{column: flags_z, rule: bits_none, mask: 262144}]}
+      skymapper:
+        quality: [{column: flags, rule: range, max: 3}]
+        bands:
+          skymapper_u: {value: u_psf, error: e_u_psf}
+          skymapper_v: {value: v_psf, error: e_v_psf}
+          skymapper_g: {value: g_psf, error: e_g_psf}
+          skymapper_r: {value: r_psf, error: e_r_psf}
+          skymapper_i: {value: i_psf, error: e_i_psf}
+          skymapper_z: {value: z_psf, error: e_z_psf}
+      ps1:
+        quality: [{column: quality_flag, rule: bits_any, mask: 12}]
+        bands:
+          ps1_g: {value: g_mean_psf_mag, error: g_mean_psf_mag_error, bright_limit: 14.0}
+          ps1_r: {value: r_mean_psf_mag, error: r_mean_psf_mag_error, bright_limit: 14.0}
+          ps1_i: {value: i_mean_psf_mag, error: i_mean_psf_mag_error, bright_limit: 14.0}
+          ps1_z: {value: z_mean_psf_mag, error: z_mean_psf_mag_error, bright_limit: 13.5}
+          ps1_y: {value: y_mean_psf_mag, error: y_mean_psf_mag_error, bright_limit: 13.0}
+      twomass:
+        bands:
+          tmass_j: {value: j_m, error: j_msigcom, quality: [{column: ph_qual, rule: char_in, index: 0, values: ABC}]}
+          tmass_h: {value: h_m, error: h_msigcom, quality: [{column: ph_qual, rule: char_in, index: 1, values: ABC}]}
+          tmass_ks: {value: ks_m, error: ks_msigcom, quality: [{column: ph_qual, rule: char_in, index: 2, values: ABC}]}
+      catwise:
+        bands:
+          catwise_w1: {value: w1mpro, error: w1sigmpro}
+          catwise_w2: {value: w2mpro, error: w2sigmpro}
+
+  gaia_master_v2:
+    description: >
+      MSA-IN v2 (data.md 2.7): the Gaia-anchored full-wavelength master written by
+      xmatcher ray-anchor (docs/gaia-master-data.md). Survey columns carry the suffix
+      _<tag>, where tag is the resolved xmatcher catalogue name (xmatcher
+      docs/ray-anchor.md); `{tag}` in a column name is replaced by the survey tag below
+      (overridable in the run config: data.survey_tags). Each survey also has
+      <tag>_quality (good, poor, ambiguous, pm_warn, ambiguous+pm_warn, no_match).
+      XP stays a sidecar tree (dr3_xp_continuous), joined on source_id.
+    xp:
+      coefficients: {bp: bp_coefficients, rp: rp_coefficients}
+      errors: {bp: bp_coefficient_errors, rp: rp_coefficient_errors}
+      correlations: {bp: bp_coefficient_correlations, rp: rp_coefficient_correlations}
+      g_mag: phot_g_mean_mag
+    surveys:
+      gaia:
+        bands:
+          gaia_g: {value: phot_g_mean_mag, error_flux_over_error: phot_g_mean_flux_over_error}
+          gaia_bp: {value: phot_bp_mean_mag, error_flux_over_error: phot_bp_mean_flux_over_error}
+          gaia_rp: {value: phot_rp_mean_mag, error_flux_over_error: phot_rp_mean_flux_over_error}
+      gaia_astrometry:
+        bands:
+          parallax: {value: parallax, error: parallax_error}
+          pmra: {value: pmra, error: pmra_error}
+          pmdec: {value: pmdec, error: pmdec_error}
+      sfd:
+        bands:
+          sfd_ebv: {value: sfd_ebv}
+      galex:
+        tag: galex_guvcat_ais
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          galex_fuv: {value: "fuv_mag_{tag}", error: "fuv_magerr_{tag}", quality: [{column: "fuv_artifact_{tag}", rule: bits_none, mask: -1}]}
+          galex_nuv: {value: "nuv_mag_{tag}", error: "nuv_magerr_{tag}", quality: [{column: "nuv_artifact_{tag}", rule: bits_none, mask: -1}]}
+      sdss:
+        tag: sdss_dr16_photoprimary
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          sdss_u: {flux_nmgy: "PSFFLUX_u_{tag}", ivar_nmgy: "PSFFLUX_IVAR_u_{tag}", bright_limit: 14.0}
+          sdss_g: {flux_nmgy: "PSFFLUX_g_{tag}", ivar_nmgy: "PSFFLUX_IVAR_g_{tag}", bright_limit: 14.0}
+          sdss_r: {flux_nmgy: "PSFFLUX_r_{tag}", ivar_nmgy: "PSFFLUX_IVAR_r_{tag}", bright_limit: 14.0}
+          sdss_i: {flux_nmgy: "PSFFLUX_i_{tag}", ivar_nmgy: "PSFFLUX_IVAR_i_{tag}", bright_limit: 14.0}
+          sdss_z: {flux_nmgy: "PSFFLUX_z_{tag}", ivar_nmgy: "PSFFLUX_IVAR_z_{tag}", bright_limit: 14.0}
+      skymapper:
+        tag: skymapper_dr4_hats
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+          - {column: "flags_{tag}", rule: range, max: 3}
+        bands:
+          skymapper_u: {value: "u_psf_{tag}", error: "e_u_psf_{tag}"}
+          skymapper_v: {value: "v_psf_{tag}", error: "e_v_psf_{tag}"}
+          skymapper_g: {value: "g_psf_{tag}", error: "e_g_psf_{tag}"}
+          skymapper_r: {value: "r_psf_{tag}", error: "e_r_psf_{tag}"}
+          skymapper_i: {value: "i_psf_{tag}", error: "e_i_psf_{tag}"}
+          skymapper_z: {value: "z_psf_{tag}", error: "e_z_psf_{tag}"}
+      ps1:
+        tag: ps1_otmo
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+          - {column: "qualityFlag_{tag}", rule: bits_any, mask: 12}
+          - {column: "nDetections_{tag}", rule: range, min: 2}
+        bands:
+          ps1_g: {value: "gMeanPSFMag_{tag}", error: "gMeanPSFMagErr_{tag}", bright_limit: 14.0}
+          ps1_r: {value: "rMeanPSFMag_{tag}", error: "rMeanPSFMagErr_{tag}", bright_limit: 14.0}
+          ps1_i: {value: "iMeanPSFMag_{tag}", error: "iMeanPSFMagErr_{tag}", bright_limit: 14.0}
+          ps1_z: {value: "zMeanPSFMag_{tag}", error: "zMeanPSFMagErr_{tag}", bright_limit: 13.5}
+          ps1_y: {value: "yMeanPSFMag_{tag}", error: "yMeanPSFMagErr_{tag}", bright_limit: 13.0}
+      ls_dr11:
+        tag: ls_dr11_sweep
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          ls_s_g: {flux_nmgy: "FLUX_G_{tag}", ivar_nmgy: "FLUX_IVAR_G_{tag}", where: {column: "PHOTSYS_{tag}", equals: S}}
+          ls_s_r: {flux_nmgy: "FLUX_R_{tag}", ivar_nmgy: "FLUX_IVAR_R_{tag}", where: {column: "PHOTSYS_{tag}", equals: S}}
+          ls_s_i: {flux_nmgy: "FLUX_I_{tag}", ivar_nmgy: "FLUX_IVAR_I_{tag}", where: {column: "PHOTSYS_{tag}", equals: S}}
+          ls_s_z: {flux_nmgy: "FLUX_Z_{tag}", ivar_nmgy: "FLUX_IVAR_Z_{tag}", where: {column: "PHOTSYS_{tag}", equals: S}}
+          ls_n_g: {flux_nmgy: "FLUX_G_{tag}", ivar_nmgy: "FLUX_IVAR_G_{tag}", where: {column: "PHOTSYS_{tag}", equals: N}}
+          ls_n_r: {flux_nmgy: "FLUX_R_{tag}", ivar_nmgy: "FLUX_IVAR_R_{tag}", where: {column: "PHOTSYS_{tag}", equals: N}}
+          ls_n_z: {flux_nmgy: "FLUX_Z_{tag}", ivar_nmgy: "FLUX_IVAR_Z_{tag}", where: {column: "PHOTSYS_{tag}", equals: N}}
+          ls_w1: {flux_nmgy: "FLUX_W1_{tag}", ivar_nmgy: "FLUX_IVAR_W1_{tag}"}
+          ls_w2: {flux_nmgy: "FLUX_W2_{tag}", ivar_nmgy: "FLUX_IVAR_W2_{tag}"}
+          ls_w3: {flux_nmgy: "FLUX_W3_{tag}", ivar_nmgy: "FLUX_IVAR_W3_{tag}"}
+          ls_w4: {flux_nmgy: "FLUX_W4_{tag}", ivar_nmgy: "FLUX_IVAR_W4_{tag}"}
+      des:
+        tag: des_y6_gold
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+          - {column: "FLAGS_GOLD_{tag}", rule: bits_none, mask: -1}
+        bands:
+          des_g: {value: "WAVG_MAG_PSF_G_{tag}", error: "WAVG_MAGERR_PSF_G_{tag}", bright_limit: 16.0}
+          des_r: {value: "WAVG_MAG_PSF_R_{tag}", error: "WAVG_MAGERR_PSF_R_{tag}", bright_limit: 16.0}
+          des_i: {value: "WAVG_MAG_PSF_I_{tag}", error: "WAVG_MAGERR_PSF_I_{tag}", bright_limit: 16.0}
+          des_z: {value: "WAVG_MAG_PSF_Z_{tag}", error: "WAVG_MAGERR_PSF_Z_{tag}", bright_limit: 16.0}
+          des_y: {value: "WAVG_MAG_PSF_Y_{tag}", error: "WAVG_MAGERR_PSF_Y_{tag}", bright_limit: 15.5}
+      delve:
+        tag: delve_dr3_gold
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+          - {column: "FLAGS_GOLD_{tag}", rule: bits_none, mask: -1}
+        bands:
+          delve_g: {value: "WAVG_MAG_PSF_G_{tag}", error: "WAVG_MAGERR_PSF_G_{tag}", bright_limit: 16.0}
+          delve_r: {value: "WAVG_MAG_PSF_R_{tag}", error: "WAVG_MAGERR_PSF_R_{tag}", bright_limit: 16.0}
+          delve_i: {value: "WAVG_MAG_PSF_I_{tag}", error: "WAVG_MAGERR_PSF_I_{tag}", bright_limit: 16.0}
+          delve_z: {value: "WAVG_MAG_PSF_Z_{tag}", error: "WAVG_MAGERR_PSF_Z_{tag}", bright_limit: 16.0}
+      splus:
+        tag: splus_dr4_dual
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          splus_u: {value: "u_auto_{tag}", error: "e_u_auto_{tag}"}
+          splus_j0378: {value: "j0378_auto_{tag}", error: "e_j0378_auto_{tag}"}
+          splus_j0395: {value: "j0395_auto_{tag}", error: "e_j0395_auto_{tag}"}
+          splus_j0410: {value: "j0410_auto_{tag}", error: "e_j0410_auto_{tag}"}
+          splus_j0430: {value: "j0430_auto_{tag}", error: "e_j0430_auto_{tag}"}
+          splus_g: {value: "g_auto_{tag}", error: "e_g_auto_{tag}"}
+          splus_j0515: {value: "j0515_auto_{tag}", error: "e_j0515_auto_{tag}"}
+          splus_r: {value: "r_auto_{tag}", error: "e_r_auto_{tag}"}
+          splus_j0660: {value: "j0660_auto_{tag}", error: "e_j0660_auto_{tag}"}
+          splus_i: {value: "i_auto_{tag}", error: "e_i_auto_{tag}"}
+          splus_j0861: {value: "j0861_auto_{tag}", error: "e_j0861_auto_{tag}"}
+          splus_z: {value: "z_auto_{tag}", error: "e_z_auto_{tag}"}
+      jplus:
+        tag: jplus_dr3
+        # MAG_AUTO / MAG_ERR_AUTO are 12-element arrays; the element order below has not
+        # been checked against the DR3 MagABDualObj schema.
+        verified: false
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          jplus_ujava: {value: "MAG_AUTO_{tag}", index: 0, error: "MAG_ERR_AUTO_{tag}", error_index: 0}
+          jplus_j0378: {value: "MAG_AUTO_{tag}", index: 1, error: "MAG_ERR_AUTO_{tag}", error_index: 1}
+          jplus_j0395: {value: "MAG_AUTO_{tag}", index: 2, error: "MAG_ERR_AUTO_{tag}", error_index: 2}
+          jplus_j0410: {value: "MAG_AUTO_{tag}", index: 3, error: "MAG_ERR_AUTO_{tag}", error_index: 3}
+          jplus_j0430: {value: "MAG_AUTO_{tag}", index: 4, error: "MAG_ERR_AUTO_{tag}", error_index: 4}
+          jplus_g: {value: "MAG_AUTO_{tag}", index: 5, error: "MAG_ERR_AUTO_{tag}", error_index: 5}
+          jplus_j0515: {value: "MAG_AUTO_{tag}", index: 6, error: "MAG_ERR_AUTO_{tag}", error_index: 6}
+          jplus_r: {value: "MAG_AUTO_{tag}", index: 7, error: "MAG_ERR_AUTO_{tag}", error_index: 7}
+          jplus_j0660: {value: "MAG_AUTO_{tag}", index: 8, error: "MAG_ERR_AUTO_{tag}", error_index: 8}
+          jplus_i: {value: "MAG_AUTO_{tag}", index: 9, error: "MAG_ERR_AUTO_{tag}", error_index: 9}
+          jplus_j0861: {value: "MAG_AUTO_{tag}", index: 10, error: "MAG_ERR_AUTO_{tag}", error_index: 10}
+          jplus_z: {value: "MAG_AUTO_{tag}", index: 11, error: "MAG_ERR_AUTO_{tag}", error_index: 11}
+      pristine:
+        tag: pristine_dr2
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          pristine_cahk0: {value: "CaHK_0_{tag}", error: "d_CaHK_{tag}"}
+      twomass:
+        tag: twomass_psc_hats
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          tmass_j: {value: "j_m_{tag}", error: "j_msigcom_{tag}", quality: [{column: "ph_qual_{tag}", rule: char_in, index: 0, values: ABC}]}
+          tmass_h: {value: "h_m_{tag}", error: "h_msigcom_{tag}", quality: [{column: "ph_qual_{tag}", rule: char_in, index: 1, values: ABC}]}
+          tmass_ks: {value: "k_m_{tag}", error: "k_msigcom_{tag}", quality: [{column: "ph_qual_{tag}", rule: char_in, index: 2, values: ABC}]}
+      uhs:
+        tag: uhs_dr3
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          uhs_j: {value: "japermag3_{tag}", error: "japermag3err_{tag}"}
+          uhs_k: {value: "kapermag3_{tag}", error: "kapermag3err_{tag}"}
+      vhs:
+        tag: vhs_dr7
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          vhs_j: {value: "japermag3_{tag}", error: "japermag3err_{tag}"}
+          vhs_h: {value: "hapermag3_{tag}", error: "hapermag3err_{tag}"}
+          vhs_ks: {value: "ksapermag3_{tag}", error: "ksapermag3err_{tag}"}
+      ukidss:
+        # LAS first, then GCS (disjoint footprints); each spec checks its own match.
+        tag: ukidss_dr11_las
+        tag2: ukidss_dr11_gcs
+        bands:
+          ukidss_z:
+            - {value: "zapermag3_{tag2}", error: "zapermag3err_{tag2}", quality: [{column: "{tag2}_quality", rule: in, values: [good, poor, pm_warn]}]}
+          ukidss_y:
+            - {value: "yapermag3_{tag}", error: "yapermag3err_{tag}", quality: [{column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}]}
+            - {value: "yapermag3_{tag2}", error: "yapermag3err_{tag2}", quality: [{column: "{tag2}_quality", rule: in, values: [good, poor, pm_warn]}]}
+          ukidss_j:
+            - {value: "japermag3_{tag}", error: "japermag3err_{tag}", quality: [{column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}]}
+            - {value: "japermag3_{tag2}", error: "japermag3err_{tag2}", quality: [{column: "{tag2}_quality", rule: in, values: [good, poor, pm_warn]}]}
+          ukidss_h:
+            - {value: "hapermag3_{tag}", error: "hapermag3err_{tag}", quality: [{column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}]}
+            - {value: "hapermag3_{tag2}", error: "hapermag3err_{tag2}", quality: [{column: "{tag2}_quality", rule: in, values: [good, poor, pm_warn]}]}
+          ukidss_k:
+            - {value: "kapermag3_{tag}", error: "kapermag3err_{tag}", quality: [{column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}]}
+            - {value: "kapermag3_{tag2}", error: "kapermag3err_{tag2}", quality: [{column: "{tag2}_quality", rule: in, values: [good, poor, pm_warn]}]}
+      viking:
+        tag: viking_dr5
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          viking_z: {value: "zapermag3_{tag}", error: "zapermag3err_{tag}"}
+          viking_y: {value: "yapermag3_{tag}", error: "yapermag3err_{tag}"}
+          viking_j: {value: "japermag3_{tag}", error: "japermag3err_{tag}"}
+          viking_h: {value: "hapermag3_{tag}", error: "hapermag3err_{tag}"}
+          viking_ks: {value: "ksapermag3_{tag}", error: "ksapermag3err_{tag}"}
+      vvvx:
+        tag: vvvx_dr1
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          vvvx_j: {value: "japermag3_{tag}", error: "japermag3err_{tag}"}
+          vvvx_h: {value: "hapermag3_{tag}", error: "hapermag3err_{tag}"}
+          vvvx_ks: {value: "ksapermag3_{tag}", error: "ksapermag3err_{tag}"}
+      catwise:
+        tag: catwise2020_catalog
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          catwise_w1: {value: "w1mpro_{tag}", error: "w1sigmpro_{tag}"}
+          catwise_w2: {value: "w2mpro_{tag}", error: "w2sigmpro_{tag}"}
+      allwise:
+        tag: allwise_hats
+        quality:
+          - {column: "{tag}_quality", rule: in, values: [good, poor, pm_warn]}
+        bands:
+          allwise_w3: {value: "w3mpro_{tag}", error: "w3sigmpro_{tag}", quality: [{column: "ph_qual_{tag}", rule: char_in, index: 2, values: ABC}]}
+          allwise_w4: {value: "w4mpro_{tag}", error: "w4sigmpro_{tag}", quality: [{column: "ph_qual_{tag}", rule: char_in, index: 3, values: ABC}]}

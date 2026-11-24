@@ -1,0 +1,22 @@
+{
+  "run_id": "gaia_master_estimate_20261124",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/gaia_master_estimate_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/gaia_master_estimate_20261124",
+  "source_commit": "f8f53e07a470e4382d59b0a918bda07bac01de51",
+  "branch": "main",
+  "command": "bash scripts/run_gaia_master_pilot.sh --report \"$experiment_output\" --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/xmatcher-ffa5e23ad61fb77875211f895a66427abf67dae3.tar.gz --xmatcher-sha256 19d3156393ba9c2c5a508ea0c3a1e2bc1eedbf0d1e52da0e46323fd0272b7cc5 --estimate-only",
+  "utc": "2026-11-24T04:35:40.475192+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "zm3mjlkm"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 32
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "fa91089eb76813fb6811c567c80e0a650aec9d2af4c8626ea06509ad5eb79bc9"
+}

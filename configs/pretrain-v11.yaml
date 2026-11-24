@@ -1,0 +1,101 @@
+# MSA v11 encoder pretraining on REC (FIT objects of msa-split-v1), MSA-IN v1a bands.
+# Schema and every key: src/masked_stellar_autoencoder/v11/config.py (unknown keys fail).
+# Doc: docs/programme/encoder-v11.md. Not launched yet (P4 prototype).
+#
+# Trees: the Gaia DR3 HATS anchor, the XP continuous tree and the Gaia-keyed survey
+# photometry re-partitioned to the Gaia layout by the P3 table builder (path below is the
+# planned output; it does not exist yet). All trees share the gaia/dr3 partitioning.
+# For the full-wavelength master set contract: gaia_master_v2 and the anchor to
+# /arc/projects/astroai/msa/xmatcher/gaia_master.hats; nothing else changes.
+
+run:
+  name: pretrain-v11-rec-v1a
+  output_dir: /arc/projects/astroai/msa/runs/pretrain_v11_rec_v1a
+  seed: 20261124
+  device: auto
+  precision: bf16
+  resume: true
+
+data:
+  source: hats
+  contract: gaia_keyed_v1a
+  trees:
+    - {path: /arc/projects/hats/gaia/dr3}
+    - {path: /arc/projects/hats/gaia/dr3_xp_continuous}
+    - {path: /arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a}
+  assignment: /arc/projects/astroai/msa/runs/msa_split_v1/assignment
+  train_partitions: [FIT]      # REC
+  eval_partitions: [DEV]       # REC-DEV
+  rec_sample_rate: 1.0
+  xp_covariance: exact
+  workers: 6
+  interleave_partitions: 4
+  read_batch_rows: 16384
+  shuffle_buffer_rows: 65536
+  tokens_per_microbatch: 524288   # ~3.3k XP rows (bucket 160) per micro-batch
+  max_rows_per_microbatch: 8192   # photometry-only rows: memory is per row (latent stack)
+  bucket_edges: [16, 32, 64, 128, 160, 224]
+  scalers:
+    fit_rows: 1000000
+    min_count: 50
+
+masking:                       # the only place masking ratios are read from
+  token_ratio: 0.25
+  xp_token_ratio: 0.5
+  survey_dropout: 0.15
+  xp_dropout: 0.35
+  astrometry_hide: 0.5
+  sfd_hide: 0.5
+  min_visible: 2
+  eval_seed: 12345
+
+model:
+  d_model: 256
+  n_heads: 8
+  n_latents: 32
+  n_layers: 8
+  cross_attn_layers: [0, 4]
+  mlp_ratio: 4.0
+  dropout: 0.0
+  latent_dim: 256
+  value_frequencies: 16
+  band_frequencies: 16
+  decoder_hidden: 512
+  decoder_layers: 2
+  gradient_checkpointing: true
+
+loss:
+  nu: 5.0
+  sigma_model_init: 0.05
+  sigma_model_floor: 0.001
+  group_weights: {xp: 1.0, phot: 1.0}
+
+filter_integral:
+  enabled: true
+  weight: 0.1
+  wavelength_range_nm: [336.0, 1020.0]
+  support_threshold: 0.01
+  modes: [calibrate, sed, phot]
+  nu: 5.0
+  sigma_sys_init: 0.02
+  colour_reference: 1.0
+  linear_below_fraction: 0.1
+  max_sigma_xp_mag: 0.2
+  integration_step_nm: 0.25
+
+optim:
+  lr: 0.0003
+  weight_decay: 0.05
+  betas: [0.9, 0.95]
+  warmup_steps: 2000
+  min_lr_ratio: 0.05
+  grad_clip: 1.0
+  loss_param_lr_scale: 10.0
+
+train:
+  batch_rows: 32768
+  presentations: 1360000000    # one REC pass; budget in presentations, not epochs
+  log_every: 50
+  eval_every: 2000
+  eval_rows: 262144
+  checkpoint_every: 2000

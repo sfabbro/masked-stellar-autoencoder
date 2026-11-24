@@ -1353,6 +1353,53 @@ STEPS["msa-split-v1"] = dict(
 )
 
 
+# P1 pilot of the Gaia-anchored master (docs/gaia-master-data.md, "Pilot"):
+# xmatcher ray-anchor on Gaia DR3 partitions 2/69 (coarse, 14 surveys incl. HSC)
+# and 6/42837 (fine, bulge, VVVX) against every community tree read in place.
+# CPU only. xmatcher is private, so its source is a tarball on ARC (sfabbro/xmatcher
+# main at XMATCHER_PILOT_COMMIT, checked by sha256). The HATS pilot goes to
+# /arc/projects/astroai/msa/xmatcher/pilot_gaia_master.hats, the report to
+# runs/<run_id>/; nothing is written under /arc/projects/hats.
+# v1 (session ozv1t6ad, xmatcher 9b2d810) stopped in its first task: AllWISE's
+# motion fit, wired as proper motion, moved a source by 1630" (halo check);
+# xmatcher ffa5e23 no longer propagates AllWISE. v2 reruns with it.
+XMATCHER_PILOT_COMMIT = "ffa5e23ad61fb77875211f895a66427abf67dae3"
+XMATCHER_PILOT_TARBALL = (
+    "/arc/projects/astroai/msa/launcher/xmatcher_src/"
+    f"xmatcher-{XMATCHER_PILOT_COMMIT}.tar.gz"
+)
+XMATCHER_PILOT_SHA256 = (
+    "19d3156393ba9c2c5a508ea0c3a1e2bc1eedbf0d1e52da0e46323fd0272b7cc5"
+)
+STEPS["gaia-master-pilot"] = dict(
+    run_id="gaia_master_pilot_20261124_v2",
+    gpu=0,
+    ram=128,
+    cpu=16,
+    command=(
+        'bash scripts/run_gaia_master_pilot.sh --report "$experiment_output"'
+        f" --xmatcher-tarball {XMATCHER_PILOT_TARBALL}"
+        f" --xmatcher-sha256 {XMATCHER_PILOT_SHA256}"
+        " --anchor-partitions 2/69,6/42837"
+    ),
+    files=[],
+)
+# Full-run task estimates alone (the pilots' estimate step failed on Euclid's
+# Npix=N/ directory partitions): candidate rows and bytes per anchor partition.
+STEPS["gaia-master-estimate"] = dict(
+    run_id="gaia_master_estimate_20261124",
+    gpu=0,
+    ram=32,
+    cpu=16,
+    command=(
+        'bash scripts/run_gaia_master_pilot.sh --report "$experiment_output"'
+        f" --xmatcher-tarball {XMATCHER_PILOT_TARBALL}"
+        f" --xmatcher-sha256 {XMATCHER_PILOT_SHA256} --estimate-only"
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
