@@ -1,0 +1,23 @@
+{
+  "run_id": "photometry_v1a_20261124",
+  "attempt": 3,
+  "output": "/arc/projects/astroai/msa/runs/photometry_v1a_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/photometry_v1a_20261124-attempt-3",
+  "source_commit": "283838564b39fc68393baf52528ade86b6e5d64b",
+  "branch": "main",
+  "command": "python -u scripts/build_photometry_v1a.py --workers 16 --sort-workers 2 --output /arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a --work \"$experiment_output\" --clean-staging",
+  "utc": "2026-11-24T06:10:33.339440+00:00",
+  "status": "not_submitted_confirmed",
+  "session_ids": [],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "738d9e245c50c2a4629f73ee075ec1442eec7b8f8c294dc6f67ac2b56edccea9",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout",
+  "reconciliation": "The POST timed out during a CANFAR skaha outage (session API 500/timeouts 06:10-06:52 UTC). At 06:53 the session listing worked and shows no session named msa-photometry-v1a-20261124 other than attempts 1 (z2lilwcf, finished) and 2 (t35rl8o3, stopped); the attempt-3 source bundle directory was never created. No job ran; superseded by attempt 4."
+}

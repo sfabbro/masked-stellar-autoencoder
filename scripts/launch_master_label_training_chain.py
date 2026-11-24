@@ -1488,7 +1488,8 @@ STEPS["qa-v10-stage"] = dict(
 # masks 2MASS and validates every table's pairing before the build. Attempt 2
 # (t35rl8o3) read SkyMapper's mean_epoch (an MJD) as a year, so the position match
 # failed and SkyMapper failed the validation; stopped before the build. Attempt 3
-# propagates Gaia positions to the MJD epoch.
+# was never submitted (CANFAR outage). Attempt 4 propagates Gaia positions to the MJD
+# epoch, looks SkyMapper rows up by exact and rounded id, and tests pairs on G < 19.
 PHOT_V1A = ROOT + "msa_tables_v2/photometry_v1a"
 STEPS["photometry-v1a"] = dict(
     run_id="photometry_v1a_20261124",

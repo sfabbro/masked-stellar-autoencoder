@@ -1,0 +1,22 @@
+{
+  "run_id": "photometry_v1a_20261124",
+  "attempt": 4,
+  "output": "/arc/projects/astroai/msa/runs/photometry_v1a_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/photometry_v1a_20261124-attempt-4",
+  "source_commit": "d7de92a044d2d5d41acdbf52f7b6ff042ebca1c1",
+  "branch": "main",
+  "command": "python -u scripts/build_photometry_v1a.py --workers 16 --sort-workers 2 --output /arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a --work \"$experiment_output\" --clean-staging",
+  "utc": "2026-11-24T06:57:53.608822+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "jhyv5gfi"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "d7b52d107c1acbd764d4b6d50bea42927f513c7ae69b9259592397e0436e8c01"
+}
