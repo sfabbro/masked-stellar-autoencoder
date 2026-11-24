@@ -1,7 +1,8 @@
 # Encoder v11: token set encoder for every Gaia star (P4)
 
-Status 2026-11-24: implemented and CPU smoke-tested on a synthetic sky; **not trained on
-real data yet** (no GPU run launched). Target design: [README](README.md) §4.2–4.3. Today's
+Status 2026-11-24: implemented, CPU smoke-tested, and run for the first time on real data:
+a GPU pilot on one H100 MIG 1g.12gb slice with the v1a input tree (§9, measured). Full
+pretraining not launched. Target design: [README](README.md) §4.2–4.3. Today's
 model: [architecture.md](architecture.md). Code: `src/masked_stellar_autoencoder/v11/`,
 entry point `python -m masked_stellar_autoencoder.training.pretrain_v11 --config ...`.
 
@@ -170,8 +171,18 @@ gradient. BP−RP^syn is torchgaiaxp's `DR3_Gaia_Vega` BP and RP from the same c
 - The loader computes the observed-XP synthetic fluxes `a'·c_norm` and their exact variances
   per filter-integral band (CPU, from the packed correlations), so the GPU never sees the
   2×1485 correlations.
-- v1a needs one P3 product: the adql_matches photometry re-partitioned to the Gaia layout
-  (`runs/msa_tables_v2/photometry_v1a`, planned) plus an `sfd_ebv` column.
+- v1a's P3 product exists: `/arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a`
+  (`scripts/build_photometry_v1a.py`, launcher step `photometry-v1a`, 17 min on 16 cores):
+  all 1,811,709,771 Gaia DR3 rows in the `gaia/dr3` layout and order, exactly the
+  `gaia_keyed_v1a` columns, `sfd_ebv` (dustmaps-identical SFD98), absent = null. **2MASS is
+  masked** (`adql_matches/twomass.fits` is mis-keyed, `data/twomass_gaia.py`). SkyMapper
+  DR4's `gaia_dr3_id1` went through float64 upstream, so its rows are matched by exact or
+  rounded id plus a 1″ position check. Every table passed a whole-sky pairing validation
+  (residual NMAD of G − x about a cubic in BP − RP: PS1 r 0.030, SDSS r 0.029, SkyMapper
+  r 0.036, CatWISE W1 0.145 mag, 1.7–7.9 % of the random-pairing null); partitions failing
+  the per-partition gate (PS1 16, CatWISE 17, SDSS 1: bulge and plane, ~1M rows each) are
+  masked for that survey. Rows with a value: PS1 r 900M, SkyMapper r 412M, SDSS r 120M,
+  CatWISE W1 677M. Numbers in its `manifest.json`.
 
 ## 8. Config (`v11/config.py`)
 
@@ -203,6 +214,44 @@ an XP micro-batch of 3.3k rows needs ≈ 4.3 GB. The latent stack dominates (cos
 in tokens); `n_latents: 16` halves it. Loader: XP correlations dominate I/O (≈ 2.7 TB per
 pass, ≈ 40 MB/s at 20 h).
 
+**Measured (pilot 2026-11-24, `configs/pretrain-v11-pilot*.yaml`, launcher step
+`v11-pilot`, session j6qd4aat).** NVIDIA H100 NVL MIG 1g.12gb (10.75 GiB), production
+model and step (32,768 rows, bf16, checkpointing), trees `gaia/dr3` + `dr3_xp_continuous`
++ `photometry_v1a`, FIT rows of the first 200 Gaia partitions (179M rows), 6 loader
+workers, a 2,000-step schedule (warm-up 200) run in wall-limited segments.
+
+| | `n_latents` 32 | `n_latents` 16 |
+|---|--:|--:|
+| rows/s (median of 25-step windows, eval excluded) | **5,300** (4,810–5,330) | **7,700** |
+| s per step | 6.2 | 4.3 |
+| data wait (share of step time) | 0.03 % | 0.04 % |
+| GPU memory, peak allocated / reserved | 7.4 / 8.1–9.1 GiB | 5.1 / 7.2–9.7 GiB |
+| steps logged | 725 (resumed at 250) | 250 |
+| DEV NLL at step 250: phot / XP / XP hidden | 1.92 / 1.98 / 1.97 | 3.16 / 2.10 / 2.08 |
+| DEV NLL at step 500: phot / XP / XP hidden | 0.92 / 1.86 / 1.86 | — |
+
+- Throughput is ~4–6× below the projection (19k–34k rows/s; 15k–28k with
+  checkpointing): ≈ 10 TFLOPS, MFU ≈ 9 %. The run is compute-bound (the loader waits
+  0.03 % of the time) and the rate does not depend on the step's XP share, so the cost is
+  per row; halving the latents gains only 45 %, so about two thirds of the step is outside
+  the latent stack. One REC pass at 5.3k rows/s is **71 h** on one slice (49 h with 16
+  latents).
+- 16 latents learn slower per step (DEV photometry NLL 3.16 vs 1.92 at step 250); at equal
+  wall time (16-latent step 250 ≈ 32-latent step 172) this short pilot does not decide
+  between them: keep 32 until a matched wall-clock run says otherwise.
+- Steps alternate between photometry-only and XP-heavy compositions (`xp_row_frac` 0 for
+  > 100 consecutive steps, then up to 1.0): the token buckets leave the loader in runs.
+- Training losses (l32, step 25 → 725): photometry NLL 7.7 → −0.32, XP 2.0 → 1.68, `sed`
+  3.4 → −0.08, `phot` 10.3 → 0.38, `calibrate` −2.0 → −2.55; gradient norms 30–500
+  (always clipped at 1).
+- Filter-integral zero points on DEV at step 500 (start 0): SDSS g/r/i −0.044/−0.010/
+  −0.026, SkyMapper v/g/r/i −0.017/−0.010/−0.002/−0.003, PS1 g/r/i/z −0.014/−0.000/
+  −0.000/+0.012; colour terms |k| ≤ 0.07; σ_sys 0.012–0.023 mag; residual NMAD 0.011–
+  0.056 mag.
+- Checkpoint/resume: segment 1 stopped by its wall limit after the step-250 checkpoint;
+  segment 2 resumed from `latest.pt` at step 250 (same learning-rate schedule) and saved
+  step 500. The caching allocator logged six failed-then-retried allocations of 0.65–1 GiB.
+
 ## 10. Verification
 
 - `tests/test_v11_config_schema.py`: config strictness (misplaced masking ratios), ranges,
@@ -225,9 +274,14 @@ pass, ≈ 40 MB/s at 20 h).
 
 ## 11. Open items
 
-- P3 must deliver the Gaia-layout photometry tree for v1a and `sfd_ebv`; the master needs
-  xmatcher entries for ATLAS and CFIS, VHS Y and VVVX Z/Y columns, and a check of the J-PLUS
-  array order.
+- v1a has no 2MASS until the master's designation join; the master needs xmatcher entries
+  for ATLAS and CFIS, VHS Y and VVVX Z/Y columns, and a check of the J-PLUS array order.
+- Before the full pass: mix token buckets within each step; find the two thirds of the
+  step outside the latent stack (profile; per-micro-batch host syncs, the dense XP decode
+  of the `sed` term, `torch.compile`, fused AdamW); `PYTORCH_CUDA_ALLOC_CONF=
+  expandable_segments:True`. At the measured rate one pass needs 71 slice-hours: use a
+  larger GPU or data parallelism (not wired in v11 yet).
 - Quality rules and bright limits are provisional until the P2 input contract.
 - Not yet wired: fine-tune (P5) on v11 latents, two-masking consistency, label head inputs.
-- First real run should confirm the MFU assumption on the slice and pick `n_latents`.
+- The pilot measured MFU ≈ 9 % (not 25–45 %); `n_latents` stays 32 pending a matched
+  wall-clock comparison (§9).

@@ -1,10 +1,12 @@
 # MSA v11 encoder pretraining on REC (FIT objects of msa-split-v1), MSA-IN v1a bands.
 # Schema and every key: src/masked_stellar_autoencoder/v11/config.py (unknown keys fail).
-# Doc: docs/programme/encoder-v11.md. Not launched yet (P4 prototype).
+# Doc: docs/programme/encoder-v11.md. Not launched yet (P4 prototype; GPU pilot measured
+# in encoder-v11.md section 9: 5.3k rows/s on one MIG 1g.12gb slice, ~71 h per pass).
 #
 # Trees: the Gaia DR3 HATS anchor, the XP continuous tree and the Gaia-keyed survey
-# photometry re-partitioned to the Gaia layout by the P3 table builder (path below is the
-# planned output; it does not exist yet). All trees share the gaia/dr3 partitioning.
+# photometry in the Gaia layout built by scripts/build_photometry_v1a.py (complete
+# 2026-11-24; 2MASS masked, see its manifest.json). All trees share the gaia/dr3
+# partitioning.
 # For the full-wavelength master set contract: gaia_master_v2 and the anchor to
 # /arc/projects/astroai/msa/xmatcher/gaia_master.hats; nothing else changes.
 
