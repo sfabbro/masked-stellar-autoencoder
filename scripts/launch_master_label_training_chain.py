@@ -1360,16 +1360,19 @@ STEPS["msa-split-v1"] = dict(
 # main at XMATCHER_PILOT_COMMIT, checked by sha256). The HATS pilot goes to
 # /arc/projects/astroai/msa/xmatcher/pilot_gaia_master.hats, the report to
 # runs/<run_id>/; nothing is written under /arc/projects/hats.
-XMATCHER_PILOT_COMMIT = "9b2d810210012e44201205333ef2a6da84571dd6"
+# v1 (session ozv1t6ad, xmatcher 9b2d810) stopped in its first task: AllWISE's
+# motion fit, wired as proper motion, moved a source by 1630" (halo check);
+# xmatcher ffa5e23 no longer propagates AllWISE. v2 reruns with it.
+XMATCHER_PILOT_COMMIT = "ffa5e23ad61fb77875211f895a66427abf67dae3"
 XMATCHER_PILOT_TARBALL = (
     "/arc/projects/astroai/msa/launcher/xmatcher_src/"
     f"xmatcher-{XMATCHER_PILOT_COMMIT}.tar.gz"
 )
 XMATCHER_PILOT_SHA256 = (
-    "51ff46f27ef10d1f9f52371412b87c7beba64b9febe9116bf3a2b0b99da858cd"
+    "19d3156393ba9c2c5a508ea0c3a1e2bc1eedbf0d1e52da0e46323fd0272b7cc5"
 )
 STEPS["gaia-master-pilot"] = dict(
-    run_id="gaia_master_pilot_20261124",
+    run_id="gaia_master_pilot_20261124_v2",
     gpu=0,
     ram=128,
     cpu=16,
