@@ -69,6 +69,19 @@ def _saved_bytes(fn):
 
 
 def estimate(cfg: PretrainConfig, rows: int = 256, device: str = "cpu") -> dict:
+    """FLOP / memory / throughput estimate. Writes nothing: the Pretrainer gets a
+    throwaway output directory, never ``run.output_dir`` (an /arc path would otherwise
+    be created on the host running the estimate)."""
+    import copy
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix="msa_v11_estimate_") as tmp:
+        cfg = copy.deepcopy(cfg)
+        cfg.run.output_dir = tmp
+        return _estimate(cfg, rows, device)
+
+
+def _estimate(cfg: PretrainConfig, rows: int, device: str) -> dict:
     tr = Pretrainer(cfg, device=device)
     reg = tr.comp.registry
     groups = BandGroups(reg, tr.device)
