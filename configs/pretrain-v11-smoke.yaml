@@ -1,0 +1,70 @@
+# CPU smoke run of the v11 pretraining on a tiny synthetic sky written in the
+# gaia_keyed_v1a contract (HATS layout + msa-split-v1-style assignment), through the
+# real streaming loader. Schema: src/masked_stellar_autoencoder/v11/config.py.
+#   pixi run python -m masked_stellar_autoencoder.training.pretrain_v11 --config configs/pretrain-v11-smoke.yaml
+
+run:
+  name: pretrain-v11-smoke
+  output_dir: /tmp/msa_pretrain_v11_smoke  # throwaway smoke output
+  seed: 7
+  device: cpu
+  precision: fp32
+  resume: false
+  num_threads: 2
+
+data:
+  source: synthetic
+  contract: gaia_keyed_v1a
+  train_partitions: [FIT]
+  eval_partitions: [DEV]
+  workers: 0
+  interleave_partitions: 2
+  read_batch_rows: 512
+  shuffle_buffer_rows: 1024
+  tokens_per_microbatch: 32768
+  synthetic:
+    n_rows: 6000
+    n_partitions: 4
+    xp_fraction: 0.4
+    seed: 3
+  scalers:
+    fit_rows: 4000
+    min_count: 20
+
+masking:
+  token_ratio: 0.25
+  xp_token_ratio: 0.5
+  survey_dropout: 0.15
+  xp_dropout: 0.35
+  astrometry_hide: 0.5
+  sfd_hide: 0.5
+  min_visible: 2
+
+model:
+  d_model: 64
+  n_heads: 4
+  n_latents: 8
+  n_layers: 2
+  cross_attn_layers: [0]
+  latent_dim: 256
+  value_frequencies: 8
+  band_frequencies: 8
+  decoder_hidden: 128
+  decoder_layers: 1
+
+filter_integral:
+  enabled: true
+  weight: 0.1
+
+optim:
+  lr: 0.002
+  warmup_steps: 5
+
+train:
+  batch_rows: 1024
+  presentations: 61440
+  max_steps: 60
+  log_every: 10
+  eval_every: 30
+  eval_rows: 1200
+  checkpoint_every: 30
