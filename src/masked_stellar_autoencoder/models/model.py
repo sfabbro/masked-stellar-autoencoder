@@ -2275,6 +2275,13 @@ class TabResnetWrapper(BaseEstimator):
             )
             return val_loss
 
+    def _finetune_encoder_weight_decay(self, ftopt) -> float:
+        """``ft_encoder_weight_decay`` when set, else the optimiser's default."""
+        wd = getattr(self, "ft_encoder_weight_decay", None)
+        if wd is not None:
+            return float(wd)
+        return 0.01 if ftopt == "adamw" else 0.0
+
     def _setup_finetune_optimizer(
         self, linearprobe, ftopt, ftlr, ftl2, enc_lr, head_lambda, encoder_lambda
     ):
@@ -2295,10 +2302,17 @@ class TabResnetWrapper(BaseEstimator):
                 raise ValueError(f"Unknown ftopt {ftopt!r}")
             scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=head_lambda)
         else:
+            # The autoencoder group's weight decay is explicit (finetune_settings):
+            # without it the group took the optimiser default (AdamW 0.01).
+            enc_wd = self._finetune_encoder_weight_decay(ftopt)
             if ftopt == "adam":
                 optimizer = optim.Adam(
                     [
-                        {"params": self.model.parameters(), "lr": enc_lr},
+                        {
+                            "params": self.model.parameters(),
+                            "lr": enc_lr,
+                            "weight_decay": enc_wd,
+                        },
                         {
                             "params": self.ft.parameters(),
                             "lr": ftlr,
@@ -2309,7 +2323,11 @@ class TabResnetWrapper(BaseEstimator):
             elif ftopt == "sgd":
                 optimizer = optim.SGD(
                     [
-                        {"params": self.model.parameters(), "lr": enc_lr},
+                        {
+                            "params": self.model.parameters(),
+                            "lr": enc_lr,
+                            "weight_decay": enc_wd,
+                        },
                         {
                             "params": self.ft.parameters(),
                             "lr": ftlr,
@@ -2321,7 +2339,11 @@ class TabResnetWrapper(BaseEstimator):
             elif ftopt == "adamw":
                 optimizer = optim.AdamW(
                     [
-                        {"params": self.model.parameters(), "lr": enc_lr},
+                        {
+                            "params": self.model.parameters(),
+                            "lr": enc_lr,
+                            "weight_decay": enc_wd,
+                        },
                         {
                             "params": self.ft.parameters(),
                             "lr": ftlr,

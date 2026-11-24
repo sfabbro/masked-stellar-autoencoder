@@ -12,6 +12,7 @@ from masked_stellar_autoencoder.models.model import TabResnetWrapper, make_model
 from .config_paths import expand_config_paths, ft_checkpoint_paths
 from .feature_noise import pert_channel_scale_vector
 from .finetune_data import prepare_finetune_arrays
+from .finetune_settings import effective_finetune_settings, log_effective_settings
 
 
 def _pilot_path(path):
@@ -106,9 +107,13 @@ def _finetune_one_seed(
     )
     model.load_state_dict(checkpoint["model_state_dict"])
 
-    xp_ratio = config["finetuning"].get("xp_masking_ratio", 0.3)
-    m_ratio = config["finetuning"].get("m_masking_ratio", 0.3)
+    # Masking ratios from finetuning: or training: (they must agree), the
+    # encoder weight decay from the config; both used to be silently ignored.
+    settings = effective_finetune_settings(config)
+    xp_ratio = settings["xp_masking_ratio"]
+    m_ratio = settings["m_masking_ratio"]
     ft_save_file, ft_log_file = ft_checkpoint_paths(config, seed)
+    log_effective_settings(settings, ft_log_file)
 
     wrapper = wrapper_cls(
         model=model,
@@ -146,6 +151,7 @@ def _finetune_one_seed(
         ),
     )
 
+    wrapper.ft_encoder_weight_decay = settings["encoder_weight_decay"]
     _print_parallax_consistency(pack, cols, scalers)
     if configure is not None:
         configure(wrapper)
