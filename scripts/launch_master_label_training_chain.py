@@ -1384,6 +1384,27 @@ STEPS["gaia-master-pilot"] = dict(
     ),
     files=[],
 )
+# v3: xmatcher 6d65857 (memory-aware Ray tasks, concurrent partition reads, no
+# propagation of surveys that cannot move) on 2/69 again (before/after), 2/133
+# (largest estimated task: 289M Euclid DR1 candidate rows) and 5/8283 (LMC: VMC
+# and Euclid). Separate output tree next to the v2 pilot.
+XMATCHER_V3_COMMIT = "6d6585767f5ee517bb47ebd9e3ba1c4d38feded2"
+XMATCHER_V3_SHA256 = "562eebb69bad83269c037833026669ad71c1a54493f8da94d47b5158e98dc1e4"
+STEPS["gaia-master-pilot-v3"] = dict(
+    run_id="gaia_master_pilot_20261124_v3",
+    gpu=0,
+    ram=128,
+    cpu=16,
+    command=(
+        'bash scripts/run_gaia_master_pilot.sh --report "$experiment_output"'
+        " --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/"
+        f"xmatcher-{XMATCHER_V3_COMMIT}.tar.gz"
+        f" --xmatcher-sha256 {XMATCHER_V3_SHA256}"
+        " --anchor-partitions 2/69,2/133,5/8283"
+        " --out /arc/projects/astroai/msa/xmatcher/pilot_gaia_master_v3.hats"
+    ),
+    files=[],
+)
 # Full-run task estimates alone (the pilots' estimate step failed on Euclid's
 # Npix=N/ directory partitions): candidate rows and bytes per anchor partition.
 STEPS["gaia-master-estimate"] = dict(
@@ -1424,6 +1445,26 @@ STEPS["qa-v10-stage"] = dict(
         " --competitor shboost=/arc/projects/k-pop/catalogues/shboost"
         " --competitor starhorse2023=/arc/projects/k-pop/catalogues/starhorse_ages"
         ' --stage-competitors "$experiment_output/competitors"'
+    ),
+    files=[],
+)
+
+
+# P3 (docs/programme/README.md section 6): MSA-IN v1a photometry (data.md section 2.7)
+# of all 1,811,709,771 Gaia DR3 sources in the gaia/dr3 HATS layout, the input tree of
+# the v11 encoder (configs/pretrain-v11.yaml). CPU only: stages the source_id-keyed
+# adql_matches (2MASS, PS1 ids + photometry, SDSS, CatWISE) and SkyMapper DR4 as sorted
+# column stores under the run directory (~250 GB transient, removed when complete),
+# then streams the 2,016 Gaia partitions with 16 workers; SFD from catalogues/sfd.
+PHOT_V1A = ROOT + "msa_tables_v2/photometry_v1a"
+STEPS["photometry-v1a"] = dict(
+    run_id="photometry_v1a_20261124",
+    gpu=0,
+    ram=128,
+    cpu=16,
+    command=(
+        "python -u scripts/build_photometry_v1a.py --workers 16 --sort-workers 2"
+        f' --output {PHOT_V1A} --work "$experiment_output" --clean-staging'
     ),
     files=[],
 )

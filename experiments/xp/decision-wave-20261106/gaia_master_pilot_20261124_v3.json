@@ -1,0 +1,22 @@
+{
+  "run_id": "gaia_master_pilot_20261124_v3",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/gaia_master_pilot_20261124_v3",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/gaia_master_pilot_20261124_v3",
+  "source_commit": "ff313c9a610685af51710e33097aae7d22e1f173",
+  "branch": "main",
+  "command": "bash scripts/run_gaia_master_pilot.sh --report \"$experiment_output\" --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/xmatcher-6d6585767f5ee517bb47ebd9e3ba1c4d38feded2.tar.gz --xmatcher-sha256 562eebb69bad83269c037833026669ad71c1a54493f8da94d47b5158e98dc1e4 --anchor-partitions 2/69,2/133,5/8283 --out /arc/projects/astroai/msa/xmatcher/pilot_gaia_master_v3.hats",
+  "utc": "2026-11-24T05:10:47.807596+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "d0680ko2"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 128
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "3b9277e42bb1b2cafa968e956171b126f1ee72f792e720fe590172bdaf87189a"
+}
