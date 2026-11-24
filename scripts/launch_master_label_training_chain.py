@@ -1405,6 +1405,30 @@ STEPS["gaia-master-pilot-v3"] = dict(
     ),
     files=[],
 )
+# P1 full run (proposed after the pilots; launch only when asked): every Gaia DR3
+# partition, same surveys and checks, xmatcher 266e85c (v3 code + conservative
+# task memory model + concurrent plan footers). Estimated 3-5 h on 16 cores /
+# 128 GiB, ~0.45 TB output (docs/gaia-master-data.md, "Full run").
+XMATCHER_FULL_COMMIT = "266e85ce115269e453b5a97b259f31550699af7b"
+XMATCHER_FULL_SHA256 = (
+    "99a626ad5bcf52e4c05fd66c74a0701d2a46c643744046318efdbce298d95572"
+)
+STEPS["gaia-master-full"] = dict(
+    run_id="gaia_master_full_v1",
+    gpu=0,
+    ram=128,
+    cpu=16,
+    command=(
+        'bash scripts/run_gaia_master_pilot.sh --report "$experiment_output"'
+        " --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/"
+        f"xmatcher-{XMATCHER_FULL_COMMIT}.tar.gz"
+        f" --xmatcher-sha256 {XMATCHER_FULL_SHA256}"
+        " --anchor-partitions all"
+        " --out /arc/projects/astroai/msa/xmatcher/gaia_master.hats"
+        " --expected-rows 1811709771 --skip-estimate"
+    ),
+    files=[],
+)
 # Full-run task estimates alone (the pilots' estimate step failed on Euclid's
 # Npix=N/ directory partitions): candidate rows and bytes per anchor partition.
 STEPS["gaia-master-estimate"] = dict(

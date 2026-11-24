@@ -15,6 +15,12 @@
 #     --xmatcher-tarball /arc/projects/astroai/msa/launcher/xmatcher_src/xmatcher-<sha>.tar.gz \
 #     --xmatcher-sha256 <sha256> [--anchor-partitions 2/69,6/42837] [--out PATH]
 #     [--estimate-only]   (only the per-partition full-run estimates)
+#
+# Full run (same checks, every anchor partition):
+#   ... --anchor-partitions all --out /arc/projects/astroai/msa/xmatcher/gaia_master.hats \
+#       --expected-rows 1811709771 --skip-estimate [--resume]
+# --resume reuses an existing output (xmatcher skips finished partitions when
+# the fingerprint matches, and starts over when it does not).
 set -euo pipefail
 
 REPORT=""
@@ -24,6 +30,9 @@ OUT="/arc/projects/astroai/msa/xmatcher/pilot_gaia_master.hats"
 CACHE="/arc/projects/astroai/hats"
 ANCHOR_PARTITIONS="2/69,6/42837"
 ESTIMATE_ONLY=0
+SKIP_ESTIMATE=0
+RESUME=0
+EXPECTED_ROWS=""
 COMMUNITY="/arc/projects/hats"
 ANCHOR="gaia_lsdb_hats"
 # Every community entry with local_paths (or a sync record) that is not being
@@ -47,6 +56,9 @@ while [[ $# -gt 0 ]]; do
     --out) OUT="$2"; shift 2 ;;
     --cache) CACHE="$2"; shift 2 ;;
     --estimate-only) ESTIMATE_ONLY=1; shift ;;
+    --skip-estimate) SKIP_ESTIMATE=1; shift ;;
+    --resume) RESUME=1; shift ;;
+    --expected-rows) EXPECTED_ROWS="$2"; shift 2 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -57,10 +69,12 @@ for path in "$OUT" "$CACHE" "$REPORT"; do
     "$COMMUNITY"/*) echo "refusing to write under $COMMUNITY: $path" >&2; exit 2 ;;
   esac
 done
-if [[ "$ESTIMATE_ONLY" == 0 && -e "$OUT" ]]; then
-  echo "pilot output already exists: $OUT (choose a new --out)" >&2
+if [[ "$ESTIMATE_ONLY" == 0 && "$RESUME" == 0 && -e "$OUT" ]]; then
+  echo "output already exists: $OUT (choose a new --out, or --resume)" >&2
   exit 2
 fi
+SUBSET=(--anchor-partitions "$ANCHOR_PARTITIONS")
+[[ "$ANCHOR_PARTITIONS" == all ]] && SUBSET=()
 
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH RAY_ADDRESS
@@ -86,9 +100,12 @@ log "installing xmatcher env"
 xm_env pixi install --manifest-path "$XM/pixi.toml" --frozen
 # No network is needed past this point; Ray's local gRPC must not go through
 # the session's CONNECT proxy.
+# Ray's object store holds only the plan and task results here: keep it at 5%
+# of memory so ~95% stays schedulable for the per-task memory reservations.
 xm_py() {
   xm_env env -u HTTPS_PROXY -u HTTP_PROXY -u https_proxy -u http_proxy \
     XMATCHER_CACHE_ROOT="$CACHE" NO_COLOR=1 \
+    RAY_DEFAULT_OBJECT_STORE_MEMORY_PROPORTION="${RAY_DEFAULT_OBJECT_STORE_MEMORY_PROPORTION:-0.05}" \
     pixi run --manifest-path "$XM/pixi.toml" --frozen "$@"
 }
 xm_py python -c 'import xmatcher, torchsky, ray, polars; print("xmatcher", xmatcher.__version__, "torchsky", torchsky.__version__, "ray", ray.__version__, "polars", polars.__version__)' \
@@ -129,7 +146,7 @@ df -h "$(dirname "$OUT")" "$CACHE" | tee "$REPORT/df_before.txt" || true
 log "pilot match: anchor $ANCHOR partitions $ANCHOR_PARTITIONS, ${#SURVEYS[@]} surveys"
 CMD=(xmatcher -v match "$ANCHOR" "${SURVEYS[@]}"
   --engine ray-anchor -r 1.5 --target-epoch 2016.0
-  --anchor-partitions "$ANCHOR_PARTITIONS"
+  "${SUBSET[@]}"
   --no-sync --cache-root "$CACHE"
   --task-rows 4000000000 --chunk-memory-gb 4096
   --no-color -o "$OUT")
@@ -169,7 +186,8 @@ if [[ "$code" == 0 ]]; then
   log "validate"
   set +e
   xm_py python "$XM/scripts/validate_anchor_output.py" "$OUT" \
-    --json "$REPORT/validation.json" --progress-every 1 > "$REPORT/validate.log" 2>&1
+    --json "$REPORT/validation.json" --progress-every 100 \
+    ${EXPECTED_ROWS:+--expected-rows "$EXPECTED_ROWS"} > "$REPORT/validate.log" 2>&1
   vcode=$?
   set -e
   echo "validator exit=$vcode" | tee -a "$REPORT/match_exit.txt"
@@ -179,10 +197,12 @@ if [[ "$code" == 0 ]]; then
   du -sb "$OUT" > "$REPORT/output_du.txt" || true
 fi
 
-log "full-run task estimates (footers of every input partition)"
-xm_py python "$HERE/gaia_master_pilot.py" estimate --anchor "$ANCHOR" \
-  --surveys "${SURVEYS[@]}" --cache-root "$CACHE" --radius 1.5 --target-epoch 2016.0 \
-  --threads 16 --out "$REPORT/task_estimates.parquet" > "$REPORT/estimate.log" 2>&1 \
-  || echo "estimate failed (see estimate.log)"
+if [[ "$SKIP_ESTIMATE" == 0 ]]; then
+  log "full-run task estimates (footers of every input partition)"
+  xm_py python "$HERE/gaia_master_pilot.py" estimate --anchor "$ANCHOR" \
+    --surveys "${SURVEYS[@]}" --cache-root "$CACHE" --radius 1.5 --target-epoch 2016.0 \
+    --threads 16 --out "$REPORT/task_estimates.parquet" > "$REPORT/estimate.log" 2>&1 \
+    || echo "estimate failed (see estimate.log)"
+fi
 log "done"
 exit "$code"
