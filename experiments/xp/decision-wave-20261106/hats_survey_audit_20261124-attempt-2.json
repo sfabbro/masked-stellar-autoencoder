@@ -1,0 +1,25 @@
+{
+  "run_id": "hats_survey_audit_20261124",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/hats_survey_audit_20261124",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/hats_survey_audit_20261124-attempt-2",
+  "source_commit": "3f1ab3c3001afc2260e9df40bae9ec9465738ff5",
+  "branch": "main",
+  "command": "python -u scripts/audit_hats_community.py --root /arc/projects/hats --output \"$experiment_output\" --workers 16 --max-hours 8",
+  "utc": "2026-11-24T07:37:06.912314+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "umd2ni2t"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "1d17e2f19c0bd6d9b880f00d2649e0167eb28c296e15ff1638068fc9ce84c45d",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout",
+  "reconciliation": "The POST timed out client-side (ReadTimeout) right after the skaha outage, but at 07:38 UTC the session listing shows session umd2ni2t named msa-hats-survey-audit-20261124 (Pending); it is this submission."
+}
