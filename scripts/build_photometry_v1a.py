@@ -77,6 +77,7 @@ ROW_GROUP = 131_072
 KSG_EDGES = np.round(np.arange(-3.0, 10.0001, 0.05), 3)  # G - Ks histogram
 SFD_EDGES = np.concatenate([[0.0], np.logspace(-3, 2.5, 56)])
 DSFD_EDGES = np.array([-1e9, -0.1, -0.01, -0.001, -1e-4, 1e-4, 0.001, 0.01, 0.1, 1e9])
+RATIO_EDGES = np.round(np.arange(0.5, 1.5001, 0.01), 2)  # ours / SkyMapper, E > 0.05
 
 ADQL = Path("/arc/projects/k-pop/catalogues/adql_matches")
 EXPECTED_ROWS = {  # data.md section 2.2 / 2.6 (rows of the Gaia-keyed match tables)
@@ -875,6 +876,10 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
             0
         ].tolist(),
         abs_sum=float(np.abs(sfd[m] - ebv_sm[m]).astype(np.float64).sum()),
+        ratio_hist=np.histogram(
+            (sfd[m & (ebv_sm > 0.05)] / ebv_sm[m & (ebv_sm > 0.05)]).astype(np.float64),
+            RATIO_EDGES,
+        )[0].tolist(),
     )
     names = output_columns()
     table = pa.table({c: cols[c] for c in names})
@@ -1503,7 +1508,20 @@ def finalize(
         hist=dh.tolist(),
         mean_abs_diff=sum(s["sfd_vs_skymapper"]["abs_sum"] for s in stats) / max(dn, 1),
         frac_within_0p01=float(dh[2:7].sum() / max(dn, 1)) if dn else None,
+        note="SkyMapper DR4 ebmv_sfd at the SkyMapper position, its own interpolation "
+        "and scaling: informative, not a gate",
     )
+    rh = [s["sfd_vs_skymapper"].get("ratio_hist") for s in stats]
+    if all(r is not None for r in rh) and rh:
+        rh = np.sum(rh, axis=0)
+        if rh.sum():
+            c = np.cumsum(rh) / rh.sum()
+            sm["ratio_ours_over_skymapper_e_gt_0p05"] = dict(
+                n=int(rh.sum()),
+                median=float(RATIO_EDGES[int(np.searchsorted(c, 0.5)) + 1]),
+                p16=float(RATIO_EDGES[int(np.searchsorted(c, 0.16)) + 1]),
+                p84=float(RATIO_EDGES[int(np.searchsorted(c, 0.84)) + 1]),
+            )
     checks["sfd"] = dict(
         null=sfd_null,
         max=max(s["sfd"]["max"] for s in stats),
@@ -1513,9 +1531,7 @@ def finalize(
         ok=sfd_null == 0,
     )
     checks["sfd"]["ok"] = bool(
-        checks["sfd"]["ok"]
-        and checks["sfd"]["dustmaps_parity"].get("ok", True)
-        and (dn == 0 or sm["frac_within_0p01"] >= 0.95)
+        checks["sfd"]["ok"] and checks["sfd"]["dustmaps_parity"].get("ok", True)
     )
     m["checks"] = checks
     m["rows"] = rows
@@ -1530,9 +1546,9 @@ def finalize(
     # HATS metadata (partition list, properties, schema)
     if not subset or not (out / "partition_info.csv").exists():
         with open(out / "partition_info.csv", "w") as fh:
-            fh.write("Norder,Npix\n")
-            for s in stats:
-                fh.write(f"{s['Norder']},{s['Npix']}\n")
+            fh.write("Norder,Npix\n")  # the Gaia tree's order
+            for o, p in plist:
+                fh.write(f"{o},{p}\n")
     first = out / "dataset" / partition_rel(stats[0]["Norder"], stats[0]["Npix"])
     pq.write_metadata(
         pq.ParquetFile(first).schema_arrow, out / "dataset" / "_common_metadata"

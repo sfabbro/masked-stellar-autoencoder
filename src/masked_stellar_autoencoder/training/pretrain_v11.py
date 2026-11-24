@@ -4,6 +4,7 @@
     python -m masked_stellar_autoencoder.training.pretrain_v11 --config configs/pretrain-v11-smoke.yaml
     python -m masked_stellar_autoencoder.training.pretrain_v11 --config ... --describe   # model, bands, FI bands
     python -m masked_stellar_autoencoder.training.pretrain_v11 --config ... --estimate   # FLOPs, memory, MIG rows/s
+    python -m masked_stellar_autoencoder.training.pretrain_v11 --config ... --max-steps 500  # stop early, resumable
 
 Everything is read from the one config file (unknown keys fail); the run writes
 ``config.yaml``, ``manifest.json``, ``scalers.json``, ``metrics.jsonl`` and
@@ -41,8 +42,19 @@ def main(argv=None) -> int:
         default=None,
         help="override run.device for --describe/--estimate only",
     )
+    p.add_argument(
+        "--max-steps",
+        type=int,
+        default=None,
+        help="override train.max_steps (pilots, resume tests); the schedule keeps "
+        "its length",
+    )
     args = p.parse_args(argv)
     cfg = load_config(args.config)
+    if args.max_steps is not None:
+        if args.max_steps <= 0:
+            p.error("--max-steps must be > 0")
+        cfg.train.max_steps = args.max_steps
     if args.estimate:
         from masked_stellar_autoencoder.v11.estimate import estimate
 

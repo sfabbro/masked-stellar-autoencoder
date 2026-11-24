@@ -1,0 +1,101 @@
+# MSA v11 GPU pilot (P4) on real data: one H100 MIG slice, ~1-2 h, the production
+# configuration (configs/pretrain-v11.yaml: same trees, model, masking, losses and step
+# size) on the FIT rows of the first 200 Gaia DR3 partitions (limit_partitions; a
+# contiguous patch of the northern sky crossing the Galactic plane) with a short
+# 2,000-step schedule (warm-up 200). Measures rows/s, data wait, GPU memory, the loss
+# terms, the filter-integral zero points and checkpoint/resume (launcher step
+# v11-pilot runs it in two segments). Not the pretraining.
+
+run:
+  name: pretrain-v11-pilot-l32
+  output_dir: /arc/projects/astroai/msa/runs/pretrain_v11_pilot_20261124/l32
+  seed: 20261124
+  device: auto
+  precision: bf16
+  resume: true
+
+data:
+  source: hats
+  contract: gaia_keyed_v1a
+  trees:
+    - {path: /arc/projects/hats/gaia/dr3}
+    - {path: /arc/projects/hats/gaia/dr3_xp_continuous}
+    - {path: /arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a}
+  assignment: /arc/projects/astroai/msa/runs/msa_split_v1/assignment
+  train_partitions: [FIT]      # REC
+  eval_partitions: [DEV]       # REC-DEV
+  rec_sample_rate: 1.0
+  limit_partitions: 200        # pilot only: the first 200 partitions of gaia/dr3
+  xp_covariance: exact
+  workers: 6
+  interleave_partitions: 4
+  read_batch_rows: 16384
+  shuffle_buffer_rows: 65536
+  tokens_per_microbatch: 524288   # ~3.3k XP rows (bucket 160) per micro-batch
+  max_rows_per_microbatch: 8192   # photometry-only rows: memory is per row (latent stack)
+  bucket_edges: [16, 32, 64, 128, 160, 224]
+  scalers:
+    fit_rows: 1000000
+    min_count: 50
+
+masking:                       # the only place masking ratios are read from
+  token_ratio: 0.25
+  xp_token_ratio: 0.5
+  survey_dropout: 0.15
+  xp_dropout: 0.35
+  astrometry_hide: 0.5
+  sfd_hide: 0.5
+  min_visible: 2
+  eval_seed: 12345
+
+model:
+  d_model: 256
+  n_heads: 8
+  n_latents: 32
+  n_layers: 8
+  cross_attn_layers: [0, 4]
+  mlp_ratio: 4.0
+  dropout: 0.0
+  latent_dim: 256
+  value_frequencies: 16
+  band_frequencies: 16
+  decoder_hidden: 512
+  decoder_layers: 2
+  gradient_checkpointing: true
+
+loss:
+  nu: 5.0
+  sigma_model_init: 0.05
+  sigma_model_floor: 0.001
+  group_weights: {xp: 1.0, phot: 1.0}
+
+filter_integral:
+  enabled: true
+  weight: 0.1
+  wavelength_range_nm: [336.0, 1020.0]
+  support_threshold: 0.01
+  modes: [calibrate, sed, phot]
+  nu: 5.0
+  sigma_sys_init: 0.02
+  colour_reference: 1.0
+  linear_below_fraction: 0.1
+  max_sigma_xp_mag: 0.2
+  integration_step_nm: 0.25
+
+optim:
+  lr: 0.0003
+  weight_decay: 0.05
+  betas: [0.9, 0.95]
+  warmup_steps: 200
+  min_lr_ratio: 0.05
+  grad_clip: 1.0
+  loss_param_lr_scale: 10.0
+
+train:
+  batch_rows: 32768
+  presentations: 65536000      # pilot schedule: 2,000 steps of 32,768 rows
+  max_steps: 2000
+  log_every: 25
+  eval_every: 250
+  eval_rows: 65536
+  checkpoint_every: 250
