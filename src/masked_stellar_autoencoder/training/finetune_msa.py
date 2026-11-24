@@ -318,6 +318,19 @@ def unlabelled_arrays(semi, config, pack):
         data = data[keep]
     cols = config["data"]["feature_cols"]
     error_cols = config["data"]["error_cols"]
+    if semi.get("extra_columns"):  # e.g. Gaia-keyed 2MASS (build_twomass_sidecar)
+        from .finetune_data import ExtraColumns
+
+        extra = ExtraColumns(semi["extra_columns"])
+        sid = (
+            u["source_id"]
+            if cap is None or len(u["source_id"]) <= int(cap)
+            else (u["source_id"][keep])
+        )
+        data = data.astype("f8")
+        for name in extra.columns:
+            if name in fields:
+                data[:, fields.index(name)] = extra.get(name, sid)
     X = data[:, [fields.index(c) for c in cols]].astype("f8")
     E = np.column_stack(
         [

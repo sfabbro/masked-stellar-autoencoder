@@ -180,6 +180,45 @@ def _extra_columns(config: dict[str, Any]) -> dict[str, np.ndarray]:
     return out
 
 
+class ExtraColumns:
+    """``data.extra_columns`` sidecars joined on ``source_id`` (any row subset).
+
+    The fine-tune path (``_extra_columns``) needs sidecars in table row order;
+    encoders of table chunks and of other row sets (``encode_table``,
+    ``predict_fits_rows``, the unlabelled pool) use this lookup instead, so a
+    feature replaced by a sidecar (e.g. the Gaia-keyed 2MASS J/H/KS of
+    ``scripts/build_twomass_sidecar.py``) is replaced everywhere it is read.
+    """
+
+    def __init__(self, paths):
+        self.columns: dict[str, np.ndarray] = {}
+        self._sid = np.empty(0, np.int64)
+        for path in paths or []:
+            with np.load(path, allow_pickle=False) as z:
+                sid = np.asarray(z["source_id"], np.int64)
+                order = np.argsort(sid)
+                if self._sid.size and not np.array_equal(self._sid, sid[order]):
+                    raise ValueError(
+                        f"{path}: source_id differs from the other sidecars"
+                    )
+                self._sid = sid[order]
+                for name in z.files:
+                    if name != "source_id":
+                        self.columns[name] = np.asarray(z[name], np.float64)[order]
+
+    def get(self, name: str, source_id) -> np.ndarray | None:
+        """``name`` for these ids, or None when no sidecar holds the column."""
+        if name not in self.columns:
+            return None
+        sid = np.asarray(source_id, np.int64)
+        pos = np.searchsorted(self._sid, sid).clip(max=len(self._sid) - 1)
+        if not np.array_equal(self._sid[pos], sid):
+            raise ValueError(
+                f"extra column {name!r}: source_ids missing from the sidecar"
+            )
+        return self.columns[name][pos]
+
+
 def _read_selected_fits(path: str, columns: list[str]) -> pd.DataFrame:
     with fits.open(path, memmap=True) as hdul:
         table_hdu = next(
