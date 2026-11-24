@@ -4,6 +4,11 @@ Compiled 23 November 2026 from the repository (`wip/intelligent-babbage-778ino` 
 with the age work merged from `feat/age-c0`), the CANFAR launch receipts, the run outputs on ARC
 (`/arc/projects/astroai/msa/runs/`), and the session transcript of 10–23 November.
 
+Extended on 24 November 2026 from `main` at `2116167`, the receipts, the ARC run reports and manifests,
+and the transcript to 24 Nov 16:10 UTC: status (§1.1), runs of 23 Nov evening – 24 Nov (§2.6, §3.13),
+architecture by era (§3.14), lessons L49–L57 and new unverified items (§6). The 23 Nov text is kept as
+it was. The handoff for a new session is [`HANDOFF.md`](HANDOFF.md).
+
 This is a reference document. Its purpose is that no lesson is forgotten or re-simplified.
 Every number carries its source. Anything not verified is marked **(unverified)**.
 
@@ -15,6 +20,7 @@ Every number carries its source. Anything not verified is marked **(unverified)*
 | `[C:sha]` | commit in this repository (`git show <sha>`) |
 | `[A:run/file]` | run output under `/arc/projects/astroai/msa/runs/` (read with `curl --cert ~/.ssl/cadcproxy.pem https://ws-uv.canfar.net/arc/files/projects/astroai/msa/runs/<run>/<file>`) |
 | `[X:path]` | CANFAR launch receipt under `experiments/xp/decision-wave-20261106/` unless a full path is given |
+| `[XM:sha]` | commit in sfabbro/xmatcher (`/home/user/xmatcher`) |
 | `[T:yyyy-mm-dd hh:mm]` | assistant message at that UTC time in the session transcript `/root/.claude/projects/-home-user/d60e9c7a-7b13-5bb2-ade1-fb8da7adbc26.jsonl`; numbers there were read from run outputs at the time, many of which survive only in scratch files |
 
 Notation: bias / NMAD in dex for [Fe/H] and log g, K for Teff. "Core" means the frozen held-out
@@ -23,7 +29,47 @@ high-resolution [Fe/H] reference set (7,740 held-out stars; 646 below −2) defi
 
 ---
 
-## 1. Status on 23 November 2026
+## 1. Status
+
+### 1.1 Status on 24 November 2026
+
+- **The programme changed course on 23 Nov at 21:50 UTC.** The user stopped experiments on small or
+  less diverse sets ("you keep forgetting and re-simplifying because you are dealing with a less
+  diverse dataset") and asked for the full programme: this history, a master label set, defined data
+  sets, a QA catalogue, all of Gaia with and without XP, and full wavelength coverage ("don't be cheap.
+  this is not a pet project"). The plan is P0–P8 of `README.md` §6. A new session starts from
+  `HANDOFF.md`.
+- **No model was trained between 23 Nov 12:49 and 24 Nov 16:10 UTC.** The products of §1.2 still
+  stand. Their first scoring through the single evaluator on `msa-split-v1` TEST
+  (`[R:docs/qa-v10-20261124/report.md]`):
+  - S1 5-head ensemble: joint Neyman set 0.664 / 0.923 at 68 / 95 %;
+  - S2 flow: conformal set 0.661 / 0.922;
+  - S3 v2.1 gmix: parallax PIT 68 % coverage 0.720, E(B−V) 0.898;
+  - open-cluster giants +0.328 dex above dwarfs; held-out cool companions 0.26–0.31 dex too metal-poor.
+- **Built** (§3.13):
+  - `msa-split-v1`, frozen for all 1,811,709,771 Gaia DR3 sources;
+  - `photometry_v1a`: Gaia-keyed SDSS, SkyMapper, PS1 and CatWISE photometry plus SFD for every DR3
+    source in the Gaia HATS layout, each table's pairing validated over the sky, 2MASS masked;
+  - encoder v11 (token set encoder, heteroscedastic Student-t reconstruction, whole-survey and
+    whole-XP dropout, torchgaiaxp filter-integral term), smoke-tested and piloted on one GPU slice:
+    5,300 rows/s, about 71 h per REC pass;
+  - the single evaluator `scripts/evaluate_model.py`, with the ARC-only QA scripts moved into
+    `src/masked_stellar_autoencoder/qa/`;
+  - xmatcher reads the community HATS trees in place; the Gaia-anchored master pilot passed; the full
+    run (3–5 h, ≈ 0.45 TB) waits for the PS1 OTMO rebuild;
+  - an audit of every community HATS tree.
+- **Found** (§3.13):
+  - every fine-tune v1–v10 ran masking 0.3 / 0.3 and encoder weight decay 0.01, not the configured
+    0.9 / 0.6 and 1e-5; pretraining never loaded measurement errors;
+  - the "Gaia-keyed" 2MASS table is mis-keyed: corr(G, Ks) 0.002–0.0045 against 0.948 for the
+    designation join;
+  - Gaia ids rounded through float64 in GBS v3, SkyMapper DR4 and the white-dwarf companion list;
+  - 74 of the 192 GBS benchmark stars are rows of the v5 fine-tune table, 63 in its train split.
+- **Blocking the full-Gaia run:** the GPU resources for v11 pretraining (a user decision), the P5
+  fine-tune code, the P3 labelled tables from all 19.2M master stars, and, for the full master, the
+  PS1 OTMO rebuild and xmatcher's catalogue pins.
+
+### 1.2 Status on 23 November 2026 (as compiled)
 
 The programme has a working but partial stack, all trained on one experiment-scale table.
 - **Best posterior model:** multi-survey fine-tune **v10** (`multisurvey_finetune_20261121_v10`, epoch 12).
@@ -163,6 +209,30 @@ same 129,9xx v1-table test stars (excluded from the v5 table).
 | 11-22 → 11-23 | **C0** | Age consensus from labels alone | 7,456,035 good records → 1.67M representative | latent log age, per-catalogue maps, fitted noise, co-natal terms; gauge A = APOKASC-3, C = Xiang | Held-out mapped NMAD 0.035–0.10 dex; shared isochrone error η = 0.123 dex; bridge −0.026 ± 0.002 statistical but ≥ 0.25 dex systematic; Pleiades 2.75 Gyr `[R:docs/age-c0-20261122/report.md]` | Within-regime solid; bridge not |
 | 11-23 | **C0b** | Priority labels as fitted sources | + benchmark clusters, cluster catalogues, wide pairs, WD+MS, K2 GAP/TESS | + age-validity windows, ≥ 3-catalogue rule for slopes | EBs favour gauge A (+0.060 ± 0.018 vs −0.129 ± 0.024 dex); isochrone ages ≈ +0.25 dex vs APOKASC-3; Pleiades 0.142 Gyr; NGC 188 3.75 vs 6.2 Gyr `[R:docs/age-c0b-20261123/report.md]`, `[T:2026-11-23 05:16]` | Gauge A for < 4 Gyr |
 | 11-23 | **C0c** (outputs in `docs/age-c0c-20261124/`) | Rotation and Li as fitted maps; residual QA; chemistry check | C0b frozen ages | monotone maps of the latent | Old-age "ceiling" is regression to the mean; bridge ≈ 0.20 dex at 3 Gyr → ≈ 0.05 dex at 10 Gyr; Praesepe 1.13 → 0.68 Gyr; ≈ 270k dwarfs gain an age (26k with σ < 0.3 dex) `[R:docs/age-c0c-20261124/report.md]` | Age-dependent bridge needed |
+
+### 2.6 Programme reset, data foundations and the v11 encoder (23 Nov evening – 24 Nov)
+
+Sessions and commits are in the cited receipts; `[XM:sha]` is a commit of sfabbro/xmatcher. Narrative in §3.13.
+
+| Date (UTC) | Run id | Purpose | Data | Architecture / loss | Key results | Verdict |
+|---|---|---|---|---|---|---|
+| 11-23 22:10–22:29 | programme documents (`[C:214bff7]`, `[C:5c88fb9]`, `[C:9638db6]`, `[C:abea751]`) | Reference set after the reset | code, configs, receipts, ARC, transcript | — | `architecture.md`, `experiment-history.md`, `qa.md`, `data.md` + `datasets.yaml`, `README.md` (plan P0–P8). Found: v10 masking ratios unread; 2MASS mismatched; errors unused in pretraining; no product passes its own acceptance rule | Done |
+| 11-23 22:50 / 23:02 | `msa_split_v1` (sessions `fekqgpk6`, `l1eiaf80`; `[X:msa_split_v1{,-attempt-2}.json]`) | P0: freeze FIT/DEV/CAL/TEST for every DR3 source | Gaia DR3 HATS (2,016 partitions); HR23, EB21, VB21, GBS v3, age benchmarks, LEGACY, WD lists | salted splitmix64 of `source_id`; group keys | FIT 1,357,929,871; DEV 90,537,669; CAL 144,843,506; TEST 217,273,992; QA_RESERVED 1,124,733; 0 groups split; 1 pair split (expected); 4.3M-row independent recomputation identical `[A:msa_split_v1/manifest.json]`, `[T:2026-11-23 23:28]` | **Frozen** (`[C:6d1afb8]` removed `--force`) |
+| 11-23 22:53–23:09 | output-location rules (`[C:1cf4560]`, `[C:0188491]`; `[XM:0518d3e]`, first as `c0699cc` on the wip branch) | Where MSA writes | — | — | MSA outputs only under `/arc/projects/astroai/msa`; xmatcher cache `/arc/projects/astroai/hats`; `/arc/projects/hats` read-only (user, 22:52 and 23:05) | Rule |
+| 11-23 23:28 | P1 preflight (local, wrote nothing) | Can the master run? | community trees | — | planner bug: each task's cone sized by the coarsest partition of any input; ≈ 0.75 TB selected columns; 50–150 core-h (estimate) `[T:2026-11-23 23:28]` | Planner fixed in `[XM:cf819f2]` |
+| 11-24 00:06–00:23 | xmatcher community trees (`[XM:cf819f2]`, `[XM:fc99b42]`) | Read `/arc/projects/hats` in place | — | — | read-only community roots, `local_paths`, `xmatcher adopt hats`, 28 bundled entries, per-partition cones, write protection; 1,192 tests pass `[T:2026-11-24 00:23]` | On xmatcher `main` |
+| 11-24 04:06 | fine-tune and pretraining fixes (`[C:2f8750e]`, `[C:9d200a6]`) | Config keys that were never read | — | — | v1–v10 (and stopgap, v7 grid) ran masking 0.3 / 0.3 and encoder weight decay 0.01; errors now loaded (cache ≈ 225 GB vs 117 GB) | Fixed |
+| 11-24 04:26 | `gaia_master_pilot_20261124` (`ozv1t6ad`, `[XM:9b2d810]`) | P1 pilot | Gaia 2/69, 6/42837 × 21 surveys | ray-anchor, 1.5″, J2016.0 | stopped in its first task: AllWISE's motion fit, used as proper motion, moved a source by 1,630″ | Fixed in `[XM:ffa5e23]` |
+| 11-24 04:33 | `gaia_master_pilot_20261124_v2` (`ufvwfkmc`, `[XM:ffa5e23]`) | Pilot rerun | same | same | passed; 1,513,619 rows; every input read in place; nothing written under `/arc/projects/hats` `[R:docs/gaia-master-data.md]` | Pass |
+| 11-24 04:35 | `gaia_master_estimate_20261124` (`zm3mjlkm`) | Full-run cost | footers of all 2,016 anchor partitions | — | 90.9B candidate rows, 4.63 TB compressed reads | Basis of the extrapolation |
+| 11-24 04:34 | encoder v11 (`[C:07b21c5]`) | P4 code | synthetic sky | token set encoder 10.5M; Student-t reconstruction + filter integral | 48 tests; CPU smoke recovers injected zero points (SDSS i 0.019 vs 0.020) | Implemented |
+| 11-24 04:37 | GBS ids (`[C:3c84d32]`), 2MASS (`[C:7fd6e17]`), one split hash (`[C:0eb2133]`) | Data correctness | Gaia archive | — | GBS: 192 of 192 stored ids recovered; 74 GBS stars in the v5 table, 63 in train. 2MASS: corr(G, Ks) 0.010 (Andrae file) vs 0.948 (designation join) | Fixed / mis-keyed file refused |
+| 11-24 04:50–05:15 | `qa_v10_20261124` (+ `_stage`: `uajdsmxr`, `l9io9zc5`, `f8txmamq`) | First single-evaluator QA | TEST minus v5 train/valid | — | S1 joint 0.664 / 0.923; S2 flow 0.661 / 0.922; S3 parallax 0.720, E 0.898; OC giant − dwarf +0.328; cool companions +0.26 to +0.31; core TEST 296 rows `[R:docs/qa-v10-20261124/report.md]` | Report |
+| 11-24 05:10 | `gaia_master_pilot_20261124_v3` (`d0680ko2`, `[XM:6d65857]`) | Worst cases | 2/69, 2/133 (289M Euclid candidates), 5/8283 (LMC) | memory-aware Ray tasks, concurrent reads | passed; 2,193,149 rows; 2/133 peak 59.5 GiB; full run ≈ 32 task-h, 3–5 h on 16 cores / 128 GiB, ≈ 0.45 TB | Full run proposed (`gaia-master-full`), not launched |
+| 11-24 05:10–07:16 | `photometry_v1a_20261124` (`z2lilwcf`, `t35rl8o3`, attempt 3 not submitted, `jhyv5gfi`) | P3: v11 input for every DR3 source | Gaia DR3 HATS; adql PS1, SDSS, CatWISE; SkyMapper DR4; SFD | — | attempt 1: r(G, Ks) 0.0045 on 329M pairs, SkyMapper float ids; attempt 4: 1,811,709,771 rows, 166.7 GB, built in 17.4 min; pairing NMAD PS1 r 0.030, SDSS r 0.029, SkyMapper r 0.036, CatWISE W1 0.145 mag `[A:msa_tables_v2/photometry_v1a/manifest.json]` | **Built** |
+| 11-24 05:47–06:33 | xmatcher `[XM:665f484]`, `[XM:266e85c]`, `[XM:d651612]` | Memory model, plan footers, test isolation | — | — | task estimate 1.17× the 2/133 peak; ~36k footers read concurrently; tests no longer switch to CANFAR mode when a host `/arc` exists | On xmatcher `main` |
+| 11-24 07:37 | `pretrain_v11_pilot_20261124` (`j6qd4aat`) | P4 GPU pilot | FIT rows of the first 200 partitions (179M) | v11 production config, 32 vs 16 latents | 5,300 vs 7,700 rows/s; MFU ≈ 9 %; data wait 0.03 %; one REC pass ≈ 71 h on one 1g.12gb slice `[R:docs/programme/encoder-v11.md §9]` | Full pretraining awaits a GPU decision |
+| 11-24 07:38–08:57 | `hats_survey_audit_20261124` (`umd2ni2t`) + `_followup` (`dlec1oky`) | Audit the community trees | 74 roots (54 public), 24.07 TB | — | 10 top problems (§3.13.6) `[R:docs/hats-survey-audit-20261124.md]` | Report |
 
 ---
 
@@ -375,6 +445,461 @@ posterior labels. It ran 40 recipes, then a 4.4M-identity evaluation.
   - So the bridge must depend on age.
   - Rotation and lithium add about 270k dwarf ages, mostly with wide uncertainties.
   - TARS rotation periods are truncated above about 10–13 d and biased older clusters young, so they were dropped (`[C:7d11992]`).
+
+### 3.13 From experiments to the full-Gaia programme (23 Nov evening – 24 Nov)
+
+#### 3.13.1 The reset and the programme documents
+
+- **Trigger.** At 18:11 UTC on 23 Nov the user asked why only about 4M labelled stars were being used
+  out of 18M, whether runs were experiments or full-data training, and whether a torchgaiaxp
+  filter-integral term was worth adding. The answer (`[T:2026-11-23 18:16]`): 5.87M labelled XP stars
+  of 19.1M (8M cap, XP requirement), up to 5M unlabelled stars in reconstruction, zero in consistency.
+- **The reset (user, 21:50 UTC).** Stop small-set experiments; document the history, the master label
+  set, defined data sets and all QA; train on all of Gaia with and without XP and with full wavelength
+  coverage; give architecture diagrams, losses and data sets.
+- **Five documents in 40 minutes**, written by four parallel agents and checked by the coordinator:
+  `architecture.md` (`[C:214bff7]`), this history (`[C:5c88fb9]`), `qa.md` (`[C:9638db6]`), `data.md`,
+  `datasets.yaml` and `README.md` (`[C:abea751]`). They found the problems that drove the next day:
+  the fine-tune masking ratios were never read, 2MASS was matched to the wrong stars, pretraining
+  ignored measurement errors, no single evaluator existed, and no product passed its own acceptance
+  rule. The data document also corrected this history: the v5 split is a seeded row shuffle, not a
+  `source_id` hash (`[T:2026-11-23 22:26]`).
+
+#### 3.13.2 `msa-split-v1` frozen (P0)
+
+- **Rule** (`data.md` §3): u = splitmix64(`source_id` ⊕ salt) ≫ 11 × 2⁻⁵³ with salt
+  `sha256("msa-split-v1")[:8]` = `0xb6f6e5353645106b`; FIT u < 0.75, DEV < 0.80, CAL < 0.88, TEST
+  otherwise. Open clusters (HR23, p ≥ 0.7) and wide binaries (EB21, R_chance < 0.1) take the
+  partition of a group key; reserved QA objects (GBS v3, VB21 globular members, 35 age-benchmark
+  clusters, Kepler LEGACY, WD+MS pairs and WD ages) are never fitted.
+- **Attempt 1** (`fekqgpk6`, `[C:676bd78]`) reserved the GBS stars by their stored ids. Those ids had
+  gone through float64 upstream (every one float-exact; median 10 trailing zero bits against 7 for
+  real Gaia ids), and only 85 of the 192 existed in DR3. **Attempt 2** (`l1eiaf80`, `[C:ae719af]`)
+  reserves every Gaia source whose id rounds to the same float64 (198 sources for 192 ids), as for the
+  978 float-stored white-dwarf companion ids (734 sources), and fails closed on any other id list that
+  looks float-rounded.
+- **Result** (`[A:msa_split_v1/manifest.json]`, 23 Nov 23:07 UTC, 5 min on 8 cores): FIT
+  1,357,929,871; DEV 90,537,669; CAL 144,843,506; TEST 217,273,992; QA_RESERVED 1,124,733. Input class
+  X 219,197,643, P 1,321,572,876, G 265,484,088, N 5,455,164. 1,263,567 groups (7,167 clusters,
+  1,256,400 pairs), 0 split; one pair split as expected (its stars sit in two clusters). `--force` was
+  then removed from the launcher step so a relaunch cannot overwrite the freeze (`[C:6d1afb8]`).
+- One shared implementation of the hash, `data/msa_split.py`, now serves the evaluator and v11
+  (`[C:0eb2133]`); the frozen builder keeps its own checksummed copy.
+
+#### 3.13.3 Output locations and branches
+
+- **User rules** (22:52 and 23:05 UTC): MSA outputs only under `/arc/projects/astroai/msa`
+  (`vos:astroai/msa`); `/arc/projects/hats` is reserved for the community to read HATS catalogues; the
+  xmatcher cache goes under `/arc/projects/astroai/hats`, for later promotion to community-ready HATS.
+  Applied in the runbook, scripts, README and `AGENTS.md` (`[C:1cf4560]`, `[C:0188491]`) and as
+  xmatcher's CANFAR defaults (`[XM:0518d3e]`; it also moved xmatcher's default output out of
+  `/arc/projects/hats/xmatcher` to `/arc/projects/astroai/xmatcher`).
+- **Branches** (user, 23:27 and 23:33): all work on `main` of the sfabbro forks, no `wip` branches.
+  MSA `origin/main` was fast-forwarded to the wip branch without a force-push, and `AGENTS.md` now says
+  so (`[C:6b80223]`); branch deletion on GitHub is refused from this session, so the user deletes old
+  branches in the UI.
+
+#### 3.13.4 xmatcher: reading the community trees in place
+
+- **Why it did not use them** (`[T:2026-11-23 23:16]`): a named survey resolves to a remote URL, and
+  `locate_mirrored` looked only at `<cache_root>/<name>/hats-<scheme>-<sha1(url)[:12]>/`. The community
+  trees sit at `<survey>/<product>`, so the lookup missed (2MASS PSC is a byte-identical copy whose
+  `PENSUS_SYNC.json` even carries xmatcher's own version name). Pointing at a bare folder lost the
+  entry's epoch, motion, error and column settings; extra cache roots were written to; and several
+  trees are other releases than the bundled entries (SDSS DR13 tree vs DR16 entry, PS1 OTMO vs CDS DR2,
+  VHS DR7 vs DR5).
+- **Fix** (`[XM:cf819f2]`, pushed before a container restart lost the agent's summary): read-only
+  community roots (`XMATCHER_COMMUNITY_ROOTS`, default `/arc/projects/hats` on CANFAR) indexed by their
+  sync records; `local_paths` on entries, checked against `hats_nrows` and `obs_collection`;
+  `xmatcher adopt hats <path>`; 28 bundled entries for the community trees; `cache.replica_roots`
+  separate from read-only roots, with every write into a read-only root refused; per-partition cones
+  (each Gaia anchor partition reads only the survey partitions it overlaps); invalid survey rows dropped
+  and counted. `[XM:fc99b42]` renamed a test whose nonsense catalogue name now fuzzy-matched an entry;
+  1,192 tests passed.
+- **Pilot fixes:** `--anchor-partitions` and per-task stats (`[XM:9b2d810]`); AllWISE's motion fit is
+  not astrometry and no longer moves AllWISE positions (`[XM:ffa5e23]`); memory-aware Ray tasks,
+  8 concurrent partition reads, no propagation of surveys without motions (`[XM:6d65857]`); a
+  conservative task memory model from the Euclid worst case (`[XM:665f484]`); concurrent plan footers
+  (`[XM:266e85c]`).
+- **Test isolation** (`[XM:d651612]`): with any `/arc` on the host (a CANFAR session, or the stray empty
+  local `/arc` an agent created at 05:13 UTC) the suite switched to the CANFAR defaults and would have
+  written test files into `/arc/projects/astroai`.
+- The user is reviewing xmatcher for Pensus separately (06:37 UTC).
+
+#### 3.13.5 The Gaia-anchored master: preflight and pilot (P1)
+
+- **Preflight** (23 Nov 23:28, local, nothing written): every needed tree was complete; the planner sized
+  every task's cone by the coarsest partition of any input, so with whole-sky-scale partitions (SDSS,
+  SkyMapper, S-PLUS, J-PAS) each of the 2,016 tasks would have read every survey over the whole sky.
+  First estimates: ≈ 0.75 TB of selected columns and 50–150 core-hours.
+- **Pilots** (`[R:docs/gaia-master-data.md]`; receipts `gaia_master_pilot_20261124{,_v2,_v3}.json`,
+  `gaia_master_estimate_20261124.json`), 16 cores / 128 GiB, CPU only, 22 inputs (Gaia + 21 surveys;
+  PS1 OTMO, DES, DELVE, UHS left out while Pensus rebuilt them; J-PLUS/J-PAS left out for string
+  magnitudes):
+
+  | Run | Session | xmatcher | Partitions | Outcome |
+  |---|---|---|---|---|
+  | `gaia_master_pilot_20261124` | `ozv1t6ad` | 9b2d810 | 2/69, 6/42837 | stopped: AllWISE motion fit moved a source by 1,630″ (halo check) |
+  | `gaia_master_pilot_20261124_v2` | `ufvwfkmc` | ffa5e23 | 2/69, 6/42837 | passed; `xmatcher/pilot_gaia_master.hats`, 1,513,619 rows |
+  | `gaia_master_estimate_20261124` | `zm3mjlkm` | ffa5e23 | footers only | candidate rows and bytes for all 2,016 anchor partitions |
+  | `gaia_master_pilot_20261124_v3` | `d0680ko2` | 6d65857 | 2/69, 2/133, 5/8283 | passed; `xmatcher/pilot_gaia_master_v3.hats`, 2,193,149 rows |
+
+- **Checks:** every input logged "in place (read-only; no mirror)"; snapshots of `/arc/projects/hats`
+  before and after each run differed only by new `des/y6_gold` partitions written by Pensus's own
+  `pensus-des-delve-import` session; the cache gained only `registry/community_index.json`; 0 null or
+  duplicate `source_id`; 2/69 written by v2 and v3 is byte-identical in size (565,159,810 bytes).
+- **Match fraction within 1.5″, % of Gaia rows (crowded = n_within > 1 in brackets):**
+
+  | Survey | 2/69 (637,729) | 6/42837 bulge (875,890) | 2/133 (1,424,509) | 5/8283 LMC (130,911) |
+  |---|--:|--:|--:|--:|
+  | 2MASS PSC | 50.5 (0.01) | 11.7 (0.01) | 44.3 (0.01) | 13.5 (0.00) |
+  | AllWISE | 77.0 (0.00) | 3.2 (0.00) | 73.9 (0.00) | 27.9 (0.00) |
+  | CatWISE2020 | 86.7 (0.07) | 9.7 (0.02) | 89.1 (0.07) | 47.5 (0.02) |
+  | SkyMapper DR4 | 86.3 (0.04) | 25.9 (0.18) | 89.0 (0.05) | 59.9 (0.10) |
+  | SDSS DR16 | 97.4 (0.60) | – | 0 | – |
+  | LS DR11 | 100.0 (23.46) | – | 100.0 (5.55) | 100.0 (9.77) |
+  | GALEX | 12.3 (0.00) | 0 | 10.0 (0.00) | 1.5 (0.00) |
+  | VHS DR7 | 62.8 (0.40) | 66.6 (1.26) | 98.9 (0.47) | 85.7 (0.39) |
+  | UKIDSS LAS | 61.8 (0.79) | – | – | – |
+  | VIKING DR5 | 4.1 (0.04) | – | 0 | – |
+  | VVVX DR1 | – | 94.7 (13.13) | – | – |
+  | VMC DR7 | – | – | – | 39.8 (0.57) |
+  | S-PLUS DR4 | 26.5 (0.45) | 0 | 12.9 (1.39) | 55.7 (4.48) |
+  | Pristine DR2 | 49.3 (0.12) | – | 0 | – |
+  | HSC g / r / i / z / y | 67.9 / 71.1 / 59.7 / 67.1 / 58.7 (52–63) | – | – | – |
+  | Euclid DR1 MER | – | – | 93.7 (16.34) | 22.1 (6.02) |
+
+- **Full-run extrapolation:** 90.9B candidate rows and 4.63 TB of compressed reads (3.9× the 23.6B survey
+  rows); about **32 task-hours** (median task ≈ 45 s, largest 4–5 min); memory per task median 7.6 GiB,
+  max 64.9 GiB; **3–5 h on 16 cores / 128 GiB**; output **≈ 0.45 TB** (0.35–0.6), not the 3–5 TB
+  budgeted before. Launcher step `gaia-master-full` (xmatcher 266e85c) exists and was not launched. The
+  coordinator recommended waiting for the PS1 OTMO rebuild, because adding an input later reruns
+  everything (`[T:2026-11-24 06:34]`); the DES rebuild has since renamed its `obs_collection` to
+  `y6_gold_rawrap`, which breaks xmatcher's pin.
+
+#### 3.13.6 HATS community audit
+
+`[R:docs/hats-survey-audit-20261124.md]`. Read-only CPU jobs `umd2ni2t` (main, 07:38–08:15 UTC, commit
+`3f1ab3c`) and `dlec1oky` (tree-wide follow-up counts, 08:42–08:57, `cd6e4ed`); both first submissions
+were never created during a CANFAR outage and are reconciled in their receipts. Scope: 74 catalogue
+roots (54 public), 5 collections, about 24.07 TB of the 27.7 TB quota; every partition footer read,
+347 partitions sampled with a Gaia-anchored multiplicity check at 1.5″. Script
+`scripts/audit_hats_community.py` (refuses an output under the audited root). Top problems:
+
+1. **HSC PDR3 forced (g r i z y):** no primary, inner or pixel flags; in full-depth fields 87–95 % of
+   the matched Gaia stars have ≥ 2 rows within 1.5″; the best match is a deblend parent for 26–44 %;
+   `instFlux` in coadd counts (ZP ≈ 27). Blocker.
+2. **ATLAS DR5:** 10 of 385 partitions unreadable (6,613,768 rows, 4.4 %); MJD columns null. Blocker.
+3. **SDSS photoPrimary:** `id` equals THING_ID, not objID, and is not unique; the unique key is
+   (RUN, CAMCOL, FIELD, ID). Blocker for xmatcher's pin.
+4. **PS1 OTMO:** 67.8 % of rows single-detection, 7.6 % zero; 19–36 % ambiguous Gaia matches; −999
+   sentinels; not yet rebuilt.
+5. **Legacy Surveys DR11:** ≈ 22M north/south overlap objects stored twice (RELEASE 11010 and 11011).
+6. **Euclid DR1 MER / Q1:** 16–28 % of the matched Gaia stars have a second row in the same tile.
+7. **S-PLUS DR4:** 9.6 % of rows are field-overlap twins.
+8. **J-PLUS / J-PAS:** numbers stored as strings; arrays in CEFCA filter-ID order, not wavelength.
+9. **Rebuilds:** DES Y6 and UHS clean, but DES's collection is now `y6_gold_rawrap`; DELVE has 8 rows at
+   RA = 360.0; 1.39 TB and 27 GB of pre-fix backups sit in the public tree.
+10. **VISTA/UKIRT trees:** −999999500 sentinels, no epochs, position errors or quality bits; VHS has no
+   Y or Z.
+
+Also: the XP tree has no `properties` or metadata files; GALEX `*_mag_auto` lacks the zero point;
+Pristine has 58,177 duplicated `source_id` pairs.
+
+#### 3.13.7 Correctness fixes (24 Nov 04:06–04:37)
+
+- **Masking ratios and weight decay** (`[C:2f8750e]`). Every fine-tune config (v1–v10, stopgap, the v7
+  ablation grid) set `xp_masking_ratio` / `m_masking_ratio` under `training:`, but `finetune_msa` read
+  `finetuning:` with defaults 0.3 / 0.3; so **v1–v10 all ran 0.3 / 0.3** (v10 configured 0.9 / 0.6).
+  The autoencoder parameter group had no `weight_decay`, so it took **AdamW's default 0.01**, not
+  `training.weight_decay` 1e-5. `training/finetune_settings.py` now reads either location, stops on a
+  disagreement, logs the effective values to `<log>_effective_settings.json`, and prints the keys the
+  fine-tune never reads.
+- **Silently ignored keys** found by that audit: `training.lasso`, `optimizer`, `mini_batch_size`,
+  `micro_batch_size`, `epochs`, `presaved`, the I/O-cache and monitor keys, `pert_features`, `pert_scale`,
+  `pert_ebv_scale` and the cosine-schedule keys (pretraining only); `data.valid_keys` (the datafile is
+  opened, no row read); under the anchored formulation also `finetuning.lf`, `rncloss`, `pert_labels`
+  and the `quantile_*` keys; `ensemble_seed/size` when the ensemble is off.
+- **Errors in pretraining** (`[C:9d200a6]`). `_pretrain_io_error_cols` dropped every error column unless
+  the loss was weighted or noise was on, so the July pretraining never read any E_*, `e_parallax` or XP
+  error. `training.load_errors` (default true) now loads them; losses unchanged; the input cache grows
+  from about 117 GB to 225 GB (the 150 GB cap then samples per shard). G, BP, RP, W1, W2 and EBV still
+  have no error column in the Andrae file.
+
+#### 3.13.8 GBS benchmark ids and leakage
+
+- `gaia_fgk_benchmarks.parquet` stores `GaiaDR3` rounded through float64: 85 of the 192 stored ids exist
+  in DR3, and 2 of those (η Ser, ψ Ser) are a faint neighbour without parallax, so the loader attached
+  labels to **wrong or missing stars for 109 of 192** (`[C:3c84d32]`).
+- `scripts/fix_gbs_dr3_ids.py` queries the Gaia archive for every source whose id rounds to the stored
+  float64 and accepts the one whose propagated position lies within 1.5″ and whose parallax agrees:
+  **192 of 192 stored ids recovered** (191 by superset + position + parallax, median 0.13″; one lone
+  2-parameter source). 9 rows without a stored id stay unmatched. Output:
+  `/arc/projects/astroai/msa/catalogues/gaia_fgk_benchmarks_v3_dr3ids.parquet`; the loader now refuses
+  float-typed or float-rounded id lists.
+- **Leakage:** 74 of the 192 GBS stars are rows of the v5 fine-tune table, **63 in its train split**,
+  because the table builder excluded the benchmarks by their rounded ids. Every past "independent"
+  benchmark check was partly on training stars; the v10 QA scores only the 4–5 unseen ones
+  (`[R:docs/qa-v10-20261124/README.md]`).
+
+#### 3.13.9 2MASS: the "Gaia-keyed" table is mis-keyed
+
+- The Andrae-file J/H/Ks equal those of `/arc/projects/k-pop/catalogues/adql_matches/twomass.fits` for
+  4,086 of 4,086 stars compared. That file's `tmass_oid` holds DR3 `clean_tmass_psc_xsc_oid`, but its
+  photometry is that of the DR1 `tmass_original_valid` row with the same number; both count up with
+  declination and coincide only for the first rows near the south pole (10 of 100 sampled rows right:
+  the first 10) (`[C:7fd6e17]`).
+- **Evidence:** corr(Ks, G) 0.010 for the Andrae values against **0.948** for the designation join
+  through the Gaia archive (2,000 random wide-binary companions); 0.0045 on 329M good-quality pairs in
+  photometry attempt 1; 0.002–0.016 in the HATS audit's appendix. Replacing the Andrae columns with
+  `twomass.fits` changes nothing (−0.004 → +0.002).
+- **Consequence:** every model since July has had wrong 2MASS J/H/Ks as inputs and reconstruction targets.
+  `data/twomass_gaia.py` refuses the mis-keyed files; the archive designation join works but runs at
+  about 40 stars/s; table builders default to masking 2MASS (missing, not wrong). Correct 2MASS for all
+  Gaia comes from the master's positional match.
+
+#### 3.13.10 The single evaluator and the v10 QA
+
+- `scripts/evaluate_model.py` (`[C:d056113]`, follow-ups `efe632f`, `1835760`, `f01fcb8`, `8e377f7`)
+  reads saved predictions and the frozen split, scores TEST rows only, reports QA-reserved objects only,
+  and drops rows a legacy model has seen (`--exclude-table-splits 0,1`). The six ARC-only scripts are now
+  `src/masked_stellar_autoencoder/qa/` with tests. Competitor rows were staged on CANFAR (step
+  `qa-v10-stage`; attempt 1 SHBoost reader failed; attempt 3 parsed Andrae's `in_training_sample` text
+  flag, which attempt 2 had read as always true).
+- **Headline** (`[R:docs/qa-v10-20261124/report.md]`; TEST minus v5 train/valid):
+
+  | Set | n | Teff bias / NMAD | log g | [Fe/H] | 68 / 95 % coverage |
+  |---|--:|---|---|---|---|
+  | posterior head, v1-table test | 15,473 | +21 / 121 K | −0.023 / 0.139 | −0.004 / 0.121 | 0.34–0.53 / – |
+  | S1 `all`, 5 heads | 46,148 | −6 / 79 K | +0.004 / 0.194 | +0.001 / 0.117 | joint 0.664 / 0.923 |
+  | S2 flow | 46,148 | −5 / 71 K | −0.007 / 0.151 | −0.001 / 0.101 | joint 0.661 / 0.922 |
+  | S3 v2.1 gmix | 46,491 | parallax PIT | | | 0.720 (E(B−V) 0.898) |
+
+  - frozen core under TEST minus v5 train/valid: 296 rows, 12 below −2.5, so every metal-poor cell is
+    descriptive; worst |bias| at G ≤ 16 0.031–0.057 dex;
+  - wide binaries (33,321 pairs): Δ[Fe/H] +0.086 / 0.189, |z| < 1 for 0.57; held-out pool: +0.312
+    (3000–3700 K), +0.256 (3700–4200 K), +0.095 (4200–4800 K), +0.016 (4800–5500 K);
+  - open clusters (637, HR23 p ≥ 0.7): giant − dwarf **+0.328** (224 clusters), median χ²/dof 2.63;
+    globular clusters vs Harris within ±0.09 per bin;
+  - competitors on exact-id overlap: the S2 flow has the smaller median absolute error than Andrae 2023
+    (own training stars removed), GSP-Phot and SHBoost in every parameter, and than StarHorse except
+    log g (+0.019); the references are survey labels on the models' own scale, which favours the models.
+
+#### 3.13.11 Encoder v11 (P4 code)
+
+`[C:07b21c5]`, `[R:docs/programme/encoder-v11.md]`. A token set encoder for any subset of 215 bands
+(101 magnitudes in 24 surveys from GALEX to AllWISE W4, 110 XP coefficients, 4 conditioning values),
+read through two mappings of one contract (`gaia_keyed_v1a`, 28 bands; `gaia_master_v2`, 95 bands).
+One token per visible quantity (band embedding with wavelength, Fourier value and log-error features);
+32 latents reading the tokens by cross-attention at layers 0 and 4; 8 pre-LN blocks; attention pooling
+to z ∈ ℝ²⁵⁶; a decoder queried by band; 10,534,209 parameters. Losses: Student-t reconstruction with
+σ² = σ²_meas + σ²_model,b and the torchgaiaxp filter-integral term in three modes with fitted zero
+point, colour term and scatter per band (46 bands in the master, 11 in v1a). Strict config (unknown keys
+fail), masking only from `masking:`, streaming from HATS with the frozen assignment and no row caps.
+48 tests; the CPU smoke run recovers the injected zero points (SDSS i 0.019 vs 0.020, SkyMapper i −0.031
+vs −0.030, PS1 i/z 0.015 vs 0.015). The agent committed from a temporary clone because the shared
+checkout held other agents' unpushed commits and edits (`[T:2026-11-24 04:36]`).
+
+#### 3.13.12 `photometry_v1a` (P3 input of v11)
+
+`scripts/build_photometry_v1a.py`, step `photometry-v1a`, output
+`/arc/projects/astroai/msa/runs/msa_tables_v2/photometry_v1a/` (`[A:msa_tables_v2/photometry_v1a/manifest.json]`).
+
+- **Attempt 1** (`z2lilwcf`, 37 min) built the table with the mis-keyed 2MASS (r(G, Ks) 0.0045 on 329M
+  pairs: checks failed) and SkyMapper joined on its float64-rounded `gaia_dr3_id1` (233.8M ids matched
+  no DR3 source, as reported by the build agent). **Attempt 2** (`t35rl8o3`) masked 2MASS and validated
+  every table, but read SkyMapper's `mean_epoch` (an MJD) as a year, so the 1″ position check failed;
+  stopped before the build. **Attempt 3** was never submitted (outage). **Attempt 4** (`jhyv5gfi`,
+  `[C:d7de92a]`) completed in 17.4 min.
+- **Product:** 1,811,709,771 rows in the `gaia/dr3` partitioning and row order, 2,016 files, 166.7 GB,
+  65 columns; absent and sentinel values null; 0 duplicate `source_id`; SFD identical to `dustmaps`
+  (maps in `/arc/projects/astroai/msa/catalogues/sfd/`).
+- **Pairing validation** before use: one random Gaia partition per order-1 HEALPix pixel; residual NMAD
+  of G − x about a robust cubic in BP − RP for G < 19, against the same rows with x permuted:
+
+  | Table | Residual NMAD | Ratio to random pairing | corr(G, x) | Id mode |
+  |---|--:|--:|--:|---|
+  | PS1 r | 0.030 mag | 0.019 | 0.985 | exact |
+  | SDSS r | 0.029 mag | 0.017 | 0.967 | exact |
+  | SkyMapper r | 0.036 mag | 0.018 | 0.991 | float64-rounded id + 1″ position |
+  | CatWISE W1 | 0.145 mag | 0.079 | 0.836 | exact |
+
+  A per-partition gate masks a survey where it fails: PS1 16, CatWISE 17, SDSS 1 partitions (low
+  latitude; extinction or crowding, not keying). Contract-usable rows: PS1 r 892,417,764; SkyMapper r
+  381,600,937; SDSS r 113,682,410; CatWISE W1 677,031,825; 2MASS 0. SkyMapper rows matched by exact or
+  rounded id plus position: 530,651,861 Gaia sources.
+- Caveat: the SDSS magnitudes in `sdss.fits` are probably model, not PSF, magnitudes (unverified).
+
+#### 3.13.13 v11 GPU pilot
+
+`pretrain_v11_pilot_20261124` (`j6qd4aat`, step `v11-pilot`; attempt 1 never submitted). One H100 NVL
+MIG 1g.12gb slice; the production model and step (32,768 rows, bf16, checkpointing) on the FIT rows of
+the first 200 Gaia partitions (179M rows); trees `gaia/dr3` + `dr3_xp_continuous` + `photometry_v1a`;
+two wall-limited segments with a resume at step 250, then a 16-latent arm (250 steps logged)
+(`[R:docs/programme/encoder-v11.md §9]`).
+
+| | 32 latents | 16 latents |
+|---|--:|--:|
+| rows/s (median of 25-step windows) | **5,300** | **7,700** |
+| s per step | 6.2 | 4.3 |
+| data wait | 0.03 % | 0.04 % |
+| peak GPU memory allocated | 7.4 GiB | 5.1 GiB |
+| DEV NLL at step 250: phot / XP / XP hidden | 1.92 / 1.98 / 1.97 | 3.16 / 2.10 / 2.08 |
+
+- 4–6× below the CPU-FLOP projection of 19k–34k rows/s: MFU ≈ 9 %, compute-bound, cost per row
+  independent of the step's XP share; halving the latents gains only 45 %, so about two thirds of the
+  step is outside the latent stack. **One REC pass: ≈ 71 h on one slice** (49 h with 16 latents).
+- Losses fell (32 latents, steps 25 → 725): photometry NLL 7.7 → −0.32, XP 2.0 → 1.68, `sed` 3.4 → −0.08,
+  `phot` 10.3 → 0.38, `calibrate` −2.0 → −2.55. DEV zero points at step 500 (start 0): SDSS g/r/i
+  −0.044/−0.010/−0.026, SkyMapper v/g/r/i −0.017/−0.010/−0.002/−0.003, PS1 g/r/i/z
+  −0.014/−0.000/−0.000/+0.012; |k| ≤ 0.07; σ_sys 0.012–0.023 mag.
+- The loader emits token buckets in runs (> 100 consecutive photometry-only steps, then XP-heavy ones).
+  The allocator retried six 0.65–1 GiB allocations. Full pretraining needs bucket mixing, profiling and
+  more GPU (full H100, larger MIG profile, or data parallelism, which v11 does not have): the user's
+  decision.
+
+#### 3.13.14 S3 v2 and v2.1: final results
+
+The v2 final pass (`ms-s3v2-final-2`, attempt 2, 23 Nov 12:49) completed the flow ensemble after the
+retrained members (`ms-s3v2-flow-{k}b`, seed 100, lr 5e-4); v2.1 (`ms-s3v21-*`) fitted the outlier
+width λ separately (`[A:distance_extinction_s3_v2_20261123/report.md]`,
+`[A:distance_extinction_s3_v21_20261123/report.md]`, `heads/history_gmix_k.json`; attempt 3 from
+`[T:2026-11-23 13:29]`):
+
+| | attempt 3 gmix | v2 gmix | **v2 flow** | v2.1 gmix |
+|---|---|---|---|---|
+| held-out NLL of the measurements | −2.192 | −2.284 | **−2.304** | −2.282 |
+| precise-parallax Δμ bias / NMAD (mag) | +0.013 / 0.205 | +0.010 / 0.210 | +0.007 / 0.208 | +0.009 / 0.209 |
+| parallax 68 % coverage (bins failing G; S/N) | 0.706 | 0.720 (4; 4) | 0.710 (1; 1) | 0.721 (4; 4) |
+| 95 open clusters: Δμ bias / NMAD | +0.015 / 0.117 | +0.031 / 0.160 | **+0.002 / 0.136** | +0.029 / 0.161 |
+| clusters: χ²/dof of s / E | – | 0.85 / 1.31 | 0.83 / 1.09 | 0.84 / 1.24 |
+| XP hidden: Δμ NMAD | 1.37 | **0.578** | 0.587 | 0.578 |
+| XP hidden: 68 % coverage | 0.61 | **0.699** | 0.684 | 0.699 |
+| E(B−V) bias / NMAD vs labels | +0.001 / 0.040 | +0.001 / 0.033 | −0.004 / 0.040 | +0.001 / 0.031 |
+| E(B−V) 68 % coverage | 0.90 | 0.902 | 0.935 | 0.899 |
+| fitted κ_g, G ≤ 13 / 17–18 | – | 2.23–2.35 / 1.19–1.23 | 2.17–2.30 / 1.18–1.22 | – |
+| fitted κ_E (6 G bins) | – | 0.17–0.67 | 0.20–1.03 | 0.19–0.67 |
+| outlier fraction ε | – | 0.093–0.101 | 0.069–0.085 | 0.082–0.088 (one member 0.026) |
+| outlier width | – | 4 κ_E e (fixed) | 4 κ_E e (fixed) | λ e, λ = 1.39–1.46 (one member 3.20) |
+| fitted σ_zp | – | 0 | 0 | 0 |
+| prediction speed (stars/s, 5 members, all summaries) | – | 2,027 | 759 | – |
+
+- **The flow is the distance model:** best NLL, best cluster agreement, narrower intervals. Its weak
+  spot: with XP hidden, 68 % coverage is 0.34 for stars whose predicted ϖ/σ < 1 (891 test stars) and
+  0.56 at 1–3 (7,520), against 0.53 (1,997) and 0.68 (23,694) for the gmix (each family's own
+  predicted-S/N classes).
+- **E(B−V) intervals still over-cover** with every noise model: the cause is the predicted E
+  distribution, not the label noise. Metal-poor distances remain 0.05–0.09 mag too far at
+  [Fe/H] < −1. Training had to roll back divergent flows (4 of 5 original v2 flows).
+
+### 3.14 Architecture by era
+
+Six generations, each with its loss. Formulas and code references: `architecture.md`, `encoder-v11.md`.
+
+**Era 1. July masked autoencoder (July – Oct; checkpoint 26 is the only survivor).** 140 scalar slots,
+each with its own periodic embedding; a flattened residual MLP to z ∈ ℝ²⁵⁶; 34.1M parameters.
+
+```mermaid
+flowchart LR
+  X["140 slots: XP 110, 24 bands, parallax, SFD, pm, RA Dec<br/>missing and masked = -9999 token"] --> E["periodic embeddings, Linear 2240-2048,<br/>8 ResBlocks"]
+  E --> Z(("z 256"))
+  Z --> D["decoder 256-512-1024-136"]
+  D --> L["masked L1 on masked and observed slots"]
+```
+
+Loss: $\mathcal L=\sum_{ij}m_{ij}\lvert\hat x_{ij}-x_{ij}\rvert/\sum_{ij}m_{ij}$, masks XP by row and other
+slots by element (config 0.5 / 0.2; the July run's ratios are unverified); no measurement errors.
+
+**Era 2. October heads on the pretrained encoder (15 Oct – 9 Nov; all lost).** Parents 72 and 86 of
+the October run; heads per target, compared in about 150 CANFAR jobs; six targets from 24 Oct, with
+StarHorse ages and distances as labels.
+
+```mermaid
+flowchart LR
+  P["October encoder, parent72 or parent86"] --> Z(("z 256"))
+  Z --> H["head per target: Huber, residual Huber,<br/>Gaussian NLL, MDN, NSF"]
+  Z --> R["masked reconstruction, weight 0.01 to 0.03"]
+  H --> T["Teff, log g, Fe/H, alpha, age, distance"]
+```
+
+Loss: Huber ℓ_δ(y − ŷ), or the label-noise Gaussian
+$\tfrac12\big[(y-\mu)^2/(\sigma^2+e^2)+\log(\sigma^2+e^2)\big]$, or a mixture/flow NLL; plus λ_rec × the
+masked L1. From 28 Oct NSF heads were trained by a masked energy score (era 3) after their sparse-label
+NLL failed its gates.
+
+**Era 3. Master-label six-target NSF (7 – 12 Nov; lost with `msa_runs`).** All 140 inputs plus head
+metadata context; XP dropout 30 % (v2b); a 6-D conditional NSF; learned survey maps with seismic log g
+on the identity map.
+
+```mermaid
+flowchart LR
+  I["140 inputs + head metadata context,<br/>XP dropout 30 %"] --> Z(("z"))
+  Z --> F["6-D conditional NSF:<br/>Teff, log g, Fe/H, alpha, age, distance"]
+  F --> M["samples through survey maps,<br/>plus label noise"]
+  M --> ES["masked energy score per record"]
+  Z --> R["masked reconstruction 0.03"]
+```
+
+Loss per record r with observed block O_r, samples x_j ~ p(x | z), mapped and noise-convolved
+ỹ_j = g_s(x_j) + ε_j, per-coordinate scales W:
+$\mathrm{ES}=\tfrac1m\sum_j\lVert W(\tilde y_j-y_r)_{O_r}\rVert-\tfrac{1}{2m(m-1)}\sum_{j\ne k}\lVert W(\tilde y_j-\tilde y_k)_{O_r}\rVert$,
+plus 0.03 × masked L1 and map regularisation (`docs/reports/msa-current-production-contract-20261108.md`).
+
+**Era 4. Multi-survey fine-tunes v1–v10 (13 – 21 Nov).** The July checkpoint fine-tuned end to end on
+the v1 or v5 table. v1–v5 (and the stopgap): a quantile head with monotone spline or conditional maps
+and a consensus gauge. v6–v10: a joint Student-t head with per-survey maps by record count and
+identity-mapped anchors (IRFM Teff, seismic log g; the high-resolution [Fe/H] core from v10).
+
+```mermaid
+flowchart LR
+  C["July checkpoint 26, fine-tuned"] --> Z(("z 256"))
+  Z --> Q["v1-v5: quantile head 16, 50, 84,<br/>spline or conditional maps, consensus gauge"]
+  Z --> T["v6-v10: Student-t head nu 5 over Teff, log g, Fe/H, E, log plx,<br/>per-survey maps, identity anchors, fitted noise"]
+  Z --> R["masked L1: labelled 0.2, unlabelled 0.2"]
+```
+
+Losses: stopgap and v1–v4 $0.8\sum_q\rho_q(y-\hat y_q)+0.2\,\mathcal L_\mathrm{MAE}$ with
+ρ_q(u) = u(q − 1[u < 0]) through the survey maps (v5 added unlabelled reconstruction 0.2 and two-masking
+consistency 0.1); v6–v10 $0.8\,\mathcal L_\mathrm{joint}+0.2\,\mathcal L^\mathrm{lab}_\mathrm{MAE}+0.2\,\mathcal L^\mathrm{unl}_\mathrm{MAE}$,
+the joint multivariate Student-t likelihood of each star's records with Σ = A L Lᵀ Aᵀ + diag(e² + σ_s²),
+censored floors and map penalties (`architecture.md` §4). All ran masking 0.3 / 0.3 and encoder weight
+decay 0.01 (§3.13.7).
+
+**Era 5. Heads on frozen v10 latents (19 – 23 Nov).** The encoder is frozen; three latent views (full,
+PARALLAX hidden, XP and PARALLAX hidden) feed separate products.
+
+```mermaid
+flowchart LR
+  K["v10 encoder, frozen"] --> LF["z: full input"]
+  K --> LP["z: PARALLAX hidden"]
+  K --> LX["z: XP and PARALLAX hidden"]
+  LF --> S1["S1: CNRE ratio heads x5, Neyman sets"]
+  LF --> S2["S2: flow and mixtures x5, EIV, conformal"]
+  LP --> S3["S3: p of s and E given z, gmix and flow x5"]
+  LX --> S3
+  PLX["Gaia parallax, L21 zero point"] --> S3
+```
+
+Losses: S1 CNRE (K = 8, γ = 1), optimum log p(z | θ) − log p(z); S2
+$-\log\int p(\theta\mid z)\,\mathcal N(y\mid\theta,\mathrm{diag}\,\sigma^2)\,d\theta$; S3 the exact
+marginal likelihood of the parallax and the E(B−V) label by quadrature, with fitted κ_g, κ_E, ε, λ, σ_zp
+(`architecture.md` §6, §7, §9).
+
+**Era 6. v11 token set encoder (24 Nov; implemented and piloted, not trained).**
+
+```mermaid
+flowchart LR
+  B["any subset of 215 bands: magnitudes, XP coefficients,<br/>conditioning; value and error per token"] --> M["whole-XP, whole-survey and token masking"]
+  M --> A["32 latents, cross-attention, 8 blocks"]
+  A --> Z(("z 256"))
+  Z --> D["query decoder per band"]
+  D --> R["Student-t reconstruction"]
+  D --> FI["filter integral with fitted zp, colour, scatter"]
+```
+
+Loss: $\mathcal L=\mathcal L_\mathrm{rec}+0.1(\mathcal L_\mathrm{sed}+\mathcal L_\mathrm{phot})+\mathcal L_\mathrm{cal}$,
+with Student-t (ν = 5) NLLs whose variance adds the quoted error and a fitted per-band model scatter
+(`encoder-v11.md` §5).
 
 ---
 
@@ -668,6 +1193,92 @@ Each lesson gives the evidence and its source. Several were learned more than on
     [Fe/H] only for giants with G < 13 (r = 0.57; 0.07–0.20 elsewhere).
   - *Source:* `[R:docs/design-20261122-data-driven-inference.md §0–4]`, `[T:2026-11-17 16:52, 17:12]`.
 
+### Data plumbing, throughput and agent operations (added 24 Nov)
+
+- **L49. Gaia ids that went through float64 are not Gaia ids.**
+  - *Evidence:*
+    - GBS v3: every stored `GaiaDR3` equals its float64 rounding; 85 of 192 exist in DR3 and 2 of
+      those are faint neighbours, so labels attached to wrong or missing stars for 109 of 192.
+    - SkyMapper DR4 `gaia_dr3_id1`: 233.8M ids matched no DR3 source in photometry attempt 1.
+    - `wd_ages_published.parquet`: 978 companion ids stored as float.
+    - A genuine Gaia id list is float64-exact for about 0.2–0.5 of its ids (VB21 0.20, WD+MS 0.37,
+      PS1 0.45, SDSS 0.51); a rounded list is exact for all of them (GBS 1.0).
+  - *Rule:* refuse float-typed id columns and id lists that are all float-exact; recover by the rounding
+    superset plus a position (and parallax) check; never build an id column from row dicts or a
+    float DataFrame.
+  - *Source:* `[C:3c84d32, ae719af, 9c2ffba]`, `[A:msa_split_v1/manifest.json]`,
+    `[A:msa_tables_v2/photometry_v1a/manifest.json]`.
+- **L50. A table keyed by `source_id` can still pair the wrong stars.**
+  - *Evidence:* `adql_matches/twomass.fits` joins DR3 `clean_tmass_psc_xsc_oid` to DR1
+    `tmass_original_valid.tmass_oid`, a different numbering: corr(G, Ks) 0.002–0.0045 against 0.948
+    for the designation join. The Andrae-file J/H/Ks used by every model since July are the same wrong
+    values. L10 (18 Nov) saw the symptom; the cause was found only on 24 Nov.
+  - *Rule:* a join key's name says nothing about its numbering; test the photometry, not the keys.
+  - *Source:* `[C:7fd6e17]`, `[T:2026-11-24 05:31]`.
+- **L51. A config key the code does not read is worse than a missing key.**
+  - *Evidence:* v1–v10 set masking 0.9 / 0.6 under `training:`; the fine-tune read `finetuning:` and ran
+    0.3 / 0.3. The encoder group got AdamW's default weight decay 0.01, not 1e-5. Pretraining never
+    loaded the error columns it was configured with. Further pretraining-only and formulation-specific
+    keys were inert in every fine-tune config (§3.13.7).
+  - *Rule:* strict schemas (v11: unknown keys fail at any depth); log the effective value and its source
+    for every setting; one place per setting.
+  - *Source:* `[C:2f8750e, 9d200a6, 07b21c5]`.
+- **L52. Validate every cross-match pairing across the whole sky before using it.**
+  - *Evidence:* the pairing test (G − x about a cubic in BP − RP against a permuted-pairing null, one
+    partition per order-1 pixel) passed PS1, SDSS, SkyMapper and CatWISE at 0.017–0.079 of the null
+    scatter, caught 2MASS (corr 0.0045), and masked 34 low-latitude partitions where it failed. Its
+    first version flagged CatWISE through faint galaxies and QSOs (fixed by G < 19). Other pairing
+    hazards found the same day: AllWISE's motion fit moved a source by 1,630″ when used as proper motion;
+    LS DR11 holds ≈ 22M objects twice; HSC deblend parents are the best match for 26–44 % of Gaia stars;
+    SkyMapper's `mean_epoch` is an MJD, not a year.
+  - *Rule:* a pairing check per table and per partition, by sky region and second band, before any build;
+    a failing table is masked, never "fixed" by a guess.
+  - *Source:* `[C:7eeb379, 9c2ffba, 2838385]`, `[XM:ffa5e23]`, `[R:docs/hats-survey-audit-20261124.md]`.
+- **L53. Benchmarks leak into training unless they are reserved by key before any table is built.**
+  - *Evidence:* 74 of the 192 GBS stars are rows of the v5 fine-tune table, 63 in its train split (the
+    builder excluded them by rounded ids); 107,026 consistency-set stars have their labels in training;
+    the July encoder saw the inputs of every XP star, so TEST is label-fresh but not input-fresh.
+  - *Rule:* reserve QA objects in the split (msa-split-v1 `QA_RESERVED`), exclude by exact id, score
+    only unseen rows (`evaluate_model.py` drops seen rows and reports reserved sets separately).
+  - *Source:* `[R:docs/qa-v10-20261124/README.md]`, `[R:docs/programme/data.md §3.1]`.
+- **L54. Regression-to-the-mean artefacts look like physics (extends L24).**
+  - *Evidence:* the C0b "old-age ceiling" (−0.15 / −0.27 dex at t = 1.0–1.1 / 1.1–1.2 for Xiang) is
+    reproduced by a null simulation that bins a correct map by a noisy consensus (−0.20 / −0.26); binned
+    by the record value it is flat. Posterior coverage in bins of the *true* [Fe/H] fails for every
+    predictive distribution (S2 0.26–0.59 below −2) by construction.
+  - *Rule:* bin by both the reference and the prediction (the evaluator's `feh_ref` and `feh_pred`
+    strata), and simulate the null before reading a trend as a model error.
+  - *Source:* `[R:docs/age-c0c-20261124/report.md §1]`, `[R:docs/programme/qa.md K3]`.
+- **L55. Measure throughput on the target GPU before budgeting.**
+  - *Evidence:* the v11 `--estimate` (CPU FLOP counts, 25–45 % MFU) projected 19k–34k rows/s; the GPU
+    pilot measured 5,300 (MFU ≈ 9 %, data wait 0.03 %): one REC pass 71 h, not 11–20 h. Halving the
+    latents gained only 45 %, so the cost is outside the part the estimate modelled.
+  - *Source:* `[R:docs/programme/encoder-v11.md §9]`.
+- **L56. Parallel agents in one checkout collide.**
+  - *Evidence:*
+    - the v11 agent found two unpushed commits and uncommitted edits of other agents in the shared
+      checkout and committed from a temporary clone; the v1a agent left `data.md` alone for the same
+      reason;
+    - stop hooks asked the coordinator to commit half-finished edits of running agents (24 Nov 04:37);
+    - two merge commits went out with git's default message and no trailers (`3daf29a`, `b1f5827`);
+    - an agent created an empty local `/arc` (05:13 UTC), which switched xmatcher's test suite into
+      CANFAR mode;
+    - a container restart stopped an agent after its push but before its report (00:07 UTC);
+    - the local disk filled (0 MB free), and the coordinator first over-reported what it had deleted
+      (corrected at 03:40 UTC).
+  - *Rule:* one clean clone per agent for commits; `git merge -m` with trailers; never commit another
+    agent's work; check `git status` and the remote before reporting; nothing outside the scratchpad
+    and the repos.
+  - *Source:* `[T:2026-11-24 00:23, 03:40, 04:36, 04:37, 06:22]`, `[XM:d651612]`.
+- **L57. Write only to trees you own; snapshot the ones you read.**
+  - *Evidence:* xmatcher's CANFAR cache and default output pointed inside the community tree
+    `/arc/projects/hats`; extra cache roots were written to as replicas. The user's rule (23 Nov 22:52):
+    MSA outputs only under `/arc/projects/astroai/msa`. The Gaia-master pilots snapshotted
+    `/arc/projects/hats` before and after every run; the only change came from Pensus's own import.
+  - *Rule:* read-only community roots enforced in code (xmatcher refuses every write under
+    `/arc/projects/hats`; the audit script refuses an output under its root).
+  - *Source:* `[C:1cf4560, 0188491]`, `[XM:0518d3e, cf819f2]`, `[R:docs/gaia-master-data.md]`.
+
 ---
 
 ## 5. Data actually used, and what was lost
@@ -751,3 +1362,13 @@ Where things live (ARC, `/arc/projects/astroai/msa/`):
 - Numbers quoted only from `[T:...]` messages whose source files lived in the session scratchpad
   (e.g. `pair/compare*.txt`, `rescore/analysis.txt`, `consistency_v7.txt`). The underlying predictions are on ARC
   (`multisurvey_eval_*`, `rescore_pred_*`, `consistency_pred_*`), but those tables were not recomputed for this document.
+- *(Added 24 Nov.)* The encoding throughput of about 17,600 stars/s per GPU slice quoted in `README.md`
+  §6: its source log was not re-located.
+- *(Added 24 Nov.)* The 233.8M SkyMapper ids without a DR3 match in photometry attempt 1 are from the
+  build agent's report; the final build's manifest records the position-matched staging instead.
+- *(Added 24 Nov.)* Whether the SDSS magnitudes in `adql_matches/sdss.fits` are model or PSF
+  magnitudes (probably model).
+- *(Added 24 Nov.)* From the HATS audit: why GALEX GUVcat holds 24 rows fewer than the release; the
+  J-PAS array order; whether lsdb can open `dr3_xp_continuous` without its metadata files.
+- *(Added 24 Nov.)* The full-H100 time of 10–20 h per v11 REC pass is an estimate from the slice pilot,
+  not a measurement.
