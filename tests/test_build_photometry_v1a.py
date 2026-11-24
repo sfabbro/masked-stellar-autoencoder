@@ -100,9 +100,9 @@ def sky(tmp_path_factory):
                 "b": np.degrees(np.arcsin(rng.uniform(-1, 1, n))),
                 "parallax": rng.normal(1, 0.5, n),
                 "parallax_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
-                "pmra": rng.normal(0, 5, n),
+                "pmra": rng.normal(0, 200, n),  # fast movers: SkyMapper epoch matters
                 "pmra_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
-                "pmdec": rng.normal(0, 5, n),
+                "pmdec": rng.normal(0, 200, n),
                 "pmdec_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
                 "phot_g_mean_mag": pa.array(g, pa.float32()),
                 "phot_g_mean_flux_over_error": rng.uniform(50, 5000, n).astype(
@@ -269,13 +269,20 @@ def sky(tmp_path_factory):
     gra, gdec = gtab["ra"].to_numpy(), gtab["dec"].to_numpy()
     off = np.full(nm, 0.1)
     off[-3], off[-2] = 0.6, 0.2
-    sra = gra[src_sm] + off / 3600 / np.cos(np.radians(gdec[src_sm]))
+    # SkyMapper sees the star at its mean epoch: Gaia position + pm * (epoch - J2016)
+    ep = rng.uniform(57262.0, 59469.0, nm)
+    dt = (ep - 57388.5) / 365.25
+    pmr = gtab["pmra"].to_numpy()[src_sm]
+    pmd = gtab["pmdec"].to_numpy()[src_sm]
+    cosd = np.cos(np.radians(gdec[src_sm]))
+    sdec = gdec[src_sm] + pmd * dt / 3.6e6
+    sra = gra[src_sm] + (off / 3600 + pmr * dt / 3.6e6) / cosd
     key = np.where(sid_sm > 0, sid_sm.astype(np.float64).astype(np.int64), 0)
     smc = {
         "object_id": np.arange(nm, dtype=np.int64),
         "raj2000": sra,
-        "dej2000": gdec[src_sm],
-        "mean_epoch": np.full(nm, 2016.0),
+        "dej2000": sdec,
+        "mean_epoch": ep,  # MJD, as in DR4
         "flags": np.zeros(nm, np.int32),
         "gaia_dr3_id1": pa.array(key, mask=sid_sm == 0),
         "gaia_dr3_dist1": dist,

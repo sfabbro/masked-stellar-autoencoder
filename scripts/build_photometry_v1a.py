@@ -83,7 +83,7 @@ from pathlib import Path
 
 import numpy as np
 
-BUILD_VERSION = "photometry-v1a-2"
+BUILD_VERSION = "photometry-v1a-3"
 CONTRACT = "gaia_keyed_v1a"
 GAIA_NROWS_DR3 = 1_811_709_771
 HEALPIX_SHIFT = 35  # Gaia source_id // 2**35 = HEALPix level-12 nested index
@@ -141,7 +141,7 @@ GAIA_READ = [
     "pmdec_error",
 ]
 GAIA_OUT = [c for c in GAIA_READ if c not in ("ra", "dec", "l", "b")]
-GAIA_EPOCH = 2016.0
+GAIA_EPOCH_MJD = 57388.5  # J2016.0 (TCB); SkyMapper DR4 mean_epoch is an MJD
 SKYMAPPER_POS_SEP = 1.0  # arcsec: Gaia (propagated to the SkyMapper epoch) vs SkyMapper
 
 
@@ -870,7 +870,7 @@ def skymapper_pairs(
     sra = gather(store["_ra"], sp, a, b)
     sdec = gather(store["_dec"], sp, a, b)
     sep_ep = gather(store["_epoch"], sp, a, b)
-    dt = np.where(np.isfinite(sep_ep), sep_ep - GAIA_EPOCH, 0.0)
+    dt = np.where(np.isfinite(sep_ep), (sep_ep - GAIA_EPOCH_MJD) / 365.25, 0.0)
     pr = np.nan_to_num(np.asarray(pmra, np.float64)[qi])
     pd_ = np.nan_to_num(np.asarray(pmdec, np.float64)[qi])
     d0 = np.asarray(dec, np.float64)[qi]
