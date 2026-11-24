@@ -37,10 +37,11 @@ Sources (read only):
   ``obj_id``; ids missing from their chunk file are looked up in every file);
 * SkyMapper DR4 HATS ``/arc/projects/hats/skymapper/dr4``: rows with ``gaia_dr3_id1``
   and ``gaia_dr3_dist1`` < ``--skymapper-max-sep`` (2 arcsec). Its ``gaia_dr3_id1`` went
-  through float64 upstream (every id is float-exact; 38 % of them are no DR3 id, others
-  belong to a neighbouring id), so the key is the rounded id: a Gaia source takes,
-  among the rows with its rounded id, the one within 1" of its position propagated to
-  the SkyMapper mean epoch (one-to-one, nearest first; ``skymapper_pairs``);
+  through float64 upstream in most files (every id float-exact; 38 % of the staged ids
+  are no DR3 id, others name a neighbouring id), so a Gaia source takes, among the rows
+  keyed by its exact or its float64-rounded id, the one within 1" of its position
+  propagated to the SkyMapper mean epoch (one-to-one, nearest first;
+  ``skymapper_pairs``);
 * SFD98 E(B-V) maps (``SFD_dust_4096_{ngp,sgp}.fits``, dustmaps' files) evaluated at the
   Gaia (l, b) exactly as ``dustmaps.sfd.SFDQuery`` does (ZEA WCS, bilinear, nearest at
   the edge); no 0.86 rescaling.
@@ -83,7 +84,7 @@ from pathlib import Path
 
 import numpy as np
 
-BUILD_VERSION = "photometry-v1a-3"
+BUILD_VERSION = "photometry-v1a-4"
 CONTRACT = "gaia_keyed_v1a"
 GAIA_NROWS_DR3 = 1_811_709_771
 HEALPIX_SHIFT = 35  # Gaia source_id // 2**35 = HEALPix level-12 nested index
@@ -110,6 +111,7 @@ PAIR_MIN_N = 50
 PAIR_MAX_RATIO = 0.5
 PAIR_MAX_OUTLIER = 0.3  # outlier share relative to the random-pairing null
 PAIR_OUTLIER_MAG = 1.0
+PAIR_MAX_G = 19.0  # test rows: G < 19, where BP - RP is reliable and galaxies are few
 VALIDATE_ORDER = 1  # validation sample: one random Gaia partition per order-1 pixel
 
 ADQL = Path("/arc/projects/k-pop/catalogues/adql_matches")
@@ -856,9 +858,16 @@ def skymapper_pairs(
     Gaia sources can round to one key), accept pairs whose SkyMapper position lies
     within ``max_sep`` of the Gaia position propagated (proper motion) to the SkyMapper
     mean epoch; one-to-one, nearest first."""
+    # most rows carry the float64-rounded id, some the exact id: look up both keys
     key = float64_key(sid)
     pad = 1 << 11  # float64 rounding moves an id by < 2**10
-    qi, sp = lookup_multi(store["source_id"], key, lo_id - pad, hi_id + pad)
+    qa, sa = lookup_multi(store["source_id"], key, lo_id - pad, hi_id + pad)
+    ex = np.flatnonzero(key != sid)
+    qb, sb = lookup_multi(store["source_id"], sid[ex], lo_id, hi_id)
+    pair = np.unique(
+        np.stack([np.concatenate([qa, ex[qb]]), np.concatenate([sa, sb])], 1), axis=0
+    )
+    qi, sp = pair[:, 0], pair[:, 1]
     pos = np.full(len(sid), -1, np.int64)
     st = dict(candidates=len(qi), gaia_with_candidate=int(len(np.unique(qi))))
     if not len(qi):
@@ -936,7 +945,8 @@ def pairing_metrics(g, bp, rp, x, seed: int = 0) -> dict:
     c = np.asarray(bp, np.float64) - np.asarray(rp, np.float64)
     g = np.asarray(g, np.float64)
     x = np.asarray(x, np.float64)
-    ok = np.isfinite(c) & np.isfinite(g) & np.isfinite(x) & (c > -0.5) & (c < 4.0)
+    with np.errstate(invalid="ignore"):
+        ok = np.isfinite(c) & np.isfinite(x) & (c > -0.5) & (c < 4.0) & (g < PAIR_MAX_G)
     n = int(ok.sum())
     out = dict(n=n)
     if n < PAIR_MIN_N:

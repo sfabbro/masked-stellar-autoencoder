@@ -278,6 +278,7 @@ def sky(tmp_path_factory):
     sdec = gdec[src_sm] + pmd * dt / 3.6e6
     sra = gra[src_sm] + (off / 3600 + pmr * dt / 3.6e6) / cosd
     key = np.where(sid_sm > 0, sid_sm.astype(np.float64).astype(np.int64), 0)
+    key[2::7] = sid_sm[2::7]  # some files kept the exact id
     smc = {
         "object_id": np.arange(nm, dtype=np.int64),
         "raj2000": sra,
@@ -364,7 +365,7 @@ def test_build_completes_with_manifest_checks(sky):
     for name in B.SURVEY_ORDER:
         assert m["pairing_validation"][name]["passed"], name
     smv = m["pairing_validation"]["skymapper"]
-    assert smv["id_float_exact_fraction"] == 1.0 and smv["ids_ok"]
+    assert smv["id_float_exact_fraction"] > 0.8 and smv["ids_ok"]  # mostly rounded
     assert m["pairing_validation"]["ps1"]["id_float_exact_fraction"] < 0.9
     pmatch = s["skymapper"]["position_match"]
     assert pmatch["accepted"] == len(sky["sid_sm"]) - 3 and pmatch["conflicts"] >= 1
