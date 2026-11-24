@@ -122,6 +122,7 @@ def load_labels(path) -> pd.DataFrame | None:
 
 
 def references_for(pred, labels: pd.DataFrame | None) -> dict:
+    """Reference per product: the file's own ``<p>_ref``, else ``--labels``."""
     refs = {}
     for p in REF_PRODUCTS:
         if f"{p}_ref" in pred.extra:
@@ -160,6 +161,10 @@ def evaluate_set(name, pred, split, a, cov, labels, physical, comp_frames) -> di
     c = covariates_for(sub, cov)
     refs = references_for(sub, labels)
     strata = strata_for(sub, c, refs)
+    out["reference_source"] = {
+        p: ("prediction file (<p>_ref)" if f"{p}_ref" in sub.extra else "--labels")
+        for p in refs
+    }
     out["strata_known"] = {k: float(np.mean(v != "")) for k, v in strata.items()}
     out["heldout"] = {}
     for p in REF_PRODUCTS:
@@ -296,7 +301,10 @@ def main(argv=None):
         help="NAME=PATH[:ADAPTER] (adapter: auto, canonical, posterior, s2, s3)",
     )
     p.add_argument(
-        "--core", help="NAME of a --predictions set whose rows index --core-records"
+        "--core",
+        action="append",
+        default=[],
+        help="NAME of a --predictions set whose table_row indexes --core-records (repeatable)",
     )
     p.add_argument("--core-records")
     p.add_argument(
@@ -341,6 +349,13 @@ def main(argv=None):
         default=[],
         help="drop rows whose table_split is listed (e.g. 0,1)",
     )
+    p.add_argument(
+        "--table-splits",
+        action="append",
+        default=[],
+        help="NAME=npz (table_row, split): legacy row splits of the table that set "
+        "NAME's table_row indexes (only for sets without table_split)",
+    )
     p.add_argument("--title", default="MSA QA")
     p.add_argument("--out", type=Path)
     a = p.parse_args(argv)
@@ -351,6 +366,16 @@ def main(argv=None):
     for name, spec in _kv(a.predictions).items():
         path, _, adapter = spec.partition(":")
         preds[name] = load_predictions(path, adapter or "auto", model=name)
+    for name, path in _kv(a.table_splits).items():
+        pr = preds[name]
+        if "table_split" in pr.extra:
+            raise SystemExit(f"{name} already carries table_split")
+        with np.load(path) as z:
+            split_of = dict(
+                zip(z["table_row"].tolist(), z["split"].tolist(), strict=True)
+            )
+        rows = np.asarray(pr.extra["table_row"]).tolist()
+        pr.extra["table_split"] = np.array([split_of.get(r, -1) for r in rows])
     if a.stage_competitors:
         ids = np.unique(np.concatenate([
             pr.source_id[split.partition(pr.source_id) == PART_CODE[a.partition]] for pr in preds.values()
@@ -409,7 +434,7 @@ def main(argv=None):
         if not (a.core_records and a.core_config):
             missing["core"] = "--core needs --core-records and --core-config"
         else:
-            metrics["core"] = dict(set=a.core, **run_core(a, preds[a.core], split))
+            metrics["core"] = {name: run_core(a, preds[name], split) for name in a.core}
     else:
         missing["core"] = "no --core set"
     tables = {}

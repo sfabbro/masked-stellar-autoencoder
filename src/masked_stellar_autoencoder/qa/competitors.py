@@ -96,42 +96,48 @@ def read_andrae(path, ids=None, chunk: int = 10_000_000) -> pd.DataFrame:
 
 
 def read_shboost(path, ids=None) -> pd.DataFrame:
-    import pyarrow.dataset as ds
+    """SHBoost 2024 parts, one file at a time (each file's own schema).
+
+    Columns: ``xgb_logteff`` (log10 K), ``xgb_logg``, ``xgb_met``, ``xgb_av``,
+    ``dist`` (kpc); ``source_id`` may be stored as the pandas index.
+    """
+    import pyarrow.parquet as pq
 
     files = (
         sorted(Path(path).glob("*.parquet")) if Path(path).is_dir() else [Path(path)]
     )
-    dset = ds.dataset([str(f) for f in files], format="parquet")
-    cols = dset.schema.names
-    # SHBoost 2024 columns: xgb_logteff (log10 K), xgb_logg, xgb_met, xgb_av,
-    # dist (kpc)
-    c = dict(
-        source_id=_pick(cols, "source_id"),
-        logteff=_pick(cols, "xgb_logteff"),
-        logg=_pick(cols, "xgb_logg"),
-        fe_h=_pick(cols, "xgb_met"),
-        dist=_pick(cols, "dist"),
-        av=_pick(cols, "xgb_av"),
+    want = None if ids is None else np.unique(np.asarray(ids, np.int64))
+    wanted = ("source_id", "xgb_logteff", "xgb_logg", "xgb_met", "xgb_av", "dist")
+    parts = []
+    for f in files:
+        names = pq.read_schema(f).names
+        t = pq.read_table(f, columns=[c for c in wanted if c in names]).to_pandas()
+        if "source_id" not in t.columns:
+            t = t.reset_index()
+        if "source_id" not in t.columns:
+            raise KeyError(f"{f}: no source_id (columns {names[:12]})")
+        sid = t["source_id"].to_numpy(np.int64)
+        if want is not None:
+            t = t[np.isin(sid, want)]
+        if not len(t):
+            continue
+        out = pd.DataFrame({"source_id": t["source_id"].to_numpy(np.int64)})
+        if "xgb_logteff" in t:
+            out["teff"] = 10.0 ** t["xgb_logteff"].to_numpy(np.float64)
+        if "xgb_logg" in t:
+            out["logg"] = t["xgb_logg"].to_numpy(np.float64)
+        if "xgb_met" in t:
+            out["fe_h"] = t["xgb_met"].to_numpy(np.float64)
+        if "dist" in t:
+            out["dist_mod"] = _dist_mod_kpc(t["dist"])
+        if "xgb_av" in t:
+            out["ebv"] = t["xgb_av"].to_numpy(np.float64) / R_V
+        parts.append(out)
+    return (
+        pd.concat(parts, ignore_index=True)
+        if parts
+        else pd.DataFrame(columns=["source_id"])
     )
-    if c["source_id"] is None:
-        raise KeyError(f"{path}: no source_id column in {cols[:20]}")
-    flt = None
-    if ids is not None:
-        flt = ds.field(c["source_id"]).isin(
-            pd.unique(np.asarray(ids, np.int64)).tolist()
-        )
-    t = dset.to_table(columns=[v for v in c.values() if v], filter=flt).to_pandas()
-    out = pd.DataFrame({"source_id": t[c["source_id"]].astype("int64")})
-    if c["logteff"]:
-        out["teff"] = 10.0 ** t[c["logteff"]].astype("float64").to_numpy()
-    for k in ("logg", "fe_h"):
-        if c[k]:
-            out[k] = t[c[k]].astype("float64").to_numpy()
-    if c["dist"]:
-        out["dist_mod"] = _dist_mod_kpc(t[c["dist"]])
-    if c["av"]:
-        out["ebv"] = t[c["av"]].astype("float64").to_numpy() / R_V
-    return out
 
 
 def read_starhorse(path, ids=None) -> pd.DataFrame:

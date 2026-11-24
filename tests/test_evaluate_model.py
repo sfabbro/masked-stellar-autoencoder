@@ -191,6 +191,15 @@ def test_adapters_posterior_s2_s3_and_canonical(tmp_path):
              pit_plx=RNG.random(n), pit_e=RNG.random(n))  # fmt: skip
     s3 = load_predictions(tmp_path / "s3.npz")
     assert s3.q["dist_mod"][0, 0] == pytest.approx(10.0)  # 1 kpc
+    mle = RNG.normal(size=(n, 3))
+    np.savez(tmp_path / "s1.npz", source_id=sid, table_row=np.arange(n), split=np.full(n, 2),
+             mle=mle, smax=np.zeros(n), post_median=mle, neyman68_lo=mle - 1, neyman68_hi=mle + 1,
+             neyman95_lo=mle - 2, neyman95_hi=mle + 2,
+             in_neyman68_param=np.ones((n, 3), bool))  # fmt: skip
+    s1 = load_predictions(tmp_path / "s1.npz")
+    assert s1.kind == "A" and s1.levels.tolist() == [0.025, 0.16, 0.5, 0.84, 0.975]
+    np.testing.assert_allclose(s1.q["logg"][:, 1], mle[:, 1] - 1)
+    assert s1.extra["fe_h_cov68"].all()
     write_predictions(tmp_path / "c.npz", p)
     c = load_predictions(tmp_path / "c.npz")
     np.testing.assert_array_equal(c.source_id, sid)
@@ -335,7 +344,7 @@ def test_evaluator_end_to_end(tmp_path):
     assert s["competitors"]["andrae2023"]["teff"]["competitor"][
         "bias"
     ] == pytest.approx(100)
-    assert m["core"]["with_reference"] > 0 and "table" in m["core"]
+    assert m["core"]["toy"]["with_reference"] > 0 and "table" in m["core"]["toy"]
     assert m["conatal"]["wide_binaries"]["pairs_scored"] > 0
     assert "competitor:survey_of_surveys_dr3" in m["missing"]
     report = (out / "report.md").read_text()

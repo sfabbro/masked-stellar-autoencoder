@@ -1403,6 +1403,8 @@ STEPS["gaia-master-estimate"] = dict(
 # QA of the v10 chain with the single evaluator (scripts/evaluate_model.py):
 # stage the competitor rows (Andrae 2023, SHBoost, StarHorse 2023) of the TEST
 # stars of the v10 prediction files; the evaluation itself reads the slim files.
+# Attempt 1 (uajdsmxr) staged Andrae and StarHorse; its SHBoost reader failed,
+# attempt 2 reads the SHBoost parts one file at a time.
 QA_V10 = "qa_v10_20261124"
 _V10 = ROOT + "multisurvey_finetune_20261121_v10/"
 STEPS["qa-v10-stage"] = dict(
@@ -1416,6 +1418,7 @@ STEPS["qa-v10-stage"] = dict(
         f" --predictions posterior_core={_V10}multi_v10_core.npz"
         f" --predictions s2_flow={ROOT}distributional_heads_s2_v10_20261122/s2_predictions_flow.npz"
         f" --predictions s3_gmix={ROOT}distance_extinction_s3_v21_20261123/s3_predictions_gmix.npz"
+        f" --predictions s1_all_ens={ROOT}likelihood_head_s1_v10_ens_20261122/s1_predictions.npz"
         " --competitor andrae2023=/arc/projects/k-pop/catalogues/table-1.fits.gz"
         " --competitor shboost=/arc/projects/k-pop/catalogues/shboost"
         " --competitor starhorse2023=/arc/projects/k-pop/catalogues/starhorse_ages"

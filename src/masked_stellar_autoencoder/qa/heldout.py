@@ -85,17 +85,20 @@ def evaluate_product(pred: Predictions, p: str, ref, strata: dict) -> dict:
     if not ok.any():
         return out
     q = pred.q[p]
-    sd = 0.5 * (q[:, -1] - q[:, 0]) if q.shape[1] >= 3 else np.full(len(q), np.nan)
+    iv = central_interval(pred.levels, q, 0.68)
+    sd = 0.5 * (iv[1] - iv[0]) if iv is not None else np.full(len(q), np.nan)
     pull = (med - ref) / np.where(sd > 0, sd, np.nan)
     out["pull"] = dict(
         median=float(np.nanmedian(pull[ok])), nmad=summary(pull[ok])["nmad"]
     )
-    pit = pit_from_quantiles(pred.levels, q, ref)
-    if np.isfinite(pit[ok]).sum() >= MIN_N:
-        diag = pit_diagnostics(pit[ok & np.isfinite(pit)])
-        out["pit"] = {
-            k: diag[k] for k in ("n", "pit_ks", "pit_ks_pvalue", "pit_mean", "pit_var")
-        }
+    if pred.kind != "A":  # confidence limits of a measurement are not a CDF
+        pit = pit_from_quantiles(pred.levels, q, ref)
+        if np.isfinite(pit[ok]).sum() >= MIN_N:
+            diag = pit_diagnostics(pit[ok & np.isfinite(pit)])
+            out["pit"] = {
+                k: diag[k]
+                for k in ("n", "pit_ks", "pit_ks_pvalue", "pit_mean", "pit_var")
+            }
     for axis in AXES:
         lab = strata[axis]
         cells = {}

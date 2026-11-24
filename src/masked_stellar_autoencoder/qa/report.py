@@ -43,6 +43,57 @@ def _cell(s, p):
     return f"{_f(s['bias'], _nd(p), True)} / {_f(s['nmad'], _nd(p))} ({s['n']}){star}"
 
 
+def _fails(cov) -> str:
+    """Strata (n >= 20) outside nominal ± 0.03, counted per axis."""
+    fails = cov["failing_strata"]
+    if not fails:
+        return "every stratum with n ≥ 20 within ±0.03"
+    total = sum(
+        sum(not r["descriptive"] for r in rows) for rows in cov["by_stratum"].values()
+    )
+    axes = {}
+    for f in fails:
+        axes.setdefault(f.split(":")[0], []).append(f.split(":", 1)[1])
+    return f"{len(fails)} of {total} strata (n ≥ 20) outside ±0.03 (" + "; ".join(
+        f"{a}: {', '.join(v)}" for a, v in axes.items()) + ")"  # fmt: skip
+
+
+def _headline(m) -> list[str]:
+    L = ["## Headline", "",
+         "| set | product | n | bias | NMAD | 68 % cov | 95 % cov | strata failing 68 % |",
+         "|---|---|--:|--:|--:|--:|--:|--:|"]  # fmt: skip
+    for name, res in m["sets"].items():
+        for p, h in res.get("heldout", {}).items():
+            c68 = h.get("coverage", {}).get("68", {})
+            c95 = h.get("coverage", {}).get("95", {})
+            o = h["overall"]
+            L.append(f"| {name} | {p} | {o['n']} | {_f(o['bias'], _nd(p), True)} | {_f(o['nmad'], _nd(p))} "
+                     f"| {_f(c68.get('overall'), 3)} | {_f(c95.get('overall'), 3)} | {len(c68.get('failing_strata', []))} |")  # fmt: skip
+        for key, sp in res.get("supplied_pit", {}).items():
+            L.append(
+                f"| {name} | {key} | {sp['n']} | | | {_f(sp['coverage'], 3)} | | {len(sp['failing_strata'])} |"
+            )
+    L.append("")
+    for name, core in m.get("core", {}).items():
+        w = core["worst_bias_G_le_16"]
+        L.append(f"- core `{name}`: worst |bias| (G ≤ 16, n ≥ 20) {_f(w['bias'], 3, True)} in {w['bin']} "
+                 f"({core['with_reference']} TEST rows with a core reference)")  # fmt: skip
+    c = m.get("conatal")
+    if c:
+        wb = c["wide_binaries"]
+        L.append(f"- wide binaries: Δ[Fe/H] {_f(wb['all']['median'], 3, True)} / NMAD {_f(wb['all']['nmad'])} "
+                 f"({wb['pairs_scored']} pairs), |z| < 1 {_f(wb['all'].get('abs_z_lt_1'), 2)}")  # fmt: skip
+        oc = c["open_clusters"]
+        if oc.get("clusters"):
+            L.append(f"- open clusters: giant − dwarf {_f(oc['giant_minus_dwarf'], 3, True)} "
+                     f"({oc['giant_minus_dwarf_clusters']} clusters), median χ²/dof {_f(oc['median_chi2_dof'], 2)}")  # fmt: skip
+        if "binary_pool_heldout" in c:
+            bp = c["binary_pool_heldout"]["by_companion_teff"]
+            L.append("- binary pool, primary − companion: " + "; ".join(
+                f"{k} K {_f(v['median'], 3, True)}" for k, v in bp.items() if v["n"]))  # fmt: skip
+    return L + [""]
+
+
 def _md_set(name, res) -> list[str]:
     L = [f"### {name} (`{res['model']}`, kind {res['kind'] or '?'})", ""]
     r = res["rows"]
@@ -54,15 +105,20 @@ def _md_set(name, res) -> list[str]:
         )
         + "."
     )
+    if res.get("reference_source"):
+        L.append(
+            "References: "
+            + ", ".join(f"{p} from {v}" for p, v in res["reference_source"].items())
+            + "."
+        )
     L.append("")
     for p, h in res.get("heldout", {}).items():
         L.append(f"**{p}** ({UNITS.get(p, '')}) vs reference: bias / NMAD (n) overall "
                  f"{_cell(h['overall'], p)}; pull NMAD {_f(h.get('pull', {}).get('nmad'), 2)}"
                  + (f"; PIT KS {_f(h['pit']['pit_ks'], 3)}" if h.get("pit") else ""))  # fmt: skip
         for mass, cov in h.get("coverage", {}).items():
-            fails = cov["failing_strata"]
-            L.append(f"- {mass} % coverage ({cov['method']}): {_f(cov['overall'], 3)}; strata "
-                     f"outside ±0.03 (n ≥ 20): {', '.join(fails) if fails else 'none'}")  # fmt: skip
+            L.append(f"- {mass} % coverage ({cov['method']}): {_f(cov['overall'], 3)}; "
+                     f"{_fails(cov)}")  # fmt: skip
         for axis in ("G", "feh_ref", "stage", "input_class", "ruwe", "abs_b"):
             cells = h["by_stratum"].get(axis)
             if not cells:
@@ -71,8 +127,9 @@ def _md_set(name, res) -> list[str]:
             L.append(f"- by {axis}: {row}")
         L.append("")
     for key, sp in res.get("supplied_pit", {}).items():
-        L.append(f"**{key}**: 68 % coverage {_f(sp['coverage'], 3)} (n {sp['n']}); failing "
-                 f"strata: {', '.join(sp['failing_strata']) or 'none'}")  # fmt: skip
+        L.append(
+            f"**{key}**: 68 % coverage {_f(sp['coverage'], 3)} (n {sp['n']}); {_fails(sp)}"
+        )
         g = sp["by_stratum"].get("G", [])
         if g:
             L.append("- by G: " + "; ".join(f"{c['stratum']}: {_f(c['coverage'], 3)} "
@@ -121,8 +178,8 @@ def _md_set(name, res) -> list[str]:
     return L
 
 
-def _md_core(core) -> list[str]:
-    L = [f"## Frozen metal-poor core (set `{core['set']}`)", "",
+def _md_core(name, core) -> list[str]:
+    L = [f"### Core: set `{name}`", "",
          f"Rows with a core reference: {core['with_reference']}; rows: "
          + ", ".join(f"{k} {v}" for k, v in core["rows"].items()) + ".", "",
          "Median offset / NMAD (n) of [Fe/H] − core reference, per [Fe/H]_ref × G "
@@ -210,11 +267,15 @@ def write_markdown(path, m) -> None:
             if m["exclude_table_splits"] else "") + ".", "",
          "Conventions (qa.md §0): bias = median(prediction − reference), NMAD = 1.4826 MAD, "
          "coverage of the (noisy) reference with Wilson 95 % Bonferroni bands, cells with n < 20 "
-         "descriptive (*). Teff in K, others in dex or mag.", "", "## Held-out labels and calibration", ""]  # fmt: skip
+         "descriptive (*). Teff in K, others in dex or mag.", ""]  # fmt: skip
+    L += _headline(m)
+    L += ["## Held-out labels and calibration", ""]
     for name, res in m["sets"].items():
         L += _md_set(name, res)
     if "core" in m:
-        L += _md_core(m["core"])
+        L += ["## Frozen metal-poor core", ""]
+        for name, core in m["core"].items():
+            L += _md_core(name, core)
     if "conatal" in m:
         L += _md_conatal(m["conatal"])
     L += ["## Not run / missing inputs", ""]
@@ -269,6 +330,8 @@ def write_plots(out_dir, m, sets, tables) -> list[str]:
         sub, refs, _ = sets[name]
         from .stats import pit_from_quantiles
 
+        if sub.kind == "A":
+            continue
         fig, axes = plt.subplots(
             1, len(hp), figsize=(3.2 * len(hp), 2.8), squeeze=False
         )
@@ -281,8 +344,8 @@ def write_plots(out_dir, m, sets, tables) -> list[str]:
         fig.savefig(f, dpi=110)
         plt.close(fig)
         made.append(f.name)
-    if "core" in m:
-        t = m["core"]["table"]
+    for name, core in m.get("core", {}).items():
+        t = core["table"]
         gn = ("G<=13.5", "13.5-15", "15-16", "16-17.65")
         fig, ax = plt.subplots(figsize=(6, 3.5))
         for k, g in enumerate(gn):
@@ -293,9 +356,10 @@ def write_plots(out_dir, m, sets, tables) -> list[str]:
         ax.axhline(0, color="0.5", lw=0.8)
         ax.set_xticks(range(len(t)), list(t), rotation=30, fontsize=7)
         ax.set_ylabel("[Fe/H] − core ref")
+        ax.set_title(f"frozen core: {name} (cells with n ≥ 5)", fontsize=9)
         ax.legend(fontsize=7)
         fig.tight_layout()
-        f = out_dir / "qa_core_bias.png"
+        f = out_dir / f"qa_core_{name}.png"
         fig.savefig(f, dpi=110)
         plt.close(fig)
         made.append(f.name)

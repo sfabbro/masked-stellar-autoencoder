@@ -18,7 +18,8 @@ Canonical layout (``.npz``; ``write_predictions`` writes it):
 Products: ``teff`` (K), ``logg`` (dex), ``fe_h`` (dex), ``ebv`` (mag),
 ``parallax`` (mas), ``dist_mod`` (mag). Adapters convert the v10-era files:
 ``posterior`` (``predict_fits_rows`` output: multi_*.npz, consistency_*.npz),
-``s2`` (``s2_predictions_<family>.npz``), ``s3`` (``s3_predictions_<family>.npz``).
+``s1`` (``s1_predictions*.npz``, product A: MLE and Neyman limits), ``s2``
+(``s2_predictions_<family>.npz``), ``s3`` (``s3_predictions_<family>.npz``).
 """
 
 from __future__ import annotations
@@ -146,7 +147,39 @@ def _s3(z, model) -> Predictions:
                        LEVELS_68.copy(), q, extra, "B")  # fmt: skip
 
 
-ADAPTERS = dict(canonical=_canonical, posterior=_posterior, s2=_s2, s3=_s3)
+def _s1(z, model) -> Predictions:
+    """s1_likelihood_head: MLE and confidence limits of (Teff, log g, [Fe/H]).
+
+    Product A (measurement): the "quantiles" are the MLE and the per-parameter
+    68 / 95 % Neyman (else profile) limits, so coverage is meaningful and PIT
+    is not. ``<p>_cov68`` / ``_cov95`` carry the head's own per-parameter
+    Neyman membership of the label it was calibrated on.
+    """
+    mle = np.asarray(z["mle"], np.float64)[:, :3]
+    cols, levels = [], []
+    for name, lo_l, hi_l in (("95", 0.025, 0.975), ("68", 0.16, 0.84)):
+        lo = z.get(f"neyman{name}_lo", z.get(f"lo{name}"))
+        hi = z.get(f"neyman{name}_hi", z.get(f"hi{name}"))
+        if lo is not None and hi is not None:
+            cols.append((lo_l, np.asarray(lo, np.float64)[:, :3]))
+            cols.append((hi_l, np.asarray(hi, np.float64)[:, :3]))
+    cols.append((0.5, mle))
+    cols.sort(key=lambda c: c[0])
+    levels = np.array([c[0] for c in cols])
+    stack = np.stack([c[1] for c in cols], axis=2)  # (N, 3, K)
+    q, extra = {}, {"table_row": z["table_row"], "table_split": z["split"]}
+    for j, p in enumerate(("teff", "logg", "fe_h")):
+        q[p] = stack[:, j]
+        for name in ("68", "95"):
+            key = f"in_neyman{name}_param"
+            if key in z.files:
+                extra[f"{p}_cov{name}"] = np.asarray(z[key][:, j], bool)
+    return Predictions(
+        model or "s1", np.asarray(z["source_id"], np.int64), levels, q, extra, "A"
+    )
+
+
+ADAPTERS = dict(canonical=_canonical, posterior=_posterior, s1=_s1, s2=_s2, s3=_s3)
 
 
 def detect(files) -> str:
@@ -155,6 +188,8 @@ def detect(files) -> str:
         return "canonical"
     if {"truth_names", "quantiles", "median"} <= files:
         return "posterior"
+    if {"mle", "smax", "post_median"} <= files:
+        return "s1"
     if {"q16", "q84", "conformal_group"} <= files:
         return "s2"
     if {"s_q", "e_q", "pit_plx"} <= files:

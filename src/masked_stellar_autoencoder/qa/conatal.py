@@ -147,7 +147,7 @@ def wide_binaries(P: PredTable, pair1, pair2, pair_r=None, keep=None,
     for lo, hi in DG_BINS:
         m = (dG >= lo) & (dG < hi)
         out["by_dG"][f"[{lo},{hi})"] = dict(
-            all=_cell(d[m], z[m]), neither_labelled=_cell(d[m & unl])
+            all=_cell(d[m], z[m]), neither_labelled=_cell(d[m & unl], z[m & unl])
         )
     tf = P.teff[faint]
     for lo, hi in COMPANION_TEFF_BINS:
