@@ -1400,6 +1400,35 @@ STEPS["gaia-master-estimate"] = dict(
 )
 
 
+# QA of the v10 chain with the single evaluator (scripts/evaluate_model.py):
+# stage the competitor rows (Andrae 2023, SHBoost, StarHorse 2023) of the TEST
+# stars of the v10 prediction files; the evaluation itself reads the slim files.
+# Attempt 1 (uajdsmxr) staged Andrae and StarHorse; its SHBoost reader failed,
+# attempt 2 reads the SHBoost parts one file at a time; attempt 3 parses Andrae's
+# in_training_sample text flag ('True '/'False', every row read as True before).
+QA_V10 = "qa_v10_20261124"
+_V10 = ROOT + "multisurvey_finetune_20261121_v10/"
+STEPS["qa-v10-stage"] = dict(
+    run_id=QA_V10 + "_stage",
+    gpu=0,
+    ram=48,
+    cpu=4,
+    command=(
+        "python -u scripts/evaluate_model.py"
+        f" --predictions posterior_test={_V10}multi_v10_test.npz"
+        f" --predictions posterior_core={_V10}multi_v10_core.npz"
+        f" --predictions s2_flow={ROOT}distributional_heads_s2_v10_20261122/s2_predictions_flow.npz"
+        f" --predictions s3_gmix={ROOT}distance_extinction_s3_v21_20261123/s3_predictions_gmix.npz"
+        f" --predictions s1_all_ens={ROOT}likelihood_head_s1_v10_ens_20261122/s1_predictions.npz"
+        " --competitor andrae2023=/arc/projects/k-pop/catalogues/table-1.fits.gz"
+        " --competitor shboost=/arc/projects/k-pop/catalogues/shboost"
+        " --competitor starhorse2023=/arc/projects/k-pop/catalogues/starhorse_ages"
+        ' --stage-competitors "$experiment_output/competitors"'
+    ),
+    files=[],
+)
+
+
 # P3 (docs/programme/README.md section 6): MSA-IN v1a photometry (data.md section 2.7)
 # of all 1,811,709,771 Gaia DR3 sources in the gaia/dr3 HATS layout, the input tree of
 # the v11 encoder (configs/pretrain-v11.yaml). CPU only: stages the source_id-keyed

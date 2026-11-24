@@ -74,8 +74,8 @@ model:
   cosine_latent: false
 
 training:
-  xp_masking_ratio: 0.9
-  m_masking_ratio: 0.6
+  # Fine-tune masking ratios live under finetuning: below (0.3 / 0.3). A copy here
+  # that disagrees now stops the fine-tune (training/finetune_settings.py).
   mask_mixture_xp_full_frac: 0.0
   lr: 0.00001
   weight_decay: 0.00001

@@ -123,14 +123,15 @@ Why the target departs from today's encoder:
 ## 5. Fixes required before the full-scale run
 
 Found while writing these documents; each one changes results.
-1. **Masking ratios are not applied.** The v10 config's fine-tune masking ratios (0.9 XP / 0.6 other) sit under `training:`, but the code reads `finetuning:`, so every v10 run used 0.3 / 0.3.
-2. **Wrong 2MASS stars.** 2MASS J/H/Ks in the Andrae input file belong to other stars (Ks–G correlation 0.016), yet they are encoder inputs and targets everywhere. Replace them with the Gaia-keyed matches.
-3. **Measurement errors are unused in pretraining;** they are not even loaded.
+1. **Masking ratios are not applied.** The v10 config's fine-tune masking ratios (0.9 XP / 0.6 other) sit under `training:`, but the code reads `finetuning:`, so every v10 run used 0.3 / 0.3. *Fixed 2026-11-24* (`training/finetune_settings.py`: both locations accepted, a disagreement stops the run, effective values logged; the encoder weight decay now applies too, and the keys the fine-tune never reads are printed).
+2. **Wrong 2MASS stars.** 2MASS J/H/Ks in the Andrae input file belong to other stars (Ks–G correlation 0.016), yet they are encoder inputs and targets everywhere. *2026-11-24:* the "Gaia-keyed" `adql_matches/twomass.fits` is the source of the error (its join used `clean_tmass_psc_xsc_oid` as `tmass_oid`), so it is refused; the correct designation join (`data/twomass_gaia.py`, Gaia archive) gives Ks–G correlation 0.95; table builders mask 2MASS by default until the full-wavelength master supersedes it.
+3. **Measurement errors are unused in pretraining;** they are not even loaded. *2026-11-24:* loaded by default (`training.load_errors`); losses unchanged.
 4. **Scaler and parallax.** The input scaler is refitted between pretraining and fine-tune, and parallax changes from raw mas to S/N clipped at 10. A single input contract is needed.
 5. **Splits** are replaced by `msa-split-v1`: frozen, with the assignment file and override list on ARC.
 6. **QA plumbing.**
-   - The single evaluator (`scripts/evaluate_model.py`, promised on 20 Nov) does not exist.
-   - Several QA scripts live only on ARC; they move into the repo with tests.
+   - The single evaluator (`scripts/evaluate_model.py`, promised on 20 Nov) does not exist. *Done 2026-11-24*; first report on v10: `docs/qa-v10-20261124/`.
+   - Several QA scripts live only on ARC; they move into the repo with tests. *Done* (`src/masked_stellar_autoencoder/qa/`).
+   - GBS v3 ids were rounded through float64 (109 of 192 wrong or missing): exact ids in `/arc/projects/astroai/msa/catalogues/gaia_fgk_benchmarks_v3_dr3ids.parquet`; the loader refuses rounded ids.
    - Every run before 13 Nov is gone, so old numbers must be recomputed before any comparison.
 7. **Master documentation** still names v3 and the old counts, and `catalogues.json` points at deleted paths.
 8. **The 8M row cap** and the other caps (5M unlabelled, 4.7M S3, 2M S2, 1M forward model) are removed.

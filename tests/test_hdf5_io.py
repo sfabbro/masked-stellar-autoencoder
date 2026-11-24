@@ -420,3 +420,22 @@ def test_microbatch_accumulation_rejects_batchnorm(tmp_path):
         with pytest.raises(ValueError, match="changes BatchNorm statistics"):
             wrapper._train_pretrain_key("train", optimizer, 2, 0.0, 0.0, 0)
         store.close()
+
+
+def test_pretraining_batches_carry_measured_errors_by_default(tmp_path):
+    """The pretraining store loads E_* / bpe_* errors even under a plain MAE loss."""
+    from masked_stellar_autoencoder.training.pretrain_msa import _pretrain_io_error_cols
+
+    io_errors = _pretrain_io_error_cols(["error"], loss_fn="mae", pert_features=False)
+    with h5py.File(tmp_path / "input.h5", "w") as h5:
+        h5.create_dataset("train", data=_table(), chunks=(2,))
+        store = ProjectedHDF5Store(
+            h5, ["feature"], io_errors, scratch_dir=tmp_path, cache_fraction=1.0,
+            chunk_rows=2,
+        )  # fmt: skip
+        store.prepare(["train"], ["train"], scaler_max_rows=4, scaler_seed=4)
+        assert store.fields == ["feature", "error"]
+        scaler = RobustScaler().fit(np.array([[0.0], [6.0]], dtype=np.float32))
+        errors = np.concatenate([e for _, e in _collect(store, scaler)])
+    # measured errors divided by the scale factor (2.0), not unit errors
+    np.testing.assert_allclose(errors[:, 0], (0.5 + np.arange(7) / 10) / 2.0, rtol=1e-6)

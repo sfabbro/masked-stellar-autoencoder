@@ -9,7 +9,9 @@ the raw pretraining HDF5 exactly as build_stopgap_finetune_table does (same
 fields, same cleaning), and written to ``DIR/stars.fits`` with NaN labels, so
 predict_fits_rows predicts them like the benchmark stars.
 ``--labelled-table`` also lists the targets that are in a fine-tune table
-(``labelled.npz``), whose labels the model has seen.
+(``labelled.npz``), whose labels the model has seen. The raw 2MASS columns
+are replaced as in build_stopgap_finetune_table (``--twomass``: mask by
+default, archive, a designation-keyed table, or none to keep them).
 """
 
 import argparse
@@ -23,7 +25,12 @@ import numpy as np
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_stopgap_finetune_table import RAW, scan_shard  # noqa: E402
+from build_stopgap_finetune_table import (  # noqa: E402
+    RAW,
+    TWOMASS_DEFAULT,
+    replace_twomass,
+    scan_shard,
+)
 
 PARAMETERS = ("teff", "logg", "fe_h", "alpha")
 
@@ -36,6 +43,7 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--chunk", type=int, default=262_144)
+    p.add_argument("--twomass", default=TWOMASS_DEFAULT)
     p.add_argument(
         "--labelled-table",
         type=Path,
@@ -77,6 +85,7 @@ def main():
                       flush=True)  # fmt: skip
     sid, first = np.unique(np.concatenate(ids), return_index=True)
     matrix = np.concatenate(blocks)[first]
+    twomass = replace_twomass(a.twomass, fields, dict(stars=(sid, matrix)))
     from astropy.table import Table
 
     t = Table()
@@ -89,7 +98,7 @@ def main():
     t.write(out)
     (a.output / "manifest.json").write_text(json.dumps(dict(
         targets=len(wanted), stars_with_inputs=int(len(sid)), raw=a.raw,
-        config=str(a.config)), indent=2) + "\n")  # fmt: skip
+        config=str(a.config), twomass=twomass), indent=2, default=str) + "\n")  # fmt: skip
     print("wrote", out, len(sid))
 
 

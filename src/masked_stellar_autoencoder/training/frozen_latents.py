@@ -175,7 +175,10 @@ def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=
     from astropy.io import fits
 
     from .eval_ensemble import _inverse_labels, _inverse_quantile_block
+    from .finetune_data import ExtraColumns
 
+    # sidecar features (e.g. Gaia-keyed 2MASS) replace the table's columns
+    extra = ExtraColumns(config["data"].get("extra_columns"))
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     device = torch.device(device)
@@ -210,6 +213,8 @@ def encode_table(config, state, fits_path, out_dir, *, device="cpu", chunk_rows=
             chunk = data[sl]
 
             def col(name, chunk=chunk):
+                if name in extra.columns:
+                    return extra.get(name, chunk["source_id"])
                 return np.asarray(chunk[name], dtype="f8")
 
             X = np.column_stack([col(c) for c in cols])

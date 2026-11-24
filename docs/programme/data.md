@@ -145,7 +145,7 @@ The master holds spectroscopic Teff, log g, [Fe/H] and α only. The other target
 | E(B−V) | Reddening labels | `/arc/projects/astroai/msa/runs/reddening_labels_20261118_v6/` | `v5_reddening.npz`, `v1_reddening.npz`, intrinsic colours fitted on the 4,697,789 v5 train rows. |
 | log g anchors | Seismology | `/arc/projects/k-pop/catalogues/` | `apokasc-3-2024.fits`, `apo_k2_2024.fits`, `apokasc-1-dwarfs.fits`, `kepler-legacy-dwarfs.fits`; loaded by `training/anchor_labels.py`. |
 | Teff anchors | IRFM-scale Teff | computed by `training/irfm_teff.py` | 898,839 stars in v5. They are computed from photometry that is also a model input, so they are a consistency anchor, not an independent truth. |
-| Benchmarks | Gaia FGK benchmarks v3 | `/arc/projects/k-pop/catalogues/gaia_fgk_benchmarks.parquet` | 192 stars (63 with XP inputs in v5). |
+| Benchmarks | Gaia FGK benchmarks v3 | `/arc/projects/k-pop/catalogues/gaia_fgk_benchmarks.parquet` (`GaiaDR3` rounded through float64: 107 of 192 ids not in DR3, 2 more point at a faint neighbour); exact ids in `/arc/projects/astroai/msa/catalogues/gaia_fgk_benchmarks_v3_dr3ids.parquet` (`scripts/fix_gbs_dr3_ids.py`) | 192 stars with a stored id, all recovered (63 with XP inputs in v5, built from the wrong ids). |
 | Distance | Gaia DR3 parallax | `hats/gaia/dr3` | Label in the parallax-free variant, input in the parallax-conditioned variant. |
 | Co-natal | Consistency targets | `runs/consistency_table_20261118/`, `analysis/consistency/` | 1,440,253 targets (El-Badry+2021 pairs, Hunt & Reffert 2023 members incl. globulars); 1,209,544 with XP inputs. |
 
@@ -191,7 +191,7 @@ against 219M XP stars.
 
 | File | Rows | Columns |
 |---|--:|---|
-| `twomass.fits` | 469,001,402 | `source_id, tmass_oid, ph_qual, j_m, j_msigcom, h_m, h_msigcom, ks_m, ks_msigcom` |
+| `twomass.fits` | 469,001,402 | `source_id, tmass_oid, ph_qual, j_m, j_msigcom, h_m, h_msigcom, ks_m, ks_msigcom`. **Mis-keyed, do not use** (2026-11-24): `tmass_oid` holds DR3 `clean_tmass_psc_xsc_oid`, but the photometry is that of the DR1 `tmass_original_valid` row with that `tmass_oid`, i.e. another 2MASS source at a similar declination (right only for the first rows near the south pole). The Andrae file's J/H/Ks are these values. Correct key: DR3 `original_ext_source_id` = DR1 `designation` (`data/twomass_gaia.py`). |
 | `pans_gaia_ids.fits` | 951,450,474 | `source_id, original_ext_source_id` (all of `gaiadr3.panstarrs1_best_neighbour`) |
 | `panstarrsdr1_matches/` (89 GB), `ps1_curated.h5` (66 GB) | — | PS1 g, r, i, z, y mean PSF mags and errors, `obj_info_flag`, `quality_flag` (query in `data/example_adql_match.py`) |
 | `sdss.fits` | 119,663,765 | `source_id, objid, flags, flags_u…z, u, g, r, i, z, err_u…err_z` (SDSS DR13 best neighbour) |

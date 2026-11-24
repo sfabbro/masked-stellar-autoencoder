@@ -109,11 +109,18 @@ def main():
         rows = kept[split_row_positions(len(kept), mp)[2]]
     if a.rows:
         rows = np.unique(np.load(a.rows).astype("i8"))
+    from masked_stellar_autoencoder.training.finetune_data import ExtraColumns
+
+    # sidecar features (data.extra_columns, e.g. Gaia-keyed 2MASS) replace the
+    # table's columns of the same name
+    extra = ExtraColumns(config["data"].get("extra_columns"))
     with fits.open(a.fits, memmap=True) as hdul:
         d = hdul[1].data
         take = slice(None) if rows is None else rows
 
         def col(name):
+            if name in extra.columns:
+                return extra.get(name, d["source_id"][take])
             return np.asarray(d[name][take], dtype="f8")
 
         X = np.column_stack([col(c) for c in cols])

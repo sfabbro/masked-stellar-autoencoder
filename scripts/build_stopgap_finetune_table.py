@@ -9,7 +9,13 @@ from the raw pretraining HDF5. Options for the semi-supervised run (v5):
 (training.irfm_teff) as an anchor survey, ``--unlabelled-fraction`` keeps a
 random sample of raw stars outside the table (``unlabelled.npz``, same
 columns) for reconstruction/consistency, and ``--exclude-test-of`` drops an
-earlier table's test stars so models can be compared on them. Writes ``finetune.fits`` in the column layout
+earlier table's test stars so models can be compared on them. The raw file's
+2MASS J/H/KS (and E_*) belong to other stars (``data/twomass_gaia.py``), so
+``--twomass`` replaces them in every output (table, validation, unlabelled)
+and records the Ks-G check in the manifest: ``mask`` (default) sets them
+missing, ``archive`` takes the correct designation-keyed 2MASS from the Gaia
+archive (exact, ~40 stars/s), a path reads a correctly keyed table, ``none``
+keeps the raw (wrong) values. Writes ``finetune.fits`` in the column layout
 finetune_msa reads (teff, e_teff, logg, e_logg, fe_h, e_fe_h, alpha, e_alpha,
 age, e_age, features, errors) plus source_id and label provenance.
 """
@@ -25,6 +31,38 @@ import pandas as pd
 import yaml
 
 RAW = "/arc/projects/k-pop/catalogues/andrae2023/sslset-realmags-full-052725.h5"
+TWOMASS_DEFAULT = "mask"
+
+
+def replace_twomass(source, fields, blocks, log=print):
+    """Replace J/H/KS/E_* of each (ids, matrix) block (data/twomass_gaia.resolve).
+
+    ``source``: 'mask', 'archive', a correctly keyed table, or 'none' (keep).
+    Returns the manifest record: lookup counts and the Ks-G check per block.
+    """
+    from masked_stellar_autoencoder.data.twomass_gaia import (
+        ks_g_check,
+        replace_columns,
+        resolve,
+    )
+
+    if str(source).lower() == "none":
+        return dict(replaced=False)
+    blocks = {k: v for k, v in blocks.items() if len(v[0])}
+    ids = np.unique(np.concatenate([v[0] for v in blocks.values()]))
+    cols, info = resolve(ids, source, log=log)
+    out = dict(replaced=True, twomass=info, check={})
+    g = fields.index("G")
+    for name, (sid, matrix) in blocks.items():
+        pos = np.searchsorted(ids, sid)
+        mine = {c: v[pos] for c, v in cols.items()}
+        ks_old = matrix[:, fields.index("KS")].copy() if "KS" in fields else None
+        out["columns"] = replace_columns(fields, matrix, mine)
+        out["check"][name] = ks_g_check(matrix[:, g], ks_old, mine["KS"])
+        new = out["check"][name]["new"]
+        log(f"2MASS {name}: Ks-G corr {out['check'][name]['old']['corr']:.3f} -> "
+            f"{new['corr']:.3f} (n={new['n']})")  # fmt: skip
+    return out
 
 
 def log(msg):
@@ -128,6 +166,12 @@ def main():
         type=Path,
         help="earlier table folder whose test-split stars are left out entirely",
     )
+    p.add_argument(
+        "--twomass",
+        default=TWOMASS_DEFAULT,
+        help="replacement of the raw (mis-keyed) J/H/KS: mask (default), archive, "
+        "a designation-keyed table, or none to keep them",
+    )
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--chunk", type=int, default=262_144)
     a = p.parse_args()
@@ -226,13 +270,21 @@ def main():
         bench_ids, bench_matrix = ids[bench], matrix[bench]
         ids, matrix = ids[~bench], matrix[~bench]
         labels = labels.loc[ids]
+        u_ids = np.empty(0, "i8")
+        u_matrix = np.empty((0, len(fields)), "f4")
         if a.unlabelled_fraction > 0:
             u_ids = np.concatenate(unl_ids)
             u_ids, first = np.unique(u_ids, return_index=True)
+            u_matrix = np.concatenate(unl)[first]
+        m.update(twomass=replace_twomass(a.twomass, fields, dict(
+            table=(ids, matrix), validation=(bench_ids, bench_matrix),
+            unlabelled=(u_ids, u_matrix)), log=log))  # fmt: skip
+        save()
+        if a.unlabelled_fraction > 0:
             np.savez(
                 a.output / "unlabelled.npz",
                 source_id=u_ids,
-                features=np.concatenate(unl)[first],
+                features=u_matrix,
                 fields=np.array(fields, dtype="U40"),
             )
             m.update(unlabelled_stars=int(len(u_ids)))
