@@ -35,8 +35,8 @@ the same share among the Gaia sources that have at least one match.
    Gaia-anchored matching.** There is no primary flag (`detect_isPrimary`), no
    patch/tract-inner flag and no pixel flag in any of the five trees. Deblend parents,
    their children and patch/tract-overlap copies are all present. In the sampled
-   partitions 30–76 % of rows have another row within 0.5″ and about 10 % sit at the
-   same position (<1 mas). In full-depth fields 87–95 % of the matched Gaia stars have
+   partitions 30–76 % of rows have another row within 0.5″ and 9–15 % sit at the same
+   position (<1 mas). In full-depth fields 87–95 % of the matched Gaia stars have
    two or more rows within 1.5″. The best match is a deblend parent for 26–44 % of the
    Gaia stars. `instFlux` is in coadd counts with a zero point of about 27, not nJy
    (verified). Affects X, P, M.
@@ -48,37 +48,43 @@ the same share among the Gaia sources that have at least one match.
    read of the tree fails. The five epoch columns `UMJD`…`ZMJD` are null in every row.
    Affects X, P, M.
 3. **SDSS (`sdss/photoprimary_dr13`): `id` is not the SDSS objID.** It equals
-   `THING_ID` in FU_SDSS_EQ rows, and it is not unique (FU_SDSS_DUP repeated values).
-   Decoding it as a packed objID matches `RUN`/`CAMCOL`/`FIELD`/`ID` in 0 % of the
-   sampled rows. The tree has both `ID` (object number within a field, 1–9304) and
-   `id`, two names that differ only in case. xmatcher's pin assumes that `id` is the
-   objID. The key that is unique is `RUN, RERUN, CAMCOL, FIELD, ID` (0 duplicates).
-   Affects X, M.
+   `THING_ID` in all 469,050,917 rows, and it is not unique (3 repeated values: 4710,
+   5418 and 7849). Decoding it as a packed objID matches `RUN`, `FIELD` and `ID` in at
+   most 0.003 % of the sampled rows. The tree has both `ID` (object number within a
+   field, 1–9304) and `id`, two names that differ only in case. xmatcher's pin assumes
+   that `id` is the objID. The key `RUN, CAMCOL, FIELD, ID` is unique across all rows
+   (`RERUN` is 301 in every sampled row). Affects X, M.
 4. **PS1 OTMO (`ps1/otmo`): single-detection objects and ambiguous Gaia matches.**
-   FU_PS1_EQ1 of the 10,560,724,292 rows have `nDetections = 1` (in typical sampled
-   fields 72–79 %). They make up only 0.04–3 % of the best Gaia matches. Gaia ≥2 is
-   19–36 % in the sampled order-5/6 fields, with the second row about 1.2″ away. Many
+   7,160,529,807 of the 10,560,724,292 rows (67.8 %) have `nDetections = 1`, and
+   805,690,947 (7.6 %) have 0 (verified, all rows). Single detections are only
+   0.04–3 % of the best Gaia matches. Gaia ≥2 is 19–36 % in the sampled order-5/6 fields, with the second row about 1.2″ away. Many
    columns use −999 for missing values (`raMeanErr`, `epochMean`, `*MeanPSFMag`,
    `raStack`). Eight rows have RA just outside [0, 360) (verified, all rows). The tree
    has not been rebuilt: session `ykehpdqk` *pensus-ps1-import-arm* was still running.
    Affects X, M.
 5. **Legacy Surveys DR11 (`legacysurvey/dr11`): rows in the north/south overlap
-   appear twice.** FU_LS_MIXED of 9,222 partitions hold both `RELEASE` 11010 (S) and
-   11011 (N). Across those partitions FU_LS_TWIN of rows have a twin with the other
-   RELEASE within 0.1″, FU_LS_SAMEGAIA of them pointing to the same Gaia `REF_ID`.
-   FU_LS_GAIA. Partitions outside the overlap hold a single RELEASE, and there the
-   Gaia ≥2 share of 1–13 % comes from real neighbours about 1″ away. Affects X, P, M.
+   appear twice.** 485 of 9,222 partitions hold both `RELEASE` 11010 (S) and 11011 (N).
+   In 400 of them, 21.1 % of rows (37,324,926 of 176,991,268) have a twin with the
+   other RELEASE within 0.1″, and 37.5 % within 0.5″ (verified, follow-up). Where the
+   twins concentrate, 72 % of Gaia sources have two or more rows within 1.5″, and the
+   second row has the other RELEASE in a median 97 % of cases. Extrapolated, about 22 M
+   objects are stored twice. Partitions outside the overlap hold a single RELEASE, and
+   there the Gaia ≥2 share of 1–13 % comes from real neighbours about 1″ away.
+   Affects X, P, M.
 6. **Euclid DR1 MER wide and Euclid Q1: ambiguous Gaia matches built into the MER
    catalogue.** m_ge2 is 16–28 % (wide 19–28 %, Q1 16–19 %, deep 9–26 %). The second
    row is in the same `tileid` (99.6–100 %), so these are not tile-overlap copies:
-   39–48 % of the pairs differ in `spurious_flag` and 30–48 % in `vis_det`. Tree-wide FU_EU_FLAGS. The wide
-   tree is the IRSA collection layout, with `Npix=N/` directory partitions and
-   properties that lack `hats_version`, `hats_creation_date` and `hats_col_healpix`.
-   Affects X, M.
+   39–48 % of the pairs differ in `spurious_flag` and 30–48 % in `vis_det`. Tree-wide,
+   22.4 % of the wide rows have `vis_det=0`, 6.3 % have `spurious_flag=1` and 18.0 %
+   have `det_quality_flag≠0`; 62.1 % pass all three cuts. The wide tree is the IRSA
+   collection layout, with `Npix=N/` directory partitions and properties that lack
+   `hats_version`, `hats_creation_date` and `hats_col_healpix`. Affects X, M.
 7. **S-PLUS DR4 (`splus/dr4`): overlapping fields are not de-duplicated.** In the
    samples 0.8–11 % of rows have a twin within 0.5″, and every one of those pairs comes
    from two different `field`s (for example `SPLUS-n20s34`/`SPLUS-n20s35`,
-   `MC0021`/`MC0029`). Tree-wide FU_SP. Affects X, P, M.
+   `MC0021`/`MC0029`). Tree-wide, 9.6 % of the 80,155,547 rows (7,700,226) have a twin
+   from another field within 0.5″, and none from the same field (verified, all rows).
+   Affects X, P, M.
 8. **J-PLUS DR3 and J-PAS e2DR: numbers stored as strings, and the array order is not
    wavelength.** Every photometry and flag column is a space-separated text array
    (`"19.0042 19.7985 … 99.0000"`, `"NaN NaN …"`), and `TILE_ID`, `NUMBER` and
@@ -135,11 +141,11 @@ unless it is handled. **Cosmetic**: metadata, naming or provenance only.
 | `kids/dr5` | — | — | text ids stored as binary | P |
 | `legacysurvey/dr11` | N/S twins in the overlap | ambiguous Gaia matches | temporary host | X P M |
 | `lotss/dr3` | — | — | duplicate `Source_Name` in samples; 3 order-0 partitions | P |
-| `pristine/dr2` | — | 0.2–0.7 % duplicated `source_id` (FU_PR) | — | X M |
+| `pristine/dr2` | — | 58,177 duplicated `source_id` pairs (0.23 %) | — | X M |
 | `ps1/otmo` | — | ~75 % single detections; m_ge2 19–36 %; −999 sentinels; 8 rows out of range | hats v0.1 (hipscat 0.2.5); no sync record | X M |
 | `sdss/photoprimary_dr13` | `id` = THING_ID, not objID; `id`/`ID` case clash | −9999 sentinels; no epoch | directory says DR13, properties DR16 | X M |
 | `skymapper/dr4` | — | — | 2 order-0 partitions; no sync record | X |
-| `splus/dr4` | — | field-overlap twins (0.8–11 %) | order-0 partition; text `id` | X P M |
+| `splus/dr4` | — | field-overlap twins (9.6 % of rows) | order-0 partition; text `id` | X P M |
 | `uhs/dr3` (+ backup) | — | sentinel −999999500; no epoch/flags | `obs_collection=dr3_cephwrap`; backup with RA = 360 kept | X P M |
 | `ukidss/dr11_{las,gcs,dxs,uds}` | — | sentinel; no epoch/flags | DXS/UDS provenance says `gcsSource`; DXS order-0 partitions | P M |
 | `vhs/dr7`, `vvvx/dr1`, `vmc/dr7`, `viking/dr5`, `video/dr6` | — | sentinel; no epoch/errors/flags; VHS no Y/Z | `obs_collection` collisions (`dr5`, `dr7`, `dr1`) | X M |
@@ -174,8 +180,8 @@ checks and their exceptions:
 - Cosmetic: there is no `PENSUS_SYNC.json`. The only provenance is xmatcher's yaml
   comment ("byte copy of the LSDB tree"). `obs_description` promises "10 arcsec and
   300 arcsec margins and a source_id index", but neither exists in
-  `/arc/projects/hats/gaia`. xmatcher's docs record 1,812,731,847 rows for the LSDB tree on 2026-10-22, so
-  the local copy is not the current LSDB build (metadata).
+  `/arc/projects/hats/gaia`. xmatcher's docs record 1,812,731,847 rows for the LSDB
+  tree on 2026-10-22, so the local copy is not the current LSDB build (metadata).
 - Fix: add a sync record (source URL and version). Either copy the margins and index,
   or remove the sentence from the description. **Affects** X (provenance), P.
 
@@ -282,7 +288,7 @@ checks and their exceptions:
   full scan finds no out-of-range or NaN coordinate in 691,483,608 rows. The partition
   set and the row counts per partition equal the backup's (all 1633 partitions). The
   backup still has 2 rows at RA = 360.0 (`5/4351`: `COADD_OBJECT_ID` 1033925010;
-  `5/4864`: 1034047618), all verified.
+  `5/4864`: 1034047618), verified by footer statistics and samples.
 - **Blocker for xmatcher:** the swap changed `obs_collection` from `des_y6_gold` to
   `y6_gold_rawrap`. xmatcher pins `obs_collection: "des_y6_gold"`, so `verify_tree`
   now fails.
@@ -319,7 +325,11 @@ checks and their exceptions:
 - **Bias (verified, sample):** 10–13 % of rows have a neighbour within 1″, and
   1.3–2.1 % within 0.5″. m_ge2 is 19–28 % (wide) and 9–26 % (deep and deep
   photometry). The second row is in the same `tileid` in 99.6–100 % of pairs. 39–48 %
-  of the pairs differ in `spurious_flag` and 30–48 % in `vis_det` (wide). Tree-wide (wide): FU_EU_DETAIL. Many
+  of the pairs differ in `spurious_flag` and 30–48 % in `vis_det` (wide). Tree-wide
+  (wide; verified, all rows), `vis_det=0` in 199,125,435 rows
+  (22.4 %), `spurious_flag=1` in 55,966,502 (6.3 %) and `det_quality_flag≠0` in
+  160,144,348 (18.0 %). 551,309,183 rows (62.1 %) have `vis_det=1`, `spurious_flag=0`
+  and `det_quality_flag=0`. Many
   columns (for example `flux_*_ext_lsst_*`, `binary_flag`, `blended_prob`) are null in
   every row. In the deep tree, `object_id` -616384011471271136 appears twice in
   partition `5/8583`.
@@ -344,7 +354,9 @@ checks and their exceptions:
   [−10.43, 4.32] and `nuv_mag` spans [9.65, 24.40]. That is an offset of exactly 20.08,
   the NUV zero point. `fuv_mag_auto` reaches 4.97 and `fuv_mag` reaches 23.79, an
   offset of 18.82, the FUV zero point. The `*_mag_auto` and `*_mag_aper_*` columns are
-  therefore instrumental magnitudes without the zero point. FU_GX. Whether the MAST CSV
+  therefore instrumental magnitudes without the zero point. Tree-wide, `nuv_mag − nuv_mag_auto` is 20.08 and `fuv_mag − fuv_mag_auto`
+  is 18.82 at the 1st, 50th and 99th percentiles (1.66 M and 0.16 M sampled rows with
+  valid magnitudes; verified, follow-up). Whether the MAST CSV
   ships them this way is unverified. Missing values: −999 in `fuv_mag`, `fuv_flux` and
   `fuv_magerr`, and −99/99 in the aperture and auto columns. 93 % of `fuv_mag` are
   −999 in one sample.
@@ -368,8 +380,8 @@ checks and their exceptions:
 - **Blocker (verified, sample of 7 partitions per band):**
   - 12–15 % of rows are deblend parents (`deblend_nChild>0`), 30–55 % are children
     and 30–70 % are isolated;
-  - 30–76 % of rows have another row within 0.5″, and about 10 % have a twin closer
-    than 1 mas (for example 50,980 of 464,523 rows in g `4/1649`);
+  - 30–76 % of rows have another row within 0.5″, and 9–15 % have a twin closer than
+    1 mas (for example 50,980 of 464,523 rows in g `4/1649`);
   - in full-depth fields (g `6/18007`, i `6/27353`, r `6/27410`, i `7/104868`) the
     Gaia match rate is 97–99 %, Gaia ≥2 is 87–92 % and m_ge2 is 89–95 %. The second
     row sits within about 2×10⁻⁵″, and 69–86 % of these pairs are parent and child.
@@ -442,7 +454,23 @@ checks and their exceptions:
 - 3,967,618,454 rows from 2126 north and south sweeps, carried with `PHOTSYS`;
   `integrity_key` RELEASE·10¹²+BRICKID·10⁶+OBJID (metadata). `RELEASE` takes only
   11010 and 11011 (verified, all rows).
-- **N/S twins (verified, follow-up, all mixed partitions):** FU_LS_DETAIL.
+- **N/S twins (verified, follow-up):**
+  - The footer statistics of `RELEASE` show 485 of the 9,222 partitions holding both
+    11010 (S) and 11011 (N), mostly along the Dec ≈ 32° boundary (for example `4/2037`,
+    `5/1239`–`5/1273`, `4/334`, `4/416`).
+  - In 400 of them (176,991,268 rows), 21.1 % of rows have a twin with the other
+    RELEASE within 0.1″ and 37.5 % within 0.5″. Per partition the share is 0–41 %
+    (median 6 %): for example `5/1261` has 40.7 % of 519,143 rows and `4/2037` has
+    26 %.
+  - Extrapolated to the 485 partitions, that is about 45 M rows, or about 22 M objects
+    stored twice (about 1.1 % of the tree).
+  - In the order-6 sub-pixel with the most twins in each partition, 72 % of 2,143,117
+    Gaia sources have two or more LS rows within 1.5″ (per partition 5–100 %, median
+    67 %). In a median 97 % of these cases the second row has the other RELEASE. The
+    6–23 % of Gaia positions reported earlier fits the edges of the overlap; in its
+    core the share approaches 100 %.
+  - Whether a twin pair shares the same Gaia `REF_ID` was not established: the audit
+    looked for `REF_CAT='G2'`, and DR11 writes `G3`.
 - Outside the overlap (verified, sample of 5): each partition holds a single
   RELEASE, and Gaia ≥2 of 1–13 % comes from second rows of the same RELEASE about
   0.6–1.1″ away (real neighbours). Gaia sources are fixed at their Gaia positions, so
@@ -470,7 +498,11 @@ checks and their exceptions:
   `source_id` instead of being matched by position.
 - **Bias (verified, sample):** 0.17–0.68 % of rows repeat a `source_id` at an
   identical position (813, 1479, 699, 3936 and 525 rows in the five samples).
-  FU_PR_DETAIL. `G_0` has values down to −489.3 and `CaHK_0` down to −80.1
+  Tree-wide (verified, all rows) there are 58,177 duplicate pairs (0.23 % of rows;
+  25,166,165 distinct `source_id`). Every pair shares RA/Dec, the Gaia position. `CaHK_0`
+  differs in 99.2 % of the pairs (it is identical in 480), and `FeH_Pristine` and `G_0`
+  differ in about half. These are separate Pristine measurements matched to the same
+  Gaia source, not copies. `G_0` has values down to −489.3 and `CaHK_0` down to −80.1
   (verified, all rows), which are unphysical. **Affects** X, M.
 
 ### 2.23 `ps1/otmo`
@@ -483,8 +515,10 @@ checks and their exceptions:
   (360.0000021 and 360.0), in `5/5116`, `5/3967`, `5/5056`, `6/3051`, `6/13663`,
   `6/17404`, `6/14199` and `6/20416`. Example: `objID` 152510000000013521. There is no
   NaN. `raStack` reaches 360.0.
-- **Single detections:** FU_PS1_DETAIL. Per sample 10–79 % (72–79 % in typical
-  order-5/6 fields, 10 % in the Galactic-plane partition `7/115182`). Rows with
+- **Single detections (verified, all rows):** 7,160,529,807 rows (67.8 %) have
+  `nDetections = 1` and 805,690,947 (7.6 %) have 0, so 75.4 % have at most one
+  detection. Per sample 10–79 % (72–79 % in typical order-5/6 fields, 10 % in the
+  Galactic-plane partition `7/115182`). Rows with
   `nDetections = 1` are 0.04–3.4 % of best Gaia matches, against 24–79 % of unmatched
   rows.
 - **Gaia ≥2 = 19–36 %** in high-latitude samples (`5/5116`, `5/3967`, `5/5056`,
@@ -494,7 +528,7 @@ checks and their exceptions:
   of 0.98–1.01 over 117–139 stars with |μ| > 30 mas/yr. They are finite for only
   1–79 % of rows (16 % tree-wide) and have absurd tails (±5.8×10⁸). `raMeanErr` is
   consistent with arcsec: the all-row median is 0.17″, and for matched G<19 stars the
-  median is 0.6–3 mas. `epochMean` is an MJD (about 55,900–57,100). All three use −999 for
+  median is 0.6–3 mas. `epochMean` is an MJD (about 55,900–57,100). Both use −999 for
   missing values (about 2 % of rows).
 - Fix: drop or flag `nDetections ≤ 1` (or apply MAST's `qualityFlag`) before matching,
   null the −999s, and finish the RA-wrapped rebuild. **Affects** X, M.
@@ -505,18 +539,21 @@ checks and their exceptions:
   `calibObj-*-stargal-primary` files (`PENSUS_BUILD.json`). These are the DR13
   calibration, which DR14–DR17 imaging reuse, so the data are "DR13 imaging as
   distributed with DR16". `obs_collection=dr16` and `planned_hats_path …/sdss/dr16`
-  disagree with the directory name `photoprimary_dr13`. The `stargal` sweeps leave out some object types, so the
-  count need not equal SkyServer's PhotoPrimary count (unverified).
-- **`id` (verified):** FU_SDSS_DETAIL. Decoding `id` as an objID matches
+  disagree with the directory name `photoprimary_dr13`. The `stargal` sweeps leave out
+  some object types, so the count need not equal SkyServer's PhotoPrimary count
+  (unverified).
+- **`id` (verified, all rows):** `id` equals `THING_ID` in all 469,050,917 rows. Three
+  values repeat (4710, 5418 and 7849), and the composite (`RUN`, `CAMCOL`, `FIELD`,
+  `ID`) is unique across the tree. Decoding `id` as an objID matches
   `RUN`/`CAMCOL`/`FIELD`/`ID` in 0–7 % of sampled rows, so it is not the objID. `ID` is
   the object number within a field (1–9304). `RERUN` is binary (`b'301'`). The objID
   can be rebuilt as `(2<<59)|(301<<48)|(RUN<<32)|(CAMCOL<<29)|(FIELD<<16)|ID`
   (skyVersion 2, rerun 301; the firstField bit is unverified). The tree has two
   columns, `ID` and `id`, that differ only in case, which breaks case-insensitive
   tools (SQL engines, some DataFrame libraries, FITS export).
-- Sentinels: `MODELMAG_*` −9999. Fluxes are in nanomaggies (`*FLUX_IVAR` in nmgy⁻²),
-  as xmatcher assumes. There is no epoch column (the sweeps have no MJD). One order-0
-  partition (`0/9`, 338,686 rows).
+- Sentinels: `MODELMAG_*` −9999. The flux ranges (`PSFFLUX_r` from −199 to 1.7×10⁷)
+  fit nanomaggies, as xmatcher assumes, but this was not checked against Gaia. There is
+  no epoch column. One order-0 partition (`0/9`, 338,686 rows).
 - Fix: rename `id` to `thing_id` (or drop it), add a real `objid`, and settle the
   release label. In xmatcher, use `THING_ID` or the composite key. **Affects** X, M.
 
@@ -533,7 +570,9 @@ checks and their exceptions:
 - **Bias (verified, sample of 6):** 0.8–11 % of rows have a twin within 0.5″, and
   every such pair comes from different fields (`SPLUS-n20s34`/`SPLUS-n20s35`,
   `STRIPE82-0087`/`-0088`, `MC0021`/`MC0029`, `HYDRA-0130`/`-0138`, …). Gaia ≥2 is up
-  to 6 %. FU_SP_DETAIL.
+  to 6 %. Tree-wide (verified, all rows), 7,700,226 rows (9.6 %) have a twin from
+  another field within 0.5″ (8,807,339, 11.0 %, within 1″), and none from the same
+  field.
 - `*_auto` use 99 for missing values; one order-0 partition (`0/10`, 798,258 rows).
 - Fix: de-duplicate the field overlaps (keep the detection nearer its field centre,
   or the best-S/N one), or use a de-duplicated S-PLUS release. **Affects** X, P, M.
@@ -666,8 +705,8 @@ checks and their exceptions:
       `PENSUS_BUILD.json`).
 11. **What a Gaia-anchored match should expect** (sampled m_ge2): about 0–1 % for
     2MASS, AllWISE, CatWISE, SkyMapper, SDSS and the VISTA trees; a few % for DES,
-    DELVE, KiDS and ATLAS; 1–13 % for LS outside the overlap (FU_LS_SHORT in it); up to
-    6 % for S-PLUS; 9–28 % for Euclid; 19–36 % for PS1; 70–95 % for HSC broad bands;
+    DELVE, KiDS and ATLAS; 1–13 % for LS outside the overlap (median 67 % and up to 100 % in it); up to
+    6 % for S-PLUS (9.6 % of its rows are field-overlap twins); 9–28 % for Euclid; 19–36 % for PS1; 70–95 % for HSC broad bands;
     and up to 100 % for Hubble HSC. Ambiguity flags will dominate the PS1, Euclid, HSC
     and Hubble HSC columns unless their cleaning cuts are applied first.
 
@@ -733,7 +772,9 @@ root, and every output went to `/arc/projects/astroai/msa`.
   CANFAR outage), MSA commit `3f1ab3c`, run
   `hats_survey_audit_20261124`, 07:38–08:15 UTC. Receipts:
   `experiments/xp/decision-wave-20261106/hats_survey_audit_20261124{,-attempt-2}.json`.
-- Follow-up: FU_SESSION.
+- Follow-up: session **`dlec1oky`** (attempt 2; attempt 1 was never created during an
+  outage), MSA commit `cd6e4ed`, run `hats_survey_audit_20261124_followup`, 08:42–08:57
+  UTC. Receipts: `experiments/xp/decision-wave-20261106/hats_survey_audit_20261124_followup{,-attempt-2}.json`.
 - Outputs in `/arc/projects/astroai/msa/runs/hats_survey_audit_20261124/`:
   - `discovery.json`: the tree walk, links and access;
   - `structure/<tree>.json`: properties, the partition table against the files,
