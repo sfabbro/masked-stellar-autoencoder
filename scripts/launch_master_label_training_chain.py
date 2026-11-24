@@ -1404,7 +1404,8 @@ STEPS["gaia-master-estimate"] = dict(
 # stage the competitor rows (Andrae 2023, SHBoost, StarHorse 2023) of the TEST
 # stars of the v10 prediction files; the evaluation itself reads the slim files.
 # Attempt 1 (uajdsmxr) staged Andrae and StarHorse; its SHBoost reader failed,
-# attempt 2 reads the SHBoost parts one file at a time.
+# attempt 2 reads the SHBoost parts one file at a time; attempt 3 parses Andrae's
+# in_training_sample text flag ('True '/'False', every row read as True before).
 QA_V10 = "qa_v10_20261124"
 _V10 = ROOT + "multisurvey_finetune_20261121_v10/"
 STEPS["qa-v10-stage"] = dict(

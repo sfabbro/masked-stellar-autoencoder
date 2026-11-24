@@ -29,6 +29,15 @@ SOURCES = {
     "starhorse2023": KPOP / "starhorse_ages",
     "gspphot": Path("/arc/projects/hats/gaia/dr3"),
 }
+# Caveats printed with the comparison (qa.md §3 comparator contract)
+NOTES = {
+    "andrae2023": "own training stars (in_training_sample) removed from the comparison",
+    "starhorse2023": "spectroscopic StarHorse runs take the survey Teff, log g and [M/H] as "
+    "inputs: agreement with survey references is partly by construction",
+    "shboost": "trained on spectroscopic (StarHorse) labels of the same surveys; no "
+    "training flag, so overlap with its training set is not removed",
+    "gspphot": "Gaia DR3 GSP-Phot (Aeneas), independent of the survey labels",
+}
 MISSING = {
     "zhang_green_rix2023": "not on ARC (schema verified only)",
     "survey_of_surveys_dr3": "not on ARC",
@@ -53,6 +62,19 @@ def _dist_mod_pc(d_pc):
     d = np.asarray(d_pc, np.float64)
     with np.errstate(divide="ignore", invalid="ignore"):
         return np.where(d > 0, 5.0 * np.log10(d) - 5.0, np.nan)
+
+
+def _as_bool(values) -> np.ndarray:
+    """Booleans from a logical, integer or text column ('True' / 'False', 'T' / 'F').
+
+    Andrae 2023 stores ``in_training_sample`` as 5-character text: casting the
+    strings with ``bool`` would make every row True.
+    """
+    v = np.asarray(values)
+    if v.dtype.kind in "SUO":
+        t = np.char.lower(np.char.strip(v.astype(str)))
+        return np.isin(t, ("true", "t", "1", "yes"))
+    return v.astype(bool)
 
 
 def _pick(cols, *names):
@@ -86,7 +108,7 @@ def read_andrae(path, ids=None, chunk: int = 10_000_000) -> pd.DataFrame:
                     teff=np.asarray(b["teff_xgboost"][m], np.float64),
                     logg=np.asarray(b["logg_xgboost"][m], np.float64),
                     fe_h=np.asarray(b["mh_xgboost"][m], np.float64),
-                    in_training=np.asarray(b["in_training_sample"][m], bool),
+                    in_training=_as_bool(b["in_training_sample"][m]),
                 )))  # fmt: skip
     return (
         pd.concat(parts, ignore_index=True)

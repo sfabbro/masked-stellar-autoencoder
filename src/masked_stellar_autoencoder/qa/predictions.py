@@ -128,6 +128,12 @@ def _s2(z, model) -> Predictions:
     extra = {"table_row": z["table_row"], "table_split": z["split"]}
     if "p_mp" in z.files:
         extra["p_feh_lt_m2p5"] = z["p_mp"]
+    for name in ("68", "95"):  # Mondrian conformal HPD set of the label (qa.md K3)
+        if f"conformal{name}_nlp" in z.files and "lp_label" in z.files:
+            lp = np.asarray(z["lp_label"], np.float64)
+            thr = np.asarray(z[f"conformal{name}_nlp"], np.float64)
+            member = np.where(np.isfinite(lp) & np.isfinite(thr), -lp <= thr, False)
+            extra[f"joint_member{name}"] = member
     return Predictions(model or "s2", np.asarray(z["source_id"], np.int64),
                        LEVELS_68.copy(), q, extra, "B0")  # fmt: skip
 
@@ -174,6 +180,9 @@ def _s1(z, model) -> Predictions:
             key = f"in_neyman{name}_param"
             if key in z.files:
                 extra[f"{p}_cov{name}"] = np.asarray(z[key][:, j], bool)
+    for name in ("68", "95"):  # joint 3-parameter Neyman set (qa.md K1)
+        if f"in_neyman{name}" in z.files:
+            extra[f"joint_member{name}"] = np.asarray(z[f"in_neyman{name}"], bool)
     return Predictions(
         model or "s1", np.asarray(z["source_id"], np.int64), levels, q, extra, "A"
     )

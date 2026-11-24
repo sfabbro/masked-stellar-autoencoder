@@ -51,6 +51,7 @@ from masked_stellar_autoencoder.qa import conatal as K
 from masked_stellar_autoencoder.qa import core as Q
 from masked_stellar_autoencoder.qa import physical as Ph
 from masked_stellar_autoencoder.qa.heldout import (
+    evaluate_membership,
     evaluate_pit,
     evaluate_product,
     integrity,
@@ -174,11 +175,28 @@ def evaluate_set(name, pred, split, a, cov, labels, physical, comp_frames) -> di
     for key in ("parallax_pit", "ebv_pit"):
         if key in sub.extra:
             out["supplied_pit"][key] = evaluate_pit(sub.extra[key], strata)
+    out["joint_sets"] = {}
+    for mass in ("68", "95"):  # the model's own joint set (Neyman, conformal)
+        key = f"joint_member{mass}"
+        if key in sub.extra:
+            has_ref = np.ones(len(sub), bool)
+            if refs:
+                has_ref = np.any([np.isfinite(v) for v in refs.values()], axis=0)
+            out["joint_sets"][mass] = evaluate_membership(
+                sub.extra[key], strata, int(mass) / 100, has_ref
+            )
     if "teff" in sub.q and "teff_irfm" in sub.extra:
         out["irfm"] = Ph.score_irfm(sub.median("teff"), sub.extra["teff_irfm"])
     if physical is not None and len(physical):
         pts = {p: pred.median(p) for p in ("teff", "logg", "fe_h") if p in pred.q}
-        test_or_res = keep | reserved  # reserved benchmarks are report-only
+        seen = np.zeros(len(pred), bool)
+        if a.exclude_table_splits and "table_split" in pred.extra:
+            seen = np.isin(
+                np.asarray(pred.extra["table_split"]), a.exclude_table_splits
+            )
+        # reserved benchmarks are report-only; rows the model has seen are not scored
+        test_or_res = (keep | reserved) & ~seen
+        out["physical_rows_seen_dropped"] = int(((keep | reserved) & seen).sum())
         allp = pred.subset(test_or_res)
         out["physical"] = Ph.score_physical(
             physical, allp.source_id, {k: v[test_or_res] for k, v in pts.items()},
@@ -191,13 +209,16 @@ def evaluate_set(name, pred, split, a, cov, labels, physical, comp_frames) -> di
             if p in ("teff", "logg", "fe_h", "ebv", "dist_mod")
         }
         out["competitors"] = {
-            cname: C.compare(sub.source_id, model, refs, frame)
+            cname: dict(
+                C.compare(sub.source_id, model, refs, frame),
+                note=C.NOTES.get(cname, ""),
+            )
             for cname, frame in comp_frames.items()
         }
     return out, sub, refs, strata
 
 
-def run_core(a, pred, split) -> dict:
+def run_core(a, pred, split, cov=None) -> dict:
     """Frozen core: references from the records of the table the rows index."""
     import yaml
 
@@ -211,6 +232,8 @@ def run_core(a, pred, split) -> dict:
     )
     feh = pred.median("fe_h")
     G = np.asarray(pred.extra.get("G", np.full(len(pred), np.nan)), np.float64)
+    if not np.isfinite(G).any():
+        G = np.asarray(covariates_for(pred, cov).get("G", G), np.float64)
     m = keep & np.isfinite(ref)
     table = Q.core_table(feh[m], ref[m], G[m])
     out = dict(
@@ -434,7 +457,9 @@ def main(argv=None):
         if not (a.core_records and a.core_config):
             missing["core"] = "--core needs --core-records and --core-config"
         else:
-            metrics["core"] = {name: run_core(a, preds[name], split) for name in a.core}
+            metrics["core"] = {
+                name: run_core(a, preds[name], split, cov) for name in a.core
+            }
     else:
         missing["core"] = "no --core set"
     tables = {}

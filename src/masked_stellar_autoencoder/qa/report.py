@@ -69,6 +69,10 @@ def _headline(m) -> list[str]:
             o = h["overall"]
             L.append(f"| {name} | {p} | {o['n']} | {_f(o['bias'], _nd(p), True)} | {_f(o['nmad'], _nd(p))} "
                      f"| {_f(c68.get('overall'), 3)} | {_f(c95.get('overall'), 3)} | {len(c68.get('failing_strata', []))} |")  # fmt: skip
+        for mass, js in res.get("joint_sets", {}).items():
+            L.append(f"| {name} | joint set (own) | {js['n']} | | | "
+                     f"{_f(js['coverage'], 3) if mass == '68' else ''} | {_f(js['coverage'], 3) if mass == '95' else ''} "
+                     f"| {len(js['failing_strata']) if mass == '68' else ''} |")  # fmt: skip
         for key, sp in res.get("supplied_pit", {}).items():
             L.append(
                 f"| {name} | {key} | {sp['n']} | | | {_f(sp['coverage'], 3)} | | {len(sp['failing_strata'])} |"
@@ -136,13 +140,23 @@ def _md_set(name, res) -> list[str]:
                                              f"[{_f(c['lower'], 3)}, {_f(c['upper'], 3)}] ({c['n']})"
                                              for c in g))  # fmt: skip
         L.append("")
+    for mass, js in res.get("joint_sets", {}).items():
+        L.append(f"**Joint {mass} % set of the model** (Neyman for A, conformal for B0): coverage "
+                 f"{_f(js['coverage'], 3)} (n {js['n']}); {_fails(js)}")  # fmt: skip
+        g = js["by_stratum"].get("G", [])
+        if g:
+            L.append("- by G: " + "; ".join(f"{c['stratum']}: {_f(c['coverage'], 3)} "
+                                             f"[{_f(c['lower'], 3)}, {_f(c['upper'], 3)}] ({c['n']})"
+                                             for c in g))  # fmt: skip
+        L.append("")
     if "irfm" in res:
         L.append(
             f"**IRFM Teff**: {_cell(res['irfm'], 'teff')} (training anchor: tests transfer)"
         )
         L.append("")
     if res.get("physical"):
-        L.append("**Physical references** (bias / NMAD (n); TEST and reserved stars):")
+        L.append("**Physical references** (bias / NMAD (n); TEST and reserved stars not seen "
+                 f"in training; {res.get('physical_rows_seen_dropped', 0)} seen rows dropped):")  # fmt: skip
         for survey, cell in res["physical"].items():
             parts = [
                 f"{p} {_cell(cell[p], p)}"
@@ -161,7 +175,13 @@ def _md_set(name, res) -> list[str]:
             "| catalogue | overlap | product | model bias / NMAD | competitor bias / NMAD | Δ median abs err (95 %) |"
         )
         L.append("|---|--:|---|---|---|---|")
+        notes = []
         for cname, cr in res["competitors"].items():
+            if cr.get("note"):
+                notes.append(f"{cname}: {cr['note']}")
+            if cr.get("overlap_in_competitor_training"):
+                notes.append(f"{cname}: {cr['overlap_in_competitor_training']} of {cr['overlap']} "
+                             "overlap stars are in its training set and are not compared")  # fmt: skip
             for p in ("teff", "logg", "fe_h", "ebv", "dist_mod"):
                 if p not in cr:
                     continue
@@ -174,6 +194,8 @@ def _md_set(name, res) -> list[str]:
                 else:
                     L.append(f"| {cname} | {cr['overlap']} | {p} | model − competitor "
                              f"{_cell(c['model_minus_competitor'], p)} | | |")  # fmt: skip
+        L.append("")
+        L += [f"- {n}" for n in dict.fromkeys(notes)]
         L.append("")
     return L
 

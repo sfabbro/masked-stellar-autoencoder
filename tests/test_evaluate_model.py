@@ -213,7 +213,9 @@ def test_competitor_readers_and_compare(tmp_path):
     from astropy.table import Table
 
     sid = _ids(200)
-    t = Table(dict(source_id=sid, in_training_sample=np.arange(200) < 50,
+    # Andrae 2023 stores the flag as 5-character text ("True " / "False")
+    flag = np.where(np.arange(200) < 50, "True", "False").astype("S5")
+    t = Table(dict(source_id=sid, in_training_sample=flag,
                    mh_xgboost=np.zeros(200), teff_xgboost=np.full(200, 5000.0),
                    logg_xgboost=np.full(200, 4.0)))  # fmt: skip
     t.write(tmp_path / "andrae.fits")
@@ -280,7 +282,7 @@ def test_evaluator_end_to_end(tmp_path):
         q[p] = mu[:, None] + sd[p] * norm.ppf(levels)[None]
         extra[f"{p}_ref"] = t
     G = RNG.uniform(10, 18, n)
-    extra.update(G=G, table_row=np.arange(n), table_split=np.where(np.arange(n) < 600, 0, 2),
+    extra.update(G=G, table_row=np.arange(n), table_split=np.where((np.arange(n) >= 600) & (np.arange(n) < 1200), 0, 2),
                  teff_irfm=truth["teff"] + RNG.normal(0, 50, n))  # fmt: skip
     write_predictions(
         tmp_path / "pred.npz", Predictions("toy", sid, levels, q, extra, "B")
@@ -330,10 +332,9 @@ def test_evaluator_end_to_end(tmp_path):
     m = json.loads((out / "metrics.json").read_text())
     s = m["sets"]["toy"]
     test = (part == 3) & ~np.isin(sid, res)
-    assert s["rows"]["evaluated"] == int((test & (np.arange(n) >= 600)).sum())
-    assert s["rows"]["excluded_seen_in_partition"] == int(
-        (test & (np.arange(n) < 600)).sum()
-    )
+    seen = (np.arange(n) >= 600) & (np.arange(n) < 1200)
+    assert s["rows"]["evaluated"] == int((test & ~seen).sum())
+    assert s["rows"]["excluded_seen_in_partition"] == int((test & seen).sum())
     h = s["heldout"]["fe_h"]
     assert (
         abs(h["overall"]["bias"]) < 0.02

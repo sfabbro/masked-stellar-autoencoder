@@ -155,6 +155,26 @@ def evaluate_pit(pit, strata: dict, nominal: float = 0.68) -> dict:
     return out
 
 
+def evaluate_membership(member, strata: dict, nominal: float, keep=None) -> dict:
+    """Coverage of the model's own (joint) set of the label, per stratum."""
+    member = np.asarray(member, bool)
+    ok = np.ones(len(member), bool) if keep is None else np.asarray(keep, bool)
+    out = dict(n=int(ok.sum()), coverage=float(np.mean(member[ok])) if ok.any() else np.nan,
+               by_stratum={})  # fmt: skip
+    for axis in AXES:
+        rows = wilson_by_stratum(np.where(ok, strata[axis], ""), member, nominal,
+                                 order=list(STRATA[axis][1]))  # fmt: skip
+        if rows:
+            out["by_stratum"][axis] = rows
+    out["failing_strata"] = [
+        f"{axis}:{r['stratum']}"
+        for axis, rows in out["by_stratum"].items()
+        for r in rows
+        if not r["descriptive"] and not r["within_003"]
+    ]
+    return out
+
+
 def integrity(pred: Predictions) -> dict:
     """Catalogue integrity (qa.md §5.3, first row): duplicates, finiteness, monotone quantiles."""
     sid = pred.source_id
