@@ -35,9 +35,12 @@ Sources (read only):
   photometry files ``panstarrsdr1_matches/ids_pansdr1_<k>.fits.gz`` (plain FITS; file k
   holds the PS1 rows of id-table rows [k * 2,000,000, (k + 1) * 2,000,000), matched on
   ``obj_id``; ids missing from their chunk file are looked up in every file);
-* SkyMapper DR4 HATS ``/arc/projects/hats/skymapper/dr4``: ``gaia_dr3_id1`` within
-  ``--skymapper-max-sep`` (2 arcsec, as the earlier SkyMapper curation), nearest
-  SkyMapper object per Gaia source;
+* SkyMapper DR4 HATS ``/arc/projects/hats/skymapper/dr4``: rows with ``gaia_dr3_id1``
+  and ``gaia_dr3_dist1`` < ``--skymapper-max-sep`` (2 arcsec). Its ``gaia_dr3_id1`` went
+  through float64 upstream (every id is float-exact; 38 % of them are no DR3 id, others
+  belong to a neighbouring id), so the key is the rounded id: a Gaia source takes,
+  among the rows with its rounded id, the one within 1" of its position propagated to
+  the SkyMapper mean epoch (one-to-one, nearest first; ``skymapper_pairs``);
 * SFD98 E(B-V) maps (``SFD_dust_4096_{ngp,sgp}.fits``, dustmaps' files) evaluated at the
   Gaia (l, b) exactly as ``dustmaps.sfd.SFDQuery`` does (ZEA WCS, bilinear, nearest at
   the edge); no 0.86 rescaling.
@@ -80,7 +83,7 @@ from pathlib import Path
 
 import numpy as np
 
-BUILD_VERSION = "photometry-v1a-2"
+BUILD_VERSION = "photometry-v1a-3"
 CONTRACT = "gaia_keyed_v1a"
 GAIA_NROWS_DR3 = 1_811_709_771
 HEALPIX_SHIFT = 35  # Gaia source_id // 2**35 = HEALPix level-12 nested index
@@ -120,6 +123,8 @@ EXPECTED_ROWS = {  # data.md section 2.2 / 2.6 (rows of the Gaia-keyed match tab
 GAIA_READ = [
     "_healpix_29",
     "source_id",
+    "ra",
+    "dec",
     "l",
     "b",
     "phot_g_mean_mag",
@@ -135,7 +140,9 @@ GAIA_READ = [
     "pmdec",
     "pmdec_error",
 ]
-GAIA_OUT = [c for c in GAIA_READ if c not in ("l", "b")]
+GAIA_OUT = [c for c in GAIA_READ if c not in ("ra", "dec", "l", "b")]
+GAIA_EPOCH_MJD = 57388.5  # J2016.0 (TCB); SkyMapper DR4 mean_epoch is an MJD
+SKYMAPPER_POS_SEP = 1.0  # arcsec: Gaia (propagated to the SkyMapper epoch) vs SkyMapper
 
 
 @dataclass(frozen=True)
@@ -151,7 +158,12 @@ class Col:
 class Survey:
     name: str
     columns: tuple[Col, ...]
-    dedup: str = "drop_ambiguous"  # drop_ambiguous | nearest (by the _sep column)
+    dedup: str = "drop_ambiguous"  # drop_ambiguous | nearest (_sep column) | none
+    # exact: the key is the Gaia DR3 source_id. float64: the key is the source_id
+    # rounded through float64 upstream (SkyMapper DR4 HATS); a Gaia source takes the
+    # positionally consistent row among those with its rounded id (skymapper_pairs).
+    id_mode: str = "exact"
+    spec: str = "1"  # staged-store layout version (a change re-stages the store)
 
 
 def _band_cols(spec):
@@ -186,9 +198,14 @@ SURVEYS = {
             + [
                 Col("_sep_arcsec", "extra", "f4", "gaia_dr3_dist1"),
                 Col("_ebmv_sfd", "extra", "f4", "ebmv_sfd"),
+                Col("_ra", "extra", "f8", "raj2000"),
+                Col("_dec", "extra", "f8", "dej2000"),
+                Col("_epoch", "extra", "f8", "mean_epoch"),
             ]
         ),
-        dedup="nearest",
+        dedup="none",
+        id_mode="float64",
+        spec="2",
     ),
     "ps1": Survey(
         "ps1",
@@ -458,7 +475,7 @@ def store_meta(staging: Path, name: str) -> dict | None:
     p = sorted_dir(staging, name) / "meta.json"
     if p.exists():
         m = json.loads(p.read_text())
-        if m.get("status") == "complete":
+        if m.get("status") == "complete" and m.get("spec", "1") == SURVEYS[name].spec:
             return m
     return None
 
@@ -607,7 +624,9 @@ def task_sort_store(t: dict) -> dict:
     n_dup_rows = int((~first).sum())
     n_amb_ids = 0
     n_identical = 0
-    if n_dup_rows and survey.dedup == "nearest":
+    if n_dup_rows and survey.dedup == "none":
+        keep = np.ones(len(s), bool)
+    elif n_dup_rows and survey.dedup == "nearest":
         keep = first
     elif n_dup_rows:
         rep = np.flatnonzero(~first)  # rows equal (in source_id) to the previous row
@@ -654,6 +673,8 @@ def task_sort_store(t: dict) -> dict:
         identical_repeats_dropped=n_identical,
         ambiguous_ids_dropped=n_amb_ids,
         dedup=survey.dedup,
+        id_mode=survey.id_mode,
+        spec=survey.spec,
         valid_mag_counts=counts,
         columns=[n for n, _ in store_columns(survey)],
         sort_seconds=time.monotonic() - t0,
@@ -783,6 +804,103 @@ def _arrow_text(values: np.ndarray, valid: np.ndarray):
     return pc.if_else(pa.array(valid), s, pa.scalar(None, pa.string()))
 
 
+def float64_key(source_id: np.ndarray) -> np.ndarray:
+    """The source_id as stored by a table that passed it through float64."""
+    return np.asarray(source_id, np.int64).astype(np.float64).astype(np.int64)
+
+
+def lookup_multi(store_key: np.ndarray, qkey: np.ndarray, lo: int, hi: int):
+    """All (query index, store position) pairs with equal keys; the store may repeat
+    keys. The store block [lo, hi) is read once, other keys are searched one by one."""
+    a = int(np.searchsorted(store_key, lo, side="left"))
+    b = int(np.searchsorted(store_key, hi, side="left"))
+    block = np.asarray(store_key[a:b])
+    inside = (qkey >= lo) & (qkey < hi)
+    qs, ps = [], []
+    for sel, arr, off in (
+        (np.flatnonzero(inside), block, a),
+        (np.flatnonzero(~inside), store_key, 0),
+    ):
+        if not len(sel) or not len(arr):
+            continue
+        q = qkey[sel]
+        left = np.searchsorted(arr, q, side="left")
+        right = np.searchsorted(arr, q, side="right")
+        cnt = right - left
+        tot = int(cnt.sum())
+        starts = np.repeat(left, cnt)
+        offs = np.arange(tot) - np.repeat(np.cumsum(cnt) - cnt, cnt)
+        qs.append(np.repeat(sel, cnt))
+        ps.append(off + starts + offs)
+    if not qs:
+        return np.zeros(0, np.int64), np.zeros(0, np.int64)
+    return np.concatenate(qs), np.concatenate(ps).astype(np.int64)
+
+
+def _sep_arcsec(ra1, dec1, ra2, dec2) -> np.ndarray:
+    r1, d1, r2, d2 = (
+        np.radians(np.asarray(x, np.float64)) for x in (ra1, dec1, ra2, dec2)
+    )
+    h = (
+        np.sin((d2 - d1) / 2) ** 2
+        + np.cos(d1) * np.cos(d2) * np.sin((r2 - r1) / 2) ** 2
+    )
+    return np.degrees(2 * np.arcsin(np.sqrt(np.clip(h, 0, 1)))) * 3600.0
+
+
+def skymapper_pairs(
+    store, sid, ra, dec, pmra, pmdec, lo_id, hi_id, max_sep=SKYMAPPER_POS_SEP
+):
+    """Gaia row -> SkyMapper store position (-1 none) for a store keyed by the
+    float64-rounded Gaia id: among the rows sharing a Gaia source's rounded id (several
+    Gaia sources can round to one key), accept pairs whose SkyMapper position lies
+    within ``max_sep`` of the Gaia position propagated (proper motion) to the SkyMapper
+    mean epoch; one-to-one, nearest first."""
+    key = float64_key(sid)
+    pad = 1 << 11  # float64 rounding moves an id by < 2**10
+    qi, sp = lookup_multi(store["source_id"], key, lo_id - pad, hi_id + pad)
+    pos = np.full(len(sid), -1, np.int64)
+    st = dict(candidates=len(qi), gaia_with_candidate=int(len(np.unique(qi))))
+    if not len(qi):
+        st.update(accepted=0)
+        return pos, st
+    order = np.argsort(sp, kind="stable")
+    sp_sorted = sp[order]
+    a, b = int(sp_sorted[0]), int(sp_sorted[-1]) + 1
+    sra = gather(store["_ra"], sp, a, b)
+    sdec = gather(store["_dec"], sp, a, b)
+    sep_ep = gather(store["_epoch"], sp, a, b)
+    dt = np.where(np.isfinite(sep_ep), (sep_ep - GAIA_EPOCH_MJD) / 365.25, 0.0)
+    pr = np.nan_to_num(np.asarray(pmra, np.float64)[qi])
+    pd_ = np.nan_to_num(np.asarray(pmdec, np.float64)[qi])
+    d0 = np.asarray(dec, np.float64)[qi]
+    gdec = d0 + pd_ * dt / 3.6e6
+    gra = np.asarray(ra, np.float64)[qi] + pr * dt / 3.6e6 / np.maximum(
+        np.cos(np.radians(d0)), 1e-6
+    )
+    sep = _sep_arcsec(gra, gdec, sra, sdec)
+    ok = np.isfinite(sep) & (sep < max_sep)
+    st.update(within_sep=int(ok.sum()), beyond_sep=int((~ok).sum()))
+    qi, sp, sep = qi[ok], sp[ok], sep[ok]
+    o = np.argsort(sep, kind="stable")
+    qi, sp, sep = qi[o], sp[o], sep[o]
+    _, first_s = np.unique(sp, return_index=True)  # each SkyMapper row: nearest Gaia
+    keep = np.zeros(len(sp), bool)
+    keep[first_s] = True
+    qi2, sp2, sep2 = qi[keep], sp[keep], sep[keep]
+    o = np.argsort(sep2, kind="stable")
+    qi2, sp2, sep2 = qi2[o], sp2[o], sep2[o]
+    _, first_q = np.unique(qi2, return_index=True)  # each Gaia source: nearest row
+    pos[qi2[first_q]] = sp2[first_q]
+    acc = sep2[first_q]
+    st.update(
+        accepted=int(len(first_q)),
+        conflicts=int(len(sp) - len(first_q)),  # pairs within max_sep not taken
+        sep_hist=np.histogram(acc, np.linspace(0, max_sep, 21))[0].tolist(),
+    )
+    return pos, st
+
+
 def _nmad(x: np.ndarray) -> float:
     return float(1.4826 * np.median(np.abs(x - np.median(x)))) if len(x) else np.nan
 
@@ -904,6 +1022,10 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
     g_mag = g["phot_g_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
     bp_mag = g["phot_bp_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
     rp_mag = g["phot_rp_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
+    ra_deg, dec_deg, pm_ra, pm_dec = (
+        g[c].to_numpy(zero_copy_only=False).astype(np.float64)
+        for c in ("ra", "dec", "pmra", "pmdec")
+    )
     for name in SURVEY_ORDER:
         survey = SURVEYS[name]
         if name not in cfg["active"]:  # no trusted source, or failed validation
@@ -917,7 +1039,15 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
             st["surveys"][name] = dict(masked=cfg["masked"].get(name, "masked"))
             continue
         store = W["stores"][name]
-        pos, a, b = lookup(store["source_id"], sid, lo_id, hi_id)
+        if survey.id_mode == "float64":
+            pos, xst = skymapper_pairs(
+                store, sid, ra_deg, dec_deg, pm_ra, pm_dec, lo_id, hi_id
+            )
+            good = pos[pos >= 0]
+            a, b = (int(good.min()), int(good.max()) + 1) if len(good) else (0, 0)
+        else:
+            pos, a, b = lookup(store["source_id"], sid, lo_id, hi_id)
+            xst = None
         hit = pos >= 0
         matched_in_block = int(((pos >= a) & (pos < b)).sum())
         vals = {c.name: gather(store[c.name], pos, a, b) for c in survey.columns}
@@ -941,6 +1071,8 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
             any_band=0,
             pairing=met,
         )
+        if xst is not None:
+            sst["position_match"] = xst
         mags = {}
         for c in survey.columns:
             v = vals[c.name]
@@ -1300,6 +1432,9 @@ def task_validate(t: dict) -> dict:
         "phot_g_mean_mag",
         "phot_bp_mean_mag",
         "phot_rp_mean_mag",
+        "ra",
+        "pmra",
+        "pmdec",
     ]
     g = pa.concat_tables([pq.read_table(f, columns=cols) for f in t["gaia"]])
     sid = g["source_id"].to_numpy().astype(np.int64, copy=False)
@@ -1310,9 +1445,31 @@ def task_validate(t: dict) -> dict:
     for name in t["surveys"]:
         d = sorted_dir(Path(t["staging"]), name)
         ssid = np.load(d / "source_id.npy", mmap_mode="r")
-        pos, a, b = lookup(ssid, sid, lo_id, hi_id)
+        res = {}
+        if SURVEYS[name].id_mode == "float64":
+            store = {
+                c: np.load(d / f"{c}.npy", mmap_mode="r")
+                for c in ("source_id", "_ra", "_dec", "_epoch")
+            }
+            pos, res["position_match"] = skymapper_pairs(
+                store,
+                sid,
+                arr["ra"],
+                arr["dec"],
+                arr["pmra"],
+                arr["pmdec"],
+                lo_id,
+                hi_id,
+            )
+            good = pos[pos >= 0]
+            a, b = (int(good.min()), int(good.max()) + 1) if len(good) else (0, 0)
+        else:
+            pos, a, b = lookup(ssid, sid, lo_id, hi_id)
         hit = pos >= 0
-        res = dict(matched=int(hit.sum()))
+        res["matched"] = int(hit.sum())
+        # ids rounded through float64 upstream are all float-exact (Gaia ids ~0.2-0.5)
+        k = np.asarray(ssid[a:b][:200_000]) if b > a else np.zeros(0, np.int64)
+        res["float_exact"] = [int((float64_key(k) == k).sum()), int(len(k))]
         sub = {}
         for key, band in (
             ("primary", PAIRING_BAND[name][0]),
@@ -1410,7 +1567,7 @@ def validate_pairing(
             )
         judged = [r["primary"] for r in rs if "passed" in r["primary"]]
         frac = float(np.mean([j["passed"] for j in judged])) if judged else 0.0
-        extra = {}
+        extra: dict = {}
         if name == "catwise":
             w12 = pooled["x"] - pooled["x2"]
             w12 = w12[np.isfinite(w12)]
@@ -1419,7 +1576,25 @@ def validate_pairing(
                 median=float(np.median(w12)) if len(w12) else None,
                 nmad=_nmad(w12),
             )
+        fe = np.sum([r["float_exact"] for r in rs], axis=0)
+        fe_frac = float(fe[0] / fe[1]) if fe[1] else None
+        id_ok = SURVEYS[name].id_mode == "float64" or fe[1] < 1000 or fe_frac < 0.99
+        if SURVEYS[name].id_mode == "float64":
+            extra["position_match"] = {
+                k: int(sum(r["position_match"].get(k, 0) for r in rs))
+                for k in (
+                    "candidates",
+                    "gaia_with_candidate",
+                    "within_sep",
+                    "beyond_sep",
+                    "accepted",
+                    "conflicts",
+                )
+            }
         report["surveys"][name] = dict(
+            id_float_exact_fraction=fe_frac,
+            id_mode=SURVEYS[name].id_mode,
+            ids_ok=bool(id_ok),
             pooled_primary=prim,
             pooled_second=sec,
             by_dec=by_dec,
@@ -1434,7 +1609,7 @@ def validate_pairing(
                 )
                 for r in results
             ],
-            passed=bool(prim.get("passed", False) and frac >= 0.8),
+            passed=bool(prim.get("passed", False) and frac >= 0.8 and id_ok),
             **extra,
         )
         log(
@@ -1847,9 +2022,29 @@ def finalize(
     m["columns_non_null"] = {
         c: sum(s["columns"].get(c, 0) for s in stats) for c in output_columns()
     }
+    exact = [k for k in active if SURVEYS[k].id_mode == "exact"]
+    for k in active:
+        if SURVEYS[k].id_mode != "exact":
+            pm = [s["surveys"][k].get("position_match", {}) for s in stats]
+            surveys[k]["position_match"] = {
+                f: int(sum(x.get(f, 0) for x in pm))
+                for f in (
+                    "candidates",
+                    "gaia_with_candidate",
+                    "within_sep",
+                    "beyond_sep",
+                    "accepted",
+                    "conflicts",
+                )
+            }
+            hs = [x["sep_hist"] for x in pm if "sep_hist" in x]
+            surveys[k]["position_match"]["sep_hist_0_to_1arcsec_20bins"] = (
+                np.sum(hs, axis=0).tolist() if hs else None
+            )
+            surveys[k]["staged_rows_not_in_gaia"] = None  # keys are rounded ids
     checks["staged_rows_on_gaia"] = dict(
-        per_survey={k: surveys[k]["staged_rows_not_in_gaia"] for k in active},
-        ok=subset or all(surveys[k]["staged_rows_not_in_gaia"] == 0 for k in active),
+        per_survey={k: surveys[k]["staged_rows_not_in_gaia"] for k in exact},
+        ok=subset or all(surveys[k]["staged_rows_not_in_gaia"] == 0 for k in exact),
     )
     checks["pairing"] = dict(
         validation={k: v["passed"] for k, v in m["pairing_validation"].items()},

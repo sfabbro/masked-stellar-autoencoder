@@ -81,6 +81,9 @@ def sky(tmp_path_factory):
     lo0, _ = B.pixel_range(1, 0)
     misplaced = (np.int64(lo0 + 5) << 35) + 12345
     rows[(1, 1)][3] = misplaced
+    # two Gaia sources whose ids round to the same float64 (SkyMapper key collision)
+    a_id = (rows[(1, 2)][4] >> 10 << 10) + 100
+    rows[(1, 2)][4], rows[(1, 2)][5] = a_id, a_id + 1
     allg, part_of = [], []
     for (o, p), sid in rows.items():
         n = len(sid)
@@ -97,9 +100,9 @@ def sky(tmp_path_factory):
                 "b": np.degrees(np.arcsin(rng.uniform(-1, 1, n))),
                 "parallax": rng.normal(1, 0.5, n),
                 "parallax_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
-                "pmra": rng.normal(0, 5, n),
+                "pmra": rng.normal(0, 200, n),  # fast movers: SkyMapper epoch matters
                 "pmra_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
-                "pmdec": rng.normal(0, 5, n),
+                "pmdec": rng.normal(0, 200, n),
                 "pmdec_error": rng.uniform(0.01, 0.3, n).astype(np.float32),
                 "phot_g_mean_mag": pa.array(g, pa.float32()),
                 "phot_g_mean_flux_over_error": rng.uniform(50, 5000, n).astype(
@@ -244,22 +247,44 @@ def sky(tmp_path_factory):
         c["quality_flag"] = np.full(len(idx), 52, np.int16)
         _write_fits(Table(c), phd / f"ids_pansdr1_{k}.fits.gz")
 
-    # SkyMapper HATS: 50 % of the stars; a second, farther object for one star; one
-    # beyond 2"; one without Gaia id
-    sm = rng.permutation(n)[: int(0.5 * n)]
+    # SkyMapper HATS, its Gaia ids rounded through float64 as in DR4: 50 % of the
+    # stars at their Gaia position (+0.1"); a second object 0.6" from star 0; star 1
+    # only through a 0.2" twin (its own row has dist1 3"); one row without Gaia id;
+    # the collision pair: only source a_id has a SkyMapper row
+    ia, ib = (
+        int(np.flatnonzero(sid == a_id)[0]),
+        int(np.flatnonzero(sid == a_id + 1)[0]),
+    )
+    sm = rng.permutation(np.setdiff1d(np.arange(n), [ia, ib]))[: int(0.5 * n)]
+    sm[5] = ia
     sid_sm = np.concatenate([sid[sm], [sid[sm][0], sid[sm][1], 0]])
     src_sm = np.concatenate([sm, [sm[0], sm[1], sm[2]]])
     dist = rng.uniform(0.05, 1.0, len(sid_sm))
-    dist[-3] = dist[0] + 0.5
+    dist[-3] = 0.6
     dist[-2] = 0.2
     dist[-1] = np.nan
     dist[1] = 3.0  # star 1: only its 0.2" twin counts
     nm = len(sid_sm)
     rsm = mag(-0.1, 0.2, 0.03, src_sm)
+    gra, gdec = gtab["ra"].to_numpy(), gtab["dec"].to_numpy()
+    off = np.full(nm, 0.1)
+    off[-3], off[-2] = 0.6, 0.2
+    # SkyMapper sees the star at its mean epoch: Gaia position + pm * (epoch - J2016)
+    ep = rng.uniform(57262.0, 59469.0, nm)
+    dt = (ep - 57388.5) / 365.25
+    pmr = gtab["pmra"].to_numpy()[src_sm]
+    pmd = gtab["pmdec"].to_numpy()[src_sm]
+    cosd = np.cos(np.radians(gdec[src_sm]))
+    sdec = gdec[src_sm] + pmd * dt / 3.6e6
+    sra = gra[src_sm] + (off / 3600 + pmr * dt / 3.6e6) / cosd
+    key = np.where(sid_sm > 0, sid_sm.astype(np.float64).astype(np.int64), 0)
     smc = {
         "object_id": np.arange(nm, dtype=np.int64),
+        "raj2000": sra,
+        "dej2000": sdec,
+        "mean_epoch": ep,  # MJD, as in DR4
         "flags": np.zeros(nm, np.int32),
-        "gaia_dr3_id1": pa.array(np.where(sid_sm > 0, sid_sm, 0), mask=sid_sm == 0),
+        "gaia_dr3_id1": pa.array(key, mask=sid_sm == 0),
         "gaia_dr3_dist1": dist,
     }
     for b, off in zip("uvgriz", (2.0, 1.5, 0.4, 0.0, -0.3, -0.4), strict=True):
@@ -303,7 +328,7 @@ def sky(tmp_path_factory):
         adql=adql, gtab=gtab, sid=sid, g=g, part_of=part_of, t2=t2, tm=tm,
         sdc=sdss_cols, cw=cw, cwc=cwc, bad=bad, ps=ps, ext=ext, moved=moved,
         lost=lost, sid_sm=sid_sm, smc=smc, sfd_ref=np.asarray(sfd_ref),
-        misplaced=misplaced,
+        misplaced=misplaced, ia=ia, ib=ib,
     )  # fmt: skip
 
 
@@ -330,12 +355,19 @@ def test_build_completes_with_manifest_checks(sky):
     assert s["twomass"]["staged_rows"] == len(sky["tm"]) - 1
     assert s["ps1"]["fallback_found"] == 1 and s["ps1"]["no_photometry"] == 1
     assert s["sdss"]["bands"]["u"]["sentinel_to_null"] == 1
-    assert all(v["staged_rows_not_in_gaia"] == 0 for v in s.values())
+    exact = [k for k in B.SURVEY_ORDER if k != "skymapper"]
+    assert all(s[k]["staged_rows_not_in_gaia"] == 0 for k in exact)
+    assert s["skymapper"]["staged_rows_not_in_gaia"] is None  # keys: rounded ids
     assert m["checks"]["twomass_ks_g"]["pearson_r_ks_g"] > 0.95
     assert m["checks"]["sfd"]["vs_skymapper_ebmv_sfd"]["frac_within_0p01"] == 1.0
     assert m["checks"]["sfd"]["dustmaps_parity"]["max_abs_diff"] == 0.0
     for name in B.SURVEY_ORDER:
         assert m["pairing_validation"][name]["passed"], name
+    smv = m["pairing_validation"]["skymapper"]
+    assert smv["id_float_exact_fraction"] == 1.0 and smv["ids_ok"]
+    assert m["pairing_validation"]["ps1"]["id_float_exact_fraction"] < 0.9
+    pmatch = s["skymapper"]["position_match"]
+    assert pmatch["accepted"] == len(sky["sid_sm"]) - 3 and pmatch["conflicts"] >= 1
     assert s["catwise"]["pairing_gate"]["partitions_failed"] == 1
     assert s["ps1"]["pairing_gate"]["partitions_failed"] == 0
     assert m["pairing_validation"]["ps1"]["pooled_primary"]["ratio"] < 0.1
@@ -412,6 +444,8 @@ def test_values_nulls_and_sentinels(sky):
     assert u[pos[sm[0]]] == np.float32(sky["smc"]["u_psf"][0])  # not the 99 twin
     assert u[pos[sm[1]]] == np.float32(sky["smc"]["u_psf"][-2])  # 0.2" twin, not 3"
     assert t["flags"].null_count == len(sky["sid"]) - (len(sm) - 3)
+    # rounded-id collision resolved by position: a_id has its row, a_id + 1 none
+    assert not np.isnan(u[sky["ia"]]) and np.isnan(u[sky["ib"]])
     # the out-of-range source id is found in every store it is in
     i = pos[sky["misplaced"]]
     for name, ids in (
