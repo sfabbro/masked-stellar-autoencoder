@@ -26,10 +26,16 @@ dependencies = [
     "pyyaml>=6.0.1",
     "wandb>=0.16.0",
     "torchregress @ git+https://github.com/sfabbro/torchregress.git@edab00440c8ae424a70b441e4a187b68e37176af",
+    # v11 encoder: filter integrals of XP spectra (masked_stellar_autoencoder.v11.filters)
+    "torchgaiaxp>=0.3.0,<0.4",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+# v11 input contract and SVO filter curves (provenance in filters/provenance.json)
+"masked_stellar_autoencoder.v11" = ["contract.yaml", "filters/*.csv", "filters/*.json"]
 
 [tool.pixi.workspace]
 channels = ["conda-forge"]
@@ -110,6 +116,8 @@ monitor-pretrain = "marimo run monitor/msa_pretrain.py --host 127.0.0.1 --port 2
 masked-stellar-autoencoder = { path = ".", editable = true }
 pre-commit = "*"
 zuko = ">=1.6.0, <2"
+# astroai torchgaiaxp: XP passband integrals with the exact coefficient covariance (v11 encoder)
+torchgaiaxp = "==0.3.0"
 
 [tool.ruff]
 target-version = "py312"
