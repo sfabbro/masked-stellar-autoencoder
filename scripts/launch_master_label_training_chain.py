@@ -1548,6 +1548,22 @@ STEPS["hats-survey-audit"] = dict(
     ),
     files=[],
 )
+# Follow-up (session umd2ni2t found them in samples): tree-wide counts of the Legacy
+# Surveys DR11 north/south twins, PS1 single detections, Pristine duplicate source_id,
+# SDSS id vs THING_ID, S-PLUS field-overlap twins, GALEX zero points and Euclid wide
+# detection flags; results next to the main audit's, in followup/.
+STEPS["hats-survey-audit-followup"] = dict(
+    run_id="hats_survey_audit_20261124_followup",
+    gpu=0,
+    ram=96,
+    cpu=16,
+    command=(
+        "python -u scripts/audit_hats_community.py --root /arc/projects/hats"
+        " --output /arc/projects/astroai/msa/runs/hats_survey_audit_20261124/followup"
+        " --workers 16 --stages followup --max-hours 4"
+    ),
+    files=[],
+)
 
 
 def pushed_head() -> tuple[str, str]:

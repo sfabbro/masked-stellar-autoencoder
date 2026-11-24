@@ -149,3 +149,51 @@ def test_refuses_output_under_root(tree):
     hats, _ = tree
     with pytest.raises(SystemExit):
         audit.main(["--root", str(hats), "--output", os.path.join(hats, "x")])
+
+
+def test_followup_ls_twins(tree):
+    hats, out = tree
+    gaia = pq.read_table(
+        hats / "gaia" / "dr3" / "dataset" / "Norder=0" / "Dir=0" / "Npix=4.parquet"
+    )
+    ra, dec = gaia.column("ra").to_numpy()[:500], gaia.column("dec").to_numpy()[:500]
+    n = len(ra)
+    # the first 100 positions appear again with the other RELEASE (north/south twins)
+    ls = pa.table(
+        dict(
+            _healpix_29=np.concatenate(
+                [
+                    gaia.column("_healpix_29").to_numpy()[:n],
+                    gaia.column("_healpix_29").to_numpy()[:100],
+                ]
+            ),
+            RA=np.concatenate([ra, ra[:100]]),
+            DEC=np.concatenate([dec, dec[:100]]),
+            RELEASE=np.array([11010] * n + [11011] * 100, dtype=np.int16),
+            REF_CAT=np.array(["G2"] * (n + 100)),
+            REF_ID=np.concatenate([np.arange(n), np.arange(100)]),
+            TYPE=np.array(["PSF"] * (n + 100)),
+        )
+    )
+    _write_tree(
+        hats / "legacysurvey", "dr11", _props(n + 100, ra="RA", dec="DEC"), {(0, 4): ls}
+    )
+    assert (
+        audit.main(
+            [
+                "--root",
+                str(hats),
+                "--output",
+                str(out),
+                "--workers",
+                "2",
+                "--stages",
+                "followup",
+            ]
+        )
+        == 0
+    )
+    f = json.loads((out / "followup.json").read_text())["ls_dr11_overlap"]
+    assert f["n_mixed_release_partitions"] == 1
+    assert f["totals"]["twin01"] == 200 and f["totals"]["same_gaia_twin"] == 200
+    assert f["partitions"][0]["gaia_frac_ge2"] > 0

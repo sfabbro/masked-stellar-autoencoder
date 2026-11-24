@@ -22,6 +22,10 @@ Stages (each writes its JSON before the next starts, so a timeout keeps the resu
 4. ``fullscan``: every row's coordinates (NaN, range, pixel membership) for small
    catalogues and for the named rebuild candidates.
 5. ``compare``: per-partition row counts of rebuilt trees vs their backups.
+6. ``followup`` (only when asked): tree-wide numbers for issues the samples raised
+   (Legacy Surveys DR11 north/south twins, PS1 single detections, Pristine duplicate
+   source_id, SDSS ``id`` vs THING_ID, S-PLUS field-overlap twins, GALEX zero points,
+   Euclid wide detection flags).
 
 Usage (CANFAR, /arc mounted)::
 
@@ -1832,6 +1836,347 @@ def full_scan(cat: str, struct: dict, workers: int, deadline: float) -> dict:
     )
 
 
+# ----------------------------------------------------------------------------- followup
+# Tree-wide numbers for the issues the samples raised (stage ``followup``).
+
+
+def _files(root: Path, cat: str) -> list[tuple[int, int, str]]:
+    parts = list_partitions(root / cat / "dataset")["parts"]
+    return sorted((o, p, f) for (o, p), v in parts.items() for f, _ in v["files"])
+
+
+def _read_cols(path: str, cols: list[str]):
+    import pyarrow.parquet as pq
+
+    names = pq.read_schema(path).names
+    return pq.read_table(path, columns=[c for c in cols if c in names])
+
+
+def _map_files(root: Path, cat: str, fn, workers: int) -> list:
+    out = []
+    with ThreadPoolExecutor(workers) as ex:
+        futs = [ex.submit(fn, o, p, f) for o, p, f in _files(root, cat)]
+        for fut in as_completed(futs):
+            try:
+                out.append(fut.result())
+            except Exception as exc:
+                out.append(dict(error=repr(exc)[:200]))
+    return out
+
+
+def nn_other(tree, xyz) -> tuple[np.ndarray, np.ndarray]:
+    """Separation (arcsec) and index of each point's nearest neighbour other than itself
+    (with exact duplicates the KD-tree may return the twin first and the point second)."""
+    d, ix = tree.query(xyz, k=3)
+    self_ = np.arange(len(xyz))[:, None]
+    col = np.argmax(ix != self_, axis=1)
+    rows = np.arange(len(xyz))
+    return sep_arcsec(d[rows, col]), ix[rows, col]
+
+
+def ls_overlap(
+    root: Path, gaia: GaiaReader | None, workers: int, cap: int = 400
+) -> dict:
+    """Legacy Surveys DR11 north/south overlap: rows at the same position twice."""
+    import pyarrow.parquet as pq
+    from scipy.spatial import cKDTree
+
+    cat = "legacysurvey/dr11"
+
+    def rel_range(o, p, f):
+        md = pq.read_metadata(f)
+        names = [md.schema.column(j).path for j in range(md.num_columns)]
+        j = names.index("RELEASE")
+        vals = set()
+        for i in range(md.num_row_groups):
+            s = md.row_group(i).column(j).statistics
+            vals |= {s.min, s.max}
+        return (o, p, f, sorted(vals))
+
+    ranges = _map_files(root, cat, rel_range, workers)
+    mixed = [r for r in ranges if isinstance(r, tuple) and len(r[3]) > 1]
+    res = dict(n_files=len(ranges), n_mixed_release_partitions=len(mixed))
+    rng = np.random.default_rng(11)
+    pick = (
+        mixed
+        if len(mixed) <= cap
+        else [mixed[i] for i in sorted(rng.choice(len(mixed), cap, replace=False))]
+    )
+    tot = Counter()
+    per = []
+    for o, p, f, _ in pick:
+        t = _read_cols(f, ["RA", "DEC", "RELEASE", "REF_CAT", "REF_ID", "TYPE"])
+        ra, dec = (
+            to_np(t.column("RA")).astype(float),
+            to_np(t.column("DEC")).astype(float),
+        )
+        rel = to_np(t.column("RELEASE"))
+        xyz = unitvec(ra, dec)
+        s, j = nn_other(cKDTree(xyz), xyz)
+        cross = rel != rel[j]
+        tw01 = (s < 0.1) & cross
+        tw05 = (s < 0.5) & cross
+        refc = to_np(t.column("REF_CAT")).astype(str)
+        refi = to_np(t.column("REF_ID"))
+        g2 = np.char.strip(refc) == "G2"
+        same_gaia = tw01 & g2 & g2[j] & (refi == refi[j])
+        n = len(ra)
+        tot.update(
+            rows=n,
+            twin01=int(tw01.sum()),
+            twin05=int(tw05.sum()),
+            same_gaia_twin=int(same_gaia.sum()),
+        )
+        item = dict(
+            partition=f"{o}/{p}",
+            rows=n,
+            frac_cross_release_twin_lt0p1=round(float(tw01.mean()), 4),
+            frac_cross_release_twin_lt0p5=round(float(tw05.mean()), 4),
+            release_counts=dict(Counter(map(str, rel)).most_common(3)),
+        )
+        if gaia is not None and tw01.any():
+            import healpy as hp
+
+            so = max(o, 6)
+            sub = hp.ang2pix(2**so, ra[tw01], dec[tw01], nest=True, lonlat=True)
+            vals, cnt = np.unique(sub, return_counts=True)
+            sp = int(vals[np.argmax(cnt)])
+            sel = hp.ang2pix(2**so, ra, dec, nest=True, lonlat=True) == sp
+            g = gaia.rows_in(so, sp)
+            if g is not None and g.num_rows and sel.sum() > 1:
+                sidx = np.flatnonzero(sel)
+                st = cKDTree(xyz[sidx])
+                gd, gi = st.query(
+                    unitvec(
+                        to_np(g.column("ra")).astype(float),
+                        to_np(g.column("dec")).astype(float),
+                    ),
+                    k=2,
+                    distance_upper_bound=chord(MATCH_RADIUS),
+                )
+                ok = np.isfinite(gd)
+                m2 = ok[:, 1]
+                item["gaia_subpixel"] = f"{so}/{sp}"
+                item["gaia_n"] = int(len(gd))
+                item["gaia_frac_matched"] = round(float(ok[:, 0].mean()), 4)
+                item["gaia_frac_ge2"] = round(float(m2.mean()), 4)
+                if m2.any():
+                    r1, r2 = sidx[gi[m2, 0]], sidx[gi[m2, 1]]
+                    item["gaia_ge2_cross_release_frac"] = round(
+                        float(np.mean(rel[r1] != rel[r2])), 4
+                    )
+                tot.update(gaia_n=int(len(gd)), gaia_ge2=int(m2.sum()))
+        per.append(item)
+    res.update(partitions_read=len(pick), totals=dict(tot), partitions=per[:60])
+    if tot["rows"]:
+        res["frac_rows_with_cross_release_twin_lt0p1_in_mixed"] = round(
+            tot["twin01"] / tot["rows"], 4
+        )
+    res["mixed_partitions"] = [f"{o}/{p}" for o, p, _, _ in mixed][:500]
+    return res
+
+
+def ps1_ndetections(root: Path, workers: int) -> dict:
+    def f(o, p, path):
+        nd = to_np(_read_cols(path, ["nDetections"]).column("nDetections"))
+        return dict(
+            n=len(nd),
+            eq0=int((nd == 0).sum()),
+            eq1=int((nd == 1).sum()),
+            eq2=int((nd == 2).sum()),
+        )
+
+    tot = Counter()
+    for r in _map_files(root, "ps1/otmo", f, workers):
+        if "error" not in r:
+            tot.update(r)
+    return dict(
+        tot,
+        frac_eq1=round(tot["eq1"] / max(tot["n"], 1), 4),
+        frac_le1=round((tot["eq0"] + tot["eq1"]) / max(tot["n"], 1), 4),
+    )
+
+
+def pristine_dups(root: Path) -> dict:
+    import pyarrow as pa
+
+    tabs = [
+        _read_cols(
+            f,
+            [
+                "source_id",
+                "RA",
+                "Dec",
+                "G_0",
+                "CaHK_0",
+                "FeH_Pristine",
+                "merged_CASU_flag",
+            ],
+        )
+        for _, _, f in _files(root, "pristine/dr2")
+    ]
+    t = pa.concat_tables(tabs)
+    sid = to_np(t.column("source_id"))
+    order = np.argsort(sid, kind="stable")
+    s = sid[order]
+    dup = np.flatnonzero(s[1:] == s[:-1])
+    res = dict(
+        rows=len(sid),
+        duplicate_pairs=int(len(dup)),
+        distinct_ids=int(len(np.unique(sid))),
+    )
+    if len(dup):
+        a, b = order[dup], order[dup + 1]
+        for c in ("G_0", "CaHK_0", "FeH_Pristine", "merged_CASU_flag", "RA"):
+            v = to_np(t.column(c)).astype(float)
+            res[f"dup_pairs_identical_{c}"] = int(
+                np.sum((v[a] == v[b]) | (np.isnan(v[a]) & np.isnan(v[b])))
+            )
+        res["examples"] = [int(x) for x in s[dup][:5]]
+    return res
+
+
+def sdss_ids(root: Path, workers: int) -> dict:
+    cols = ["id", "THING_ID", "RUN", "CAMCOL", "FIELD", "ID"]
+
+    def f(o, p, path):
+        t = _read_cols(path, cols)
+        idv = to_np(t.column("id")).astype(np.int64)
+        th = to_np(t.column("THING_ID")).astype(np.int64)
+        key = (
+            (to_np(t.column("RUN")).astype(np.int64) << 32)
+            | (to_np(t.column("CAMCOL")).astype(np.int64) << 29)
+            | (to_np(t.column("FIELD")).astype(np.int64) << 16)
+            | to_np(t.column("ID")).astype(np.int64)
+        )
+        return dict(n=len(idv), id_eq_thing=int((idv == th).sum()), ids=idv, keys=key)
+
+    rs = [
+        r
+        for r in _map_files(root, "sdss/photoprimary_dr13", f, workers)
+        if "error" not in r
+    ]
+    ids = np.concatenate([r["ids"] for r in rs])
+    keys = np.concatenate([r["keys"] for r in rs])
+    n = len(ids)
+    res = dict(rows=n, id_equals_THING_ID=int(sum(r["id_eq_thing"] for r in rs)))
+    ids.sort()
+    dup = ids[1:] == ids[:-1]
+    res["duplicate_id_values"] = int(dup.sum())
+    res["duplicate_id_examples"] = [int(x) for x in ids[1:][dup][:5]]
+    res["negative_ids"] = int((ids < 0).sum())
+    keys.sort()
+    res["duplicate_run_camcol_field_ID"] = int((keys[1:] == keys[:-1]).sum())
+    return res
+
+
+def splus_overlap(root: Path, workers: int) -> dict:
+    from scipy.spatial import cKDTree
+
+    def f(o, p, path):
+        t = _read_cols(path, ["ra", "dec", "field"])
+        ra, dec = (
+            to_np(t.column("ra")).astype(float),
+            to_np(t.column("dec")).astype(float),
+        )
+        fld = to_np(t.column("field")).astype(str)
+        xyz = unitvec(ra, dec)
+        s, j = nn_other(cKDTree(xyz), xyz)
+        other = fld != fld[j]
+        return dict(
+            n=len(ra),
+            twin05_other_field=int(((s < 0.5) & other).sum()),
+            twin10_other_field=int(((s < 1.0) & other).sum()),
+            twin05_same_field=int(((s < 0.5) & ~other).sum()),
+        )
+
+    tot = Counter()
+    for r in _map_files(root, "splus/dr4", f, workers):
+        if "error" not in r:
+            tot.update(r)
+    return dict(
+        tot,
+        frac_rows_with_other_field_twin_lt0p5=round(
+            tot["twin05_other_field"] / max(tot["n"], 1), 4
+        ),
+    )
+
+
+def galex_zp(root: Path, workers: int) -> dict:
+    def f(o, p, path):
+        t = _read_cols(path, ["nuv_mag", "nuv_mag_auto", "fuv_mag", "fuv_mag_auto"])
+        out = {}
+        for b in ("nuv", "fuv"):
+            m, a = (
+                to_np(t.column(f"{b}_mag")).astype(float),
+                to_np(t.column(f"{b}_mag_auto")).astype(float),
+            )
+            ok = (m > 5) & (m < 30) & (a > -30) & (a < 30)
+            out[b] = (m[ok] - a[ok])[::50]
+        return out
+
+    res = {}
+    rs = [
+        r
+        for r in _map_files(root, "galex/guvcat_ais_gr67", f, workers)
+        if "error" not in r
+    ]
+    for b in ("nuv", "fuv"):
+        dd = np.concatenate([r[b] for r in rs]) if rs else np.array([])
+        if dd.size:
+            res[f"{b}_mag_minus_mag_auto_pcts_1_50_99"] = [
+                round(float(x), 4) for x in np.percentile(dd, [1, 50, 99])
+            ]
+            res[f"{b}_n_sampled"] = int(dd.size)
+    return res
+
+
+def euclid_flags(root: Path, workers: int) -> dict:
+    cat = "euclid/dr1/mer_catalogue_wide_survey/euclid_dr1_reformatted_catalogs_mer_catalogue_wide_survey-hats"
+
+    def f(o, p, path):
+        t = _read_cols(path, ["vis_det", "spurious_flag", "det_quality_flag"])
+        v = to_np(t.column("vis_det"))
+        s = to_np(t.column("spurious_flag"))
+        q = to_np(t.column("det_quality_flag"))
+        return dict(
+            n=len(v),
+            vis_det0=int((v == 0).sum()),
+            spurious1=int((s == 1).sum()),
+            dqf_nonzero=int((q != 0).sum()),
+            vis1_spur0_dqf0=int(((v == 1) & (s == 0) & (q == 0)).sum()),
+        )
+
+    tot = Counter()
+    for r in _map_files(root, cat, f, workers):
+        if "error" not in r:
+            tot.update(r)
+    return dict(tot)
+
+
+def followup(root: Path, gaia: GaiaReader | None, workers: int) -> dict:
+    out = {}
+    for name, fn in (
+        ("ls_dr11_overlap", lambda: ls_overlap(root, gaia, workers)),
+        ("ps1_ndetections", lambda: ps1_ndetections(root, workers)),
+        ("pristine_duplicates", lambda: pristine_dups(root)),
+        ("sdss_ids", lambda: sdss_ids(root, workers)),
+        ("splus_overlap", lambda: splus_overlap(root, workers)),
+        ("galex_zero_point", lambda: galex_zp(root, workers)),
+        ("euclid_wide_flags", lambda: euclid_flags(root, workers)),
+    ):
+        t0 = time.time()
+        try:
+            out[name] = fn()
+        except Exception as exc:
+            out[name] = dict(
+                error=repr(exc)[:500], traceback=traceback.format_exc()[-1500:]
+            )
+        out[name]["seconds"] = round(time.time() - t0, 1)
+        log(f"  followup {name} {out[name]['seconds']}s")
+    return out
+
+
 # ----------------------------------------------------------------------------- main
 
 
@@ -1960,6 +2305,13 @@ def main(argv=None) -> int:
             except Exception as exc:
                 r = dict(error=repr(exc))
             dump(out / "fullscan" / (safe(c) + ".json"), dict(catalogue=c, **r))
+    if "followup" in stages:
+        g = (
+            GaiaReader(root)
+            if (root / GAIA_TREE / "partition_info.csv").is_file()
+            else None
+        )
+        dump(out / "followup.json", followup(root, g, a.workers))
     if "compare" in stages:
         comp = []
         for x, y in COMPARE:
