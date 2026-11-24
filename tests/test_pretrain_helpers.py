@@ -160,17 +160,27 @@ def test_unweighted_pretrain_can_resume_with_corrected_error_mapping(
     assert result == (0.0, 0.0, 2)
 
 
-def test_pretrain_io_skips_error_columns_only_when_they_are_unused():
+def test_pretrain_io_loads_error_columns_by_default():
     errors = ["e_a", None]
 
-    assert _pretrain_io_error_cols(errors, loss_fn="mae", pert_features=False) == [
-        None,
-        None,
-    ]
+    # measured errors reach the batches even when the loss does not use them
+    assert _pretrain_io_error_cols(errors, loss_fn="mae", pert_features=False) == errors
+    # opt-out: the July behaviour, errors read only when the loss needs them
+    assert _pretrain_io_error_cols(
+        errors, loss_fn="mae", pert_features=False, load_errors=False
+    ) == [None, None]
     assert (
-        _pretrain_io_error_cols(errors, loss_fn="wmae", pert_features=False) == errors
+        _pretrain_io_error_cols(
+            errors, loss_fn="wmae", pert_features=False, load_errors=False
+        )
+        == errors
     )
-    assert _pretrain_io_error_cols(errors, loss_fn="mae", pert_features=True) == errors
+    assert (
+        _pretrain_io_error_cols(
+            errors, loss_fn="mae", pert_features=True, load_errors=False
+        )
+        == errors
+    )
 
 
 def test_pretrain_resume_allows_expanding_same_training_shards(

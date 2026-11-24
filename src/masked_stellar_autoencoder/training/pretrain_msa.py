@@ -91,9 +91,18 @@ def _validate_error_columns(feature_cols, error_cols):
         )
 
 
-def _pretrain_io_error_cols(error_cols, *, loss_fn, pert_features):
-    """Keep uncertainty fields out of the input cache when training cannot use them."""
-    if pert_features or loss_fn in {"wmse", "wmae"}:
+def _pretrain_io_error_cols(error_cols, *, loss_fn, pert_features, load_errors=True):
+    """Uncertainty fields the input store reads alongside the features.
+
+    Every configured error column is loaded by default (``training.load_errors``,
+    2026-11-24), so each batch carries the measured per-band errors of the
+    photometry and XP coefficients (``eX``) whether or not the current loss
+    uses them; an error-aware encoder needs no I/O change. ``load_errors:
+    false`` restores the old behaviour (errors read only when the loss is
+    weighted or feature noise is on, unit errors otherwise), which halves the
+    input cache.
+    """
+    if load_errors or pert_features or loss_fn in {"wmse", "wmae"}:
         return list(error_cols)
     return [None] * len(error_cols)
 
@@ -208,6 +217,13 @@ def main():
         config["data"]["error_cols"],
         loss_fn=config["training"].get("loss_fn", "mse"),
         pert_features=bool(config["training"].get("pert_features", False)),
+        load_errors=bool(config["training"].get("load_errors", True)),
+    )
+    loaded = [e for e in io_error_cols if e is not None]
+    print(
+        f"Pretraining inputs: {len(cols)} features, {len(loaded)} error columns "
+        f"loaded; features without one get unit (scaled) errors: "
+        f"{[c for c, e in zip(cols, io_error_cols, strict=True) if e is None]}"
     )
 
     # Load the pretraining file after checking the feature/uncertainty mapping.
