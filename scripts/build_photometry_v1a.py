@@ -11,11 +11,25 @@ A survey a star has no counterpart in is null (never a fill value); values that 
 sentinels in the sources (SDSS -9999, PS1 -999, NaN) are null too. Quality rules, bright
 limits and error caps are *not* applied here: the contract applies them when reading.
 
+**2MASS is masked** (its columns are all null) unless ``--twomass`` names a correctly
+keyed table: ``adql_matches/twomass.fits`` pairs every Gaia source with another 2MASS
+star (``masked_stellar_autoencoder.data.twomass_gaia``; refused). Correct 2MASS comes
+with the full-wavelength master's designation join.
+
+**Pairing validation.** The other match tables come from the same 2023 ADQL work, so
+before any is used its pairing is tested on a whole-sky sample (one random Gaia
+partition per HEALPix order-1 pixel): residuals of G - x about a robust cubic in
+BP - RP (x = PS1 r, SDSS r, SkyMapper r, CatWISE W1; a second band and declination
+bands reported), against the same rows with x permuted (``pairing_metrics``). A table
+that fails is masked whole; in the build every partition repeats the test and a
+partition that fails is masked for that survey. Numbers in ``validation.json`` and the
+manifest.
+
 Sources (read only):
 
 * Gaia DR3 HATS ``/arc/projects/hats/gaia/dr3`` (the anchor: rows, order, partitions);
 * ``adql_matches`` (Gaia-archive best-neighbour joins keyed by ``source_id``):
-  ``twomass.fits`` (the source_id-keyed 2MASS match), ``sdss.fits``, ``catwise.fits``
+  ``sdss.fits``, ``catwise.fits``
   (Gaia ``source_id`` is ``id2``; its ``source_id`` is the CatWISE name), and PS1 as
   ``pans_gaia_ids.fits`` (``source_id -> original_ext_source_id``) joined to the
   photometry files ``panstarrsdr1_matches/ids_pansdr1_<k>.fits.gz`` (plain FITS; file k
@@ -42,8 +56,9 @@ fingerprint) are not rebuilt.
 Checks (``manifest.json``; ``status: photometry_v1a_complete`` only when all pass): row
 count = Gaia ``hats_nrows`` (1,811,709,771) and per partition; no duplicate
 ``source_id`` (per partition, and across partitions for the out-of-range sources); every
-staged survey row lands on a Gaia source; 2MASS Ks-G Pearson correlation and G-Ks
-distribution; SFD against dustmaps on a sample and against SkyMapper's ``ebmv_sfd``.
+staged survey row lands on a Gaia source; every survey used passed the pairing
+validation (partitions failing the gate counted); 2MASS Ks-G correlation when 2MASS is
+used; SFD against dustmaps on a sample (and, informative, SkyMapper's ``ebmv_sfd``).
 Per band: rows with a value, rows usable under the contract (quality rules applied by
 ``ContractReader``), against the data.md row counts.
 """
@@ -65,7 +80,7 @@ from pathlib import Path
 
 import numpy as np
 
-BUILD_VERSION = "photometry-v1a-1"
+BUILD_VERSION = "photometry-v1a-2"
 CONTRACT = "gaia_keyed_v1a"
 GAIA_NROWS_DR3 = 1_811_709_771
 HEALPIX_SHIFT = 35  # Gaia source_id // 2**35 = HEALPix level-12 nested index
@@ -78,6 +93,21 @@ KSG_EDGES = np.round(np.arange(-3.0, 10.0001, 0.05), 3)  # G - Ks histogram
 SFD_EDGES = np.concatenate([[0.0], np.logspace(-3, 2.5, 56)])
 DSFD_EDGES = np.array([-1e9, -0.1, -0.01, -0.001, -1e-4, 1e-4, 0.001, 0.01, 0.1, 1e9])
 RATIO_EDGES = np.round(np.arange(0.5, 1.5001, 0.01), 2)  # ours / SkyMapper, E > 0.05
+
+# pairing validation (pairing_metrics): survey band tested against Gaia G, BP - RP and
+# the magnitude range used (unsaturated, S/N high enough for a colour relation)
+PAIRING_BAND = {
+    "sdss": ("r", (14.5, 20.5)),
+    "skymapper": ("r_psf", (10.0, 19.0)),
+    "ps1": ("r_mean_psf_mag", (14.5, 20.5)),
+    "twomass": ("ks_m", (5.0, 15.0)),
+    "catwise": ("w1mpro", (8.0, 16.5)),
+}
+PAIR_MIN_N = 50
+PAIR_MAX_RATIO = 0.5
+PAIR_MAX_OUTLIER = 0.3  # outlier share relative to the random-pairing null
+PAIR_OUTLIER_MAG = 1.0
+VALIDATE_ORDER = 1  # validation sample: one random Gaia partition per order-1 pixel
 
 ADQL = Path("/arc/projects/k-pop/catalogues/adql_matches")
 EXPECTED_ROWS = {  # data.md section 2.2 / 2.6 (rows of the Gaia-keyed match tables)
@@ -206,7 +236,9 @@ def output_columns() -> list[str]:
 @dataclass
 class Inputs:
     gaia: Path = Path("/arc/projects/hats/gaia/dr3")
-    twomass: Path = ADQL / "twomass.fits"
+    # 2MASS: "mask" (default) or a correctly keyed table. adql_matches/twomass.fits is
+    # mis-keyed (masked_stellar_autoencoder.data.twomass_gaia) and refused.
+    twomass: str = "mask"
     sdss: Path = ADQL / "sdss.fits"
     catwise: Path = ADQL / "catwise.fits"
     ps1_ids: Path = ADQL / "pans_gaia_ids.fits"
@@ -690,7 +722,7 @@ def _worker_state(cfg: dict) -> dict:
         _W["key"] = cfg["fingerprint"]
         _W["sfd"] = SFD(Path(cfg["sfd"]))
         stores = {}
-        for name in SURVEY_ORDER:
+        for name in cfg["active"]:
             d = sorted_dir(Path(cfg["staging"]), name)
             stores[name] = {
                 c: np.load(d / f"{c}.npy", mmap_mode="r")
@@ -751,6 +783,78 @@ def _arrow_text(values: np.ndarray, valid: np.ndarray):
     return pc.if_else(pa.array(valid), s, pa.scalar(None, pa.string()))
 
 
+def _nmad(x: np.ndarray) -> float:
+    return float(1.4826 * np.median(np.abs(x - np.median(x)))) if len(x) else np.nan
+
+
+def _poly_resid(c: np.ndarray, y: np.ndarray, deg: int = 3, iters: int = 3):
+    """Residuals of y about a robust (5 NMAD clipped) polynomial in c."""
+    m = np.ones(len(c), bool)
+    res = y - np.median(y)
+    for _ in range(iters):
+        if m.sum() <= deg + 1:
+            break
+        coef = np.polyfit(c[m], y[m], deg)
+        res = y - np.polyval(coef, c)
+        cut = 5 * max(_nmad(res[m]), 1e-3)
+        m = np.abs(res - np.median(res[m])) < cut
+    return res
+
+
+def pairing_metrics(g, bp, rp, x, seed: int = 0) -> dict:
+    """Is ``x`` (a survey magnitude) the photometry of the Gaia source on its row?
+
+    Residuals of G - x about a robust cubic in BP - RP: for true pairs their NMAD
+    is the survey's colour scatter (a few 0.01 mag in the optical, ~0.1-0.3 mag in
+    the mid-IR with reddening); for pairs with another star's photometry it is the
+    spread of G - x itself. ``ratio`` divides the NMAD by that of the same rows with
+    x permuted (the random-pairing null, from the same sky): ~1 when the table pairs
+    rows with other stars. ``outlier_frac`` is the share of |residual| >
+    PAIR_OUTLIER_MAG and ``outlier_ratio`` divides it by the null's share: about the
+    fraction of wrong pairs in a mixture (crowding and variability add a little).
+    Pass: ratio < PAIR_MAX_RATIO and outlier_ratio < PAIR_MAX_OUTLIER, with at least
+    PAIR_MIN_N usable rows; a table or partition with more than ~30 % wrong pairs fails.
+    """
+    c = np.asarray(bp, np.float64) - np.asarray(rp, np.float64)
+    g = np.asarray(g, np.float64)
+    x = np.asarray(x, np.float64)
+    ok = np.isfinite(c) & np.isfinite(g) & np.isfinite(x) & (c > -0.5) & (c < 4.0)
+    n = int(ok.sum())
+    out = dict(n=n)
+    if n < PAIR_MIN_N:
+        return out
+    c, g, x = c[ok], g[ok], x[ok]
+    res = _poly_resid(c, g - x)
+    rng = np.random.default_rng(seed)
+    res0 = _poly_resid(c, g - x[rng.permutation(n)])
+    nm, nm0 = _nmad(res), _nmad(res0)
+    ratio = nm / max(nm0, 1e-6)
+    frac = float(np.mean(np.abs(res - np.median(res)) > PAIR_OUTLIER_MAG))
+    frac0 = float(np.mean(np.abs(res0 - np.median(res0)) > PAIR_OUTLIER_MAG))
+    oratio = frac / max(frac0, 1e-3)
+    out.update(
+        nmad=nm,
+        nmad_null=nm0,
+        ratio=ratio,
+        outlier_frac=frac,
+        outlier_frac_null=frac0,
+        outlier_ratio=oratio,
+        corr_g_x=float(np.corrcoef(g, x)[0, 1]),
+        passed=bool(ratio < PAIR_MAX_RATIO and oratio < PAIR_MAX_OUTLIER),
+    )
+    return out
+
+
+def _null_array(c: Col, n: int):
+    import pyarrow as pa
+
+    if c.kind == "text":
+        return pa.nulls(n, pa.string())
+    if c.kind in ("mag", "err"):
+        return pa.nulls(n, pa.float32())
+    return pa.nulls(n, pa.from_numpy_dtype(np.dtype(c.dtype)))
+
+
 def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
     """(Arrow table in Gaia row order, stats dict) of one partition."""
     import pyarrow as pa
@@ -797,40 +901,68 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
         st["columns"][c] = int(n - cols[c].null_count)
     st["columns"]["sfd_ebv"] = int(n - cols["sfd_ebv"].null_count)
     extras = {}
+    g_mag = g["phot_g_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
+    bp_mag = g["phot_bp_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
+    rp_mag = g["phot_rp_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
     for name in SURVEY_ORDER:
-        survey, store = SURVEYS[name], W["stores"][name]
+        survey = SURVEYS[name]
+        if name not in cfg["active"]:  # no trusted source, or failed validation
+            for c in survey.columns:
+                if c.kind == "extra":
+                    extras[(name, c.name)] = np.full(n, np.nan)
+                else:
+                    cols[c.name] = _null_array(c, n)
+                    st["columns"][c.name] = 0
+                    st["columns"][c.name + ":sentinel"] = 0
+            st["surveys"][name] = dict(masked=cfg["masked"].get(name, "masked"))
+            continue
+        store = W["stores"][name]
         pos, a, b = lookup(store["source_id"], sid, lo_id, hi_id)
         hit = pos >= 0
         matched_in_block = int(((pos >= a) & (pos < b)).sum())
+        vals = {c.name: gather(store[c.name], pos, a, b) for c in survey.columns}
+        # pairing gate: this partition's matches must be the photometry of their row
+        xb, (xlo, xhi) = PAIRING_BAND[name]
+        xv = vals[xb]
+        with np.errstate(invalid="ignore"):
+            xok = hit & _valid_mag(xv) & (xv >= xlo) & (xv <= xhi)
+        met = pairing_metrics(
+            g_mag, bp_mag, rp_mag, np.where(xok, xv, np.nan), seed=order * 100003 + npix
+        )
+        gate = met.get("passed", True)  # too few rows to judge: keep
+        keep = hit & gate
         sst = dict(
             matched=int(hit.sum()),
+            kept=int(keep.sum()),
+            masked_by_pairing_gate=int((hit & ~keep).sum()),
             block_rows=b - a,
             block_unmatched=(b - a) - matched_in_block,
             matched_outside=int((hit & outside).sum()),
             any_band=0,
+            pairing=met,
         )
         mags = {}
         for c in survey.columns:
-            v = gather(store[c.name], pos, a, b)
+            v = vals[c.name]
             if c.kind == "extra":
-                extras[(name, c.name)] = np.where(hit, v, np.nan)
+                extras[(name, c.name)] = np.where(keep, v, np.nan)
                 continue
             if c.kind == "mag":
-                ok = hit & _valid_mag(v)
+                ok = keep & _valid_mag(v)
                 mags[c.name] = (v, ok)
-                sentinel = int((hit & np.isfinite(v) & ~ok).sum())
+                sentinel = int((keep & np.isfinite(v) & ~ok).sum())
                 cols[c.name] = pa.array(v, type=pa.float32(), mask=~ok)
             elif c.kind == "err":
-                ok = hit & _valid_err(v) & mags[c.pair][1]
+                ok = keep & _valid_err(v) & mags[c.pair][1]
                 sentinel = int(
-                    (hit & mags[c.pair][1] & np.isfinite(v) & ~_valid_err(v)).sum()
+                    (keep & mags[c.pair][1] & np.isfinite(v) & ~_valid_err(v)).sum()
                 )
                 cols[c.name] = pa.array(v, type=pa.float32(), mask=~ok)
             elif c.kind == "flag":
-                ok, sentinel = hit, 0
+                ok, sentinel = keep, 0
                 cols[c.name] = pa.array(v, mask=~ok)
             else:  # text
-                ok, sentinel = hit, 0
+                ok, sentinel = keep, 0
                 cols[c.name] = _arrow_text(v, ok)
             st["columns"][c.name] = int(ok.sum())
             st["columns"][c.name + ":sentinel"] = sentinel
@@ -840,9 +972,6 @@ def partition_table(order: int, npix: int, gaia_files: list[Path], cfg: dict):
         sst["any_band"] = int(anyb.sum())
         st["surveys"][name] = sst
         if name == "twomass":
-            g_mag = (
-                g["phot_g_mean_mag"].to_numpy(zero_copy_only=False).astype(np.float64)
-            )
             ks, ks_ok = mags["ks_m"]
             q = cols["ph_qual"]
             good = np.asarray(
@@ -971,15 +1100,36 @@ def ps1_phot_file(inputs: Inputs, k: int) -> Path | None:
     return None
 
 
+def enabled_surveys(inputs: Inputs) -> tuple[list[str], dict[str, str]]:
+    """Surveys with a trusted source, and why the others are masked."""
+    masked = {}
+    if str(inputs.twomass) == "mask":
+        masked["twomass"] = (
+            "no trusted Gaia-keyed 2MASS table: adql_matches/twomass.fits is mis-keyed "
+            "(DR3 clean_tmass_psc_xsc_oid joined to DR1 tmass_oid; corr(G, Ks) 0.002); "
+            "2MASS comes with the full-wavelength master's designation join"
+        )
+    else:
+        from masked_stellar_autoencoder.data.twomass_gaia import refuse_miskeyed
+
+        refuse_miskeyed(inputs.twomass)
+    return [s for s in SURVEY_ORDER if s not in masked], masked
+
+
 def prepare_stores(
-    inputs: Inputs, opt: Options, staging: Path, workers: int, sort_workers: int
+    inputs: Inputs,
+    opt: Options,
+    staging: Path,
+    workers: int,
+    sort_workers: int,
+    surveys: list[str],
 ) -> dict:
     """Stage every match table as a sorted, de-duplicated column store."""
     import pyarrow.parquet as pq
 
     tasks_by: dict[str, list] = {}
     info: dict[str, dict] = {}
-    todo = [s for s in SURVEY_ORDER if store_meta(staging, s) is None]
+    todo = [s for s in surveys if store_meta(staging, s) is None]
     for name in todo:
         survey = SURVEYS[name]
         u = unsorted_dir(staging, name)
@@ -987,7 +1137,7 @@ def prepare_stores(
         cols = [(c.name, c.src, c.dtype) for c in survey.columns]
         tasks = []
         if name in ("twomass", "sdss", "catwise"):
-            path = getattr(inputs, name)
+            path = Path(getattr(inputs, name))
             lay = fits_layout(path)
             n = lay.nrows
             sid_col = "id2" if name == "catwise" else "source_id"
@@ -1112,11 +1262,185 @@ def prepare_stores(
                 log(
                     f"store {m['survey']}: {m['rows']:,} rows sorted ({m['sort_seconds']:.0f} s)"
                 )
-    for s in SURVEY_ORDER:
+    for s in surveys:
         metas[s] = store_meta(staging, s)
         if metas[s] is None:
             raise RuntimeError(f"store {s} incomplete")
     return metas
+
+
+def validation_sample(plist, seed: int = 20261124) -> list[tuple[int, int]]:
+    """One random Gaia partition per HEALPix order-VALIDATE_ORDER pixel (whole sky)."""
+    rng = np.random.default_rng(seed)
+    by: dict[int, list] = {}
+    for o, p in plist:
+        lo, _ = pixel_range(o, p)
+        by.setdefault(lo >> 2 * (LEVEL - VALIDATE_ORDER), []).append((o, p))
+    return [v[int(rng.integers(len(v)))] for _, v in sorted(by.items())]
+
+
+SECOND_BAND = {
+    "sdss": "i",
+    "skymapper": "i_psf",
+    "ps1": "i_mean_psf_mag",
+    "twomass": "j_m",
+    "catwise": "w2mpro",
+}
+DEC_BANDS = (-90, -60, -30, 0, 30, 60, 90)
+
+
+def task_validate(t: dict) -> dict:
+    """Pairing metrics of every store on one Gaia partition (+ a row subsample)."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    cols = [
+        "source_id",
+        "dec",
+        "phot_g_mean_mag",
+        "phot_bp_mean_mag",
+        "phot_rp_mean_mag",
+    ]
+    g = pa.concat_tables([pq.read_table(f, columns=cols) for f in t["gaia"]])
+    sid = g["source_id"].to_numpy().astype(np.int64, copy=False)
+    arr = {c: g[c].to_numpy(zero_copy_only=False).astype(np.float64) for c in cols[1:]}
+    lo_id, hi_id = id_range(t["order"], t["npix"])
+    rng = np.random.default_rng(t["order"] * 100003 + t["npix"])
+    out = dict(Norder=t["order"], Npix=t["npix"], rows=len(sid), surveys={})
+    for name in t["surveys"]:
+        d = sorted_dir(Path(t["staging"]), name)
+        ssid = np.load(d / "source_id.npy", mmap_mode="r")
+        pos, a, b = lookup(ssid, sid, lo_id, hi_id)
+        hit = pos >= 0
+        res = dict(matched=int(hit.sum()))
+        sub = {}
+        for key, band in (
+            ("primary", PAIRING_BAND[name][0]),
+            ("second", SECOND_BAND[name]),
+        ):
+            x = gather(np.load(d / f"{band}.npy", mmap_mode="r"), pos, a, b).astype(
+                np.float64
+            )
+            xlo, xhi = PAIRING_BAND[name][1]
+            with np.errstate(invalid="ignore"):
+                ok = hit & _valid_mag(x) & (x >= xlo - 1) & (x <= xhi + 1)
+                if key == "primary":
+                    ok &= (x >= xlo) & (x <= xhi)
+            x = np.where(ok, x, np.nan)
+            res[key] = dict(
+                band=band,
+                **pairing_metrics(
+                    arr["phot_g_mean_mag"],
+                    arr["phot_bp_mean_mag"],
+                    arr["phot_rp_mean_mag"],
+                    x,
+                    seed=t["npix"],
+                ),
+            )
+            sub[key] = x
+        use = np.flatnonzero(np.isfinite(sub["primary"]) | np.isfinite(sub["second"]))
+        if len(use) > t["sample_rows"]:
+            use = np.sort(rng.choice(use, t["sample_rows"], replace=False))
+        res["sample"] = {
+            "g": arr["phot_g_mean_mag"][use],
+            "bp": arr["phot_bp_mean_mag"][use],
+            "rp": arr["phot_rp_mean_mag"][use],
+            "dec": arr["dec"][use],
+            "x": sub["primary"][use],
+            "x2": sub["second"][use],
+        }
+        out["surveys"][name] = res
+    return out
+
+
+def validate_pairing(
+    plist,
+    gaia: Path,
+    staging: Path,
+    surveys: list[str],
+    workers: int,
+    sample_rows: int = 20000,
+) -> dict:
+    """Pairing validation of each staged survey on a whole-sky random sample of Gaia
+    partitions, before any is used: pooled and per-partition ``pairing_metrics``
+    (primary band decides; a second band and declination bands are reported)."""
+    parts = validation_sample(plist)
+    tasks = [
+        dict(
+            order=o,
+            npix=p,
+            gaia=[str(f) for f in partition_files(gaia, o, p)],
+            staging=str(staging),
+            surveys=surveys,
+            sample_rows=sample_rows,
+        )
+        for o, p in parts
+    ]
+    with _pool(workers) as pool:
+        results = _run_tasks(pool, task_validate, tasks, "validate pairing", every=12)
+    report = dict(
+        rule=(
+            f"residual NMAD of G - x about a robust cubic in BP - RP, divided by the NMAD "
+            f"with x permuted (random-pairing null), < {PAIR_MAX_RATIO}; share of "
+            f"|residual| > {PAIR_OUTLIER_MAG} mag over the null's share < {PAIR_MAX_OUTLIER}; "
+            f">= {PAIR_MIN_N} rows; "
+            "a survey is used only if the pooled sample passes and >= 80 % of the judged "
+            "sampled partitions pass"
+        ),
+        sample_partitions=[(r["Norder"], r["Npix"]) for r in results],
+        surveys={},
+    )
+    for name in surveys:
+        rs = [r["surveys"][name] for r in results]
+        pooled = {
+            k: np.concatenate([r["sample"][k] for r in rs])
+            for k in ("g", "bp", "rp", "dec", "x", "x2")
+        }
+        prim = pairing_metrics(
+            pooled["g"], pooled["bp"], pooled["rp"], pooled["x"], seed=1
+        )
+        sec = pairing_metrics(
+            pooled["g"], pooled["bp"], pooled["rp"], pooled["x2"], seed=2
+        )
+        by_dec = {}
+        for lo, hi in zip(DEC_BANDS[:-1], DEC_BANDS[1:], strict=True):
+            m = (pooled["dec"] >= lo) & (pooled["dec"] < hi)
+            by_dec[f"{lo}..{hi}"] = pairing_metrics(
+                pooled["g"][m], pooled["bp"][m], pooled["rp"][m], pooled["x"][m], seed=3
+            )
+        judged = [r["primary"] for r in rs if "passed" in r["primary"]]
+        frac = float(np.mean([j["passed"] for j in judged])) if judged else 0.0
+        extra = {}
+        if name == "catwise":
+            w12 = pooled["x"] - pooled["x2"]
+            w12 = w12[np.isfinite(w12)]
+            extra["w1_minus_w2"] = dict(
+                n=len(w12),
+                median=float(np.median(w12)) if len(w12) else None,
+                nmad=_nmad(w12),
+            )
+        report["surveys"][name] = dict(
+            pooled_primary=prim,
+            pooled_second=sec,
+            by_dec=by_dec,
+            partitions_judged=len(judged),
+            partitions_passed_frac=frac,
+            partitions=[
+                dict(
+                    Norder=r["Norder"],
+                    Npix=r["Npix"],
+                    matched=r["surveys"][name]["matched"],
+                    **{k: v for k, v in r["surveys"][name]["primary"].items()},
+                )
+                for r in results
+            ],
+            passed=bool(prim.get("passed", False) and frac >= 0.8),
+            **extra,
+        )
+        log(
+            f"validate {name}: pooled {prim}; partitions passed {frac:.2f} of {len(judged)}"
+        )
+    return report
 
 
 def _apply(ft):
@@ -1221,6 +1545,8 @@ def build(inputs: Inputs, opt: Options, args) -> int:
             error_valid=f"finite and {ERR_RANGE[0]} < e < {ERR_RANGE[1]} mag and its magnitude valid (else null)",
             quality="not applied here; contract quality rules, bright limits and max_error_mag apply when read",
             duplicates="per match table: identical repeats kept once, a source_id with differing rows is dropped (ambiguous); SkyMapper: nearest within max_sep",
+            pairing="whole-sky validation of each table (validation.json) and a per-partition gate: G - x residual NMAD about a cubic in BP - RP vs the permuted-pairing null, and the outlier share vs the null's; a failing table is masked whole, a failing partition for that survey",
+            twomass="masked unless --twomass names a correctly keyed table (adql_matches/twomass.fits is mis-keyed and refused)",
             sfd="SFD98 E(B-V) at Gaia (l, b): dustmaps SFDQuery equivalent (ZEA WCS, order-1 map_coordinates, mode nearest); no 0.86 rescaling",
         ),
         inputs={k: str(getattr(inputs, k)) for k in Inputs.__dataclass_fields__},
@@ -1239,42 +1565,80 @@ def build(inputs: Inputs, opt: Options, args) -> int:
     )
     _save_json(mpath, m)
     stages = set(args.stage.split(","))
+    enabled, masked = enabled_surveys(inputs)
+    m["masked_surveys"] = dict(masked)
     log(f"photometry_v1a {BUILD_VERSION}; output {out}; staging {staging}")
+    log(f"surveys with a source: {enabled}; masked: {sorted(masked)}")
     if stages & {"prepare", "all"}:
         m["status"] = "staging_stores"
         _save_json(mpath, m)
         t0 = time.monotonic()
-        metas = prepare_stores(inputs, opt, staging, args.workers, args.sort_workers)
+        metas = prepare_stores(
+            inputs, opt, staging, args.workers, args.sort_workers, enabled
+        )
         m["stores"] = metas
         m["prepare_seconds"] = time.monotonic() - t0
         _save_json(mpath, m)
     if not stages & {"build", "all"}:
         return 0
-    metas = {s: store_meta(staging, s) for s in SURVEY_ORDER}
+    metas = {s: store_meta(staging, s) for s in enabled}
     if any(v is None for v in metas.values()):
         raise SystemExit(
             f"stores incomplete: {[s for s, v in metas.items() if v is None]}"
         )
     m["stores"] = metas
+    store_fp = {
+        s: {k: metas[s][k] for k in ("rows", "input_rows", "duplicate_rows")}
+        for s in metas
+    }
+    plist_all = hats_partitions(inputs.gaia)
+    # pairing validation on a whole-sky sample before any survey is used
+    vpath = work / "validation.json"
+    val = json.loads(vpath.read_text()) if vpath.exists() else None
+    if (
+        val is None
+        or val.get("stores") != store_fp
+        or val.get("version") != BUILD_VERSION
+    ):
+        m["status"] = "validating_pairing"
+        _save_json(mpath, m)
+        val = validate_pairing(plist_all, inputs.gaia, staging, enabled, args.workers)
+        val.update(stores=store_fp, version=BUILD_VERSION)
+        _save_json(vpath, val)
+    m["pairing_validation"] = {
+        k: {kk: vv for kk, vv in v.items() if kk != "partitions"}
+        for k, v in val["surveys"].items()
+    }
+    m["pairing_validation_file"] = str(vpath)
+    for name in enabled:
+        if not val["surveys"][name]["passed"]:
+            masked[name] = "failed the pairing validation (validation.json)"
+    active = [s for s in enabled if s not in masked]
+    m["masked_surveys"] = dict(masked)
+    m["active_surveys"] = active
+    log(f"surveys used: {active}; masked: {masked}")
     fp = hashlib.sha256(
         json.dumps(
             dict(
                 v=BUILD_VERSION,
-                stores={
-                    s: {
-                        k: metas[s][k] for k in ("rows", "input_rows", "duplicate_rows")
-                    }
-                    for s in metas
-                },
+                stores=store_fp,
+                active=active,
                 sfd=m["sfd_md5"],
                 opt=m["options"],
+                gate=[PAIR_MIN_N, PAIR_MAX_RATIO, PAIR_MAX_OUTLIER, PAIR_OUTLIER_MAG],
             ),
             sort_keys=True,
         ).encode()
     ).hexdigest()
     m["fingerprint"] = fp
-    cfg = dict(fingerprint=fp, staging=str(staging), sfd=str(inputs.sfd))
-    plist = hats_partitions(inputs.gaia)
+    cfg = dict(
+        fingerprint=fp,
+        staging=str(staging),
+        sfd=str(inputs.sfd),
+        active=active,
+        masked=masked,
+    )
+    plist = plist_all
     if args.partitions:
         want = {tuple(int(x) for x in s.split("/")) for s in args.partitions.split(",")}
         plist = [p for p in plist if p in want]
@@ -1403,9 +1767,20 @@ def finalize(
     )
     # surveys
     surveys = {}
+    active = m["active_surveys"]
     for name in SURVEY_ORDER:
+        if name not in active:
+            surveys[name] = dict(masked=m["masked_surveys"][name], rows_with_any_band=0)
+            continue
         meta = m["stores"][name]
         matched = sum(s["surveys"][name]["matched"] for s in stats)
+        pm = [s["surveys"][name]["pairing"] for s in stats]
+        judged = [x for x in pm if "passed" in x]
+        failed = [
+            dict(Norder=s["Norder"], Npix=s["Npix"], **s["surveys"][name]["pairing"])
+            for s in stats
+            if s["surveys"][name]["pairing"].get("passed") is False
+        ]
         surveys[name] = dict(
             input_rows=meta["input_rows"],
             expected_rows=EXPECTED_ROWS.get(name),
@@ -1416,6 +1791,30 @@ def finalize(
             identical_repeats_dropped=meta["identical_repeats_dropped"],
             matched_gaia_rows=matched,
             staged_rows_not_in_gaia=meta["rows"] - matched,
+            kept_rows=sum(s["surveys"][name]["kept"] for s in stats),
+            pairing_gate=dict(
+                partitions_judged=len(judged),
+                partitions_failed=len(failed),
+                rows_masked=sum(
+                    s["surveys"][name]["masked_by_pairing_gate"] for s in stats
+                ),
+                nmad_median=float(np.median([x["nmad"] for x in judged]))
+                if judged
+                else None,
+                nmad_p90=float(np.percentile([x["nmad"] for x in judged], 90))
+                if judged
+                else None,
+                ratio_median=float(np.median([x["ratio"] for x in judged]))
+                if judged
+                else None,
+                ratio_p99=float(np.percentile([x["ratio"] for x in judged], 99))
+                if judged
+                else None,
+                corr_g_x_median=float(np.median([x["corr_g_x"] for x in judged]))
+                if judged
+                else None,
+                failed_partitions=failed[:200],
+            ),
             rows_with_any_band=sum(s["surveys"][name]["any_band"] for s in stats),
             matched_outside_healpix_range=sum(
                 s["surveys"][name]["matched_outside"] for s in stats
@@ -1449,10 +1848,27 @@ def finalize(
         c: sum(s["columns"].get(c, 0) for s in stats) for c in output_columns()
     }
     checks["staged_rows_on_gaia"] = dict(
-        per_survey={k: v["staged_rows_not_in_gaia"] for k, v in surveys.items()},
-        ok=subset or all(v["staged_rows_not_in_gaia"] == 0 for v in surveys.values()),
+        per_survey={k: surveys[k]["staged_rows_not_in_gaia"] for k in active},
+        ok=subset or all(surveys[k]["staged_rows_not_in_gaia"] == 0 for k in active),
     )
-    # 2MASS Ks - G
+    checks["pairing"] = dict(
+        validation={k: v["passed"] for k, v in m["pairing_validation"].items()},
+        partitions_failed={
+            k: surveys[k]["pairing_gate"]["partitions_failed"] for k in active
+        },
+        rule="every survey used passed the whole-sky validation; partitions failing the "
+        "gate are masked for that survey (counted)",
+        ok=all(m["pairing_validation"][k]["passed"] for k in active),
+    )
+    if "twomass" in active:
+        checks["twomass_ks_g"] = twomass_ks_g(stats, subset)
+    else:
+        checks["twomass_ks_g"] = dict(skipped="2MASS masked", ok=True)
+    _finalize_sfd(m, checks, stats, inputs, plist, rows)
+    _finalize_write(m, checks, stats, plist, inputs, out, work, subset, rows)
+
+
+def twomass_ks_g(stats, subset) -> dict:
     a = {
         k: sum(s["ks_g"][k] for s in stats)
         for k in ("n", "sx", "sy", "sxx", "syy", "sxy", "below", "above")
@@ -1488,7 +1904,7 @@ def finalize(
             / max(tot, 1)
         ),
     )
-    checks["twomass_ks_g"] = dict(
+    return dict(
         **gk,
         rule="Pearson r(G, Ks) >= 0.85 and median G-Ks in [0.5, 4] for ph_qual(Ks) in ABC",
         ok=bool(n == 0 and subset)
@@ -1498,7 +1914,9 @@ def finalize(
             and 0.5 <= gk["g_minus_ks_median"] <= 4
         ),
     )
-    # SFD
+
+
+def _finalize_sfd(m, checks, stats, inputs, plist, rows) -> None:
     sfd_null = sum(s["sfd"]["null"] for s in stats)
     dh = np.sum([s["sfd_vs_skymapper"]["hist"] for s in stats], axis=0)
     dn = sum(s["sfd_vs_skymapper"]["n"] for s in stats)
@@ -1533,6 +1951,11 @@ def finalize(
     checks["sfd"]["ok"] = bool(
         checks["sfd"]["ok"] and checks["sfd"]["dustmaps_parity"].get("ok", True)
     )
+
+
+def _finalize_write(m, checks, stats, plist, inputs, out, work, subset, rows) -> None:
+    import pyarrow.parquet as pq
+
     m["checks"] = checks
     m["rows"] = rows
     m["partitions"] = len(stats)
@@ -1566,7 +1989,7 @@ def finalize(
                 "hats_cols_survey_id=source_id",
                 f"hats_order={max(s['Norder'] for s in stats)}",
                 f"hats_creation_date={dt.datetime.now(dt.UTC):%Y-%m-%dT%H:%MUTC}",
-                f"obs_description=MSA-IN v1a Gaia-keyed photometry ({CONTRACT}): Gaia DR3 G/BP/RP, astrometry, SFD E(B-V), SDSS, SkyMapper DR4, PS1, 2MASS, CatWISE; rows and order of gaia/dr3",
+                f"obs_description=MSA-IN v1a Gaia-keyed photometry ({CONTRACT}): Gaia DR3 G/BP/RP, astrometry, SFD E(B-V) and {', '.join(m['active_surveys'])}; masked (columns all null): {', '.join(sorted(m['masked_surveys'])) or 'none'}; rows and order of gaia/dr3",
                 f"prov_progenitor={inputs.gaia}; {ADQL}; {inputs.skymapper}; {inputs.sfd}",
                 f"msa_build_version={BUILD_VERSION}",
                 f"msa_code_commit={m['code_commit']}",
@@ -1581,7 +2004,7 @@ def finalize(
             rows=s["rows"],
             seconds=s["seconds"],
             bytes=s["bytes"],
-            **{f"{k}_matched": v["matched"] for k, v in s["surveys"].items()},
+            **{f"{k}_kept": v["kept"] for k, v in s["surveys"].items() if "kept" in v},
         )
         for s in stats
     ]
@@ -1646,7 +2069,10 @@ def main(argv=None) -> int:
     p.add_argument("--fits-chunk-rows", type=int, default=4_000_000)
     for k in Inputs.__dataclass_fields__:
         p.add_argument(
-            "--" + k.replace("_", "-"), type=Path, default=getattr(Inputs(), k)
+            "--" + k.replace("_", "-"),
+            type=str if k == "twomass" else Path,
+            default=getattr(Inputs(), k),
+            help="'mask' or a correctly keyed 2MASS table" if k == "twomass" else None,
         )
     a = p.parse_args(argv)
     inputs = Inputs(**{k: getattr(a, k) for k in Inputs.__dataclass_fields__})

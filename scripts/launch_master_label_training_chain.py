@@ -1453,9 +1453,13 @@ STEPS["qa-v10-stage"] = dict(
 # P3 (docs/programme/README.md section 6): MSA-IN v1a photometry (data.md section 2.7)
 # of all 1,811,709,771 Gaia DR3 sources in the gaia/dr3 HATS layout, the input tree of
 # the v11 encoder (configs/pretrain-v11.yaml). CPU only: stages the source_id-keyed
-# adql_matches (2MASS, PS1 ids + photometry, SDSS, CatWISE) and SkyMapper DR4 as sorted
-# column stores under the run directory (~250 GB transient, removed when complete),
+# adql_matches (PS1 ids + photometry, SDSS, CatWISE) and SkyMapper DR4 as sorted column
+# stores under the run directory (~150 GB transient, removed when complete), validates
+# each table's pairing on a whole-sky sample (failing tables and partitions masked),
 # then streams the 2,016 Gaia partitions with 16 workers; SFD from catalogues/sfd.
+# 2MASS is masked (adql_matches/twomass.fits is mis-keyed). Attempt 1 (z2lilwcf)
+# staged the stores with the mis-keyed 2MASS and was stopped before the build;
+# attempt 2 resumes from its stores with 2MASS masked and the pairing validation.
 PHOT_V1A = ROOT + "msa_tables_v2/photometry_v1a"
 STEPS["photometry-v1a"] = dict(
     run_id="photometry_v1a_20261124",
