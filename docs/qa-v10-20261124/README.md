@@ -64,6 +64,11 @@ every XP star: TEST is label-fresh, not input-fresh.
 - Co-natal checks reproduce the audit's v10 numbers on the TEST groups: fainter
   companions read 0.09 dex more metal-poor, cool held-out companions 0.26–0.31 dex
   too metal-poor, open-cluster giants +0.33 dex above dwarfs.
+- Competitors are compared against the survey labels whose common scale the v10
+  models are fitted to, which favours the models; StarHorse spectroscopic runs use
+  those survey labels as inputs, and SHBoost has no training flag. Against
+  GSP-Phot (independent) and Andrae 2023 (own training stars removed) the S2 flow
+  has the smaller median absolute error in every parameter.
 - 74 of the 192 GBS stars are rows of the v5 fine-tune table (63 in train), because
   the table builder excluded the benchmarks by their float-rounded ids; only the
   unseen ones are scored (4–5 stars).

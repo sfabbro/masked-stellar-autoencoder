@@ -168,7 +168,8 @@ def _md_set(name, res) -> list[str]:
         L.append("")
     if res.get("competitors"):
         L.append(
-            "**Competitors** (exact-id overlap; model vs competitor against the same reference):"
+            "**Competitors** (exact-id overlap; model vs competitor against the same reference; "
+            "the reference labels set the model's own scale, which favours the model):"
         )
         L.append("")
         L.append(
