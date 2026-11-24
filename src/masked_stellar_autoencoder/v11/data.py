@@ -29,13 +29,20 @@ XP rows), which bounds activation memory independently of the row mix.
 
 from __future__ import annotations
 
-import hashlib
 import math
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
 import torch
+
+from masked_stellar_autoencoder.data.msa_split import (  # noqa: F401  (re-exported)
+    REC_SALT64,
+    SALT64,
+    partition_of,
+    salt64,
+    unit,
+)
 
 from .filters import FilterOperator, exact_band_variance
 from .schema import N_XP, BandRegistry, ContractArrays, ContractReader, xp_normalisation
@@ -46,31 +53,10 @@ INPUT_CLASSES = ("X", "P", "G", "N")
 
 
 # ---------------------------------------------------------------- split hash
-
-
-def salt64(label: bytes) -> int:
-    return int.from_bytes(hashlib.sha256(label).digest()[:8], "little")
-
-
-SPLIT_SALT64 = salt64(b"msa-split-v1")  # 0xb6f6e5353645106b
-REC_SALT64 = salt64(b"msa-rec-v1")
-
-
-def split_unit(source_id, salt: int = SPLIT_SALT64) -> np.ndarray:
-    """``msa-split-v1`` unit hash of integer keys (salted splitmix64 finaliser)."""
-    z = np.asarray(source_id, np.int64).view(np.uint64) ^ np.uint64(salt)
-    with np.errstate(over="ignore"):
-        z = z + np.uint64(0x9E3779B97F4A7C15)
-        z = (z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
-        z = (z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
-    z = z ^ (z >> np.uint64(31))
-    return (z >> np.uint64(11)).astype(np.float64) * 2.0**-53
-
-
-def split_partition(u) -> np.ndarray:
-    return np.searchsorted(
-        np.asarray((0.75, 0.80, 0.88)), np.asarray(u), side="right"
-    ).astype(np.uint8)
+# One implementation of the msa-split-v1 hash: data/msa_split.py (names kept).
+SPLIT_SALT64 = SALT64  # 0xb6f6e5353645106b
+split_unit = unit
+split_partition = partition_of
 
 
 # ---------------------------------------------------------------- HATS layout
