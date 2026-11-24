@@ -1,0 +1,22 @@
+{
+  "run_id": "qa_v10_20261124_stage",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/qa_v10_20261124_stage",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/qa_v10_20261124_stage-attempt-2",
+  "source_commit": "efe632f5b902be9d7afab7a9ce59d2814af2df56",
+  "branch": "main",
+  "command": "python -u scripts/evaluate_model.py --predictions posterior_test=/arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/multi_v10_test.npz --predictions posterior_core=/arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/multi_v10_core.npz --predictions s2_flow=/arc/projects/astroai/msa/runs/distributional_heads_s2_v10_20261122/s2_predictions_flow.npz --predictions s3_gmix=/arc/projects/astroai/msa/runs/distance_extinction_s3_v21_20261123/s3_predictions_gmix.npz --predictions s1_all_ens=/arc/projects/astroai/msa/runs/likelihood_head_s1_v10_ens_20261122/s1_predictions.npz --competitor andrae2023=/arc/projects/k-pop/catalogues/table-1.fits.gz --competitor shboost=/arc/projects/k-pop/catalogues/shboost --competitor starhorse2023=/arc/projects/k-pop/catalogues/starhorse_ages --stage-competitors \"$experiment_output/competitors\"",
+  "utc": "2026-11-24T04:56:53.608055+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "l9io9zc5"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 48
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "3946ad8f387dfaccbb5f8c4fb094159d5fcf6f2800424f543f6aefb20f135931"
+}
