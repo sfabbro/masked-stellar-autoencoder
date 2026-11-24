@@ -1,0 +1,25 @@
+{
+  "run_id": "hats_survey_audit_20261124_followup",
+  "attempt": 2,
+  "output": "/arc/projects/astroai/msa/runs/hats_survey_audit_20261124_followup",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/hats_survey_audit_20261124_followup-attempt-2",
+  "source_commit": "cd6e4edf98f234744f66c2838f5bb8fc8b53adcd",
+  "branch": "main",
+  "command": "python -u scripts/audit_hats_community.py --root /arc/projects/hats --output /arc/projects/astroai/msa/runs/hats_survey_audit_20261124/followup --workers 16 --stages followup --max-hours 4",
+  "utc": "2026-11-24T08:40:38.204495+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "dlec1oky"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 16,
+    "ram": 96
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "b0ea1cc79e27225c499da0d1dc25b419833f0d04d9ca132e75f9e1e044986c0f",
+  "error": "The read operation timed out",
+  "error_type": "ReadTimeout",
+  "reconciliation": "The POST timed out client-side (ReadTimeout), but at 08:42 UTC the session listing shows session dlec1oky named msa-hats-survey-audit-20261124-followup (Running); it is this submission."
+}
