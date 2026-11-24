@@ -1530,6 +1530,25 @@ STEPS["v11-pilot"] = dict(
 )
 
 
+# Read-only audit of every HATS catalogue under /arc/projects/hats, the community tree
+# Pensus maintains (docs/hats-survey-audit-20261124.md): directory listings, small
+# metadata files, every partition footer, a stratified sample of partitions (with a
+# Gaia DR3-anchored multiplicity check) and full coordinate scans of the small trees
+# and the rebuild candidates. CPU only; nothing is written under /arc/projects/hats
+# (the script refuses an output there); results go to runs/<run_id>/.
+STEPS["hats-survey-audit"] = dict(
+    run_id="hats_survey_audit_20261124",
+    gpu=0,
+    ram=96,
+    cpu=16,
+    command=(
+        "python -u scripts/audit_hats_community.py --root /arc/projects/hats"
+        ' --output "$experiment_output" --workers 16 --max-hours 8'
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
