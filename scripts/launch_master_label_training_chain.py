@@ -1457,9 +1457,11 @@ STEPS["qa-v10-stage"] = dict(
 # stores under the run directory (~150 GB transient, removed when complete), validates
 # each table's pairing on a whole-sky sample (failing tables and partitions masked),
 # then streams the 2,016 Gaia partitions with 16 workers; SFD from catalogues/sfd.
-# 2MASS is masked (adql_matches/twomass.fits is mis-keyed). Attempt 1 (z2lilwcf)
-# staged the stores with the mis-keyed 2MASS and was stopped before the build;
-# attempt 2 resumes from its stores with 2MASS masked and the pairing validation.
+# 2MASS is masked (adql_matches/twomass.fits is mis-keyed). Attempt 1 (z2lilwcf, 37
+# min) built the table with the mis-keyed 2MASS (r(G, Ks) = 0.005: checks failed) and
+# SkyMapper joined on its float64-rounded Gaia ids; attempt 2 reuses the PS1, SDSS
+# and CatWISE stores, re-stages SkyMapper with positions (id + 1" position match),
+# masks 2MASS and validates every table's pairing before the build.
 PHOT_V1A = ROOT + "msa_tables_v2/photometry_v1a"
 STEPS["photometry-v1a"] = dict(
     run_id="photometry_v1a_20261124",
