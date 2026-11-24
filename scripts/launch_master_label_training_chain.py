@@ -1450,6 +1450,26 @@ STEPS["qa-v10-stage"] = dict(
 )
 
 
+# P3 (docs/programme/README.md section 6): MSA-IN v1a photometry (data.md section 2.7)
+# of all 1,811,709,771 Gaia DR3 sources in the gaia/dr3 HATS layout, the input tree of
+# the v11 encoder (configs/pretrain-v11.yaml). CPU only: stages the source_id-keyed
+# adql_matches (2MASS, PS1 ids + photometry, SDSS, CatWISE) and SkyMapper DR4 as sorted
+# column stores under the run directory (~250 GB transient, removed when complete),
+# then streams the 2,016 Gaia partitions with 16 workers; SFD from catalogues/sfd.
+PHOT_V1A = ROOT + "msa_tables_v2/photometry_v1a"
+STEPS["photometry-v1a"] = dict(
+    run_id="photometry_v1a_20261124",
+    gpu=0,
+    ram=128,
+    cpu=16,
+    command=(
+        "python -u scripts/build_photometry_v1a.py --workers 16 --sort-workers 2"
+        f' --output {PHOT_V1A} --work "$experiment_output" --clean-staging'
+    ),
+    files=[],
+)
+
+
 def pushed_head() -> tuple[str, str]:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     branch = subprocess.check_output(
