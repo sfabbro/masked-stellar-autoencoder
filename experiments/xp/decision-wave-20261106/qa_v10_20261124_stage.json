@@ -1,0 +1,22 @@
+{
+  "run_id": "qa_v10_20261124_stage",
+  "attempt": 1,
+  "output": "/arc/projects/astroai/msa/runs/qa_v10_20261124_stage",
+  "source_bundle": "/arc/projects/astroai/msa/launcher/source_bundles/qa_v10_20261124_stage",
+  "source_commit": "c52acdfa00dd713bc38a2c74963a493a1cf332fb",
+  "branch": "main",
+  "command": "python -u scripts/evaluate_model.py --predictions posterior_test=/arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/multi_v10_test.npz --predictions posterior_core=/arc/projects/astroai/msa/runs/multisurvey_finetune_20261121_v10/multi_v10_core.npz --predictions s2_flow=/arc/projects/astroai/msa/runs/distributional_heads_s2_v10_20261122/s2_predictions_flow.npz --predictions s3_gmix=/arc/projects/astroai/msa/runs/distance_extinction_s3_v21_20261123/s3_predictions_gmix.npz --competitor andrae2023=/arc/projects/k-pop/catalogues/table-1.fits.gz --competitor shboost=/arc/projects/k-pop/catalogues/shboost --competitor starhorse2023=/arc/projects/k-pop/catalogues/starhorse_ages --stage-competitors \"$experiment_output/competitors\"",
+  "utc": "2026-11-24T04:50:10.142375+00:00",
+  "status": "accepted",
+  "session_ids": [
+    "uajdsmxr"
+  ],
+  "resources": {
+    "gpu": 0,
+    "cores": 4,
+    "ram": 48
+  },
+  "image": "images.canfar.net/astroai/base:latest",
+  "source_sha256": {},
+  "payload_sha256": "3a5be6f47334b8fb87c8f056b0ddaef6aedb2ec28e7874426cb54aa8ed128bfc"
+}
