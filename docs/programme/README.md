@@ -1,6 +1,6 @@
 # MSA programme: stellar parameters for every Gaia star and beyond (2026-11-23)
 
-Programme home. It ties four reference documents to the production plan:
+Programme home. To resume in a new session, start with [`HANDOFF.md`](HANDOFF.md). It ties four reference documents to the production plan:
 - what has been tried: [`experiment-history.md`](experiment-history.md);
 - what the models are: [`architecture.md`](architecture.md);
 - what data they use: [`data.md`](data.md), [`datasets.yaml`](datasets.yaml);

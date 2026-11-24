@@ -1,5 +1,12 @@
 # MSA handoff — 2026-11-08, Vancouver
 
+> **Superseded (24 Nov 2026).** The current handoff is
+> [`docs/programme/HANDOFF.md`](docs/programme/HANDOFF.md): state, rules, where
+> everything is, architecture and losses, how to train and predict, and next steps.
+> The full history of experiments is in
+> [`docs/programme/experiment-history.md`](docs/programme/experiment-history.md).
+> This 8 Nov file is kept for the record only; its branch and paths are out of date.
+
 Start here when resuming on another computer. This is a WIP research handoff, not a release or a claim that the corrected full-Gaia model has been trained.
 
 ## Get the working state
