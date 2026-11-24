@@ -444,6 +444,11 @@ class Pretrainer:
         for k, v in agg.items():
             out[k] = v / max(norm[STAT_NORM[k]], 1)
         out.update({f"n_{k}": v for k, v in norm.items()})
+        rows = sum(len(mb["source_id"]) for mb in mbs)
+        xp0 = self.xp_idx[0]
+        out["xp_row_frac"] = sum(
+            int(torch.isfinite(mb["values"][:, xp0]).sum()) for mb in mbs
+        ) / max(rows, 1)
         return out
 
     @torch.no_grad()
@@ -613,6 +618,13 @@ class Pretrainer:
             "torch": torch.__version__,
             "python": platform.python_version(),
             "device": str(self.device),
+            "gpu": torch.cuda.get_device_name(self.device)
+            if self.device.type == "cuda"
+            else None,
+            "gpu_total_gb": torch.cuda.get_device_properties(self.device).total_memory
+            / 2**30
+            if self.device.type == "cuda"
+            else None,
             "parameters": parameter_count(self.comp.model),
             "loss_parameters": sum(p.numel() for p in self.comp.recon.parameters())
             + (
@@ -649,11 +661,17 @@ class Pretrainer:
         last: dict = {}
         t0 = time.time()
         rows_t0 = self.rows_seen
+        # throughput window since the last log, without evaluation and checkpoints
+        win = {"t": t0, "rows": 0, "wait": 0.0, "excl": 0.0}
+        cuda = self.device.type == "cuda"
         while self.step < stop:
+            tw = time.time()
             mbs, rows = self._next_step_batches(holder)
+            win["wait"] += time.time() - tw
             rec = self.train_step(mbs)
             self.step += 1
             self.rows_seen += rows
+            win["rows"] += rows
             rec.update(
                 step=self.step,
                 rows=self.rows_seen,
@@ -661,8 +679,20 @@ class Pretrainer:
                 micro_batches=len(mbs),
             )
             if self.step % cfg.train.log_every == 0 or self.step == stop:
-                dt = time.time() - t0
-                rec["rows_per_s"] = (self.rows_seen - rows_t0) / max(dt, 1e-9)
+                now = time.time()
+                rec["rows_per_s"] = (self.rows_seen - rows_t0) / max(now - t0, 1e-9)
+                span = max(now - win["t"] - win["excl"], 1e-9)
+                rec["win_rows_per_s"] = win["rows"] / span
+                rec["data_wait_frac"] = win["wait"] / span
+                if cuda:
+                    rec["gpu_mem_peak_gb"] = (
+                        torch.cuda.max_memory_allocated(self.device) / 2**30
+                    )
+                    rec["gpu_mem_reserved_gb"] = (
+                        torch.cuda.memory_reserved(self.device) / 2**30
+                    )
+                    torch.cuda.reset_peak_memory_stats(self.device)
+                win = {"t": now, "rows": 0, "wait": 0.0, "excl": 0.0}
                 self.log(rec)
                 print(
                     json.dumps(
@@ -673,14 +703,17 @@ class Pretrainer:
                     ),
                     flush=True,
                 )
+            te = time.time()
             if self.step % cfg.train.eval_every == 0 or self.step == stop:
                 ev = self.evaluate()
                 ev["step"] = self.step
+                ev["eval_seconds"] = time.time() - te
                 self.log(ev)
                 print(json.dumps(ev), flush=True)
                 rec.update({k: v for k, v in ev.items() if k != "dev_fi"})
             if self.step % cfg.train.checkpoint_every == 0 or self.step == stop:
                 self.save()
+            win["excl"] += time.time() - te
             last = rec
         return last
 

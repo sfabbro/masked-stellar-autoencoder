@@ -1468,6 +1468,33 @@ STEPS["photometry-v1a"] = dict(
     ),
     files=[],
 )
+# P4 GPU pilot of the v11 encoder on real data (encoder-v11.md section 9), one GPU
+# slice, ~2 h: the production configuration on the FIT rows of the first 200 Gaia
+# partitions, a 2,000-step schedule run as two segments (the second resumes from
+# latest.pt at step 500), then 400 steps with 16 latents. Each segment has a wall
+# limit; the run logs rows/s, data wait, GPU memory, every loss term and the DEV
+# filter-integral zero points. Outputs in runs/pretrain_v11_pilot_20261124/{l32,l16}.
+_PV11 = "python -u -m masked_stellar_autoencoder.training.pretrain_v11"
+STEPS["v11-pilot"] = dict(
+    run_id="pretrain_v11_pilot_20261124",
+    gpu=1,
+    ram=64,
+    cpu=8,
+    # the entrypoint runs under set -e: a segment that hits its wall limit must not
+    # stop the next one
+    command=' ; "${pixi_run[@]}" '.join(
+        f'{seg} || echo "v11 pilot segment {i} exited $?"'
+        for i, seg in enumerate(
+            [
+                f"timeout 40m {_PV11} --config configs/pretrain-v11-pilot.yaml --max-steps 500",
+                f"timeout 55m {_PV11} --config configs/pretrain-v11-pilot.yaml",
+                f"timeout 20m {_PV11} --config configs/pretrain-v11-pilot-l16.yaml --max-steps 400",
+            ],
+            1,
+        )
+    ),
+    files=[],
+)
 
 
 def pushed_head() -> tuple[str, str]:
